@@ -30,7 +30,8 @@ export type ResourceDataType = {
   year: string
   type: string
   learningOutcomes: LearningOutcome[]
-  popularity?: {
+  points?: null | number
+  popularity?: null | {
     overall: number
     items: {
       downloads?: ResourcePopularityItem

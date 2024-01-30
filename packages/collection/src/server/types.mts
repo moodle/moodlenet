@@ -15,7 +15,8 @@ export type ResourceListItem = {
 export type CollectionDataType = CollectionMeta & {
   published: boolean
   resourceList: ResourceListItem[]
-  popularity?: {
+  points?: null | number
+  popularity?: null | {
     overall: number
     items: { [key: string]: CollectionPopularityItem }
   }
@@ -31,6 +32,13 @@ export type ImageUploaded = { kind: 'file'; directAccessId: string; credits?: Cr
 export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
 
 export type CollectionEvents = CollectionActivityEvents
+// export type ResourceInCollectionInfo = {
+//   key: string
+//   published: boolean
+//   creatorKey?: string
+// //  creator?: { key: string; sameAsCollectionCreator: boolean }
+// }
+
 export type CollectionActivityEvents = {
   'created': {
     collection: EntityFullDocument<CollectionDataType>
@@ -45,6 +53,7 @@ export type CollectionActivityEvents = {
   'published': {
     userId: EntityIdentifier
     collection: EntityFullDocument<CollectionDataType>
+    // resourceListInfo: ResourceInCollectionInfo[]
   }
   'resource-list-curation': {
     collection: EntityFullDocument<CollectionDataType>
@@ -56,6 +65,7 @@ export type CollectionActivityEvents = {
   'unpublished': {
     userId: EntityIdentifier
     collection: EntityFullDocument<CollectionDataType>
+    // resourceListInfo: ResourceInCollectionInfo[]
   }
   'deleted': {
     userId: EntityIdentifier

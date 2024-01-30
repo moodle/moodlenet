@@ -1,6 +1,6 @@
 import type { Href } from '@moodlenet/react-app/common'
 
-export type WebUserEntityNames = 'Profile'
+export type WebUserEntityNames = 'Profile' | 'EntityPoints'
 export type KnownEntityFeature = 'bookmark' | 'follow' | 'like'
 export type KnownEntityType = 'resource' | 'collection' | 'profile' | 'subject'
 

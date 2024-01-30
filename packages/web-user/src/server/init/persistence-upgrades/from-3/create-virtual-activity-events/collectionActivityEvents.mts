@@ -1,5 +1,6 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
 import { getCollectionMeta } from '@moodlenet/collection/server'
+
 import type { EventPayload } from '@moodlenet/core'
 import '@moodlenet/ed-resource/server'
 import { Resource } from '@moodlenet/ed-resource/server'
@@ -9,7 +10,7 @@ import type { ProfileDataType, WebUserActivityEvents } from '../../../../exports
 import { shell } from '../../../../shell.mjs'
 import { initialEventsNowISO } from './initialEventsNow.mjs'
 
-export default function collectionActivityEvents(
+export default async function collectionActivityEvents(
   profile: EntityFullDocument<ProfileDataType>,
   ownCollections: EntityFullDocument<CollectionDataType>[],
 ) {
@@ -57,12 +58,19 @@ export default function collectionActivityEvents(
         data: {
           collection: ownCollection,
           userId,
+          // resourceListInfo: await getExistingResourcesInCollectionInfo(
+          //   ownCollection._meta.creatorEntityId,
+          //   ownCollection.resourceList,
+          // ),
         },
       })
     }
 
     ownCollection.resourceList.forEach(async (resourceItem, index) => {
-      const resource = await Resource.collection.document({ _key: resourceItem._key })
+      const resource = await Resource.collection.document(
+        { _key: resourceItem._key },
+        { graceful: true },
+      )
       if (!resource) {
         return
       }

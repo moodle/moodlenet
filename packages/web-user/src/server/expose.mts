@@ -27,8 +27,9 @@ import { shell } from './shell.mjs'
 import {
   isAllowedKnownEntityFeature,
   reduceToKnownFeaturedEntities,
-} from './srv/known-features.mjs'
+} from './srv/known-entity-types.mjs'
 import {
+  changeProfilePublisherPerm,
   editMyProfileInterests,
   editProfile,
   entityFeatureAction,
@@ -42,7 +43,6 @@ import {
   sendMessageToProfile as sendMessageToProfileIntent,
   setProfileAvatar,
   setProfileBackgroundImage,
-  setProfilePublisherFlag,
 } from './srv/profile.mjs'
 import {
   currentWebUserDeletionAccountRequest,
@@ -173,7 +173,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           canEdit: !!profileRecord.access.u,
           canFollow: !!currentProfileIds && currentProfileIds._key !== profileRecord.entity._key,
           numFollowers,
-          points: profileRecord.entity.points,
+          points: profileRecord.entity.points ?? 0,
           profileHref: href(profileHomePagePath),
           profileUrl: getWebappUrl(profileHomePagePath),
           data,
@@ -472,7 +472,10 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     'webapp/admin/roles/setIsPublisher': {
       guard: () => void 0,
       async fn({ profileKey, isPublisher }) {
-        const response = await setProfilePublisherFlag({ profileKey, isPublisher })
+        const response = await changeProfilePublisherPerm({
+          profileKey,
+          setIsPublisher: isPublisher,
+        })
         return !!response?.ok
       },
     },

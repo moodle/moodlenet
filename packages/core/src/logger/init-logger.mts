@@ -20,10 +20,10 @@ export const logLevelMap: Record<AllLogLevel, number> = {
   critical: 2,
   error: 3,
   warn: 4,
-  event: 4.5,
   notice: 5,
   info: 6,
   debug: 7,
+  event: 8,
 }
 const mainLoggerConfigs = coreConfigs.mainLogger
 

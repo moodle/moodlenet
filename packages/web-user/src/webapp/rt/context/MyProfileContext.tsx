@@ -115,13 +115,18 @@ function useAllMyFeaturedEntities() {
     },
     [all],
   )
-
+  const [toggleFeatOngoing, setToggleFeatOngoing] = useState(false)
   const toggle = useCallback<AllMyFeaturedEntitiesHandle['toggle']>(
     async ({ _key, entityType, feature }) => {
+      if (toggleFeatOngoing) {
+        return
+      }
+      setToggleFeatOngoing(true)
       const action = isFeatured({ _key, entityType, feature }) ? 'remove' : 'add'
       await shell.rpc.me(
         'webapp/entity-social-actions/:action(add|remove)/:feature(bookmark|follow|like)/:entityType(resource|profile|collection|subject)/:_key',
       )(void 0, { action, _key, entityType, feature })
+      setToggleFeatOngoing(false)
       setAll(featuredEntities => {
         const currentList = featuredEntities[feature][entityType]
         const updatedList: { _key: string }[] =
@@ -137,7 +142,7 @@ function useAllMyFeaturedEntities() {
         }
       })
     },
-    [isFeatured],
+    [isFeatured, toggleFeatOngoing],
   )
 
   const myFeaturedEntitiesContext = useMemo<AllMyFeaturedEntitiesHandle>(() => {

@@ -50,17 +50,31 @@ export type ProfileMeta = {
 }
 export type ProfileDataType = ProfileMeta & {
   knownFeaturedEntities: KnownFeaturedEntityItem[]
-  points: number
   publisher: boolean
   webslug: string
   settings: ProfileSettings
-  popularity?: {
+  points?: null | number
+  popularity?: null | {
     overall: number
     items: {
       followers?: ProfilePopularityItem
     } & { [key: string]: ProfilePopularityItem }
   }
 }
+
+export type EntityPointsDataType = {
+  entityType: KnownEntityType
+  entityKey: string
+  synced: boolean
+  popularity?: null | {
+    overall: number
+    items: {
+      [itemName in string]: number
+    }
+  }
+  points?: null | number
+}
+
 export type ProfilePopularityItem = { value: number }
 
 type Image = ImageUploaded
@@ -121,6 +135,7 @@ export type WebUserAccountDeletionToken = {
 export type WebUserEvents = WebUserActivityEvents //& {}
 export type ActivityLogDataType = EventPayload<WebUserActivityEvents> & {
   ulid: string
+  digested: boolean
 }
 
 export type WebUserActivityEvents = {
@@ -169,6 +184,7 @@ export type WebUserActivityEvents = {
   'collection-published': {
     userId: EntityIdentifier
     collection: EntityFullDocument<CollectionDataType>
+    // resourceListInfo: ResourceInCollectionInfo[]
   }
   'collection-resource-list-curation': {
     collection: EntityFullDocument<CollectionDataType>
@@ -179,6 +195,7 @@ export type WebUserActivityEvents = {
   'collection-unpublished': {
     userId: EntityIdentifier
     collection: EntityFullDocument<CollectionDataType>
+    // resourceListInfo: ResourceInCollectionInfo[]
   }
   'collection-deleted': {
     userId: EntityIdentifier

@@ -206,24 +206,38 @@ export async function patchEntity<
     ? `${currentEntityVar}._rev == ${toaql(opts.matchRev)} && `
     : ''
   const now = shell.now().toISOString()
-
   const patchCursor = await accessEntities(entityClass, 'u', {
     ...opts,
     preAccessBody: `${opts?.preAccessBody ?? ''} 
     FILTER ${matchRevFilter} ${currentEntityVar}._key == ${toaql(key)} LIMIT 1`,
     postAccessBody: `${opts?.postAccessBody ?? ''} 
-    let providedPatch = UNSET(${aqlPatchVar}, '_meta') 
-    let noChanges = MATCHES( ${currentEntityVar}, MERGE_RECURSIVE(${currentEntityVar}, providedPatch) )
-    let patch = noChanges 
-                ? { _rev: ${currentEntityVar}._rev } 
-                : MERGE_RECURSIVE(providedPatch, { _meta: { updated: ${toaql(now)} } } )
-    UPDATE ${currentEntityVar} WITH patch IN @@collection`,
+    let mergedPatch = MERGE_RECURSIVE(
+        ${currentEntityVar}, 
+        UNSET(${aqlPatchVar}, '_meta'), 
+        { 
+          _meta: { 
+            updated: ${toaql(now)} 
+          } 
+        } 
+      )
+
+    let noChanges = MATCHES( 
+      UNSET( mergedPatch, '_meta' ,'_rev' ), 
+      UNSET( ${currentEntityVar}, '_meta' ,'_rev' )
+    )
+    
+    LET patch = noChanges ? {} : mergedPatch
+
+    UPDATE ${currentEntityVar} WITH patch IN @@collection
+    `,
     project: {
       patched: 'NEW' as AqlVal<EntityFullDocument<EntityDataType>>,
       old: 'OLD' as AqlVal<EntityFullDocument<EntityDataType>>,
       noChanges: 'noChanges' as AqlVal<boolean>,
+      // ...(opts?.project ?? {}),
     },
   })
+
   const patchRecord = await patchCursor.next()
   if (!patchRecord) {
     return

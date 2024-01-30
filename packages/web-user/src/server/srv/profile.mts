@@ -1,8 +1,9 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
+import * as collection from '@moodlenet/collection/server'
 import { RpcStatus, type RpcFile } from '@moodlenet/core'
+import * as resCore from '@moodlenet/core-domain/resource'
 import type { IscedFieldDataType } from '@moodlenet/ed-meta/server'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
-import * as collection from '@moodlenet/collection/server'
 import * as resource from '@moodlenet/ed-resource/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
@@ -31,6 +32,7 @@ import {
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import dot from 'dot'
+import { waitFor } from 'xstate/lib/waitFor.js'
 import type { EditProfileDataRpc } from '../../common/expose-def.mjs'
 import type { KnownEntityFeature, KnownEntityType, SortTypeRpc } from '../../common/types.mjs'
 import type { ValidationsConfig } from '../../common/validationSchema.mjs'
@@ -48,7 +50,7 @@ import type {
   ProfileInterests,
   ProfileMeta,
 } from '../types.mjs'
-import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-features.mjs'
+import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-entity-types.mjs'
 import {
   getCurrentProfileIds,
   getWebUserByProfileKey,
@@ -205,36 +207,41 @@ export async function entityFeatureAction({
   const updateResult = await shell.call(patchEntity)(
     Profile.entityClass,
     profileKey,
-    `{ 
-      knownFeaturedEntities: newKnownFeaturedEntities
-    }`,
+    `knownFeaturedEntitiesPatch`,
     {
-      postAccessBody:
-        `
+      postAccessBody: `
         let isPresent = 0 < LENGTH(${currentEntityVar}.knownFeaturedEntities[* FILTER 
                                                                                 CURRENT._id == @featuringEntityItem._id
                                                                                 && CURRENT.feature == @featuringEntityItem.feature
                                                                             ])
-        let newKnownFeaturedEntities = ` + adding
-          ? `/* adding */    isPresent ? ${currentEntityVar}.knownFeaturedEntities : PUSH( ${currentEntityVar}.knownFeaturedEntities, @featuringEntityItem , true )`
-          : `/* removing */ !isPresent ? ${currentEntityVar}.knownFeaturedEntities : ${currentEntityVar}.knownFeaturedEntities[* FILTER 
+        let knownFeaturedEntitiesPatch = ${
+          adding
+            ? `/* adding */    isPresent ? {} : { knownFeaturedEntities: SORTED( PUSH( ${currentEntityVar}.knownFeaturedEntities, @featuringEntityItem ) ) }`
+            : `/* removing */ !isPresent ? {} : { knownFeaturedEntities: SORTED( ${currentEntityVar}.knownFeaturedEntities[* FILTER 
                                                                                                                                   CURRENT._id != @featuringEntityItem._id
                                                                                                                                   && CURRENT.feature != @featuringEntityItem.feature
-                                                                                                                              ]`,
+                                                                                                                              ]) }`
+        }`,
       bindVars: {
         featuringEntityItem,
       },
+      //project: { isPresent: 'isPresent' as AqlVal<boolean> },
     },
   )
   assert(updateResult)
-
-  updateResult.changed &&
-    shell.events.emit('feature-entity', {
-      action,
-      profile: updateResult.patched,
-      item: featuringEntityItem,
-      targetEntityDoc,
-    })
+  // const wasPresent = !!updateResult.patched.knownFeaturedEntities.find(
+  //   ({ _id, feature }) =>
+  //     _id === featuringEntityItem._id && feature === featuringEntityItem.feature,
+  // )
+  // const changed = adding ? !wasPresent : wasPresent
+  // console.log(changed, action, feature, _key, updateResult.changed /*, pesentChanged, wasPresent */)
+  // changed &&
+  shell.events.emit('feature-entity', {
+    action,
+    profile: updateResult.patched,
+    item: featuringEntityItem,
+    targetEntityDoc,
+  })
 
   // if (updateResult.patched.publisher) {
   //   await deltaPopularity(adding, {
@@ -247,12 +254,12 @@ export async function entityFeatureAction({
   return updateResult
 }
 
-export async function setProfilePublisherFlag({
+export async function changeProfilePublisherPerm({
   profileKey,
-  isPublisher: setIsPublisher,
+  setIsPublisher,
 }: {
   profileKey: string
-  isPublisher: boolean
+  setIsPublisher: boolean
 }) {
   const moderator = await getCurrentSystemUser()
   assert(moderator.type === 'pkg' || moderator.type === 'entity')
@@ -268,13 +275,31 @@ export async function setProfilePublisherFlag({
     return { type: 'not-found', ok: false }
   }
 
-  if (patchResult.changed) {
-    shell.events.emit('user-publishing-permission-change', {
-      type: setIsPublisher ? 'given' : 'revoked',
-      profile: { ...profile.entity, _meta: profile.meta },
-      moderator,
-    })
-  }
+  const [collections, resources] = await Promise.all([
+    getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection' }),
+    getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource' }),
+  ])
+  await Promise.all(
+    collections
+      .filter(({ entity: { published } }) => published)
+      .map(({ entity: { _key } }) => collection.setPublished(_key, false)),
+  )
+  await Promise.all(
+    resources
+      .filter(({ entity: { published } }) => published)
+      .map(async data => {
+        const [interpreter] = await resource.stdEdResourceMachine({ by: 'data', data })
+        interpreter.send('unpublish')
+        await waitFor(interpreter, resCore.nameMatcher('Unpublished'))
+        interpreter.stop()
+      }),
+  )
+
+  shell.events.emit('user-publishing-permission-change', {
+    type: setIsPublisher ? 'given' : 'revoked',
+    profile: { ...profile.entity, _meta: profile.meta },
+    moderator,
+  })
   return { type: 'done', ok: true }
 }
 
