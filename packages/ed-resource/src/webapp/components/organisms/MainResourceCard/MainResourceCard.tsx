@@ -55,8 +55,7 @@ export type MainResourceCardSlots = {
 export type ValidForms = {
   isDraftFormValid: boolean
   isPublishedFormValid: boolean
-  isPublishedContentValid: boolean
-  isDraftContentValid: boolean
+  isContentValid: boolean
   isImageValid: boolean
 }
 
@@ -147,13 +146,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const { deleteResource } = actions
   const { canEdit, canPublish, canDelete } = access
 
-  const {
-    isDraftFormValid,
-    isPublishedFormValid,
-    isPublishedContentValid,
-    isDraftContentValid,
-    isImageValid,
-  } = areFormsValid
+  const { isDraftFormValid, isPublishedFormValid, isContentValid, isImageValid } = areFormsValid
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
@@ -163,7 +156,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
 
   const isFormValid = isPublished ? isPublishedFormValid : isDraftFormValid
-  const isContentValid = isPublished ? isPublishedContentValid : isDraftContentValid
 
   useEffect(() => {
     setCurrentContentUrl(contentUrl)

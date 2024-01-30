@@ -6,7 +6,6 @@ import type {
   KnownEntityFeature,
   KnownEntityType,
   KnownFeaturedEntities,
-  Profile,
   ProfileGetRpc,
   ProfileSearchResultRpc,
   SortTypeRpc,
@@ -17,7 +16,13 @@ import type { ValidationsConfig } from './validationSchema.mjs'
 export type { EntityIdentifier } from '@moodlenet/system-entities/common'
 
 export type WebappConfigsRpc = { validations: ValidationsConfig }
-export type EditProfileDataRpc = Omit<Profile, 'avatarUrl' | 'backgroundUrl' | '_key'>
+export type EditProfileDataRpc = {
+  displayName: string
+  aboutMe: string
+  organizationName: string | undefined | null
+  location: string | undefined | null
+  siteUrl: string | undefined | null
+}
 export type WebUserExposeType = PkgExposeDef<{
   rpc: {
     'webapp/get-configs'(): Promise<WebappConfigsRpc>

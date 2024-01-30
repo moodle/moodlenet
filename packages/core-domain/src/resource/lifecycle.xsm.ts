@@ -38,11 +38,11 @@ export interface EdResourceMachineDeps {
     StoreNewResource(context: T.Context): Promise<T.Actor_StoreNewResource_Data>
     StoreResourceEdits(context: T.Context): Promise<T.Actor_StoreResourceEdits_Data>
     // MetaGenerator(context: T.Context): Promise<T.Actor_MetaGenerator_Data>
-    ModeratePublishingResource(context: T.Context): Promise<T.Actor_ModeratePublishingResource_Data>
+    // ModeratePublishingResource(context: T.Context): Promise<T.Actor_ModeratePublishingResource_Data>
     ScheduleDestroy(context: T.Context): Promise<T.Actor_ScheduleDestroy_Data>
   }
   actions: {
-    notify_creator(context: T.Context /*,event:T.Event_????_Data */): unknown
+    // notify_creator(context: T.Context /*,event:T.Event_????_Data */): unknown
     destroy_all_data(context: T.Context): unknown
     request_generate_meta_suggestions(context: T.Context): unknown
   }
@@ -53,7 +53,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
   const schemas = getValidationSchemas(deps.validationConfigs)
 
   const EdResourceMachine = createMachine({
-    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQDaADALqKgAOmsAlgC4OYB21IAHogLQDMARgAcZAHQB2AEzCArABZ+E2VLJSANCACefQQDYyeyf1nD5giYKkT58vQF97m1Blg4CYMQGUmmXAzYoXgA5MAB3Xld3QiIIdk8AgDdMAGtPFyw8Qm9ff0CQ8MjMjwQkzHwAQxZ2cgpazjpGao4kbj4pfnlhMQBOJX5+HtsVQc0dBF5ZCzEpKT0esmlhQUFZPSlHZ3Ri7J8-AKDQiKis4ji2BLZktLEMt1Oc-fyjovuSssrm2pJBKlbG5isFqgHgTfT8KRiUR6CT8PTyOaDCRjPhTCQzOY9axwiyKYSbEB3aKeACC2F8MAuuCqB14AFkwEwKkRKmxCAAbXgAW0ZFV4lLA1K+lAa9EB7E4oN4FmUYiE8h6EjMSsUsn4KImqiM+g6gz0ckVwnWBKJDzJFLAVJp+QZTKIAqFkG5vN4sGwUBgsGasHq-zFzUl7X4al6sPkaiVYb0Gul6zlenW60ESnWEkWJu2b2yAFU2DRsAAjdkMWAAC0gRFwYAAjtg4ExePmiyXS77aP6gYGwbIJD1enC8VI+oNZBq7PIZhDzGRDMt5CoMycPGJc03i2WK1Xa-XnUz+ZbBTSaiK-U1O60pSI42thMI5rIyHflDHZt1ZO+5gY5Ap9Iudp5V0LddywgIgmGpMs2xAAEAwvPgegWMRw1hMxzD0HtBB6DVPzEQR5ykfR1mEZQhnkP8swAvMgJbCsvT8MBeEgZgfRPdszwlOCJgkNMNVkcjiRXKjmw3UCaFwTBEgYCAGKrCjGIgZioJg88QV0PD0X0PCuiHfRH2EGNpmkdD0PnfRZB6d9+H4h4AAVqLLWk6UwaShSBWJ4jEMoblNZc7OE0tHOcw9mlKK5yiPNhvlY6COw41SwQWfhcODNZuLwoRrA1eEJwIlLBhWJVk2s3z7ICm0gtc9h3IuTywu8zMBL84DApciLQuST4gW+X5RXY4E2jBW8kukMh53WecJvkDVlEEXC9EwhZBFGuZYWK7IAEk2F4AAVCDS2qy5rnSBqHk2na9va8LhTqaLlLigbeGUWQxBnBR+DkDpFjkXipGesgH1MNV1lfKynEJE7lzO3aKjLSt63opTYv6qU0z7B89SmdDdQ0bREBwvCVEImQSNsNbPCamjQKrAArMB8AbNcW0Rvqu14X6pAnLFMIUKYlDvLKEUkZMyAQ+QVXMsmxApkSiGwITgOZ8VkfaDpnoTUXiZFozeOmMWlR6AnfvMfEwZ87JpdLIpafpis5cZyDbqR1mdL7ZZFgTDm1kMXi016LoxZ6fUlThSW9jyIJUGYg7aqO24Id2XJaUjphYEuzrjxuv42KV1mrEWF9bCQro1nMmwFjMUGtiXbJbT5Lx3U9ZpeBJRIKgYdkKiLYgxIkqSZP-eTFMdlnOLZ6xXZkMw1SsdZR1xhBfbkcxTAr0RZgkSWAGFy3wFJaTOzf2CYS0mCIHvJOk3gLgiWTiUV2D4rZ0RZuEPoJHWfo1XVefpXlSQ71Vo+dYZAIRbx3nvfIB8j4nzPuJC+DFr68FvqcH4WcYoj0fhzYiUIbCiFfqYRQ-0DLT1DIHFC1g7wmyrv+MQ286YQKCFAtgx9mFEDolWK+hRkEeHvipB6HRZSdGUO-ZMIglQGQsK7BYfRMJyHmqtU28dPB0N3vvLah9mEwPYQgrh-5UG9RzqPT6Rh3yLFynItUMZA4TmWKIA2QiP6gzBmwIK8BWhmzAAYh+D0IQyEkDIN6yhVA43GLGIYk5TAgLhCA42ktgiYGbvgQgsA3HZ28VKYM3Feh3gVMITocwtYGWDElOwICRZEQ6AqUOidniFGrp408hjMH3jEPMKYBtVCKixHPUJoh0TBmTNlaJPQzCS3NJgB01ogi1y8XwqUsxEIIkGDOPoBhVQvksP4uY1glQEQfIISWgF-KQFmfdS8ShxAG0wss6wIsQmIGTM9FQ5d3rmFyXxRR9SpalRasFPhd1lZgnMH2eEiwUI2DhEMLKhgZjC1UGQR5HzqEUTEFDPapzAWPQMEhBM-1YSJX1PchAgxIQrAJu9Pohg8WSwticxp6SVZ+I6aoEwY0oXzwMEYSwGUFDYxATS0qVs6bHwgBi52t5xAqHfEtSwCL3oC0hJYIcCp2kiBFpLAAIvWcSWg6VpLmXwd+kIp5zBWHYMwj4sodBxa-biWI0zmR6NUp4EcFIpzFaPA26JuK4MWBYUaQgXwqBepZOEeCOYWCoeDL5tdeD1w9PWIEzdW7t07uyBp+qzkqwGK0gGCKRnoQKgZcQahlhetUAaecG9Pk0JUQw3gTCWFMA9c0+ck47zCwwplH+cLYVqHfMoUtBzHD2CAA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QFEICU4HsCuAnAxmAMQDaADALqKgAOmsAlgC4OYB21IAHogLQDMARgAcZAHQB2AEzCArABZ+E2VLJSANCACefQQDYyeyf1nD5giYKkT58vQF97m1Blg4CYMQGUmmXAzYoXgA5MAB3Xld3QiIIdk8AgDdMAGtPFyw8Qm9ff0CQ8MjMjwQkzHwAQxZ2cgpazjpGao4kbj4pfnlhMQBOJX5+HtsVQc0dBF5ZCzEpKT0esmlhQUFZPSlHZ3Ri7J8-AKDQiKis4ji2BLZktLEMt1Oc-fyjovuSssrm2pJBKlbG5isFqgHgTfT8KRiUR6CT8PTyOaDCRjPhTCQzOY9axwiyKYSbEB3aKeACC2F8MAuuCqB14AFkwEwKkRKmxCAAbXgAW0ZFV4lLA1K+lAa9EB7E4oN4FmUYiE8h6EjMSsUsn4KImqiM+g6gz0ckVwnWBKJDzJFLAVJp+QZTKIAqFkG5vN4sGwUBgsGasHq-zFzUl7X4al6sPkaiVYb0Gul6zlenW60ESnWEkWJu2b2yAFU2DRsAAjdkMWAAC0gRHzRZLpd9tH9QMDYIU8jELakip6CjI4eEGts6Ik6yNsjIirUJgcTkJmeJYlzVeLZYruDAAEdsHAmM6mfzLYKaTURX6mo3WlKRHG1sJhHNR7flDHZt1ZK+5gY5Ap9BmTh553nCyXcsICIJhqTLOsQABANzz4HoFjEcNYTMcw9FkSweg1d8xEEeQVH0YdlCGeQfx2TwF0AmsKy9PwwF4SBmB9Y961PCVYImCQ0w1WRSKzciAOrZcQJoXBMESBgIDo1c+PoiBGMg6CzxBXRcPRfRcK6Dt9DIG8Y2maQ0LQvD9FkLs1V4ucAAVKKEohVwAKzAfBt0XGsFIbNjlM1FRWyxQQu2MpRbw1eFIUsYN4PkFVTIsh5rME4CiGwASgPc1jgTaTUOlkMQE0imQ00VOZuOmKKlR6XCVC-fFp1NP94qAopHOcitktciDmKgjyMqlLSeihQRFgTKQ8IMaNtEQdDxCGZUen1JU4Viv89jyIJUEY2J4jEMobjq3ZclpdamFgUornKQ82G+TrFM8zLpVUZEJs1WxEK6NZTJsBYzH4JbsltPkvHdT1ml4ElEgqBh2QqItiBEsSJKksjZPk67uqbXhZgkfrbxvPChDmKRZA1NMoS-UxvtETHfs8ABhct8BSWkAEk2F4Gn2CYS0mErUTxMk3gLgiaTiTS8UevaURBChPohw6WE1XVJ7pXlSRb2ynT1jICFqbEOmnMZ-IWbZjmuZ5+H+cF3hhdOH4-hYsX0ZG4R0WdrodK7b6yCJpXViEUM5uQ6wcZ1vWGeZ1n2bYTmo6IGjVwFwprY8UWYK8jGlByzplCHZMRCVPSLGxhY+n8uQ9AsH7atnB5Q4NoIjcj6PubjujLaTwhbdFdLHeDIxX0WKRkzLtUYzm1tllECqs-WAZHGnNhMEk+BWj2sAu4d9iBGfSQZAUDPVA0H35lbbK0K1srFR14JMFB-BCFgZf7dTu7g043pbwVYROjmMdHvGZWtaIQMBFYcHQFQ6xWrSF4v5CDr2fr1O8uUuz+SsL-LE3t-6iHRMGZM8JFAGB6GYHW5pMAOmtEEf6cClJ3VmAhBEgwyBjjhD2EwT5LA7wJpxW8qwyCCB1hRBKkAqG3QvEoaaKw+gLGsGOQ+4xkw5RUF9fgZhcKEJ4lXGBngGpUQgMI8WWUZC9CsKoEwo0hghUMJIXOhN6EQi1jrbRZYmpOU5rok8G804yFEG2QmUxFiDSHiFBEViOwKimBVSeOsAAiW5RJaCEe4+BfBZZQjwnMFYdgzA6RCh0IBwhFRY2kaZHoECDr5COo-Lq3dN4VUHJxN2lg0yKEEE+FQYgvYK31DpEaFgapbE0WIf6vBAYei3ECUG4NIbQ3ZGvRJ1CEEDFyqOUcpc0IrD-rocQahli1NUAaPCEgQ70zrrwBuJso56MdiNHKHRuHBnQlYDZYJgyQkHmoV8yhtl8LnkAA */
     id: 'EdResource',
 
     predictableActionArguments: true,
@@ -114,8 +114,12 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
         // entry: 'persist_context',
         entry: 'assign_validations',
         on: {
-          'request-publish': {
-            target: 'Publishing-Moderation',
+          // 'request-publish': {
+          //   target: 'Publishing-Moderation',
+          //   cond: 'issuer is creator and issuer is publisher and meta valid for publishing',
+          // },
+          'publish': {
+            target: 'Published',
             cond: 'issuer is creator and issuer is publisher and meta valid for publishing',
           },
           'request-meta-generation': {
@@ -124,7 +128,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
           },
 
           'trash': {
-            target: 'In-Trash',
+            target: 'Destroyed',
             cond: 'issuer is creator',
           },
 
@@ -144,42 +148,6 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
 even empty. 
     
 Just check upper bound size`,
-      },
-
-      'Publishing-Moderation': {
-        exit: 'notify_creator',
-
-        invoke: {
-          src: 'ModeratePublishingResource',
-          onDone: [
-            {
-              target: 'Published',
-              cond: 'moderation passed',
-            },
-            {
-              target: '#EdResource.Publish-Rejected',
-              actions: 'assign_last_publishing_moderation_rejection_reason',
-            },
-          ],
-        },
-
-        // entry: 'persist_context',
-      },
-
-      'In-Trash': {
-        invoke: {
-          src: 'ScheduleDestroy',
-          onDone: 'Destroyed',
-        },
-
-        on: {
-          restore: {
-            target: 'Unpublished',
-            cond: 'issuer is creator',
-          },
-        },
-
-        // entry: 'persist_context',
       },
 
       'Published': {
@@ -314,9 +282,9 @@ link: url string format`,
           (issuer.type === 'user' && (issuer.feats.creator || issuer.feats.admin))
         )
       },
-      'moderation passed'(_, { data }) {
-        return data.notPassed === false
-      },
+      // 'moderation passed'(_, { data }) {
+      //   return data.notPassed === false
+      // },
       'provided content+meta are not valid'(context) {
         return !!context.contentRejected
       },
@@ -355,11 +323,11 @@ link: url string format`,
           proxy.doc = data.doc
         })
       }),
-      assign_last_publishing_moderation_rejection_reason: assign((context, { data }) => {
-        return produce(context, proxy => {
-          proxy.publishRejected = data.notPassed ? data.notPassed : null
-        })
-      }),
+      // assign_last_publishing_moderation_rejection_reason: assign((context, { data }) => {
+      //   return produce(context, proxy => {
+      //     proxy.publishRejected = data.notPassed ? data.notPassed : null
+      //   })
+      // }),
       assign_suggested_meta: assign((context, { generatedData }) => {
         return produce(context, proxy => {
           proxy.generatedData = generatedData
@@ -377,9 +345,9 @@ link: url string format`,
           image,
         })
         const validatedContent = schemas.providedContent(content)
-        // console.log({ validatedContent })
+        console.log({ content, image, meta, validatedContent })
         const { contentRejected, providedContent } = validatedContent.valid
-          ? { contentRejected: null, providedContent: validatedContent.providedContent }
+          ? { contentRejected: null, providedContent: validatedContent.providedContent ?? null }
           : { contentRejected: { reason: validatedContent.reason }, providedContent: null }
 
         return produce(context, proxy => {
@@ -391,20 +359,17 @@ link: url string format`,
       destroy_all_data(context) {
         deps.actions.destroy_all_data(context)
       },
-      notify_creator(context) {
-        deps.actions.notify_creator(context)
-      },
+      // notify_creator(context) {
+      //   deps.actions.notify_creator(context)
+      // },
     },
     services: {
       // async MetaGenerator(context /* ,event */) {
       //   return deps.services.MetaGenerator(context)
       // },
-      async ModeratePublishingResource(context /* , event */) {
-        return await deps.services.ModeratePublishingResource(context)
-      },
-      async ScheduleDestroy(context /* , event */) {
-        return deps.services.ScheduleDestroy(context)
-      },
+      // async ModeratePublishingResource(context /* , event */) {
+      //   return await deps.services.ModeratePublishingResource(context)
+      // },
       async StoreNewResource(context) {
         return deps.services.StoreNewResource(context)
       },

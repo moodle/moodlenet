@@ -1,7 +1,8 @@
-import type { PersistentContext } from '@moodlenet/core-domain/resource'
+import type { PersistentContext, ResourceDoc, ResourceMeta } from '@moodlenet/core-domain/resource'
 import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import type { FsItem } from '@moodlenet/simple-file-store/server'
-import type { EntityDocument, SystemUser } from '@moodlenet/system-entities/server'
+import type { EntityIdentifier } from '@moodlenet/system-entities/common'
+import type { EntityDocument, EntityFullDocument } from '@moodlenet/system-entities/server'
 
 export type ResourceEntityDoc = EntityDocument<ResourceDataType>
 export type Content = FileContent | LinkContent
@@ -29,7 +30,8 @@ export type ResourceDataType = {
   year: string
   type: string
   learningOutcomes: LearningOutcome[]
-  popularity?: {
+  points?: null | number
+  popularity?: null | {
     overall: number
     items: {
       downloads?: ResourcePopularityItem
@@ -47,12 +49,38 @@ export type Image = ImageUploaded | ImageUrl
 export type ImageUploaded = { kind: 'file'; directAccessId: string }
 export type ImageUrl = { kind: 'url'; url: string; credits?: Credits | null }
 
-export type ResourceEvents = {
-  'resource:downloaded': {
+export type ResourceEvents = ResourceActivityEvents // & {}
+export type ResourceActivityEvents = {
+  'downloaded': {
     resourceKey: string
-    currentSysUser: SystemUser
+    userId: EntityIdentifier | null
   }
-  'resource:request-metadata-generation': {
+  'created': {
+    userId: EntityIdentifier
+    resource: EntityFullDocument<ResourceDataType>
+  }
+  'updated-meta': {
     resourceKey: string
+    userId: EntityIdentifier
+    meta: EventResourceMeta
+    oldMeta: EventResourceMeta
+  }
+  'published': {
+    userId: EntityIdentifier
+    resource: EntityFullDocument<ResourceDataType>
+  }
+  'request-metadata-generation': {
+    resourceKey: string
+    userId: EntityIdentifier
+  }
+  'unpublished': {
+    userId: EntityIdentifier
+    resource: EntityFullDocument<ResourceDataType>
+  }
+  'deleted': {
+    userId: EntityIdentifier
+    resource: EntityFullDocument<ResourceDataType>
   }
 }
+
+export type EventResourceMeta = ResourceMeta & Pick<ResourceDoc, 'image'>

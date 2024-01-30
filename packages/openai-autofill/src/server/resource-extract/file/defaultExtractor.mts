@@ -4,9 +4,7 @@ import type { FileExtractor } from './types.mjs'
 
 const defaultExtractor: FileExtractor = async ({ compactedFileBuffer, rpcFile }) => {
   const pFromBufferWithMime = promisify<string, Buffer, string>(fromBufferWithMime)
-  const text = await pFromBufferWithMime(rpcFile.type, compactedFileBuffer).catch(() => {
-    return null
-  })
+  const text = await pFromBufferWithMime(rpcFile.type, compactedFileBuffer).catch(() => null)
   if (!text) {
     return null
   }

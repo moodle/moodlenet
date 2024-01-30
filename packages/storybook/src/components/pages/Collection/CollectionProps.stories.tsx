@@ -96,10 +96,18 @@ export const validationSchema: SchemaOf<CollectionFormProps> = object({
         : true,
     )
     .optional(),
-  language: string().optional(),
-  level: string().optional(),
-  month: string().optional(),
-  type: string().optional(),
+  language: string()
+    .transform(value => value || null)
+    .nullable(),
+  level: string()
+    .transform(value => value || null)
+    .nullable(),
+  month: string()
+    .transform(value => value || null)
+    .nullable(),
+  type: string()
+    .transform(value => value || null)
+    .nullable(),
   visibility: mixed().required(/* t */ `Visibility is required`),
   year: string().when('month', (month, schema) => {
     return month ? schema.required(/* t */ `Please select a year`) : schema.optional()

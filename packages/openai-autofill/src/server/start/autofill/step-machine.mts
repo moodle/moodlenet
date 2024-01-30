@@ -1,12 +1,12 @@
 import type { ProvidedFileImage } from '@moodlenet/core-domain/resource'
-import { stdEdResourceMachine, updateImage } from '@moodlenet/ed-resource/server'
+import { silentlyUpdateImage, stdEdResourceMachine } from '@moodlenet/ed-resource/server'
 import { setPkgCurrentUser } from '@moodlenet/system-entities/server'
 import { shell } from '../../shell.mjs'
 import { generateMeta } from './generateMeta.mjs'
 
 export async function stepMachine(resourceKey: string) {
   return shell.initiateCall(async () => {
-    setPkgCurrentUser()
+    await setPkgCurrentUser()
     const [interpreter] = await stdEdResourceMachine({ by: 'key', key: resourceKey })
     const snap = interpreter.getSnapshot()
     if (!snap.can({ type: 'generated-meta-suggestions', generatedData: { meta: {} } })) {
@@ -24,7 +24,7 @@ export async function stepMachine(resourceKey: string) {
         }
       : undefined
     if (!doc.image && generatedImageEdit) {
-      await updateImage(doc.id.resourceKey, generatedImageEdit)
+      await silentlyUpdateImage(doc.id.resourceKey, generatedImageEdit)
     }
 
     interpreter.send({

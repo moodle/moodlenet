@@ -8,3 +8,4 @@ export {
   License,
 } from './init/sys-entities.mjs'
 export { deltaIscedFieldPopularityItem } from './services.mjs'
+export * from './types.mjs'
