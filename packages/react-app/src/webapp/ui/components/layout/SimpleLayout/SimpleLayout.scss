@@ -19,7 +19,8 @@
   position: relative;
   display: flex;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  height: fit-content;
   flex-direction: column;
   align-items: center;
   max-width: None;
@@ -88,7 +89,8 @@
   }
 
   > .content {
-    height: 100%;
+    height: fit-content;
+    min-height: 100%;
     width: -webkit-fill-available;
     display: flex;
     flex-direction: column;
