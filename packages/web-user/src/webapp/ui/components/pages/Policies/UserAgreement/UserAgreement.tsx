@@ -1,7 +1,6 @@
+import type { MainFooterProps, MinimalisticHeaderProps } from '@moodlenet/react-app/ui'
+import { SimpleLayout } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
-import SimpleLayout from '../../../layout/SimpleLayout/SimpleLayout.js'
-import type { MainFooterProps } from '../../../organisms/Footer/MainFooter/MainFooter.js'
-import type { MinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 import './UserAgreement.scss'
 
 export type UserAgreementProps = {

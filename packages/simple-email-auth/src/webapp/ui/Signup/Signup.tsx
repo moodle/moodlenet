@@ -1,9 +1,7 @@
-import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
-import type { Href } from '@moodlenet/react-app/common'
-import { Link } from '@moodlenet/react-app/ui'
+import { InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import { MailOutline } from '@mui/icons-material'
 import type { useFormik } from 'formik'
-import type { FC } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 import './Signup.scss'
 
 export type SignupFormValues = { email: string; password: string; displayName: string }
@@ -12,13 +10,17 @@ export type SignupProps = {
   form: ReturnType<typeof useFormik<SignupFormValues>>
   errMsg: string
   emailSent: boolean
-  userAgreementHref: Href
 }
 
 export const SignupIcon: FC = () => {
   return <PrimaryButton color="blue">Use email</PrimaryButton>
 }
-export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form, userAgreementHref }) => {
+export const SignupPanel: FC<PropsWithChildren<SignupProps>> = ({
+  emailSent,
+  errMsg,
+  form,
+  children,
+}) => {
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
   return (
@@ -65,9 +67,7 @@ export const SignupPanel: FC<SignupProps> = ({ emailSent, errMsg, form, userAgre
             >
               Sign up
             </PrimaryButton>
-            <Link href={userAgreementHref} target="__blank">
-              <TertiaryButton>You agree to our Terms &amp; Conditions</TertiaryButton>
-            </Link>
+            {children}
           </div>
           <div className="general-error" hidden={!errMsg}>
             {errMsg}

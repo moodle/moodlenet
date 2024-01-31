@@ -9,8 +9,10 @@ import {
   PROFILE_HOME_PAGE_ROUTE_PATH,
   SETTINGS_PAGE_ROUTE_PATH,
   SIGNUP_PAGE_ROUTE_BASE_PATH,
+  USER_AGREEMENTS_PAGE_PATH,
 } from '../../common/webapp-routes.mjs'
 import LoginPanelContainer from './page/access/LoginPageContainer.js'
+import { UserAgreementContainer } from './page/access/policies/UserAgreementContainer.js'
 import { RootLoginContainer } from './page/access/RootLoginContainer.js'
 import { SignUpContainer } from './page/access/SignupContainer.js'
 import { BookmarksPageContainer } from './page/bookmarks/BookmarksPageContainer.js'
@@ -34,6 +36,7 @@ export const pkgRoutes: PkgRoutes = {
       </Route>
       <Route path={PROFILE_FOLLOWERS_PAGE_ROUTE_PATH} element={<ProfileFollowersPageRoute />} />
       <Route path={PROFILE_HOME_PAGE_ROUTE_PATH} element={<ProfilePageRoute />} />
+      <Route path={USER_AGREEMENTS_PAGE_PATH} element={<UserAgreementContainer />} />
     </>
   ),
 }

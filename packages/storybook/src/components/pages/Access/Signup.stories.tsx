@@ -52,7 +52,7 @@ SignupProps => {
         // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
       ],
       headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps(
-        MinimalisticAccessButtonsStories.getAccesMinimalisticHeaderItems({
+        MinimalisticAccessButtonsStories.getMinimalisticAccessHeaderItems({
           loginHref: href('Pages/Access/Login/Default'),
           signupHref: href('Pages/Access/SignUp/Default'),
           showLearnMoreButton: true,
@@ -62,6 +62,7 @@ SignupProps => {
       ),
       footerProps: FooterStoryProps,
       loginHref: href('Pages/Access/Login/Default'),
+      userAgreementHref: href('Pages/Policies/UserAgreement/Default'),
       // accessHeaderProps: AccessHeaderStoryProps,
       // form: useFormik<SignupFormValues>({
       //   validationSchema,

@@ -7,6 +7,8 @@ export const SETTINGS_PAGE_ROUTE_PATH = '/settings'
 export const LOGIN_PAGE_ROUTE_BASE_PATH = '/login'
 export const SIGNUP_PAGE_ROUTE_BASE_PATH = '/signup'
 export const LOGIN_ROOT_PAGE_ROUTE_SUB_PATH = 'root'
+export const USER_AGREEMENTS_PAGE_PATH = '/static/user-agreements'
+
 type KeySlugParams = { key: string; slug: string }
 
 export const profileHomePageRoutePath = compile<KeySlugParams>(PROFILE_HOME_PAGE_ROUTE_PATH)
