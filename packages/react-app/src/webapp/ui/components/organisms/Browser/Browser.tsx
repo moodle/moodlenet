@@ -36,46 +36,48 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
   const filterByItemType = useMemo(() => {
     return mainColumnItems
       ? sortAddonItems(
-          mainColumnItems.map(e => {
-            // if (e.numElements === 0) return null
-            const isCurrent = e.key === currentMainFilter
+          mainColumnItems
+            .sort((a, b) => (a.position ?? Infinity) - (b.position ?? Infinity))
+            .map(e => {
+              // if (e.numElements === 0) return null
+              const isCurrent = e.key === currentMainFilter
 
-            const options = mainColumnItems.map(i => {
-              return { label: i.name, value: i.key.toString() }
-            })
-            options.push({ label: 'All', value: 'all' })
+              const options = mainColumnItems.map(i => {
+                return { label: i.name, value: i.key.toString() }
+              })
+              options.push({ label: 'All', value: 'all' })
 
-            return isCurrent || !currentMainFilter ? (
-              isCurrent ? (
-                <SimpleDropdown
-                  className={`content-type-filter`}
-                  options={options}
-                  selected={[e.key.toString()]}
-                  label={e.name}
-                  onClick={(key: string | number) => {
-                    setCurrentMainFilter(key === 'all' ? undefined : key)
-                  }}
-                />
-              ) : (
-                <SecondaryButton
-                  key={e.key}
-                  className={`content-type-filter filter-element ${isCurrent ? 'selected' : ''}`}
-                  onClick={() => {
-                    setCurrentMainFilter(e.key)
-                  }}
-                  color="grey"
-                >
-                  <span>{e.name}</span>
-                </SecondaryButton>
-              )
-            ) : null
-          }),
+              return isCurrent || !currentMainFilter ? (
+                isCurrent ? (
+                  <SimpleDropdown
+                    className={`content-type-filter`}
+                    options={options}
+                    selected={[e.key.toString()]}
+                    label={e.name}
+                    onClick={(key: string | number) => {
+                      setCurrentMainFilter(key === 'all' ? undefined : key)
+                    }}
+                  />
+                ) : (
+                  <SecondaryButton
+                    key={e.key}
+                    className={`content-type-filter filter-element ${isCurrent ? 'selected' : ''}`}
+                    onClick={() => {
+                      setCurrentMainFilter(e.key)
+                    }}
+                    color="grey"
+                  >
+                    <span>{e.name}</span>
+                  </SecondaryButton>
+                )
+              ) : null
+            }),
         )
       : []
   }, [mainColumnItems, currentMainFilter])
 
   useEffect(() => {
-    mainColumnItems?.map(e => e.key === currentMainFilter && setCurrentFilters(e.filters))
+    mainColumnItems.map(e => e.key === currentMainFilter && setCurrentFilters(e.filters))
   }, [currentMainFilter, mainColumnItems])
 
   const filters =
