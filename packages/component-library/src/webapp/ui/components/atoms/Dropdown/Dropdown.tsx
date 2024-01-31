@@ -24,10 +24,12 @@ export type DropdownProps = SelectorProps & {
   abbr?: string
   position?: { top?: number; bottom?: number }
   dropdownButton?: ReactNode
+  multiKeepOpenOnSelect?: boolean
 }
 export const Dropdown: FC<DropdownProps> = props => {
   const {
     children,
+    multiKeepOpenOnSelect,
     pills: _pills,
     searchByText: _searchByText,
     searchText: _searchText,
@@ -71,6 +73,7 @@ const DropdownComp: FC<DropdownProps> = props => {
     abbr,
     position,
     dropdownButton: DropdownButton,
+    multiKeepOpenOnSelect,
   } = props
 
   const [isShowingContent, setShowingContent] = useState(false)
@@ -209,7 +212,7 @@ const DropdownComp: FC<DropdownProps> = props => {
           highlight ? ' highlight' : ''
         }
           ${multilines ? ' multilines' : ''} 
-         ${noBorder ? ' no-border' : ''}
+          ${noBorder ? ' no-border' : ''}
         ${showContent ? ' showing-content' : ''}
         `}
         tabIndex={!disabled && !isShowingContent ? 0 : undefined}
@@ -269,7 +272,10 @@ const DropdownComp: FC<DropdownProps> = props => {
           tabIndex={-1}
           onClick={_ => {
             _.stopPropagation()
-            !multiple && setShowingContent(false)
+            const closeOnSelect = !multiple || !multiKeepOpenOnSelect
+            if (closeOnSelect) {
+              setShowingContent(false)
+            }
           }}
         >
           {children}
@@ -290,16 +296,7 @@ export const SimplePill: FC<{
   return (
     <abbr title={title} className="dropdown-pill">
       <div className="label">{label}</div>
-      {edit && (
-        <RoundButton
-          className="remove"
-          onClick={e => {
-            toggle && toggle()
-            e.stopPropagation()
-            console.log('deleting')
-          }}
-        />
-      )}
+      {edit && <RoundButton className="remove" onClick={toggle} />}
     </abbr>
   )
 }
