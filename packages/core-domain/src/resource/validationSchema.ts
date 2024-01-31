@@ -124,7 +124,7 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
   function getContentValidationSchema() {
     const schema /* : SchemaOf<ProvidedCreationContent |undefined>  */ =
       mixed<ProvidedCreationContent>().test((content, { createError }) => {
-        console.log({ content })
+        // console.log({ content })
         const errors = !content
           ? createError({ message: `Please provide a file or a link` })
           : content.kind === `link`

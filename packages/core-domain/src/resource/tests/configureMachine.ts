@@ -17,13 +17,13 @@ export function getEdResourceMachineDeps() {
   const edResourceMachineDeps: EdResourceMachineDeps = {
     actions: {
       destroy_all_data() {
-        console.log('destroy_all_data')
+        // console.log('destroy_all_data')
       },
       // notify_creator() {
       //   console.log('notify_creator')
       // },
       request_generate_meta_suggestions() {
-        console.log('request_generate_meta_suggestions')
+        //console.log('request_generate_meta_suggestions')
       },
     },
     services: {

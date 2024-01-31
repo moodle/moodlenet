@@ -16,6 +16,7 @@ import { FilterNone, PermIdentity } from '@mui/icons-material'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
 import { getProfileFollowersRoutePath } from '../../../../common/webapp-routes.mjs'
+import { ReactComponent as LeafIcon } from '../../../ui/assets/icons/leaf.svg'
 import type { ProfileProps } from '../../../ui/exports/ui.mjs'
 import { AuthCtx } from '../../context/AuthContext.js'
 import { useProfileContext } from '../../context/ProfileContext.js'
@@ -291,7 +292,7 @@ export const useProfileProps = ({
             }),
           ),
         },
-        // { Icon: Grade, name: 'Kudos', value: profileGetRpc.points },
+        { Icon: LeafIcon, name: 'Leaves', className: 'leaves', value: profileGetRpc.points },
         {
           Icon: FilterNone,
           name: 'Resources',
