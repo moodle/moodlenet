@@ -15,7 +15,10 @@ import {
 import { FilterNone, Grade, PermIdentity } from '@mui/icons-material'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
-import { getProfileFollowersRoutePath } from '../../../../common/webapp-routes.mjs'
+import {
+  getProfileFollowersRoutePath,
+  getProfileFollowingRoutePath,
+} from '../../../../common/webapp-routes.mjs'
 import type { ProfileProps } from '../../../ui/exports/ui.mjs'
 import { AuthCtx } from '../../context/AuthContext.js'
 import { useProfileContext } from '../../context/ProfileContext.js'
@@ -198,6 +201,9 @@ export const useProfileProps = ({
       //     displayName: profileGetRpc.data.displayName,
       //   }),
       // ),
+      // userProgressCardProps: {
+      //   points: profileGetRpc.points,
+      // },
       access: {
         canApprove: profileGetRpc.canApprove,
         isPublisher: profileGetRpc.isPublisher,
@@ -295,14 +301,14 @@ export const useProfileProps = ({
         {
           Icon: Grade,
           name: 'Following',
-          value: profileGetRpc.numFollowing,
           className: 'following',
-          // href: href(
-          //   getProfileFollowingRoutePath({
-          //     displayName: profileGetRpc.data.displayName,
-          //     key: profileKey,
-          //   }),
-          // ),
+          value: profileGetRpc.numFollowing,
+          href: href(
+            getProfileFollowingRoutePath({
+              displayName: profileGetRpc.data.displayName,
+              key: profileKey,
+            }),
+          ),
         },
         {
           Icon: FilterNone,

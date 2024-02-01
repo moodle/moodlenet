@@ -80,6 +80,7 @@ export type WebUserExposeType = PkgExposeDef<{
         // sortType?: SortTypeRpc
         after?: string
         limit?: number
+        mode?: 'reverse'
       },
     ): Promise<{ profiles: { _key: string }[] }>
     'webapp/all-my-featured-entities'(): Promise<null | {

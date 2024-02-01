@@ -2,7 +2,10 @@ import type { AddOnMap } from '@moodlenet/core/lib'
 import { href } from '@moodlenet/react-app/common'
 import { createPlugin } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
-import { getProfileHomePageRoutePath } from '../../../common/webapp-routes.mjs'
+import {
+  getProfileFollowingRoutePath,
+  getProfileHomePageRoutePath,
+} from '../../../common/webapp-routes.mjs'
 import type {
   AvatarMenuItem,
   AvatarMenuProps,
@@ -32,7 +35,16 @@ export function useAvatarMenuProps(): AvatarMenuProps {
     const avatarMenuProps: AvatarMenuProps = {
       avatarUrl,
       menuItems: plugins.getKeyedAddons('menuItems'),
-      followingMenuProps: hasProfile ? { followingHref: href('/following') } : null,
+      followingMenuProps: hasProfile
+        ? {
+            followingHref: href(
+              getProfileFollowingRoutePath({
+                key: hasProfile._key,
+                displayName: hasProfile.displayName,
+              }),
+            ),
+          }
+        : null,
       bookmarksMenuProps: hasProfile ? { bookmarksHref: href('/bookmarks') } : null,
       profileMenuProps: hasProfile ? { profileHref: myProfileHref } : null,
       logoutMenuProps: { logout: authCtx.logout },

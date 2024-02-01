@@ -323,7 +323,7 @@ export async function getProfileRecord(
   return record
 }
 
-export async function getEntityFeatureCount({
+export async function getEntityFeaturesCount({
   _key,
   entityType,
   feature,
@@ -337,9 +337,9 @@ export async function getEntityFeatureCount({
     entityType,
     feature,
   }
-  const bindVars = { '@collection': Profile.collection.name, needle }
+  const bindVars = { '@profileCollection': Profile.collection.name, needle }
   const query = `
-  FOR profile IN @@collection
+  FOR profile IN @@profileCollection
   FILTER profile.publisher && @needle IN (FOR item in profile.knownFeaturedEntities 
                                             RETURN { 
                                               entityType: item.entityType, 
