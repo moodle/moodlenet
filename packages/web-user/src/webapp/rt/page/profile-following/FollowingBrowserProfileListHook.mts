@@ -2,41 +2,38 @@ import { proxyWith } from '@moodlenet/react-app/ui'
 import { silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useEffect, useMemo, useState } from 'react'
 import type { BrowserProfileListDataProps } from '../../../ui/exports/ui.mjs'
+import { useMyProfileContext } from '../../context/MyProfileContext.js'
 import { useProfileCardProps } from '../../organisms/ProfileCardHooks.js'
 import { shell } from '../../shell.mjs'
 
-export function useProfileFollowersBrowserProfileListDataProps({
-  profileKey,
-}: {
-  profileKey: string
-}) {
-  const [result, setResult] = useState<{ profiles: { _key: string }[] }>({
-    profiles: [],
-  })
+export function useFollowingBrowserProfileListDataProps({ profileKey }: { profileKey: string }) {
+  const myCtx = useMyProfileContext()
+  const isMe = myCtx?.myProfile._key === profileKey
+  const [followingProfiles, setFollowingProfiles] = useState(
+    isMe ? myCtx.myFeaturedEntities.all.follow.profile : [],
+  )
 
   useEffect(() => {
+    if (isMe) return
     shell.rpc
       .me(
         'webapp/feature-entity/profiles/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key',
-        { rpcId: `FollowersBrowserProfileListDataProps#${profileKey}` },
-      )(
-        undefined,
-        { feature: 'follow', entityType: 'profile', _key: profileKey },
-        { mode: 'reverse', limit: 100 },
-      )
-      .then(setResult)
+        { rpcId: `FollowingBrowserProfileListDataProps#${profileKey}` },
+      )(undefined, { _key: profileKey, feature: 'follow', entityType: 'profile' }, { limit: 100 })
+      .then(_ => setFollowingProfiles(_.profiles))
       .catch(silentCatchAbort)
-  }, [profileKey])
+  }, [isMe, profileKey])
+
   const profilesCardPropsList = useMemo<BrowserProfileListDataProps['profilesCardPropsList']>(
     () =>
-      result.profiles.map(({ _key }) => ({
+      followingProfiles.map(({ _key }) => ({
         key: _key,
         props: proxyWith(function useBrowserProfileCardPropsList() {
           const props = useProfileCardProps(_key)
           return { props }
         }),
       })),
-    [result],
+    [followingProfiles],
   )
 
   const browserProfileListProps = useMemo<BrowserProfileListDataProps>(() => {

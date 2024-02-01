@@ -34,8 +34,8 @@ import {
   editMyProfileInterests,
   editProfile,
   entityFeatureAction,
-  getEntityFeatureCount,
   getEntityFeatureProfiles,
+  getEntityFeaturesCount,
   getLandingPageList,
   getProfileOwnKnownEntities,
   getProfilePointLeaders,
@@ -121,7 +121,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       fn: ({ rootPassword }) => loginAsRoot(rootPassword),
     },
     'webapp/profile/leader-board-data': {
-      async guard(_) {
+      async guard() {
         return true
       },
       async fn() {
@@ -188,11 +188,13 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
             }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
             getCurrentProfileIds(),
             verifyCurrentTokenCtx(),
-            getEntityFeatureCount({ _key, entityType: 'profile', feature: 'follow' }).then(
+            getEntityFeaturesCount({ _key, entityType: 'profile', feature: 'follow' }).then(
               _ => _?.count ?? 0,
             ),
           ])
-
+        const numFollowing = profileRecord.entity.knownFeaturedEntities.filter(
+          ({ entityType, feature }) => feature === 'follow' && entityType === 'profile',
+        ).length
         const profileHomePagePath = getProfileHomePageRoutePath({
           _key,
           displayName: profileRecord.entity.displayName,
@@ -207,6 +209,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           canEdit: !!profileRecord.access.u,
           canFollow: !!currentProfileIds && currentProfileIds._key !== profileRecord.entity._key,
           numFollowers,
+          numFollowing,
           points: profileRecord.entity.points ?? 0,
           profileHref: href(profileHomePagePath),
           profileUrl: getWebappUrl(profileHomePagePath),
@@ -290,7 +293,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           if (!isAllowedKnownEntityFeature({ entityType, feature })) {
             return { count: 0 }
           }
-          const countRes = await getEntityFeatureCount({ _key, entityType, feature })
+          const countRes = await getEntityFeaturesCount({ _key, entityType, feature })
           // shell.log('debug', [countRes?.count ?? 0, _key, entityType, feature])
 
           return countRes ?? { count: 0 }
@@ -298,15 +301,39 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       },
     'webapp/feature-entity/profiles/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key':
       {
-        guard: () => void 0,
-        async fn(_, { _key, entityType, feature }, paging) {
+        guard: (_b, _p, q) => {
+          return (
+            (q?.limit === undefined || parseInt(q.limit) > 0) &&
+            (q?.mode === undefined || q.mode === 'reverse') &&
+            (q?.after === undefined || q.after === '')
+          )
+        },
+        async fn(_, { _key, entityType, feature }, { after, limit, mode }) {
           if (!isAllowedKnownEntityFeature({ entityType, feature })) {
             return { profiles: [] }
           }
-          const cursor = await getEntityFeatureProfiles({ _key, entityType, feature, paging })
-          const all = await cursor.all()
-          return {
-            profiles: all.map(({ entity: { _key } }) => ({ _key })),
+
+          if (mode === 'reverse') {
+            const cursor = await getEntityFeatureProfiles({
+              _key,
+              entityType,
+              feature,
+              paging: { after, limit },
+            })
+            const all = await cursor.all()
+            return {
+              profiles: all.map(({ entity: { _key } }) => ({ _key })),
+            }
+          } else {
+            const profile = await getProfileRecord(_key)
+            if (!profile) {
+              return { profiles: [] }
+            }
+            return {
+              profiles: profile.entity.knownFeaturedEntities
+                .filter(item => item.feature === feature && item.entityType === entityType)
+                .map(({ _key }) => ({ _key })),
+            }
           }
         },
       },

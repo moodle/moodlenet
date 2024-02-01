@@ -12,11 +12,13 @@ import {
   silentCatchAbort,
   useMainLayoutProps,
 } from '@moodlenet/react-app/webapp'
-import { FilterNone, PermIdentity } from '@mui/icons-material'
+import { FilterNone, Grade, PermIdentity } from '@mui/icons-material'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ProfileGetRpc } from '../../../../common/types.mjs'
-import { getProfileFollowersRoutePath } from '../../../../common/webapp-routes.mjs'
-import { ReactComponent as LeafIcon } from '../../../ui/assets/icons/leaf.svg'
+import {
+  getProfileFollowersRoutePath,
+  getProfileFollowingRoutePath,
+} from '../../../../common/webapp-routes.mjs'
 import type { ProfileProps } from '../../../ui/exports/ui.mjs'
 import { AuthCtx } from '../../context/AuthContext.js'
 import { useProfileContext } from '../../context/ProfileContext.js'
@@ -52,8 +54,10 @@ type SaveState = {
 }
 export const useProfileProps = ({
   profileKey,
+  ownContributionListLimit,
 }: {
   profileKey: string
+  ownContributionListLimit: number
 }): ProfileProps | null | undefined => {
   const showAccountApprovedSuccessAlert = false
   const { validationSchemas } = useProfileContext()
@@ -148,13 +152,13 @@ export const useProfileProps = ({
         {
           _key: profileKey,
         },
-        { ownContributionListLimit: '300' },
+        { ownContributionListLimit: String(ownContributionListLimit) },
       )
       .then(res => {
         setProfileGetRpc(res)
       })
       .catch(silentCatchAbort)
-  }, [profileKey])
+  }, [profileKey, ownContributionListLimit])
 
   const mainLayoutProps = useMainLayoutProps()
   const follow = useMyFeaturedEntity({ _key: profileKey, entityType: 'profile', feature: 'follow' })
@@ -199,6 +203,9 @@ export const useProfileProps = ({
       //     displayName: profileGetRpc.data.displayName,
       //   }),
       // ),
+      // userProgressCardProps: {
+      //   points: profileGetRpc.points,
+      // },
       access: {
         canApprove: profileGetRpc.canApprove,
         isPublisher: profileGetRpc.isPublisher,
@@ -284,6 +291,7 @@ export const useProfileProps = ({
         {
           Icon: PermIdentity,
           name: 'Followers',
+          className: 'followers',
           value: profileGetRpc.numFollowers,
           href: href(
             getProfileFollowersRoutePath({
@@ -292,10 +300,22 @@ export const useProfileProps = ({
             }),
           ),
         },
-        { Icon: LeafIcon, name: 'Leaves', className: 'leaves', value: profileGetRpc.points },
+        {
+          Icon: Grade,
+          name: 'Following',
+          className: 'following',
+          value: profileGetRpc.numFollowing,
+          href: href(
+            getProfileFollowingRoutePath({
+              displayName: profileGetRpc.data.displayName,
+              key: profileKey,
+            }),
+          ),
+        },
         {
           Icon: FilterNone,
           name: 'Resources',
+          className: 'resources',
           value: profileGetRpc.ownKnownEntities.resources.length,
         },
 
