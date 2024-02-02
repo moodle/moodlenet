@@ -1,11 +1,9 @@
 import { Card } from '@moodlenet/component-library'
 import type { MainFooterProps, MinimalisticHeaderProps } from '@moodlenet/react-app/ui'
 import { SimpleLayout } from '@moodlenet/react-app/ui'
-import type { ComponentType, FC } from 'react'
+import type { FC } from 'react'
 import './DeleteAccountSuccess.scss'
 
-export type DeleteAccountSuccessFormValues = { name: string; email: string; password: string }
-export type DeleteAccountSuccessItem = { Icon: ComponentType; Panel: ComponentType; key: string }
 export type DeleteAccountSuccessProps = {
   headerProps: MinimalisticHeaderProps
   footerProps: MainFooterProps

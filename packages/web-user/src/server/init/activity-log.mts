@@ -6,6 +6,7 @@ import { shell } from '../shell.mjs'
 import type { ActivityLogDataType, WebUserActivityEvents } from '../types.mjs'
 
 import { ActivityLogCollection } from '../init/arangodb.mjs'
+import { digestActivityEvent } from '../srv/digestActivities/activity-events-handler.mjs'
 
 // console.log('init /*/')
 
@@ -37,7 +38,7 @@ collection.on('updated-meta', ({ data }) => shell.events.emit('collection-update
 shell.events.any(saveWebUserActivity)
 
 export function saveWebUserActivity(activity: EventPayload<WebUserActivityEvents>) {
-  const { ulid } = crypto.ulid.create()
+  const { ulid } = crypto.ulid.create({ now: activity.at })
   const activityData: ActivityLogDataType = {
     ulid,
     digested: false,
@@ -49,4 +50,5 @@ export function saveWebUserActivity(activity: EventPayload<WebUserActivityEvents
     waitForSync: false,
     overwriteMode: 'ignore',
   })
+  digestActivityEvent(activityData)
 }

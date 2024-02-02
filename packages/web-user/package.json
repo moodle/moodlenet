@@ -73,6 +73,7 @@
     "@moodlenet/arangodb": "0.6.0",
     "@moodlenet/collection": "0.6.0",
     "@moodlenet/core": "0.6.0",
+    "@moodlenet/core-domain": "0.6.0",
     "@moodlenet/crypto": "0.6.0",
     "@moodlenet/ed-meta": "0.6.0",
     "@moodlenet/ed-resource": "0.6.0",
@@ -87,6 +88,7 @@
     "@moodlenet/arangodb": "0.6.0",
     "@moodlenet/collection": "0.6.0",
     "@moodlenet/core": "0.6.0",
+    "@moodlenet/core-domain": "0.6.0",
     "@moodlenet/crypto": "0.6.0",
     "@moodlenet/ed-meta": "0.6.0",
     "@moodlenet/ed-resource": "0.6.0",
@@ -108,7 +110,6 @@
   },
   "dependencies": {
     "@moodlenet/component-library": "0.6.0",
-    "@moodlenet/core-domain": "0.6.0",
     "@moodlenet/key-value-store": "0.6.0",
     "@moodlenet/simple-file-store": "0.6.0",
     "dot": "1.1.3",

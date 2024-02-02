@@ -4,7 +4,10 @@ import type { FC, PropsWithChildren } from 'react'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { Profile } from '../../../common/exports.mjs'
-import { WEB_USER_SESSION_TOKEN_COOKIE_NAME } from '../../../common/exports.mjs'
+import {
+  SESSION_CHANGE_REDIRECT_Q_NAME,
+  WEB_USER_SESSION_TOKEN_COOKIE_NAME,
+} from '../../../common/exports.mjs'
 import defaultAvatarUrl from '../../ui/assets/img/default-avatar.svg'
 import rootAvatarUrl from '../../ui/assets/img/root-avatar.svg'
 import { shell } from '../shell.mjs'
@@ -120,7 +123,10 @@ export function useAuthCtxValue() {
   useEffect(() => {
     sessionTokenCookieChanged = () => {
       fetchClientSessionDataRpc().finally(() => {
-        const redirectTo = new URLSearchParams(loc.search).get(REDIRECT_Q_NAME)
+        const redirectTo = new URLSearchParams(loc.search).get(SESSION_CHANGE_REDIRECT_Q_NAME)
+        if (redirectTo === '.') {
+          return
+        }
         nav(redirectTo || '/')
       })
     }
@@ -177,7 +183,6 @@ wrapFetch((url, reqInit, next) => {
   })
 })
 
-const REDIRECT_Q_NAME = 'redirectTo'
 export function useNeedsWebUserLogin(): {
   isAdmin: boolean
   myProfile: Profile
@@ -190,7 +195,7 @@ export function useNeedsWebUserLogin(): {
       return
     }
     const usp = new URLSearchParams()
-    usp.append(REDIRECT_Q_NAME, `${loc.pathname}${loc.search}${loc.hash}`)
+    usp.append(SESSION_CHANGE_REDIRECT_Q_NAME, `${loc.pathname}${loc.search}${loc.hash}`)
     nav(`/login?${usp.toString()}`)
   }, [authCtx.clientSessionData?.myProfile, authCtx.isAuthenticated, loc, nav])
   return authCtx.clientSessionData?.myProfile
