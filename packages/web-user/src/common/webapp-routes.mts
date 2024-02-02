@@ -1,5 +1,5 @@
 import { compile, match, webSlug } from '@moodlenet/react-app/common'
-
+export const SESSION_CHANGE_REDIRECT_Q_NAME = 'redirectTo'
 export const PROFILE_HOME_PAGE_ROUTE_PATH = '/profile/:key/:slug'
 export const BOOKMARKS_PAGE_ROUTE_PATH = '/bookmarks'
 export const SETTINGS_PAGE_ROUTE_PATH = '/settings'
@@ -7,6 +7,7 @@ export const LOGIN_PAGE_ROUTE_BASE_PATH = '/login'
 export const SIGNUP_PAGE_ROUTE_BASE_PATH = '/signup'
 export const LOGIN_ROOT_PAGE_ROUTE_SUB_PATH = 'root'
 export const USER_AGREEMENTS_PAGE_PATH = '/static/user-agreements'
+export const DELETE_ACCOUNT_SUCCESS_PAGE_PATH = '/static/deleted-account-success'
 
 type KeySlugParams = { key: string; slug: string }
 

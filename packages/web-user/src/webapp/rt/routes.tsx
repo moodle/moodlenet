@@ -2,6 +2,7 @@ import type { PkgRoutes } from '@moodlenet/react-app/webapp'
 import { Route } from 'react-router-dom'
 import {
   BOOKMARKS_PAGE_ROUTE_PATH,
+  DELETE_ACCOUNT_SUCCESS_PAGE_PATH,
   LOGIN_PAGE_ROUTE_BASE_PATH,
   LOGIN_ROOT_PAGE_ROUTE_SUB_PATH,
   PROFILE_FOLLOWERS_PAGE_ROUTE_PATH,
@@ -11,6 +12,7 @@ import {
   SIGNUP_PAGE_ROUTE_BASE_PATH,
   USER_AGREEMENTS_PAGE_PATH,
 } from '../../common/webapp-routes.mjs'
+import { DeleteAccountSuccessContainer } from './page/access/DeleteAccountSuccesContainer.js'
 import LoginPanelContainer from './page/access/LoginPageContainer.js'
 import { UserAgreementContainer } from './page/access/policies/UserAgreementContainer.js'
 import { RootLoginContainer } from './page/access/RootLoginContainer.js'
@@ -37,6 +39,7 @@ export const pkgRoutes: PkgRoutes = {
       <Route path={PROFILE_FOLLOWING_PAGE_ROUTE_PATH} element={<ProfileFollowingPageRoute />} />
       <Route path={PROFILE_HOME_PAGE_ROUTE_PATH} element={<ProfilePageRoute />} />
       <Route path={USER_AGREEMENTS_PAGE_PATH} element={<UserAgreementContainer />} />
+      <Route path={DELETE_ACCOUNT_SUCCESS_PAGE_PATH} element={<DeleteAccountSuccessContainer />} />
     </>
   ),
 }
