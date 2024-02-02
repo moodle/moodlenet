@@ -50,7 +50,11 @@ import type {
   ProfileInterests,
   ProfileMeta,
 } from '../types.mjs'
-import { getEntityIdByKnownEntity, isAllowedKnownEntityFeature } from './known-entity-types.mjs'
+import {
+  getEntityClassByKnownEntity,
+  getEntityIdByKnownEntity,
+  isAllowedKnownEntityFeature,
+} from './known-entity-types.mjs'
 import {
   getCurrentProfileIds,
   getWebUserByProfileKey,
@@ -255,7 +259,7 @@ export async function entityFeatureAction({
 }
 
 export async function getProfilePointLeaders(): Promise<EntityFullDocument<ProfileDataType>[]> {
-  const profiles = await searchProfiles({ limit: 12, sortType: 'Popular' })
+  const profiles = await searchProfiles({ limit: 20, sortType: 'Points' })
   return profiles.list.map<EntityFullDocument<ProfileDataType>>(({ entity, meta }) => {
     const fullDoc: EntityFullDocument<ProfileDataType> = { ...entity, _meta: meta }
     return fullDoc
@@ -315,11 +319,31 @@ export async function getProfileRecord(
   key: string,
   opts?: {
     projectAccess?: EntityAccess[]
+    filterOutUnaccessibleFeatured?: boolean
   },
 ) {
   const record = await getEntity(Profile.entityClass, key, {
     projectAccess: opts?.projectAccess,
   })
+  if (!record) {
+    return undefined
+  }
+
+  if (opts?.filterOutUnaccessibleFeatured) {
+    //https://github.com/moodle/moodlenet/issues/44
+    const knownFeaturedEntitiesWithRecord = await Promise.all(
+      record.entity.knownFeaturedEntities.map(async entityItem => {
+        const { entityType, _key } = entityItem
+        const entityClass = getEntityClassByKnownEntity({ entityType })
+        const record = await getEntity(entityClass, _key)
+        return [entityItem, record] as const
+      }),
+    )
+    record.entity.knownFeaturedEntities = knownFeaturedEntitiesWithRecord
+      .filter(([, record]) => !!record)
+      .map(([item]) => item)
+  }
+
   return record
 }
 
@@ -504,15 +528,18 @@ export async function searchProfiles({
   text = '',
   after = '0',
 }: {
-  sortType?: SortTypeRpc
+  sortType?: SortTypeRpc | 'Points'
   text?: string
   after?: string
   limit?: number
 }) {
   const sort =
-    sortType === 'Popular'
+    sortType === 'Points'
+      ? `${currentEntityVar}.points DESC
+      , rank DESC`
+      : sortType === 'Popular'
       ? `${currentEntityVar}.points + ( ${currentEntityVar}.popularity.overall || 0 ) DESC
-          , rank DESC`
+      , rank DESC`
       : sortType === 'Relevant'
       ? 'rank DESC'
       : sortType === 'Recent'
