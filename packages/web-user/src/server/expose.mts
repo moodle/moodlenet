@@ -172,7 +172,10 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           q?.ownContributionListLimit === undefined
             ? undefined
             : parseInt(q.ownContributionListLimit) || 0
-        const profileRecord = await getProfileRecord(_key, { projectAccess: ['u'] })
+        const profileRecord = await getProfileRecord(_key, {
+          filterOutUnaccessibleFeatured: true,
+          projectAccess: ['u'],
+        })
         if (!profileRecord) {
           return null
         }
@@ -349,7 +352,9 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         if (!myProfileIds) {
           return null
         }
-        const profileRec = await getProfileRecord(myProfileIds._key)
+        const profileRec = await getProfileRecord(myProfileIds._key, {
+          filterOutUnaccessibleFeatured: true,
+        })
         if (!profileRec) {
           return null
         }

@@ -1,6 +1,7 @@
 import { Collection, CollectionEntitiesTools } from '@moodlenet/collection/server'
 import { EdMetaEntitiesTools, IscedField } from '@moodlenet/ed-meta/server'
 import { EdResourceEntitiesTools, Resource } from '@moodlenet/ed-resource/server'
+import type { EntityClass, SomeEntityDataType } from '@moodlenet/system-entities/common'
 import assert from 'assert'
 import type {
   KnownEntityFeature,
@@ -51,6 +52,25 @@ export function getEntityIdByKnownEntity({
 
   assert(_id)
   return _id
+}
+export function getEntityClassByKnownEntity({
+  entityType,
+}: {
+  entityType: KnownEntityType
+}): EntityClass<SomeEntityDataType> {
+  const entityClass =
+    entityType === 'collection'
+      ? CollectionEntitiesTools.getClassOf('Collection')
+      : entityType === 'resource'
+      ? EdResourceEntitiesTools.getClassOf('Resource')
+      : entityType === 'profile'
+      ? WebUserEntitiesTools.getClassOf('Profile')
+      : entityType === 'subject'
+      ? EdMetaEntitiesTools.getClassOf('IscedField')
+      : null
+
+  assert(entityClass)
+  return entityClass
 }
 export function getEntityToolByKnownEntity({ entityType }: { entityType: KnownEntityType }) {
   const _id =
