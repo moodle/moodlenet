@@ -69,7 +69,7 @@ export async function user_resources() {
             description: v2_resource.description,
             title: v2_resource.name,
             published: isPublisher && v2_resource._published,
-            content: null, //{ kind: 'link', url: '' },
+            content: { kind: 'link', url: '' },
             image:
               v2_resource.image?.ext === true
                 ? {
@@ -81,7 +81,6 @@ export async function user_resources() {
 
             month,
             year,
-            learningOutcomes: [],
             ...featsMap,
           }
           const newResource = await createResource(resourceData)

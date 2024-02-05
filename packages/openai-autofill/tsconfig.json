@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig-base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../core-domain"
+    },
+    {
+      "path": "../ed-resource"
+    },
+    {
+      "path": "../ed-meta"
+    },
+    {
+      "path": "../system-entities"
+    }
+  ]
+}

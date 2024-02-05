@@ -1,5 +1,6 @@
 import type { PkgExposeDef } from '@moodlenet/core'
 import { npm, RpcNext, RpcStatus } from '@moodlenet/core'
+import { getCurrentHttpCtx } from '@moodlenet/http-server/server'
 import { getOrgData, setOrgData } from '@moodlenet/organization/server'
 import { href } from '@moodlenet/react-app/common'
 import {
@@ -8,41 +9,47 @@ import {
   getWebappUrl,
   setAppearance,
 } from '@moodlenet/react-app/server'
-import type { EntityDocument } from '@moodlenet/system-entities/server'
+import type { EntityDocument, EntityFullDocument } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import type { SchemaOf } from 'yup'
 import { array, object, string } from 'yup'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type {
   ClientSessionDataRpc,
+  LeaderBoardContributor,
   Profile,
   ProfileGetRpc,
   UserInterests,
   WebUserData,
 } from '../common/types.mjs'
-import { getProfileHomePageRoutePath } from '../common/webapp-routes.mjs'
-import { profileValidationSchema, validationsConfig } from './env.mjs'
+import {
+  DELETE_ACCOUNT_SUCCESS_PAGE_PATH,
+  getProfileHomePageRoutePath,
+  SESSION_CHANGE_REDIRECT_Q_NAME,
+} from '../common/webapp-routes.mjs'
+import { messageFormValidationSchema, profileValidationSchema, validationsConfig } from './env.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
 import { shell } from './shell.mjs'
 import {
   isAllowedKnownEntityFeature,
   reduceToKnownFeaturedEntities,
-} from './srv/known-features.mjs'
+} from './srv/known-entity-types.mjs'
 import {
+  changeProfilePublisherPerm,
   editMyProfileInterests,
   editProfile,
   entityFeatureAction,
-  getEntityFeatureCount,
   getEntityFeatureProfiles,
+  getEntityFeaturesCount,
   getLandingPageList,
   getProfileOwnKnownEntities,
+  getProfilePointLeaders,
   getProfileRecord,
   getValidations,
   searchProfiles,
   sendMessageToProfile as sendMessageToProfileIntent,
   setProfileAvatar,
   setProfileBackgroundImage,
-  setProfilePublisherFlag,
 } from './srv/profile.mjs'
 import {
   currentWebUserDeletionAccountRequest,
@@ -52,7 +59,7 @@ import {
   loginAsRoot,
   searchUsers,
   sendWebUserTokenCookie,
-  toggleWebUserIsAdmin,
+  setWebUserIsAdmin,
   verifyCurrentTokenCtx,
 } from './srv/web-user.mjs'
 import type { ProfileDataType } from './types.mjs'
@@ -118,9 +125,38 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       guard: () => void 0,
       fn: ({ rootPassword }) => loginAsRoot(rootPassword),
     },
+    'webapp/profile/leader-board-data': {
+      async guard() {
+        return true
+      },
+      async fn() {
+        const profilePointLeaders: EntityFullDocument<ProfileDataType>[] =
+          await getProfilePointLeaders()
+        const contributors = profilePointLeaders.map<LeaderBoardContributor>(profileRecord => {
+          const profileHomePagePath = getProfileHomePageRoutePath({
+            _key: profileRecord._key,
+            displayName: profileRecord.displayName,
+          })
+
+          const profileData = profileDoc2Profile(profileRecord)
+          const leaderBoardContributor: LeaderBoardContributor = {
+            avatarUrl: profileData.avatarUrl ?? undefined,
+            displayName: profileData.displayName,
+            points: profileRecord.points ?? 0,
+            profileHref: href(profileHomePagePath),
+            //subject: profileData.subject,
+          }
+          return leaderBoardContributor
+        })
+        return { contributors }
+      },
+    },
     'webapp/profile/:_key/edit': {
-      guard: _ => {
-        _.editData = profileValidationSchema.validateSync(_?.editData, { stripUnknown: true })
+      async guard(_) {
+        const validatedData = await profileValidationSchema.validate(_?.editData, {
+          stripUnknown: true,
+        })
+        _.editData = validatedData
       },
       async fn({ editData }, { _key }) {
         const patchRecord = await editProfile(_key, editData)
@@ -131,8 +167,15 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     },
     'webapp/profile/:_key/get': {
       guard: () => void 0,
-      async fn(_, { _key }) {
-        const profileRecord = await getProfileRecord(_key, { projectAccess: ['u'] })
+      async fn(_, { _key }, q) {
+        const ownContribLimit =
+          q?.ownContributionListLimit === undefined
+            ? undefined
+            : parseInt(q.ownContributionListLimit) || 0
+        const profileRecord = await getProfileRecord(_key, {
+          filterOutUnaccessibleFeatured: true,
+          projectAccess: ['u'],
+        })
         if (!profileRecord) {
           return null
         }
@@ -143,19 +186,23 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
             getProfileOwnKnownEntities({
               knownEntity: 'collection',
               profileKey: _key,
+              limit: ownContribLimit,
             }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
 
             getProfileOwnKnownEntities({
               knownEntity: 'resource',
               profileKey: _key,
+              limit: ownContribLimit,
             }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
             getCurrentProfileIds(),
             verifyCurrentTokenCtx(),
-            getEntityFeatureCount({ _key, entityType: 'profile', feature: 'follow' }).then(
+            getEntityFeaturesCount({ _key, entityType: 'profile', feature: 'follow' }).then(
               _ => _?.count ?? 0,
             ),
           ])
-
+        const numFollowing = profileRecord.entity.knownFeaturedEntities.filter(
+          ({ entityType, feature }) => feature === 'follow' && entityType === 'profile',
+        ).length
         const profileHomePagePath = getProfileHomePageRoutePath({
           _key,
           displayName: profileRecord.entity.displayName,
@@ -170,7 +217,8 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           canEdit: !!profileRecord.access.u,
           canFollow: !!currentProfileIds && currentProfileIds._key !== profileRecord.entity._key,
           numFollowers,
-          numKudos: profileRecord.entity.kudos,
+          numFollowing,
+          points: profileRecord.entity.points ?? 0,
           profileHref: href(profileHomePagePath),
           profileUrl: getWebappUrl(profileHomePagePath),
           data,
@@ -253,7 +301,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           if (!isAllowedKnownEntityFeature({ entityType, feature })) {
             return { count: 0 }
           }
-          const countRes = await getEntityFeatureCount({ _key, entityType, feature })
+          const countRes = await getEntityFeaturesCount({ _key, entityType, feature })
           // shell.log('debug', [countRes?.count ?? 0, _key, entityType, feature])
 
           return countRes ?? { count: 0 }
@@ -261,15 +309,39 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       },
     'webapp/feature-entity/profiles/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key':
       {
-        guard: () => void 0,
-        async fn(_, { _key, entityType, feature }, paging) {
+        guard: (_b, _p, q) => {
+          return (
+            (q?.limit === undefined || parseInt(q.limit) > 0) &&
+            (q?.mode === undefined || q.mode === 'reverse') &&
+            (q?.after === undefined || q.after === '')
+          )
+        },
+        async fn(_, { _key, entityType, feature }, { after, limit, mode }) {
           if (!isAllowedKnownEntityFeature({ entityType, feature })) {
             return { profiles: [] }
           }
-          const cursor = await getEntityFeatureProfiles({ _key, entityType, feature, paging })
-          const all = await cursor.all()
-          return {
-            profiles: all.map(({ entity: { _key } }) => ({ _key })),
+
+          if (mode === 'reverse') {
+            const cursor = await getEntityFeatureProfiles({
+              _key,
+              entityType,
+              feature,
+              paging: { after, limit },
+            })
+            const all = await cursor.all()
+            return {
+              profiles: all.map(({ entity: { _key } }) => ({ _key })),
+            }
+          } else {
+            const profile = await getProfileRecord(_key)
+            if (!profile) {
+              return { profiles: [] }
+            }
+            return {
+              profiles: profile.entity.knownFeaturedEntities
+                .filter(item => item.feature === feature && item.entityType === entityType)
+                .map(({ _key }) => ({ _key })),
+            }
           }
         },
       },
@@ -280,7 +352,9 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         if (!myProfileIds) {
           return null
         }
-        const profileRec = await getProfileRecord(myProfileIds._key)
+        const profileRec = await getProfileRecord(myProfileIds._key, {
+          filterOutUnaccessibleFeatured: true,
+        })
         if (!profileRec) {
           return null
         }
@@ -325,18 +399,25 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         body.interests = interests
       },
       async fn({ interests }) {
-        return editMyProfileInterests({ items: interests })
+        const result = await editMyProfileInterests({ items: interests })
+        return result && !!result
       },
     },
     'webapp/my-interests/use-as-default-search-filters': {
       guard: body => typeof body.use === 'boolean',
       async fn({ use }) {
-        return editMyProfileInterests({ asDefaultFilters: use })
+        const result = await editMyProfileInterests({ asDefaultFilters: use })
+        return result && !!result
       },
     },
     'webapp/send-message-to-user/:profileKey': {
-      //@ALE TODO
-      guard: () => void 0,
+      guard: _ => {
+        const validatedMsgObj = messageFormValidationSchema.validateSync(
+          { msg: _.message },
+          { stripUnknown: true },
+        )
+        _.message = validatedMsgObj.msg
+      },
       async fn({ message }, { profileKey }) {
         sendMessageToProfileIntent({ message, profileKey })
       },
@@ -393,6 +474,9 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           throw RpcStatus('Unauthorized')
         }
         if (result.status === 'done') {
+          getCurrentHttpCtx()?.response.redirect(
+            getWebappUrl(`${DELETE_ACCOUNT_SUCCESS_PAGE_PATH}?${SESSION_CHANGE_REDIRECT_Q_NAME}=.`),
+          )
           return
         }
         throw RpcStatus('Unprocessable Entity', result.status)
@@ -452,17 +536,20 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         return webUsers
       },
     },
-    'webapp/admin/roles/toggleIsAdmin': {
+    'webapp/admin/roles/setIsAdmin': {
       guard: () => void 0,
       async fn(by) {
-        const patchedUser = await toggleWebUserIsAdmin(by)
+        const patchedUser = await setWebUserIsAdmin(by)
         return !!patchedUser
       },
     },
-    'webapp/admin/roles/toggleIsPublisher': {
+    'webapp/admin/roles/setIsPublisher': {
       guard: () => void 0,
-      async fn({ profileKey }) {
-        const response = await setProfilePublisherFlag({ profileKey, publisher: 'toggle' })
+      async fn({ profileKey, isPublisher }) {
+        const response = await changeProfilePublisherPerm({
+          profileKey,
+          setIsPublisher: isPublisher,
+        })
         return !!response?.ok
       },
     },

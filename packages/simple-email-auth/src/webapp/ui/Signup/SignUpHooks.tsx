@@ -1,5 +1,5 @@
 import { useFormik } from 'formik'
-import type { FC } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 import { useMemo, useState } from 'react'
 import { shell } from '../../shell.mjs'
 import type { SignupFormValues, SignupProps } from './Signup.js'
@@ -40,8 +40,8 @@ export const usePanelProps = (): SignupProps => {
   return panelProps
 }
 
-export const SignUpPanelContainer: FC = () => {
+export const SignUpPanelContainer: FC<PropsWithChildren> = ({ children }) => {
   const panelProps = usePanelProps()
 
-  return <SignUpAddon.SignupPanel {...panelProps} />
+  return <SignUpAddon.SignupPanel {...panelProps}>{children}</SignUpAddon.SignupPanel>
 }

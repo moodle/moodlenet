@@ -44,7 +44,7 @@ LoginProps => {
       // { Icon: PassportAuth.Icon, Panel: PassportAuth.Panel },
     ],
     headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps(
-      MinimalisticAccessButtonsStories.getAccesMinimalisticHeaderItems({
+      MinimalisticAccessButtonsStories.getMinimalisticAccessHeaderItems({
         loginHref: href('Pages/Access/Login/Default'),
         signupHref: href('Pages/Access/SignUp/Default'),
         showLearnMoreButton: true,

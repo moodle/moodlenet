@@ -32,7 +32,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
   const { configs, validationSchemas } = useContext(MainContext)
   const mainLayoutProps = useMainLayoutProps()
   const resourceCommonProps = useResourceBaseProps({ resourceKey })
-
+  const isCreating = resourceKey === '.'
   const info = useMemo(
     () =>
       resourceCommonProps && {
@@ -58,7 +58,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     mainColumnItems: [],
     headerColumnItems: [],
     topLeftHeaderItems: [],
-    topRightHeaderItems: plugins.getKeyedAddons('topRightHeaderItems'),
+    topRightHeaderItems: isCreating ? [] : plugins.getKeyedAddons('topRightHeaderItems'),
     moreButtonItems: [],
     footerRowItems: [],
     uploadOptionsItems: [],
@@ -95,7 +95,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     },
     ...layoutProps,
 
-    generalActionsItems: plugins.getKeyedAddons('generalAction'),
+    generalActionsItems: isCreating ? [] : plugins.getKeyedAddons('generalAction'),
     data,
     resourceForm,
     state,

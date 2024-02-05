@@ -87,6 +87,7 @@ function SubjectPageSimpleResourceList({ subjectKey }: { subjectKey: string }) {
         sortType: 'Recent',
         limit: 50,
         filterSubjects: subjectKey,
+        filterAs: 'strict',
       })
       .then(res => {
         setResourceKeys(res.list)

@@ -67,7 +67,7 @@ export function makeExtPortsApp() {
         }
 
         try {
-          rpcDefItem.guard(...rpcArgs)
+          await rpcDefItem.guard(...rpcArgs)
         } catch (err) {
           shell.log('info', err)
           httpResp.status(400)
@@ -113,6 +113,7 @@ export function makeExtPortsApp() {
                   rpcStatusCode: 500,
                   payload: err instanceof Error ? format(err) : String(err),
                 }
+            shell.log('error', err)
             httpResp.status(rpcStatusCode).send(payload)
           })
         return srvApp
@@ -140,7 +141,7 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
     : undefined
 
   if (!type) {
-    throw new Error(`Unsupported content-type: ${contentTypeHeader}`)
+    throw new TypeError(`Unsupported content-type: ${contentTypeHeader}`)
   }
 
   if (['get', 'head'].includes(req.method.toLowerCase())) {
@@ -211,7 +212,7 @@ function getRpcBody(req: Request): [body: any, contentType: 'json' | 'multipart'
     return [body, type]
   }
 
-  throw new Error(`Unsupported contentType: ${contentTypeHeader}`)
+  throw new TypeError(`Unsupported contentType: ${contentTypeHeader}`)
 }
 
 async function getRpcResponse(rpcResponse: any) {

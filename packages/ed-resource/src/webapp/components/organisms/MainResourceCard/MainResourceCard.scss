@@ -93,7 +93,8 @@
             height: 21px;
           }
 
-          .delete-button.disabled {
+          .delete-button.disabled,
+          .publish-check-button.disabled {
             color: #e8e8e8;
             cursor: default;
             > svg {
@@ -222,6 +223,21 @@
       padding-left: 8px;
       &:hover {
         color: #1a6aff;
+      }
+    }
+  }
+
+  > .resource-header > .title.disabled,
+  > .description.disabled {
+    > .textarea-container {
+      background-color: transparent;
+      border: none;
+      box-shadow: none;
+      > textarea {
+        background-color: transparent;
+        &::placeholder {
+          color: #e0e0e0;
+        }
       }
     }
   }

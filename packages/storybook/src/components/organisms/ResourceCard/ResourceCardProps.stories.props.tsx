@@ -8,12 +8,14 @@ import { getResourceCardStoryProps } from './ResourceCard.stories.js'
 export const getResourceCardsStoryProps = (
   amount = 8,
   overrides?: PartialDeep<ResourceCardProps>,
+  showAlert?: boolean,
 ): { props: ResourceCardProps; key: string }[] => {
   const randomsortedarray = getRandomSortedArrayElements(resourcesCardFactory, amount)
-  return randomsortedarray.map(resource => {
+  return randomsortedarray.map((resource, i) => {
     const newResource = getResourceCardStoryProps({
       ...resource,
       ...overrides,
+      showVisualAlert: i < 2 && showAlert,
     })
     return transformPropsToObjectWithKey(newResource, resource.data?.id ?? '')
   })

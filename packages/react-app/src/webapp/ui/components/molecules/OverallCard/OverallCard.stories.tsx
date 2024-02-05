@@ -1,8 +1,10 @@
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 // import { href } from '../../../../elements/link'
 // import { Grade, LibraryBooks, PermIdentity } from '@mui/icons-material'
-import { FilterNone, Grade, PermIdentity } from '@mui/icons-material'
+import { FilterNone } from '@mui/icons-material'
 import { href } from '../../../../../common/lib.mjs'
+import { ReactComponent as LeafIcon } from '../../../assets/icons/leaf.svg'
+import { ReactComponent as PersonIcon } from '../../../assets/icons/profile.svg'
 import type { OverallCardProps } from './OverallCard.js'
 import { OverallCard } from './OverallCard.js'
 
@@ -31,14 +33,36 @@ const meta: ComponentMeta<typeof OverallCard> = {
 
 export const OverallCardStoryProps: OverallCardProps = {
   items: [
-    { Icon: PermIdentity, href: href('Pages/Followers'), name: 'Followers', value: 25 },
-    { Icon: Grade, name: 'Kudos', value: 121 },
-    { Icon: FilterNone, name: 'Resources', value: 23 },
+    {
+      Icon: PersonIcon,
+      className: 'followers',
+      href: href('Pages/Followers'),
+      name: 'Followers',
+      value: 25,
+    },
+    {
+      Icon: PersonIcon,
+      className: 'following',
+      href: href('Pages/Following'),
+      name: 'Following',
+      value: 97,
+    },
+    { Icon: FilterNone, className: 'resources', name: 'Resources', value: 23 },
   ],
 }
 
 export const OverallCardNoCardStoryProps: OverallCardProps = {
-  ...OverallCardStoryProps,
+  items: [
+    {
+      Icon: PersonIcon,
+      className: 'followers',
+      href: href('Pages/Followers'),
+      name: 'Followers',
+      value: 25,
+    },
+    { Icon: LeafIcon, name: 'Leaves', className: 'leaves', value: 43212 },
+    { Icon: FilterNone, className: 'resources', name: 'Resources', value: 23 },
+  ],
   noCard: true,
 }
 

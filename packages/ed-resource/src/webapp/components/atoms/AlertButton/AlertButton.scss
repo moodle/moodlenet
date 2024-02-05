@@ -1,0 +1,68 @@
+.alert-button {
+  width: 34px;
+  height: 36px;
+  > a {
+    width: fit-content;
+    position: relative;
+    > .red-dot {
+      position: absolute;
+      z-index: 1;
+      top: 1px;
+      right: 0;
+      height: 13.5px;
+      width: 14px;
+      background-color: #ff3131;
+      border-radius: 50px;
+    }
+
+    /* Swing Animation */
+    @keyframes swing {
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+      25% {
+        transform: rotate(10deg);
+      }
+      50% {
+        transform: rotate(0deg);
+      }
+      75% {
+        transform: rotate(-10deg);
+      }
+    }
+
+    // Scale Animation
+    @keyframes scaleBell {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.2);
+      }
+    }
+
+    > .alert-icon-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+      transform-origin: 50% 50%; // Centered scaling
+      animation: scaleBell 0.5s cubic-bezier(0.45, 0.25, 0.6, 0.95) forwards;
+
+      > svg {
+        display: flex;
+        width: 28px;
+        height: 28px;
+        transform-origin: 14px 0px; // Swing from the top
+        animation: swing 0.3s cubic-bezier(0.45, 0.25, 0.6, 0.95) 3 0.5s;
+
+        g {
+          fill: #aeaeae;
+        }
+      }
+    }
+  }
+}

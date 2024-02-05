@@ -1,5 +1,3 @@
-import { shell } from './shell.mjs'
-
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
 import {
   assertRpcFileReadable,
@@ -7,42 +5,42 @@ import {
   RpcStatus,
   setRpcStatusCode,
 } from '@moodlenet/core'
-import { defaultImageUploadMaxSize, getWebappUrl } from '@moodlenet/react-app/server'
+import { getWebappUrl } from '@moodlenet/react-app/server'
 import {
   creatorUserInfoAqlProvider,
-  getCurrentSystemUser,
+  getCurrentEntityUserIdentifier,
   isCurrentUserCreatorOfCurrentEntity,
 } from '@moodlenet/system-entities/server'
+import { waitFor } from 'xstate/lib/waitFor.js'
+import { shell } from './shell.mjs'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
+import type {
+  Event,
+  Event_ProvideResourceEdits_Data,
+  StateName,
+} from '@moodlenet/core-domain/resource'
+import { DEFAULT_CONTEXT, matchState, nameMatcher } from '@moodlenet/core-domain/resource'
 import { getSubjectHomePageRoutePath } from '@moodlenet/ed-meta/common'
 import { href } from '@moodlenet/react-app/common'
 import { boolean, object } from 'yup'
 import type { ResourceExposeType } from '../common/expose-def.mjs'
-import type { ResourceRpc } from '../common/types.mjs'
+import type { EditResourceRespRpc, ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { env } from './init/env.mjs'
-import { publicFiles, resourceFiles } from './init/fs.mjs'
-import { getImageAssetInfo, getImageUrl } from './lib.mjs'
+import { getImageAssetInfo } from './lib.mjs'
 import {
-  createResource,
-  delResource,
-  delResourceFile,
-  getImageLogicalFilename,
   getResource,
+  getResourceFile,
   getResourceFileUrl,
-  getResourceLogicalFilename,
   getResourcesCountInSubject,
   getValidations,
   incrementResourceDownloads,
-  patchResource,
   RESOURCE_DOWNLOAD_ENDPOINT,
   searchResources,
-  setPublished,
-  setResourceContent,
-  setResourceImage,
+  validationsConfigs,
 } from './services.mjs'
-import type { ResourceDataType } from './types.mjs'
+import { stdEdResourceMachine } from './xsm/machines.mjs'
+import * as map from './xsm/mappings/rpc.mjs'
 
 export type FullResourceExposeType = PkgExposeDef<ResourceExposeType & ServerResourceExposeType>
 
@@ -61,17 +59,56 @@ export const expose = await shell.expose<FullResourceExposeType>({
           publish: boolean().required(),
         }).isValid(_),
       fn: async ({ publish }, { _key }) => {
-        const patchResult = await setPublished(_key, publish)
-        if (!patchResult) {
-          return patchResult
+        const resourceRecord = await getResource(_key)
+        if (!resourceRecord) {
+          return { done: false }
         }
-        return true
+        const [interpreter] = await stdEdResourceMachine({ by: 'data', data: resourceRecord })
+        let snap = interpreter.getSnapshot()
+        const { event, awaitNextState } = ((): { event: Event; awaitNextState: StateName } =>
+          publish
+            ? { awaitNextState: 'Published', event: { type: 'publish' } }
+            : { awaitNextState: 'Unpublished', event: { type: 'unpublish' } })()
+        if (!snap.can(event)) {
+          interpreter.stop()
+          return { done: false }
+        }
+        interpreter.send(event)
+
+        await waitFor(interpreter, nameMatcher(awaitNextState))
+        snap = interpreter.getSnapshot()
+        interpreter.stop()
+
+        return { done: true }
       },
     },
+    'webapp/:action(cancel|start)/meta-autofill/:_key': {
+      guard: () => void 0,
+      fn: async (_, { _key, action }) => {
+        const resourceRecord = await getResource(_key, {
+          project: {
+            isCreator: isCurrentUserCreatorOfCurrentEntity(),
+          },
+        })
+        if (!resourceRecord) {
+          return { done: false }
+        }
+        const [interpreter] = await stdEdResourceMachine({
+          by: 'data',
+          data: resourceRecord,
+        })
+        const ev = action === 'cancel' ? `cancel-meta-generation` : `request-meta-generation`
+        const done = interpreter.getSnapshot().can(ev)
+        interpreter.send(ev)
+        interpreter.stop()
+        return { done }
+      },
+    },
+
     'webapp/get/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }) => {
-        const found = await getResource(_key, {
+        const resourceRecord = await getResource(_key, {
           projectAccess: ['u', 'd'],
           project: {
             canPublish: canPublish(),
@@ -79,71 +116,122 @@ export const expose = await shell.expose<FullResourceExposeType>({
             contributor: creatorUserInfoAqlProvider(),
           },
         })
-        if (!found) {
+        if (!resourceRecord) {
           return null
         }
-        const image = getImageAssetInfo(found.entity.image)
+        const [interpreter] = await stdEdResourceMachine({
+          by: 'data',
+          data: resourceRecord,
+        })
+        const snap = interpreter.getSnapshot()
+        interpreter.stop()
+        if (matchState(snap, 'No-Access') || !resourceRecord) {
+          return null
+        }
 
-        const contentUrl = !found.entity.content
-          ? null
-          : found.entity.content.kind === 'file'
-          ? await getResourceFileUrl({ _key, rpcFile: found.entity.content.fsItem.rpcFile })
-          : found.entity.content.url
+        const image = getImageAssetInfo(snap.context.doc.image?.ref)
+
+        const contentUrl =
+          snap.context.doc.content.kind === 'file'
+            ? await getResourceFileUrl({
+                _key,
+                rpcFile: snap.context.doc.content.ref.fsItem.rpcFile,
+              })
+            : snap.context.doc.content.ref.url
 
         const resourceRpc: ResourceRpc = {
           contributor: {
-            avatarUrl: found.contributor.iconUrl,
+            avatarUrl: resourceRecord.contributor.iconUrl,
             creatorProfileHref: {
-              url: found.contributor.homepagePath,
+              url: resourceRecord.contributor.homepagePath,
               ext: false,
             },
-            displayName: found.contributor.name,
-            timeSinceCreation: found.meta.created,
-            // avatarUrl: found.contributor?.iconUrl ?? null,
-            // creatorProfileHref: {
-            //   url: 'google.it',
-            //   ext: true,
-            // },
-            // displayName: 'contributor.name',
-            // timeSinceCreation: shell.now().toString(),
+            displayName: resourceRecord.contributor.name,
+            timeSinceCreation: resourceRecord.meta.created,
           },
           resourceForm: {
-            description: found.entity.description,
-            title: found.entity.title,
-            license: found.entity.license,
-            subject: found.entity.subject,
-            language: found.entity.language,
-            level: found.entity.level,
-            month: found.entity.month,
-            year: found.entity.year,
-            type: found.entity.type,
-            learningOutcomes: found.entity.learningOutcomes,
+            description: resourceRecord.entity.description,
+            title: resourceRecord.entity.title,
+            license: resourceRecord.entity.license,
+            subject: resourceRecord.entity.subject,
+            language: resourceRecord.entity.language,
+            level: resourceRecord.entity.level,
+            month: resourceRecord.entity.month,
+            year: resourceRecord.entity.year,
+            type: resourceRecord.entity.type,
+            learningOutcomes: resourceRecord.entity.learningOutcomes,
           },
           data: {
-            contentType: found.entity.content?.kind ?? null,
+            contentType: resourceRecord.entity.content.kind,
             contentUrl,
             downloadFilename:
-              found.entity.content?.kind === 'file'
-                ? found.entity.content.fsItem.rpcFile.name
+              resourceRecord.entity.content?.kind === 'file'
+                ? resourceRecord.entity.content.fsItem.rpcFile.name
                 : null,
-            id: found.entity._key,
-            mnUrl: getWebappUrl(getResourceHomePageRoutePath({ _key, title: found.entity.title })),
+            id: resourceRecord.entity._key,
+            mnUrl: getWebappUrl(
+              getResourceHomePageRoutePath({ _key, title: resourceRecord.entity.title }),
+            ),
             image,
-            subjectHref: found.entity.subject
+            subjectHref: resourceRecord.entity.subject
               ? href(
                   getSubjectHomePageRoutePath({
-                    _key: found.entity.subject,
-                    title: found.entity.subject,
+                    _key: resourceRecord.entity.subject,
+                    title: resourceRecord.entity.subject,
                   }),
                 )
               : null,
           },
-          state: { isPublished: found.entity.published },
+          state: {
+            isPublished: resourceRecord.entity.published,
+            value: snap.value.toString() as StateName,
+            autofillSuggestions: {
+              // image: snap.context.generatedData?.image
+              //   ? { credits: null, location: snap.context.generatedData?.image.url }
+              //   : null,
+              meta: snap.context.generatedData?.meta
+                ? map.meta_2_form({
+                    title:
+                      snap.context.doc.meta.title || snap.context.generatedData.meta.title || '',
+                    description:
+                      snap.context.doc.meta.description ||
+                      snap.context.generatedData.meta.description ||
+                      '',
+                    language:
+                      snap.context.doc.meta.language ??
+                      snap.context.generatedData.meta.language ??
+                      null,
+                    level:
+                      snap.context.doc.meta.level ?? snap.context.generatedData.meta.level ?? null,
+                    license:
+                      snap.context.doc.meta.license ??
+                      snap.context.generatedData.meta.license ??
+                      null,
+                    originalPublicationInfo:
+                      snap.context.doc.meta.originalPublicationInfo ??
+                      snap.context.generatedData.meta.originalPublicationInfo ??
+                      null,
+                    subject:
+                      snap.context.doc.meta.subject ??
+                      snap.context.generatedData.meta.subject ??
+                      null,
+                    type:
+                      snap.context.doc.meta.type ?? snap.context.generatedData.meta.type ?? null,
+                    learningOutcomes: snap.context.doc.meta.learningOutcomes.length
+                      ? snap.context.doc.meta.learningOutcomes
+                      : snap.context.generatedData.meta.learningOutcomes ?? [],
+                  })
+                : null,
+              // image: snap.context.generatedData?.image
+              //   ? await map.image_2_assetInfo(snap.context.generatedData.image,_key)
+              //   : null,
+            },
+          },
           access: {
-            canDelete: !!found.access.d,
-            canEdit: !!found.access.u,
-            canPublish: found.canPublish,
-            isCreator: found.isCreator,
+            canDelete: !!resourceRecord.access.d,
+            canEdit: !!resourceRecord.access.u,
+            canPublish: resourceRecord.canPublish,
+            isCreator: resourceRecord.isCreator,
           },
         }
 
@@ -151,37 +239,85 @@ export const expose = await shell.expose<FullResourceExposeType>({
       },
     },
     'webapp/edit/:_key': {
-      guard: async body => {
-        const { draftResourceValidationSchema } = await getValidations()
-        body.values = await draftResourceValidationSchema.validate(body?.values, {
-          stripUnknown: true,
-        })
+      guard: async () => {
+        // const { draftResourceValidationSchema } = await getValidations()
+        // body.form = await draftResourceValidationSchema.validate(body?.form?.meta, {
+        //   stripUnknown: true,
+        // })
       },
-      fn: async ({ values }, { _key }) => {
-        const patch: Partial<ResourceDataType> = {
-          description: values.description,
-          language: values.language,
-          learningOutcomes: values.learningOutcomes.filter(({ sentence }) => !!sentence),
-          level: values.level,
-          license: values.license,
-          month: values.month,
-          year: values.year,
-          title: values.title,
-          subject: values.subject,
-          type: values.type,
+      fn: async ({ form }, { _key }) => {
+        // const resourceRecord = await getResource(_key)
+        // const { interpreter } = await xsm.interpreterAndMachine(resourceRecord)
+        if (!(form.meta || form.image)) {
+          // const editResourceRespRpc: EditResourceRespRpc = {
+          //   meta: map.meta_2_form(snap.context.doc.meta),
+          //   image: getImageAssetInfo(snap.context.doc.image?.ref ?? null),
+          // }
+          // return editResourceRespRpc
+          return null
         }
-        const patchResult = await patchResource(_key, patch)
-        if (!patchResult) {
-          return //throw ?
+        const [interpreter] = await stdEdResourceMachine({
+          by: 'key',
+          key: _key,
+        })
+        let snap = interpreter.getSnapshot()
+        const resourceMeta = form.meta
+          ? map.resourceMetaForm_2_meta(form.meta)
+          : snap.context.doc.meta
+
+        const resourceEdits: Event_ProvideResourceEdits_Data = {
+          edits: {
+            meta: resourceMeta,
+            image:
+              form.image?.kind === 'file'
+                ? {
+                    kind: 'file',
+                    size: form.image.file[0].size,
+                    rpcFile: form.image.file[0],
+                  }
+                : form.image?.kind === 'no-change'
+                ? {
+                    kind: 'no-change',
+                  }
+                : form.image?.kind === 'remove'
+                ? {
+                    kind: 'remove',
+                  }
+                : { kind: 'no-change' },
+          },
         }
-        return
+
+        const provideEditsEvent: Event = { type: 'provide-resource-edits', ...resourceEdits }
+        if (!snap.can(provideEditsEvent)) {
+          // console.log('cannot provide edits', provideEditsEvent, snap.value, snap.context)
+          interpreter.stop()
+          return null
+        }
+        interpreter.send(provideEditsEvent)
+        const storeEvent: Event = { type: 'store-edits', ...resourceEdits }
+        interpreter.send(storeEvent)
+
+        await waitFor(interpreter, nameMatcher('Unpublished'))
+        snap = interpreter.getSnapshot()
+
+        const editResourceRespRpc: EditResourceRespRpc = {
+          meta: map.meta_2_form(snap.context.doc.meta),
+          image: getImageAssetInfo(snap.context.doc.image?.ref ?? null),
+        }
+        interpreter.stop()
+        return editResourceRespRpc
+      },
+      bodyWithFiles: {
+        fields: {
+          '.form.image.file': 1,
+        },
+        maxSize: validationsConfigs.imageMaxUploadSize,
       },
     },
     'basic/v1/create': {
       guard: async body => {
-        const { draftResourceValidationSchema, draftContentValidationSchema } =
-          await getValidations()
-        await draftContentValidationSchema.validate({ content: body?.resource })
+        const { draftResourceValidationSchema, contentValidationSchema } = await getValidations()
+        await contentValidationSchema.validate({ content: body?.resource })
         await draftResourceValidationSchema.validate(body, {
           stripUnknown: true,
         })
@@ -191,138 +327,138 @@ export const expose = await shell.expose<FullResourceExposeType>({
         if (!resourceContent) {
           throw RpcStatus('Bad Request')
         }
+        const [interpreter] = await stdEdResourceMachine({ by: 'create' })
+        let snap = interpreter.getSnapshot()
+        const provideNewResourceEvent: Event = {
+          type: 'provide-new-resource',
+          meta: {
+            ...DEFAULT_CONTEXT.doc.meta,
+            title: name,
+            description,
+          },
+          content:
+            'string' === typeof resourceContent
+              ? { kind: 'link', url: resourceContent }
+              : { kind: 'file', rpcFile: resourceContent, size: resourceContent.size },
+        }
+        interpreter.send(provideNewResourceEvent)
 
-        const createResult = await createResource({
-          title: name,
-          description,
-        })
+        snap = interpreter.getSnapshot()
 
-        if (!createResult) {
-          throw RpcStatus('Unauthorized')
+        if (matchState(snap, 'No-Access')) {
+          interpreter.stop()
+          if (snap.context.noAccess?.reason === 'unauthorized') {
+            throw RpcStatus('Unauthorized')
+          }
+          if (snap.context.contentRejected) {
+            throw RpcStatus('Bad Request', snap.context.contentRejected.reason)
+          }
+          if (snap.context.resourceEdits?.errors) {
+            throw RpcStatus('Bad Request', snap.context.resourceEdits.errors)
+          }
+          throw RpcStatus('Unauthorized', 'unknown')
         }
 
-        const setResourceResult = await setResourceContent(createResult._key, resourceContent)
+        interpreter.send('store-new-resource')
 
-        if (!setResourceResult) {
-          await delResource(createResult._key)
-          throw RpcStatus('Unauthorized')
-        }
+        await waitFor(interpreter, nameMatcher(['Unpublished', 'Autogenerating-Meta']))
+        snap = interpreter.getSnapshot()
+
+        const newDoc = snap.context.doc
+        const contentUrl =
+          newDoc.content.kind === 'file'
+            ? await getResourceFileUrl({
+                _key: newDoc.id.resourceKey,
+                rpcFile: newDoc.content.ref.fsItem.rpcFile,
+              })
+            : newDoc.content.url
 
         setRpcStatusCode('Created')
+        interpreter.stop()
+        snap = interpreter.getSnapshot()
         return {
-          _key: createResult._key,
-          description: createResult.description,
+          _key: newDoc.id.resourceKey,
+          name: newDoc.meta.title,
+          description: newDoc.meta.description,
           homepage: getWebappUrl(
-            getResourceHomePageRoutePath({ _key: createResult._key, title: createResult.title }),
+            getResourceHomePageRoutePath({ _key: newDoc.id.resourceKey, title: newDoc.meta.title }),
           ),
-          name: createResult.title,
-          url: setResourceResult.contentUrl,
+          url: contentUrl,
         }
       },
       bodyWithFiles: {
         fields: {
           '.resource': 1,
         },
-        maxSize: env.resourceUploadMaxSize,
+        maxSize: validationsConfigs.contentMaxUploadSize,
       },
     },
-    'webapp/create': {
-      guard: () => void 0,
-      fn: async () => {
-        const createResult = await createResource({})
-        if (!createResult) {
-          throw RpcStatus('Unauthorized')
-        }
-        return {
-          _key: createResult._key,
-        }
-      },
-    },
-    'webapp/delete/:_key': {
+
+    'webapp/trash/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }) => {
-        const delResult = await delResource(_key)
-        if (!delResult) {
-          return
+        const [interpreter] = await stdEdResourceMachine({ by: 'key', key: _key })
+        const snap = interpreter.getSnapshot()
+        if (matchState(snap, 'Published') || matchState(snap, 'Publish-Rejected')) {
+          interpreter.send('unpublish')
+          await waitFor(interpreter, nameMatcher('Unpublished'))
         }
-        const imageLogicalFilename = getImageLogicalFilename(_key)
-        await publicFiles.del(imageLogicalFilename)
-        if (delResult.entity.content?.kind === 'file') {
-          await delResourceFile(_key)
+        if (matchState(snap, 'Autogenerating-Meta')) {
+          interpreter.send('cancel-meta-generation')
+          await waitFor(interpreter, nameMatcher('Unpublished'))
         }
+        if (matchState(snap, 'Meta-Suggestion-Available')) {
+          interpreter.send({ type: 'provide-resource-edits', edits: {} })
+          await waitFor(interpreter, nameMatcher('Unpublished'))
+        }
+        interpreter.send('trash')
+        await waitFor(interpreter, nameMatcher('Destroyed'))
+        interpreter.stop()
         return
       },
     },
-    'webapp/upload-image/:_key': {
+    'webapp/create': {
       guard: async body => {
-        const { imageValidationSchema } = await getValidations()
-        const validatedImageOrNullish = await imageValidationSchema.validate(
-          { image: body?.file?.[0] },
-          { stripUnknown: true },
-        )
-        body.file = [validatedImageOrNullish]
-      },
-      async fn({ file: [uploadedRpcFile] }, { _key }) {
-        const got = await getResource(_key, { projectAccess: ['u'] })
-
-        if (!got?.access.u) {
-          throw RpcStatus('Unauthorized')
-        }
-        const updateRes = await setResourceImage(_key, uploadedRpcFile)
-        if (updateRes === false) {
-          throw RpcStatus('Bad Request')
-        }
-        if (!updateRes) {
-          return null
-        }
-        const imageUrl = updateRes.patched.image && getImageUrl(updateRes.patched.image)
-        return imageUrl
-      },
-      bodyWithFiles: {
-        fields: {
-          '.file': 1,
-        },
-        maxSize: defaultImageUploadMaxSize,
-      },
-    },
-    'webapp/upload-content/:_key': {
-      guard: async body => {
-        const { publishedContentValidationSchema } = await getValidations()
-        const validatedContentOrNullish = await publishedContentValidationSchema.validate(
+        const { contentValidationSchema } = await getValidations()
+        const validatedContent = await contentValidationSchema.validate(
           { content: body?.content?.[0] },
           { stripUnknown: true },
         )
-        body.content = [validatedContentOrNullish]
+        body.content = [validatedContent.content]
       },
-      async fn({ content: [uploadedContent] }, { _key }) {
-        const got = await getResource(_key, { projectAccess: ['u'] })
+      async fn({ content: [resourceContent] }) {
+        if (!resourceContent) {
+          throw RpcStatus('Bad Request')
+        }
 
-        if (!got?.access.u) {
-          throw RpcStatus('Unauthorized')
+        const [interpreter] = await stdEdResourceMachine({ by: 'create' })
+        let snap = interpreter.getSnapshot()
+        console.log({ resourceContent })
+        const provideNewResourceEvent: Event = {
+          type: 'provide-new-resource',
+          content:
+            'string' === typeof resourceContent
+              ? { kind: 'link', url: resourceContent }
+              : { kind: 'file', rpcFile: resourceContent, size: resourceContent.size },
         }
-        if (got.entity.published && !uploadedContent) {
-          throw RpcStatus('Precondition Failed')
-        }
-        // shell.log('info', { uploadedContent })
-        if (!uploadedContent) {
-          await delResourceFile(_key)
-          await patchResource(_key, {
-            content: null,
-            published: false,
-          })
+        interpreter.send(provideNewResourceEvent)
+        if (matchState(snap, 'No-Access')) {
+          interpreter.stop()
           return null
         }
-        const storeContentResult = await setResourceContent(_key, uploadedContent)
-        if (!storeContentResult) {
-          throw RpcStatus('Unauthorized')
-        }
-        return storeContentResult.contentUrl
+        interpreter.send('store-new-resource')
+
+        await waitFor(interpreter, nameMatcher(['Unpublished', 'Autogenerating-Meta']))
+        snap = interpreter.getSnapshot()
+
+        interpreter.stop()
+        return { resourceKey: snap.context.doc.id.resourceKey }
       },
       bodyWithFiles: {
         fields: {
           '.content': 1,
         },
-        maxSize: env.resourceUploadMaxSize,
+        maxSize: validationsConfigs.contentMaxUploadSize,
       },
     },
     'webapp/get-resources-count-in-subject/:subjectKey': {
@@ -335,17 +471,16 @@ export const expose = await shell.expose<FullResourceExposeType>({
     [RESOURCE_DOWNLOAD_ENDPOINT]: {
       guard: () => void 0,
       async fn(_, { _key }: { _key: string }) {
-        const resourceLogicalFilename = getResourceLogicalFilename(_key)
-        const fsItem = await resourceFiles.get(resourceLogicalFilename)
+        const fsItem = await getResourceFile(_key)
         if (!fsItem) {
           throw RpcStatus('Not Found')
         }
         const readable = await assertRpcFileReadable(fsItem.rpcFile)
 
         readable.on('end', async () => {
-          const currentSysUser = await getCurrentSystemUser()
-          shell.events.emit('resource:downloaded', { resourceKey: _key, currentSysUser })
-          incrementResourceDownloads({ _key })
+          const userId = await getCurrentEntityUserIdentifier()
+          shell.events.emit('downloaded', { resourceKey: _key, userId })
+          userId && incrementResourceDownloads({ _key })
         })
         return readableRpcFile({ ...fsItem.rpcFile }, () => readable)
       },
@@ -365,6 +500,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           limit,
           text,
           after,
+          filterAs,
         },
       ) {
         const { endCursor, list } = await searchResources({
@@ -372,6 +508,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           sortType,
           text,
           after,
+          strictFilters: filterAs === 'strict',
           filters: [
             ['subject', filterSubjects ? filterSubjects.split('|') : []],
             ['language', filterLanguages ? filterLanguages.split('|') : []],

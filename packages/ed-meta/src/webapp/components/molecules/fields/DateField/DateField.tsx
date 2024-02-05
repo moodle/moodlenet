@@ -15,6 +15,7 @@ export type DateFieldProps = {
   shouldShowErrors: boolean
   editMonth(month: string): void
   editYear(year: string): void
+  disabled?: boolean
 }
 
 export const DateField: FC<DateFieldProps> = ({
@@ -28,6 +29,7 @@ export const DateField: FC<DateFieldProps> = ({
   errorYear,
   editMonth,
   editYear,
+  disabled,
 }) => {
   const months = {
     opts: monthOptions,
@@ -74,7 +76,7 @@ export const DateField: FC<DateFieldProps> = ({
 
   const monthLabel = monthOptions.find(({ value }) => value === month)?.label
   return canEdit ? (
-    <div className="date">
+    <div className={`date-field ${disabled ? 'disabled' : ''}`}>
       <label>Original creation date</label>
       <div className="fields date-field">
         <Dropdown
@@ -86,6 +88,7 @@ export const DateField: FC<DateFieldProps> = ({
           placeholder="Month"
           edit
           noBorder
+          disabled={disabled}
           highlight={shouldShowErrors}
           error={shouldShowErrors && errorMonth}
           position={{ top: 30, bottom: 25 }}
@@ -123,6 +126,7 @@ export const DateField: FC<DateFieldProps> = ({
           placeholder="Year"
           edit
           noBorder
+          disabled={disabled}
           highlight={shouldShowErrors}
           error={shouldShowErrors && errorYear}
           position={{ top: 30, bottom: 25 }}
@@ -148,7 +152,7 @@ export const DateField: FC<DateFieldProps> = ({
       </div>
     </div>
   ) : month || year ? (
-    <div className="detail">
+    <div className={`date-field-read-mode detail ${disabled ? 'disabled' : ''}`}>
       <div className="title">Original creation date</div>
       <abbr className={`value date`} title={`${monthLabel ?? ''} ${year ?? ''}`}>
         {monthLabel && <span>{monthLabel}</span>}

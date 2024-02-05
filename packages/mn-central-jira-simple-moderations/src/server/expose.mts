@@ -56,5 +56,5 @@ async function userRequestState2RpcApprovalRequestState(
       minimumResourceAmount,
     }
   }
-  throw new Error('unreachable')
+  throw new TypeError('never')
 }

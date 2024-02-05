@@ -37,7 +37,7 @@ export const useRecoverPasswordStoryProps = (
   return overrideDeep<RecoverPasswordProps>(
     {
       headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps(
-        MinimalisticAccessButtonsStories.getAccesMinimalisticHeaderItems({
+        MinimalisticAccessButtonsStories.getMinimalisticAccessHeaderItems({
           showLoginButton: true,
           loginHref: href('Pages/Access/Login/Default'),
           showSignupButton: false,

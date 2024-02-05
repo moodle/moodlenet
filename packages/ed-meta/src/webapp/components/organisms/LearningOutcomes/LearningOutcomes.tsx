@@ -15,6 +15,7 @@ export type LearningOutcomesProps = {
   isEditing: boolean
   learningOutcomes: LearningOutcome[]
   learningOutcomeOptions: LearningOutcomeOption[]
+  disabled?: boolean
   error?: string | string[]
   shouldShowErrors: boolean
   edit: (learningOutcomes: LearningOutcome[]) => unknown
@@ -38,6 +39,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   learningOutcomeOptions,
   learningOutcomes,
   isEditing,
+  disabled,
   error,
   shouldShowErrors,
   edit,
@@ -58,6 +60,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
             name="content"
             placeholder={`the necessary facts...`}
             edit
+            disabled={disabled}
             value={sentence}
             onChange={value => {
               const newLearningOutcomes = [...learningOutcomes]
@@ -81,6 +84,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
               <RoundButton
                 onClick={() => deleteOutcome(i)}
                 tabIndex={0}
+                disabled={disabled}
                 abbrTitle={'Remove learning outcome'}
                 onKeyUp={e => e.key === 'enter' && deleteOutcome(i)}
               />
@@ -132,7 +136,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
             }
         ${maxLearningOutcomesReached ? 'max-reached' : ''}`}
             pills={false}
-            disabled={maxLearningOutcomesReached}
+            disabled={maxLearningOutcomesReached || disabled}
             abbr={
               maxLearningOutcomesReached ? 'Max learning outcomes reached' : 'Add learning outcome'
             }
@@ -200,7 +204,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   )
 
   return (
-    <div className="learning-outcomes-section">
+    <div className={`learning-outcomes-section ${disabled ? 'disabled' : ''}`}>
       {title}
       {errorDiv}
       {subtitle}

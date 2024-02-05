@@ -1,4 +1,5 @@
 // import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '@moodlenet/react-app/stories'
+import type { FollowersProps } from '@moodlenet/web-user/ui'
 import { Followers } from '@moodlenet/web-user/ui'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from '../../../components/layout/MainLayout/MainLayout.stories.js'
@@ -25,12 +26,13 @@ type FollowersStory = ComponentStory<typeof Followers>
 // const FollowersStory: ComponentStory<typeof Followers> = args => <Followers {...args} />
 
 export const LoggedIn: FollowersStory = () => {
-  const props = {
+  const props: FollowersProps = {
     mainLayoutProps: MainLayoutLoggedInStoryProps,
     browserProps: useBrowserStoryProps({
-      mainColumnItems: [useBrowserProfileList(false)], //@ETTO Followers check that on this page you only show profiles
+      mainColumnItems: [useBrowserProfileList(false)],
     }),
     profileName: 'Eduard Stromberg',
+    isCreator: false,
   }
   return <Followers {...props} />
 }

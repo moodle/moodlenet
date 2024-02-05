@@ -66,13 +66,13 @@ export const NewResourceProps: Partial<ResourceFormProps> = {
 
 export const New: ResourceStory = () => {
   const props = useResourceStoryProps({
-    data: {
-      image: null,
-    },
+    // data: {
+    //   image: null,
+    // },
     resourceForm: NewResourceProps,
+    startWithoutImage: true,
     state: {
       isPublished: false,
-      // uploadProgress: 74,
     },
     actions: {},
     access: {

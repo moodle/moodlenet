@@ -1,13 +1,20 @@
-.browser-profile-list {
+.browser-profile-list.list-card {
   padding: 24px 24px 66px 24px;
   position: relative;
 
   &.show-all:not(.load-more) {
     padding: 24px;
+    &.no-card {
+      padding: 0;
+    }
   }
 
   &.no-card {
-    padding: 0;
+    padding: 0 0 66px 0;
+    > .list-card-footer {
+      border-bottom: 1px solid rgb(0 0 0 / 8%);
+      margin-left: 0;
+    }
   }
 
   > .list-card-footer {

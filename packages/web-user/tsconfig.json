@@ -9,6 +9,7 @@
     { "path": "../component-library" },
     { "path": "../system-entities" },
     { "path": "../core" },
+    { "path": "../core-domain" },
     { "path": "../http-server" },
     { "path": "../react-app" },
     { "path": "../crypto" },
@@ -16,6 +17,9 @@
     { "path": "../ed-resource" },
     { "path": "../ed-meta" },
     { "path": "../simple-file-store" },
-    { "path": "../key-value-store" }
+    { "path": "../key-value-store" },
+    {
+      "path": "../core-domain"
+    }
   ]
 }

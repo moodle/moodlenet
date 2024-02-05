@@ -23,11 +23,26 @@
       text-align: center;
       font-size: 13px;
 
-      > abbr > svg {
-        height: 0.8em;
-        width: 0.8em;
-        color: #b6b6b6;
+      > .title-icon {
+        height: 19px;
+        width: 19px;
         margin-bottom: 5px;
+        > svg {
+          color: #b6b6b6;
+          height: 100%;
+          width: 100%;
+        }
+        > svg > g > path {
+          fill: #b6b6b6;
+        }
+        &.leaves > svg {
+          height: 17px;
+          width: 17px;
+        }
+        &.followers > svg {
+          height: 18px;
+          width: 18px;
+        }
       }
 
       > span {
