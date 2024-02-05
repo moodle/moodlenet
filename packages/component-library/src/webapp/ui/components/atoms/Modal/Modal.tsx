@@ -13,6 +13,7 @@ export type ModalProps = {
   className?: string
   closeButton?: boolean
   children?: ReactNode
+  contentRef?: React.RefObject<HTMLDivElement>
   onClose?: () => void
 }
 
@@ -26,6 +27,7 @@ export const Modal: React.FC<ModalProps> = ({
   className,
   closeButton,
   children,
+  contentRef,
 }) => {
   const handleonClose = useCallback(
     (event: React.MouseEvent) => {
@@ -54,7 +56,7 @@ export const Modal: React.FC<ModalProps> = ({
         >
           {(title || closeButton) && (
             <div className="modal-header">
-              {title && <div className="title">{title}</div>}
+              {<div className="title">{title ?? ''}</div>}
               {closeButton && (
                 <div className="close-button" onClick={handleonClose}>
                   <CloseRoundedIcon />
@@ -62,7 +64,11 @@ export const Modal: React.FC<ModalProps> = ({
               )}
             </div>
           )}
-          {children && <div className="content">{children}</div>}
+          {children && (
+            <div className="content" ref={contentRef}>
+              {children}
+            </div>
+          )}
           {actions && <div className="actions">{actions}</div>}
         </Card>
       </div>

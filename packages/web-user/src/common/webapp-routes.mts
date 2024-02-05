@@ -1,12 +1,14 @@
 import { compile, match, webSlug } from '@moodlenet/react-app/common'
-
+export const SESSION_CHANGE_REDIRECT_Q_NAME = 'redirectTo'
 export const PROFILE_HOME_PAGE_ROUTE_PATH = '/profile/:key/:slug'
-export const FOLLOWING_PAGE_ROUTE_PATH = '/following'
 export const BOOKMARKS_PAGE_ROUTE_PATH = '/bookmarks'
 export const SETTINGS_PAGE_ROUTE_PATH = '/settings'
 export const LOGIN_PAGE_ROUTE_BASE_PATH = '/login'
 export const SIGNUP_PAGE_ROUTE_BASE_PATH = '/signup'
 export const LOGIN_ROOT_PAGE_ROUTE_SUB_PATH = 'root'
+export const USER_AGREEMENTS_PAGE_PATH = '/static/user-agreements'
+export const DELETE_ACCOUNT_SUCCESS_PAGE_PATH = '/static/deleted-account-success'
+
 type KeySlugParams = { key: string; slug: string }
 
 export const profileHomePageRoutePath = compile<KeySlugParams>(PROFILE_HOME_PAGE_ROUTE_PATH)
@@ -27,6 +29,7 @@ export function matchProfileHomePageRoutePath(path: string) {
   return _matchProfileHomePageRoutePath(path) || null
 }
 
+// FOLLOWERS PAGE
 export const PROFILE_FOLLOWERS_PAGE_ROUTE_PATH = `${PROFILE_HOME_PAGE_ROUTE_PATH}/followers`
 export const profileFollowersRoutePath = compile<KeySlugParams>(PROFILE_FOLLOWERS_PAGE_ROUTE_PATH)
 const _matchProfileFollowersHomePageRoutePath = match<KeySlugParams>(
@@ -49,4 +52,29 @@ export function getProfileFollowersRoutePath({
 const _matchFollowersRoutePath = match<KeySlugParams>(PROFILE_FOLLOWERS_PAGE_ROUTE_PATH)
 export function matchFollowersRoutePath(path: string) {
   return _matchFollowersRoutePath(path) || null
+}
+
+// FOLLOWING PAGE
+export const PROFILE_FOLLOWING_PAGE_ROUTE_PATH = `${PROFILE_HOME_PAGE_ROUTE_PATH}/following`
+export const profileFollowingRoutePath = compile<KeySlugParams>(PROFILE_FOLLOWING_PAGE_ROUTE_PATH)
+const _matchProfileFollowingHomePageRoutePath = match<KeySlugParams>(
+  PROFILE_FOLLOWING_PAGE_ROUTE_PATH,
+)
+export function matchProfileFollowingHomePageRoutePath(path: string) {
+  return _matchProfileFollowingHomePageRoutePath(path) || null
+}
+export function getProfileFollowingRoutePath({
+  key,
+  displayName,
+}: {
+  key: string
+  displayName: string
+}) {
+  const slug = webSlug(displayName)
+  return profileFollowingRoutePath({ key, slug })
+}
+
+const _matchFollowingRoutePath = match<KeySlugParams>(PROFILE_FOLLOWING_PAGE_ROUTE_PATH)
+export function matchFOLLOWINGRoutePath(path: string) {
+  return _matchFollowingRoutePath(path) || null
 }

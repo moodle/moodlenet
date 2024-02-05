@@ -55,8 +55,7 @@ export type MainResourceCardSlots = {
 export type ValidForms = {
   isDraftFormValid: boolean
   isPublishedFormValid: boolean
-  isPublishedContentValid: boolean
-  isDraftContentValid: boolean
+  isContentValid: boolean
   isImageValid: boolean
 }
 
@@ -66,7 +65,7 @@ export type MainResourceCardProps = {
   data: ResourceDataProps
   edMetaOptions: EdMetaOptionsProps
   form: FormikHandle<ResourceFormProps>
-  contentForm: FormikHandle<{ content: File | string | undefined | null }>
+  contentForm: FormikHandle<{ content: File | string }>
   imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
   learningOutcomeOptions: LearningOutcomeOption[]
 
@@ -84,6 +83,8 @@ export type MainResourceCardProps = {
 
   emptyOnStart: boolean
   setEmptyOnStart: React.Dispatch<React.SetStateAction<boolean>>
+  disableFields: boolean
+  hasAllData: boolean
 
   areFormsValid: ValidForms
   shouldShowErrors: boolean
@@ -116,6 +117,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   emptyOnStart,
   setEmptyOnStart,
+  disableFields,
+  hasAllData,
 
   areFormsValid,
   setShouldShowErrors,
@@ -138,19 +141,12 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
   const { subjectOptions } = edMetaOptions
 
-  const { isPublished, uploadProgress } = state
+  const { isPublished, autofillState /* , uploadProgress */ } = state
 
   const { deleteResource } = actions
-
   const { canEdit, canPublish, canDelete } = access
 
-  const {
-    isDraftFormValid,
-    isPublishedFormValid,
-    isPublishedContentValid,
-    isDraftContentValid,
-    isImageValid,
-  } = areFormsValid
+  const { isDraftFormValid, isPublishedFormValid, isContentValid, isImageValid } = areFormsValid
 
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
@@ -160,7 +156,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
 
   const isFormValid = isPublished ? isPublishedFormValid : isDraftFormValid
-  const isContentValid = isPublished ? isPublishedContentValid : isDraftContentValid
 
   useEffect(() => {
     setCurrentContentUrl(contentUrl)
@@ -207,7 +202,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   const [isHandlingSaving, setIsHandlingSaving] = useState<boolean>(false)
 
   const handleOnSaveClick = () => {
-    if (!form.dirty && !imageForm.dirty && !contentForm.dirty) {
+    if (autofillState !== 'ai-completed' && !form.dirty && !imageForm.dirty && !contentForm.dirty) {
       setIsEditing(false)
       return
     }
@@ -224,8 +219,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       setShowSaveError(true)
       return
     }
-
-    if (form.dirty) {
+    if (form.dirty || autofillState === 'ai-completed') {
       form_submitForm()
     }
 
@@ -240,6 +234,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     setIsEditing(false)
     setEmptyOnStart(false)
   }, [
+    autofillState,
     contentForm.dirty,
     contentForm.values.content,
     contentForm_submitForm,
@@ -279,6 +274,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       key="title"
       className="title"
       isTextarea
+      disabled={disableFields}
       edit={isEditing}
       value={form.values.title}
       placeholder="Title"
@@ -365,11 +361,16 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       : null
 
   const publishCheckButton: FloatingMenuContentItem | null =
-    isEditing && canPublish && !isPublished
+    // isEditing && canPublish && !isPublished
+    isEditing && canPublish && !isPublished && (hasAllData || disableFields)
       ? {
           Element: (
-            <div key="publish-button" onClick={publishCheck}>
-              <Check style={{ fill: '#00bd7e' }} />
+            <div
+              className={`publish-check-button ${disableFields ? 'disabled' : ''}`}
+              key="publish-check-button"
+              onClick={publishCheck}
+            >
+              <Check />
               Publish check
             </div>
           ),
@@ -466,32 +467,35 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ) : // )
     null
 
-  const editSaveButton = canEdit
-    ? {
-        Item: () => (
-          <div className="edit-save">
-            {isEditing && (
-              <PrimaryButton
-                className={`save-button`}
-                color="green"
-                onClick={handleOnSaveClick}
-                disabled={empty && emptyOnStart}
-              >
-                <div className="label">
-                  <Save />
-                </div>
-              </PrimaryButton>
-            )}
-            {!isEditing && (
-              <SecondaryButton className="edit-button" onClick={handleOnEditClick} color="orange">
-                <Edit />
-              </SecondaryButton>
-            )}
-          </div>
-        ),
-        key: 'edit-save-button',
-      }
-    : null
+  const disableSaveButton = (empty && emptyOnStart) || autofillState === 'ai-generation'
+
+  const editSaveButton =
+    canEdit && !isPublished
+      ? {
+          Item: () => (
+            <div className="edit-save">
+              {isEditing && (
+                <PrimaryButton
+                  className={`save-button`}
+                  color="green"
+                  onClick={handleOnSaveClick}
+                  disabled={disableSaveButton}
+                >
+                  <div className="label">
+                    <Save />
+                  </div>
+                </PrimaryButton>
+              )}
+              {!isEditing && (
+                <SecondaryButton className="edit-button" onClick={handleOnEditClick} color="orange">
+                  <Edit />
+                </SecondaryButton>
+              )}
+            </div>
+          ),
+          key: 'edit-save-button',
+        }
+      : null
 
   const updatedTopRightHeaderItems = [
     publishedButton,
@@ -542,10 +546,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       imageForm={imageForm}
       uploadOptionsItems={uploadOptionsItems}
       fileMaxSize={fileMaxSize}
-      downloadFilename={downloadFilename}
-      uploadProgress={uploadProgress}
       shouldShowErrors={shouldShowErrors}
-      contentType={contentType}
+      actions={actions}
+      data={data}
+      state={state}
       key="resource-uploader"
     />
   )
@@ -567,6 +571,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
       className="description"
       name="description"
       key="description"
+      disabled={disableFields}
       isTextarea
       textAreaAutoSize
       noBorder
@@ -605,6 +610,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         learningOutcomeOptions={learningOutcomeOptions}
         learningOutcomes={form.values.learningOutcomes}
         isEditing={isEditing}
+        disabled={disableFields}
         error={
           shouldShowErrors && isEditing && typeof outcomeErrors === 'string'
             ? outcomeErrors

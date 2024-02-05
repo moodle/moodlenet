@@ -23,7 +23,7 @@ export const useNewPasswordStoryProps = (
   return overrideDeep<NewPasswordProps>(
     {
       headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps(
-        MinimalisticAccessButtonsStories.getAccesMinimalisticHeaderItems({
+        MinimalisticAccessButtonsStories.getMinimalisticAccessHeaderItems({
           showLoginButton: false,
           loginHref: href('Pages/Access/Login/Default'),
           showSignupButton: false,

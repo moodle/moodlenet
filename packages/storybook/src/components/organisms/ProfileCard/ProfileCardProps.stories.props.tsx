@@ -9,6 +9,8 @@ import type { ProfileCardProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { PartialDeep } from 'type-fest'
 
+const pointsArray = [14, 74, 249, 499, 1499, 4999, 14999, 49999, 99999, 100000]
+
 export const getProfileCardFactory = (
   profileFactory?: PeopleFactory,
   overrides?: PartialDeep<ProfileCardProps>,
@@ -25,12 +27,14 @@ export const getProfileCardFactory = (
         avatarUrl: profile?.avatarUrl,
         profileHref: href('Pages/Profile/Logged In'),
         displayName: profile?.displayName ?? '',
+        points: pointsArray[Math.floor(Math.random() * pointsArray.length)] ?? 0,
       },
       state: {
         profileUrl: 'https://moodle.net/profile',
         followed: false,
         numFollowers: 13,
         isPublisher: true,
+        showAccountApprovedSuccessAlert: false,
       },
       actions: {
         editProfile: action('edit profile'),
@@ -38,6 +42,8 @@ export const getProfileCardFactory = (
         toggleFollow: action('toogleFollow'),
         setAvatar: action('set avatar image'),
         setBackground: action('set background image'),
+        approveUser: action('approve user'),
+        unapproveUser: action('unapprove user'),
       },
       access: {
         isAdmin: false,
@@ -45,6 +51,8 @@ export const getProfileCardFactory = (
         isCreator: false,
         isAuthenticated: true,
         canFollow: true,
+        canApprove: true,
+        isPublisher: true,
       },
     },
     { ...overrides },

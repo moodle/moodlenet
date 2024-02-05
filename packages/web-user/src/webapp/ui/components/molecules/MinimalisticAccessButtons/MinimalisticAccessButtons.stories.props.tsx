@@ -6,7 +6,7 @@ import type { ReactElement } from 'react'
 import { LoginButtonMini, SignupButtonMini } from './MinimalisticAccessButtons.js'
 import './MinimalisticAccessButtons.scss'
 
-export type MinimalisticHeaderProps = {
+export type MinimalisticAccessHeaderProps = {
   showLoginButton: boolean
   showSignupButton: boolean
   showLearnMoreButton: boolean
@@ -19,8 +19,8 @@ export type MinimalisticSlots = {
   rightItems: AddonItem[]
 }
 
-export const getAccesMinimalisticHeaderItems = (
-  props: MinimalisticHeaderProps,
+export const getMinimalisticAccessHeaderItems = (
+  props: MinimalisticAccessHeaderProps,
 ): MinimalisticSlots => {
   const { showLearnMoreButton, showLoginButton, showSignupButton, loginHref, signupHref } = props
 

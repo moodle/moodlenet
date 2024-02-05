@@ -1,4 +1,5 @@
 // import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '@moodlenet/react-app/stories'
+import type { FollowingProps } from '@moodlenet/web-user/ui'
 import { Following } from '@moodlenet/web-user/ui'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from '../../../components/layout/MainLayout/MainLayout.stories.js'
@@ -27,15 +28,17 @@ type FollowingStory = ComponentStory<typeof Following>
 // const FollowingStory: ComponentStory<typeof Following> = args => <Following {...args} />
 
 export const LoggedIn: FollowingStory = () => {
-  const props = {
+  const props: FollowingProps = {
     mainLayoutProps: MainLayoutLoggedInStoryProps,
     browserProps: useBrowserStoryProps({
       mainColumnItems: [
         useBrowserSubjectList(),
         useBrowserProfileList(),
         useBrowserCollectionList(),
-      ], //@ETTO Following check that on this page you only show the profiles and collection, on that order, with profiles first
+      ],
     }),
+    profileName: 'Janine Buvette',
+    isCreator: false,
   }
   return <Following {...props} />
 }

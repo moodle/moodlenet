@@ -20,7 +20,7 @@ export const ProfileCardPlugins = createPlugin<
 
 export const useProfileCardProps = (profileKey: string): ProfileCardProps | null => {
   const plugins = ProfileCardPlugins.usePluginHooks({ profileKey })
-  const profileProps = useProfileProps({ profileKey })
+  const profileProps = useProfileProps({ profileKey, ownContributionListLimit: 0 })
 
   if (!profileProps) {
     return null

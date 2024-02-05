@@ -314,7 +314,7 @@ export async function userSendsMessageToWebUser({
   title,
   message,
   toWebUser,
-}: WebUserEvents['send-message-to-web-user']) {
+}: WebUserEvents['request-send-message-to-web-user']) {
   const messageBody = message.html || message.text
   await sendMessageToWebUser({
     subject,

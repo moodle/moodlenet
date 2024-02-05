@@ -4,7 +4,7 @@ import { Profile } from '../../../ui/exports/ui.mjs'
 import { useProfileProps } from './ProfileHooks.js'
 
 export const ProfileContainer: FC<{ profileKey: string }> = ({ profileKey }) => {
-  const profileProps = useProfileProps({ profileKey })
+  const profileProps = useProfileProps({ profileKey, ownContributionListLimit: 300 })
   if (profileProps === null) {
     return <FallbackContainer />
   } else if (profileProps === undefined) return null

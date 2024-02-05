@@ -6,6 +6,7 @@ import {
   useMinimalisticHeaderProps,
 } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
+import { SIGNUP_PAGE_ROUTE_BASE_PATH } from '../../../../common/webapp-routes.mjs'
 import type { LoginItem, LoginProps } from '../../../ui/exports/ui.mjs'
 // import { useFooterProps } from '../../../organisms/Footer/MainFooter/MainFooterHooks.mjs'
 // import { useMinimalisticHeaderProps } from '../../../organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
@@ -25,7 +26,7 @@ export const useLoginProps = (): LoginProps => {
       headerProps,
       footerProps,
       loginItems: plugins.getKeyedAddons('loginMethod'),
-      signupHref: href('/signup'),
+      signupHref: href(SIGNUP_PAGE_ROUTE_BASE_PATH),
     }
     return loginProps
   }, [headerProps, footerProps, plugins])

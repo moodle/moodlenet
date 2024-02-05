@@ -18,7 +18,7 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import type { AddonItem } from '@moodlenet/component-library'
 import { Card, getThumbnailFromUrl, isEllipsisActive } from '@moodlenet/component-library'
 import { getBackupImage, Link, withProxy } from '@moodlenet/react-app/ui'
-import { Public, PublicOff } from '@mui/icons-material'
+import { Bolt, Public, PublicOff } from '@mui/icons-material'
 import { useEffect, useRef, useState } from 'react'
 import type {
   ResourceCardAccess,
@@ -27,6 +27,7 @@ import type {
   ResourceCardState,
 } from '../../../../common/types.mjs'
 import { getResourceTypeInfo } from '../../../../common/types.mjs'
+// import { ReactComponent as ExtractInfoIcon } from '../../../assets/icons/extract-info.svg'
 import './ResourceCard.scss'
 
 export type ResourceCardProps = ResourceCardPropsData & ResourceCardPropsUI
@@ -76,13 +77,7 @@ export const ResourceCard = withProxy<ResourceCardProps>(
       contentType,
       downloadFilename,
     } = data
-    const {
-      // liked,
-      // bookmarked,
-      isPublished,
-      // isSelected,
-      // selectionMode,
-    } = state
+    const { isPublished, autofillState } = state
     const {
       canPublish,
       // canLike,
@@ -108,13 +103,15 @@ export const ResourceCard = withProxy<ResourceCardProps>(
     if (orientation === 'horizontal') {
       background = {
         background:
-          'url("' + (thumbnail ? thumbnail : imageUrl ? imageUrl : getBackupImage(id)) + '")',
+          'url("' +
+          (thumbnail ? thumbnail : imageUrl ? imageUrl : getBackupImage(id ?? '0')) +
+          '")',
       }
     } else {
       background = {
         background:
           'linear-gradient(0deg, rgba(0, 0, 0, 0.91) 0%, rgba(0, 0, 0, 0.1729) 45.15%, rgba(0, 0, 0, 0) 100%), url(' +
-          (thumbnail ? thumbnail : imageUrl ? imageUrl : getBackupImage(id)) +
+          (thumbnail ? thumbnail : imageUrl ? imageUrl : getBackupImage(id ?? '0')) +
           ')',
       }
     }
@@ -168,6 +165,26 @@ export const ResourceCard = withProxy<ResourceCardProps>(
       (item): item is AddonItem | JSX.Element => !!item,
     )
 
+    const autofillingState =
+      /*  autofillState === 'extracting-info' ? (
+        <abbr
+          className="extracting-info"
+          title={`Extracting info from ${
+            contentType === 'file'
+              ? downloadFilename
+                ? downloadFilename.split('.').pop()
+                : 'file'
+              : 'link'
+          }`}
+        >
+          <ExtractInfoIcon />
+        </abbr>
+      ) :  */ autofillState === 'ai-generation' ? (
+        <abbr className="ai-generation" title={`Autofilling with AI`}>
+          <Bolt />
+        </abbr>
+      ) : null
+
     const publishState = canPublish ? (
       isPublished ? (
         <abbr
@@ -190,7 +207,7 @@ export const ResourceCard = withProxy<ResourceCardProps>(
       )
     ) : null
 
-    const updatedTopRightItems = [publishState, ...(topRightItems ?? [])].filter(
+    const updatedTopRightItems = [autofillingState, publishState, ...(topRightItems ?? [])].filter(
       (item): item is AddonItem | JSX.Element => !!item,
     )
 

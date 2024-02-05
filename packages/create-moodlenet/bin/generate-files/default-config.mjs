@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto'
 import { writeFile } from 'fs/promises'
 import { resolve } from 'path'
 import { crypto, devInstallLocalRepoSymlinks, installDir, npmRegistry } from '../env.mjs'
@@ -50,7 +51,7 @@ async function defaultConfigJson() {
         },
       },
       '@moodlenet/system-entities': {
-        rootPassword: devInstallLocalRepoSymlinks ? 'root' : Math.random().toString(36).slice(2),
+        rootPassword: devInstallLocalRepoSymlinks ? 'root' : randomBytes(16).toString('base64url'),
       },
       '@moodlenet/react-app': {
         defaultImageUploadMaxSize: '3MB',

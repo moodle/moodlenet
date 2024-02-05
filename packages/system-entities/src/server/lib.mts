@@ -33,6 +33,7 @@ import type {
   EntityCollectionHandles,
   EntityDocFullData,
   EntityDocument,
+  EntityFullDocument,
   EntityMetadata,
   PkgUser,
   RootUser,
@@ -204,19 +205,49 @@ export async function patchEntity<
   const matchRevFilter = opts?.matchRev
     ? `${currentEntityVar}._rev == ${toaql(opts.matchRev)} && `
     : ''
+  const now = shell.now().toISOString()
   const patchCursor = await accessEntities(entityClass, 'u', {
     ...opts,
     preAccessBody: `${opts?.preAccessBody ?? ''} 
     FILTER ${matchRevFilter} ${currentEntityVar}._key == ${toaql(key)} LIMIT 1`,
     postAccessBody: `${opts?.postAccessBody ?? ''} 
-    UPDATE ${currentEntityVar} WITH UNSET(${aqlPatchVar}, '_meta') IN @@collection`,
-    project: { patched: 'NEW' as AqlVal<EntityDocument<EntityDataType>> },
+    let mergedPatch = MERGE_RECURSIVE(
+        ${currentEntityVar}, 
+        UNSET(${aqlPatchVar}, '_meta'), 
+        { 
+          _meta: { 
+            updated: ${toaql(now)} 
+          } 
+        } 
+      )
+
+    let noChanges = MATCHES( 
+      UNSET( mergedPatch, '_meta' ,'_rev' ), 
+      UNSET( ${currentEntityVar}, '_meta' ,'_rev' )
+    )
+    
+    LET patch = noChanges ? {} : mergedPatch
+
+    UPDATE ${currentEntityVar} WITH patch IN @@collection
+    `,
+    project: {
+      patched: 'NEW' as AqlVal<EntityFullDocument<EntityDataType>>,
+      old: 'OLD' as AqlVal<EntityFullDocument<EntityDataType>>,
+      noChanges: 'noChanges' as AqlVal<boolean>,
+      // ...(opts?.project ?? {}),
+    },
   })
+
   const patchRecord = await patchCursor.next()
   if (!patchRecord) {
     return
   }
-  return { patched: patchRecord.patched, old: patchRecord.entity }
+  return {
+    patched: patchRecord.patched,
+    old: patchRecord.old,
+    noChanges: patchRecord.noChanges,
+    changed: !patchRecord.noChanges,
+  }
 }
 
 /* export async function patchEntity<EntityDataType extends SomeEntityDataType>(
@@ -728,12 +759,20 @@ export async function matchRootPassword(matchPassword: string): Promise<boolean>
 }
 
 export async function setPkgCurrentUser() {
+  const currentPkgUser: PkgUser = await getPkgCurrentUser()
+  shell.myAsyncCtx.set(() => ({ type: 'CurrentUserFetchedCtx', currentUser: currentPkgUser }))
+  return currentPkgUser
+}
+export async function setCurrentSystemUser(currentUser: SystemUser) {
+  shell.myAsyncCtx.set(() => ({ type: 'CurrentUserFetchedCtx', currentUser }))
+}
+
+export async function getPkgCurrentUser() {
   const { pkgId } = shell.assertCallInitiator()
   const currentPkgUser: PkgUser = {
     type: 'pkg',
     pkgName: pkgId.name,
   }
-  shell.myAsyncCtx.set(() => ({ type: 'CurrentUserFetchedCtx', currentUser: currentPkgUser }))
   return currentPkgUser
 }
 
@@ -741,7 +780,23 @@ export function registerEntityInfoProvider(providerItem: EntityInfoProviderItem)
   ENTITY_INFO_PROVIDERS.push({ providerItem })
 }
 
-const createEntityKey = customAlphabet(
+export const createEntityKey = customAlphabet(
   `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`,
   8,
 )
+
+export function getEntityDoc<DataType extends SomeEntityDataType>(
+  fullEntityDoc: EntityFullDocument<DataType>,
+): EntityDocument<DataType> {
+  const { _meta: _1, ...doc } = fullEntityDoc
+  return doc as any as EntityDocument<DataType>
+}
+
+export async function getCurrentEntityUserIdentifier() {
+  const sysUser = await getCurrentSystemUser()
+  return getEntityUserIdentifier(sysUser)
+}
+
+export async function getEntityUserIdentifier(sysUser: SystemUser) {
+  return sysUser.type === 'entity' ? sysUser.entityIdentifier : null
+}

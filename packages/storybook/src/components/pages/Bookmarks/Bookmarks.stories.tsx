@@ -29,7 +29,7 @@ export const LoggedIn: BookmarksStory = () => {
   const props = {
     mainLayoutProps: MainLayoutLoggedInStoryProps,
     browserProps: useBrowserStoryProps({
-      mainColumnItems: [useBrowserResourceList(), useBrowserCollectionList()], //@ETTO Bookmarks check that on this page you only show the resources and collection
+      mainColumnItems: [useBrowserResourceList(), useBrowserCollectionList()],
     }),
   }
   return <Bookmarks {...props} />

@@ -1,4 +1,5 @@
 import { proxyWith } from '@moodlenet/react-app/ui'
+import { silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useEffect, useMemo, useState } from 'react'
 import type { BrowserProfileListDataProps } from '../../../ui/exports/ui.mjs'
 import { useProfileCardProps } from '../../organisms/ProfileCardHooks.js'
@@ -17,8 +18,14 @@ export function useProfileFollowersBrowserProfileListDataProps({
     shell.rpc
       .me(
         'webapp/feature-entity/profiles/:feature(follow|like)/:entityType(profile|collection|resource|subject)/:_key',
-      )(undefined, { feature: 'follow', entityType: 'profile', _key: profileKey }, { limit: 100 })
+        { rpcId: `FollowersBrowserProfileListDataProps#${profileKey}` },
+      )(
+        undefined,
+        { feature: 'follow', entityType: 'profile', _key: profileKey },
+        { mode: 'reverse', limit: 100 },
+      )
       .then(setResult)
+      .catch(silentCatchAbort)
   }, [profileKey])
   const profilesCardPropsList = useMemo<BrowserProfileListDataProps['profilesCardPropsList']>(
     () =>

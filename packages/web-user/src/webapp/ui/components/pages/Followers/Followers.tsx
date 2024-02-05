@@ -6,12 +6,22 @@ export type FollowersProps = {
   mainLayoutProps: MainLayoutProps
   browserProps: BrowserPropsData
   profileName: string
+  isCreator: boolean
 }
-export const Followers: FC<FollowersProps> = ({ mainLayoutProps, browserProps, profileName }) => {
+export const Followers: FC<FollowersProps> = ({
+  mainLayoutProps,
+  browserProps,
+  profileName,
+  isCreator,
+}) => {
   return (
     <MainLayout {...mainLayoutProps}>
       <div className="followers">
-        <Browser {...browserProps} title={`${profileName}${`'s followers`}`} showFilters={false} />
+        <Browser
+          {...browserProps}
+          title={isCreator ? `My followers` : `${profileName}${`'s followers`}`}
+          showFilters={false}
+        />
       </div>
     </MainLayout>
   )
