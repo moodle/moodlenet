@@ -119,7 +119,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
       </>
     ) : null
 
-  const clearFilters = () => {
+  const resetFilters = () => {
     setCurrentMainFilter(undefined)
     setCurrentFilters([])
     mainColumnItems?.map((e, eIdx) => {
@@ -132,8 +132,8 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
     })
   }
 
-  const clearFiltersButton = currentMainFilter && (
-    <SecondaryButton className="clear-filters-button" abbr="Clear filters" onClick={clearFilters}>
+  const resetFiltersButton = currentMainFilter && (
+    <SecondaryButton className="reset-filters-button" abbr="Reset filters" onClick={resetFilters}>
       <FilterAltOff />
     </SecondaryButton>
   )
@@ -173,7 +173,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
               {filterByItemType.filter(e => !!e)}
               {extraFilters && <div className="separator" />}
               {extraFilters}
-              {clearFiltersButton}
+              {resetFiltersButton}
             </>
           </div>
         </div>
