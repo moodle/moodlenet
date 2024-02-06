@@ -616,17 +616,7 @@ export async function sendMessageToProfile({
 
 export async function getProfileOwnKnownEntities<
   KT extends Exclude<KnownEntityType, 'profile' | 'subject'>,
->({
-  profileKey,
-  knownEntity,
-  limit,
-  sort,
-}: {
-  profileKey: string
-  knownEntity: KT
-  limit?: number
-  sort?: string
-}) {
+>({ profileKey, knownEntity, limit }: { profileKey: string; knownEntity: KT; limit?: number }) {
   const { entityIdentifier: profileIdentifier } = WebUserEntitiesTools.getIdentifiersByKey({
     _key: profileKey,
     type: 'Profile',
@@ -649,7 +639,7 @@ export async function getProfileOwnKnownEntities<
   const list = await (
     await shell.call(queryEntities)(entityClass, {
       limit,
-      sort: sort || `${currentEntityVar}._meta.created DESC`,
+      sort: `${currentEntityVar}._meta.created DESC`,
       preAccessBody: `FILTER ${isCreatorOfCurrentEntity(toaql(profileIdentifier))}`,
     })
   ).all()

@@ -1,7 +1,9 @@
 import type { TextOptionProps } from '@moodlenet/component-library'
+import { SecondaryButton } from '@moodlenet/component-library'
 import { DropdownFilterField } from '@moodlenet/ed-meta/ui'
-import type { FilterElement } from '@moodlenet/react-app/ui'
+import type { SortType } from '@moodlenet/react-app/ui'
 import { SortBy } from '@moodlenet/react-app/ui'
+import { FilterAltOff } from '@mui/icons-material'
 
 export type SortFilterElement = {
   Item: JSX.Element
@@ -12,18 +14,9 @@ export const SortByItem = ({
   selected,
   setSelected,
 }: {
-  selected: string[]
-  setSelected: (e: string[]) => void
-}): FilterElement => {
-  return {
-    filterItem: {
-      Item: () => <SortBy selected={selected} setSelected={setSelected} />,
-      key: 'sort-by',
-    },
-    selected: selected,
-    setSelected: setSelected,
-  }
-}
+  selected: SortType
+  setSelected: (e: SortType) => void
+}) => <SortBy selected={selected} setSelected={setSelected} />
 
 export const SortByLanguageItem = ({
   selected,
@@ -33,21 +26,14 @@ export const SortByLanguageItem = ({
   selected: string[]
   setSelected: (e: string[]) => void
   options: TextOptionProps[]
-}): FilterElement => ({
-  filterItem: {
-    Item: () => (
-      <DropdownFilterField
-        title={'Language'}
-        selected={selected}
-        setSelected={setSelected}
-        options={options}
-      />
-    ),
-    key: 'sort-by-language',
-  },
-  selected: selected,
-  setSelected: setSelected,
-})
+}) => (
+  <DropdownFilterField
+    title={'Language'}
+    selected={selected}
+    setSelected={setSelected}
+    options={options}
+  />
+)
 
 export const SortByLicenseItem = ({
   selected,
@@ -57,21 +43,14 @@ export const SortByLicenseItem = ({
   selected: string[]
   setSelected: (e: string[]) => void
   options: TextOptionProps[]
-}): FilterElement => ({
-  filterItem: {
-    Item: () => (
-      <DropdownFilterField
-        title={'License'}
-        selected={selected}
-        setSelected={setSelected}
-        options={options}
-      />
-    ),
-    key: 'sort-by-license',
-  },
-  selected: selected,
-  setSelected: setSelected,
-})
+}) => (
+  <DropdownFilterField
+    title={'License'}
+    selected={selected}
+    setSelected={setSelected}
+    options={options}
+  />
+)
 
 export const SortByLevelItem = ({
   selected,
@@ -81,21 +60,14 @@ export const SortByLevelItem = ({
   selected: string[]
   setSelected: (e: string[]) => void
   options: TextOptionProps[]
-}): FilterElement => ({
-  filterItem: {
-    Item: () => (
-      <DropdownFilterField
-        title={'Level'}
-        selected={selected}
-        setSelected={setSelected}
-        options={options}
-      />
-    ),
-    key: 'sort-by-level',
-  },
-  selected: selected,
-  setSelected: setSelected,
-})
+}) => (
+  <DropdownFilterField
+    title={'Level'}
+    selected={selected}
+    setSelected={setSelected}
+    options={options}
+  />
+)
 
 export const SortByTypeItem = ({
   selected,
@@ -105,21 +77,14 @@ export const SortByTypeItem = ({
   selected: string[]
   setSelected: (e: string[]) => void
   options: TextOptionProps[]
-}): FilterElement => ({
-  filterItem: {
-    Item: () => (
-      <DropdownFilterField
-        title={'Type'}
-        selected={selected}
-        setSelected={setSelected}
-        options={options}
-      />
-    ),
-    key: 'sort-by-type',
-  },
-  selected: selected,
-  setSelected: setSelected,
-})
+}) => (
+  <DropdownFilterField
+    title={'Type'}
+    selected={selected}
+    setSelected={setSelected}
+    options={options}
+  />
+)
 
 export const SortBySubjectItem = ({
   selected,
@@ -129,21 +94,20 @@ export const SortBySubjectItem = ({
   selected: string[]
   setSelected: (e: string[]) => void
   options: TextOptionProps[]
-}): FilterElement => ({
-  filterItem: {
-    Item: () => (
-      <DropdownFilterField
-        title={'Subject'}
-        selected={selected}
-        setSelected={setSelected}
-        options={options}
-      />
-    ),
-    key: 'sort-by-subject',
-  },
-  selected: selected,
-  setSelected: setSelected,
-})
+}) => (
+  <DropdownFilterField
+    title={'Subject'}
+    selected={selected}
+    setSelected={setSelected}
+    options={options}
+  />
+)
+
+export const ResetFiltersButton = ({ resetFilters }: { resetFilters(): void }) => (
+  <SecondaryButton className="reset-filters-button" abbr="Reset filters" onClick={resetFilters}>
+    <FilterAltOff />
+  </SecondaryButton>
+)
 
 export const BrowserResourceFilters = {
   SortByItem,
@@ -152,4 +116,5 @@ export const BrowserResourceFilters = {
   SortByLevelItem,
   SortByTypeItem,
   SortBySubjectItem,
+  ResetFiltersButton,
 }

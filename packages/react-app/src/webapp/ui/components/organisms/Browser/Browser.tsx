@@ -1,6 +1,5 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import { SecondaryButton, SimpleDropdown, sortAddonItems } from '@moodlenet/component-library'
-import { FilterAltOff } from '@mui/icons-material'
 import type { ComponentType, FC } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './Browser.scss'
@@ -11,16 +10,10 @@ export type BrowserMainColumnItemBase = {
   showHeader?: boolean
 }
 
-export type FilterElement = {
-  filterItem: AddonItem
-  selected: string[]
-  setSelected: (e: string[]) => void
-}
-
 export type MainColumItem = Omit<AddonItem, 'Item'> & {
   Item: ComponentType<BrowserMainColumnItemBase>
   name: string
-  filters: FilterElement[]
+  filters: AddonItem[]
   // numElements: number // the amount of elements in the Item list
 }
 
@@ -38,8 +31,7 @@ export type BrowserPropsUI = {
 export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters }) => {
   const mainColumnRef = useRef<HTMLDivElement>(null)
   const [currentMainFilter, setCurrentMainFilter] = useState<string | number | undefined>(undefined)
-  const [currentFilters, setCurrentFilters] = useState<FilterElement[] | undefined>([])
-  const originalMainColumnItemsRef = useRef<MainColumItem[]>([...mainColumnItems])
+  const [currentFilters, setCurrentFilters] = useState<AddonItem[] | undefined>([])
 
   const filterByItemType = useMemo(() => {
     return mainColumnItems
@@ -92,7 +84,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
     currentFilters && currentFilters.length > 0 ? (
       <>
         {currentFilters.map(i => (
-          <i.filterItem.Item key={i.filterItem.key} />
+          <i.Item key={i.key} />
         ))}
       </>
     ) : null
@@ -118,25 +110,6 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
         {/* <TertiaryButton onClick={() => setCurrentMainFilter(undefined)}>Reset</TertiaryButton> */}
       </>
     ) : null
-
-  const resetFilters = () => {
-    setCurrentMainFilter(undefined)
-    setCurrentFilters([])
-    mainColumnItems?.map((e, eIdx) => {
-      e.filters.map((f, fIdx) => {
-        const originalFilter = originalMainColumnItemsRef.current[eIdx]?.filters
-          ? originalMainColumnItemsRef.current[eIdx]?.filters[fIdx]?.selected ?? []
-          : []
-        f.setSelected(originalFilter)
-      })
-    })
-  }
-
-  const resetFiltersButton = currentMainFilter && (
-    <SecondaryButton className="reset-filters-button" abbr="Reset filters" onClick={resetFilters}>
-      <FilterAltOff />
-    </SecondaryButton>
-  )
 
   const filterBarRef = useRef<HTMLDivElement>(null)
   const [filterBarHeigh, setFilterBarHeigh] = useState(0)
@@ -173,7 +146,6 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
               {filterByItemType.filter(e => !!e)}
               {extraFilters && <div className="separator" />}
               {extraFilters}
-              {resetFiltersButton}
             </>
           </div>
         </div>
