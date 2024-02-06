@@ -4,6 +4,7 @@ import {
   PrimaryButton,
   Snackbar,
   TertiaryButton,
+  useSnackbar,
 } from '@moodlenet/component-library'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
@@ -34,7 +35,7 @@ export const SendToMoodle: FC<SendToMoodleProps> = ({
   const [isAddingToMoodleLms, setIsAddingToMoodleLms] = useState<boolean>(false)
   const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
     useState<boolean>(false)
-  const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
+  const { addSnackbar } = useSnackbar()
 
   const form = useFormik<SendToMoodleForm>({
     initialValues: { site: site },
@@ -59,11 +60,14 @@ export const SendToMoodle: FC<SendToMoodleProps> = ({
   }
 
   const copyId = () => {
-    userId && navigator.clipboard.writeText(userId)
-    setShowUserIdCopiedAlert(false)
-    setTimeout(() => {
-      setShowUserIdCopiedAlert(true)
-    }, 100)
+    if (userId) {
+      navigator.clipboard.writeText(userId)
+      addSnackbar(
+        <Snackbar type="success" position="bottom" autoHideDuration={5000} showCloseButton={false}>
+          User ID copied to the clipboard, use it to connect with Moodle LMS
+        </Snackbar>,
+      )
+    }
   }
 
   const copyIdButton = (
@@ -74,19 +78,13 @@ export const SendToMoodle: FC<SendToMoodleProps> = ({
     </abbr>
   )
 
-  const snackbars = [
-    showUserIdCopiedAlert && (
-      <Snackbar
-        type="success"
-        position="bottom"
-        autoHideDuration={3000}
-        showCloseButton={false}
-        onClose={() => setShowUserIdCopiedAlert(false)}
-      >
-        User ID copied to the clipboard, use it to connect with Moodle LMS
-      </Snackbar>
-    ),
-  ]
+  const showSendSuccess = () => {
+    addSnackbar(
+      <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
+        Resource sent to {form.values.site}
+      </Snackbar>,
+    )
+  }
 
   const modal = isAddingToMoodleLms && (
     <Modal
@@ -96,18 +94,22 @@ export const SendToMoodle: FC<SendToMoodleProps> = ({
         <PrimaryButton
           onClick={() => {
             handleOnSendToMoodleClick()
+            showSendSuccess()
           }}
         >
           Send
         </PrimaryButton>
       }
+      onEnter={() => {
+        handleOnSendToMoodleClick()
+        showSendSuccess()
+      }}
       onClose={() => {
         setIsAddingToMoodleLms(false)
         setShouldShowSendToMoodleLmsError(false)
       }}
       style={{ maxWidth: '350px', width: '100%' }}
     >
-      {snackbars}
       <InputTextField
         placeholder="http://your-moodle-lms-site.com"
         value={form.values.site}
