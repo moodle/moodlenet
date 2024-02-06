@@ -24,7 +24,6 @@ export * from '../components/organisms/ProfileCollectionList/ProfileCollectionLi
 export * from '../components/organisms/ProfileResourceList/ProfileResourceList.js'
 export * from '../components/organisms/Roles/Users.js'
 export * from '../components/organisms/UserProgressCard/UserProgressCard.js'
-export * from '../components/organisms/UserProgressCard/UserProgressCardLegacy/UserProgressCardLegacy.js'
 export * from '../components/pages/Access/DeleteAccountSuccess/DeleteAccountSuccess.js'
 export * from '../components/pages/Access/Login/Login.js'
 export * from '../components/pages/Access/RootLogin/RootLogin.js'
