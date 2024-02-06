@@ -36,10 +36,22 @@
         height: 24px;
         background-color: #d7d7d7;
       }
+
       > div {
         display: flex;
         gap: 10px;
         align-items: center;
+      }
+
+      > .dropdown-filter-field > .input-container {
+        box-shadow: none;
+      }
+
+      > .clear-filters-button {
+        padding: 0 5px;
+        > svg {
+          height: 20px;
+        }
       }
     }
   }

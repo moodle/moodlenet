@@ -1,5 +1,6 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import { SecondaryButton, SimpleDropdown, sortAddonItems } from '@moodlenet/component-library'
+import { FilterAltOff } from '@mui/icons-material'
 import type { ComponentType, FC } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './Browser.scss'
@@ -10,10 +11,15 @@ export type BrowserMainColumnItemBase = {
   showHeader?: boolean
 }
 
+export type FilterElement = {
+  filterItem: AddonItem
+  setSelected: (e: string[]) => void
+}
+
 export type MainColumItem = Omit<AddonItem, 'Item'> & {
   Item: ComponentType<BrowserMainColumnItemBase>
   name: string
-  filters: AddonItem[]
+  filters: FilterElement[]
   // numElements: number // the amount of elements in the Item list
 }
 
@@ -31,7 +37,7 @@ export type BrowserPropsUI = {
 export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters }) => {
   const mainColumnRef = useRef<HTMLDivElement>(null)
   const [currentMainFilter, setCurrentMainFilter] = useState<string | number | undefined>(undefined)
-  const [currentFilters, setCurrentFilters] = useState<AddonItem[] | undefined>([])
+  const [currentFilters, setCurrentFilters] = useState<FilterElement[] | undefined>([])
 
   const filterByItemType = useMemo(() => {
     return mainColumnItems
@@ -84,7 +90,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
     currentFilters && currentFilters.length > 0 ? (
       <>
         {currentFilters.map(i => (
-          <i.Item key={i.key} />
+          <i.filterItem.Item key={i.filterItem.key} />
         ))}
       </>
     ) : null
@@ -111,6 +117,18 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
       </>
     ) : null
 
+  const clearFilters = () => {
+    setCurrentMainFilter(undefined)
+    setCurrentFilters([])
+    mainColumnItems?.map(e => e.filters.map(i => i.setSelected([])))
+  }
+
+  const clearFiltersButton = currentMainFilter && (
+    <SecondaryButton className="clear-filters-button" abbr="Clear filters" onClick={clearFilters}>
+      <FilterAltOff />
+    </SecondaryButton>
+  )
+
   return (
     <div className={`browser ${showFilters ? 'show-filters' : ''}`}>
       {showFilters && (
@@ -120,6 +138,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
               {filterByItemType.filter(e => !!e)}
               {extraFilters && <div className="separator" />}
               {extraFilters}
+              {clearFiltersButton}
             </>
           </div>
         </div>
