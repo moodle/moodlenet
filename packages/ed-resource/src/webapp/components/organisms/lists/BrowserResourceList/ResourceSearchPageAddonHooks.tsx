@@ -338,6 +338,13 @@ export const SearchResourceSectionAddon: AddOnMap<SearchEntitySectionAddon> = {
           )
         },
       },
+      {
+        key: 'reset-filter',
+        Item: () => {
+          const { resetFilters } = useContext(MainSearchBoxCtx)
+          return <BrowserResourceFilters.ResetFiltersButton resetFilters={resetFilters} />
+        },
+      },
     ],
     name: 'Resources',
   },
