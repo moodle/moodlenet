@@ -17,7 +17,7 @@ const meta: ComponentMeta<typeof DeleteAccountSuccess> = {
 
 export const DeleteAccountSuccessStoryProps: DeleteAccountSuccessProps = {
   headerProps: MinimalisticHeaderStories.MinimalisticHeaderStoryProps(
-    MinimalisticAccessButtonsStories.getAccesMinimalisticHeaderItems({
+    MinimalisticAccessButtonsStories.getMinimalisticAccessHeaderItems({
       showLoginButton: true,
       loginHref: href('Pages/Access/Login/Default'),
       showSignupButton: false,

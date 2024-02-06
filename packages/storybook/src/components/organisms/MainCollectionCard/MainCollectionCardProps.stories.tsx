@@ -16,7 +16,6 @@ import type { OptionItemProp } from '@moodlenet/component-library'
 import type { CollectionFormProps } from '@moodlenet/collection/common'
 import type { MainCollectionCardProps } from '@moodlenet/collection/ui'
 import { Collection, MainCollectionCard } from '@moodlenet/collection/ui'
-import { DropdownPropsStories } from '@moodlenet/component-library/stories'
 import { useCollectionForm } from '../../../components/pages/Collection/CollectionProps.stories.js'
 const maxUploadSize = 1024 * 1024 * 50
 
@@ -54,7 +53,7 @@ export const validationSchema: SchemaOf<CollectionFormProps> = object({
   }),
   isFile: boolean().required(),
   description: string().max(4096).min(3).required(/* t */ `Please provide a description`),
-  name: string().max(160).min(3).required(/* t */ `Please provide a title`),
+  title: string().max(160).min(3).required(/* t */ `Please provide a title`),
   image: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && v.size > maxUploadSize
@@ -74,23 +73,21 @@ export const validationSchema: SchemaOf<CollectionFormProps> = object({
   }),
 })
 export const collectionFormValues: CollectionFormProps = {
-  isFile: true,
   // visibility: VisbilityIconTextOptionProps[0]!.value,
   // category: CategoriesTextOptionProps[2]!.value,
-  content: '',
-  // description:
+
   //   'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
   description:
     'Earth 2020: An Insider’s Guide to a Rapidly Changing Planet responds to a public increasingly concerned about the deterioration of Earth’s natural systems, offering readers a wealth of perspectives on our shared ecological past, and on the future trajectory of planet Earth. Written by world-leading thinkers on the front-lines of global change research and policy, this multi-disciplinary collection maintains a dual focus: some essays investigate specific facets of the physical Earth system, while others explore the social, legal and political dimensions shaping the human environmental footprint. In doing so, the essays collectively highlight the urgent need for collaboration across diverse domains of expertise in addressing one of the most significant challenges facing us today. Earth 2020 is essential reading for everyone seeking a deeper understanding of the past, present and future of our planet, and the role of humanity in shaping this trajectory.',
-  image: { location: 'https://picsum.photos/200/100' },
+  // image: { location: 'https://picsum.photos/200/100' },
   // language: LanguagesTextOptionProps[2]!.value,
   // level: LevelTextOptionProps[2]!.value,
   // license: LicenseIconTextOptionProps[2]!.value,
   // month: MonthTextOptionProps[8]!.value,
   // year: YearsProps[20],
-  name: '',
+  title: '',
   // name: 'The Best Collection Ever',
-  type: DropdownPropsStories.TypeTextOptionProps[2]!.value,
+  //type: DropdownPropsStories.TypeTextOptionProps[2]!.value,
 }
 
 export const CollectionTextOptionProps: OptionItemProp[] = [
@@ -112,10 +109,10 @@ export const useMainCollectionCardStoryProps = (overrides?: {
     // validationSchema,
     // onSubmit: action('submit edit'),
     // initialValues: {
-    content: null,
-    isFile: true,
+    // content: null,
+    // isFile: true,
     // visibility: 'Public',
-    name: 'Best collection ever',
+    title: 'Best collection ever',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us. This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     // 'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
@@ -125,17 +122,19 @@ export const useMainCollectionCardStoryProps = (overrides?: {
     // license: LicenseIconTextOptionProps[2]?.value,
     // month: MonthTextOptionProps[8]?.value,
     // year: YearsProps[20],
-    type: DropdownPropsStories.TypeTextOptionProps[2]?.value,
-    image: {
-      location:
-        'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
-    },
+    // type: DropdownPropsStories.TypeTextOptionProps[2]?.value,
+    // image: {
+    //   location:
+    //     'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+    // },
     ...overrides?.collectionValues,
     // },
     // ...overrides?.formConfig,
   }
 
   return {
+    //@ts-ignore because it needs to be reviewed
+    // @BRU, prop type definition doesn't match
     collection: collection,
     publish: action('save collection'),
     editCollection: async () => action('editing collection submited'),
@@ -217,6 +216,8 @@ export const LoggedIn = () => {
 export const Owner = () => {
   const props = useMainCollectionCardStoryProps({
     props: {
+      //@ts-ignore because it needs to be reviewed
+      // @BRU, prop type definition doesn't match
       isCreator: true,
       collectionUrl: 'https://picsum.photos/200/100',
     },
@@ -227,6 +228,8 @@ export const Owner = () => {
 export const Admin = () => {
   const props = useMainCollectionCardStoryProps({
     props: {
+      //@ts-ignore because it needs to be reviewed
+      // @BRU, prop type definition doesn't match
       isCreator: true,
       isAdmin: true,
     },
