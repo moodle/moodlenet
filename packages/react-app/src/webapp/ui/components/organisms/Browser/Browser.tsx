@@ -13,6 +13,7 @@ export type BrowserMainColumnItemBase = {
 
 export type FilterElement = {
   filterItem: AddonItem
+  selected: string[]
   setSelected: (e: string[]) => void
 }
 
@@ -38,6 +39,7 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
   const mainColumnRef = useRef<HTMLDivElement>(null)
   const [currentMainFilter, setCurrentMainFilter] = useState<string | number | undefined>(undefined)
   const [currentFilters, setCurrentFilters] = useState<FilterElement[] | undefined>([])
+  const originalMainColumnItemsRef = useRef<MainColumItem[]>([...mainColumnItems])
 
   const filterByItemType = useMemo(() => {
     return mainColumnItems
@@ -120,7 +122,14 @@ export const Browser: FC<BrowserProps> = ({ mainColumnItems, title, showFilters 
   const clearFilters = () => {
     setCurrentMainFilter(undefined)
     setCurrentFilters([])
-    mainColumnItems?.map(e => e.filters.map(i => i.setSelected([])))
+    mainColumnItems?.map((e, eIdx) => {
+      e.filters.map((f, fIdx) => {
+        const originalFilter = originalMainColumnItemsRef.current[eIdx]?.filters
+          ? originalMainColumnItemsRef.current[eIdx]?.filters[fIdx]?.selected ?? []
+          : []
+        f.setSelected(originalFilter)
+      })
+    })
   }
 
   const clearFiltersButton = currentMainFilter && (
