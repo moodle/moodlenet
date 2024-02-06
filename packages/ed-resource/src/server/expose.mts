@@ -397,24 +397,31 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/trash/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }) => {
+        await ensureUnpublish()
         const [interpreter] = await stdEdResourceMachine({ by: 'key', key: _key })
-        const snap = interpreter.getSnapshot()
-        if (matchState(snap, 'Published') || matchState(snap, 'Publish-Rejected')) {
-          interpreter.send('unpublish')
-          await waitFor(interpreter, nameMatcher('Unpublished'))
-        }
-        if (matchState(snap, 'Autogenerating-Meta')) {
-          interpreter.send('cancel-meta-generation')
-          await waitFor(interpreter, nameMatcher('Unpublished'))
-        }
-        if (matchState(snap, 'Meta-Suggestion-Available')) {
-          interpreter.send({ type: 'provide-resource-edits', edits: {} })
-          await waitFor(interpreter, nameMatcher('Unpublished'))
-        }
+
         interpreter.send('trash')
         await waitFor(interpreter, nameMatcher('Destroyed'))
         interpreter.stop()
         return
+        async function ensureUnpublish() {
+          const [interpreter] = await stdEdResourceMachine({ by: 'key', key: _key })
+          const snap = interpreter.getSnapshot()
+          const event =
+            matchState(snap, 'Published') || matchState(snap, 'Publish-Rejected')
+              ? 'unpublish'
+              : matchState(snap, 'Autogenerating-Meta')
+              ? 'cancel-meta-generation'
+              : matchState(snap, 'Meta-Suggestion-Available')
+              ? ({ type: 'provide-resource-edits', edits: {} } as const)
+              : null
+          if (event) {
+            interpreter.send(event)
+            await waitFor(interpreter, nameMatcher('Unpublished'))
+          }
+          interpreter.stop()
+          return new Promise(r => setTimeout(r, 300))
+        }
       },
     },
     'webapp/create': {

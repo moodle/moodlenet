@@ -8,17 +8,16 @@ export {
   // deleteImageFile,
   // delResource,
   // delResourceFile,
-  deltaResourcePopularityItem,
-  EMPTY_RESOURCE,
-  getImageLogicalFilename,
+  // deltaResourcePopularityItem,
+  // EMPTY_RESOURCE,
+  // getImageLogicalFilename,
   getResource,
   getResourceFile,
-  getResourceFileUrl,
-  getValidations,
+  // getResourceFileUrl,
+  // getValidations,
   // patchResource,
   // storeResourceFile,
   updateImage as silentlyUpdateImage,
-  validationsConfigs,
 } from './services.mjs'
 export * from './types.mjs'
 export * from './xsm/exports.mjs'
