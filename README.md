@@ -12,7 +12,7 @@ MoodleNet 4.0 now feaures AI metadata generation for resources, gamification to 
 
 ## Documentation 
 
-Our main documentation with everythinng you need to know is here:  [MoodleNet Docs](https://docs.moodle.org/dev/MoodleNet)
+Our main documentation with everything you need to know is here: [MoodleNet Docs](https://docs.moodle.org/dev/MoodleNet).
 
 ## Quick install tip
 
