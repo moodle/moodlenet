@@ -100,7 +100,7 @@ export const SendToMoodle: FC<SendToMoodleProps> = ({
           Send
         </PrimaryButton>
       }
-      onEnter={() => {
+      onPressEnter={() => {
         handleOnSendToMoodleClick()
         showSendSuccess()
       }}

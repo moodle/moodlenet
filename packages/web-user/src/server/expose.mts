@@ -39,6 +39,7 @@ import {
   editMyProfileInterests,
   editProfile,
   entityFeatureAction,
+  filterUserUnaccessibleEntities,
   getEntityFeatureProfiles,
   getEntityFeaturesCount,
   getLandingPageList,
@@ -328,12 +329,16 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
               feature,
               paging: { after, limit },
             })
-            const all = await cursor.all()
+            const allItems = await cursor.all()
+
+            const fileredItems = await filterUserUnaccessibleEntities(
+              allItems.map(({ entity: { _key } }) => ({ _key, entityType })),
+            )
             return {
-              profiles: all.map(({ entity: { _key } }) => ({ _key })),
+              profiles: fileredItems.map(({ _key }) => ({ _key })),
             }
           } else {
-            const profile = await getProfileRecord(_key)
+            const profile = await getProfileRecord(_key, { filterOutUnaccessibleFeatured: true })
             if (!profile) {
               return { profiles: [] }
             }

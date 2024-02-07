@@ -15,11 +15,11 @@ export const SortBy: FC<SortByProps> = ({ selected, setSelected }) => {
   return (
     <SimpleDropdown
       options={sortTypesList}
-      selected={[selected]}
+      selected={[selected ?? 'Relevant']}
       label="Sort by"
       onClick={name => setSelected(name as SortType)}
       notHighlightInitialSelection={true}
-      initialSelection="relevant"
+      initialSelection="Relevant"
     />
   )
 }

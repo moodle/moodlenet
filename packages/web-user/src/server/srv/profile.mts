@@ -330,21 +330,27 @@ export async function getProfileRecord(
   }
 
   if (opts?.filterOutUnaccessibleFeatured) {
-    //https://github.com/moodle/moodlenet/issues/44
-    const knownFeaturedEntitiesWithRecord = await Promise.all(
-      record.entity.knownFeaturedEntities.map(async entityItem => {
-        const { entityType, _key } = entityItem
-        const entityClass = getEntityClassByKnownEntity({ entityType })
-        const record = await getEntity(entityClass, _key)
-        return [entityItem, record] as const
-      }),
+    record.entity.knownFeaturedEntities = await filterUserUnaccessibleEntities(
+      record.entity.knownFeaturedEntities,
     )
-    record.entity.knownFeaturedEntities = knownFeaturedEntitiesWithRecord
-      .filter(([, record]) => !!record)
-      .map(([item]) => item)
   }
 
   return record
+}
+
+export async function filterUserUnaccessibleEntities<
+  KEI extends { _key: string; entityType: KnownEntityType },
+>(knownEntityItems: KEI[]): Promise<KEI[]> {
+  //https://github.com/moodle/moodlenet/issues/44
+  const knownFeaturedEntitiesWithRecord = await Promise.all(
+    knownEntityItems.map(async entityItem => {
+      const { entityType, _key } = entityItem
+      const entityClass = getEntityClassByKnownEntity({ entityType })
+      const record = await getEntity(entityClass, _key)
+      return [entityItem, record] as const
+    }),
+  )
+  return knownFeaturedEntitiesWithRecord.filter(([, record]) => !!record).map(([item]) => item)
 }
 
 export async function getEntityFeaturesCount({
@@ -401,7 +407,7 @@ export async function getEntityFeatureProfiles({
   const cursor = await queryEntities(Profile.entityClass, {
     skip,
     limit,
-    postAccessBody: `FILTER ${currentEntityVar}.publisher && @needle IN (FOR item in ${currentEntityVar}.knownFeaturedEntities 
+    postAccessBody: `FILTER @needle IN (FOR item in ${currentEntityVar}.knownFeaturedEntities 
                                                                           RETURN { 
                                                                             entityType: item.entityType, 
                                                                             _key:       item._key, 
@@ -610,17 +616,7 @@ export async function sendMessageToProfile({
 
 export async function getProfileOwnKnownEntities<
   KT extends Exclude<KnownEntityType, 'profile' | 'subject'>,
->({
-  profileKey,
-  knownEntity,
-  limit,
-  sort,
-}: {
-  profileKey: string
-  knownEntity: KT
-  limit?: number
-  sort?: string
-}) {
+>({ profileKey, knownEntity, limit }: { profileKey: string; knownEntity: KT; limit?: number }) {
   const { entityIdentifier: profileIdentifier } = WebUserEntitiesTools.getIdentifiersByKey({
     _key: profileKey,
     type: 'Profile',
@@ -643,7 +639,7 @@ export async function getProfileOwnKnownEntities<
   const list = await (
     await shell.call(queryEntities)(entityClass, {
       limit,
-      sort: sort || `${currentEntityVar}._meta.created DESC`,
+      sort: `${currentEntityVar}._meta.created DESC`,
       preAccessBody: `FILTER ${isCreatorOfCurrentEntity(toaql(profileIdentifier))}`,
     })
   ).all()

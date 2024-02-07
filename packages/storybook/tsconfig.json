@@ -29,12 +29,12 @@
     { "path": "../ed-resource" },
     { "path": "../extensions-manager" },
     { "path": "../moodle-lms-integration" },
-    { "path": "../passport-auth" },
     { "path": "../react-app" },
     { "path": "../simple-email-auth" },
-    { "path": "../unsplash" },
     { "path": "../web-user" },
     { "path": "../mn-central-jira-simple-moderations" }
+    // { "path": "../passport-auth" },
+    // { "path": "../unsplash" },
   ],
   "paths": {
     "@/*": ["src/*"]
