@@ -180,6 +180,7 @@ export type ResourceActions = {
   deleteResource(): void
   startAutofill(): void
   stopAutofill(): void
+  cancelUpload(): void
 }
 
 export type ResourceAccessRpc = {
