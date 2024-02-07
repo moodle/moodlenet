@@ -161,7 +161,9 @@ export const UploadResource: FC<UploadResourceProps> = ({
     })
     contentForm_setTouched({ content: true })
     contentForm_validateForm()
+    actions.cancelUpload()
   }, [
+    actions,
     contentForm_setFieldValue,
     contentForm_setTouched,
     contentForm_submitForm,
