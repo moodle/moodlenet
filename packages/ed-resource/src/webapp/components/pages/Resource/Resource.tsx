@@ -681,6 +681,7 @@ export const Resource: FC<ResourceProps> = ({
     if (showAutofillSuccess) {
       addSnackbar({
         autoHideDuration: 6000,
+        type: 'success',
         children: `Resource ready! Verify and edit any required details`,
         onClose: () => setShowAutofillSuccess(false),
       })

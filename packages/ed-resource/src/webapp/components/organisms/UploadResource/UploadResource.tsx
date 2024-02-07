@@ -544,12 +544,18 @@ export const UploadResource: FC<UploadResourceProps> = ({
               </abbr>
               {uploadBeats}
               {autofillBeats}
-              {(uploadProgress !== undefined || autofillState) && (
+              {(uploadProgress !== undefined || autofillState === 'ai-generation') && (
                 <RoundButton
-                  onClick={autofillState ? stopAutofill : stopUpload}
+                  onClick={autofillState === 'ai-generation' ? stopAutofill : stopUpload}
                   tabIndex={0}
-                  abbrTitle={autofillState ? 'Stop autofill' : 'Stop upload'}
-                  onKeyUp={e => (e.key === 'Enter' && autofillState ? stopAutofill : stopUpload)}
+                  abbrTitle={
+                    autofillState === 'ai-generation' ? 'Cancel autofill' : 'Cancel upload'
+                  }
+                  onKeyUp={e =>
+                    e.key === 'Enter' && autofillState === 'ai-generation'
+                      ? stopAutofill
+                      : stopUpload
+                  }
                 />
               )}
             </div>
