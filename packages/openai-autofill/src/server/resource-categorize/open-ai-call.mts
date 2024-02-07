@@ -66,9 +66,22 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   }
 
   function cleanupChatCompletion(chatCompletion: ChatCompletion) {
-    const data: Partial<ClassifyPars> = JSON.parse(
-      chatCompletion.choices[0]?.message.function_call?.arguments ?? '{}',
-    )
+    const data: Partial<ClassifyPars> = (() => {
+      const argsString = chatCompletion.choices[0]?.message.function_call?.arguments ?? '{}'
+      try {
+        return JSON.parse(argsString)
+      } catch {
+        shell.log(
+          'warn',
+          'chatCompletion arguments unparseable',
+          argsString,
+          'finish_reason',
+          chatCompletion.choices[0]?.finish_reason,
+        )
+        return {}
+      }
+    })()
+
     // writeFile('_.json', JSON.stringify({ textResource, data, messages, classifyResourceFn }, null, 2))
     data.bloomsCognitive = data.bloomsCognitive
       ?.map(generatedBloom => {
