@@ -7,6 +7,7 @@ export function getPkgRpcFetchOpts(
   targetPkgId: PkgIdentifier,
   apiPath: string,
   args: RpcArgs,
+  opts?: { customHeaders?: Record<string, string> },
 ) {
   const [bodyArg, params, query] = args
   const searchParams = new URLSearchParams(JSON.parse(JSON.stringify(query ?? {}))).toString()
@@ -28,6 +29,7 @@ export function getPkgRpcFetchOpts(
       ...(contentType ? { 'Content-Type': contentType } : null),
       'Accept': 'application/json',
       'x-moodlenet-react-app-caller': `${userPkgId.name}@${userPkgId.version}`,
+      ...opts?.customHeaders,
     },
     body,
     credentials: 'same-origin',

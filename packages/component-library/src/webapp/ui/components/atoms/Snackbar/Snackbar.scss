@@ -6,7 +6,7 @@
 }
 
 .snackbar.card {
-  position: fixed;
+  // position: fixed;
   display: flex;
   flex-direction: row;
   width: fit-content;
@@ -17,6 +17,7 @@
   font-weight: bold;
   background-color: #7b7b7b;
   align-items: center;
+  text-align: center;
   justify-content: space-between;
   padding: 6px 6px 6px 14px;
   margin: 0 20px;
@@ -24,6 +25,7 @@
   gap: 10px;
   z-index: 11;
   box-shadow: 0px 1px 2px 0px rgb(36 39 41 / 5%), 0px 2px 6px 2px rgb(41 44 46 / 5%);
+  opacity: 1;
 
   &.position-top {
     top: 68px;
@@ -66,34 +68,32 @@
   }
 
   &.state-opening {
-    animation: fadeIn 0.5s forwards;
-    text-align: center;
-  }
+    animation: fadeIn 0.3s forwards;
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
   }
 
   &.state-closing {
-    animation: fadeOut 0.2s forwards;
-    text-align: center;
+    animation: fadeOut 0.3s forwards;
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
   }
 
   &.state-closed {
-    display: none;
-  }
-
-  @keyframes fadeOut {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
+    opacity: 0;
   }
 }

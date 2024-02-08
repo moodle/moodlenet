@@ -592,8 +592,8 @@ ${projectAqlRawProps}
       retryOnConflict: 5,
     })
     .catch(e => {
-      shell.log('error', e)
-      shell.log('debug', q, JSON.stringify({ bindVars }))
+      shell.log('error', 'Access Entities', e)
+      console.debug(q, JSON.stringify({ bindVars }))
       throw e
     })
 

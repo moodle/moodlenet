@@ -2,11 +2,10 @@
 
 .view > .snackbar-stack,
 .snackbar-stack {
-  z-index: 9;
+  z-index: 11;
   display: flex;
   width: 100%;
   height: fit-content;
-  gap: 12px;
   position: fixed;
   align-items: center;
   flex-direction: column;
@@ -20,10 +19,9 @@
   &.position-bottom {
     top: auto;
     bottom: 20px;
+    flex-direction: column-reverse;
   }
   > :not(.nothing).snackbar {
-    position: unset;
-    transform: none;
     left: auto;
     padding: 6px 6px 6px 14px;
     bottom: auto;

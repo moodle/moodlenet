@@ -37,11 +37,13 @@ export function pkgRpcs<TargetPkgRpcDefs extends PkgRpcDefs>(
     abortRpc(rpcId)
     const controller = new AbortController()
     const pendingPromise = (async () => {
-      const { requestInit, url } = getPkgRpcFetchOpts(userPkgId, targetPkgId, path as string, [
-        body,
-        params,
-        query,
-      ])
+      const { requestInit, url } = getPkgRpcFetchOpts(
+        userPkgId,
+        targetPkgId,
+        path as string,
+        [body, params, query],
+        { customHeaders: { 'x-moodlenet-react-app-rpcid': rpcId } },
+      )
       const fetchExecutor: FetchWrapper2 = (url, requestInit) =>
         fetch(url, { ...requestInit, signal: controller.signal })
       const response = await FETCH_WRAPPERS.reduce<FetchWrapper2>((nextWrapper, { wrapper }) => {

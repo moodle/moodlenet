@@ -50,7 +50,7 @@ function enqueueOneWaiting(after: number) {
     const nextAfter = await findOneWaiting()
       .catch(() => 30_000)
       .then(res => {
-        return res === 'none' ? 10_000 : res === 'done one' ? 1_000 : res === 'error' ? 10_000 : res
+        return res === 'none' ? 5_000 : res === 'done one' ? 500 : res === 'error' ? 1_000 : res
       })
     enqueueOneWaiting(nextAfter)
   }, after)

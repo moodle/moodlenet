@@ -1,7 +1,6 @@
 import { OverallCardStories } from '@moodlenet/react-app/stories'
 // import { Profile } from '@moodlenet/web-user/ui'
 import { Profile } from '@moodlenet/web-user/ui'
-import { action } from '@storybook/addon-actions'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { useState } from 'react'
 import { getCollectionCardsStoryProps } from '../../../components/organisms/CollectionCard/CollectionCardProps.stories.props.js'
@@ -96,14 +95,16 @@ export const Owner: ProfileStory = () => {
     },
   })
 
-  const [resourceCardPropsList, setResourceCardPropsList] = useState(props.resourceCardPropsList)
+  const [resourceCardPropsList /* , setResourceCardPropsList */] = useState(
+    props.resourceCardPropsList,
+  )
 
-  resourceCardPropsList.map(r => {
-    r.onRemoveClick = () => {
-      action('onRemoveResourceClick')
-      setResourceCardPropsList(resourceCardPropsList.filter(x => x !== r))
-    }
-  })
+  // resourceCardPropsList.map(r => {
+  //   r.onRemoveClick = () => {
+  //     action('onRemoveResourceClick')
+  //     setResourceCardPropsList(resourceCardPropsList.filter(x => x !== r))
+  //   }
+  // })
 
   return <Profile {...props} resourceCardPropsList={resourceCardPropsList} />
 }

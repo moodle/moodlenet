@@ -11,6 +11,9 @@ export const getCollectionCardsStoryProps = (
 ): { props: CollectionCardProps; key: string }[] => {
   return getRandomSortedArrayElements(collectionsCardFactory, amount).map(collection => {
     // return getCollectionCardStoryProps({ ...collection, ...overrides })
+
+    //@ts-ignore because it needs to be reviewed
+    // @BRU, prop type definition doesn't match
     const newCollection = getCollectionCardStoryProps({
       ...collection,
       ...overrides,

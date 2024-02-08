@@ -4,9 +4,8 @@ import {
   Modal,
   PrimaryButton,
   SecondaryButton,
-  Snackbar,
-  SnackbarStack,
   sortAddonItems,
+  useSnackbar,
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
 import { DateField, DropdownField, LicenseField } from '@moodlenet/ed-meta/ui'
@@ -644,96 +643,89 @@ export const Resource: FC<ResourceProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const uploadSnackbar =
-    uploadProgress !== undefined || isSavingImage === 'saving' ? (
-      <Snackbar
-        position="bottom"
-        type="info"
-        waitDuration={4000}
-        showCloseButton={false}
-        autoHideDuration={6000}
-      >
-        {`Uploading file, feel free to move around the platform, just don't close this tab`}
-      </Snackbar>
-    ) : null
+  const { addSnackbar } = useSnackbar()
+
+  const showUploadingSnackbar = uploadProgress !== undefined || isSavingImage === 'saving'
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout
+    if (showUploadingSnackbar) {
+      timeoutId = setTimeout(() => {
+        addSnackbar({
+          position: 'bottom',
+          autoHideDuration: 6000,
+          children:
+            "Uploading file, feel free to move around the platform, just don't close this tab",
+        })
+      }, 4000)
+    }
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [showUploadingSnackbar, addSnackbar])
 
   const [showAutofillSuccess, setShowAutofillSuccess] = useState<boolean>(
     autofillState === 'ai-completed',
   )
 
-  const autofillingSnackbar =
-    autofillState === 'ai-generation' ? (
-      <Snackbar position="bottom" type="info" showCloseButton={false} autoHideDuration={6000}>
-        {`Using AI to autofill the resource details, it usually takes a couple of minutes`}
-      </Snackbar> //@ALE change time when we know the average one
-    ) : null
+  useEffect(() => {
+    if (autofillState === 'ai-generation') {
+      addSnackbar({
+        autoHideDuration: 6000,
+        children: `Using AI to autofill the resource details, it usually takes a couple of minutes`,
+      })
+    }
+  }, [addSnackbar, autofillState])
 
-  const autofillSuccessSnackbar = showAutofillSuccess ? (
-    <Snackbar
-      position="bottom"
-      type="success"
-      showCloseButton={false}
-      autoHideDuration={6000}
-      onClose={() => setShowAutofillSuccess(false)}
-    >
-      {`Resource ready! Verify and edit any required details`}
-    </Snackbar>
-  ) : null
+  useEffect(() => {
+    if (showAutofillSuccess) {
+      addSnackbar({
+        autoHideDuration: 6000,
+        type: 'success',
+        children: `Resource ready! Verify and edit any required details`,
+        onClose: () => setShowAutofillSuccess(false),
+      })
+    }
+  }, [addSnackbar, showAutofillSuccess])
 
-  const checkPublishSnackbar =
-    showCheckPublishSuccess !== 'idle' ? (
-      <Snackbar
-        position="bottom"
-        type={showCheckPublishSuccess === 'success' ? 'success' : 'error'}
-        autoHideDuration={3000}
-        showCloseButton={false}
-        onClose={() => setShowCheckPublishSuccess('idle')}
-      >
-        {showCheckPublishSuccess === 'success'
-          ? `Success, save before publishing`
-          : `Failed, fix the errors and try again`}
-      </Snackbar>
-    ) : null
+  useEffect(() => {
+    if (showCheckPublishSuccess !== 'idle') {
+      addSnackbar({
+        autoHideDuration: 4000,
+        type: showCheckPublishSuccess === 'success' ? 'success' : 'error',
+        children:
+          showCheckPublishSuccess === 'success'
+            ? `Success, save before publishing`
+            : `Failed, fix the errors and try again`,
+        onClose: () => setShowCheckPublishSuccess('idle'),
+      })
+    }
+  }, [addSnackbar, showCheckPublishSuccess])
 
-  const publishSnackbar =
-    showPublishSuccess !== 'idle' ? (
-      <Snackbar
-        position="bottom"
-        type={showPublishSuccess === 'success' ? 'success' : 'error'}
-        autoHideDuration={3000}
-        showCloseButton={false}
-        onClose={() => setShowPublishSuccess('idle')}
-      >
-        {showPublishSuccess === 'success'
-          ? `Resource published`
-          : `Failed, fix the errors and try again`}
-      </Snackbar>
-    ) : null
+  useEffect(() => {
+    if (showPublishSuccess !== 'idle') {
+      addSnackbar({
+        type: showPublishSuccess === 'success' ? 'success' : 'error',
+        autoHideDuration: 4000,
+        children:
+          showPublishSuccess === 'success'
+            ? `Resource published`
+            : `Failed, fix the errors and try again`,
+        onClose: () => setShowPublishSuccess('idle'),
+      })
+    }
+  }, [addSnackbar, showPublishSuccess])
 
-  const unpublishSnackbar = showUnpublishSuccess ? (
-    <Snackbar
-      position="bottom"
-      type="success"
-      autoHideDuration={3000}
-      showCloseButton={false}
-      onClose={() => setShowUnpublishSuccess(false)}
-    >
-      {`Resource unpublished`}
-    </Snackbar>
-  ) : null
-
-  const snackbars = (
-    <SnackbarStack
-      snackbarList={[
-        uploadSnackbar,
-        autofillingSnackbar,
-        autofillSuccessSnackbar,
-        checkPublishSnackbar,
-        publishSnackbar,
-        unpublishSnackbar,
-      ]}
-    />
-  )
+  useEffect(() => {
+    if (showUnpublishSuccess) {
+      addSnackbar({
+        type: 'success',
+        autoHideDuration: 4000,
+        children: 'Resource unpublished',
+        onClose: () => setShowUnpublishSuccess(false),
+      })
+    }
+  }, [addSnackbar, showUnpublishSuccess])
 
   const modals = (
     <>
@@ -763,7 +755,6 @@ export const Resource: FC<ResourceProps> = ({
   return (
     <MainLayout {...mainLayoutProps}>
       {modals}
-      {snackbars}
       <div className="resource">
         <div className="content">
           {updatedWideColumnItems.length > 0 && (

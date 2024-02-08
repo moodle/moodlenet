@@ -18,6 +18,8 @@ export const UploadResourceStoryProps = (
 ): UploadResourceProps => {
   return {
     fileMaxSize: 50 * 1024 * 1024,
+    //@ts-ignore because it needs to be reviewed
+    // @BRU, prop type definition doesn't match
     resource: {
       content: '',
       name: '',

@@ -7,8 +7,8 @@ import {
   PrimaryButton,
   SecondaryButton,
   Snackbar,
-  SnackbarStack,
   TertiaryButton,
+  useSnackbar,
   useWindowDimensions,
 } from '@moodlenet/component-library'
 import type { AssetInfoForm } from '@moodlenet/component-library/common'
@@ -645,34 +645,35 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ...(mainColumnItems ?? []),
   ].filter((item): item is AddonItem | JSX.Element => !!item)
 
-  const snackbars = (
-    <SnackbarStack
-      snackbarList={[
-        showUrlCopiedAlert ? (
-          <Snackbar
-            type="success"
-            position="bottom"
-            autoHideDuration={3000}
-            showCloseButton={false}
-            key="url-copy-snackbar"
-          >
-            Copied to clipoard
-          </Snackbar>
-        ) : null,
-        showSaveError ? (
-          <Snackbar
-            position="bottom"
-            type="error"
-            autoHideDuration={3000}
-            showCloseButton={false}
-            onClose={() => setShowSaveError(false)}
-          >
-            Failed, fix the errors and try again
-          </Snackbar>
-        ) : null,
-      ]}
-    />
-  )
+  const { addSnackbar } = useSnackbar()
+
+  if (showUrlCopiedAlert) {
+    addSnackbar(
+      <Snackbar
+        type="success"
+        position="bottom"
+        autoHideDuration={3000}
+        showCloseButton={false}
+        key="url-copy-snackbar"
+      >
+        Copied to clipoard
+      </Snackbar>,
+    )
+  }
+
+  if (showSaveError) {
+    addSnackbar(
+      <Snackbar
+        position="bottom"
+        type="error"
+        autoHideDuration={3000}
+        showCloseButton={false}
+        onClose={() => setShowSaveError(false)}
+      >
+        Failed, fix the errors and try again
+      </Snackbar>,
+    )
+  }
 
   const modals = [
     isToDelete && deleteResource && (
@@ -690,6 +691,10 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           </PrimaryButton>
         }
         onClose={() => setIsToDelete(false)}
+        onPressEnter={() => {
+          deleteResource()
+          setIsToDelete(false)
+        }}
         style={{ maxWidth: '400px' }}
         className="delete-message"
         key="delete-message-modal"
@@ -702,7 +707,6 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   return (
     <>
       {modals}
-      {snackbars}
       <Card className="main-resource-card" key="main-resource-card" hideBorderWhenSmall={true}>
         {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
       </Card>

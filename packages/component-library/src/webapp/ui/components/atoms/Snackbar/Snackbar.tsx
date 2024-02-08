@@ -7,7 +7,7 @@ import {
 } from '@mui/icons-material'
 import type React from 'react'
 import type { CSSProperties, ReactNode } from 'react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Card from '../Card/Card.js'
 import './Snackbar.scss'
 
@@ -32,7 +32,6 @@ export type SnackbarProps = {
 const stopPropagation = (event: React.MouseEvent) => event.stopPropagation()
 
 export const Snackbar: React.FC<SnackbarProps> = ({
-  onClose,
   showCloseButton,
   actions,
   icon,
@@ -45,30 +44,41 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   waitDuration,
   position,
   children,
+  onClose,
 }) => {
-  const [movementState, setMovementState] = useState<'opening' | 'closing' | 'closed'>('opening')
-  const handleonClose = useCallback(
-    (event?: React.MouseEvent) => {
-      event?.stopPropagation()
-      setMovementState('closing')
-      setTimeout(() => {
-        setMovementState('closed')
-        onClose && onClose()
-      }, 100)
-    },
-    [onClose],
+  const [state, setState] = useState<'opening' | 'opened' | 'closing' | 'closed' | 'hidden'>(
+    'opening',
   )
+  const snackbarRef = useRef<HTMLDivElement>(null)
+
+  const handleonClose = useCallback(() => {
+    setState('closing')
+    setTimeout(() => {
+      onClose && onClose()
+      setState('closed')
+    }, 300)
+  }, [onClose])
 
   useEffect(() => {
     if (waitDuration) {
-      setMovementState('closed')
+      setState('closed')
       const timer = setTimeout(() => {
-        setMovementState('opening')
+        setState('opening')
       }, waitDuration)
       return () => clearTimeout(timer)
     }
     return
-  }, [waitDuration, setMovementState])
+  }, [waitDuration, setState])
+
+  useEffect(() => {
+    if (state === 'opening') {
+      const timer = setTimeout(() => {
+        setState('opened')
+      }, 300)
+      return () => clearTimeout(timer)
+    }
+    return
+  }, [setState, state])
 
   useEffect(() => {
     if (autoHideDuration) {
@@ -85,7 +95,8 @@ export const Snackbar: React.FC<SnackbarProps> = ({
 
   const snackbar = (
     <Card
-      className={`snackbar ${className} type-${type} state-${movementState} position-${position}`}
+      ref={snackbarRef}
+      className={`snackbar ${className} type-${type} state-${state} position-${position}`}
       onClick={stopPropagation}
       style={style}
     >
@@ -121,6 +132,8 @@ export const Snackbar: React.FC<SnackbarProps> = ({
 
   const snackbarStack = document.querySelector('.snackbar-stack')
 
+  if (state === 'closed') return null
+
   return snackbarStack
     ? snackbar
     : createPortal(
@@ -133,6 +146,7 @@ Snackbar.defaultProps = {
   className: '',
   showIcon: true,
   position: 'bottom',
+  type: 'info',
   showCloseButton: false,
   autoHideDuration: 6000,
 }

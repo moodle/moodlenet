@@ -265,7 +265,6 @@ export const useResourceStoryProps = (
     overrides?.state?.uploadProgress ?? undefined,
   )
   const [autofillState, setautofillState] = useState(overrides?.state?.autofillState ?? undefined)
-  // const [isUploaded, setIsUploaded] = useState(overrides?.state?.isUploaded ?? false)
 
   const saveContent = () => {
     setIsSavingContent('save-done')
@@ -285,7 +284,7 @@ export const useResourceStoryProps = (
   const [uploadTimeoutIds, setUploadTimeoutIds] = useState<NodeJS.Timeout[] | null>(null)
 
   useEffect(() => {
-    const intervalTime = 4000 / 100
+    const intervalTime = 6000 / 100
     const timeouts: NodeJS.Timeout[] = []
 
     if (uploadProgress === 0 && !hasStartedUploadRef.current) {
@@ -413,6 +412,9 @@ export const useResourceStoryProps = (
     stopAutofill: () => {
       setautofillState(undefined)
       autofillTimeoutId && clearTimeout(autofillTimeoutId)
+    },
+    cancelUpload() {
+      setUploadProgress(undefined)
     },
     ...overrides?.actions,
   }
