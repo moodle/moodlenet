@@ -8,13 +8,11 @@ You can find our main instance here at [moodle.net](https://moodle.net), but you
 
 ## Current Status
 
-MoodleNet has just reached the 3.0 milestone, which largely involved architectural changes to support plugins.
-
-We are now focussed on MoodleNet 4.0 which is focussed on a number of systems (including AI, gamification and use of metadata) to vastly improve how quality is identified and surfaced to you as a user.
+MoodleNet 4.0 now feaures AI metadata generation for resources, gamification to vastly improve how quality is identified and surfaced to you as a user.
 
 ## Documentation 
 
-Our main documentation with everythinng you need to know is here:  [MoodleNet Docs](https://docs.moodle.org/dev/MoodleNet)
+Our main documentation with everything you need to know is here: [MoodleNet Docs](https://docs.moodle.org/dev/MoodleNet).
 
 ## Quick install tip
 
