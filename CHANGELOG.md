@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [4.1.0]
+
+### Improvements
+
+- DB indexing
+
+### Added
+
+- clear resource search filters
+
+### Fixed
+
+- User can request autofill from any state
+- Flaw in point system when deleting a published resource
+- Cancel upload functionality
+- Prevent showing blank cards in lists when entity is not readable by the user
+
+## [4.0.0]
+
+### Added
+
+- openai-autofill package uses openai apis to categorize user resources and categorize with educational metadata
+- user point system / gamification: users contributing with content, activities and sharing gain points (leaves) growing from "seed" to "tree" to "ecosystem" in the MoodleNet community
+
 ## [3.2.0]
 
 ### Added
