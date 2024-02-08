@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/react-app",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "publishConfig": {
     "access": "public"
   },
@@ -76,16 +76,16 @@
     }
   },
   "peerDependencies": {
-    "@moodlenet/arangodb": "0.7.0",
-    "@moodlenet/core": "0.7.0",
-    "@moodlenet/http-server": "0.7.0",
-    "@moodlenet/organization": "0.7.0"
+    "@moodlenet/arangodb": "0.7.1",
+    "@moodlenet/core": "0.7.1",
+    "@moodlenet/http-server": "0.7.1",
+    "@moodlenet/organization": "0.7.1"
   },
   "devDependencies": {
-    "@moodlenet/arangodb": "0.7.0",
-    "@moodlenet/core": "0.7.0",
-    "@moodlenet/http-server": "0.7.0",
-    "@moodlenet/organization": "0.7.0",
+    "@moodlenet/arangodb": "0.7.1",
+    "@moodlenet/core": "0.7.1",
+    "@moodlenet/http-server": "0.7.1",
+    "@moodlenet/organization": "0.7.1",
     "@storybook/addon-actions": "7.4.2",
     "@storybook/react": "7.4.2",
     "@types/copy-webpack-plugin": "10.1.0",
@@ -101,8 +101,8 @@
     "@babel/preset-react": "7.17.12",
     "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
-    "@moodlenet/component-library": "0.7.0",
-    "@moodlenet/key-value-store": "0.7.0",
+    "@moodlenet/component-library": "0.7.1",
+    "@moodlenet/key-value-store": "0.7.1",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@svgr/webpack": "6.2.1",
