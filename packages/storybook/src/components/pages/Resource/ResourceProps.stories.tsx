@@ -413,6 +413,9 @@ export const useResourceStoryProps = (
       setautofillState(undefined)
       autofillTimeoutId && clearTimeout(autofillTimeoutId)
     },
+    cancelUpload() {
+      setUploadProgress(undefined)
+    },
     ...overrides?.actions,
   }
 

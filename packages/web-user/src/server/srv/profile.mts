@@ -370,12 +370,10 @@ export async function getEntityFeaturesCount({
   const bindVars = { '@profileCollection': Profile.collection.name, needle }
   const query = `
   FOR profile IN @@profileCollection
-  FILTER profile.publisher && @needle IN (FOR item in profile.knownFeaturedEntities 
-                                            RETURN { 
-                                              entityType: item.entityType, 
-                                              _key:       item._key, 
-                                              feature:    item.feature
-                                            })
+  FILTER profile.publisher 
+          && @needle._key IN profile.knownFeaturedEntities[*]._key
+          && @needle.entityType IN profile.knownFeaturedEntities[*].entityType
+          && @needle.feature IN profile.knownFeaturedEntities[*].feature
   COLLECT WITH COUNT INTO count
   RETURN { count } 
   `
