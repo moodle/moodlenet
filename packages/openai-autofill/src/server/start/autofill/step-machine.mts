@@ -15,7 +15,7 @@ export async function stepMachine(resourceKey: string) {
     }
     const doc = snap.context.doc
 
-    const generateResult = await generateMeta(doc)
+    const generateResult = await generateMeta(doc).catch(() => null)
     const generatedImageEdit: ProvidedFileImage | undefined = generateResult?.provideImage
       ? {
           kind: 'file',

@@ -1,3 +1,4 @@
+import { SnackbarCtxProvider } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import AppRoutes from './app-routes.js'
@@ -10,11 +11,13 @@ const App: FC = () => {
     <ProvideViewport>
       <BrowserRouter>
         <ProvideLinkComponentCtx>
-          <MainSearchBoxCtxProviderContainer>
-            <MainApp>
-              <AppRoutes />
-            </MainApp>
-          </MainSearchBoxCtxProviderContainer>
+          <SnackbarCtxProvider>
+            <MainSearchBoxCtxProviderContainer>
+              <MainApp>
+                <AppRoutes />
+              </MainApp>
+            </MainSearchBoxCtxProviderContainer>
+          </SnackbarCtxProvider>
         </ProvideLinkComponentCtx>
       </BrowserRouter>
     </ProvideViewport>

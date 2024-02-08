@@ -9,9 +9,12 @@ export function getMyShell<UsesPkgDeps extends WebPkgDeps>(): WebappShell<UsesPk
   const rpc = Object.entries(deps).reduce((_rpc, [depName, { /* rpcPaths,  */ targetPkgId }]) => {
     return { ..._rpc, [depName]: pkgRpcs(targetPkgId, pkgId /* , rpcPaths */) }
   }, {} as WebappShell<UsesPkgDeps>['rpc'])
+
   const shell: WebappShell<UsesPkgDeps> = {
     pkgId,
-    abortRpc,
+    abortRpc(id) {
+      return abortRpc(`${pkgId.name}::${id}`)
+    },
     rpc,
     init: {
       getCurrentInitPkg,

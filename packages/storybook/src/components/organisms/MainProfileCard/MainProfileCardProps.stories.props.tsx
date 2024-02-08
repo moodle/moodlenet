@@ -111,6 +111,7 @@ export default function useMainProfileCardStoryProps(
         backgroundUrl: person && person.backgroundUrl,
         userId: (Math.random() * 1000000).toString(),
         displayName: person && person.username ? person.username : 'username',
+        points: 1000,
         ...overrides?.data,
         profileHref: href('https://iuri.is/'),
       },

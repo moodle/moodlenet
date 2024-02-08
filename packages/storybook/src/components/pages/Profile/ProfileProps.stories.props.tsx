@@ -136,9 +136,9 @@ export const useProfileStoryProps = (
     footerItems: [jiraRequestApprovalButton],
   }
 
-  const userProgressCardProps = {
-    points: 10,
-  }
+  // const userProgressCardProps = {
+  //   points: 10,
+  // }
 
   return overrideDeep<ProfileProps>(
     {
@@ -166,7 +166,7 @@ export const useProfileStoryProps = (
       }),
       createCollection: linkTo('Pages/Collection', 'New'),
       overallCardItems: OverallCardStories.OverallCardStoryProps.items ?? [],
-      userProgressCardProps: userProgressCardProps,
+      // userProgressCardProps: userProgressCardProps,
 
       // editForm: ProfileCardStoryProps.editForm,
       // sendEmailForm: useFormik<{ text: string }>({

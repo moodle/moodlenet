@@ -92,7 +92,7 @@ export const Creator: CollectionStory = () => {
       isCreator: true,
       canEdit: true,
     },
-    isSaving: false,
+    //isSaving: false,
     // resourceCardPropsList: [],
   })
   // const [resourceCardPropsList, setResourceCardPropsList] = useState(props.resourceCardPropsList)
@@ -128,7 +128,6 @@ export const Admin: CollectionStory = () => {
       canPublish: true,
       canEdit: true,
     },
-    isSaving: false,
   })
 
   return <Collection {...props} />

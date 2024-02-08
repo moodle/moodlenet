@@ -85,6 +85,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/:action(cancel|start)/meta-autofill/:_key': {
       guard: () => void 0,
       fn: async (_, { _key, action }) => {
+        action === 'start' && (await ensureUnpublish(_key))
         const resourceRecord = await getResource(_key, {
           project: {
             isCreator: isCurrentUserCreatorOfCurrentEntity(),
@@ -98,6 +99,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
           data: resourceRecord,
         })
         const ev = action === 'cancel' ? `cancel-meta-generation` : `request-meta-generation`
+
         const done = interpreter.getSnapshot().can(ev)
         interpreter.send(ev)
         interpreter.stop()
@@ -397,20 +399,9 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/trash/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }) => {
+        await ensureUnpublish(_key)
         const [interpreter] = await stdEdResourceMachine({ by: 'key', key: _key })
-        const snap = interpreter.getSnapshot()
-        if (matchState(snap, 'Published') || matchState(snap, 'Publish-Rejected')) {
-          interpreter.send('unpublish')
-          await waitFor(interpreter, nameMatcher('Unpublished'))
-        }
-        if (matchState(snap, 'Autogenerating-Meta')) {
-          interpreter.send('cancel-meta-generation')
-          await waitFor(interpreter, nameMatcher('Unpublished'))
-        }
-        if (matchState(snap, 'Meta-Suggestion-Available')) {
-          interpreter.send({ type: 'provide-resource-edits', edits: {} })
-          await waitFor(interpreter, nameMatcher('Unpublished'))
-        }
+
         interpreter.send('trash')
         await waitFor(interpreter, nameMatcher('Destroyed'))
         interpreter.stop()
@@ -544,4 +535,23 @@ type ServerResourceExposeType = {
       homepage: string
     }>
   }
+}
+
+async function ensureUnpublish(_key: string) {
+  const [interpreter] = await stdEdResourceMachine({ by: 'key', key: _key })
+  const snap = interpreter.getSnapshot()
+  const event =
+    matchState(snap, 'Published') || matchState(snap, 'Publish-Rejected')
+      ? 'unpublish'
+      : matchState(snap, 'Autogenerating-Meta')
+      ? 'cancel-meta-generation'
+      : matchState(snap, 'Meta-Suggestion-Available')
+      ? ({ type: 'provide-resource-edits', edits: {} } as const)
+      : null
+  if (event) {
+    interpreter.send(event)
+    await waitFor(interpreter, nameMatcher('Unpublished'))
+  }
+  interpreter.stop()
+  return new Promise(r => setTimeout(r, 300))
 }

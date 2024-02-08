@@ -18,10 +18,8 @@ import {
   sysEntitiesDB,
   toaql,
 } from '@moodlenet/system-entities/server'
-import type { ResourceFormProps } from '../common/types.mjs'
 import type { ValidationsConfig } from '../common/validationSchema.mjs'
 import { getValidationSchemas } from '../common/validationSchema.mjs'
-import { canPublish } from './aql.mjs'
 import { env } from './init/env.mjs'
 import { publicFiles, resourceFiles } from './init/fs.mjs'
 import { Resource } from './init/sys-entities.mjs'
@@ -61,50 +59,50 @@ export async function getValidations() {
   }
 }
 
-export async function setPublished(key: string, published: boolean) {
-  let matchRev: string | undefined = undefined
-  if (published) {
-    const resource = await shell.call(getEntity)(Resource.entityClass, key)
-    if (!resource) {
-      return null
-    }
-    if (!resource.entity.content) {
-      return false
-    }
+// export async function setPublished(key: string, published: boolean) {
+//   let matchRev: string | undefined = undefined
+//   if (published) {
+//     const resource = await shell.call(getEntity)(Resource.entityClass, key)
+//     if (!resource) {
+//       return null
+//     }
+//     if (!resource.entity.content) {
+//       return false
+//     }
 
-    const { publishedResourceValidationSchema } = await getValidations()
-    const resourceFormProps: ResourceFormProps = {
-      description: resource.entity.description,
-      title: resource.entity.title,
-      language: resource.entity.language,
-      level: resource.entity.level,
-      license: resource.entity.license,
-      subject: resource.entity.subject,
-      type: resource.entity.type,
-      month: resource.entity.month,
-      year: resource.entity.year,
-      learningOutcomes: resource.entity.learningOutcomes,
-    }
-    const isValid = await publishedResourceValidationSchema.isValid(resourceFormProps)
-    if (!isValid) {
-      return false
-    }
-    matchRev = resource.entity._rev
-  }
-  const patchResult = await shell.call(patchEntity)(
-    Resource.entityClass,
-    key,
-    { published },
-    {
-      matchRev,
-      preAccessBody: published ? `FILTER ${canPublish()}` : undefined,
-    },
-  )
-  if (!patchResult) {
-    return
-  }
-  return patchResult
-}
+//     const { publishedResourceValidationSchema } = await getValidations()
+//     const resourceFormProps: ResourceFormProps = {
+//       description: resource.entity.description,
+//       title: resource.entity.title,
+//       language: resource.entity.language,
+//       level: resource.entity.level,
+//       license: resource.entity.license,
+//       subject: resource.entity.subject,
+//       type: resource.entity.type,
+//       month: resource.entity.month,
+//       year: resource.entity.year,
+//       learningOutcomes: resource.entity.learningOutcomes,
+//     }
+//     const isValid = await publishedResourceValidationSchema.isValid(resourceFormProps)
+//     if (!isValid) {
+//       return false
+//     }
+//     matchRev = resource.entity._rev
+//   }
+//   const patchResult = await shell.call(patchEntity)(
+//     Resource.entityClass,
+//     key,
+//     { published },
+//     {
+//       matchRev,
+//       preAccessBody: published ? `FILTER ${canPublish()}` : undefined,
+//     },
+//   )
+//   if (!patchResult) {
+//     return
+//   }
+//   return patchResult
+// }
 export const EMPTY_RESOURCE: Omit<ResourceDataType, 'content' | 'persistentContext'> = {
   description: '',
   title: '',
@@ -153,7 +151,7 @@ export async function incrementResourceDownloads({ _key }: { _key: string }) {
   return deltaResourcePopularityItem({ _key, itemName: 'downloads', delta: 1 })
 }
 
-export async function deltaResourcePopularityItem({
+async function deltaResourcePopularityItem({
   _key,
   itemName,
   delta,
@@ -164,7 +162,7 @@ export async function deltaResourcePopularityItem({
 }) {
   const updatePopularityResult = await sysEntitiesDB.query<ResourceDataType>(
     {
-      query: `FOR res in @@resourceCollection 
+      query: `FOR res in @@resourceCollection
       FILTER res._key == @_key
       LIMIT 1
       UPDATE res WITH {
@@ -174,7 +172,7 @@ export async function deltaResourcePopularityItem({
             "${itemName}": (res.popularity.items["${itemName}"] || 0) + ( ${delta} )
           }
         }
-      } IN @@resourceCollection 
+      } IN @@resourceCollection
       RETURN NEW`,
       bindVars: { '@resourceCollection': Resource.collection.name, _key },
     },

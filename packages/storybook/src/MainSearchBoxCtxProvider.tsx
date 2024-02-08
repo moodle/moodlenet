@@ -4,7 +4,13 @@ import type { FC, PropsWithChildren } from 'react'
 
 export const ProvideSBMainSearchBoxCtx: FC<PropsWithChildren<unknown>> = ({ children }) => {
   return (
-    <ProvideMainSearchBoxCtx search={action('main search box')}>{children}</ProvideMainSearchBoxCtx>
+    <ProvideMainSearchBoxCtx
+      search={action('main search box')}
+      initSearchText=""
+      initialDefaultQuery={{}}
+    >
+      {children}
+    </ProvideMainSearchBoxCtx>
   )
 }
 

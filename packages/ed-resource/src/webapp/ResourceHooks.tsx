@@ -176,6 +176,9 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
   )
   const actions = useMemo<ResourceActions>(() => {
     const resourceActions: ResourceActions = {
+      cancelUpload() {
+        shell.abortRpc(provideResourceTaskId)
+      },
       async editData(res) {
         editData({ meta: res }, `edit resource ${resourceKey} form`)
       },
@@ -270,7 +273,11 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
             actions,
             props: {
               ...resource,
-              state: { ...resource.state, isPublished },
+              state: {
+                ...resource.state,
+                isPublished,
+                uploadProgress: saveState.content === 'saving' ? 'N/A' : undefined,
+              },
               data: {
                 ...resource.data,
                 ...(upImageTaskCurrent

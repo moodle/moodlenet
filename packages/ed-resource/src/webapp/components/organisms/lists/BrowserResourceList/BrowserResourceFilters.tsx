@@ -1,7 +1,14 @@
 import type { TextOptionProps } from '@moodlenet/component-library'
+import { SecondaryButton } from '@moodlenet/component-library'
 import { DropdownFilterField } from '@moodlenet/ed-meta/ui'
 import type { SortType } from '@moodlenet/react-app/ui'
 import { SortBy } from '@moodlenet/react-app/ui'
+import { FilterAltOff } from '@mui/icons-material'
+
+export type SortFilterElement = {
+  Item: JSX.Element
+  setSelected: (e: string[]) => void
+}
 
 export const SortByItem = ({
   selected,
@@ -96,6 +103,12 @@ export const SortBySubjectItem = ({
   />
 )
 
+export const ResetFiltersButton = ({ resetFilters }: { resetFilters(): void }) => (
+  <SecondaryButton className="reset-filters-button" abbr="Reset filters" onClick={resetFilters}>
+    <FilterAltOff />
+  </SecondaryButton>
+)
+
 export const BrowserResourceFilters = {
   SortByItem,
   SortByLanguageItem,
@@ -103,4 +116,5 @@ export const BrowserResourceFilters = {
   SortByLevelItem,
   SortByTypeItem,
   SortBySubjectItem,
+  ResetFiltersButton,
 }
