@@ -102,16 +102,16 @@
     max-height: calc(100vh - 40px); /* This provides 20px padding on top and bottom */
     overflow-y: auto;
 
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 30px; /* Adjust this for the height of the fade effect */
-      pointer-events: none; /* Make sure the gradient doesn't interfere with any interactions */
-      z-index: 10; /* Place the gradient above the content */
-    }
+    // &::before,
+    // &::after {
+    //   content: '';
+    //   position: absolute;
+    //   left: 0;
+    //   right: 0;
+    //   height: 30px; /* Adjust this for the height of the fade effect */
+    //   pointer-events: none; /* Make sure the gradient doesn't interfere with any interactions */
+    //   z-index: 10; /* Place the gradient above the content */
+    // }
 
     &.top-reached::before,
     &.bottom-reached::after {

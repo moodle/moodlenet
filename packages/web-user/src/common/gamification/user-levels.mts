@@ -64,7 +64,7 @@ export const actionsAndPointsObtained: { action: string; points: number; abbr?: 
   },
   { action: 'Publish resource', points: P.contribution.resource.published.toCreator.points },
   {
-    action: 'Follow a user a collection or a subject',
+    action: 'Follow a user, collection or subject',
     points: P.engagement.follow.followerProfile.points,
   },
   { action: 'New follower', points: P.engagement.follow.followedProfile.points },
@@ -78,7 +78,7 @@ export const actionsAndPointsObtained: { action: string; points: number; abbr?: 
     action: 'New bookmark on your profile or contribution',
     points: P.curation.bookmark.toTargetEntityCreator.points,
   },
-  { action: 'Bookmark a contribution or auser', points: P.curation.bookmark.toActor.points },
+  { action: 'Bookmark a contribution or user', points: P.curation.bookmark.toActor.points },
   { action: 'Become a publisher', points: P.engagement.profile.publisher.points },
 ]
 
