@@ -2,9 +2,9 @@ import { fromBufferWithMime } from '@nosferatu500/textract'
 import { promisify } from 'util'
 import type { FileExtractor } from './types.mjs'
 
-const defaultExtractor: FileExtractor = async ({ compactedFileBuffer, rpcFile }) => {
+const defaultExtractor: FileExtractor = async ({ fileBuffer, rpcFile }) => {
   const pFromBufferWithMime = promisify<string, Buffer, string>(fromBufferWithMime)
-  const text = await pFromBufferWithMime(rpcFile.type, compactedFileBuffer).catch(() => null)
+  const text = await pFromBufferWithMime(rpcFile.type, fileBuffer).catch(() => null)
   if (!text) {
     return null
   }
