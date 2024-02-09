@@ -10,7 +10,10 @@ const imageExtractor: FileExtractor = async feArgs => {
     return null
   }
   const defaultExtraction = await defaultExtractor(feArgs)
-  const extractedTextPrompts = defaultExtraction?.text
+  const extractedText = [defaultExtraction?.title ?? '', defaultExtraction?.content ?? '']
+    .join('\n')
+    .trim()
+  const extractedTextPrompts = extractedText
     ? ([
         {
           type: 'text',
@@ -18,7 +21,7 @@ const imageExtractor: FileExtractor = async feArgs => {
         },
         {
           type: 'text',
-          text: defaultExtraction.text,
+          text: extractedText,
         },
       ] as const)
     : []
@@ -57,12 +60,10 @@ const imageExtractor: FileExtractor = async feArgs => {
     ],
     // max_tokens: 300,
   })
-  const text = chatCompletion?.choices[0]?.message.content
-  if (!text) {
-    return null
-  }
+  const aiContent = chatCompletion?.choices[0]?.message.content
   return {
-    text,
+    title: defaultExtraction?.title,
+    content: aiContent ?? defaultExtraction?.content,
     type: `Image`,
     contentDesc: `image description`,
     provideImage: undefined,

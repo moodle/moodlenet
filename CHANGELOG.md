@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Flaw in point system when deleting a published resource
 - Cancel upload functionality
 - Prevent showing blank cards in lists when entity is not readable by the user
+- Issues in openai autofill procedures
 
 ## [4.0.0]
 
