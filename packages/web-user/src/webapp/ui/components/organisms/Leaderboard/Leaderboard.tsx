@@ -5,6 +5,7 @@ import { Link } from '@moodlenet/react-app/ui'
 import { getUserLevelDetails } from '../../../../../common/gamification/user-levels.mjs'
 import type { LeaderBoardContributor } from '../../../../../common/types.mjs'
 import { ReactComponent as LeafIcon } from '../../../assets/icons/leaf.svg'
+import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import './Leaderboard.scss'
 
 export type LeaderboardProps = {
@@ -34,7 +35,11 @@ export const Leaderboard: FC<LeaderboardProps> = ({ contributors }) => {
                   )}
                 </div>
                 <Link className="avatar" href={contributor.profileHref}>
-                  <img className="profile-avatar" src={contributor.avatarUrl} alt="avatar" />
+                  <img
+                    className="profile-avatar"
+                    src={contributor.avatarUrl || defaultAvatar}
+                    alt="avatar"
+                  />
                   <div className={`level-avatar-container level-${level}`}>
                     <img className="level-avatar" src={avatar} alt="level avatar" />
                   </div>

@@ -34,8 +34,8 @@ const leaderboardContributors = [
     subject: 'Physics',
   },
   {
-    avatarUrl:
-      'https://moodle.net/.pkg/@moodlenet/web-user/public/2023/05/18/15/45/42/838_foto_rid_seria.jpeg',
+    avatarUrl: undefined,
+    // 'https://moodle.net/.pkg/@moodlenet/web-user/public/2023/05/18/15/45/42/838_foto_rid_seria.jpeg',
     points: 44234,
     displayName: 'Carlo Cavicchioli',
     profileHref: href('Pages/Profile/Default'),
