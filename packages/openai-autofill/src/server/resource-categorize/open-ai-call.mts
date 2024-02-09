@@ -25,7 +25,13 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   d.on('error', err => {
     shell.log('error', 'TEXT EXTRACTION OR OPEN AI CALL ERROR ! caught by DOMAIN Aborting', err)
   })
-  const resourceExtraction = await d.run(() => extractResourceData(doc).catch(() => null))
+  const resourceExtraction = await d.run(() =>
+    extractResourceData(doc).catch(err => {
+      console.log('resourceExtraction err', err)
+      return null
+    }),
+  )
+  console.log({ resourceExtraction })
   if (!resourceExtraction) {
     return null
   }
