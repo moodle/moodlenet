@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/http-server",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "publishConfig": {
     "access": "public"
   },
@@ -40,10 +40,10 @@
     "xbytes": "1.8.0"
   },
   "peerDependencies": {
-    "@moodlenet/core": "0.7.2"
+    "@moodlenet/core": "0.7.3"
   },
   "devDependencies": {
-    "@moodlenet/core": "0.7.2",
+    "@moodlenet/core": "0.7.3",
     "@types/cookie-parser": "1.4.3",
     "@types/express": "4.17.14",
     "@types/multer": "1.4.7",
