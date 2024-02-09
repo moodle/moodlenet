@@ -20,7 +20,7 @@ export async function extractTextFromFile(doc: ResourceDoc): Promise<ResourceExt
   const readable = await assertRpcFileReadable(rpcFile)
 
   const compactedChuncksLength = Math.floor(env.cutContentToCharsAmount / 3)
-  const compactedFileBuffer = await getCompactBuffer(
+  const { compactedFileBuffer, fileBuffer } = await getCompactBuffer(
     await assertRpcFileReadable(rpcFile),
     compactedChuncksLength,
   )
@@ -32,11 +32,29 @@ export async function extractTextFromFile(doc: ResourceDoc): Promise<ResourceExt
         type: 'text file',
         provideImage: undefined,
       }
-    : await fileExtractor(readable, compactedFileBuffer, rpcFile).finally(() => readable.destroy())
+    : await fileExtractor({ readable, fileBuffer, rpcFile })
+        .catch(err => {
+          console.error(
+            `[extractResourceText] file extraction failed for resource ${doc.id.resourceKey}`,
+            err,
+          )
+          return null
+        })
+        .finally(() => readable.destroy())
+
+  console.log('resourceExtraction', resourceExtraction)
   return resourceExtraction
 }
 
-function fileExtractor(readable: Readable, compactedFileBuffer: Buffer, rpcFile: RpcFile) {
+function fileExtractor({
+  fileBuffer,
+  readable,
+  rpcFile,
+}: {
+  readable: Readable
+  fileBuffer: Buffer
+  rpcFile: RpcFile
+}) {
   const ext = (rpcFile.name.split('.').pop() ?? '').toLowerCase()
   const extensionExtractor: Record<string, FileExtractor> = {
     mbz: mbzExtractor,
@@ -48,5 +66,5 @@ function fileExtractor(readable: Readable, compactedFileBuffer: Buffer, rpcFile:
   }
 
   const extractor = extensionExtractor[ext] ?? typeKindExtractor[typeKind] ?? defaultExtractor
-  return extractor({ readable, compactedFileBuffer, rpcFile })
+  return extractor({ readable, fileBuffer, rpcFile })
 }
