@@ -40,10 +40,15 @@
           font-size: 20px;
           text-align: center;
         }
-        > svg {
-          height: 120px;
-          width: 120px;
+        > .emoji {
+          font-size: 110px;
+          padding-bottom: 28px;
+          margin-top: -46px;
         }
+        // > .icon {
+        //   height: 120px;
+        //   width: 120px;
+        // }
       }
     }
   }

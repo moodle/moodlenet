@@ -1,7 +1,7 @@
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import type { MainFooterProps, MinimalisticHeaderProps } from '@moodlenet/react-app/ui'
 import { SimpleLayout } from '@moodlenet/react-app/ui'
-import { CallMade as CallMadeIcon, MailOutline } from '@mui/icons-material'
+import { CallMade as CallMadeIcon } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import type { ComponentType, FC } from 'react'
 import { Link } from 'react-router-dom'
@@ -84,7 +84,8 @@ export const RecoverPassword: FC<RecoverPasswordProps> = ({
           <div className={`success-content ${requestSent ? 'success' : ''}`}>
             <Card>
               <div className="content">
-                <MailOutline className="icon" />
+                <div className="emoji">📨</div>
+                {/* <MailOutline className="icon" /> */}
                 <div className="subtitle">
                   If the email you provided corresponds to a MoodleNet user, you&apos;ll receive an
                   email with a change password link
