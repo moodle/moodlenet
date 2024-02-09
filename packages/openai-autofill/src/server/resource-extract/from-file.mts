@@ -27,7 +27,8 @@ export async function extractTextFromFile(doc: ResourceDoc): Promise<ResourceExt
   const fileIsText = isText(rpcFile.name, compactedFileBuffer)
   const resourceExtraction: ResourceExtraction | null = fileIsText
     ? {
-        text: compactedFileBuffer.toString(),
+        title: rpcFile.name,
+        content: compactedFileBuffer.toString(),
         contentDesc: `content`,
         type: 'text file',
         provideImage: undefined,
@@ -42,7 +43,6 @@ export async function extractTextFromFile(doc: ResourceDoc): Promise<ResourceExt
         })
         .finally(() => readable.destroy())
 
-  console.log('resourceExtraction', resourceExtraction)
   return resourceExtraction
 }
 

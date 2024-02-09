@@ -4,12 +4,10 @@ import type { FileExtractor } from './types.mjs'
 
 const defaultExtractor: FileExtractor = async ({ fileBuffer, rpcFile }) => {
   const pFromBufferWithMime = promisify<string, Buffer, string>(fromBufferWithMime)
-  const text = await pFromBufferWithMime(rpcFile.type, fileBuffer).catch(() => null)
-  if (!text) {
-    return null
-  }
+  const content = await pFromBufferWithMime(rpcFile.type, fileBuffer).catch(() => undefined)
   return {
-    text,
+    title: rpcFile.name,
+    content,
     contentDesc: 'extracted text',
     type: `${rpcFile.type} file type`,
     provideImage: undefined,

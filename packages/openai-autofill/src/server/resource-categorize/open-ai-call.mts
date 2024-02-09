@@ -16,7 +16,7 @@ import type { BloomsCognitiveElem, ClassifyPars } from './types.mjs'
 import { bcAttr, FN_NAME, par } from './types.mjs'
 
 interface OpenAiResponse {
-  data: Partial<ClassifyPars>
+  data: null | Partial<ClassifyPars>
   resourceExtraction: ResourceExtraction
 }
 
@@ -31,12 +31,11 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
       return null
     }),
   )
-  console.log({ resourceExtraction })
   if (!resourceExtraction) {
     return null
   }
 
-  const { contentDesc, text, type, provideImage } = resourceExtraction
+  const { contentDesc, content, title, type, provideImage } = resourceExtraction
   shell.log('notice', 'calling openai for', { contentDesc, type })
 
   const { completionConfig, prompts } = await getCompletionConfigs()
@@ -49,14 +48,17 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   }
 
   // console.log({ promptL: prompt.content?.length,  messagesL: prompts.systemMessagesJsonl.messages.reduce((_, { content }) => {     return _ + (content?.length ?? 0) }, 0), tokens: resp.usage, })
+  const cleaneupCompletions = cleanupChatCompletion(resp)
+  if (!cleaneupCompletions) {
+    return { data: null, resourceExtraction }
+  }
   const {
     data,
     foundIscedFieldDesc,
     foundIscedGradeDesc,
     // foundLanguageDesc,
     // foundResourceTypeDesc,
-  } = cleanupChatCompletion(resp)
-
+  } = cleaneupCompletions
   // type: ${foundResourceTypeDesc ? `of type "${foundResourceTypeDesc}"` : ''}
 
   const openAiProvideImage = provideImage ?? (await generateProvideImage())
@@ -65,17 +67,18 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
     data,
     resourceExtraction: {
       contentDesc,
-      text,
+      content,
+      title,
       type,
       provideImage: openAiProvideImage ?? provideImage,
     },
   }
 
   function cleanupChatCompletion(chatCompletion: ChatCompletion) {
-    const data: Partial<ClassifyPars> = (() => {
+    const data = (() => {
       const argsString = chatCompletion.choices[0]?.message.function_call?.arguments ?? '{}'
       try {
-        return JSON.parse(argsString)
+        return JSON.parse(argsString) as Partial<ClassifyPars>
       } catch {
         shell.log(
           'warn',
@@ -84,10 +87,12 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
           'finish_reason',
           chatCompletion.choices[0]?.finish_reason,
         )
-        return {}
+        return null
       }
     })()
-
+    if (!data) {
+      return null
+    }
     // writeFile('_.json', JSON.stringify({ textResource, data, messages, classifyResourceFn }, null, 2))
     data.bloomsCognitive = data.bloomsCognitive
       ?.map(generatedBloom => {
@@ -186,7 +191,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   }
 
   async function getCompletionConfigs() {
-    const cutText = text.slice(0, env.cutContentToCharsAmount)
+    const cutText = [title ?? '', content ?? ''].join('\n').slice(0, env.cutContentToCharsAmount)
 
     const prompts = await getPromptsAndData()
     const prompt: ChatCompletionMessageParam = {
