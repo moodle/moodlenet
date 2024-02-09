@@ -18,8 +18,8 @@ export async function generateMeta(doc: ResourceDoc): Promise<null | {
     return {
       generatedData: {
         meta: {
-          description: openAiResponse.resourceExtraction.content,
-          title: openAiResponse.resourceExtraction.title,
+          description: openAiResponse.resourceExtraction.content?.substring(0, 300),
+          title: openAiResponse.resourceExtraction.title?.substring(0, 60),
           learningOutcomes: [],
           language: null,
           level: null,
