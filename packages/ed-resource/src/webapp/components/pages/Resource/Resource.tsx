@@ -664,29 +664,25 @@ export const Resource: FC<ResourceProps> = ({
     }
   }, [showUploadingSnackbar, addSnackbar])
 
-  const [showAutofillSuccess, setShowAutofillSuccess] = useState<boolean>(
-    autofillState === 'ai-completed',
-  )
-
   useEffect(() => {
     if (autofillState === 'ai-generation') {
       addSnackbar({
         autoHideDuration: 6000,
         children: `Using AI to autofill the resource details, it usually takes a couple of minutes`,
       })
-    }
-  }, [addSnackbar, autofillState])
-
-  useEffect(() => {
-    if (showAutofillSuccess) {
+    } else if (autofillState === 'ai-completed') {
       addSnackbar({
         autoHideDuration: 6000,
         type: 'success',
         children: `Resource ready! Verify and edit any required details`,
-        onClose: () => setShowAutofillSuccess(false),
+      })
+    } else if (autofillState === 'ai-error') {
+      addSnackbar({
+        autoHideDuration: 6000,
+        children: `Unfortunatelly we couldn't complete AI autofill`,
       })
     }
-  }, [addSnackbar, showAutofillSuccess])
+  }, [addSnackbar, autofillState])
 
   useEffect(() => {
     if (showCheckPublishSuccess !== 'idle') {
