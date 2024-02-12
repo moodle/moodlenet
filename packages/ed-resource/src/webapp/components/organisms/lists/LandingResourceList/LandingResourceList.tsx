@@ -25,7 +25,7 @@ export const LandingResourceList: FC<LandingResourceListProps> = ({
   const subtitle = (
     <div className="subtitle">
       {hasSetInterests
-        ? 'Top resource aligned with your interests'
+        ? 'Top resources aligned with your interests'
         : 'Highlights on top quality content'}
     </div>
   )

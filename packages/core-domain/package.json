@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/core-domain",
-  "version": "0.7.3",
+  "version": "0.7.2",
   "publishConfig": {
     "access": "public"
   },
