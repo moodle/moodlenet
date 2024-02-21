@@ -19,12 +19,12 @@ export async function urlToRpcFile(imageUrl: string) {
 }
 
 export function getCompactBuffer(stream: Readable, nBytes: number) {
-  return new Promise<{ compactedFileBuffer: Buffer; fileBuffer: Buffer }>((resolve, reject) => {
+  return new Promise<{ compactedFileBuffer: Buffer;/*  fileBuffer: Buffer */ }>((resolve, reject) => {
     let totalLength = 0
     let first: null | Buffer = null
     let middle: null | Buffer = null
     let last = Buffer.alloc(nBytes)
-    let fileBuffer = Buffer.alloc(0)
+  //  let fileBuffer = Buffer.alloc(0)
 
     let middleStart = 0
     let middleEnd = 0
@@ -32,7 +32,7 @@ export function getCompactBuffer(stream: Readable, nBytes: number) {
 
     stream.on('data', _chunk => {
       const chunk = _chunk instanceof Buffer ? _chunk : Buffer.from(_chunk)
-      fileBuffer = Buffer.concat([fileBuffer, chunk])
+   //   fileBuffer = Buffer.concat([fileBuffer, chunk])
       totalLength += chunk.length
 
       // Capture first nBytes bytes
@@ -71,7 +71,7 @@ export function getCompactBuffer(stream: Readable, nBytes: number) {
           middle ?? Buffer.alloc(0),
           last,
         ]),
-        fileBuffer,
+      //  fileBuffer,
       })
     })
 
