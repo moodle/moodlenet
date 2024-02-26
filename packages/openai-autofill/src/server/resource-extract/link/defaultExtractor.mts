@@ -1,7 +1,6 @@
-import { fromBufferWithName } from '@nosferatu500/textract'
 import _ogs from 'open-graph-scraper'
 import puppeteer from 'puppeteer'
-import { promisify } from 'util'
+import { localTikaExtract } from '../../localTikaExtract.mjs'
 import type { ResourceExtraction } from '../types.mjs'
 import { urlToRpcFile } from '../util.mjs'
 import type { LinkExtractor } from './types.mjs'
@@ -76,11 +75,8 @@ async function puppeteerScrape(
     await page.goto(url, {})
     await new Promise(r => setTimeout(r, 5000))
     const pdfBuffer = await page.pdf({ /* path: 'page.pdf', */ format: 'A4' })
-    const quasiName = url.split('/').reverse().slice(0, 1).join('') + '.pdf'
-    const content = await promisify<string, Buffer, string>(fromBufferWithName)(
-      quasiName,
-      pdfBuffer,
-    )
+
+    const content = await localTikaExtract({ file: pdfBuffer, mimeType: 'application/pdf' })
 
     await browser.close()
     return { title, content, provideImage: undefined }

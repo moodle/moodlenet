@@ -424,7 +424,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
 
         const [interpreter] = await stdEdResourceMachine({ by: 'create' })
         let snap = interpreter.getSnapshot()
-        console.log({ resourceContent })
+        // console.log({ resourceContent })
         const provideNewResourceEvent: Event = {
           type: 'provide-new-resource',
           content:
