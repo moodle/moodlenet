@@ -147,43 +147,48 @@
       > .leaves {
         display: flex;
         flex-direction: column;
-        gap: 14px;
         > .title {
+          padding-bottom: 14px;
           font-weight: bold;
+          position: sticky;
+          background: white;
+          top: 0;
         }
-        > .row {
+        > .rows {
           display: flex;
-          align-items: center;
-          justify-content: space-between;
-          width: 300px;
-          > .level {
-            min-width: 62px;
-          }
-          > .points {
-            width: 75px;
+          flex-direction: column;
+          gap: 14px;
+          padding-bottom: 14px;
+          > .row {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            gap: 4px;
-            > svg {
-              height: 13px;
+            justify-content: space-between;
+            width: 300px;
+            > .level {
+              min-width: 62px;
             }
-          }
-          > .level-avatar {
-            width: 50px;
-            height: 50px;
-            margin-left: 20px;
-            > .avatar {
-              width: 100%;
-              height: 100%;
-              padding: 4px;
+            > .points {
+              width: 75px;
+              display: flex;
+              align-items: center;
+              justify-content: flex-end;
+              gap: 4px;
+              > svg {
+                height: 13px;
+              }
+            }
+            > .level-avatar {
+              width: 50px;
+              height: 50px;
+              margin-left: 20px;
+              > .avatar {
+                width: 100%;
+                height: 100%;
+                padding: 4px;
+              }
             }
           }
         }
-      }
-
-      > .leaves {
-        gap: 26px;
       }
     }
 
