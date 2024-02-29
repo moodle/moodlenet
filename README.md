@@ -8,7 +8,7 @@ You can find our main instance here at [moodle.net](https://moodle.net), but you
 
 ## Current Status
 
-MoodleNet 4.0 now feaures AI metadata generation for resources, gamification to vastly improve how quality is identified and surfaced to you as a user.
+MoodleNet 4.0 now features AI metadata generation for resources, gamification to vastly improve how quality is identified and surfaced to you as a user.
 
 ## Documentation 
 
