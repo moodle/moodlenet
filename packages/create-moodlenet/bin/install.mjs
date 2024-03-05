@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import execa from 'execa'
+import { execa } from 'execa'
 import { configJsonFilename, crypto, installDir, myPkgJson } from './env.mjs'
 import './generate-files/main.mjs'
 

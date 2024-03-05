@@ -19,7 +19,7 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "execa": "5.1.1",
+    "execa": "7.1.1",
     "jose": "4.14",
     "yargs": "17.5.1"
   },

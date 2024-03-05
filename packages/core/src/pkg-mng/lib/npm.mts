@@ -1,4 +1,4 @@
-import execa from 'execa'
+import { execa } from 'execa'
 import { run } from 'npm-check-updates'
 import {
   coreConfigs,

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import execa from 'execa'
+import { execa } from 'execa'
 import { fwRestArgs, fwRestOpts, mnDevDir, nodeDev } from './env.mjs'
 
 const noNodeDev = !(nodeDev ?? true)

@@ -1,4 +1,4 @@
-import execa from 'execa'
+import { execa } from 'execa'
 import { mkdir, readFile } from 'fs/promises'
 import { basename, dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
