@@ -9,9 +9,6 @@
       "path": "../arangodb"
     },
     {
-      "path": "../component-library"
-    },
-    {
       "path": "../core"
     },
     {
@@ -24,10 +21,16 @@
       "path": "../http-server"
     },
     {
+      "path": "../organization"
+    },
+    {
       "path": "../react-app"
     },
     {
       "path": "../web-user"
+    },
+    {
+      "path": "../component-library"
     },
     {
       "path": "../key-value-store"

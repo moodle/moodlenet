@@ -56,7 +56,7 @@
     "@types/react-dom": "18.2.7",
     "react-dom": "18.2.0",
     "react-router-dom": "6.4.1",
-    "typescript": "4.7.2"
+    "typescript": "5.3"
   },
   "scripts": {
     "buildx": "tsc --build"

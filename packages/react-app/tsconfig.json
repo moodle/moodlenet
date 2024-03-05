@@ -16,19 +16,19 @@
       "path": "../arangodb"
     },
     {
-      "path": "../component-library"
-    },
-    {
       "path": "../core"
     },
     {
       "path": "../http-server"
     },
     {
-      "path": "../key-value-store"
+      "path": "../organization"
     },
     {
-      "path": "../organization"
+      "path": "../component-library"
+    },
+    {
+      "path": "../key-value-store"
     }
   ]
 }

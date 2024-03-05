@@ -12,10 +12,10 @@
       "path": "../core-domain"
     },
     {
-      "path": "../ed-resource"
+      "path": "../ed-meta"
     },
     {
-      "path": "../ed-meta"
+      "path": "../ed-resource"
     },
     {
       "path": "../system-entities"

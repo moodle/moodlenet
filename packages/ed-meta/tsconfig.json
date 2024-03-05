@@ -6,16 +6,16 @@
   },
   "references": [
     {
-      "path": "../component-library"
+      "path": "../core"
+    },
+    {
+      "path": "../react-app"
     },
     {
       "path": "../system-entities"
     },
     {
-      "path": "../core"
-    },
-    {
-      "path": "../react-app"
+      "path": "../component-library"
     },
     {
       "path": "../key-value-store"

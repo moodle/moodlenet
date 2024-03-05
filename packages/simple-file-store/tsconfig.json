@@ -9,10 +9,10 @@
       "path": "../arangodb"
     },
     {
-      "path": "../http-server"
+      "path": "../core"
     },
     {
-      "path": "../core"
+      "path": "../http-server"
     }
   ]
 }

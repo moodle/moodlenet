@@ -9,6 +9,9 @@
       "path": "../core"
     },
     {
+      "path": "../organization"
+    },
+    {
       "path": "../key-value-store"
     }
   ]
