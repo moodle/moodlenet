@@ -5,6 +5,6 @@
   },
   "rules": {
     // do not ban
-    "@typescript-eslint/ban-types": false
+    "@typescript-eslint/ban-types": 0
   }
 }
