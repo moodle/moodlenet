@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/v2-migrate-v3",
-  "version": "0.5.1",
+  "version": "0.5.2-alpha.0",
   "publishConfig": {
     "access": "public"
   },
