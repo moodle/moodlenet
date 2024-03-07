@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 import type { Readable } from 'stream'
 import { env } from './init/env.mjs'
 
-export async function localTikaExtract({
+export async function tikaExtract({
   file,
   mimeType,
 }: {
