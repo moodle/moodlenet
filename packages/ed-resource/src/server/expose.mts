@@ -1,8 +1,8 @@
 import type { PkgExposeDef, RpcFile } from '@moodlenet/core'
 import {
+  RpcStatus,
   assertRpcFileReadable,
   readableRpcFile,
-  RpcStatus,
   setRpcStatusCode,
 } from '@moodlenet/core'
 import { getWebappUrl } from '@moodlenet/react-app/server'
@@ -29,13 +29,13 @@ import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
 import { getImageAssetInfo } from './lib.mjs'
 import {
+  RESOURCE_DOWNLOAD_ENDPOINT,
   getResource,
   getResourceFile,
   getResourceFileUrl,
   getResourcesCountInSubject,
   getValidations,
   incrementResourceDownloads,
-  RESOURCE_DOWNLOAD_ENDPOINT,
   searchResources,
   validationsConfigs,
 } from './services.mjs'
@@ -319,7 +319,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'basic/v1/create': {
       guard: async body => {
         const { draftResourceValidationSchema, contentValidationSchema } = await getValidations()
-        await contentValidationSchema.validate({ content: body?.resource })
+        await contentValidationSchema.validate({ content: [body?.resource].flat()[0] })
         await draftResourceValidationSchema.validate(body, {
           stripUnknown: true,
         })

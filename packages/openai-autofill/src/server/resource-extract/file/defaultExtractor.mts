@@ -1,9 +1,13 @@
-import { localTikaExtract } from '../../localTikaExtract.mjs'
+import { assertRpcFileReadable } from '@moodlenet/core'
+import { tikaExtract } from '../../tikaExtract.mjs'
 import type { FileExtractor } from './types.mjs'
 
-const defaultExtractor: FileExtractor = async ({ rpcFile, readable }) => {
+const defaultExtractor: FileExtractor = async ({ rpcFile }) => {
   // const pFromBufferWithMime = promisify<string, Buffer, string>(fromBufferWithMime)
-  const content = await localTikaExtract({ file: readable, mimeType: rpcFile.type })
+  const content = await tikaExtract({
+    file: await assertRpcFileReadable(rpcFile),
+    mimeType: rpcFile.type,
+  })
   // const content = await pFromBufferWithMime(rpcFile.type, fileBuffer).catch(() => undefined)
   return {
     title: rpcFile.name,

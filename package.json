@@ -41,6 +41,7 @@
     "vscode-generate-index-standalone": "^1.6.0"
   },
   "scripts": {
+    "prepublish": "node align_pkg_mn-peer-deps_to_mn-dev-deps.mjs",
     "postinstall": "npm run prj-cleanup-build && npm run prj-husky-init && npm run prj-bs",
     "prepare": "npm run prj-cleanup-build && npm run prj-build",
     "prj-husky-init": "rimraf .husky && husky install && husky add .husky/pre-commit \"npm run pre-commit\"",

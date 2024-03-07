@@ -1,6 +1,6 @@
 import _ogs from 'open-graph-scraper'
 import puppeteer from 'puppeteer'
-import { localTikaExtract } from '../../localTikaExtract.mjs'
+import { tikaExtract } from '../../tikaExtract.mjs'
 import type { ResourceExtraction } from '../types.mjs'
 import { urlToRpcFile } from '../util.mjs'
 import type { LinkExtractor } from './types.mjs'
@@ -76,7 +76,7 @@ async function puppeteerScrape(
     await new Promise(r => setTimeout(r, 5000))
     const pdfBuffer = await page.pdf({ /* path: 'page.pdf', */ format: 'A4' })
 
-    const content = await localTikaExtract({ file: pdfBuffer, mimeType: 'application/pdf' })
+    const content = await tikaExtract({ file: pdfBuffer, mimeType: 'application/pdf' })
 
     await browser.close()
     return { title, content, provideImage: undefined }
