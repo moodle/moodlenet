@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/simple-email-auth",
-  "version": "0.7.3-alpha.0",
+  "version": "0.7.3-alpha.1",
   "publishConfig": {
     "access": "public"
   },
@@ -41,8 +41,6 @@
     "yup": "0.32.11"
   },
   "peerDependencies": {
-    "@mui/icons-material": "5.14.9",
-    "@mui/material": "5.14.9",
     "@moodlenet/arangodb": "^0.7.3-alpha.0",
     "@moodlenet/core": "^0.7.3-alpha.0",
     "@moodlenet/crypto": "^0.7.3-alpha.0",
@@ -50,7 +48,9 @@
     "@moodlenet/http-server": "^0.7.3-alpha.0",
     "@moodlenet/organization": "^0.7.3-alpha.0",
     "@moodlenet/react-app": "^0.7.3-alpha.0",
-    "@moodlenet/web-user": "^0.7.3-alpha.0"
+    "@moodlenet/web-user": "^0.7.3-alpha.0",
+    "@mui/icons-material": "5.14.9",
+    "@mui/material": "5.14.9"
   },
   "devDependencies": {
     "@moodlenet/arangodb": "^0.7.3-alpha.0",
@@ -60,7 +60,7 @@
     "@moodlenet/http-server": "^0.7.3-alpha.0",
     "@moodlenet/organization": "^0.7.3-alpha.0",
     "@moodlenet/react-app": "^0.7.3-alpha.0",
-    "@moodlenet/web-user": "^0.7.3-alpha.0",
+    "@moodlenet/web-user": "^0.7.3-alpha.1",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@storybook/addon-actions": "7.4.2",

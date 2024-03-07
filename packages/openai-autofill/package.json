@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/openai-autofill",
-  "version": "0.7.3-alpha.0",
+  "version": "0.7.3-alpha.1",
   "publishConfig": {
     "access": "public"
   },
@@ -51,7 +51,7 @@
     "@moodlenet/core": "^0.7.3-alpha.0",
     "@moodlenet/core-domain": "^0.7.3-alpha.0",
     "@moodlenet/ed-meta": "^0.7.3-alpha.0",
-    "@moodlenet/ed-resource": "^0.7.3-alpha.0",
+    "@moodlenet/ed-resource": "^0.7.3-alpha.1",
     "@moodlenet/system-entities": "^0.7.3-alpha.0",
     "@types/file-type": "10.9.1",
     "@types/istextorbinary": "2.3.4",
