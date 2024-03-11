@@ -1,1 +1,18 @@
-export const defaultCorePackages = {}
+export const defaultCorePackages = {
+  'core': '^0.7.3-alpha.0',
+  'arangodb': '^0.7.3-alpha.0',
+  'crypto': '^0.7.3-alpha.0',
+  'http-server': '^0.7.3-alpha.1',
+  'organization': '^0.7.3-alpha.1',
+  'system-entities': '^0.7.3-alpha.0',
+  'email-service': '^0.7.3-alpha.1',
+  'react-app': '^0.7.3-alpha.1',
+  'extensions-manager': '^0.7.3-alpha.1',
+  'simple-email-auth': '^0.7.3-alpha.2',
+  'openid': '^0.7.3-alpha.2',
+  'ed-resource': '^0.7.3-alpha.2',
+  'collection': '^0.7.3-alpha.2',
+  'web-user': '^0.7.3-alpha.2',
+  'ed-meta': '^0.7.3-alpha.1',
+  'moodle-lms-integration': '^0.7.3-alpha.2',
+}
