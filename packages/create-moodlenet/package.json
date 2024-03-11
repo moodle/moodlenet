@@ -14,9 +14,7 @@
   ],
   "bin": "./bin/install.mjs",
   "scripts": {
-    "start": "node ./bin/install.mjs",
-    "prepublishOnly": "npm run generate-package-list",
-    "generate-package-list": "node generate-package-list.mjs"
+    "start": "node ./bin/install.mjs"
   },
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
