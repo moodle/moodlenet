@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/web-user",
-  "version": "0.7.3-alpha.1",
+  "version": "0.7.3-alpha.2",
   "publishConfig": {
     "access": "public"
   },
@@ -86,15 +86,15 @@
   },
   "devDependencies": {
     "@moodlenet/arangodb": "^0.7.3-alpha.0",
-    "@moodlenet/collection": "^0.7.3-alpha.1",
+    "@moodlenet/collection": "^0.7.3-alpha.2",
     "@moodlenet/core": "^0.7.3-alpha.0",
     "@moodlenet/core-domain": "^0.7.3-alpha.0",
     "@moodlenet/crypto": "^0.7.3-alpha.0",
-    "@moodlenet/ed-meta": "^0.7.3-alpha.0",
-    "@moodlenet/ed-resource": "^0.7.3-alpha.1",
-    "@moodlenet/http-server": "^0.7.3-alpha.0",
-    "@moodlenet/organization": "^0.7.3-alpha.0",
-    "@moodlenet/react-app": "^0.7.3-alpha.0",
+    "@moodlenet/ed-meta": "^0.7.3-alpha.1",
+    "@moodlenet/ed-resource": "^0.7.3-alpha.2",
+    "@moodlenet/http-server": "^0.7.3-alpha.1",
+    "@moodlenet/organization": "^0.7.3-alpha.1",
+    "@moodlenet/react-app": "^0.7.3-alpha.1",
     "@moodlenet/system-entities": "^0.7.3-alpha.0",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
@@ -111,7 +111,7 @@
   "dependencies": {
     "@moodlenet/component-library": "^0.7.3-alpha.0",
     "@moodlenet/key-value-store": "^0.7.3-alpha.0",
-    "@moodlenet/simple-file-store": "^0.7.3-alpha.0",
+    "@moodlenet/simple-file-store": "^0.7.3-alpha.1",
     "dot": "1.1.3",
     "formik": "2.2.9",
     "immer": "10.0.3",
