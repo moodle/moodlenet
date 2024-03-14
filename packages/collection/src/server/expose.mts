@@ -175,7 +175,7 @@ export const expose = await shell.expose<CollectionExposeType>({
           { image: body?.file?.[0] },
           { stripUnknown: true },
         )
-        body.file = [validatedImageOrNullish]
+        body.file = [validatedImageOrNullish?.image]
       },
       async fn({ file: [uploadedRpcFile] }, { _key }) {
         const got = await getCollection(_key, { projectAccess: ['u'] })
