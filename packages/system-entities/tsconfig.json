@@ -12,13 +12,7 @@
       "path": "../core"
     },
     {
-      "path": "../crypto"
-    },
-    {
       "path": "../key-value-store"
-    },
-    {
-      "path": "../react-app"
     }
   ]
 }

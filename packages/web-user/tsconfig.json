@@ -5,21 +5,47 @@
     "outDir": "./dist"
   },
   "references": [
-    { "path": "../arangodb" },
-    { "path": "../component-library" },
-    { "path": "../system-entities" },
-    { "path": "../core" },
-    { "path": "../core-domain" },
-    { "path": "../http-server" },
-    { "path": "../react-app" },
-    { "path": "../crypto" },
-    { "path": "../collection" },
-    { "path": "../ed-resource" },
-    { "path": "../ed-meta" },
-    { "path": "../simple-file-store" },
-    { "path": "../key-value-store" },
+    {
+      "path": "../arangodb"
+    },
+    {
+      "path": "../collection"
+    },
+    {
+      "path": "../core"
+    },
     {
       "path": "../core-domain"
+    },
+    {
+      "path": "../crypto"
+    },
+    {
+      "path": "../ed-meta"
+    },
+    {
+      "path": "../ed-resource"
+    },
+    {
+      "path": "../http-server"
+    },
+    {
+      "path": "../organization"
+    },
+    {
+      "path": "../react-app"
+    },
+    {
+      "path": "../system-entities"
+    },
+    {
+      "path": "../component-library"
+    },
+    {
+      "path": "../key-value-store"
+    },
+    {
+      "path": "../simple-file-store"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/mn-central-jira-simple-moderations",
-  "version": "0.7.3-alpha.2",
+  "version": "0.7.3-alpha.3",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -32,11 +32,11 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "peerDependencies": {
-    "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/react-app": "^0.7.3-alpha.0",
-    "@moodlenet/web-user": "^0.7.3-alpha.0",
     "@mui/icons-material": "5.14.9",
-    "@mui/material": "5.14.9"
+    "@mui/material": "5.14.9",
+    "@moodlenet/core": "^0.7.3-alpha.0",
+    "@moodlenet/react-app": "^0.7.3-alpha.2",
+    "@moodlenet/web-user": "^0.7.3-alpha.3"
   },
   "dependencies": {
     "@moodlenet/component-library": "^0.7.3-alpha.0",
@@ -47,8 +47,8 @@
   },
   "devDependencies": {
     "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/react-app": "^0.7.3-alpha.1",
-    "@moodlenet/web-user": "^0.7.3-alpha.2",
+    "@moodlenet/react-app": "^0.7.3-alpha.2",
+    "@moodlenet/web-user": "^0.7.3-alpha.3",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@types/jira-client": "7.1.6",

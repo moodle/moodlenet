@@ -41,7 +41,7 @@
   },
   "peerDependencies": {
     "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/organization": "^0.7.3-alpha.0"
+    "@moodlenet/organization": "^0.7.3-alpha.1"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.7.3-alpha.0",
