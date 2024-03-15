@@ -17,7 +17,10 @@ export {
   HeaderPlugins,
   type HeaderAddonRegItem,
 } from '../ui/components/organisms/Header/MainHeader/MainHeaderHooks.mjs'
-export { useMinimalisticHeaderProps } from '../ui/components/organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
+export {
+  MimimalisticHeaderHookPlugin,
+  useMinimalisticHeaderProps,
+} from '../ui/components/organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
 export {
   AdminSettingsPagePlugins,
   type AdminSettingsSectionItem,
