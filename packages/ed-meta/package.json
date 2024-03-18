@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/ed-meta",
-  "version": "0.7.3-alpha.2",
+  "version": "0.7.3-alpha.3",
   "publishConfig": {
     "access": "public"
   },
@@ -38,13 +38,13 @@
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/react-app": "^0.7.3-alpha.2",
+    "@moodlenet/react-app": "^0.7.3-alpha.4",
     "@moodlenet/system-entities": "^0.7.3-alpha.1"
   },
   "devDependencies": {
     "@lingui/macro": "3.14.0",
     "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/react-app": "^0.7.3-alpha.2",
+    "@moodlenet/react-app": "^0.7.3-alpha.4",
     "@moodlenet/system-entities": "^0.7.3-alpha.1",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",

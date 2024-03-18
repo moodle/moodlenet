@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/simple-email-auth",
-  "version": "0.7.3-alpha.3",
+  "version": "0.7.3-alpha.4",
   "publishConfig": {
     "access": "public"
   },
@@ -49,8 +49,8 @@
     "@moodlenet/email-service": "^0.7.3-alpha.1",
     "@moodlenet/http-server": "^0.7.3-alpha.1",
     "@moodlenet/organization": "^0.7.3-alpha.1",
-    "@moodlenet/react-app": "^0.7.3-alpha.2",
-    "@moodlenet/web-user": "^0.7.3-alpha.3"
+    "@moodlenet/react-app": "^0.7.3-alpha.4",
+    "@moodlenet/web-user": "^0.7.3-alpha.5"
   },
   "devDependencies": {
     "@moodlenet/arangodb": "^0.7.3-alpha.0",
@@ -59,8 +59,8 @@
     "@moodlenet/email-service": "^0.7.3-alpha.1",
     "@moodlenet/http-server": "^0.7.3-alpha.1",
     "@moodlenet/organization": "^0.7.3-alpha.1",
-    "@moodlenet/react-app": "^0.7.3-alpha.2",
-    "@moodlenet/web-user": "^0.7.3-alpha.3",
+    "@moodlenet/react-app": "^0.7.3-alpha.4",
+    "@moodlenet/web-user": "^0.7.3-alpha.5",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@storybook/addon-actions": "7.4.2",

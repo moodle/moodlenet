@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/extensions-manager",
-  "version": "0.7.3-alpha.2",
+  "version": "0.7.3-alpha.3",
   "publishConfig": {
     "access": "public"
   },
@@ -47,11 +47,11 @@
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/react-app": "^0.7.3-alpha.2"
+    "@moodlenet/react-app": "^0.7.3-alpha.4"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/react-app": "^0.7.3-alpha.2",
+    "@moodlenet/react-app": "^0.7.3-alpha.4",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@storybook/addon-actions": "7.4.2",

@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/react-app",
-  "version": "0.7.3-alpha.3",
+  "version": "0.7.3-alpha.4",
   "publishConfig": {
     "access": "public"
   },
