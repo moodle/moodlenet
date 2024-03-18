@@ -13,7 +13,7 @@ import { urlToRpcFile } from '../resource-extract/util.mjs'
 import { shell } from '../shell.mjs'
 import getPromptsAndData from './get-prompts-and-data.mjs'
 import type { BloomsCognitiveElem, ClassifyPars } from './types.mjs'
-import { bcAttr, FN_NAME, par } from './types.mjs'
+import { FN_NAME, bcAttr, par } from './types.mjs'
 
 interface OpenAiResponse {
   data: null | Partial<ClassifyPars>
@@ -27,7 +27,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   })
   const resourceExtraction = await d.run(() =>
     extractResourceData(doc).catch(err => {
-      console.log('resourceExtraction err', err)
+      shell.log('warn', 'resourceExtraction err', err)
       return null
     }),
   )
@@ -40,7 +40,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
 
   const { completionConfig, prompts } = await getCompletionConfigs()
   const resp = await openAiClient.chat.completions.create(completionConfig).catch(err => {
-    shell.log('warn', 'openai gpt-3.5-turbo call failed', err)
+    shell.log('warn', 'openai chat completions call failed', err)
     return null
   })
   if (!resp) {
