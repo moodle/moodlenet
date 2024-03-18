@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/simple-email-auth",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "publishConfig": {
     "access": "public"
   },
@@ -34,33 +34,35 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "@moodlenet/component-library": "0.7.1",
-    "@moodlenet/key-value-store": "0.7.1",
+    "@moodlenet/component-library": "^0.8.0",
+    "@moodlenet/key-value-store": "^0.8.0",
     "dot": "1.1.3",
     "formik": "2.2.9",
     "yup": "0.32.11"
   },
   "peerDependencies": {
-    "@mui/material": "5.14.9",
+    "@moodlenet/arangodb": "^0.7.3-alpha.0",
+    "@moodlenet/core": "^0.7.3-alpha.0",
+    "@moodlenet/crypto": "^0.7.3-alpha.0",
+    "@moodlenet/email-service": "^0.7.3-alpha.1",
+    "@moodlenet/http-server": "^0.7.3-alpha.1",
+    "@moodlenet/organization": "^0.7.3-alpha.1",
+    "@moodlenet/react-app": "^0.7.3-alpha.4",
+    "@moodlenet/web-user": "^0.7.3-alpha.5",
     "@mui/icons-material": "5.14.9",
-    "@moodlenet/arangodb": "0.7.1",
-    "@moodlenet/core": "0.7.1",
-    "@moodlenet/crypto": "0.7.1",
-    "@moodlenet/email-service": "0.7.1",
-    "@moodlenet/http-server": "0.7.1",
-    "@moodlenet/organization": "0.7.1",
-    "@moodlenet/react-app": "0.7.1",
-    "@moodlenet/web-user": "0.7.1"
+    "@mui/material": "5.14.9"
   },
   "devDependencies": {
-    "@moodlenet/arangodb": "0.7.1",
-    "@moodlenet/core": "0.7.1",
-    "@moodlenet/crypto": "0.7.1",
-    "@moodlenet/email-service": "0.7.1",
-    "@moodlenet/http-server": "0.7.1",
-    "@moodlenet/organization": "0.7.1",
-    "@moodlenet/react-app": "0.7.1",
-    "@moodlenet/web-user": "0.7.1",
+    "@moodlenet/arangodb": "^0.8.0",
+    "@moodlenet/core": "^0.8.0",
+    "@moodlenet/crypto": "^0.8.0",
+    "@moodlenet/email-service": "^0.8.0",
+    "@moodlenet/http-server": "^0.8.0",
+    "@moodlenet/organization": "^0.8.0",
+    "@moodlenet/react-app": "^0.8.0",
+    "@moodlenet/web-user": "^0.8.0",
+    "@mui/icons-material": "5.14.9",
+    "@mui/material": "5.14.9",
     "@storybook/addon-actions": "7.4.2",
     "@storybook/react": "7.4.2",
     "@types/dot": "1.1.5",
@@ -68,9 +70,7 @@
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "react-router-dom": "6.4.1",
-    "typescript": "4.7.2",
-    "@mui/material": "5.14.9",
-    "@mui/icons-material": "5.14.9"
+    "typescript": "5.3"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",

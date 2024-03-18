@@ -1,7 +1,7 @@
 import { DepGraph } from 'dependency-graph'
 
 import assert from 'assert'
-import execa from 'execa'
+import { execa } from 'execa'
 import type { PackageJson } from 'type-fest'
 import type { CoreConfigs } from './types.mjs'
 export const MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES =

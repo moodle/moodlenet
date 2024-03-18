@@ -377,7 +377,7 @@ function html() {
                             account.
                           </div>
                           <p style="margin: 25px 0">
-                            <a href={{=it.action-button-url}} class="btn btn-primary" target="_blank">Activate account</a>
+                            <a href={{=it.action-button-url}} class="btn btn-primary" style="background: #f88012" target="_blank">Activate account</a>
                           </p>
                           <span class="position disclaimer">Not you? Just ignore this message.</span>
                         </div>

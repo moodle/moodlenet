@@ -72,33 +72,37 @@ export const UserProgressCard: FC<UserProgressCardProps> = ({
     >
       <div className="levels">
         <div className="title">Levels</div>
-        {userLevels.map((level, index) => (
-          <div className="row" key={index}>
-            <div className={`level`}>Level {level.level}</div>
-            <div className="points">
-              <span className="min">{level.minPoints.toLocaleString()}</span>
-              <LeafIcon />
+        <div className="rows">
+          {userLevels.map((level, index) => (
+            <div className="row" key={index}>
+              <div className={`level`}>Level {level.level}</div>
+              <div className="points">
+                <span className="min">{level.minPoints.toLocaleString()}</span>
+                <LeafIcon />
+              </div>
+              <div className={`level-avatar level-${level.level}`}>
+                <img className="avatar" src={level.avatar} alt="level avatar" />
+              </div>
             </div>
-            <div className={`level-avatar level-${level.level}`}>
-              <img className="avatar" src={level.avatar} alt="level avatar" />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
       <div className="leaves">
         <div className="title">Leaves</div>
-        {actionsAndPointsObtained.map((action, index) => (
-          <div className="row" key={index}>
-            <abbr className={`action`} title={action.abbr ?? ''}>
-              {' '}
-              {action.action}
-            </abbr>
-            <div className="points">
-              <span className="points">{action.points.toLocaleString()}</span>
-              <LeafIcon />
+        <div className="rows">
+          {actionsAndPointsObtained.map((action, index) => (
+            <div className="row" key={index}>
+              <abbr className={`action`} title={action.abbr ?? ''}>
+                {' '}
+                {action.action}
+              </abbr>
+              <div className="points">
+                <span className="points">{action.points.toLocaleString()}</span>
+                <LeafIcon />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </Modal>
   )

@@ -9,22 +9,16 @@
       "path": "../core"
     },
     {
-      "path": "../key-value-store"
+      "path": "../react-app"
     },
     {
       "path": "../web-user"
     },
     {
-      "path": "../ed-resource"
-    },
-    {
-      "path": "../http-server"
-    },
-    {
-      "path": "../system-entities"
-    },
-    {
       "path": "../component-library"
+    },
+    {
+      "path": "../key-value-store"
     }
   ]
 }

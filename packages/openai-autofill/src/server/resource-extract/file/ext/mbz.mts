@@ -1,9 +1,11 @@
+import { assertRpcFileReadable } from '@moodlenet/core'
 import tar from 'tar-stream'
 import { createGunzip } from 'zlib'
 import { streamToBuffer } from '../../util.mjs'
 import type { FileExtractor } from '../types.mjs'
 
-const mbzExtractor: FileExtractor = async ({ readable }) => {
+const mbzExtractor: FileExtractor = async ({ rpcFile }) => {
+  const readable = await assertRpcFileReadable(rpcFile)
   try {
     const extract = tar.extract({ allowUnknownFormat: true })
     readable.pipe(createGunzip()).pipe(extract)
@@ -12,7 +14,8 @@ const mbzExtractor: FileExtractor = async ({ readable }) => {
       if (entry.header.name === 'moodle_backup.xml') {
         const moodle_backup_str = (await streamToBuffer(entry)).toString('utf-8')
         return {
-          text: moodle_backup_str,
+          title: rpcFile.name,
+          content: moodle_backup_str,
           type: `Moodle course`,
           contentDesc: `moodle_backup.xml`,
           provideImage: undefined,

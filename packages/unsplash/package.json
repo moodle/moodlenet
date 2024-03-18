@@ -32,22 +32,22 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "@moodlenet/component-library": "0.7.1"
+    "@moodlenet/component-library": "file:../component-library"
   },
   "peerDependencies": {
-    "@moodlenet/core": "0.7.1",
-    "@moodlenet/react-app": "0.7.1",
-    "@moodlenet/web-user": "0.7.1"
+    "@moodlenet/core": "file:../core",
+    "@moodlenet/react-app": "file:../react-app",
+    "@moodlenet/web-user": "file:../web-user"
   },
   "devDependencies": {
-    "@moodlenet/core": "0.7.1",
-    "@moodlenet/react-app": "0.7.1",
-    "@moodlenet/web-user": "0.7.1",
+    "@moodlenet/core": "file:../core",
+    "@moodlenet/react-app": "file:../react-app",
+    "@moodlenet/web-user": "file:../web-user",
     "@types/node": "17.0.35",
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "react-router-dom": "6.4.1",
-    "typescript": "4.7.2"
+    "typescript": "5.3"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",

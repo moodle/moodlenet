@@ -1,8 +1,7 @@
-import { execa } from 'execa'
 import { writeFile } from 'fs/promises'
 import { resolve } from 'path'
+import { defaultCorePackages } from '../defaultCorePackages.mjs'
 import {
-  defaultCorePackages,
   devInstallLocalRepoSymlinks,
   installationName,
   installDir,
@@ -16,19 +15,15 @@ await writeFile(resolve(installDir, 'package.json'), JSON.stringify(installPkgJs
 })
 
 async function freshInstallPkgJson() {
-  const defaultCorePackageWithVersion = await Promise.all(
-    defaultCorePackages.map(async pkgName => {
-      const fullPkgName = `@moodlenet/${pkgName}`
-      const version = devInstallLocalRepoSymlinks
-        ? `file:${resolve(myPkgDir, '..', pkgName)}`
-        : `^${(await execa('npm', ['view', fullPkgName, 'dist-tags.latest'])).stdout}`
+  const defaultCorePackageWithVersion = Object.entries(defaultCorePackages).map(([pkgName, v]) => {
+    const fullPkgName = `@moodlenet/${pkgName}`
+    const version = devInstallLocalRepoSymlinks ? `file:${resolve(myPkgDir, '..', pkgName)}` : v
 
-      return {
-        fullPkgName,
-        version,
-      }
-    }),
-  )
+    return {
+      fullPkgName,
+      version,
+    }
+  })
 
   const dependencies = defaultCorePackageWithVersion.reduce((_, { fullPkgName, version }) => {
     return {

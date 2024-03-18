@@ -102,16 +102,16 @@
     max-height: calc(100vh - 40px); /* This provides 20px padding on top and bottom */
     overflow-y: auto;
 
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 30px; /* Adjust this for the height of the fade effect */
-      pointer-events: none; /* Make sure the gradient doesn't interfere with any interactions */
-      z-index: 10; /* Place the gradient above the content */
-    }
+    // &::before,
+    // &::after {
+    //   content: '';
+    //   position: absolute;
+    //   left: 0;
+    //   right: 0;
+    //   height: 30px; /* Adjust this for the height of the fade effect */
+    //   pointer-events: none; /* Make sure the gradient doesn't interfere with any interactions */
+    //   z-index: 10; /* Place the gradient above the content */
+    // }
 
     &.top-reached::before,
     &.bottom-reached::after {
@@ -147,43 +147,48 @@
       > .leaves {
         display: flex;
         flex-direction: column;
-        gap: 14px;
         > .title {
+          padding-bottom: 14px;
           font-weight: bold;
+          position: sticky;
+          background: white;
+          top: 0;
         }
-        > .row {
+        > .rows {
           display: flex;
-          align-items: center;
-          justify-content: space-between;
-          width: 300px;
-          > .level {
-            min-width: 62px;
-          }
-          > .points {
-            width: 75px;
+          flex-direction: column;
+          gap: 14px;
+          padding-bottom: 14px;
+          > .row {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            gap: 4px;
-            > svg {
-              height: 13px;
+            justify-content: space-between;
+            width: 300px;
+            > .level {
+              min-width: 62px;
             }
-          }
-          > .level-avatar {
-            width: 50px;
-            height: 50px;
-            margin-left: 20px;
-            > .avatar {
-              width: 100%;
-              height: 100%;
-              padding: 4px;
+            > .points {
+              width: 75px;
+              display: flex;
+              align-items: center;
+              justify-content: flex-end;
+              gap: 4px;
+              > svg {
+                height: 13px;
+              }
+            }
+            > .level-avatar {
+              width: 50px;
+              height: 50px;
+              margin-left: 20px;
+              > .avatar {
+                width: 100%;
+                height: 100%;
+                padding: 4px;
+              }
             }
           }
         }
-      }
-
-      > .leaves {
-        gap: 26px;
       }
     }
 

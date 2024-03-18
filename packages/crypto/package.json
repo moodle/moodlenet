@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/crypto",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "publishConfig": {
     "access": "public"
   },
@@ -26,18 +26,18 @@
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
     "argon2": "0.31.0",
-    "jose": "4.11.4",
+    "jose": "4.14",
     "ulid": "2.3.0",
     "ulidx": "2.2.1"
   },
   "peerDependencies": {
-    "@moodlenet/core": "0.7.1"
+    "@moodlenet/core": "^0.7.3-alpha.0"
   },
   "devDependencies": {
-    "@moodlenet/core": "0.7.1",
+    "@moodlenet/core": "^0.8.0",
     "@types/argon2": "0.15.0",
     "@types/node": "17.0.35",
-    "typescript": "4.7.2"
+    "typescript": "5.3"
   },
   "scripts": {},
   "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"

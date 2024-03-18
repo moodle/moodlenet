@@ -1,6 +1,7 @@
 import {
   AdminSettingsPagePlugins,
   HeaderPlugins,
+  MimimalisticHeaderHookPlugin,
   registerAppRoutes,
   registerMainAppPluginHook,
   type MainAppPluginHookResult,
@@ -15,8 +16,14 @@ import './init/search-page.js'
 import './init/settings-page.js'
 import './init/social-actions.js'
 
-import { useSwichAddonsByAuth } from './lib/AddonsByUserRule.js'
+import { href } from '@moodlenet/react-app/common'
+import {
+  LOGIN_PAGE_ROUTE_BASE_PATH,
+  SIGNUP_PAGE_ROUTE_BASE_PATH,
+} from '../../common/webapp-routes.mjs'
+import { getMiniAccessButtonsHeaderItems } from '../ui/exports/ui.mjs'
 import MainWrapper from './MainWrapper.js'
+import { useSwichAddonsByAuth } from './lib/AddonsByUserRule.js'
 import { menuAddonsDefaultSetting, menuHeaderButtonsAuthAddons } from './menus/menuAddons.js'
 import { pkgRoutes } from './routes.js'
 
@@ -34,5 +41,16 @@ AdminSettingsPagePlugins.register(function useAdminSettingsPagePlugin() {
   return {
     adminSettingsSection: menuAddonsDefaultSetting,
     denyAccess: !(authCtx.clientSessionData?.isAdmin || authCtx.clientSessionData?.isRoot),
+  }
+})
+
+MimimalisticHeaderHookPlugin.register(function useMimimalisticHeaderHookPlugin() {
+  return {
+    rightItems: {
+      accessMiniButtons: getMiniAccessButtonsHeaderItems({
+        signupHref: href(SIGNUP_PAGE_ROUTE_BASE_PATH),
+        loginHref: href(LOGIN_PAGE_ROUTE_BASE_PATH),
+      }),
+    },
   }
 })

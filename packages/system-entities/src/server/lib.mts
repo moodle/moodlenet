@@ -221,10 +221,7 @@ export async function patchEntity<
         } 
       )
 
-    let noChanges = MATCHES( 
-      UNSET( mergedPatch, '_meta' ,'_rev' ), 
-      UNSET( ${currentEntityVar}, '_meta' ,'_rev' )
-    )
+    let noChanges = UNSET( mergedPatch, '_meta' ,'_rev' ) == UNSET( ${currentEntityVar}, '_meta' ,'_rev' )
     
     LET patch = noChanges ? {} : mergedPatch
 

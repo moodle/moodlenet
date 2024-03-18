@@ -1,14 +1,12 @@
 import type { InstallPkgReq, PkgIdentifier } from '@moodlenet/core'
 import { npm, npmRegistry, pkgRegistry } from '@moodlenet/core'
-import _axios from 'axios'
+import axios from 'axios'
 import type {
   DeployedPkgInfo,
   SearchPackagesResObject,
   SearchPackagesResponse,
 } from '../common/data.mjs'
 import type { SearchResponse } from '../common/npmRegistry.mjs'
-
-const axios = _axios.default
 
 export async function install(installPkgReqs: InstallPkgReq[]) {
   return npm.install(installPkgReqs)

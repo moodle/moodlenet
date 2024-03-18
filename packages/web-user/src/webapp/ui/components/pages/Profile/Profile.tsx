@@ -226,7 +226,7 @@ export const Profile: FC<ProfileProps> = ({
     ...(rightColumnItems ?? []),
   ].filter((item): item is AddonItem /* | JSX.Element */ => !!item)
 
-  console.log('viewport ', viewport.screen.type)
+  // console.log('viewport ', viewport.screen.type)
   return (
     <MainLayout {...mainLayoutProps}>
       {/* {modals} {snackbars} */}

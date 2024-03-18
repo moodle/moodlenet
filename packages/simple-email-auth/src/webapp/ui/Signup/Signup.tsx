@@ -1,5 +1,4 @@
 import { InputTextField, PrimaryButton } from '@moodlenet/component-library'
-import { MailOutline } from '@mui/icons-material'
 import type { useFormik } from 'formik'
 import type { FC, PropsWithChildren } from 'react'
 import './Signup.scss'
@@ -76,9 +75,10 @@ export const SignupPanel: FC<PropsWithChildren<SignupProps>> = ({
       )}
       {emailSent && (
         <div className="email-sent">
-          <MailOutline className="icon" />
+          {/* <MailOutline className="icon" /> */}
+          <div className="emoji">📨</div>
           <div className="title">Email sent!</div>
-          <div className="subtitle">Check out your inbox and activate your account</div>
+          <div className="subtitle">Check out your inbox to activate your account</div>
         </div>
       )}
     </>

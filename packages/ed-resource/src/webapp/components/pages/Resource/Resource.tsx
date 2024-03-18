@@ -140,7 +140,9 @@ export const Resource: FC<ResourceProps> = ({
   )
   const [showUnpublishSuccess, setShowUnpublishSuccess] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(
-    emptyOnStart || (!!uploadProgress && uploadProgress >= 0) || autofillState !== undefined, // || !(autofillState === undefined || autofillState === 'ai-saved-generated-data'),
+    emptyOnStart ||
+      (!!uploadProgress && uploadProgress !== 'N/A' && uploadProgress >= 0) ||
+      autofillState !== undefined, // || !(autofillState === undefined || autofillState === 'ai-saved-generated-data'),
   )
 
   const prevIsPublishedRef = useRef(isPublished)
@@ -585,12 +587,12 @@ export const Resource: FC<ResourceProps> = ({
   const downloadButton =
     contentType === 'file' && contentUrl && contentForm.values.content ? (
       <a
-        href={contentUrl ?? undefined}
+        href={contentUrl && !disableFields ? contentUrl : undefined}
         target="_blank"
         rel="noreferrer"
         download={downloadFilename}
       >
-        <SecondaryButton key="download-or-open-link-button">
+        <SecondaryButton key="download-or-open-link-button" disabled={disableFields}>
           <InsertDriveFile />
           Download file
         </SecondaryButton>
@@ -599,8 +601,12 @@ export const Resource: FC<ResourceProps> = ({
 
   const openLinkButton =
     contentType === 'link' && contentUrl && contentForm.values.content ? (
-      <a href={contentUrl ?? undefined} target="_blank" rel="noreferrer">
-        <SecondaryButton key="download-or-open-link-button">
+      <a
+        href={contentUrl && !disableFields ? contentUrl : undefined}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <SecondaryButton key="download-or-open-link-button" disabled={disableFields}>
           <Link />
           Open link
         </SecondaryButton>
@@ -664,29 +670,25 @@ export const Resource: FC<ResourceProps> = ({
     }
   }, [showUploadingSnackbar, addSnackbar])
 
-  const [showAutofillSuccess, setShowAutofillSuccess] = useState<boolean>(
-    autofillState === 'ai-completed',
-  )
-
   useEffect(() => {
     if (autofillState === 'ai-generation') {
       addSnackbar({
         autoHideDuration: 6000,
         children: `Using AI to autofill the resource details, it usually takes a couple of minutes`,
       })
-    }
-  }, [addSnackbar, autofillState])
-
-  useEffect(() => {
-    if (showAutofillSuccess) {
+    } else if (autofillState === 'ai-completed') {
       addSnackbar({
         autoHideDuration: 6000,
         type: 'success',
         children: `Resource ready! Verify and edit any required details`,
-        onClose: () => setShowAutofillSuccess(false),
+      })
+    } else if (autofillState === 'ai-error') {
+      addSnackbar({
+        autoHideDuration: 6000,
+        children: `Unfortunatelly we couldn't complete AI autofill`,
       })
     }
-  }, [addSnackbar, showAutofillSuccess])
+  }, [addSnackbar, autofillState])
 
   useEffect(() => {
     if (showCheckPublishSuccess !== 'idle') {

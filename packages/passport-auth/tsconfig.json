@@ -6,9 +6,6 @@
   },
   "references": [
     {
-      "path": "../component-library"
-    },
-    {
       "path": "../core"
     },
     {
@@ -16,6 +13,9 @@
     },
     {
       "path": "../react-app"
+    },
+    {
+      "path": "../component-library"
     }
   ]
 }

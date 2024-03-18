@@ -50,7 +50,7 @@ export type ResourceDataRpc = {
 
 export type AutofillState =
   //| 'extracting-info'
-  'ai-generation' | 'ai-completed' | undefined // | 'ai-saved-generated-data'
+  'ai-generation' | 'ai-completed' | 'ai-error' | undefined // | 'ai-saved-generated-data'
 
 export type AutofillSuggestions = {
   meta: null | Partial<ResourceFormProps>

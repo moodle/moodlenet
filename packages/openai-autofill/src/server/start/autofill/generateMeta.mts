@@ -14,6 +14,23 @@ export async function generateMeta(doc: ResourceDoc): Promise<null | {
   if (!openAiResponse) {
     return null
   }
+  if (!openAiResponse.data) {
+    return {
+      generatedData: {
+        meta: {
+          description: openAiResponse.resourceExtraction.content?.substring(0, 300),
+          title: openAiResponse.resourceExtraction.title?.substring(0, 60),
+          learningOutcomes: [],
+          language: null,
+          level: null,
+          subject: null,
+          type: null,
+        },
+      },
+      provideImage: openAiResponse.resourceExtraction.provideImage,
+    }
+  }
+
   const generatedData: ProvidedGeneratedData = {
     meta: {
       description: openAiResponse.data.resourceSummary,

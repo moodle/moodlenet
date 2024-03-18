@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import execa from 'execa'
+import { execa } from 'execa'
 import { open, writeFile } from 'fs/promises'
 import * as jose from 'jose'
 import { resolve } from 'path'

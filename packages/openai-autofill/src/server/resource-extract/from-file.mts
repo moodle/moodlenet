@@ -4,7 +4,6 @@ import type { ResourceDoc } from '@moodlenet/core-domain/resource'
 import { getResourceFile } from '@moodlenet/ed-resource/server'
 import assert from 'assert'
 import { isText } from 'istextorbinary'
-import type { Readable } from 'stream'
 import { env } from '../init/env.mjs'
 import defaultExtractor from './file/defaultExtractor.mjs'
 import mbzExtractor from './file/ext/mbz.mjs'
@@ -20,23 +19,33 @@ export async function extractTextFromFile(doc: ResourceDoc): Promise<ResourceExt
   const readable = await assertRpcFileReadable(rpcFile)
 
   const compactedChuncksLength = Math.floor(env.cutContentToCharsAmount / 3)
-  const compactedFileBuffer = await getCompactBuffer(
+  const { compactedFileBuffer } = await getCompactBuffer(
     await assertRpcFileReadable(rpcFile),
     compactedChuncksLength,
   )
   const fileIsText = isText(rpcFile.name, compactedFileBuffer)
   const resourceExtraction: ResourceExtraction | null = fileIsText
     ? {
-        text: compactedFileBuffer.toString(),
+        title: rpcFile.name,
+        content: compactedFileBuffer.toString(),
         contentDesc: `content`,
         type: 'text file',
         provideImage: undefined,
       }
-    : await fileExtractor(readable, compactedFileBuffer, rpcFile).finally(() => readable.destroy())
+    : await fileExtractor({ rpcFile })
+        .catch(err => {
+          console.error(
+            `[extractResourceText] file extraction failed for resource ${doc.id.resourceKey}`,
+            err,
+          )
+          return null
+        })
+        .finally(() => readable.destroy())
+
   return resourceExtraction
 }
 
-function fileExtractor(readable: Readable, compactedFileBuffer: Buffer, rpcFile: RpcFile) {
+function fileExtractor({ rpcFile }: { rpcFile: RpcFile }) {
   const ext = (rpcFile.name.split('.').pop() ?? '').toLowerCase()
   const extensionExtractor: Record<string, FileExtractor> = {
     mbz: mbzExtractor,
@@ -48,5 +57,5 @@ function fileExtractor(readable: Readable, compactedFileBuffer: Buffer, rpcFile:
   }
 
   const extractor = extensionExtractor[ext] ?? typeKindExtractor[typeKind] ?? defaultExtractor
-  return extractor({ readable, compactedFileBuffer, rpcFile })
+  return extractor({ rpcFile })
 }
