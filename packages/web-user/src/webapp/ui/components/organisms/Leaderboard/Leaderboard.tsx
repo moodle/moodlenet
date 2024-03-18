@@ -17,7 +17,7 @@ export const Leaderboard: FC<LeaderboardProps> = ({ contributors }) => {
     <div className="leaderboard-container">
       <div className="leaderboard-header">
         <div className="title">Leaderboard</div>
-        <div className="subtitle">Expectional contributors leading the way</div>
+        <div className="subtitle">Exceptional contributors leading the way</div>
       </div>
       <Card className="leaderboard">
         {contributors.map((contributor, index) => {
