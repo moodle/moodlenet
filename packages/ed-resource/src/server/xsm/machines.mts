@@ -3,21 +3,24 @@ import type {
   Actor_StoreResourceEdits_Data,
   Context,
   EdResourceMachineDeps,
+  ImageEdit,
   ResourceDoc,
   StateName,
 } from '@moodlenet/core-domain/resource'
 import { DEFAULT_CONTEXT, getEdResourceMachine } from '@moodlenet/core-domain/resource'
 import { interpret } from 'xstate'
 
+import type { RpcFile } from '@moodlenet/core'
+import { webImageResizer } from '@moodlenet/react-app/server'
 import type { AccessEntitiesRecordType } from '@moodlenet/system-entities/server'
 import { createEntityKey, getCurrentEntityUserIdentifier } from '@moodlenet/system-entities/server'
 import { Resource } from '../exports.mjs'
 import { env } from '../init/env.mjs'
 import {
   createResource,
-  deleteImageFile,
   delResource,
   delResourceFile,
+  deleteImageFile,
   getResource,
   patchResource,
   storeResourceFile,
@@ -132,7 +135,22 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
           contentResourceDataType.kind === 'file' && delResourceFile(newResourceKey)
           throw new Error('resource creation failed for unknown reasons')
         }
-        const image = context.resourceEdits?.data?.image
+        const imageResource: ImageEdit | undefined =
+          context.providedContent.kind === 'file' &&
+          /^image\//.test(context.providedContent.rpcFile.type)
+            ? await (async (rpcFile: RpcFile) => {
+                const resizedRpcFile = await webImageResizer(rpcFile, 'image')
+
+                const imageEdit: ImageEdit = {
+                  kind: 'file',
+                  rpcFile: resizedRpcFile,
+                  size: resizedRpcFile.size,
+                }
+                return imageEdit
+              })(context.providedContent.rpcFile)
+            : undefined
+
+        const image = imageResource ?? context.resourceEdits?.data?.image
         if (image?.kind === 'file' || image?.kind === 'url')
           await updateImage(newResourceKey, image)
 
@@ -186,7 +204,7 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
         const persistentContext = map.db.doc_2_persistentContext(patchRes.patched)
 
         const userId = await getCurrentEntityUserIdentifier()
-        console.log({ patchRes })
+        // console.log({ patchRes })
         if (userId && patchRes.changed) {
           shell.events.emit('updated-meta', {
             meta: getEventResourceMeta(persistentContext.doc),
