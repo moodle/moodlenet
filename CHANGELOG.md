@@ -6,18 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [4.1.1]
+## [4.2.0]
 
 ### Improvements
 
-- Allow scalable system by [en|dis]abling workers and primaries by configuration
 - Various UI improvements
 - Package versions dependency management improvements
+
+### Added
+
+- Allow scalable system by [en|dis]abling workers and primaries by configuration
 - openai-autofill
   - uses Tika for file text extraction
   - If newly created resource is an image, uses it as background instead of generating
-
-### Added
 
 ### Fixed
 
