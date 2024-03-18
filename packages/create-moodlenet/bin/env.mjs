@@ -15,29 +15,6 @@ await mkdir(installDir, { recursive: true })
 export const installationName = `moodlenet.${basename(installDir)}`
 export const { devInstallLocalRepoSymlinks } = argv
 
-// const currentRegistryStr = (await execa('npm', ['get', 'registry'])).stdout
-// exporat const currentRegistry =
-//   currentRegistryStr === 'undefined' ? 'https://registry.npmjs.org/' : currentRegistryStr
-
-export const defaultCorePackages = [
-  'core',
-  'arangodb',
-  'crypto',
-  'http-server',
-  'organization',
-  'system-entities',
-  'email-service',
-  'react-app',
-  'extensions-manager',
-  'simple-email-auth',
-  'openid',
-  'ed-resource',
-  'collection',
-  'web-user',
-  'ed-meta',
-  'moodle-lms-integration',
-]
-
 export const crypto = {
   defaultKeyFilenames: {
     private: resolve(installDir, 'default.crypto.privateKey'),

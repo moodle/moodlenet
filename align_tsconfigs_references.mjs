@@ -8,7 +8,7 @@ const packagesDirs = readdirSync(path.resolve(__dirname, 'packages')).map(pkg_na
 )
 
 packagesDirs.forEach(pkgDir => {
-  if (pkgDir === 'storybook') {
+  if (pkgDir.match('/storybook$') || pkgDir.match('/v2-migrate-v3$')) {
     return
   }
   console.log('pkgDir', pkgDir)

@@ -5,6 +5,7 @@ type Env = {
   tikaUrl: string
   apiKey: string
   cutContentToCharsAmount: number
+  noBgProc: boolean
 }
 function getEnv(): Env {
   const config = shell.config
@@ -12,6 +13,7 @@ function getEnv(): Env {
     tikaUrl: String(config.tikaUrl),
     apiKey: config.apiKey,
     cutContentToCharsAmount: Number(config.cutContentToCharsAmount ?? 20_000),
+    noBgProc: !!config.noBgProc,
   }
 
   return env

@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [4.2.0]
+
+### Improvements
+
+- Various UI improvements
+- Package versions dependency management improvements
+
+### Added
+
+- Allow scalable system by [en|dis]abling workers and primaries by configuration
+- openai-autofill
+  - uses Tika for file text extraction
+  - If newly created resource is an image, uses it as background instead of generating
+
+### Fixed
+
+- Ulpoading profile images when images not set yet won't apply edits
+- Ulpoading collection image won't apply edits
+- Reverse-reference-lists displays blank cards when entity is not readable by the user
+- Login/Signup button won't show on small screens
+- Create moodlenet script won't install correct versions
+- fix determination of `noChanged` in `patchEntity()`
+
 ## [4.1.0]
 
 ### Improvements

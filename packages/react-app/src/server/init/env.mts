@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-// @ts-ignore: because seems tsc won't read 'xbytes' declared typings :/
+// @ts-ignore because seems tsc won't read 'xbytes' declared typings :/
 import { parseSize } from 'xbytes'
 import { shell } from '../shell.mjs'
 
