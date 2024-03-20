@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/react-app",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "publishConfig": {
     "access": "public"
   },
@@ -17,8 +17,8 @@
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
-    "node": "16",
-    "npm": "8",
+    "node": "20",
+    "npm": "10",
     "yarn": "please-use-npm"
   },
   "readme": "",
@@ -76,16 +76,16 @@
     }
   },
   "peerDependencies": {
-    "@moodlenet/arangodb": "^0.7.3-alpha.0",
-    "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/http-server": "^0.7.3-alpha.1",
-    "@moodlenet/organization": "^0.7.3-alpha.1"
+    "@moodlenet/arangodb": "^0.8.1",
+    "@moodlenet/core": "^0.8.1",
+    "@moodlenet/http-server": "^0.8.1",
+    "@moodlenet/organization": "^0.8.1"
   },
   "devDependencies": {
-    "@moodlenet/arangodb": "^0.8.0",
-    "@moodlenet/core": "^0.8.0",
-    "@moodlenet/http-server": "^0.8.0",
-    "@moodlenet/organization": "^0.8.0",
+    "@moodlenet/arangodb": "^0.8.1",
+    "@moodlenet/core": "^0.8.1",
+    "@moodlenet/http-server": "^0.8.1",
+    "@moodlenet/organization": "^0.8.1",
     "@storybook/addon-actions": "7.4.2",
     "@storybook/react": "7.4.2",
     "@types/copy-webpack-plugin": "10.1.0",
@@ -101,8 +101,8 @@
     "@babel/preset-react": "7.17.12",
     "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
-    "@moodlenet/component-library": "^0.8.0",
-    "@moodlenet/key-value-store": "^0.8.0",
+    "@moodlenet/component-library": "^0.8.1",
+    "@moodlenet/key-value-store": "^0.8.1",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@svgr/webpack": "6.2.1",
@@ -138,7 +138,7 @@
     "slugify": "1.6.6",
     "style-loader": "3.3.1",
     "ts-loader": "9.3.0",
-    "typescript": "5.3",
+    "typescript": "5.4",
     "url-loader": "4.1.1",
     "webpack": "5.88.2",
     "webpack-bundle-analyzer": "4.5.0",

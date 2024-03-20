@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/core-domain",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "publishConfig": {
     "access": "public"
   },
@@ -16,8 +16,8 @@
   },
   "license": "AGPL-3.0",
   "engines": {
-    "node": "16",
-    "npm": "8",
+    "node": "20",
+    "npm": "10",
     "yarn": "please-use-npm"
   },
   "readme": "",

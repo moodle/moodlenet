@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/mn-central-jira-simple-moderations",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -8,8 +8,8 @@
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
-    "node": "16",
-    "npm": "8",
+    "node": "20",
+    "npm": "10",
     "yarn": "please-use-npm"
   },
   "exports": {
@@ -32,23 +32,23 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "peerDependencies": {
-    "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/react-app": "^0.7.3-alpha.4",
-    "@moodlenet/web-user": "^0.7.3-alpha.5",
     "@mui/icons-material": "5.14.9",
-    "@mui/material": "5.14.9"
+    "@mui/material": "5.14.9",
+    "@moodlenet/core": "^0.8.1",
+    "@moodlenet/react-app": "^0.8.1",
+    "@moodlenet/web-user": "^0.8.1"
   },
   "dependencies": {
-    "@moodlenet/component-library": "^0.8.0",
-    "@moodlenet/key-value-store": "^0.8.0",
+    "@moodlenet/component-library": "^0.8.1",
+    "@moodlenet/key-value-store": "^0.8.1",
     "formik": "2.2.9",
     "jira-client": "8.2.2",
     "yup": "0.32.11"
   },
   "devDependencies": {
-    "@moodlenet/core": "^0.8.0",
-    "@moodlenet/react-app": "^0.8.0",
-    "@moodlenet/web-user": "^0.8.0",
+    "@moodlenet/core": "^0.8.1",
+    "@moodlenet/react-app": "^0.8.1",
+    "@moodlenet/web-user": "^0.8.1",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@types/jira-client": "7.1.6",
@@ -56,7 +56,7 @@
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "react-router-dom": "6.4.1",
-    "typescript": "5.3"
+    "typescript": "5.4"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",

@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/ed-resource",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "publishConfig": {
     "access": "public"
   },
@@ -20,8 +20,8 @@
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
-    "node": "16",
-    "npm": "8",
+    "node": "20",
+    "npm": "10",
     "yarn": "please-use-npm"
   },
   "readme": "",
@@ -29,10 +29,10 @@
     "dist/"
   ],
   "dependencies": {
-    "@moodlenet/component-library": "^0.8.0",
-    "@moodlenet/core-domain": "^0.8.0",
-    "@moodlenet/key-value-store": "^0.8.0",
-    "@moodlenet/simple-file-store": "^0.8.0",
+    "@moodlenet/component-library": "^0.8.1",
+    "@moodlenet/core-domain": "^0.8.1",
+    "@moodlenet/key-value-store": "^0.8.1",
+    "@moodlenet/simple-file-store": "^0.8.1",
     "formik": "2.2.9",
     "moment": "2.29.4",
     "xbytes": "1.8.0",
@@ -40,21 +40,21 @@
     "yup": "0.32.11"
   },
   "peerDependencies": {
-    "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/ed-meta": "^0.7.3-alpha.3",
-    "@moodlenet/http-server": "^0.7.3-alpha.1",
-    "@moodlenet/react-app": "^0.7.3-alpha.4",
-    "@moodlenet/system-entities": "^0.7.3-alpha.1",
     "@mui/icons-material": "5.14.9",
-    "@mui/material": "5.14.9"
+    "@mui/material": "5.14.9",
+    "@moodlenet/core": "^0.8.1",
+    "@moodlenet/ed-meta": "^0.8.1",
+    "@moodlenet/http-server": "^0.8.1",
+    "@moodlenet/react-app": "^0.8.1",
+    "@moodlenet/system-entities": "^0.8.1"
   },
   "devDependencies": {
     "@lingui/macro": "3.14.0",
-    "@moodlenet/core": "^0.8.0",
-    "@moodlenet/ed-meta": "^0.8.0",
-    "@moodlenet/http-server": "^0.8.0",
-    "@moodlenet/react-app": "^0.8.0",
-    "@moodlenet/system-entities": "^0.8.0",
+    "@moodlenet/core": "^0.8.1",
+    "@moodlenet/ed-meta": "^0.8.1",
+    "@moodlenet/http-server": "^0.8.1",
+    "@moodlenet/react-app": "^0.8.1",
+    "@moodlenet/system-entities": "^0.8.1",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@storybook/addon-actions": "7.4.2",
@@ -64,7 +64,7 @@
     "@types/react-dom": "18.2.7",
     "react-router-dom": "6.4.1",
     "typed-emitter": "2.1.0",
-    "typescript": "5.3"
+    "typescript": "5.4"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",

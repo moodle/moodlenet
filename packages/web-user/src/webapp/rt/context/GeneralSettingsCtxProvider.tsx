@@ -19,9 +19,9 @@ const ProvideAdminSettingsContext: FC<PropsWithChildren<unknown>> = ({ children 
 
   const [devMode, toggleDevMode] = useReducer(prev => !prev, false)
 
-  const updateAllPackages = useCallback(async () => {
-    await shell.rpc.me('webapp/admin/packages/update-all-pkgs')()
-  }, [])
+  // const updateAllPackages = useCallback(async () => {
+  //   await shell.rpc.me('webapp/admin/packages/update-all-pkgs')()
+  // }, [])
   useEffect(() => {
     shell.rpc
       .me('webapp/react-app/get-appearance')()
@@ -34,9 +34,9 @@ const ProvideAdminSettingsContext: FC<PropsWithChildren<unknown>> = ({ children 
       appearanceData,
       devMode,
       toggleDevMode,
-      updateAllPackages,
+      // updateAllPackages,
     }
-  }, [updateAllPackages, saveAppearanceData, appearanceData, devMode])
+  }, [/* updateAllPackages, */ saveAppearanceData, appearanceData, devMode])
 
   return <AdminSettingsCtx.Provider value={ctx}>{children}</AdminSettingsCtx.Provider>
 }

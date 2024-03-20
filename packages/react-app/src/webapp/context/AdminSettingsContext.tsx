@@ -7,7 +7,7 @@ export type AdminSettingsCtxT = {
   appearanceData: AppearanceData
   devMode: boolean
   toggleDevMode(): void
-  updateAllPackages(): Promise<void>
+  // updateAllPackages(): Promise<void>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
