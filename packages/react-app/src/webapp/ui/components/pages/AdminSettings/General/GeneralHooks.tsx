@@ -1,13 +1,12 @@
 import type { OrganizationData } from '@moodlenet/organization/common'
 import { useFormik } from 'formik'
 import { useContext, useMemo } from 'react'
-import { AdminSettingsCtx } from '../../../../../context/AdminSettingsContext.js'
 import { OrganizationCtx } from '../../../../../context/OrganizationCtx.js'
 import type { GeneralProps } from './General.js'
 
 export const useGeneralProps = (): GeneralProps => {
   const { organizationData, saveOrganization } = useContext(OrganizationCtx)
-  const { updateAllPackages } = useContext(AdminSettingsCtx)
+  // const { updateAllPackages } = useContext(AdminSettingsCtx)
 
   const form = useFormik<OrganizationData>({
     initialValues: organizationData,
@@ -20,10 +19,10 @@ export const useGeneralProps = (): GeneralProps => {
   const generalProps = useMemo<GeneralProps>(() => {
     return {
       form,
-      updateExtensions: updateAllPackages,
+      // updateExtensions: updateAllPackages,
       updateSuccess: false,
     }
-  }, [form, updateAllPackages])
+  }, [form /* , updateAllPackages */])
 
   return generalProps
 }

@@ -16,8 +16,8 @@
   },
   "license": "AGPL-3.0",
   "engines": {
-    "node": "16",
-    "npm": "8",
+    "node": "20",
+    "npm": "10",
     "yarn": "please-use-npm"
   },
   "readme": "",

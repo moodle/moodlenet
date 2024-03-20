@@ -7,8 +7,8 @@
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
-    "node": "16",
-    "npm": "8",
+    "node": "20",
+    "npm": "10",
     "yarn": "please-use-npm"
   },
   "exports": {
@@ -46,16 +46,16 @@
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "react-router-dom": "6.4.1",
-    "typescript": "5.3"
+    "typescript": "5.4"
   },
   "peerDependencies": {
-    "@moodlenet/arangodb": "^0.7.3-alpha.0",
-    "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/crypto": "^0.7.3-alpha.0",
-    "@moodlenet/http-server": "^0.7.3-alpha.1",
-    "@moodlenet/react-app": "^0.7.3-alpha.4",
-    "@moodlenet/system-entities": "^0.7.3-alpha.1",
-    "@moodlenet/web-user": "^0.7.3-alpha.5"
+    "@moodlenet/arangodb": "^0.8.0",
+    "@moodlenet/core": "^0.8.0",
+    "@moodlenet/crypto": "^0.8.0",
+    "@moodlenet/http-server": "^0.8.0",
+    "@moodlenet/react-app": "^0.8.0",
+    "@moodlenet/system-entities": "^0.8.0",
+    "@moodlenet/web-user": "^0.8.0"
   },
   "scripts": {},
   "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"

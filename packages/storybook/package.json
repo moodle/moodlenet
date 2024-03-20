@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "engines": {
-    "node": "16",
-    "npm": "8",
+    "node": "20",
+    "node": "20",
+    "npm": "10",
     "yarn": "please-use-npm"
   },
   "scripts": {
@@ -52,7 +53,7 @@
     "sass-loader": "13.1.0",
     "storybook": "7.4.2",
     "style-loader": "3.3.1",
-    "typescript": "5.3",
+    "typescript": "5.4",
     "vite": "4.4.9",
     "vite-plugin-svgr": "3.2.0",
     "vite-tsconfig-paths": "4.2.1",
