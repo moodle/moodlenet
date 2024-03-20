@@ -1,5 +1,5 @@
 import type { PkgExposeDef } from '@moodlenet/core'
-import { npm, RpcNext, RpcStatus } from '@moodlenet/core'
+import { RpcNext, RpcStatus } from '@moodlenet/core'
 import { getCurrentHttpCtx } from '@moodlenet/http-server/server'
 import { getOrgData, setOrgData } from '@moodlenet/organization/server'
 import { href } from '@moodlenet/react-app/common'
@@ -24,8 +24,8 @@ import type {
 } from '../common/types.mjs'
 import {
   DELETE_ACCOUNT_SUCCESS_PAGE_PATH,
-  getProfileHomePageRoutePath,
   SESSION_CHANGE_REDIRECT_Q_NAME,
+  getProfileHomePageRoutePath,
 } from '../common/webapp-routes.mjs'
 import { messageFormValidationSchema, profileValidationSchema, validationsConfig } from './env.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
@@ -566,10 +566,10 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       guard: () => void 0,
       fn: setAppearance,
     },
-    'webapp/admin/packages/update-all-pkgs': {
-      guard: () => void 0,
-      fn: () => npm.updateAll(),
-    },
+    // 'webapp/admin/packages/update-all-pkgs': {
+    //   guard: () => void 0,
+    //   fn: () => npm.updateAll(),
+    // },
   },
 })
 

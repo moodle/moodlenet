@@ -4,7 +4,7 @@ import { readFile } from 'fs/promises'
 import { resolve } from 'path'
 import { buildContext } from '../build-context.mjs'
 import type { OpenGraphData, OpenGraphDataProvided } from '../opengraph.mjs'
-import { getDefaultOpenGraphData, OpenGraphProviderItems } from '../opengraph.mjs'
+import { OpenGraphProviderItems, getDefaultOpenGraphData } from '../opengraph.mjs'
 import { shell } from '../shell.mjs'
 import { env } from './env.mjs'
 
@@ -42,7 +42,13 @@ export const httpApp = await shell.call(mountApp)({
 
       // shell.log('debug', { webappPath, openGraphDataProvided, openGraphData })
 
-      const _html = await readFile(resolve(buildContext.latestBuildFolder, 'index.html'), 'utf-8')
+      const _html = await readFile(
+        resolve(buildContext.latestBuildFolder, 'index.html'),
+        'utf-8',
+      ).catch(
+        () =>
+          `<html><head><title>MoodleNet</title></head><body>temporarly unavailable</body></html>`,
+      )
       const headReplace = openGraphData
         ? `<head>
 <title>${openGraphData.title}</title>

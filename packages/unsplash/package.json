@@ -5,8 +5,8 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=16",
-    "npm": ">=8",
+    "node": "20",
+    "npm": "10",
     "yarn": "please-use-npm"
   },
   "moodlenet": {
@@ -47,7 +47,7 @@
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "react-router-dom": "6.4.1",
-    "typescript": "5.3"
+    "typescript": "5.4"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index",

@@ -1,14 +1,14 @@
 {
   "name": "@moodlenet/extensions-manager",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "publishConfig": {
     "access": "public"
   },
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
-    "node": "16",
-    "npm": "8",
+    "node": "20",
+    "npm": "10",
     "yarn": "please-use-npm"
   },
   "exports": {
@@ -35,7 +35,7 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "@moodlenet/component-library": "^0.8.0",
+    "@moodlenet/component-library": "^0.8.1",
     "axios": "1.6.2",
     "formik": "2.2.9",
     "react-markdown": "8.0.3",
@@ -44,14 +44,14 @@
     "yup": "0.32.11"
   },
   "peerDependencies": {
-    "@moodlenet/core": "^0.7.3-alpha.0",
-    "@moodlenet/react-app": "^0.7.3-alpha.4",
     "@mui/icons-material": "5.14.9",
-    "@mui/material": "5.14.9"
+    "@mui/material": "5.14.9",
+    "@moodlenet/core": "^0.8.1",
+    "@moodlenet/react-app": "^0.8.1"
   },
   "devDependencies": {
-    "@moodlenet/core": "^0.8.0",
-    "@moodlenet/react-app": "^0.8.0",
+    "@moodlenet/core": "^0.8.1",
+    "@moodlenet/react-app": "^0.8.1",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@storybook/addon-actions": "7.4.2",
@@ -60,7 +60,7 @@
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "@types/react-syntax-highlighter": "15.5.2",
-    "typescript": "5.3"
+    "typescript": "5.4"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm run create-components-index & npm run create-stories-index",

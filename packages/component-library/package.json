@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/component-library",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "publishConfig": {
     "access": "public"
   },
@@ -20,8 +20,8 @@
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
-    "node": "16",
-    "npm": "8",
+    "node": "20",
+    "npm": "10",
     "yarn": "please-use-npm"
   },
   "readme": "",
@@ -83,7 +83,7 @@
     "@types/react-dom": "18.2.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "5.3"
+    "typescript": "5.4"
   },
   "peerDependencies": {
     "@emotion/react": "11.11.1",
