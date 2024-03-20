@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/collection",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "publishConfig": {
     "access": "public"
   },
@@ -29,26 +29,26 @@
     "dist/"
   ],
   "dependencies": {
-    "@moodlenet/component-library": "^0.8.0",
-    "@moodlenet/key-value-store": "^0.8.0",
-    "@moodlenet/simple-file-store": "^0.8.0",
+    "@moodlenet/component-library": "^0.8.1",
+    "@moodlenet/key-value-store": "^0.8.1",
+    "@moodlenet/simple-file-store": "^0.8.1",
     "formik": "2.2.9",
     "yup": "0.32.11"
   },
   "peerDependencies": {
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
-    "@moodlenet/core": "^0.8.0",
-    "@moodlenet/ed-resource": "^0.8.0",
-    "@moodlenet/react-app": "^0.8.0",
-    "@moodlenet/system-entities": "^0.8.0"
+    "@moodlenet/core": "^0.8.1",
+    "@moodlenet/ed-resource": "^0.8.1",
+    "@moodlenet/react-app": "^0.8.1",
+    "@moodlenet/system-entities": "^0.8.1"
   },
   "devDependencies": {
     "@lingui/macro": "3.14.0",
-    "@moodlenet/core": "^0.8.0",
-    "@moodlenet/ed-resource": "^0.8.0",
-    "@moodlenet/react-app": "^0.8.0",
-    "@moodlenet/system-entities": "^0.8.0",
+    "@moodlenet/core": "^0.8.1",
+    "@moodlenet/ed-resource": "^0.8.1",
+    "@moodlenet/react-app": "^0.8.1",
+    "@moodlenet/system-entities": "^0.8.1",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@storybook/addon-actions": "7.4.2",
