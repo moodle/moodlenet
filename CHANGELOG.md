@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [4.2.1]
+
+### Improvements
+
+- Upgraded engines: node@20, npm@10
+
 ## [4.2.0]
 
 ### Improvements
