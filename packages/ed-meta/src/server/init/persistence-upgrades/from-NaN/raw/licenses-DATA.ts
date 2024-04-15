@@ -12,7 +12,10 @@ function _licenses(): Basic_License[] {
       description: 'Attribution + NonCommercial + ShareAlike',
       published: true,
     },
-    { code: 'cc-by-nd', description: 'Attribution NonCommercial', published: true },
+    // NOTE: The 'cc-by-nd' record was from the initial setupo (v NaN) and was corrected on DB v5 (apr 2024) to the one below,
+    // { code: 'cc-by-nd', description: 'Attribution NonCommercial', published: true },
+    // modified 'cc-by-nd' record anyway to keep correct record base here as it won't conflict with any existing data.
+    { code: 'cc-by-nd', description: 'Attribution + NoDerivatives', published: true },
     {
       code: 'cc-by-nc-nd',
       description: 'Attribution + NonCommercial + NoDerivatives',
