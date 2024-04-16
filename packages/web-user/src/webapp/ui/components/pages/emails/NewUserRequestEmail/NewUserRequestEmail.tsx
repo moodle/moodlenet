@@ -1,6 +1,5 @@
-import EmailLayout, {
-  EmailLayoutProps,
-} from '../../../../../../../../component-library/src/webapp/ui/components/molecules/EmailLayout/EmailLayout.js'
+import type { EmailLayoutProps } from '@moodlenet/component-library'
+import { EmailLayout } from '@moodlenet/component-library'
 
 export type NewUserRequestEmailProps = Partial<EmailLayoutProps> & {
   instanceName: string

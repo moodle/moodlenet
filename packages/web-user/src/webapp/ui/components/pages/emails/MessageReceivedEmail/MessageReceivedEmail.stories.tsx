@@ -1,6 +1,7 @@
 // MessageReceivedEmail.stories.js
 import { render } from '@react-email/render'
-import { MessageReceivedEmail, MessageReceivedEmailProps } from './MessageReceivedEmail.js'
+import type { MessageReceivedEmailProps } from './MessageReceivedEmail.js'
+import { MessageReceivedEmail } from './MessageReceivedEmail.js'
 
 export default {
   title: 'Pages/Emails/Social/MessageReceivedEmail',
@@ -11,6 +12,7 @@ export default {
 const EmailTemplate = () => {
   const props: MessageReceivedEmailProps = {
     displayName: 'John Kuti',
+    instanceName: 'MoodleNet',
     message:
       'Hey Charles! How are you doing? I hope you are well. I just wanted to say hi and see how you are doing. I hope you are having a great day!',
     actionUrl: 'https://moodle.net/profile/trG4VCzT/john-kuti',

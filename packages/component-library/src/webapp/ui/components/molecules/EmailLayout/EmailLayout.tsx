@@ -18,6 +18,7 @@ export type EmailLayoutProps = {
   actionTitle?: string
   actionUrl?: string
   actionButtonStyle?: React.CSSProperties
+  showIgnoreMesage?: boolean
   location?: string
   locationUrl?: string
   copyright?: string
@@ -33,6 +34,7 @@ export const EmailLayout = ({
   actionTitle,
   actionUrl,
   actionButtonStyle,
+  showIgnoreMesage,
   location,
   locationUrl,
   copyright,
@@ -44,7 +46,7 @@ export const EmailLayout = ({
       <div className="body" style={bodyStyle}>
         <Container className="container" style={containerStyle}>
           <Section className="logo-header" style={logo}>
-            <a href={logoOnClickUrl} target="_blank">
+            <a href={logoOnClickUrl} target="_blank" rel="noreferrer">
               <Img width={162} src={logoSrc} />
             </a>
           </Section>
@@ -66,7 +68,8 @@ export const EmailLayout = ({
               </Button>
             </Section>
           )}
-          <div style={ignoreMessage}>Not you? Just ignore this message</div>
+          {showIgnoreMesage && <div style={ignoreMessage}>Not you? Just ignore this message</div>}
+          {!showIgnoreMesage && <div style={separatorStyle} />}
         </Container>
         <Container style={containerBottom}>
           <a href={locationUrl} target="_blank" rel="noopener noreferrer" style={addressButton}>
@@ -89,6 +92,7 @@ EmailLayout.defaultProps = {
   logoSrc: 'https://i.ibb.co/cDZ97rk/Moodle-Net-Logo-Colour-RGB.png',
   instanceName: 'MoodleNet',
   receiverEmail: 'caterine.z.pons@temail.com',
+  showIgnoreMesage: false,
   logoOnClickUrl: 'http://moodle.com',
   location: 'PO Box 303, West Perth WA 6872, Australia',
   copyright: `Copyright © ${currentYear} Moodle Pty Ltd, All rights reserved.`,
@@ -100,15 +104,15 @@ EmailLayout.defaultProps = {
 
 export default EmailLayout
 
-const bodyStyle = {
-  height: '100%',
+const bodyStyle: React.CSSProperties = {
+  minHeight: '100%',
   backgroundColor: '#f1f1f1',
   fontFamily:
     '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
-  paddingTop: '32px',
+  padding: '32px 10px',
 }
 
-const containerStyle = {
+const containerStyle: React.CSSProperties = {
   fontFamily:
     '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
   backgroundColor: '#ffffff',
@@ -119,7 +123,7 @@ const containerStyle = {
   textAlign: 'center',
 }
 
-const containerBottom = {
+const containerBottom: React.CSSProperties = {
   fontFamily:
     '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
   borderRadius: '0 0 8px 8px',
@@ -129,24 +133,24 @@ const containerBottom = {
   padding: '32px 48px 48px 48px',
 }
 
-const logo = {
+const logo: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'center',
-  alingItems: 'center',
+  alignItems: 'center',
   paddingBottom: '16px',
   // padding: ,
 }
-const titleSection = {
+const titleSection: React.CSSProperties = {
   textAlign: 'center',
   margin: '14px 0',
 }
 
-const titleText = {
+const titleText: React.CSSProperties = {
   fontSize: '18px',
   fontWeight: 'bold',
 }
 
-const contentSection = {
+const contentSection: React.CSSProperties = {
   background: '#f5f5f5',
   padding: '28px',
   color: '#282828',
@@ -155,17 +159,17 @@ const contentSection = {
   textAlign: 'center',
 }
 
-const contentText = {
+const contentText: React.CSSProperties = {
   fontSize: '15px',
   lineHeight: '28px',
 }
 
-const actionSection = {
+const actionSection: React.CSSProperties = {
   textAlign: 'center',
-  margin: '28px 0 10px 0',
+  margin: '28px 0 0 0',
 }
 
-const actionButton = {
+const actionButton: React.CSSProperties = {
   padding: '14px 20px',
   display: 'inline-block',
   borderRadius: '48px',
@@ -174,16 +178,20 @@ const actionButton = {
   fontSize: '15px',
 }
 
-const ignoreMessage = {
+const ignoreMessage: React.CSSProperties = {
   textAlign: 'center',
   color: '#999999',
   fontSize: '12px',
   lineHeight: '150%',
-  margin: '48px 0 10px 0',
+  margin: '58px 0 10px 0',
   padding: '0',
 }
 
-const addressButton = {
+const separatorStyle: React.CSSProperties = {
+  padding: '25px',
+}
+
+const addressButton: React.CSSProperties = {
   display: 'block',
   cursor: 'pointer',
   textDecoration: 'none',
@@ -196,7 +204,7 @@ const addressButton = {
   lineHeight: '150%',
 }
 
-const copyrightStyle = {
+const copyrightStyle: React.CSSProperties = {
   margin: '10px 0',
   padding: '0',
   color: '#656565',

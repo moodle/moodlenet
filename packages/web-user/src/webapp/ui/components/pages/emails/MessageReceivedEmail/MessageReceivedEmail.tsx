@@ -1,6 +1,5 @@
-import EmailLayout, {
-  EmailLayoutProps,
-} from '../../../../../../../../component-library/src/webapp/ui/components/molecules/EmailLayout/EmailLayout.js'
+import type { EmailLayoutProps } from '../../../../../../../../component-library/src/webapp/ui/components/molecules/EmailLayout/EmailLayout.js'
+import EmailLayout from '../../../../../../../../component-library/src/webapp/ui/components/molecules/EmailLayout/EmailLayout.js'
 
 export type MessageReceivedEmailProps = Partial<EmailLayoutProps> & {
   displayName: string

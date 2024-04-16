@@ -1,6 +1,7 @@
 // RecoverPasswordEmail.stories.js
 import { render } from '@react-email/render'
-import { RecoverPasswordEmail, RecoverPasswordEmailProps } from './RecoverPasswordEmail.js'
+import type { RecoverPasswordEmailProps } from './RecoverPasswordEmail.js'
+import { RecoverPasswordEmail } from './RecoverPasswordEmail.js'
 
 export default {
   title: 'Pages/Emails/Access/RecoverPassword',

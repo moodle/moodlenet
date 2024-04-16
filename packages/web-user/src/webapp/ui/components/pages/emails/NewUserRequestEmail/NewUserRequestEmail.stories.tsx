@@ -1,6 +1,7 @@
 // NewUserRequestEmail.stories.js
 import { render } from '@react-email/render'
-import { NewUserRequestEmail, NewUserRequestEmailProps } from './NewUserRequestEmail.js'
+import type { NewUserRequestEmailProps } from './NewUserRequestEmail.js'
+import { NewUserRequestEmail } from './NewUserRequestEmail.js'
 
 export default {
   title: 'Pages/Emails/Access/NewUserRequestEmail',
@@ -10,6 +11,7 @@ export default {
 
 const EmailTemplate = () => {
   const props: NewUserRequestEmailProps = {
+    instanceName: 'MoodleNet',
     actionUrl: 'https://moodle.net/profile/trG4VCzT/john-kuti',
   }
 
