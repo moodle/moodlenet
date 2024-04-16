@@ -11,8 +11,6 @@ export default {
 const EmailTemplate = () => {
   const props: MessageReceivedEmailProps = {
     displayName: 'John Kuti',
-    receiverEmail: 'caterine.z.pons@temail.com',
-    logoOnClickUrl: 'http://moodle.com',
     message:
       'Hey Charles! How are you doing? I hope you are well. I just wanted to say hi and see how you are doing. I hope you are having a great day!',
     actionUrl: 'https://moodle.net/profile/trG4VCzT/john-kuti',
