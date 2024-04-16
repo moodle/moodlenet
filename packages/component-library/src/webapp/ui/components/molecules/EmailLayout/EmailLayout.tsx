@@ -162,7 +162,7 @@ const contentText = {
 
 const actionSection = {
   textAlign: 'center',
-  margin: '28px 0 48px 0',
+  margin: '28px 0 10px 0',
 }
 
 const actionButton = {
@@ -179,7 +179,7 @@ const ignoreMessage = {
   color: '#999999',
   fontSize: '12px',
   lineHeight: '150%',
-  margin: '10px 0',
+  margin: '48px 0 10px 0',
   padding: '0',
 }
 
