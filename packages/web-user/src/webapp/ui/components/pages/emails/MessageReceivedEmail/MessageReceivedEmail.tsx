@@ -27,3 +27,9 @@ export const MessageReceivedEmail = ({
     />
   )
 }
+
+MessageReceivedEmail.defaultProps = {
+  instanceName: 'MoodleNet',
+} as MessageReceivedEmailProps
+
+export default MessageReceivedEmail
