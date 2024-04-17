@@ -12,7 +12,7 @@ export const FirstContributionEmail = ({
   const title = `First contribution to ${instanceName}! Congrats! 🔥`
   const content = (
     <>
-      Upload <b>two more resources</b> to become a <b>publisher</b>, and make your content
+      Create <b>two more resources</b> to become a <b>publisher</b>, and make your content
       accessible to all.
     </>
   )

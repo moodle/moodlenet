@@ -15,6 +15,7 @@ export const NewUserRequestEmail = ({
   const content = (
     <>
       Thanks for signing up to {instanceName}!<br />
+      <br />
       Click the button below to activate your account.
     </>
   )

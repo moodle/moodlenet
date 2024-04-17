@@ -17,6 +17,7 @@ const EmailTemplate = () => {
   }
 
   const html = render(<SecondContributionEmail {...props} />)
+  console.log('html', html)
 
   return <div style={{ height: '100%' }} dangerouslySetInnerHTML={{ __html: html }} />
 }
