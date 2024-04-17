@@ -1,5 +1,5 @@
-import type { EmailLayoutProps } from '../../../../../../../../component-library/src/webapp/ui/components/molecules/EmailLayout/EmailLayout.js'
-import EmailLayout from '../../../../../../../../component-library/src/webapp/ui/components/molecules/EmailLayout/EmailLayout.js'
+import type { EmailLayoutProps } from '@moodlenet/component-library'
+import { EmailLayout } from '@moodlenet/component-library'
 
 export type MessageReceivedEmailProps = Partial<EmailLayoutProps> & {
   displayName: string
