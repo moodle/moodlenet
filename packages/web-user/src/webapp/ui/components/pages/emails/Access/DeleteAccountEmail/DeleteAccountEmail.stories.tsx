@@ -1,5 +1,5 @@
 import { render } from '@react-email/render'
-import { MessageReceivedEmail } from '../MessageReceivedEmail/MessageReceivedEmail.js'
+import { MessageReceivedEmail } from '../../Social/MessageReceivedEmail/MessageReceivedEmail.js'
 import type { DeleteAccountEmailProps } from './DeleteAccountEmail.js'
 import { DeleteAccountEmail } from './DeleteAccountEmail.js'
 

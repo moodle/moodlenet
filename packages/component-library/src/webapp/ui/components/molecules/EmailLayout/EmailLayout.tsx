@@ -45,8 +45,8 @@ export const EmailLayout = ({
       <Preview>{subject}</Preview>
       <div className="body" style={bodyStyle}>
         <Container className="container" style={containerStyle}>
-          <Section className="logo-header" style={logo}>
-            <a href={logoOnClickUrl} target="_blank" rel="noreferrer">
+          <Section className="logo-header">
+            <a href={logoOnClickUrl} target="_blank" rel="noreferrer" style={logo}>
               <Img width={162} src={logoSrc} />
             </a>
           </Section>
@@ -90,10 +90,10 @@ const currentYear = new Date().getFullYear()
 EmailLayout.defaultProps = {
   subject: 'Email from MoodleNet',
   logoSrc: 'https://i.ibb.co/cDZ97rk/Moodle-Net-Logo-Colour-RGB.png',
+  logoOnClickUrl: 'http://moodle.com',
   instanceName: 'MoodleNet',
   receiverEmail: 'caterine.z.pons@temail.com',
   showIgnoreMesage: false,
-  logoOnClickUrl: 'http://moodle.com',
   location: 'PO Box 303, West Perth WA 6872, Australia',
   copyright: `Copyright © ${currentYear} Moodle Pty Ltd, All rights reserved.`,
   locationUrl:
@@ -134,12 +134,11 @@ const containerBottom: React.CSSProperties = {
 }
 
 const logo: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  paddingBottom: '16px',
-  // padding: ,
+  width: 'fit-content',
+  margin: '0 auto 16px auto',
+  display: 'block',
 }
+
 const titleSection: React.CSSProperties = {
   textAlign: 'center',
   margin: '14px 0',
