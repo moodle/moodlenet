@@ -132,6 +132,15 @@ export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
   })
 }
 
+const whistleblowOptions = [
+  { id: '1', name: 'Inappropriate content' },
+  { id: '2', name: 'Copyright infringement' },
+  { id: '3', name: 'Misinformation or inaccuracy' },
+  { id: '4', name: 'Spam or self-promotion' },
+  { id: '5', name: 'Irrelevant content' },
+  { id: '6', name: 'Other' },
+]
+
 // export const CollectionTextOptionProps: OptionItemProp[] = [
 //   { label: 'Education', value: 'Education' },
 //   { label: 'Biology', value: 'Biology' },
@@ -475,6 +484,7 @@ export const useResourceStoryProps = (
 
   const whistleblowMoreButtonProps: WhistleblowMoreButtonProps = {
     canWhistleblow: isAuthenticated && !access.isCreator,
+    whistleblowOptions: whistleblowOptions,
     whistleblow: action('whistleblow'),
   }
 
