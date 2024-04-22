@@ -35,8 +35,18 @@ import type { MainResourceCardSlots, ResourceProps } from '@moodlenet/ed-resourc
 import { Resource } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 
-import type { BookmarkButtonProps, LikeButtonProps } from '@moodlenet/web-user/ui'
-import { BookmarkButton, LikeButton } from '@moodlenet/web-user/ui'
+import type {
+  BookmarkButtonProps,
+  LikeButtonProps,
+  WhistleblowButtonProps,
+  WhistleblowMoreButtonProps,
+} from '@moodlenet/web-user/ui'
+import {
+  BookmarkButton,
+  LikeButton,
+  WhistleblowButton,
+  WhistleblowMoreButton,
+} from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -137,6 +147,7 @@ export const useResourceStoryProps = (
     ResourceProps & {
       isAuthenticated: boolean
       bookmarkButtonProps: BookmarkButtonProps
+      whistleblowButtonProps: WhistleblowButtonProps
       likeButtonProps: LikeButtonProps
       startWithoutImage?: boolean
     }
@@ -452,8 +463,19 @@ export const useResourceStoryProps = (
     numLikes: 10,
     toggleLike: action('toggleLike'),
     isCreator: false,
-    ...overrides?.bookmarkButtonProps,
+    ...overrides?.likeButtonProps,
     isAuthenticated,
+  }
+
+  const whistleblowButtonProps: WhistleblowButtonProps = {
+    numWhistleblows: 5,
+    canSeeWhistleblow: access.isCreator,
+    ...overrides?.whistleblowButtonProps,
+  }
+
+  const whistleblowMoreButtonProps: WhistleblowMoreButtonProps = {
+    canWhistleblow: isAuthenticated && !access.isCreator,
+    whistleblow: action('whistleblow'),
   }
 
   const bookmarkButtonProps: BookmarkButtonProps = {
@@ -476,6 +498,11 @@ export const useResourceStoryProps = (
             key: 'like-button',
           }
         : null,
+      {
+        Item: () => <WhistleblowButton {...whistleblowButtonProps} />,
+
+        key: 'whistleblow-button',
+      },
       isPublished
         ? {
             Item: () => <BookmarkButton {...bookmarkButtonProps} />,
@@ -483,7 +510,11 @@ export const useResourceStoryProps = (
           }
         : null,
     ],
-    moreButtonItems: [],
+    moreButtonItems: [
+      {
+        Element: <WhistleblowMoreButton {...whistleblowMoreButtonProps} />,
+      },
+    ],
     footerRowItems: [],
     uploadOptionsItems: [
       // {

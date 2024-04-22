@@ -1,0 +1,18 @@
+.whistleblow-button {
+  padding: 1px 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+
+  > svg > g > path {
+    fill: #ff0073;
+  }
+
+  &:hover:not(.disabled) {
+    color: #5c5c5c;
+    > svg > g > path {
+      fill: #cf005d;
+    }
+  }
+}
