@@ -1,19 +1,17 @@
-import { Modal, Snackbar, TertiaryButton } from '@moodlenet/component-library'
+import { Snackbar, SnackbarStack, TertiaryButton } from '@moodlenet/component-library'
+import { Flag } from '@mui/icons-material'
 import { useState, type FC } from 'react'
-import { ReactComponent as WhistleblowIcon } from '../../../assets/icons/whistleblow.svg'
-import WhistleblowResource from '../../molecules/WhistleblowResource/WhistleblowResource.js'
-import { WhistleblowOptionType } from '../../molecules/WhistleblowResource/WhistleblowResourceData.js'
+import {
+  WhistleblowResourceOptionType,
+  WhistleblownResourceData,
+} from '../../../../../common/types.mjs'
+import { WhistleblowResourceModal } from '../../molecules/WhistleblowResourceModal/WhistleblowResourceModal.js'
+import WhistleblownResourcesModal from '../../molecules/WhistleblownResourcesModal/WhistleblownResourcesModal.js'
 import './WhistleblowButton.scss'
-
-export type WhistleblowButtonProps = WhistleblowButtonPropsData & WhistleblowButtonPropsUI
-
-type WhistleblowButtonPropsUI = {
-  color?: 'white' | 'grey'
-}
 
 export type WhistleblowMoreButtonProps = {
   canWhistleblow: boolean
-  whistleblowOptions: WhistleblowOptionType[]
+  whistleblowOptions: WhistleblowResourceOptionType[]
   whistleblow: () => void
 }
 
@@ -25,7 +23,7 @@ export const WhistleblowMoreButton: FC<WhistleblowMoreButtonProps> = ({
   const [showWhistleblowModal, setShowWhistleblowModal] = useState(false)
   const [showWhistleblowAlert, setShowWhistleblowAlert] = useState(false)
   const whistleblowModal = showWhistleblowModal ? (
-    <WhistleblowResource
+    <WhistleblowResourceModal
       setIsWhistleblowing={setShowWhistleblowModal}
       setShowWhistleblowAlert={setShowWhistleblowAlert}
       whistleblowOptions={whistleblowOptions}
@@ -41,67 +39,60 @@ export const WhistleblowMoreButton: FC<WhistleblowMoreButtonProps> = ({
       showCloseButton={false}
       onClose={() => setShowWhistleblowAlert(false)}
     >
-      Profile reported
+      Resource reported
     </Snackbar>
   ) : null
+  const snackbarstack = <SnackbarStack snackbarList={[whistleblowAlertSnackbar]} />
 
   return canWhistleblow ? (
     <>
       {whistleblowModal}
-      {whistleblowAlertSnackbar}
+      {snackbarstack}
       <abbr
         key="whistleblow-more-button"
         onClick={() => setShowWhistleblowModal(true)}
         title="Report content to creator"
       >
-        <WhistleblowIcon /> Whistleblow
+        <Flag /> Report to creator
       </abbr>
     </>
   ) : null
 }
 
-export type WhistleblowButtonPropsData = {
-  numWhistleblows: number
+export type WhistleblownResourcesButtonProps = {
+  whistleblows: WhistleblownResourceData[]
   canSeeWhistleblow: boolean
 }
 
-export const WhistleblowButton: FC<WhistleblowButtonProps> = ({
-  numWhistleblows,
+export const WhistleblownResourcesButton: FC<WhistleblownResourcesButtonProps> = ({
+  whistleblows,
   canSeeWhistleblow,
-  color,
 }) => {
   const [showWhistleblows, setShowWhistleblows] = useState(false)
   const whistleblowsModal = showWhistleblows ? (
-    <Modal onClose={() => setShowWhistleblows(false)}>
-      <div className="whistleblows-modal">
-        <h2>Whistleblows</h2>
-        <ul>
-          <li>Whistleblow 1</li>
-          <li>Whistleblow 2</li>
-        </ul>
-      </div>
-    </Modal>
+    <WhistleblownResourcesModal
+      whistleblows={whistleblows}
+      setIsShowingWhistleblows={setShowWhistleblows}
+    />
   ) : null
 
   return (
     canSeeWhistleblow &&
-    numWhistleblows > 0 && (
+    whistleblows.length > 0 && (
       <>
         {whistleblowsModal}
         <TertiaryButton
-          className={`whistleblow-button ${color}`}
+          className={`whistleblow-button`}
           onClick={() => setShowWhistleblows(true)}
-          abbr={`See whistleblow${numWhistleblows > 1 ? 's' : ''}`}
+          abbr={`See report${whistleblows.length > 1 ? 's' : ''}`}
           key="whistleblow-button"
         >
-          <WhistleblowIcon />
-          <span>{numWhistleblows}</span>
+          <Flag />
+          <span>{whistleblows.length}</span>
         </TertiaryButton>
       </>
     )
   )
 }
 
-WhistleblowButton.defaultProps = {
-  color: 'grey',
-}
+WhistleblownResourcesButton.defaultProps = {}

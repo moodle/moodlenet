@@ -1,0 +1,110 @@
+.whistleblown-resources-modal {
+  padding: 20px;
+  > .modal.card {
+    width: 100%;
+    max-width: 400px;
+    max-height: 100%;
+    > .modal-header {
+      margin-top: -10px;
+      margin-bottom: -5px;
+      > .title {
+        width: 100%;
+        text-align: center;
+      }
+    }
+    > .content {
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+      gap: 30px;
+      border-top: 1px solid #e5e5e5;
+      margin-left: -25px;
+      padding: 20px 25px 0;
+      width: calc(100% + 50px);
+      font-size: 15px;
+      > .whistleblow {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        > .whistleblow-header {
+          display: flex;
+          justify-content: start;
+          align-items: center;
+          gap: 16px;
+          > .avatar-container {
+            > .whistleblow-avatar {
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+            }
+          }
+          > .whistleblow-header-center {
+            > .display-name-and-reason {
+              > .display-name {
+                margin-right: 5px;
+                font-size: 16px;
+                // font-weight: bold;
+                &:hover {
+                  text-decoration: underline;
+                }
+              }
+            }
+            > .whistleblow-date {
+              color: #898989;
+              font-size: 12px;
+            }
+          }
+          > .expand-comment {
+            margin-left: auto;
+          }
+        }
+
+        > .whistleblow-comment {
+          position: relative;
+          padding: 14px;
+          background-color: #f5f5f5;
+          border-radius: 6px;
+          > .dialog-corner {
+            position: absolute;
+            top: -5px;
+            left: 16px;
+            width: 0px;
+            height: 0px;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 6px solid #f5f5f5;
+          }
+        }
+      }
+
+      > * {
+        > .title {
+          font-weight: bold;
+          padding-bottom: 5px;
+        }
+      }
+      > .option-section {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        > .option {
+          display: flex;
+          justify-content: space-between;
+          cursor: pointer;
+          > .arrow {
+            color: #a7a7a7;
+            > svg {
+              font-size: 20px;
+              margin-right: 2px;
+            }
+          }
+        }
+      }
+      > .comment-section {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  }
+}

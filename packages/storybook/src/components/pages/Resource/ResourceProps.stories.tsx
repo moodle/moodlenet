@@ -38,14 +38,14 @@ import { href } from '@moodlenet/react-app/common'
 import type {
   BookmarkButtonProps,
   LikeButtonProps,
-  WhistleblowButtonProps,
   WhistleblowMoreButtonProps,
+  WhistleblownResourcesButtonProps,
 } from '@moodlenet/web-user/ui'
 import {
   BookmarkButton,
   LikeButton,
-  WhistleblowButton,
   WhistleblowMoreButton,
+  WhistleblownResourcesButton,
 } from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -56,7 +56,12 @@ import {
 
 import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import { SendToMoodle } from '@moodlenet/moodle-lms-integration/webapp/ui'
-import { learningOutcomeOptions, learningOutcomesSelection } from './ResourceData.stories.props.js'
+import {
+  generateRandomUserWhistleblows,
+  learningOutcomeOptions,
+  learningOutcomesSelection,
+  whistleblowOptions,
+} from './ResourceData.props.js'
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',
@@ -132,15 +137,6 @@ export const useResourceForm = (overrides?: Partial<ResourceFormProps>) => {
   })
 }
 
-const whistleblowOptions = [
-  { id: '1', name: 'Inappropriate content' },
-  { id: '2', name: 'Copyright infringement' },
-  { id: '3', name: 'Misinformation or inaccuracy' },
-  { id: '4', name: 'Spam or self-promotion' },
-  { id: '5', name: 'Irrelevant content' },
-  { id: '6', name: 'Other' },
-]
-
 // export const CollectionTextOptionProps: OptionItemProp[] = [
 //   { label: 'Education', value: 'Education' },
 //   { label: 'Biology', value: 'Biology' },
@@ -156,7 +152,7 @@ export const useResourceStoryProps = (
     ResourceProps & {
       isAuthenticated: boolean
       bookmarkButtonProps: BookmarkButtonProps
-      whistleblowButtonProps: WhistleblowButtonProps
+      whistleblownResourcesButtonProps: WhistleblownResourcesButtonProps
       likeButtonProps: LikeButtonProps
       startWithoutImage?: boolean
     }
@@ -476,10 +472,10 @@ export const useResourceStoryProps = (
     isAuthenticated,
   }
 
-  const whistleblowButtonProps: WhistleblowButtonProps = {
-    numWhistleblows: 5,
+  const whistleblowButtonProps: WhistleblownResourcesButtonProps = {
     canSeeWhistleblow: access.isCreator,
-    ...overrides?.whistleblowButtonProps,
+    ...overrides?.whistleblownResourcesButtonProps,
+    whistleblows: generateRandomUserWhistleblows(10),
   }
 
   const whistleblowMoreButtonProps: WhistleblowMoreButtonProps = {
@@ -509,7 +505,7 @@ export const useResourceStoryProps = (
           }
         : null,
       {
-        Item: () => <WhistleblowButton {...whistleblowButtonProps} />,
+        Item: () => <WhistleblownResourcesButton {...whistleblowButtonProps} />,
 
         key: 'whistleblow-button',
       },

@@ -213,3 +213,32 @@ export type UserInterests = {
   levels: string[]
   languages: string[]
 }
+
+export type WhistleblowResourceReasonName =
+  | 'Inappropriate content'
+  | 'Copyright infringement'
+  | 'Misinformation or inaccuracy'
+  | 'Spam or self-promotion'
+  | 'Irrelevant content'
+  | 'Other'
+
+export type WhistleblowResourceOptionType = {
+  id: string
+  name: WhistleblowResourceReasonName
+}
+
+export type WhistleblowUser = {
+  displayName: string
+  avatarUrl: string
+  profileHref: Href
+}
+
+export type WhistleblowResourceData = {
+  type: WhistleblowResourceOptionType
+  comment: string | undefined
+}
+
+export type WhistleblownResourceData = WhistleblowResourceData & {
+  date: Date
+  user: WhistleblowUser
+}

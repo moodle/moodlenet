@@ -5,13 +5,13 @@
   align-items: center;
   font-weight: normal;
 
-  > svg > g > path {
+  > svg {
     fill: #ff0073;
   }
 
   &:hover:not(.disabled) {
     color: #5c5c5c;
-    > svg > g > path {
+    > svg {
       fill: #cf005d;
     }
   }
