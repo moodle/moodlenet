@@ -1,6 +1,7 @@
 import type { LearningOutcome, LearningOutcomeOption } from '@moodlenet/ed-meta/common'
 import { href } from '@moodlenet/react-app/common'
-import {
+import type {
+  WhistleblowResource,
   WhistleblowResourceOptionType,
   WhistleblowResourceReasonName,
   WhistleblownResourceData,
@@ -318,6 +319,28 @@ export const whistleblowOptions: WhistleblowResourceOptionType[] = [
   { id: '6', name: 'Other' },
 ]
 
+const resourceFactories: WhistleblowResource[] = [
+  {
+    title: 'Forest of the world',
+    imageUrl:
+      'https://images.unsplash.com/photo-1560851691-ebb64b584d3d?q=80&w=2099&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    resourceHref: href('Pages/Resource/Creator'),
+  },
+  {
+    title: 'The great barrier reef, The great barrier reef, The great barrier reef',
+    // title: 'The great barrier reef',
+    imageUrl:
+      'https://images.unsplash.com/photo-1582623838120-455da222cdc7?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    resourceHref: href('Pages/Resource/Creator'),
+  },
+  {
+    title: 'Algorithms, the origins',
+    imageUrl:
+      'https://plus.unsplash.com/premium_photo-1683140655656-20448abc55da?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    resourceHref: href('Pages/Resource/Creator'),
+  },
+]
+
 // Utility function to get a random comment based on the reason
 const getRandomComment = (reason: WhistleblowResourceReasonName): string => {
   const possibleComments = commentsByReason[reason]
@@ -335,7 +358,7 @@ let emailCounter = 0
 const generateRandomUserWhistleblow = (): WhistleblownResourceData => {
   emailCounter++
   const reason = getRandomReason()
-  const randomUserReport: WhistleblownResourceData = {
+  const randomUserWhislteblow: WhistleblownResourceData = {
     user: {
       avatarUrl: `https://i.pravatar.cc/150?img=${emailCounter}`,
       displayName: names[Math.floor(Math.random() * names.length)] || '',
@@ -347,8 +370,13 @@ const generateRandomUserWhistleblow = (): WhistleblownResourceData => {
       name: reason,
     },
     comment: Math.random() < 0.5 ? getRandomComment(reason) : undefined,
+    resource: resourceFactories[Math.floor(Math.random() * resourceFactories.length)] || {
+      title: 'Resource title',
+      imageUrl: 'https://via.placeholder.com/150',
+      resourceHref: href('Pages/Resource/Creator'),
+    },
   }
-  return randomUserReport
+  return randomUserWhislteblow
 }
 
 export const generateRandomUserWhistleblows = (n: number): WhistleblownResourceData[] => {

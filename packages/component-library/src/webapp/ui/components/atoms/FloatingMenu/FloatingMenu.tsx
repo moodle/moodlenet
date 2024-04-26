@@ -15,6 +15,7 @@ export type FloatingMenuProps = {
   abbr?: string
   hover?: boolean
   className?: string
+  divRef?: React.RefObject<HTMLDivElement>
 }
 
 export const FloatingMenu: FC<FloatingMenuProps> = ({
@@ -23,6 +24,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   abbr,
   hover,
   hoverElement,
+  divRef,
 }) => {
   const [currentVisible, setCurrentVisible] = useState<boolean | undefined>(false)
   const hoverElementRef = useRef<HTMLDivElement>(null)
@@ -127,6 +129,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
       onFocus={expand}
       onMouseDown={e => handleOnMouseDown(e)}
       tabIndex={0}
+      ref={divRef}
     >
       <abbr
         className="hover-element"

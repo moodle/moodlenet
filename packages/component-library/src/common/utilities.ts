@@ -255,3 +255,37 @@ export const toKebabCase = (str: string) =>
     .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
     ?.map(x => x.toLowerCase())
     .join('-')
+
+// This function calculates the time ago from a given date.
+export const getTimeAgo = (date: Date): string => {
+  const now = new Date()
+  const diff = now.getTime() - date.getTime()
+
+  // Calculate the minutes difference
+  const minutes = Math.floor(diff / (1000 * 60))
+  if (minutes < 60) {
+    return `${minutes} minutes ago`
+  }
+
+  // Calculate the hours difference
+  const hours = Math.floor(diff / (1000 * 60 * 60))
+  if (hours < 24) {
+    return `${hours} hours ago`
+  }
+
+  // Calculate the days difference
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  if (days < 7) {
+    return `${days} days ago`
+  }
+
+  // Calculate the weeks difference
+  const weeks = Math.floor(diff / (1000 * 60 * 60 * 24 * 7))
+  if (weeks < 52) {
+    return `${weeks} weeks ago`
+  }
+
+  // Calculate the years difference
+  const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365))
+  return `${years} years ago`
+}

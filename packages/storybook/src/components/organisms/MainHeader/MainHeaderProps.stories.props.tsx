@@ -1,20 +1,19 @@
-import type { AddonItem } from '@moodlenet/component-library'
+import { AlertButton, type AddonItem } from '@moodlenet/component-library'
 import { overrideDeep } from '@moodlenet/component-library/common'
-import { AlertButton } from '@moodlenet/ed-resource/ui'
 import { href } from '@moodlenet/react-app/common'
 import { HeaderTitleStories } from '@moodlenet/react-app/stories'
 import type { MainHeaderProps } from '@moodlenet/react-app/ui'
 import { AccessButtonsStories, AvatarMenuStories } from '@moodlenet/web-user/stories'
-import { AddMenu } from '@moodlenet/web-user/ui'
+import { AddMenu, WhistleblowAlert } from '@moodlenet/web-user/ui'
 import { linkTo } from '@storybook/addon-links'
 import type { PartialDeep } from 'type-fest'
+import { generateRandomUserWhistleblows } from '../../pages/Resource/ResourceData.props.js'
 
 export const getMainHeaderStoryProps = (props?: {
   overrides?: PartialDeep<MainHeaderProps>
   isAuthenticated?: boolean
-  hasAlerts?: boolean
 }): MainHeaderProps => {
-  const { overrides, isAuthenticated, hasAlerts } = props ?? {}
+  const { overrides, isAuthenticated } = props ?? {}
 
   const AddMenuItem: AddonItem = {
     Item: () => (
@@ -27,14 +26,23 @@ export const getMainHeaderStoryProps = (props?: {
     key: 'add-menu',
   }
 
-  const AlertButtonItem: AddonItem | null = hasAlerts
-    ? {
-        Item: () => (
-          <AlertButton numResourcesToReview={4} profileHref={href('Pages/Profile/Logged In')} />
-        ),
-        key: 'alert-button',
-      }
-    : null
+  const AlertButtonItem: AddonItem | null = {
+    Item: () => (
+      <AlertButton
+        elements={[
+          // getAlertButtonElement({
+          //   icon: <UsbRounded />,
+          //   content: 'You extracted the USB dangerously 🤯',
+          // }),
+          ...generateRandomUserWhistleblows(10).map(whistleblow =>
+            WhistleblowAlert({ whistleblow }),
+          ),
+        ]}
+      />
+      // <AlertButton numResourcesToReview={4} profileHref={href('Pages/Profile/Logged In')} />
+    ),
+    key: 'alert-button',
+  }
 
   const getRightItemsHeader = (): AddonItem[] => {
     const updatedRightItems = isAuthenticated

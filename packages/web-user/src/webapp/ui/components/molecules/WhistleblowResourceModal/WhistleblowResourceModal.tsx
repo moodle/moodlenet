@@ -14,7 +14,7 @@ export type WhistleblowResourceProps = {
   whistleblowOptions: WhistleblowResourceOptionType[]
   setIsWhistleblowing: (value: SetStateAction<boolean>) => void
   setShowWhistleblowAlert: (value: SetStateAction<boolean>) => void
-  whistleblowResource: (values: WhistleblowResourceData) => void
+  whistleblowResource: (values: Omit<WhistleblowResourceData, 'date'>) => void
 }
 
 export const WhistleblowResourceModal: FC<WhistleblowResourceProps> = ({
@@ -28,10 +28,8 @@ export const WhistleblowResourceModal: FC<WhistleblowResourceProps> = ({
   const [comment, setComment] = useState<string | undefined>(undefined)
 
   const whistleblow = () => {
-    console.log('whistleblow')
     option && whistleblowResource({ type: option, comment })
     setShowWhistleblowAlert(true)
-    console.log('whistleblow alert')
     setIsWhistleblowing(false)
   }
 

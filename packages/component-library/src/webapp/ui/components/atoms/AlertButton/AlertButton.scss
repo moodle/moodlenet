@@ -1,0 +1,119 @@
+.alert-button-floating-menu {
+  > .hover-element {
+    width: 36px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > .alert-button {
+      width: fit-content;
+      position: relative;
+      > .red-dot {
+        position: absolute;
+        z-index: 1;
+        top: 1px;
+        right: 0;
+        height: 13.5px;
+        width: 14px;
+        background-color: #ff3131;
+        border-radius: 50px;
+      }
+
+      /* Swing Animation */
+      @keyframes swing {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(10deg);
+        }
+        50% {
+          transform: rotate(0deg);
+        }
+        75% {
+          transform: rotate(-10deg);
+        }
+      }
+
+      // Scale Animation
+      @keyframes scaleBell {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+
+      > .alert-icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        transform-origin: 50% 50%; // Centered scaling
+        animation: scaleBell 0.5s cubic-bezier(0.45, 0.25, 0.6, 0.95) forwards;
+
+        > svg {
+          display: flex;
+          width: 28px;
+          height: 28px;
+          transform-origin: 14px 0px; // Swing from the top
+          animation: swing 0.3s cubic-bezier(0.45, 0.25, 0.6, 0.95) 3 0.5s;
+
+          g {
+            fill: #aeaeae;
+          }
+        }
+      }
+    }
+  }
+  > .menu {
+    > .content {
+      max-width: 500px;
+      height: fit-content;
+      // gap: 16px;
+      flex-wrap: nowrap;
+      overflow: auto;
+      border-top: 16px solid #ffffff;
+      border-bottom: 16px solid #ffffff;
+      padding: 0 0;
+      > .alert-element {
+        display: flex;
+        padding: 10px 16px;
+        > * {
+          &:hover {
+            background-color: transparent;
+          }
+        }
+        > .alert-icon-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 0;
+        }
+        > .alert-content {
+          padding: 0;
+          flex-grow: 1; /* Allow the alert content to grow and fill the space */
+          overflow-wrap: anywhere; /* This ensures the break can happen at any point in a word */
+          hyphens: auto;
+        }
+        > .alert-close-icon {
+          margin-left: auto;
+          padding: 0 0 0 6px;
+          &:hover {
+            > svg {
+              fill: #787878;
+            }
+          }
+        }
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
+      }
+    }
+  }
+}

@@ -151,7 +151,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingLoggedOutStoryProps,
   mainLayoutProps: {
     ...MainLayoutLoggedInStoryProps,
-    headerProps: getMainHeaderStoryProps({ isAuthenticated: true, hasAlerts: true }),
+    headerProps: getMainHeaderStoryProps({ isAuthenticated: true }),
   },
   mainColumnItems: [
     // {

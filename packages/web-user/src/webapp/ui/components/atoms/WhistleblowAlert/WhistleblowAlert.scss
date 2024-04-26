@@ -1,0 +1,77 @@
+.whistleblow-button {
+  padding: 1px 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+
+  > svg {
+    fill: #ff0073;
+  }
+
+  &:hover:not(.disabled) {
+    color: #5c5c5c;
+    > svg {
+      fill: #cf005d;
+    }
+  }
+}
+
+.alert-element {
+  display: flex;
+  gap: 14px;
+
+  > .alert-icon-container {
+    position: relative;
+    > .whistleblow-icon {
+      display: flex;
+      > img {
+        box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.09);
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      > .flag-icon {
+        box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.09);
+        background: linear-gradient(-45deg, #ff0073, #ff61a8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        bottom: -1px;
+        right: -2px;
+        position: absolute;
+        > svg {
+          height: 18px;
+          width: 18px;
+          color: #ffffff;
+        }
+      }
+    }
+  }
+
+  > .alert-content {
+    > .whistleblow-header {
+      > .whistleblow-title {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        > .resource-title {
+          font-weight: bold;
+          max-width: 198px;
+          display: inline-block;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+      > .whistleblow-date {
+        font-size: 12px;
+        color: #5c5c5c;
+      }
+    }
+  }
+}

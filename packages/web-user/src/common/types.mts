@@ -236,9 +236,16 @@ export type WhistleblowUser = {
 export type WhistleblowResourceData = {
   type: WhistleblowResourceOptionType
   comment: string | undefined
+  date: Date
+}
+
+export type WhistleblowResource = {
+  title: string
+  imageUrl: string
+  resourceHref: Href
 }
 
 export type WhistleblownResourceData = WhistleblowResourceData & {
-  date: Date
+  resource: WhistleblowResource
   user: WhistleblowUser
 }
