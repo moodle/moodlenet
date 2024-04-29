@@ -1,13 +1,13 @@
 import { useEffect, useRef, type FC, type ReactNode } from 'react'
 import { ReactComponent as AlertIcon } from '../../../assets/icons/notification-bell.svg'
 
-import { Close } from '@mui/icons-material'
 import { FloatingMenu, type FloatingMenuContentItem } from '../FloatingMenu/FloatingMenu.js'
 import './AlertButton.scss'
 
 export type AlertButtonElement = {
   icon: ReactNode
   content: ReactNode
+  // deleteNotification: () => void
 }
 
 export const getAlertButtonElement = (element: AlertButtonElement): FloatingMenuContentItem => {
@@ -15,9 +15,9 @@ export const getAlertButtonElement = (element: AlertButtonElement): FloatingMenu
     <>
       <div className="alert-icon-container">{element.icon}</div>
       <div className="alert-content">{element.content}</div>
-      <div className="alert-close-icon">
-        <Close />
-      </div>
+      {/* <div className="alert-close-icon">
+        <Close onClick={element.deleteNotification} />
+      </div> */}
     </>
   )
   return {

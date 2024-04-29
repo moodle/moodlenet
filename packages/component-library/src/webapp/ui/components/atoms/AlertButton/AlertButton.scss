@@ -95,7 +95,7 @@
           padding: 0;
         }
         > .alert-content {
-          padding: 0;
+          padding: 0 10px 0 0;
           flex-grow: 1; /* Allow the alert content to grow and fill the space */
           overflow-wrap: anywhere; /* This ensures the break can happen at any point in a word */
           hyphens: auto;

@@ -8,11 +8,13 @@ import './WhistleblowAlert.scss'
 
 export type WhistleblowAlertProps = {
   whistleblow: WhistleblownResourceData
+  // deleteNotification: () => void
 }
 
 export const WhistleblowAlert = ({
   whistleblow,
-}: WhistleblowAlertProps): FloatingMenuContentItem => {
+}: // deleteNotification,
+WhistleblowAlertProps): FloatingMenuContentItem => {
   const { resource, type, date } = whistleblow
 
   const icon = (
@@ -37,5 +39,6 @@ export const WhistleblowAlert = ({
   return getAlertButtonElement({
     icon: icon,
     content: content,
+    // deleteNotification: deleteNotification,
   })
 }

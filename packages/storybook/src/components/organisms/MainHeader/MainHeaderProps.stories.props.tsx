@@ -35,7 +35,12 @@ export const getMainHeaderStoryProps = (props?: {
           //   content: 'You extracted the USB dangerously 🤯',
           // }),
           ...generateRandomUserWhistleblows(10).map(whistleblow =>
-            WhistleblowAlert({ whistleblow }),
+            WhistleblowAlert({
+              whistleblow,
+              // deleteNotification: () => {
+              //   actions('deleteNotification')
+              // },
+            }),
           ),
         ]}
       />
