@@ -1,6 +1,6 @@
 import type React from 'react'
 import type { FC, KeyboardEvent, ReactElement } from 'react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Card from '../Card/Card.js'
 import './FloatingMenu.scss'
 
@@ -118,9 +118,63 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
     e.stopPropagation()
   }
 
-  // useEffect(() => {
-  //   hoverElementRef?.current?.setAttribute('inert', '')
-  // }, [hoverElementRef])
+  useEffect(() => {
+    const handleResize = () => {
+      const floatingMenuTmp = divRef && divRef.current?.querySelector('.menu')
+      const floatingMenuContentTmp = divRef && divRef.current?.querySelector('.menu .content')
+      const floatingMenu = floatingMenuTmp && (floatingMenuTmp as HTMLElement)
+      const floatingMenuContent = floatingMenuContentTmp && (floatingMenuContentTmp as HTMLElement)
+
+      if (floatingMenu && floatingMenuContent) {
+        floatingMenuContent.style.maxHeight = `${window.innerHeight - 68}px`
+
+        const rect = floatingMenu.getBoundingClientRect()
+
+        const hoverElementRefLeft = hoverElementRef.current?.getBoundingClientRect().left
+
+        if (rect && rect.left < 0) {
+          const xPos = rect.left
+          floatingMenu.style.left = `-${hoverElementRefLeft ?? xPos}` + 'px'
+        }
+        if (rect && rect.right > window.innerWidth) {
+          const overflow = rect.right - window.innerWidth
+          const newWidth = floatingMenu.offsetWidth - overflow
+          floatingMenu.style.width = `${newWidth}px`
+        }
+      }
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [divRef, menuContent])
+
+  const handleWindowResize = () => {
+    const maxWidth = window.innerWidth
+    const floatingMenu = divRef?.current
+    if (floatingMenu && floatingMenu.offsetWidth > maxWidth) {
+      floatingMenu.style.width = `${maxWidth}px`
+    }
+    const rect = floatingMenu?.getBoundingClientRect()
+    if (floatingMenu && rect && rect.left < 0) {
+      floatingMenu.style.left = '0'
+    }
+    if (floatingMenu && rect && rect.right > window.innerWidth) {
+      const overflow = rect.right - window.innerWidth
+      const newWidth = floatingMenu.offsetWidth - overflow
+      floatingMenu.style.width = `${newWidth}px`
+    }
+  }
+
+  useEffect(() => {
+    handleWindowResize()
+    window.addEventListener('resize', handleWindowResize)
+    return () => {
+      window.removeEventListener('resize', handleWindowResize)
+    }
+  }, [])
 
   return (
     <div

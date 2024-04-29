@@ -58,7 +58,8 @@
       > .whistleblow-title {
         display: flex;
         align-items: center;
-        gap: 5px;
+        flex-wrap: wrap;
+
         > .resource-title {
           font-weight: bold;
           max-width: 198px;
@@ -66,6 +67,7 @@
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
+          padding-right: 5px;
         }
       }
       > .whistleblow-date {

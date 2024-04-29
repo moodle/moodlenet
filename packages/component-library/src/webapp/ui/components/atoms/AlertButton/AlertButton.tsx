@@ -65,24 +65,6 @@ export const AlertButton: FC<AlertButtonProps> = ({
     }
   }, [elements])
 
-  const handleResize = () => {
-    const floatingMenu = floatingMenuRef.current?.querySelector('.menu .content')
-    const windowHeight = window.innerHeight
-    console.log('floatingMenu', floatingMenu)
-
-    if (floatingMenu) {
-      ;(floatingMenu as HTMLElement).style.maxHeight = `${windowHeight - 68}px`
-    }
-  }
-
-  useEffect(() => {
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [elements])
-
   return (
     elements &&
     elements?.length > 0 && (

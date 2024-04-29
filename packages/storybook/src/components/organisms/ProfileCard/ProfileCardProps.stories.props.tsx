@@ -22,7 +22,7 @@ export const getProfileCardFactory = (
       bottomTouchColumnItems: [],
       overallCardProps: OverallCardStories.OverallCardNoCardStoryProps,
       data: {
-        userId: 'saddsadsa-21321312',
+        userId: Math.random().toString(36).substring(2, 12),
         backgroundUrl: profile?.backgroundUrl,
         avatarUrl: profile?.avatarUrl,
         profileHref: href('Pages/Profile/Logged In'),
