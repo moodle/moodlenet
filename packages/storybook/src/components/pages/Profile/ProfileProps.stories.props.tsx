@@ -26,6 +26,13 @@ import { getResourceCardsStoryProps } from '../../organisms/ResourceCard/Resourc
 
 const maxUploadSize = 1024 * 1024 * 10
 const pointsArray = [7, 50, 125, 321, 876, 3421, 12567, 43768, 67456, 345678]
+const reportOptions = [
+  { id: '1', name: 'Inappropriate behavior' },
+  { id: '2', name: 'Impersonation' },
+  { id: '3', name: 'Spamming' },
+  { id: '4', name: 'Violation of terms of service' },
+  { id: '5', name: 'Other' },
+]
 
 export const useProfileStoryProps = (
   overrides?: PartialDeep<
@@ -41,6 +48,7 @@ export const useProfileStoryProps = (
     backgroundUrl: person && person.backgroundUrl,
     points: pointsArray[Math.floor(Math.random() * pointsArray.length)] ?? 0,
     ...overrides?.data,
+    reportOptions: reportOptions,
     profileHref: href('Page/Profile/Default'),
   }
 
@@ -63,6 +71,7 @@ export const useProfileStoryProps = (
     setBackground: action('set background image'),
     approveUser: action('approve user'),
     unapproveUser: action('unapprove user'),
+    reportProfile: action('report profile'),
     // requestApproval: action('request approval'),
   }
 

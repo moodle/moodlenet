@@ -656,7 +656,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         showCloseButton={false}
         key="url-copy-snackbar"
       >
-        Copied to clipoard
+        Link copied to clipoard
       </Snackbar>,
     )
   }

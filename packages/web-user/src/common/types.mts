@@ -1,4 +1,8 @@
 import type { Href } from '@moodlenet/react-app/common'
+import type {
+  ReportOptionType,
+  ReportProfileData,
+} from '../webapp/ui/components/molecules/ReportProfile/ReportProfileData.js'
 
 export type WebUserEntityNames = 'Profile' | 'EntityPoints'
 export type KnownEntityFeature = 'bookmark' | 'follow' | 'like'
@@ -93,6 +97,7 @@ export type ProfileData = {
   displayName: string
   profileHref: Href
   points: number
+  reportOptions: ReportOptionType[]
 }
 
 export type ProfileFormValues = {
@@ -116,6 +121,7 @@ export type ProfileState = {
 
 export type ProfileActions = {
   toggleFollow(): void
+  reportProfile(values: ReportProfileData): void
   editProfile(values: ProfileFormValues): void
   sendMessage(msg: string): void
   setAvatar(file: File | undefined | null): void
