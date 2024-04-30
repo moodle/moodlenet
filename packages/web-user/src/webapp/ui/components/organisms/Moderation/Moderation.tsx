@@ -223,10 +223,9 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
         title="Reported by"
         onClose={() => toggleShowFlagModal(undefined)}
       >
-        {showFlagModal &&
-          users[showFlagModal]?.user.reports.map((report, index) =>
-            flagRow(report.user, report.date, index),
-          )}
+        {users[showFlagModal]?.user.reports.map((report, index) =>
+          flagRow(report.user, report.date, index),
+        )}
       </Modal>
     ) : null
 
