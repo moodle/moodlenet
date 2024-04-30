@@ -10,13 +10,20 @@ import {
 import { Link } from '@moodlenet/react-app/ui'
 import {
   HowToRegOutlined,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
   ManageAccountsOutlined,
   PersonOffOutlined,
   PersonOutlineOutlined,
   Unpublished,
 } from '@mui/icons-material'
-import { useState, type FC } from 'react'
-import type { User, UserReporter } from '../../../../../common/types.mjs'
+import { useEffect, useMemo, useState, type FC } from 'react'
+import type {
+  ReportProfileReasonName,
+  User,
+  UserReport,
+  UserReporter,
+} from '../../../../../common/types.mjs'
 import { ReactComponent as RemoveFlag } from '../../../assets/icons/remove-flag.svg'
 import './Moderation.scss'
 
@@ -45,12 +52,14 @@ const Row: FC<{
   moderationUser: ModerationUser
   bodyItems: (AddonItem | null)[]
   toggleShowFlagModal: React.Dispatch<React.SetStateAction<number | undefined>>
+  setShowReasonsModal: React.Dispatch<React.SetStateAction<number | undefined>>
   setIsToDelete: React.Dispatch<React.SetStateAction<number | undefined>>
   setShowDeleteReportsSnackbar: React.Dispatch<React.SetStateAction<string | undefined>>
 }> = ({
   id,
   moderationUser,
   toggleShowFlagModal,
+  setShowReasonsModal,
   setIsToDelete,
   setShowDeleteReportsSnackbar,
   //bodyItems,
@@ -122,7 +131,13 @@ const Row: FC<{
       <abbr className="last-flag" title={`${lastReportDate}, ${lastReportTime}`}>
         {lastReportDate}
       </abbr>
-      <abbr className="reason" title="Show reason details">
+      <abbr
+        className="reason"
+        title="Show reason details"
+        onClick={() => {
+          setShowReasonsModal(id)
+        }}
+      >
         {mainReportReason}
       </abbr>
       <div className="status">{accontStatus}</div>
@@ -202,14 +217,16 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
     return (
       <div className="flag-row" key={i}>
         <div className="date">
-          {date.toLocaleString('default', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          })}
+          {date
+            .toLocaleString('default', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })
+            .replace(',', '')}
         </div>{' '}
         by <abbr title={`Go to profile page\n${user.email}`}>{user.displayName}</abbr>
       </div>
@@ -261,6 +278,113 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
     </Modal>
   )
 
+  const [showReasonsModal, setShowReasonsModal] = useState<number | undefined>(undefined)
+  const [collapsedGroups, setCollapsedGroups] = useState<{ [key: string]: boolean }>({})
+
+  const selectedUserReports = useMemo(() => {
+    return showReasonsModal !== undefined ? users[showReasonsModal]?.user.reports : []
+  }, [showReasonsModal, users])
+
+  useEffect(() => {
+    const initialCollapsedState = (selectedUserReports ?? []).reduce(acc => {
+      // const reasonName = report.reason.type.name as ReportProfileReasonName
+      // acc[reasonName] = true // All reasons start as collapsed
+      return acc
+    }, {} as { [key in ReportProfileReasonName]: boolean })
+
+    setCollapsedGroups(initialCollapsedState)
+  }, [selectedUserReports])
+
+  const ReasonsModal = () => {
+    const [initialCollapseFinished, setInitialCollapseFinished] = useState(false)
+
+    // useEffect(() => {
+    //   const newCollapsedGroups: { [reason in ReportProfileReasonName]?: boolean } = {}
+    //   selectedUserReports?.reduce((acc, report) => {
+    //     const reasonName = report.reason.type.name as ReportProfileReasonName
+    //     acc[reasonName] = true // Initialize all reasons as collapsed
+    //     return acc
+    //   }, newCollapsedGroups)
+    //   setCollapsedGroups(newCollapsedGroups)
+    // }, [])
+
+    const groupedReports = selectedUserReports?.reduce(
+      (acc: { [key: string]: UserReport[] }, report) => {
+        const reasonName = report.reason.type.name
+        acc[reasonName] = acc[reasonName] || []
+        acc[reasonName]?.push(report)
+        return acc
+      },
+      {},
+    )
+
+    const sortedReasons = Object.entries(groupedReports || {}).sort(
+      (a, b) => b[1].length - a[1].length,
+    )
+
+    const toggleGroupCollapse = (reason: string) => {
+      setCollapsedGroups(prev => ({ ...prev, [reason]: !prev[reason] }))
+    }
+
+    const onClose = () => {
+      setShowReasonsModal(undefined)
+      setInitialCollapseFinished(false)
+    }
+
+    setTimeout(() => {
+      typeof showReasonsModal === 'number' && setInitialCollapseFinished(true)
+    }, 10)
+
+    return (
+      typeof showReasonsModal === 'number' &&
+      initialCollapseFinished && (
+        <Modal
+          className="reasons-modal"
+          title="Report reasons"
+          onClose={onClose}
+          key="report-reasons-modal"
+          style={{ maxWidth: '800px' }}
+        >
+          <div className="reasons">
+            {sortedReasons.map(([reason, reports]) => (
+              <div key={reason} className="reason-type">
+                <div className="type-header" onClick={() => toggleGroupCollapse(reason)}>
+                  <h3 className="type">
+                    {reason} ({reports.length})
+                  </h3>
+                  {collapsedGroups[reason] ? <KeyboardArrowDown /> : <KeyboardArrowUp />}
+                </div>
+                {!collapsedGroups[reason] &&
+                  reports.map((report, index) => (
+                    <div key={index} className="reason">
+                      <div className="date-user">
+                        <div className="date">
+                          {report.date
+                            .toLocaleString('default', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: false,
+                            })
+                            .replace(',', '')}
+                        </div>
+                        <abbr className="user" title={`Go to profile page\n${report.user.email}`}>
+                          {report.user.displayName}
+                        </abbr>
+                      </div>
+                      <div className="comment">{report.reason.comment}</div>
+                    </div>
+                  ))}
+              </div>
+            ))}
+          </div>
+        </Modal>
+      )
+    )
+  }
+
   const [showDeletedUserSnackbar, setShowDeletedUserSnackbar] = useState<boolean>(false)
 
   const DeletedUserSnackbar = showDeletedUserSnackbar ? (
@@ -275,7 +399,7 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
 
   const snackbars = <SnackbarStack snackbarList={[DeleteReportsSnackbar, DeletedUserSnackbar]} />
 
-  const modals = [flagModal, deleteConfirmation]
+  const modals = [flagModal, ReasonsModal(), deleteConfirmation]
 
   return (
     <div className="moderation" key="Moderation">
@@ -312,6 +436,7 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
                     moderationUser={moderationUser}
                     bodyItems={usersTableItems[i] ?? []}
                     toggleShowFlagModal={toggleShowFlagModal}
+                    setShowReasonsModal={setShowReasonsModal}
                     setIsToDelete={setIsToDelete}
                     setShowDeleteReportsSnackbar={setShowDeleteReportsSnackbar}
                     key={i}

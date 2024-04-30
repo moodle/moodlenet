@@ -140,4 +140,54 @@
       }
     }
   }
+
+  &.reasons-modal {
+    > .modal {
+      max-height: 800px;
+      min-width: min(calc(100vw - 40px), 500px);
+
+      > .content {
+        overflow: auto;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        > .reasons {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          > .reason-type {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            > .type-header {
+              cursor: pointer;
+              display: flex;
+              gap: 8px;
+              > svg {
+                margin-top: 2px;
+              }
+            }
+            > .reason {
+              display: flex;
+              flex-direction: column;
+              gap: 4px;
+              > .date-user {
+                display: flex;
+                gap: 5px;
+                > .date {
+                  min-width: 147px;
+                }
+                > abbr {
+                  cursor: pointer;
+                  font-weight: 600;
+                  &:hover {
+                    text-decoration: underline;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

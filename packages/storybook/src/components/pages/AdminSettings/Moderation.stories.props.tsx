@@ -30,6 +30,37 @@ const getRandomStatus = (): UserStatus => {
   return statuses[Math.floor(Math.random() * statuses.length)] ?? 'Non-authenticated'
 }
 
+const commentsByReason: Record<ReportProfileReasonName, string[]> = {
+  'Inappropriate behavior': [
+    'The user has been posting offensive comments repeatedly on several threads.',
+    'Multiple instances of harassment in comments were observed over the past few days.',
+    'This user consistently shares content that is inappropriate for the community.',
+  ],
+  'Impersonation': [
+    "There's someone pretending to be a well-known figure and misleading other users.",
+    "This profile is a fake account that impersonates another person's identity.",
+  ],
+  'Spamming': [
+    'This account has been posting spam links in the comments section of every post.',
+    'Continuous posting of promotional content that has no relevance to the discussion topics.',
+    'The user is flooding the forum with multiple irrelevant links and promotional offers.',
+  ],
+  'Terms of service violation': [
+    'This user is sharing pirated software links, which is against our terms of service.',
+    'The reported account is engaging in selling illegal items, which is not allowed.',
+  ],
+  'Other': [
+    'The user has found a loophole in the system and is exploiting it to their advantage.',
+    "This is a catch-all for behavior that doesn't fit into other categories but is still concerning.",
+  ],
+}
+
+// Utility function to get a random comment based on the reason
+const getRandomComment = (reason: ReportProfileReasonName): string => {
+  const possibleComments = commentsByReason[reason]
+  return possibleComments[Math.floor(Math.random() * possibleComments.length)] ?? ''
+}
+
 const getRandomReason = (): ReportProfileReasonName => {
   const reasons: ReportProfileReasonName[] = [
     'Inappropriate behavior',
@@ -45,6 +76,7 @@ let emailCounter = 0
 
 const generateRandomUserReport = (): UserReport => {
   emailCounter++
+  const reason = getRandomReason()
   const randomUserReport: UserReport = {
     user: {
       displayName: names[Math.floor(Math.random() * names.length)] || '',
@@ -55,9 +87,9 @@ const generateRandomUserReport = (): UserReport => {
     reason: {
       type: {
         id: Math.random().toString(36).substring(7),
-        name: getRandomReason(),
+        name: reason,
       },
-      comment: Math.random().toString(36).substring(7),
+      comment: getRandomComment(reason),
     },
     status: getRandomStatus(),
   }
@@ -84,7 +116,7 @@ const getRandomUser = (deleteReports: (email: string) => void): ModerationUser =
       profileHref: href('Pages/Profile/Admin'),
       isAdmin: Math.random() < 0.5,
       isPublisher: Math.random() < 0.5,
-      reports: generateRandomUserReports(Math.floor(Math.random() * 10) + 1),
+      reports: generateRandomUserReports(Math.floor(Math.random() * 15) + 2),
       mainReportReason: getRandomReason(),
     },
     toggleIsPublisher: () => console.log('Toggling user type'),
@@ -132,7 +164,8 @@ export const useModerationStoryProps = (overrides?: {
               date: new Date(getRandomDate()),
               reason: {
                 type: { id: '1', name: 'Inappropriate behavior' },
-                comment: 'This is a comment',
+                comment:
+                  'The user has been posting offensive comments repeatedly on several threads.',
               },
               status: 'Non-authenticated',
             },
