@@ -10,10 +10,6 @@
       > thead > tr > td {
         text-align: left;
         padding: 8px;
-        &.user-types {
-          display: flex;
-          justify-content: center;
-        }
       }
       > thead > tr > td {
         font-weight: bold;
@@ -21,29 +17,28 @@
 
       > tbody {
         > tr {
-          > .user-types {
-            display: flex;
-            gap: 10px;
-            > * {
-              cursor: pointer;
-              &.off {
-                color: #8c8e95;
-                &:hover {
-                  color: #63656a;
-                }
+          > .status {
+            text-align: center;
+            > abbr {
+              > svg {
+                margin-left: -6px;
+                color: #838383;
               }
             }
-            > .admin,
-            > .publisher {
-              &.on {
-                color: var(--primary-color);
-                &:hover {
-                  color: var(--primary-color-hover);
-                }
-                &:active {
-                  color: var(--primary-color-active);
-                }
+          }
+          > .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            > * {
+              cursor: pointer;
+              color: #7a7a7a;
+              &:hover {
+                color: #535353;
               }
+            }
+            > .ignore > svg {
+              height: 23px;
             }
           }
         }

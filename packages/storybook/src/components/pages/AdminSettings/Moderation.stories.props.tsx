@@ -1,15 +1,15 @@
 import { JiraButtonBody, JiraButtonHead } from '@moodlenet/mn-central-jira-simple-moderations/ui'
 import { href } from '@moodlenet/react-app/common'
 import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
-import type { TableItem, UsersProps } from '@moodlenet/web-user/ui'
-import { Users, UsersMenu } from '@moodlenet/web-user/ui'
+import type { ModerationProps, ReportTableItem } from '@moodlenet/web-user/ui'
+import { Moderation, ModerationMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { FC } from 'react'
 
-export const useUsersStoryProps = (overrides?: {
-  props?: Partial<UsersProps>
-}): Omit<UsersProps, 'search'> => {
-  const jiraLinkButtons: TableItem = {
+export const useModerationStoryProps = (overrides?: {
+  props?: Partial<ModerationProps>
+}): Omit<ModerationProps, 'search'> => {
+  const jiraLinkButtons: ReportTableItem = {
     head: JiraButtonHead,
     body: {
       email: 'maria.anders@school.edu',
@@ -68,7 +68,7 @@ export const useUsersStoryProps = (overrides?: {
   }
 }
 
-const UsersItem: FC = () => {
+const ModerationItem: FC = () => {
   // const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
   // const [searchText, setSearchText] = useState('')
   // const [currentUsers, setCurrentUsers] = useState(useUsersStoryProps().users)
@@ -85,19 +85,19 @@ const UsersItem: FC = () => {
   // }, [searchText, currentUsers])
 
   return (
-    <Users
-      users={useUsersStoryProps().users}
+    <Moderation
+      users={useModerationStoryProps().users}
       search={action('Searching users')}
       // users={currentUsers}
       // search={setSearchText}
-      tableItems={useUsersStoryProps().tableItems}
+      tableItems={useModerationStoryProps().tableItems}
     />
   )
 }
-export const useUserAdminSettingsElements = (): AdminSettingsItem => {
+export const useModerationAdminSettingsElements = (): AdminSettingsItem => {
   return {
-    Menu: UsersMenu,
-    Content: () => <UsersItem />,
-    key: 'content-Users',
+    Menu: ModerationMenu,
+    Content: () => <ModerationItem />,
+    key: 'content-Moderation',
   }
 }
