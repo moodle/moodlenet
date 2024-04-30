@@ -3,7 +3,7 @@ import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { defaultAppearanceData } from '../../../../../../common/exports.mjs'
 import type { AppearanceData } from '../../../../../../common/types.mjs'
-import { AdminSettingsItem } from '../AdminSettings.js'
+import type { AdminSettingsItem } from '../AdminSettings.js'
 import type { AppearanceProps } from './Appearance.js'
 import { Appearance, AppearanceMenu } from './Appearance.js'
 

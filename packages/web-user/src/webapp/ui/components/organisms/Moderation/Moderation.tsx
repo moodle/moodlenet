@@ -137,13 +137,17 @@ const Row: FC<{
             {user.title}
           </Link>
         ) : (
-          `Deleted - ${statusHistory[0]?.date
-            .toLocaleString('default', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
-            })
-            .replace(',', '')}`
+          `Deleted - ${
+            statusHistory[0]?.date
+              ? new Date(statusHistory[0].date)
+                  .toLocaleString('default', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                  })
+                  .replace(',', '')
+              : ''
+          }`
         )}
       </abbr>
       <abbr
@@ -291,11 +295,11 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
 
   const [showFlagsModal, toggleShowFlagsModal] = useState<number | undefined>(undefined)
 
-  const flagRow = (user: UserReporter, date: Date, i: number) => {
+  const flagRow = (user: UserReporter, date: string, i: number) => {
     return (
       <div className="flag-row" key={i}>
         <div className="date">
-          {date
+          {new Date(date)
             .toLocaleString('default', {
               day: '2-digit',
               month: 'short',
@@ -386,7 +390,7 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
             </abbr>{' '}
             on
             <div className="date">
-              {statusChange.date
+              {new Date(statusChange.date)
                 .toLocaleString('default', {
                   day: '2-digit',
                   month: 'short',
@@ -484,7 +488,7 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
                     <div key={index} className="reason">
                       <div className="date-user">
                         <div className="date">
-                          {report.date
+                          {new Date(report.date)
                             .toLocaleString('default', {
                               day: '2-digit',
                               month: 'short',

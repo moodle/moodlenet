@@ -24,7 +24,7 @@ import {
   WEB_USER_SESSION_TOKEN_COOKIE_NAME,
 } from '../../common/exports.mjs'
 import { Profile } from '../exports.mjs'
-import { db, WebUserCollection } from '../init/arangodb.mjs'
+import { WebUserCollection, db } from '../init/arangodb.mjs'
 import { kvStore } from '../init/kvStore.mjs'
 import { shell } from '../shell.mjs'
 import type {
@@ -41,7 +41,13 @@ import type {
   WebUserRecord,
 } from '../types.mjs'
 import { reduceToKnownFeaturedEntities } from './known-entity-types.mjs'
-import { entityFeatureAction, getProfileOwnKnownEntities, getProfileRecord } from './profile.mjs'
+import {
+  entityFeatureAction,
+  getProfileOwnKnownEntities,
+  getProfileRecord,
+  setProfileAvatar,
+  setProfileBackgroundImage,
+} from './profile.mjs'
 
 const VALID_JWT_VERSION: TokenVersion = 1
 export async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
@@ -522,8 +528,29 @@ async function _deleteWebUserAccountNow(webUserKey: string) {
       )
     })
 
-    await Profile.collection.remove(profile._key)
-    await WebUserCollection.remove(webUser._key)
+    await setProfileAvatar({ _key: profile._key, rpcFile: null })
+    await setProfileBackgroundImage({ _key: profile._key, rpcFile: null })
+    await Profile.collection.update(profile._key, {
+      deleted: true,
+      aboutMe: '',
+      displayName: 'deleted user',
+      knownFeaturedEntities: [],
+      location: '',
+      organizationName: '',
+      points: 0,
+      publisher: false,
+      settings: { interests: null },
+      popularity: null,
+      siteUrl: null,
+      webslug: 'deleted-user',
+    })
+    await WebUserCollection.update(webUser._key, {
+      contacts: {},
+      deleted: true,
+      deleting: false,
+      displayName: 'deleted user',
+      isAdmin: false,
+    })
 
     const event: WebUserEvents['deleted-web-user-account'] = {
       displayName: profile.displayName,

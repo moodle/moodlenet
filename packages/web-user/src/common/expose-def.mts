@@ -9,6 +9,7 @@ import type {
   LeaderBoardContributor,
   ProfileGetRpc,
   ProfileSearchResultRpc,
+  ReportOptionTypeId,
   SortTypeRpc,
   UserInterests,
   WebUserData,
@@ -127,7 +128,10 @@ export type WebUserExposeType = PkgExposeDef<{
       appearanceData: AppearanceData
     }): Promise<{ valid: boolean }>
     // 'webapp/admin/packages/update-all-pkgs'(): Promise<{ updatePkgs: Record<string, string> }>
-    'webapp/admin/roles/searchUsers'(body: { search: string }): Promise<WebUserData[]>
+    'webapp/admin/roles/searchUsers'(body: {
+      search: string
+      sortType?: AdminSearchUserSortType
+    }): Promise<WebUserData[]>
     'webapp/admin/roles/setIsAdmin'(
       body: { isAdmin: boolean } & ({ profileKey: string } | { userKey: string }),
     ): Promise<boolean>
@@ -135,5 +139,23 @@ export type WebUserExposeType = PkgExposeDef<{
       profileKey: string
       isPublisher: boolean
     }): Promise<boolean>
+    //report
+    'webapp/admin/moderation/___delete-user/:_key'(
+      body: null,
+      params: { _key: string },
+    ): Promise<unknown>
+    'webapp/admin/moderation/delete-user-reports/:_key'(
+      body: null,
+      params: { _key: string },
+    ): Promise<unknown>
+    'webapp/profile/report/:_key'(
+      body: {
+        reportOptionTypeId: ReportOptionTypeId
+        comment: string | undefined
+      },
+      params: { _key: string },
+    ): Promise<unknown>
   }
 }>
+
+export type AdminSearchUserSortType = 'DispalyName' | 'Flags' | 'LastFlag' | 'MainReason' | 'Status'

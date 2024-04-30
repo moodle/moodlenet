@@ -1,7 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import type { FC } from 'react'
-import { AdminSettingsItem } from '../AdminSettings.js'
+import type { AdminSettingsItem } from '../AdminSettings.js'
 import type { AdvancedFormValues, AdvancedProps } from './Advanced.js'
 import { Advanced, AdvancedMenu } from './Advanced.js'
 

@@ -12,7 +12,12 @@ import type {
   EntityUser,
   PkgUser,
 } from '@moodlenet/system-entities/server'
-import type { KnownEntityFeature, KnownEntityType } from '../common/types.mjs'
+import type {
+  KnownEntityFeature,
+  KnownEntityType,
+  ReportOptionTypeId,
+  UserStatus,
+} from '../common/types.mjs'
 
 // TODO //@ALE ProfileEntity _meta { webUserKey }
 
@@ -54,6 +59,7 @@ export type ProfileDataType = ProfileMeta & {
   webslug: string
   settings: ProfileSettings
   points?: null | number
+  deleted?: boolean
   popularity?: null | {
     overall: number
     items: {
@@ -83,6 +89,22 @@ export type ImageUploaded = { kind: 'file'; directAccessId: string }
 
 // export type Profile = ProfileDataType & { _key: string }
 
+export type ReportItem = {
+  date: string
+  reporterWebUserKey: string
+  reportTypeId: ReportOptionTypeId
+  comment: string
+  status: UserStatus
+  ignored: null | {
+    byWebUserKey: string
+    date: string
+  }
+}
+export type UserStatusItem = {
+  status: UserStatus
+  date: string
+  byWebUserKey: string
+}
 export type WebUserRecord = WebUserDataType & DocumentMetadata
 export type WebUserDataType = {
   displayName: string
@@ -90,6 +112,11 @@ export type WebUserDataType = {
   isAdmin: boolean
   profileKey: string
   deleting?: boolean
+  deleted?: boolean
+  moderation?: {
+    reportHistory: ReportItem[]
+    statusHistory: UserStatusItem[]
+  }
 }
 
 export type Contacts = {
@@ -253,6 +280,13 @@ export type WebUserActivityEvents = {
   'web-user-logged-in': {
     webUserKey: string
     profileKey: string
+  }
+  //
+  'web-user-report': {
+    targetUser: { profileKey: string; webUserKey: string; status: UserStatus }
+    reporterUser: { profileKey: string; webUserKey: string }
+    comment: string
+    reportOptionTypeId: ReportOptionTypeId
   }
 }
 // export type WebUserActivityEvents = {

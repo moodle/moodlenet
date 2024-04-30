@@ -34,7 +34,13 @@ import assert from 'assert'
 import dot from 'dot'
 import { waitFor } from 'xstate/lib/waitFor.js'
 import type { EditProfileDataRpc } from '../../common/expose-def.mjs'
-import type { KnownEntityFeature, KnownEntityType, SortTypeRpc } from '../../common/types.mjs'
+import type {
+  KnownEntityFeature,
+  KnownEntityType,
+  ReportOptionTypeId,
+  SortTypeRpc,
+} from '../../common/types.mjs'
+import { getUserStatus } from '../../common/util.mjs'
 import type { ValidationsConfig } from '../../common/validationSchema.mjs'
 import { getValidationSchemas } from '../../common/validationSchema.mjs'
 import { getProfileHomePageRoutePath } from '../../common/webapp-routes.mjs'
@@ -57,6 +63,7 @@ import {
 } from './known-entity-types.mjs'
 import {
   getCurrentProfileIds,
+  getCurrentWebUserIds,
   getWebUserByProfileKey,
   patchWebUserDisplayName,
   verifyCurrentTokenCtx,
@@ -646,6 +653,46 @@ export async function getProfileOwnKnownEntities<
     : KT extends 'resource'
     ? AccessEntitiesRecordType<ResourceDataType, unknown, EntityAccess>[]
     : never
+}
+
+export async function reportUser({
+  comment,
+  profileKey,
+  reportOptionTypeId,
+}: {
+  profileKey: string
+  reportOptionTypeId: ReportOptionTypeId
+  comment: string
+}) {
+  const currWebUserIds = await getCurrentWebUserIds()
+  const currProfileIds = await getCurrentProfileIds()
+  if (!(currWebUserIds && currProfileIds?.publisher)) {
+    throw RpcStatus('Unauthorized')
+  }
+
+  const targetWebUser = await getWebUserByProfileKey({ profileKey })
+  if (!targetWebUser) {
+    throw RpcStatus('Not Found', 'Target web user not found')
+  }
+  const targetProfile = await getProfileRecord(profileKey)
+  if (!targetProfile) {
+    throw RpcStatus('Not Found', 'Target profile not found')
+  }
+
+  const report = shell.events.emit('web-user-report', {
+    comment,
+    targetUser: {
+      profileKey: targetWebUser.profileKey,
+      webUserKey: targetWebUser._key,
+      status: getUserStatus({ ...targetProfile.entity, ...targetWebUser }),
+    },
+    reporterUser: {
+      profileKey: currProfileIds._key,
+      webUserKey: currWebUserIds._key,
+    },
+    reportOptionTypeId,
+  })
+  return report
 }
 
 export async function editMyProfileInterests({

@@ -68,12 +68,18 @@ export type UserStatus = 'Non-authenticated' | 'Non-publisher' | 'Admin' | 'Publ
 
 export type UserStatusChange = {
   status: UserStatus
-  date: Date
+  date: string
   userChangedStatus: UserChangedStatus
 }
 
+export type ReportOptionTypeId =
+  | 'inappropriate_behavior'
+  | 'impersonation'
+  | 'spamming'
+  | 'terms_of_service_violation'
+  | 'other'
 export type ReportOptionType = {
-  id: string
+  id: ReportOptionTypeId
   name: ReportProfileReasonName
 }
 
@@ -90,7 +96,7 @@ export type UserReporter = {
 export type UserChangedStatus = UserReporter
 
 export type UserReport = {
-  date: Date
+  date: string
   user: UserReporter
   reason: ReportProfileData
   status: UserStatus

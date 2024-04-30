@@ -1,5 +1,6 @@
 import type { EventPayload } from '@moodlenet/core'
-import type { WebUserActivityEvents } from '../../exports.mjs'
+import type { ReportItem, WebUserActivityEvents } from '../../exports.mjs'
+import { WebUserCollection, db } from '../../init/arangodb.mjs'
 import {
   removeFeaturedFromAllUsers,
   removeResourceFromAllCollections,
@@ -90,6 +91,41 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
     }
     case 'web-user-logged-in': {
       break
+    }
+    case 'web-user-report': {
+      const {
+        at,
+        data: { comment, reportOptionTypeId, reporterUser, targetUser },
+      } = activity
+
+      const report: ReportItem = {
+        comment,
+        date: at,
+        ignored: null,
+        reporterWebUserKey: reporterUser.webUserKey,
+        reportTypeId: reportOptionTypeId,
+        status: targetUser.status,
+      }
+      const webUserId = WebUserCollection.documentId({ _key: targetUser.webUserKey })
+      const curs = await db.query({
+        query: `
+LET user = DOCUMENT(@webUserId)
+LET newReportHistory = UNSHIFT(user.moderation.reportHistory || [], @report)
+UPDATE user WITH {
+  moderation: {
+    reportHistory: newReportHistory
+  }
+} IN @@WebUserCollectionName
+RETURN user ? true : false
+`,
+        bindVars: {
+          '@WebUserCollectionName': WebUserCollection.name,
+          webUserId,
+          report,
+        },
+      })
+      await curs.all()
+      await curs.kill()
     }
   }
 }

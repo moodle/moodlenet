@@ -1,10 +1,11 @@
 import { href } from '@moodlenet/react-app/common'
 import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
-import type {
-  ReportProfileReasonName,
-  UserReport,
-  UserStatus,
-  UserStatusChange,
+import {
+  reportOptionTypes,
+  type ReportProfileReasonName,
+  type UserReport,
+  type UserStatus,
+  type UserStatusChange,
 } from '@moodlenet/web-user/common'
 import type { ModerationProps, ModerationUser, SortReportedUsers } from '@moodlenet/web-user/ui'
 import { Moderation, ModerationMenu } from '@moodlenet/web-user/ui'
@@ -88,12 +89,9 @@ const generateRandomUserReport = (): UserReport => {
       email: `${Math.random().toString(36).substring(7)}_${emailCounter}@school.edu`,
       profileHref: href('Pages/Profile/Admin'),
     },
-    date: new Date(getRandomDate()), // Convert the string to a Date object
+    date: getRandomDate(), // Convert the string to a Date object
     reason: {
-      type: {
-        id: Math.random().toString(36).substring(7),
-        name: reason,
-      },
+      type: reportOptionTypes[Math.floor(Math.random() * reportOptionTypes.length)]!,
       comment: getRandomComment(reason),
     },
     status: getRandomStatus(),
@@ -115,7 +113,7 @@ const generateRandomUserStatusChanges = (n: number): UserStatusChange[] => {
   for (let i = 0; i < n; i++) {
     const randomUserStatusChange: UserStatusChange = {
       status: getRandomStatus(),
-      date: new Date(getRandomDate()), // Convert the string to a Date object
+      date: getRandomDate(), // Convert the string to a Date object
       userChangedStatus: {
         displayName: names[Math.floor(Math.random() * names.length)] || '',
         email: `${Math.random().toString(36).substring(7)}@school.edu`,
@@ -136,6 +134,8 @@ function getRandomUser(
   const randomIndex = Math.floor(Math.random() * names.length)
   return {
     user: {
+      isAdmin: false,
+      isPublisher: false,
       title: names[randomIndex] || '', // Assign an empty string as the default value
       email: emails[randomIndex] || '', // Assign an empty string as the default value
       profileHref: href('Pages/Profile/Admin'),
@@ -145,7 +145,7 @@ function getRandomUser(
       statusHistory: [
         {
           status: getRandomStatus(),
-          date: new Date(getRandomDate()),
+          date: getRandomDate(),
           userChangedStatus: {
             displayName: names[Math.floor(Math.random() * names.length)] || '',
             email: emails[randomIndex] || '',
@@ -154,7 +154,7 @@ function getRandomUser(
         },
         {
           status: getRandomStatus(),
-          date: new Date(getRandomDate()),
+          date: getRandomDate(),
           userChangedStatus: {
             displayName: names[Math.floor(Math.random() * names.length)] || '',
             email: emails[randomIndex] || '',
@@ -205,11 +205,11 @@ export const useModerationStoryProps = (overrides?: {
     () => [
       {
         user: {
+          isAdmin: false,
+          isPublisher: false,
           title: 'Maria Anders',
           email: 'maria.anders@school.edu',
           profileHref: href('Pages/Profile/Admin'),
-          isAdmin: false,
-          isPublisher: false,
           reports: [
             {
               user: {
@@ -217,20 +217,19 @@ export const useModerationStoryProps = (overrides?: {
                 email: `${Math.random().toString(36).substring(7)}@school.edu`,
                 profileHref: href('Pages/Profile/Admin'),
               },
-              date: new Date(getRandomDate()),
+              date: getRandomDate(),
               reason: {
-                type: { id: '1', name: 'Inappropriate behavior' },
+                type: { id: 'inappropriate_behavior', name: 'Inappropriate behavior' },
                 comment:
                   'The user has been posting offensive comments repeatedly on several threads.',
               },
               status: 'Non-authenticated',
             },
-            ...generateRandomUserStatusChanges(Math.floor(Math.random() * 10) + 1),
+            ...generateRandomUserReports(Math.floor(Math.random() * 10) + 1),
           ],
           mainReportReason: 'Inappropriate behavior',
           currentStatus: getRandomStatus(),
           statusHistory: generateRandomUserStatusChanges(Math.floor(Math.random() * 10) + 1),
-          ...generateRandomUserReports(Math.floor(Math.random() * 10) + 1),
         },
         toggleIsPublisher: () => console.log('Toggling user type'),
         deleteReports: () => {

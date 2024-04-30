@@ -13,15 +13,21 @@ import type { EntityDocument, EntityFullDocument } from '@moodlenet/system-entit
 import assert from 'assert'
 import type { SchemaOf } from 'yup'
 import { array, object, string } from 'yup'
+import { getReportOptionType } from '../common/exports.mjs'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
 import type {
   ClientSessionDataRpc,
   LeaderBoardContributor,
   Profile,
   ProfileGetRpc,
+  ReportProfileReasonName,
   UserInterests,
+  UserReport,
+  UserReporter,
+  UserStatusChange,
   WebUserData,
 } from '../common/types.mjs'
+import { getUserStatus } from '../common/util.mjs'
 import {
   DELETE_ACCOUNT_SUCCESS_PAGE_PATH,
   SESSION_CHANGE_REDIRECT_Q_NAME,
@@ -47,6 +53,7 @@ import {
   getProfilePointLeaders,
   getProfileRecord,
   getValidations,
+  reportUser,
   searchProfiles,
   sendMessageToProfile as sendMessageToProfileIntent,
   setProfileAvatar,
@@ -392,6 +399,20 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         }
       },
     },
+    'webapp/profile/report/:_key': {
+      guard: () => void 0,
+      async fn({ comment = '', reportOptionTypeId }, { _key }) {
+        const currProfileIds = await getCurrentProfileIds()
+        if (!currProfileIds?.publisher) {
+          throw RpcStatus('Unauthorized')
+        }
+        reportUser({
+          profileKey: _key,
+          reportOptionTypeId,
+          comment,
+        })
+      },
+    },
     'webapp/my-interests/save': {
       guard: body => {
         const schema: SchemaOf<UserInterests> = object({
@@ -511,13 +532,75 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         const users_and_profiles = await searchUsers(search)
         const webUsers = Promise.all(
           users_and_profiles.map(user => {
-            return getProfileRecord(user.profileKey).then(profile => {
+            return getProfileRecord(user.profileKey).then(async profile => {
               assert(
                 profile,
                 `RPC 'webapp/admin/roles/searchUsers': found user but not profile! (webUserKey:${user._key} | profileKey:${user.profileKey})`,
               )
+              const currentStatus = getUserStatus({ ...user, ...profile.entity })
+              const reports = (user.moderation?.reportHistory ?? [])
+                .filter(({ ignored }) => !ignored)
+                .map(({ comment, date, reportTypeId, status }) => {
+                  const userReport: UserReport = {
+                    date,
+                    reason: { comment, type: getReportOptionType(reportTypeId) },
+                    status,
+                    user: {
+                      displayName: user.displayName,
+                      email: user.contacts.email ?? 'N/A',
+                      profileHref: {
+                        url: getWebappUrl(
+                          getProfileHomePageRoutePath({
+                            _key: user.profileKey,
+                            displayName: user.displayName,
+                          }),
+                        ),
+                        ext: false,
+                      },
+                    },
+                  }
+                  return userReport
+                })
+              const statusHistory: UserStatusChange[] = await Promise.all(
+                (user.moderation?.statusHistory ?? []).map(
+                  async ({ date, status, byWebUserKey }) => {
+                    const moderator = await getWebUser({ _key: byWebUserKey })
+                    const userChangedStatus: UserReporter = {
+                      displayName: moderator?.displayName ?? 'N/A',
+                      email: moderator?.contacts.email ?? 'N/A',
+                      profileHref: {
+                        url: getWebappUrl(
+                          getProfileHomePageRoutePath({
+                            _key: moderator?.profileKey ?? 'N/A',
+                            displayName: moderator?.displayName ?? 'N/A',
+                          }),
+                        ),
+                        ext: false,
+                      },
+                    }
+                    const userStatusChange: UserStatusChange = { date, status, userChangedStatus }
+                    return userStatusChange
+                  },
+                ),
+              )
+              const mainReportReasonCountMap = reports.reduce((_, userReport) => {
+                const {
+                  reason: {
+                    type: { name },
+                  },
+                } = userReport
+                _[name] = (_[name] ?? 0) + 1
+                return _
+              }, {} as Record<ReportProfileReasonName, number>)
+              const mainReportReason = Object.entries(mainReportReasonCountMap).sort(
+                (a, b) => a[1] - b[1],
+              )[0]?.[0] as ReportProfileReasonName | undefined
 
               const webUserData: WebUserData = {
+                currentStatus,
+                reports,
+                statusHistory,
+                mainReportReason,
                 _key: user._key,
                 isAdmin: user.isAdmin,
                 name: user.displayName,
@@ -565,6 +648,18 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     'webapp/admin/general/set-appearance': {
       guard: () => void 0,
       fn: setAppearance,
+    },
+    'webapp/admin/moderation/___delete-user/:_key': {
+      guard: () => void 0,
+      async fn(_, { _key }) {
+        return _key
+      },
+    },
+    'webapp/admin/moderation/delete-user-reports/:_key': {
+      guard: () => void 0,
+      async fn(_, { _key }) {
+        return _key
+      },
     },
     // 'webapp/admin/packages/update-all-pkgs': {
     //   guard: () => void 0,
