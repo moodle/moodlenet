@@ -94,7 +94,7 @@
               text-align: center;
             }
 
-            > .display-name,
+            > .display-name:not(.deleted),
             > .flags,
             > .reason,
             > .status {

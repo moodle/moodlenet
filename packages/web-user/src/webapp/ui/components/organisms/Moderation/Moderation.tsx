@@ -9,6 +9,7 @@ import {
 } from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
 import {
+  CheckCircleOutline,
   HowToRegOutlined,
   KeyboardArrowDown,
   KeyboardArrowUp,
@@ -23,6 +24,7 @@ import type {
   User,
   UserReport,
   UserReporter,
+  UserStatus,
 } from '../../../../../common/types.mjs'
 import { ReactComponent as RemoveFlag } from '../../../assets/icons/remove-flag.svg'
 import './Moderation.scss'
@@ -76,30 +78,33 @@ const Row: FC<{
   //bodyItems,
 }) => {
   const { user, toggleIsPublisher, deleteReports } = moderationUser
-  const { mainReportReason, isAdmin, isPublisher } = user
+  const { mainReportReason, currentStatus, statusHistory } = user
 
-  const accontStatus = isAdmin ? (
-    <abbr title={`Admin\nShow status changes`} key="admin">
-      <ManageAccountsOutlined />
-    </abbr>
-  ) : isPublisher ? (
-    <abbr title={`Publisher\nShow status changes`} key="publisher">
-      <HowToRegOutlined />
-    </abbr>
-  ) : (
-    /* !isPublisher ? */ <abbr title={`Non publisher\nShow status changes`} key="authorised">
-      <PersonOutlineOutlined />
-    </abbr>
-  )
+  console.log('currentStatus', currentStatus)
+  const accontStatus =
+    currentStatus === 'Admin' ? (
+      <abbr title={`Admin\nShow status changes`} key="admin">
+        <ManageAccountsOutlined />
+      </abbr>
+    ) : currentStatus === 'Publisher' ? (
+      <abbr title={`Publisher\nShow status changes`} key="publisher">
+        <HowToRegOutlined />
+      </abbr>
+    ) : currentStatus === 'Non-publisher' ? (
+      <abbr title={`Non publisher\nShow status changes`} key="authorised">
+        <PersonOutlineOutlined />
+      </abbr>
+    ) : currentStatus === 'Deleted' ? (
+      <abbr title="Deleted" key="deleted">
+        <PersonOffOutlined />
+      </abbr>
+    ) : null
+
   // : (
   //   <abbr title="Automatically unapproved" key="auto-unapprove">
   //     <PersonRemoveOutlined />
   //   </abbr>
   // )
-
-  // <abbr title="Deleted" key="deleted">
-  //   <PersonOffOutlined />
-  // </abbr>,
 
   const lastReport =
     user.reports.length > 0
@@ -125,10 +130,27 @@ const Row: FC<{
 
   return (
     <div className="table-row">
-      <abbr className="display-name" title={`Go to profile page\n${user.email}`}>
-        <Link href={user.profileHref} target="_blank">
-          {user.title}
-        </Link>
+      <abbr
+        className={`display-name ${currentStatus === 'Deleted' ? 'deleted' : ''}`}
+        title={
+          currentStatus === 'Deleted'
+            ? 'Deleted user, anonymous'
+            : `Go to profile page\n${user.email}`
+        }
+      >
+        {currentStatus !== 'Deleted' ? (
+          <Link href={user.profileHref} target="_blank">
+            {user.title}
+          </Link>
+        ) : (
+          `Deleted - ${statusHistory[0]?.date
+            .toLocaleString('default', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })
+            .replace(',', '')}`
+        )}
       </abbr>
       <abbr
         className="flags"
@@ -155,36 +177,50 @@ const Row: FC<{
       <div className="actions">
         <abbr
           onClick={() => {
-            deleteReports()
-            setShowDeleteReportsSnackbar(user.title)
+            if (currentStatus !== 'Deleted') {
+              deleteReports()
+              setShowDeleteReportsSnackbar(user.title)
+            }
           }}
-          className={`remove-flags`}
-          title="Ignore flags"
+          className={`remove-flags ${currentStatus === 'Deleted' ? 'disabled' : ''}`}
+          title={currentStatus === 'Deleted' ? 'Cannot remove flags from a deleted user' : 'Remove'}
         >
           <RemoveFlag />
         </abbr>
         <abbr
-          onClick={() => isPublisher && toggleIsPublisher()}
-          className={`unapprove ${!isPublisher || isAdmin ? 'disabled' : ''}`}
+          onClick={() => toggleIsPublisher()}
+          className={`unapprove ${
+            (['Non-authenticated', 'Admin', 'Deleted'] as UserStatus[]).includes(currentStatus)
+              ? 'disabled'
+              : ''
+          }`}
           title={
-            isAdmin
+            currentStatus === 'Admin'
               ? 'Cannot unapprove an admin'
-              : isPublisher
+              : currentStatus === 'Publisher'
               ? 'Unapprove user'
-              : 'User already not approved'
+              : currentStatus === 'Deleted'
+              ? 'Cannot unapprove a deleted user'
+              : currentStatus === 'Non-publisher'
+              ? 'Approve user'
+              : currentStatus === 'Non-authenticated'
+              ? 'Cannot unapprove a non-authenticated user'
+              : undefined
           }
         >
-          <Unpublished />
+          {currentStatus === 'Non-publisher' ? <CheckCircleOutline /> : <Unpublished />}
         </abbr>
         <abbr
           onClick={() => {
-            if (!isAdmin) {
+            if (currentStatus !== 'Admin') {
               setIsToDelete(id)
               setDisplayNameToDelete(user.title)
             }
           }}
-          className={`delete ${isAdmin ? 'disabled' : ''}`}
-          title={isAdmin ? 'Cannot delete an admin' : 'Delete user'}
+          className={`delete ${
+            currentStatus === 'Admin' || currentStatus === 'Deleted' ? 'disabled' : ''
+          }`}
+          title={currentStatus ? 'Cannot delete an admin' : 'Delete user'}
         >
           <PersonOffOutlined />
         </abbr>

@@ -55,14 +55,20 @@ export type Profile = {
 export type User = {
   title: string
   email: string
-  isAdmin: boolean
-  isPublisher: boolean
+  currentStatus: UserStatus
   profileHref: Href
   reports: UserReport[]
+  statusHistory: UserStatusChange[]
   mainReportReason?: ReportProfileReasonName
 }
 
-export type UserStatus = 'Non-authenticated' | 'Authenticated' | 'Admin' | 'Publisher'
+export type UserStatus = 'Non-authenticated' | 'Non-publisher' | 'Admin' | 'Publisher' | 'Deleted'
+
+export type UserStatusChange = {
+  status: UserStatus
+  date: Date
+  userChangedStatus: UserChangedStatus
+}
 
 export type ReportOptionType = {
   id: string
@@ -79,6 +85,7 @@ export type UserReporter = {
   email: string
   profileHref: Href
 }
+export type UserChangedStatus = UserReporter
 
 export type UserReport = {
   date: Date

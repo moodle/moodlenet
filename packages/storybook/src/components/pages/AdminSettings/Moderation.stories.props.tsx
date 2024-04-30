@@ -1,7 +1,12 @@
 import { href } from '@moodlenet/react-app/common'
 import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
-import type { ReportProfileReasonName, UserReport, UserStatus } from '@moodlenet/web-user/common'
-import type { ModerationProps, ModerationUser } from '@moodlenet/web-user/ui'
+import type {
+  ReportProfileReasonName,
+  UserReport,
+  UserStatus,
+  UserStatusChange,
+} from '@moodlenet/web-user/common'
+import type { ModerationProps, ModerationUser, SortReportedUsers } from '@moodlenet/web-user/ui'
 import { Moderation, ModerationMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react'
@@ -26,7 +31,7 @@ const getRandomDate = (): string => {
 }
 
 const getRandomStatus = (): UserStatus => {
-  const statuses: UserStatus[] = ['Non-authenticated', 'Authenticated', 'Admin', 'Publisher']
+  const statuses: UserStatus[] = ['Non-publisher', 'Admin', 'Publisher', 'Deleted']
   return statuses[Math.floor(Math.random() * statuses.length)] ?? 'Non-authenticated'
 }
 
@@ -105,24 +110,62 @@ const generateRandomUserReports = (n: number): UserReport[] => {
   return userReports
 }
 
+const generateRandomUserStatusChanges = (n: number): UserStatusChange[] => {
+  const userStatusChanges: UserStatusChange[] = []
+  for (let i = 0; i < n; i++) {
+    const randomUserStatusChange: UserStatusChange = {
+      status: getRandomStatus(),
+      date: new Date(getRandomDate()), // Convert the string to a Date object
+      userChangedStatus: {
+        displayName: names[Math.floor(Math.random() * names.length)] || '',
+        email: `${Math.random().toString(36).substring(7)}@school.edu`,
+        profileHref: href('Pages/Profile/Admin'),
+      },
+    }
+    userStatusChanges.push(randomUserStatusChange)
+  }
+  return userStatusChanges
+}
+
 const emails = names.map((name, i) => `${name.split(' ').join('.')}${i}@school.edu`.toLowerCase())
 
-const getRandomUser = (deleteReports: (email: string) => void): ModerationUser => {
+function getRandomUser(
+  deleteReports: (email: string) => void,
+  changeStatus: (newStatus: UserStatus, email: string) => void,
+): ModerationUser {
   const randomIndex = Math.floor(Math.random() * names.length)
   return {
     user: {
       title: names[randomIndex] || '', // Assign an empty string as the default value
       email: emails[randomIndex] || '', // Assign an empty string as the default value
       profileHref: href('Pages/Profile/Admin'),
-      isAdmin: Math.random() < 0.5,
-      isPublisher: Math.random() < 0.5,
+      currentStatus: getRandomStatus(),
       reports: generateRandomUserReports(Math.floor(Math.random() * 15) + 2),
       mainReportReason: getRandomReason(),
+      statusHistory: [
+        {
+          status: getRandomStatus(),
+          date: new Date(getRandomDate()),
+          userChangedStatus: {
+            displayName: names[Math.floor(Math.random() * names.length)] || '',
+            email: emails[randomIndex] || '',
+            profileHref: href('Pages/Profile/Admin'),
+          },
+        },
+        {
+          status: getRandomStatus(),
+          date: new Date(getRandomDate()),
+          userChangedStatus: {
+            displayName: names[Math.floor(Math.random() * names.length)] || '',
+            email: emails[randomIndex] || '',
+            profileHref: href('Pages/Profile/Admin'),
+          },
+        },
+      ],
     },
     toggleIsPublisher: () => console.log('Toggling user type'),
     deleteUser: () => {
-      deleteReports(emails[randomIndex] || '')
-      console.log('Deleting reports')
+      changeStatus('Deleted', emails[randomIndex] || '')
     }, // Add the missing deleteReports property
     deleteReports: () => {
       deleteReports(emails[randomIndex] || '')
@@ -133,8 +176,9 @@ const getRandomUser = (deleteReports: (email: string) => void): ModerationUser =
 const createRandomUsers = (
   n: number,
   deleteReports: (email: string) => void,
+  changeStatus: (newStatus: UserStatus, email: string) => void,
 ): ReturnType<typeof getRandomUser>[] => {
-  return Array.from({ length: n }, () => getRandomUser(deleteReports))
+  return Array.from({ length: n }, () => getRandomUser(deleteReports, changeStatus))
 }
 
 export const useModerationStoryProps = (overrides?: {
@@ -144,6 +188,17 @@ export const useModerationStoryProps = (overrides?: {
 
   const deleteReports = useCallback((email: string) => {
     setUsers(prevUsers => prevUsers.filter(user => user.user.email !== email))
+  }, [])
+
+  const changeStatus = useCallback((newStatus: UserStatus, email: string) => {
+    setUsers(prevUsers =>
+      prevUsers.map(user => {
+        if (user.user.email === email) {
+          return { ...user, user: { ...user.user, currentStatus: newStatus } }
+        }
+        return user
+      }),
+    )
   }, [])
 
   const defaultUsers: ModerationUser[] = useMemo(
@@ -170,32 +225,73 @@ export const useModerationStoryProps = (overrides?: {
               },
               status: 'Non-authenticated',
             },
-            ...generateRandomUserReports(Math.floor(Math.random() * 10) + 1),
+            ...generateRandomUserStatusChanges(Math.floor(Math.random() * 10) + 1),
           ],
           mainReportReason: 'Inappropriate behavior',
+          currentStatus: getRandomStatus(),
+          statusHistory: generateRandomUserStatusChanges(Math.floor(Math.random() * 10) + 1),
+          ...generateRandomUserReports(Math.floor(Math.random() * 10) + 1),
         },
         toggleIsPublisher: () => console.log('Toggling user type'),
         deleteReports: () => {
-          console.log('Deleting maria.anders@school.edu reports')
           deleteReports('maria.anders@school.edu')
         },
         deleteUser: () => {
-          console.log('Deleting maria.anders@school.edu')
           deleteReports('maria.anders@school.edu')
         },
       },
-      ...createRandomUsers(5, deleteReports),
+      ...createRandomUsers(5, deleteReports, changeStatus),
     ],
-    [deleteReports],
+    [deleteReports, changeStatus],
   )
 
   useEffect(() => {
     setUsers(defaultUsers)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // Include 'defaultUsers' as a dependency
+  }, [defaultUsers]) // Include 'defaultUsers' as a dependency
+
+  const sort: SortReportedUsers = {
+    sortByDispalyName: () =>
+      setUsers(prevUsers =>
+        [...prevUsers].sort((a, b) => a.user.title.localeCompare(b.user.title)),
+      ),
+    sortByStatus: () =>
+      setUsers(prevUsers =>
+        [...prevUsers].sort((a, b) => a.user.currentStatus.localeCompare(b.user.currentStatus)),
+      ),
+    sortByFlags: () =>
+      setUsers(prevUsers =>
+        [...prevUsers].sort((a, b) => a.user.reports.length - b.user.reports.length),
+      ),
+    sortByLastFlag: () => {
+      setUsers(prevUsers =>
+        [...prevUsers].sort((a, b) => {
+          const getLastReportDate = (reports: UserReport[]) =>
+            new Date(
+              reports.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+                ?.date || 0,
+            )
+          return (
+            getLastReportDate(b.user.reports).getTime() -
+            getLastReportDate(a.user.reports).getTime()
+          )
+        }),
+      )
+    },
+    sortByMainReason: () => {
+      setUsers(prevUsers =>
+        [...prevUsers].sort((a, b) => {
+          const reasonA = a.user.mainReportReason || '' // Fallback to empty string if undefined
+          const reasonB = b.user.mainReportReason || '' // Fallback to empty string if undefined
+          return reasonA.localeCompare(reasonB)
+        }),
+      )
+    },
+  }
 
   return {
     users,
+    sort,
     tableItems: [],
     ...overrides?.props,
   }
@@ -221,6 +317,7 @@ const ModerationItem: FC = () => {
     <Moderation
       users={useModerationStoryProps().users}
       search={action('Searching users')}
+      sort={useModerationStoryProps().sort}
       // users={currentUsers}
       // search={setSearchText}
       tableItems={useModerationStoryProps().tableItems}
