@@ -25,7 +25,19 @@ export const useAdminUsersProps = (): UsersProps => {
 
   const userProps = useMemo<UsersProps>(() => {
     const users: UsersProps['users'] = usersCache.map(
-      ({ isPublisher, _key, name: title, email, isAdmin, profileKey, profileHomePath }) => {
+      ({
+        reports,
+        currentStatus,
+        statusHistory,
+        mainReportReason,
+        isPublisher,
+        _key,
+        name: title,
+        email,
+        isAdmin,
+        profileKey,
+        profileHomePath,
+      }) => {
         const toggleIsAdmin = async () => {
           return shell.rpc
             .me('webapp/admin/roles/setIsAdmin')({ userKey: _key, isAdmin })
@@ -37,12 +49,15 @@ export const useAdminUsersProps = (): UsersProps => {
             .then(() => searchUser(search))
         }
         const user: User = {
+          currentStatus,
+          statusHistory,
+          mainReportReason,
           title,
           email,
           isAdmin,
           isPublisher,
           profileHref: href(profileHomePath),
-          reports: [], //TODO //@ALE
+          reports,
         }
         return {
           user,

@@ -53,6 +53,8 @@ export type Profile = {
   avatarUrl: string | undefined | null
 }
 export type User = {
+  isAdmin: boolean
+  isPublisher: boolean
   title: string
   email: string
   currentStatus: UserStatus
@@ -109,6 +111,10 @@ export type WebUserData = {
   isAdmin: boolean
   isPublisher: boolean
   profileHomePath: string
+  reports: UserReport[]
+  statusHistory: UserStatusChange[]
+  mainReportReason?: ReportProfileReasonName
+  currentStatus: UserStatus
 }
 
 export type AuthDataRpc = {
