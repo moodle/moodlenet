@@ -20,12 +20,11 @@ import type {
   LeaderBoardContributor,
   Profile,
   ProfileGetRpc,
-  ReportProfileReasonName,
   UserInterests,
-  UserReport,
-  UserReporter,
-  UserStatusChange,
-  WebUserData,
+  UserReportRPC,
+  UserReporterRPC,
+  UserStatusChangeRPC,
+  WebUserDataRPC,
 } from '../common/types.mjs'
 import { getUserStatus } from '../common/util.mjs'
 import {
@@ -538,65 +537,47 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
                 `RPC 'webapp/admin/roles/searchUsers': found user but not profile! (webUserKey:${user._key} | profileKey:${user.profileKey})`,
               )
               const currentStatus = getUserStatus({ ...user, ...profile.entity })
-              const reports = (user.moderation?.reportHistory ?? [])
-                .filter(({ ignored }) => !ignored)
-                .map(({ comment, date, reportTypeId, status }) => {
-                  const userReport: UserReport = {
+              const reports = user.moderation.reports.items.map(
+                ({ comment, date, reportTypeId, status, reporter }) => {
+                  const userReport: UserReportRPC = {
                     date,
                     reason: { comment, type: getReportOptionType(reportTypeId) },
                     status,
                     user: {
-                      displayName: user.displayName,
-                      email: user.contacts.email ?? 'N/A',
-                      profileHref: {
-                        url: getWebappUrl(
-                          getProfileHomePageRoutePath({
-                            _key: user.profileKey,
-                            displayName: user.displayName,
-                          }),
-                        ),
-                        ext: false,
-                      },
+                      displayName: reporter.displayName,
+                      email: reporter.email,
+                      profileKey: reporter.profileKey,
                     },
                   }
                   return userReport
-                })
-              const statusHistory: UserStatusChange[] = await Promise.all(
-                (user.moderation?.statusHistory ?? []).map(
-                  async ({ date, status, byWebUserKey }) => {
-                    const moderator = await getWebUser({ _key: byWebUserKey })
-                    const userChangedStatus: UserReporter = {
-                      displayName: moderator?.displayName ?? 'N/A',
-                      email: moderator?.contacts.email ?? 'N/A',
-                      profileHref: {
-                        url: getWebappUrl(
-                          getProfileHomePageRoutePath({
-                            _key: moderator?.profileKey ?? 'N/A',
-                            displayName: moderator?.displayName ?? 'N/A',
-                          }),
-                        ),
-                        ext: false,
-                      },
-                    }
-                    const userStatusChange: UserStatusChange = { date, status, userChangedStatus }
-                    return userStatusChange
-                  },
-                ),
+                },
               )
-              const mainReportReasonCountMap = reports.reduce((_, userReport) => {
-                const {
-                  reason: {
-                    type: { name },
-                  },
-                } = userReport
-                _[name] = (_[name] ?? 0) + 1
-                return _
-              }, {} as Record<ReportProfileReasonName, number>)
-              const mainReportReason = Object.entries(mainReportReasonCountMap).sort(
-                (a, b) => a[1] - b[1],
-              )[0]?.[0] as ReportProfileReasonName | undefined
-
-              const webUserData: WebUserData = {
+              const statusHistory: UserStatusChangeRPC[] = await Promise.all(
+                user.moderation.status.history.map(async ({ date, status, byWebUserKey }) => {
+                  const moderator = await getWebUser({ _key: byWebUserKey })
+                  const userChangedStatus: UserReporterRPC = {
+                    displayName: moderator?.displayName ?? 'N/A',
+                    email: moderator?.contacts.email ?? 'N/A',
+                    profileKey: moderator?.profileKey ?? 'N/A',
+                  }
+                  const userStatusChange: UserStatusChangeRPC = { date, status, userChangedStatus }
+                  return userStatusChange
+                }),
+              )
+              // const mainReportReasonCountMap = reports.reduce((_, userReport) => {
+              //   const {
+              //     reason: {
+              //       type: { name },
+              //     },
+              //   } = userReport
+              //   _[name] = (_[name] ?? 0) + 1
+              //   return _
+              // }, {} as Record<ReportProfileReasonName, number>)
+              // const mainReportReason = Object.entries(mainReportReasonCountMap).sort(
+              //   (a, b) => a[1] - b[1],
+              // )[0]?.[0] as ReportProfileReasonName | undefined
+              const mainReportReason = user.moderation.reports.mainReasonName ?? undefined
+              const webUserData: WebUserDataRPC = {
                 currentStatus,
                 reports,
                 statusHistory,

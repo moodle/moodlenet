@@ -1,13 +1,17 @@
 import { href } from '@moodlenet/react-app/common'
 import { silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { User, WebUserData } from '../../../../common/types.mjs'
+import {
+  UserStatusChangeRPC2UserStatusChange,
+  userReportRPC2UserReport,
+} from '../../../../common/reports/rpcMappings.mjs'
+import type { User, WebUserDataRPC } from '../../../../common/types.mjs'
 import type { UsersProps } from '../../../ui/exports/ui.mjs'
 import { shell } from '../../shell.mjs'
 
 export const useAdminUsersProps = (): UsersProps => {
   const [search, setSearch] = useState<string>('')
-  const [usersCache, setUsersCache] = useState<WebUserData[]>([])
+  const [usersCache, setUsersCache] = useState<WebUserDataRPC[]>([])
 
   const searchUser = useCallback((str: string) => {
     shell.rpc
@@ -50,14 +54,14 @@ export const useAdminUsersProps = (): UsersProps => {
         }
         const user: User = {
           currentStatus,
-          statusHistory,
+          statusHistory: statusHistory.map(UserStatusChangeRPC2UserStatusChange),
           mainReportReason,
           title,
           email,
           isAdmin,
           isPublisher,
           profileHref: href(profileHomePath),
-          reports,
+          reports: reports.map(userReportRPC2UserReport),
         }
         return {
           user,

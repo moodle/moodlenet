@@ -16,6 +16,7 @@ import type {
   KnownEntityFeature,
   KnownEntityType,
   ReportOptionTypeId,
+  ReportProfileReasonName,
   UserStatus,
 } from '../common/types.mjs'
 
@@ -91,11 +92,18 @@ export type ImageUploaded = { kind: 'file'; directAccessId: string }
 
 export type ReportItem = {
   date: string
-  reporterWebUserKey: string
+  reporter: {
+    profileKey: string
+    webUserKey: string
+    displayName: string
+    email: string
+  }
   reportTypeId: ReportOptionTypeId
   comment: string
   status: UserStatus
-  ignored: null | {
+}
+export type IgnoredReportItem = ReportItem & {
+  ignored: {
     byWebUserKey: string
     date: string
   }
@@ -113,9 +121,15 @@ export type WebUserDataType = {
   profileKey: string
   deleting?: boolean
   deleted?: boolean
-  moderation?: {
-    reportHistory: ReportItem[]
-    statusHistory: UserStatusItem[]
+  moderation: {
+    reports: {
+      items: ReportItem[]
+      amount: number
+      lastItem: null | ReportItem
+      mainReasonName: null | ReportProfileReasonName
+    }
+    ignoredReports: { items: IgnoredReportItem[] }
+    status: { history: UserStatusItem[] }
   }
 }
 
@@ -282,9 +296,9 @@ export type WebUserActivityEvents = {
     profileKey: string
   }
   //
-  'web-user-report': {
-    targetUser: { profileKey: string; webUserKey: string; status: UserStatus }
-    reporterUser: { profileKey: string; webUserKey: string }
+  'web-user-reported': {
+    targetWebUserKey: string
+    reporterWebUserKey: string
     comment: string
     reportOptionTypeId: ReportOptionTypeId
   }

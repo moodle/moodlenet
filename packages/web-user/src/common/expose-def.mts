@@ -12,7 +12,7 @@ import type {
   ReportOptionTypeId,
   SortTypeRpc,
   UserInterests,
-  WebUserData,
+  WebUserDataRPC,
 } from './types.mjs'
 import type { ValidationsConfig } from './validationSchema.mjs'
 export type { EntityIdentifier } from '@moodlenet/system-entities/common'
@@ -131,7 +131,7 @@ export type WebUserExposeType = PkgExposeDef<{
     'webapp/admin/roles/searchUsers'(body: {
       search: string
       sortType?: AdminSearchUserSortType
-    }): Promise<WebUserData[]>
+    }): Promise<WebUserDataRPC[]>
     'webapp/admin/roles/setIsAdmin'(
       body: { isAdmin: boolean } & ({ profileKey: string } | { userKey: string }),
     ): Promise<boolean>

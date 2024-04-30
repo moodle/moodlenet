@@ -109,7 +109,7 @@ export type ReportProfileReasonName =
   | 'Terms of service violation'
   | 'Other'
 
-export type WebUserData = {
+export type WebUserDataRPC = {
   _key: string
   profileKey: string
   name: string
@@ -117,12 +117,27 @@ export type WebUserData = {
   isAdmin: boolean
   isPublisher: boolean
   profileHomePath: string
-  reports: UserReport[]
-  statusHistory: UserStatusChange[]
+  reports: UserReportRPC[]
+  statusHistory: UserStatusChangeRPC[]
   mainReportReason?: ReportProfileReasonName
   currentStatus: UserStatus
 }
-
+export type UserReportRPC = {
+  date: string
+  user: UserReporterRPC
+  reason: ReportProfileData
+  status: UserStatus
+}
+export type UserReporterRPC = {
+  displayName: string
+  email: string
+  profileKey: string
+}
+export type UserStatusChangeRPC = {
+  status: UserStatus
+  date: string
+  userChangedStatus: UserReporterRPC
+}
 export type AuthDataRpc = {
   isRoot: false
   access: { isAdmin: boolean; isAuthenticated: boolean }

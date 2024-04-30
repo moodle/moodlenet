@@ -1,10 +1,10 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
 import * as collection from '@moodlenet/collection/server'
 import { RpcStatus, type RpcFile } from '@moodlenet/core'
-import * as resCore from '@moodlenet/core-domain/resource'
 import type { IscedFieldDataType } from '@moodlenet/ed-meta/server'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import * as resource from '@moodlenet/ed-resource/server'
+import { ensureUnpublish } from '@moodlenet/ed-resource/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import {
@@ -32,7 +32,6 @@ import {
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import dot from 'dot'
-import { waitFor } from 'xstate/lib/waitFor.js'
 import type { EditProfileDataRpc } from '../../common/expose-def.mjs'
 import type {
   KnownEntityFeature,
@@ -40,7 +39,6 @@ import type {
   ReportOptionTypeId,
   SortTypeRpc,
 } from '../../common/types.mjs'
-import { getUserStatus } from '../../common/util.mjs'
 import type { ValidationsConfig } from '../../common/validationSchema.mjs'
 import { getValidationSchemas } from '../../common/validationSchema.mjs'
 import { getProfileHomePageRoutePath } from '../../common/webapp-routes.mjs'
@@ -294,26 +292,24 @@ export async function changeProfilePublisherPerm({
     return { type: 'not-found', ok: false }
   }
 
-  const [collections, resources] = await Promise.all([
-    getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection' }),
-    getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource' }),
-  ])
-  await Promise.all(
-    collections
-      .filter(({ entity: { published } }) => published)
-      .map(({ entity: { _key } }) => collection.setPublished(_key, false)),
-  )
-  await Promise.all(
-    resources
-      .filter(({ entity: { published } }) => published)
-      .map(async data => {
-        const [interpreter] = await resource.stdEdResourceMachine({ by: 'data', data })
-        interpreter.send('unpublish')
-        await waitFor(interpreter, resCore.nameMatcher('Unpublished'))
-        interpreter.stop()
-      }),
-  )
-
+  if (!setIsPublisher) {
+    const [collections, resources] = await Promise.all([
+      getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection', limit: 10000 }),
+      getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource', limit: 10000 }),
+    ])
+    await Promise.all(
+      collections
+        .filter(({ entity: { published } }) => published)
+        .map(({ entity: { _key } }) => collection.setPublished(_key, false)),
+    )
+    await Promise.all(
+      resources
+        .filter(({ entity: { published } }) => published)
+        .map(async data => {
+          await ensureUnpublish({ by: 'data', data }, { onlyIfPublished: true })
+        }),
+    )
+  }
   shell.events.emit('user-publishing-permission-change', {
     type: setIsPublisher ? 'given' : 'revoked',
     profile: { ...profile.entity, _meta: profile.meta },
@@ -679,17 +675,10 @@ export async function reportUser({
     throw RpcStatus('Not Found', 'Target profile not found')
   }
 
-  const report = shell.events.emit('web-user-report', {
+  const report = shell.events.emit('web-user-reported', {
     comment,
-    targetUser: {
-      profileKey: targetWebUser.profileKey,
-      webUserKey: targetWebUser._key,
-      status: getUserStatus({ ...targetProfile.entity, ...targetWebUser }),
-    },
-    reporterUser: {
-      profileKey: currProfileIds._key,
-      webUserKey: currWebUserIds._key,
-    },
+    reporterWebUserKey: currWebUserIds._key,
+    targetWebUserKey: targetWebUser._key,
     reportOptionTypeId,
   })
   return report

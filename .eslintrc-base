@@ -95,7 +95,8 @@
       }
     ],
     "@typescript-eslint/no-extra-semi": ["off"],
-    "no-unexpected-multiline": ["off"]
+    "no-unexpected-multiline": ["off"],
+    "@typescript-eslint/no-explicit-any": "warn"
 
     /*
     "prettier/prettier": ["error"],
@@ -114,6 +115,5 @@
     "import/prefer-default-export": ["off"],
 
     "no-unused-vars": "error", */
-    // "@typescript-eslint/no-explicit-any": "warn"
   }
 }

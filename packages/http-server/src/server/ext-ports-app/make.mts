@@ -113,7 +113,7 @@ export function makeExtPortsApp() {
                   rpcStatusCode: 500,
                   payload: err instanceof Error ? format(err) : String(err),
                 }
-            shell.log(`error`, httpReq.path, err)
+            shell.log(`error`, httpReq.path, err, err instanceof Error ? err.stack : '')
             httpResp.status(rpcStatusCode).send(payload)
           })
         return srvApp

@@ -27,7 +27,7 @@ import type { ResourceExposeType } from '../common/expose-def.mjs'
 import type { EditResourceRespRpc, ResourceRpc } from '../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../common/webapp-routes.mjs'
 import { canPublish } from './aql.mjs'
-import { getImageAssetInfo } from './lib.mjs'
+import { ensureUnpublish, getImageAssetInfo } from './lib.mjs'
 import {
   RESOURCE_DOWNLOAD_ENDPOINT,
   getResource,
@@ -85,7 +85,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/:action(cancel|start)/meta-autofill/:_key': {
       guard: () => void 0,
       fn: async (_, { _key, action }) => {
-        action === 'start' && (await ensureUnpublish(_key))
+        action === 'start' && (await ensureUnpublish({ by: 'key', key: _key }))
         const resourceRecord = await getResource(_key, {
           project: {
             isCreator: isCurrentUserCreatorOfCurrentEntity(),
@@ -399,7 +399,7 @@ export const expose = await shell.expose<FullResourceExposeType>({
     'webapp/trash/:_key': {
       guard: () => void 0,
       fn: async (_, { _key }) => {
-        await ensureUnpublish(_key)
+        await ensureUnpublish({ by: 'key', key: _key })
         const [interpreter] = await stdEdResourceMachine({ by: 'key', key: _key })
 
         interpreter.send('trash')
@@ -535,23 +535,4 @@ type ServerResourceExposeType = {
       homepage: string
     }>
   }
-}
-
-async function ensureUnpublish(_key: string) {
-  const [interpreter] = await stdEdResourceMachine({ by: 'key', key: _key })
-  const snap = interpreter.getSnapshot()
-  const event =
-    matchState(snap, 'Published') || matchState(snap, 'Publish-Rejected')
-      ? 'unpublish'
-      : matchState(snap, 'Autogenerating-Meta')
-      ? 'cancel-meta-generation'
-      : matchState(snap, 'Meta-Suggestion-Available')
-      ? ({ type: 'provide-resource-edits', edits: {} } as const)
-      : null
-  if (event) {
-    interpreter.send(event)
-    await waitFor(interpreter, nameMatcher('Unpublished'))
-  }
-  interpreter.stop()
-  return new Promise(r => setTimeout(r, 300))
 }

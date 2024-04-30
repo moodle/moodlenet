@@ -1,6 +1,7 @@
 import { interpret } from 'xstate'
 import { waitFor } from 'xstate/lib/waitFor'
-import { DEFAULT_CONTEXT, Event, getEdResourceMachine, nameMatcher } from '../exports'
+import type { Event } from '../exports'
+import { DEFAULT_CONTEXT, getEdResourceMachine, nameMatcher } from '../exports'
 
 import { getEdResourceMachineDeps, userIssuer } from './configureMachine'
 
@@ -47,7 +48,7 @@ test('authenticated user, but not creator', async () => {
   interpreter.start()
   interpreter.start('Unpublished')
 
-  let snap = interpreter.getSnapshot()
+  const snap = interpreter.getSnapshot()
   expect(
     snap.can({
       type: 'provide-resource-edits',

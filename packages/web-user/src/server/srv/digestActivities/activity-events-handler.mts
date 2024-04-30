@@ -1,5 +1,12 @@
 import type { EventPayload } from '@moodlenet/core'
-import type { ReportItem, WebUserActivityEvents } from '../../exports.mjs'
+import { reportOptionTypeMap } from '../../../common/exports.mjs'
+import { getUserStatus } from '../../../common/util.mjs'
+import {
+  getProfileRecord,
+  getWebUser,
+  type ReportItem,
+  type WebUserActivityEvents,
+} from '../../exports.mjs'
 import { WebUserCollection, db } from '../../init/arangodb.mjs'
 import {
   removeFeaturedFromAllUsers,
@@ -92,28 +99,62 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
     case 'web-user-logged-in': {
       break
     }
-    case 'web-user-report': {
+    case 'web-user-reported': {
       const {
         at,
-        data: { comment, reportOptionTypeId, reporterUser, targetUser },
+        data: { comment, reportOptionTypeId, reporterWebUserKey, targetWebUserKey },
       } = activity
-
+      const [targetWebUser, reporterWebUser] = await Promise.all([
+        getWebUser({ _key: targetWebUserKey }),
+        getWebUser({ _key: reporterWebUserKey }),
+      ])
+      if (!(reporterWebUser && targetWebUser)) {
+        return
+      }
+      const [targetProfile /* , reporterProfile */] = await Promise.all([
+        getProfileRecord(targetWebUser.profileKey),
+        // getProfileRecord(reporterWebUser.profileKey),
+      ])
+      if (!(targetWebUser && targetProfile)) {
+        return
+      }
+      const targetUserStatus = getUserStatus({ ...targetWebUser, ...targetProfile.entity })
       const report: ReportItem = {
         comment,
         date: at,
-        ignored: null,
-        reporterWebUserKey: reporterUser.webUserKey,
+        reporter: {
+          webUserKey: reporterWebUser._key,
+          profileKey: reporterWebUser.profileKey,
+          displayName: reporterWebUser.displayName,
+          email: reporterWebUser.contacts.email ?? 'N/A',
+        },
         reportTypeId: reportOptionTypeId,
-        status: targetUser.status,
+        status: targetUserStatus,
       }
-      const webUserId = WebUserCollection.documentId({ _key: targetUser.webUserKey })
+      const webUserId = targetWebUser._id
       const curs = await db.query({
         query: `
 LET user = DOCUMENT(@webUserId)
-LET newReportHistory = UNSHIFT(user.moderation.reportHistory || [], @report)
+LET newReportItems = UNSHIFT(user.moderation.reports.items, @report)
+LET newReportItemsAmount = LENGTH(newReportItems)
+LET mainReportTypeIdAndAmount = (
+  FOR item in newReportItems
+    COLLECT reportTypeId = item.reportTypeId WITH COUNT INTO amount
+    SORT amount DESC
+    LIMIT 1
+    LET mainReportTypeIdAndAmount = {reportTypeId, amount}
+    RETURN mainReportTypeIdAndAmount)[0]
+
+LET mainReasonName = @reportOptionTypeMap[mainReportTypeIdAndAmount.reportTypeId] 
+
 UPDATE user WITH {
   moderation: {
-    reportHistory: newReportHistory
+    reports:{
+      items: newReportItems,
+      amount: newReportItemsAmount,
+      mainReasonName,
+      lastItem: @report,
+    }
   }
 } IN @@WebUserCollectionName
 RETURN user ? true : false
@@ -122,6 +163,7 @@ RETURN user ? true : false
           '@WebUserCollectionName': WebUserCollection.name,
           webUserId,
           report,
+          reportOptionTypeMap,
         },
       })
       await curs.all()

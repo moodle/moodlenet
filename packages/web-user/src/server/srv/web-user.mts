@@ -221,6 +221,11 @@ export async function createWebUser(createRequest: CreateRequest) {
     displayName: newProfile.displayName,
     isAdmin,
     contacts,
+    moderation: {
+      ignoredReports: { items: [] },
+      reports: { amount: 0, items: [], lastItem: null, mainReasonName: null },
+      status: { history: [] },
+    },
   }
 
   const { new: newWebUser } = await WebUserCollection.save(webUserData, { returnNew: true })

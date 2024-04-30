@@ -2,7 +2,11 @@ import { href } from '@moodlenet/react-app/common'
 import { silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { AdminSearchUserSortType } from '../../../../common/expose-def.mjs'
-import type { User, WebUserData } from '../../../../common/types.mjs'
+import {
+  UserStatusChangeRPC2UserStatusChange,
+  userReportRPC2UserReport,
+} from '../../../../common/reports/rpcMappings.mjs'
+import type { User, WebUserDataRPC } from '../../../../common/types.mjs'
 import type { ModerationProps, ModerationUser, SortReportedUsers } from '../../../ui/exports/ui.mjs'
 import { shell } from '../../shell.mjs'
 
@@ -29,7 +33,7 @@ export const useAdminModerationProps = (): ModerationProps => {
   }, [])
 
   // const [search, setSearch] = useState<string>('')
-  const [usersCache, setUsersCache] = useState<WebUserData[]>([])
+  const [usersCache, setUsersCache] = useState<WebUserDataRPC[]>([])
 
   const searchUser = useCallback(
     (str: string) => {
@@ -81,14 +85,14 @@ export const useAdminModerationProps = (): ModerationProps => {
         }
         const user: User = {
           currentStatus,
-          statusHistory,
+          statusHistory: statusHistory.map(UserStatusChangeRPC2UserStatusChange),
           mainReportReason,
           title,
           email,
           isAdmin,
           isPublisher,
           profileHref: href(profileHomePath),
-          reports,
+          reports: reports.map(userReportRPC2UserReport),
         }
         const moderationUser: ModerationUser = {
           user,

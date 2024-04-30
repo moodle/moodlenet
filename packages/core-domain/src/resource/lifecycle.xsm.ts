@@ -159,7 +159,7 @@ Just check upper bound size`,
 
           'unpublish': {
             target: 'Unpublished',
-            cond: 'issuer is creator',
+            cond: 'issuer is creator or admin',
           },
         },
 
@@ -174,7 +174,7 @@ image is optional`,
         on: {
           unpublish: {
             target: 'Unpublished',
-            cond: 'issuer is creator',
+            cond: 'issuer is creator or admin',
           },
         },
 
@@ -272,6 +272,9 @@ link: url string format`,
       'issuer is admin'({ issuer }) {
         return issuer.type === 'user' && issuer.feats.admin
       },
+      'issuer is creator or admin'({ issuer }) {
+        return issuer.type === 'user' && (issuer.feats.admin || issuer.feats.creator)
+      },
       'issuer is creator'({ issuer }) {
         return issuer.type === 'user' && issuer.feats.creator
       },
@@ -292,6 +295,7 @@ link: url string format`,
         return issuer.type === 'user' && issuer.feats.creator && !resourceEdits?.errors
       },
     },
+    delays: {},
     actions: {
       assign_validations: assign(context => {
         const publishingErrors = schemas.publishable(context.doc.meta).errors
