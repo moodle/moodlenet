@@ -2,13 +2,13 @@ import type { AddonItem } from '@moodlenet/component-library'
 import { Card, Searchbox } from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
 import {
-  DeleteOutline,
-  DoNotDisturb,
+  ArchiveOutlined,
   HowToRegOutlined,
+  ManageAccountsOutlined,
   PersonOffOutlined,
   PersonOutlineOutlined,
   PersonRemoveOutlined,
-  VisibilityOff,
+  Unpublished,
 } from '@mui/icons-material'
 import type { FC } from 'react'
 import type { User } from '../../../../../common/types.mjs'
@@ -51,21 +51,6 @@ const reportReasons: string[] = [
   'Other',
 ]
 
-const accountStatuses = [
-  <abbr title="Automatically unapproved" key="auto-unapprove">
-    <PersonRemoveOutlined />
-  </abbr>,
-  <abbr title="Publisher" key="publisher">
-    <HowToRegOutlined />
-  </abbr>,
-  <abbr title="Authorised" key="authorised">
-    <PersonOutlineOutlined />
-  </abbr>,
-  <abbr title="Deleted" key="deleted">
-    <PersonOffOutlined />
-  </abbr>,
-]
-
 export type ReportTableItem = {
   head: AddonItem
   body: { email: string; element: AddonItem }
@@ -95,10 +80,34 @@ const Row: FC<{
   user,
 }) => {
   const { date, time } = randomTimeGenerator()
+  const { isAdmin, isPublisher } = user
+
+  const accontStatus = isAdmin ? (
+    <abbr title="Admin" key="admin">
+      <ManageAccountsOutlined />
+    </abbr>
+  ) : isPublisher ? (
+    <abbr title="Publisher" key="publisher">
+      <HowToRegOutlined />
+    </abbr>
+  ) : !isPublisher ? (
+    <abbr title="Non publisher" key="authorised">
+      <PersonOutlineOutlined />
+    </abbr>
+  ) : (
+    <abbr title="Automatically unapproved" key="auto-unapprove">
+      <PersonRemoveOutlined />
+    </abbr>
+  )
+
+  // <abbr title="Deleted" key="deleted">
+  //   <PersonOffOutlined />
+  // </abbr>,
+
   return (
     <tr>
       <td className="display-name">
-        <abbr title={user.email}>
+        <abbr title={`Go to profile page\n${user.email}`}>
           <Link href={user.profileHref} target="_blank">
             {user.title}
           </Link>
@@ -113,23 +122,36 @@ const Row: FC<{
           {reportReasons[Math.floor(Math.random() * reportReasons.length)]}
         </abbr>
       </td>
-      <td className="status">
-        {accountStatuses[Math.floor(Math.random() * accountStatuses.length)]}
-      </td>
+      <td className="status">{accontStatus}</td>
       {/* <td>
         <Link href={user.profileHref} target="_blank">
           {user.email}
         </Link>
       </td> */}
       <td className="actions">
-        <abbr onClick={toggleIsAdmin} className={`ignore`} title="Ignore">
-          <VisibilityOff />
+        <abbr onClick={toggleIsAdmin} className={`archive`} title="Archive reports">
+          <ArchiveOutlined />
         </abbr>
-        <abbr onClick={toggleIsPublisher} className={`unapprove`} title="Unapprove">
-          <DoNotDisturb />
+        <abbr
+          onClick={() => isPublisher && toggleIsPublisher()}
+          className={`unapprove ${!isPublisher || isAdmin ? 'disabled' : ''}`}
+          title={
+            isAdmin
+              ? 'Cannot unapprove an admin'
+              : isPublisher
+              ? 'Unapprove user'
+              : 'Cannot unapprove an unapproved user'
+          }
+        >
+          <Unpublished />
         </abbr>
-        <abbr onClick={toggleIsPublisher} className={`delete`} title="Delete">
-          <DeleteOutline />
+        <abbr
+          onClick={() => !isAdmin && toggleIsPublisher()}
+          className={`delete ${isAdmin ? 'disabled' : ''}`}
+          title={isAdmin ? 'Cannot delete an admin' : 'Delete user'}
+        >
+          {/* <DeleteOutline /> */}
+          <PersonOffOutlined />
         </abbr>
       </td>
       {/* {bodyItems.map((item, i) => {
@@ -172,8 +194,8 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
           showSearchButton={false}
         />
         <div className="table-container">
-          <div className="table">
-            <table className="thead-table">
+          <table className="table">
+            <div className="thead-table">
               <thead>
                 <tr>
                   <th className="display-name">Display name</th>
@@ -184,8 +206,8 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
                   <th className="actions">Actions</th>
                 </tr>
               </thead>
-            </table>
-            <table className="tbody-table">
+            </div>
+            <div className="tbody-table">
               <tbody>
                 {users.map(({ user, toggleIsAdmin, toggleIsPublisher }, i) /* user */ => {
                   return (
@@ -199,8 +221,8 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
                   )
                 })}
               </tbody>
-            </table>
-          </div>
+            </div>
+          </table>
         </div>
       </Card>
     </div>

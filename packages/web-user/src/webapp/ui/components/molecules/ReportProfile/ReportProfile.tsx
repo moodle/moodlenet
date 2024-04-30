@@ -2,8 +2,8 @@ import { InputTextField, Modal, PrimaryButton, SecondaryButton } from '@moodlene
 
 import { ArrowForwardIosRounded } from '@mui/icons-material'
 import { useState, type FC, type SetStateAction } from 'react'
+import type { ReportOptionType, ReportProfileData } from '../../../../../common/types.mjs'
 import './ReportProfile.scss'
-import type { ReportOptionType, ReportProfileData } from './ReportProfileData.js'
 
 export type ReportProfileDirection = 'horizontal' | 'vertical'
 
@@ -68,7 +68,7 @@ export const ReportProfile: FC<ReportProfileProps> = ({
         name="comment"
         maxLength={500}
         edit
-        placeholder={`Example: Shared several malicious links on recent posts.`}
+        placeholder={`Example: Shared several malicious links on most recent posts.`}
         onChange={e => setComment(e.target.value)}
         value={comment}
         // onChange={reportForm.handleChange}

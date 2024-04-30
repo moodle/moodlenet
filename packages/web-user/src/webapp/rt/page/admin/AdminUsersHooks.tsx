@@ -2,7 +2,7 @@ import { href } from '@moodlenet/react-app/common'
 import { silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { User, WebUserData } from '../../../../common/types.mjs'
-import type { UsersProps } from '../../../ui/components/organisms/Roles/Users.js'
+import type { UsersProps } from '../../../ui/exports/ui.mjs'
 import { shell } from '../../shell.mjs'
 
 export const useAdminUsersProps = (): UsersProps => {
@@ -42,6 +42,7 @@ export const useAdminUsersProps = (): UsersProps => {
           isAdmin,
           isPublisher,
           profileHref: href(profileHomePath),
+          reports: [], //TODO //@ALE
         }
         return {
           user,

@@ -232,6 +232,7 @@ export const useProfileProps = ({
               avatarUrl: upAvatarTaskCurrentObjectUrl,
             }
           : {}),
+        reportOptions: [], //TODO //@ALE
       },
       state: {
         isPublisher: profileGetRpc.isPublisher,
@@ -241,6 +242,7 @@ export const useProfileProps = ({
         numFollowers: profileGetRpc.numFollowers,
       },
       actions: {
+        reportProfile: () => void 0, // TODO //@ALE
         approveUser: toggleIsPublisher,
         unapproveUser: toggleIsPublisher,
         editProfile,

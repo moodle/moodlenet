@@ -1,8 +1,4 @@
 import type { Href } from '@moodlenet/react-app/common'
-import type {
-  ReportOptionType,
-  ReportProfileData,
-} from '../webapp/ui/components/molecules/ReportProfile/ReportProfileData.js'
 
 export type WebUserEntityNames = 'Profile' | 'EntityPoints'
 export type KnownEntityFeature = 'bookmark' | 'follow' | 'like'
@@ -62,7 +58,34 @@ export type User = {
   isAdmin: boolean
   isPublisher: boolean
   profileHref: Href
+  reports: UserReport[]
 }
+
+export type UserStatus = 'Non-authenticated' | 'Authenticated' | 'Admin' | 'Publisher'
+
+export type ReportOptionType = {
+  id: string
+  name: ReportProfileReasonName
+}
+
+export type ReportProfileData = {
+  type: ReportOptionType
+  comment: string | undefined
+}
+
+export type UserReport = {
+  time: string
+  date: string
+  reason: ReportProfileData
+  status: UserStatus
+}
+
+export type ReportProfileReasonName =
+  | 'Inappropriate behavior'
+  | 'Impersonation'
+  | 'Spamming'
+  | 'Terms of service violation'
+  | 'Other'
 
 export type WebUserData = {
   _key: string
