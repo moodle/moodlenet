@@ -68,7 +68,7 @@ export const ReportProfile: FC<ReportProfileProps> = ({
         name="comment"
         maxLength={500}
         edit
-        placeholder={`Example: Shared several malicious links, check their recent posts.`}
+        placeholder={`Example: Shared several malicious links on recent posts.`}
         onChange={e => setComment(e.target.value)}
         value={comment}
         // onChange={reportForm.handleChange}

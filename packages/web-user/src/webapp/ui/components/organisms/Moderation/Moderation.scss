@@ -1,87 +1,95 @@
 .moderation {
   > .card {
+    > .subtitle {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    &.reported-users {
+      height: fit-content;
+      max-height: calc(100vh - 350px);
+    }
     > .table-container {
-      overflow-x: auto;
-      // display: block;
-      > .users-table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-        font-size: 14px;
-        white-space: nowrap;
-        table-layout: auto;
+      width: 100%;
+      min-height: 150px;
+      overflow-x: auto; // This will enable horizontal scrolling for the entire table
 
-        > tbody > tr > td,
-        > thead > tr > th {
-          text-align: left;
-          padding: 8px;
-          // border: 1px solid blue;
-        }
-        > thead > tr > th {
-          font-weight: bold;
-          &.status {
-            text-align: center;
-            padding-left: 5px;
-          }
-
-          &.actions {
-            text-align: center;
-            padding-left: 12px;
-          }
-        }
-
-        > thead {
-          width: 100%;
-          table-layout: auto;
+      > .table {
+        width: fit-content;
+        min-width: 100%;
+        > .thead-table,
+        > .tbody-table {
+          font-family: Arial, sans-serif;
           border-collapse: collapse;
+          width: 100%;
+          font-size: 14px;
+          white-space: nowrap;
+          table-layout: auto;
         }
 
-        > tbody {
+        > .thead-table {
+          > thead {
+            > tr {
+              * {
+                text-align: left;
+                padding: 8px;
+                font-weight: bold;
+                position: sticky;
+                top: 0;
+                background: white;
+                z-index: 10;
+              }
+              > .display-name,
+              > .reason {
+                width: 180px;
+              }
+              > .flags {
+                width: 50px;
+              }
+              > .last-flag {
+                width: 100px;
+              }
+              > .status {
+                width: 60px;
+              }
+              > .actions {
+                text-align: center;
+              }
+            }
+          }
+        }
+        > .tbody-table {
           width: 100%;
-          table-layout: auto;
-          border-collapse: collapse;
-          > tr {
-            > .display-name,
-            > .reason {
-              > abbr {
-                width: 100%;
-                white-space: nowrap;
-                display: block;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                > a {
-                  width: 100%;
+          height: fit-content;
+          overflow-y: auto;
+          > tbody {
+            > tr {
+              > td {
+                text-align: left;
+                padding: 8px;
+
+                &.display-name,
+                &.reason {
+                  width: 180px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
                 }
-              }
-            }
-            > .flags {
-              text-align: center;
-            }
-            > .status {
-              padding-left: 5px;
-              text-align: center;
-              > abbr {
-                > svg {
-                  margin-left: -6px;
-                  color: #838383;
+
+                &.flags {
+                  width: 50px;
+                  text-align: center;
                 }
-              }
-            }
-            > .actions {
-              padding-left: 12px;
-              display: flex;
-              gap: 6px;
-              align-items: center;
-              justify-content: space-between;
-              > * {
-                cursor: pointer;
-                color: #7a7a7a;
-                &:hover {
-                  color: #535353;
+                &.last-flag {
+                  width: 100px;
                 }
-              }
-              > .ignore > svg {
-                height: 23px;
+                &.status {
+                  width: 60px;
+                }
+                &.actions {
+                  width: 120px;
+                  display: flex;
+                  justify-content: space-between;
+                  // gap: 10px;
+                }
               }
             }
           }

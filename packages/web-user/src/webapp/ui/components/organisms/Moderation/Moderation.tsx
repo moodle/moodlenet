@@ -161,8 +161,8 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
       <Card className="column">
         <div className="title">Moderation</div>
       </Card>
-      <Card className="column">
-        {/* <div className="subtitle">User types</div> */}
+      <Card className="column reported-users">
+        <div className="subtitle">Reported users</div>
         <Searchbox
           key="users-searchbox"
           placeholder="Search by display name or email"
@@ -172,41 +172,35 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
           showSearchButton={false}
         />
         <div className="table-container">
-          <table className="users-table">
-            <thead>
-              <tr>
-                <th className="display-name">Display name</th>
-                {/* <td>Email</td> */}
-                <th className="flags">Flags</th>
-                <th className="last-flag">Last flag</th>
-                <th className="reason">Reason</th>
-                <th className="status">Status</th>
-                <th className="actions">Actions</th>
-                {/* {tableItems &&
-                tableItems.map((item, i) => {
-                  return item && item.head ? (
-                    <td key={i} id={item ? item.head.key.toString() : ''}>
-                      <item.head.Item key={item.head.key} />
-                    </td>
-                  ) : null
-                })} */}
-              </tr>
-            </thead>
-            <tbody>
-              {}
-              {users.map(({ user, toggleIsAdmin, toggleIsPublisher }, i) /* user */ => {
-                return (
-                  <Row
-                    user={user}
-                    toggleIsAdmin={toggleIsAdmin}
-                    bodyItems={usersTableItems[i] ?? []}
-                    toggleIsPublisher={toggleIsPublisher}
-                    key={i}
-                  />
-                )
-              })}
-            </tbody>
-          </table>{' '}
+          <div className="table">
+            <table className="thead-table">
+              <thead>
+                <tr>
+                  <th className="display-name">Display name</th>
+                  <th className="flags">Flags</th>
+                  <th className="last-flag">Last flag</th>
+                  <th className="reason">Reason</th>
+                  <th className="status">Status</th>
+                  <th className="actions">Actions</th>
+                </tr>
+              </thead>
+            </table>
+            <table className="tbody-table">
+              <tbody>
+                {users.map(({ user, toggleIsAdmin, toggleIsPublisher }, i) /* user */ => {
+                  return (
+                    <Row
+                      user={user}
+                      toggleIsAdmin={toggleIsAdmin}
+                      bodyItems={usersTableItems[i] ?? []}
+                      toggleIsPublisher={toggleIsPublisher}
+                      key={i}
+                    />
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </Card>
     </div>
