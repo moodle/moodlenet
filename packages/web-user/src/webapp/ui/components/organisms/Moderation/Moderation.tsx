@@ -105,30 +105,21 @@ const Row: FC<{
   // </abbr>,
 
   return (
-    <tr>
-      <td className="display-name">
-        <abbr title={`Go to profile page\n${user.email}`}>
-          <Link href={user.profileHref} target="_blank">
-            {user.title}
-          </Link>
-        </abbr>
-      </td>
-      <td className="flags">{Math.floor(Math.random() * (15 - 1 + 1)) + 1}</td>
-      <td className="last-flag">
-        <abbr title={time}>{date}</abbr>
-      </td>
-      <td className="reason">
-        <abbr title="Show more info">
-          {reportReasons[Math.floor(Math.random() * reportReasons.length)]}
-        </abbr>
-      </td>
-      <td className="status">{accontStatus}</td>
-      {/* <td>
+    <div className="table-row">
+      <abbr className="display-name" title={`Go to profile page\n${user.email}`}>
         <Link href={user.profileHref} target="_blank">
-          {user.email}
+          {user.title}
         </Link>
-      </td> */}
-      <td className="actions">
+      </abbr>
+      <div className="flags">{Math.floor(Math.random() * (15 - 1 + 1)) + 1}</div>
+      <abbr className="last-flag" title={date + ' ' + time}>
+        {date}
+      </abbr>
+      <abbr className="reason" title="Show more info">
+        {reportReasons[Math.floor(Math.random() * reportReasons.length)]}
+      </abbr>
+      <div className="status">{accontStatus}</div>
+      <div className="actions">
         <abbr onClick={toggleIsAdmin} className={`archive`} title="Archive reports">
           <ArchiveOutlined />
         </abbr>
@@ -153,15 +144,15 @@ const Row: FC<{
           {/* <DeleteOutline /> */}
           <PersonOffOutlined />
         </abbr>
-      </td>
+      </div>
       {/* {bodyItems.map((item, i) => {
         return (
-          <td key={(item && item.key) ?? i} id={item ? item.key.toString() : ''}>
+          <div key={(item && item.key) ?? i} id={item ? item.key.toString() : ''}>
             {item && item.Item ? <item.Item key={item.key} /> : null}
-          </td>
+          </div>
         )
       })} */}
-    </tr>
+    </div>
   )
 }
 
@@ -194,35 +185,29 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
           showSearchButton={false}
         />
         <div className="table-container">
-          <table className="table">
-            <div className="thead-table">
-              <thead>
-                <tr>
-                  <th className="display-name">Display name</th>
-                  <th className="flags">Flags</th>
-                  <th className="last-flag">Last flag</th>
-                  <th className="reason">Reason</th>
-                  <th className="status">Status</th>
-                  <th className="actions">Actions</th>
-                </tr>
-              </thead>
+          <div className="table-header">
+            <div className="display-name">Display name</div>
+            <div className="flags">Flags</div>
+            <div className="last-flag">Last flag</div>
+            <div className="reason">Reason</div>
+            <div className="status">Status</div>
+            <div className="actions">Actions</div>
+          </div>
+          <div className="table-body-container">
+            <div className="table-body">
+              {users.map(({ user, toggleIsAdmin, toggleIsPublisher }, i) /* user */ => {
+                return (
+                  <Row
+                    user={user}
+                    toggleIsAdmin={toggleIsAdmin}
+                    bodyItems={usersTableItems[i] ?? []}
+                    toggleIsPublisher={toggleIsPublisher}
+                    key={i}
+                  />
+                )
+              })}
             </div>
-            <div className="tbody-table">
-              <tbody>
-                {users.map(({ user, toggleIsAdmin, toggleIsPublisher }, i) /* user */ => {
-                  return (
-                    <Row
-                      user={user}
-                      toggleIsAdmin={toggleIsAdmin}
-                      bodyItems={usersTableItems[i] ?? []}
-                      toggleIsPublisher={toggleIsPublisher}
-                      key={i}
-                    />
-                  )
-                })}
-              </tbody>
-            </div>
-          </table>
+          </div>
         </div>
       </Card>
     </div>

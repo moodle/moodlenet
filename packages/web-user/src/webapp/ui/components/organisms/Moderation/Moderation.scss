@@ -13,122 +13,99 @@
       min-height: 325px;
     }
     > .table-container {
-      width: 100%;
+      overflow-x: auto; // Enables horizontal scrolling for both header and body
+      max-height: calc(100vh - 360px); // Set a maximum height for the vertical scrolling area
+      display: block;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
       min-height: 150px;
-      overflow-x: auto;
 
-      > .table {
-        width: 100%;
-        max-width: 100%;
-        table-layout: fixed;
+      > .table-header,
+      > .table-body-container > .table-body {
+        display: grid;
+        align-items: center;
+        grid-template-columns: minmax(170px, 1fr) 50px 100px minmax(150px, 1fr) 60px 100px;
+        gap: 16px;
+        > :last-child,
+        > .table-row > :last-child {
+          padding-right: 10px;
+        }
+      }
 
-        > .thead-table,
-        > .tbody-table {
-          font-family: Arial, sans-serif;
-          border-collapse: collapse;
-          width: 100%;
-          table-layout: fixed;
-          font-size: 14px;
+      > .table-header {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+        margin-bottom: 6px;
+
+        > * {
+          background: white;
+          font-weight: bold;
           white-space: nowrap;
-          > thead,
-          > tbody {
-          }
+          text-align: left;
+          padding-bottom: 10px;
         }
 
-        > .thead-table {
-          position: sticky;
-          display: table;
-          top: 0;
-          z-index: 10; /* Make sure the header is above other content */
-          background: white; /* Or any background as needed */
-          overflow-x: hidden;
-          > thead {
-            > tr {
-              * {
-                text-align: left;
-                padding: 8px;
-                font-weight: bold;
-                top: 0;
-                background: white;
-                z-index: 10;
-              }
-              > .display-name,
-              > .reason {
-                width: 180px;
-              }
-              > .flags {
-                width: 50px;
-              }
-              > .last-flag {
-                width: 100px;
-              }
-              > .status {
-                width: 60px;
-              }
-              > .actions {
-                width: 120px;
-                text-align: center;
-                padding-left: 14px;
+        > .flags,
+        > .last-flag,
+        > .status,
+        > .actions {
+          text-align: center;
+        }
+      }
+
+      > .table-body-container {
+        > .table-body {
+          > .table-row {
+            display: contents;
+
+            > .display-name,
+            > .reason {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            > .flags,
+            > .last-flag,
+            > .status,
+            > .actions {
+              text-align: center;
+            }
+
+            > .display-name,
+            > .flags,
+            > .reason,
+            > .status {
+              cursor: pointer;
+              &:hover {
+                text-decoration: underline;
               }
             }
-          }
-        }
-        > .tbody-table {
-          display: table;
-          width: 100%;
-          height: fit-content;
-          overflow-y: auto;
-          > tbody {
-            overflow-y: auto;
-            > tr {
-              > td {
-                text-align: left;
-                padding: 8px;
 
-                &.display-name,
-                &.reason {
-                  width: 180px;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
+            > .status,
+            > .actions {
+              > * {
+                cursor: pointer;
+                color: #7a7a7a;
+                &:hover {
+                  color: #363636;
                 }
+                &.disabled {
+                  cursor: default;
+                  color: #d4d4d4;
+                }
+              }
+            }
 
-                &.flags {
-                  width: 50px;
-                  text-align: center;
-                }
-                &.last-flag {
-                  width: 100px;
-                }
-                &.status {
-                  width: 60px;
-                  text-align: center;
-                  > abbr {
-                    > svg {
-                      color: #838383;
-                    }
-                  }
-                }
-                &.actions {
-                  width: 120px;
-                  display: flex;
-                  margin-left: 6px;
-                  justify-content: space-between;
-                  align-items: center;
-                  > * {
-                    cursor: pointer;
-                    color: #7a7a7a;
-                    &:hover {
-                      color: #535353;
-                    }
-                    &.disabled {
-                      cursor: default;
-                      color: #c0c0c0;
-                    }
-                  }
-                  > .archive > svg {
-                    height: 23px;
-                  }
-                }
+            > .actions {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+
+              > .archive > svg {
+                height: 23px;
               }
             }
           }
