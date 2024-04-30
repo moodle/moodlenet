@@ -2,10 +2,23 @@ import { JiraButtonBody, JiraButtonHead } from '@moodlenet/mn-central-jira-simpl
 import { href } from '@moodlenet/react-app/common'
 import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
 import type { ReportProfileReasonName, UserReport, UserStatus } from '@moodlenet/web-user/common'
-import type { ModerationProps, ReportTableItem } from '@moodlenet/web-user/ui'
+import type { ModerationProps, ModerationUser, ReportTableItem } from '@moodlenet/web-user/ui'
 import { Moderation, ModerationMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { FC } from 'react'
+
+const names = [
+  'Maria Anders',
+  'Ana Trujillo',
+  'Antonio Moreno',
+  'Thomas Hardy',
+  'Christina Berglund',
+  'Hanna Moos',
+  'Frederique Citeaux',
+  'Martin Sommer',
+  'Laurence Lebihan',
+  'Elizabeth Lincoln',
+]
 
 const getRandomDate = (): string => {
   const start = new Date(2020, 0, 1)
@@ -31,8 +44,12 @@ const getRandomReason = (): ReportProfileReasonName => {
 
 const generateRandomUserReport = (): UserReport => {
   const randomUserReport: UserReport = {
-    time: new Date().toISOString(),
-    date: getRandomDate(),
+    user: {
+      displayName: names[Math.floor(Math.random() * names.length)] || '',
+      email: `${Math.random().toString(36).substring(7)}@school.edu`,
+      profileHref: href('Pages/Profile/Admin'),
+    },
+    date: new Date(getRandomDate()), // Convert the string to a Date object
     reason: {
       type: {
         id: Math.random().toString(36).substring(7),
@@ -45,33 +62,32 @@ const generateRandomUserReport = (): UserReport => {
   return randomUserReport
 }
 
-const names = [
-  'Maria Anders',
-  'Ana Trujillo',
-  'Antonio Moreno',
-  'Thomas Hardy',
-  'Christina Berglund',
-  'Hanna Moos',
-  'Frederique Citeaux',
-  'Martin Sommer',
-  'Laurence Lebihan',
-  'Elizabeth Lincoln',
-]
+const generateRandomUserReports = (n: number): UserReport[] => {
+  const userReports: UserReport[] = []
+  for (let i = 0; i < n; i++) {
+    const randomUserReport = generateRandomUserReport()
+    userReports.push(randomUserReport)
+  }
+  return userReports
+}
+
 const emails = names.map(name => `${name.split(' ').join('.')}@school.edu`.toLowerCase())
 
-const getRandomUser = () => {
+const getRandomUser = (): ModerationUser => {
   const randomIndex = Math.floor(Math.random() * names.length)
   return {
     user: {
-      title: names[randomIndex],
-      email: emails[randomIndex],
+      title: names[randomIndex] || '', // Assign an empty string as the default value
+      email: emails[randomIndex] || '', // Assign an empty string as the default value
       profileHref: href('Pages/Profile/Admin'),
       isAdmin: Math.random() < 0.5,
       isPublisher: Math.random() < 0.5,
-      reports: Array.from({ length: Math.floor(Math.random() * 10) }, generateRandomUserReport),
+      reports: generateRandomUserReports(Math.floor(Math.random() * 10) + 1),
+      mainReportReason: getRandomReason(),
     },
-    toggleIsAdmin: () => console.log('Toggling user type'),
     toggleIsPublisher: () => console.log('Toggling user type'),
+    deleteUser: () => console.log('Deleting user'), // Add the missing deleteUser property
+    deleteReports: () => console.log('Deleting reports'), // Add the missing deleteReports property
   }
 }
 
@@ -100,72 +116,25 @@ export const useModerationStoryProps = (overrides?: {
           isPublisher: false,
           reports: [
             {
-              time: '11:30',
-              date: '2021-08-04',
+              user: {
+                displayName: names[Math.floor(Math.random() * names.length)] || '',
+                email: `${Math.random().toString(36).substring(7)}@school.edu`,
+                profileHref: href('Pages/Profile/Admin'),
+              },
+              date: new Date(getRandomDate()),
               reason: {
                 type: { id: '1', name: 'Inappropriate behavior' },
                 comment: 'This is a comment',
               },
               status: 'Non-authenticated',
             },
+            ...generateRandomUserReports(Math.floor(Math.random() * 10) + 1),
           ],
+          mainReportReason: 'Inappropriate behavior',
         },
-        toggleIsAdmin: action('Toggeling user type'),
-        toggleIsPublisher: action('Toggeling user type'),
-      },
-      {
-        user: {
-          title: 'Josef Stevenson',
-          email: 'josef.stevenson@university.edu',
-          profileHref: href('Pages/Profile/Admin'),
-          isAdmin: true,
-          isPublisher: true,
-          reports: [
-            {
-              time: '11:30',
-              date: '2021-08-04',
-              reason: {
-                type: { id: '1', name: 'Inappropriate behavior' },
-                comment: 'This is a comment',
-              },
-              status: 'Non-authenticated',
-            },
-            {
-              time: '11:30',
-              date: '2021-08-04',
-              reason: {
-                type: { id: '1', name: 'Inappropriate behavior' },
-                comment: 'This is a comment',
-              },
-              status: 'Non-authenticated',
-            },
-          ],
-        },
-        toggleIsAdmin: action('Toggeling user type'),
-        toggleIsPublisher: action('Toggeling user type'),
-      },
-
-      {
-        user: {
-          title: 'Veronica Velazquez',
-          email: 'vero.velazquez@next-school.edu',
-          profileHref: href('Pages/Profile/Admin'),
-          isAdmin: true,
-          isPublisher: true,
-          reports: [
-            {
-              time: '11:30',
-              date: '2021-08-04',
-              reason: {
-                type: { id: '1', name: 'Inappropriate behavior' },
-                comment: 'This is a comment',
-              },
-              status: 'Non-authenticated',
-            },
-          ],
-        },
-        toggleIsAdmin: action('Toggeling user type'),
-        toggleIsPublisher: action('Toggeling user type'),
+        toggleIsPublisher: () => console.log('Toggling user type'),
+        deleteReports: () => console.log('Deleting reports'),
+        deleteUser: () => console.log('Deleting user'),
       },
       ...createRandomUsers(5),
     ],

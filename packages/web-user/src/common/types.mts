@@ -59,6 +59,7 @@ export type User = {
   isPublisher: boolean
   profileHref: Href
   reports: UserReport[]
+  mainReportReason?: ReportProfileReasonName
 }
 
 export type UserStatus = 'Non-authenticated' | 'Authenticated' | 'Admin' | 'Publisher'
@@ -73,9 +74,15 @@ export type ReportProfileData = {
   comment: string | undefined
 }
 
+export type UserReporter = {
+  displayName: string
+  email: string
+  profileHref: Href
+}
+
 export type UserReport = {
-  time: string
-  date: string
+  date: Date
+  user: UserReporter
   reason: ReportProfileData
   status: UserStatus
 }

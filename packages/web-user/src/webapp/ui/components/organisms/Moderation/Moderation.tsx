@@ -1,67 +1,39 @@
 import type { AddonItem } from '@moodlenet/component-library'
-import { Card, Searchbox } from '@moodlenet/component-library'
+import {
+  Card,
+  Modal,
+  PrimaryButton,
+  Searchbox,
+  Snackbar,
+  SnackbarStack,
+} from '@moodlenet/component-library'
 import { Link } from '@moodlenet/react-app/ui'
 import {
-  ArchiveOutlined,
   HowToRegOutlined,
   ManageAccountsOutlined,
   PersonOffOutlined,
   PersonOutlineOutlined,
-  PersonRemoveOutlined,
   Unpublished,
 } from '@mui/icons-material'
-import type { FC } from 'react'
-import type { User } from '../../../../../common/types.mjs'
+import { useState, type FC } from 'react'
+import type { User, UserReporter } from '../../../../../common/types.mjs'
+import { ReactComponent as RemoveFlag } from '../../../assets/icons/remove-flag.svg'
 import './Moderation.scss'
-
-/**
- search, filter non devono stare 
- */
-
-function randomDate(start: Date, end: Date): Date {
-  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()))
-}
-
-function randomTimeGenerator() {
-  const randomDay: Date = randomDate(new Date(2023, 0, 1), new Date(2024, 11, 31))
-  const randomHour: number = Math.floor(Math.random() * 24)
-  const randomMinute: number = Math.floor(Math.random() * 60)
-  randomDay.setHours(randomHour, randomMinute, 0, 0)
-
-  const date =
-    `${randomDay.getDate().toString().padStart(2, '0')} ` +
-    `${randomDay.toLocaleString('default', { month: 'short' })} ` +
-    `${randomDay.getFullYear()}`
-
-  const time =
-    `${randomDay.getHours().toString().padStart(2, '0')}:` +
-    `${randomDay.getMinutes().toString().padStart(2, '0')}`
-
-  return {
-    date: date,
-    time: time,
-  }
-}
-
-const reportReasons: string[] = [
-  'Inappropriate behavior',
-  'Impersonation',
-  'Spamming',
-  'Terms of service violation',
-  'Other',
-]
 
 export type ReportTableItem = {
   head: AddonItem
   body: { email: string; element: AddonItem }
 }
 
+export type ModerationUser = {
+  user: User
+  deleteUser(): unknown
+  deleteReports(): unknown
+  toggleIsPublisher(): unknown
+}
+
 export type ModerationProps = {
-  users: {
-    user: User
-    toggleIsAdmin(): unknown
-    toggleIsPublisher(): unknown
-  }[]
+  users: ModerationUser[]
   search(str: string): unknown
   tableItems: (ReportTableItem | null)[]
 }
@@ -69,40 +41,67 @@ export type ModerationProps = {
 export const ModerationMenu = () => <abbr title="Moderation">Moderation</abbr>
 
 const Row: FC<{
-  user: User
+  id: number
+  moderationUser: ModerationUser
   bodyItems: (AddonItem | null)[]
-  toggleIsAdmin: () => unknown | Promise<unknown>
-  toggleIsPublisher: () => unknown | Promise<unknown>
+  toggleShowFlagModal: React.Dispatch<React.SetStateAction<number | undefined>>
+  setIsToDelete: React.Dispatch<React.SetStateAction<number | undefined>>
+  setShowDeleteReportsSnackbar: React.Dispatch<React.SetStateAction<string | undefined>>
 }> = ({
-  toggleIsAdmin,
-  toggleIsPublisher,
+  id,
+  moderationUser,
+  toggleShowFlagModal,
+  setIsToDelete,
+  setShowDeleteReportsSnackbar,
   //bodyItems,
-  user,
 }) => {
-  const { date, time } = randomTimeGenerator()
-  const { isAdmin, isPublisher } = user
+  const { user, toggleIsPublisher, deleteReports } = moderationUser
+  const { mainReportReason, isAdmin, isPublisher } = user
 
   const accontStatus = isAdmin ? (
-    <abbr title="Admin" key="admin">
+    <abbr title={`Admin\nShow status changes`} key="admin">
       <ManageAccountsOutlined />
     </abbr>
   ) : isPublisher ? (
-    <abbr title="Publisher" key="publisher">
+    <abbr title={`Publisher\nShow status changes`} key="publisher">
       <HowToRegOutlined />
     </abbr>
-  ) : !isPublisher ? (
-    <abbr title="Non publisher" key="authorised">
+  ) : (
+    /* !isPublisher ? */ <abbr title={`Non publisher\nShow status changes`} key="authorised">
       <PersonOutlineOutlined />
     </abbr>
-  ) : (
-    <abbr title="Automatically unapproved" key="auto-unapprove">
-      <PersonRemoveOutlined />
-    </abbr>
   )
+  // : (
+  //   <abbr title="Automatically unapproved" key="auto-unapprove">
+  //     <PersonRemoveOutlined />
+  //   </abbr>
+  // )
 
   // <abbr title="Deleted" key="deleted">
   //   <PersonOffOutlined />
   // </abbr>,
+
+  const lastReport =
+    user.reports.length > 0
+      ? user.reports.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+      : null
+  const lastReportDateRaw = lastReport ? new Date(lastReport.date) : null
+  const lastReportDate = lastReportDateRaw
+    ? lastReportDateRaw
+        .toLocaleString('default', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        })
+        .replace(',', '')
+    : ''
+  const lastReportTime = lastReportDateRaw
+    ? lastReportDateRaw.toLocaleString('default', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
+    : ''
 
   return (
     <div className="table-row">
@@ -111,17 +110,32 @@ const Row: FC<{
           {user.title}
         </Link>
       </abbr>
-      <div className="flags">{Math.floor(Math.random() * (15 - 1 + 1)) + 1}</div>
-      <abbr className="last-flag" title={date + ' ' + time}>
-        {date}
+      <abbr
+        className="flags"
+        title="Show flag details"
+        onClick={() => {
+          toggleShowFlagModal(id)
+        }}
+      >
+        {user.reports.length}
       </abbr>
-      <abbr className="reason" title="Show more info">
-        {reportReasons[Math.floor(Math.random() * reportReasons.length)]}
+      <abbr className="last-flag" title={`${lastReportDate}, ${lastReportTime}`}>
+        {lastReportDate}
+      </abbr>
+      <abbr className="reason" title="Show reason details">
+        {mainReportReason}
       </abbr>
       <div className="status">{accontStatus}</div>
       <div className="actions">
-        <abbr onClick={toggleIsAdmin} className={`archive`} title="Archive reports">
-          <ArchiveOutlined />
+        <abbr
+          onClick={() => {
+            deleteReports()
+            setShowDeleteReportsSnackbar(user.title)
+          }}
+          className={`remove-flags`}
+          title="Ignore flags"
+        >
+          <RemoveFlag />
         </abbr>
         <abbr
           onClick={() => isPublisher && toggleIsPublisher()}
@@ -131,17 +145,16 @@ const Row: FC<{
               ? 'Cannot unapprove an admin'
               : isPublisher
               ? 'Unapprove user'
-              : 'Cannot unapprove an unapproved user'
+              : 'User already not approved'
           }
         >
           <Unpublished />
         </abbr>
         <abbr
-          onClick={() => !isAdmin && toggleIsPublisher()}
+          onClick={() => !isAdmin && setIsToDelete(id)}
           className={`delete ${isAdmin ? 'disabled' : ''}`}
           title={isAdmin ? 'Cannot delete an admin' : 'Delete user'}
         >
-          {/* <DeleteOutline /> */}
           <PersonOffOutlined />
         </abbr>
       </div>
@@ -169,8 +182,104 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
     })
   })
 
+  const [showDeleteReportsSnackbar, setShowDeleteReportsSnackbar] = useState<string | undefined>(
+    undefined,
+  )
+
+  const DeleteReportsSnackbar = showDeleteReportsSnackbar ? (
+    <Snackbar
+      onClose={() => setShowDeleteReportsSnackbar(undefined)}
+      type="success"
+      key={'delete-reports-snackbar'}
+    >
+      {showDeleteReportsSnackbar} flags ignored
+    </Snackbar>
+  ) : null
+
+  const [showFlagModal, toggleShowFlagModal] = useState<number | undefined>(undefined)
+
+  const flagRow = (user: UserReporter, date: Date, i: number) => {
+    return (
+      <div className="flag-row" key={i}>
+        <abbr title={`Go to profile page\n${user.email}`}>{user.displayName}</abbr> on{' '}
+        {date.toLocaleString('default', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        })}
+      </div>
+    )
+  }
+  const flagModal =
+    typeof showFlagModal === 'number' ? (
+      <Modal
+        className="flag-modal"
+        key="flag-modal"
+        title="Reported by"
+        onClose={() => toggleShowFlagModal(undefined)}
+      >
+        {showFlagModal &&
+          users[showFlagModal]?.user.reports.map((report, index) =>
+            flagRow(report.user, report.date, index),
+          )}
+      </Modal>
+    ) : null
+
+  const [isToDelete, setIsToDelete] = useState<number | undefined>(undefined)
+  const deleteConfirmation = typeof isToDelete === 'number' && (
+    <Modal
+      title={`Alert`}
+      actions={
+        <PrimaryButton
+          onClick={() => {
+            users[isToDelete]?.deleteUser()
+            setShowDeletedUserSnackbar(true)
+            setIsToDelete(undefined)
+          }}
+          color="red"
+        >
+          Delete user
+        </PrimaryButton>
+      }
+      onPressEnter={() => {
+        users[isToDelete]?.deleteUser()
+        setShowDeletedUserSnackbar(true)
+        setIsToDelete(undefined)
+      }}
+      onClose={() => setIsToDelete(undefined)}
+      style={{ maxWidth: '450px' }}
+      className="delete-message"
+      key="delete-message-modal"
+    >
+      <b>{users[isToDelete]?.user.title}</b> will be <b>totally removed from the system</b>.<br />
+      <br />
+      Notice: only report logs and non deleted content will be kept anonymously.
+    </Modal>
+  )
+
+  const [showDeletedUserSnackbar, setShowDeletedUserSnackbar] = useState<boolean>(false)
+
+  const DeletedUserSnackbar = showDeletedUserSnackbar ? (
+    <Snackbar
+      onClose={() => setShowDeletedUserSnackbar(false)}
+      type="success"
+      key={'delete-user-snackbar'}
+    >
+      User deleted
+    </Snackbar>
+  ) : null
+
+  const snackbars = <SnackbarStack snackbarList={[DeleteReportsSnackbar, DeletedUserSnackbar]} />
+
+  const modals = [flagModal, deleteConfirmation]
+
   return (
     <div className="moderation" key="Moderation">
+      {snackbars}
+      {modals}
       <Card className="column">
         <div className="title">Moderation</div>
       </Card>
@@ -189,19 +298,21 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
             <div className="display-name">Display name</div>
             <div className="flags">Flags</div>
             <div className="last-flag">Last flag</div>
-            <div className="reason">Reason</div>
+            <div className="reason">Main reason</div>
             <div className="status">Status</div>
             <div className="actions">Actions</div>
           </div>
           <div className="table-body-container">
             <div className="table-body">
-              {users.map(({ user, toggleIsAdmin, toggleIsPublisher }, i) /* user */ => {
+              {users.map((moderationUser, i) /* user */ => {
                 return (
                   <Row
-                    user={user}
-                    toggleIsAdmin={toggleIsAdmin}
+                    id={i}
+                    moderationUser={moderationUser}
                     bodyItems={usersTableItems[i] ?? []}
-                    toggleIsPublisher={toggleIsPublisher}
+                    toggleShowFlagModal={toggleShowFlagModal}
+                    setIsToDelete={setIsToDelete}
+                    setShowDeleteReportsSnackbar={setShowDeleteReportsSnackbar}
                     key={i}
                   />
                 )
