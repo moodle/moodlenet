@@ -201,15 +201,17 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
   const flagRow = (user: UserReporter, date: Date, i: number) => {
     return (
       <div className="flag-row" key={i}>
-        <abbr title={`Go to profile page\n${user.email}`}>{user.displayName}</abbr> on{' '}
-        {date.toLocaleString('default', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false,
-        })}
+        <div className="date">
+          {date.toLocaleString('default', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          })}
+        </div>{' '}
+        by <abbr title={`Go to profile page\n${user.email}`}>{user.displayName}</abbr>
       </div>
     )
   }

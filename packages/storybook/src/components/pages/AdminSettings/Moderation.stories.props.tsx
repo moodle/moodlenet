@@ -1,11 +1,10 @@
-import { JiraButtonBody, JiraButtonHead } from '@moodlenet/mn-central-jira-simple-moderations/ui'
 import { href } from '@moodlenet/react-app/common'
 import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
 import type { ReportProfileReasonName, UserReport, UserStatus } from '@moodlenet/web-user/common'
-import type { ModerationProps, ModerationUser, ReportTableItem } from '@moodlenet/web-user/ui'
+import type { ModerationProps, ModerationUser } from '@moodlenet/web-user/ui'
 import { Moderation, ModerationMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
-import type { FC } from 'react'
+import { useCallback, useEffect, useMemo, useState, type FC } from 'react'
 
 const names = [
   'Maria Anders',
@@ -42,11 +41,14 @@ const getRandomReason = (): ReportProfileReasonName => {
   return reasons[Math.floor(Math.random() * reasons.length)] ?? 'Other'
 }
 
+let emailCounter = 0
+
 const generateRandomUserReport = (): UserReport => {
+  emailCounter++
   const randomUserReport: UserReport = {
     user: {
       displayName: names[Math.floor(Math.random() * names.length)] || '',
-      email: `${Math.random().toString(36).substring(7)}@school.edu`,
+      email: `${Math.random().toString(36).substring(7)}_${emailCounter}@school.edu`,
       profileHref: href('Pages/Profile/Admin'),
     },
     date: new Date(getRandomDate()), // Convert the string to a Date object
@@ -71,9 +73,9 @@ const generateRandomUserReports = (n: number): UserReport[] => {
   return userReports
 }
 
-const emails = names.map(name => `${name.split(' ').join('.')}@school.edu`.toLowerCase())
+const emails = names.map((name, i) => `${name.split(' ').join('.')}${i}@school.edu`.toLowerCase())
 
-const getRandomUser = (): ModerationUser => {
+const getRandomUser = (deleteReports: (email: string) => void): ModerationUser => {
   const randomIndex = Math.floor(Math.random() * names.length)
   return {
     user: {
@@ -87,26 +89,32 @@ const getRandomUser = (): ModerationUser => {
     },
     toggleIsPublisher: () => console.log('Toggling user type'),
     deleteUser: () => console.log('Deleting user'), // Add the missing deleteUser property
-    deleteReports: () => console.log('Deleting reports'), // Add the missing deleteReports property
+    deleteReports: () => {
+      deleteReports(emails[randomIndex] || '')
+      console.log('Email:', emails[randomIndex])
+      console.log('Deleting reports')
+    }, // Add the missing deleteReports property
   }
 }
 
-const createRandomUsers = (n: number): ReturnType<typeof getRandomUser>[] => {
-  return Array.from({ length: n }, getRandomUser)
+const createRandomUsers = (
+  n: number,
+  deleteReports: (email: string) => void,
+): ReturnType<typeof getRandomUser>[] => {
+  return Array.from({ length: n }, () => getRandomUser(deleteReports))
 }
 
 export const useModerationStoryProps = (overrides?: {
   props?: Partial<ModerationProps>
 }): Omit<ModerationProps, 'search'> => {
-  const jiraLinkButtons: ReportTableItem = {
-    head: JiraButtonHead,
-    body: {
-      email: 'maria.anders@school.edu',
-      element: JiraButtonBody('https://tracker.moodle.org/browse/MNM-647'),
-    },
-  }
-  return {
-    users: [
+  const [users, setUsers] = useState<ModerationUser[]>([])
+
+  const deleteReports = useCallback((email: string) => {
+    setUsers(prevUsers => prevUsers.filter(user => user.user.email !== email))
+  }, [])
+
+  const defaultUsers: ModerationUser[] = useMemo(
+    () => [
       {
         user: {
           title: 'Maria Anders',
@@ -133,12 +141,25 @@ export const useModerationStoryProps = (overrides?: {
           mainReportReason: 'Inappropriate behavior',
         },
         toggleIsPublisher: () => console.log('Toggling user type'),
-        deleteReports: () => console.log('Deleting reports'),
+        deleteReports: () => {
+          console.log('Deleting maria.anders@school.edu reports')
+          deleteReports('maria.anders@school.edu')
+        },
         deleteUser: () => console.log('Deleting user'),
       },
-      ...createRandomUsers(5),
+      ...createRandomUsers(5, deleteReports),
     ],
-    tableItems: [jiraLinkButtons],
+    [deleteReports],
+  )
+
+  useEffect(() => {
+    setUsers(defaultUsers)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Include 'defaultUsers' as a dependency
+
+  return {
+    users,
+    tableItems: [],
     ...overrides?.props,
   }
 }

@@ -123,7 +123,21 @@
     > .modal > .content {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 14px;
+      > .flag-row {
+        display: flex;
+        gap: 8px;
+        > .date {
+          min-width: 147px;
+        }
+        > abbr {
+          cursor: pointer;
+          font-weight: 600;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
     }
   }
 }
