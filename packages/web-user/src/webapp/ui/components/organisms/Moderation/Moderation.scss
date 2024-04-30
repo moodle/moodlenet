@@ -24,11 +24,16 @@
       > .table-body-container > .table-body {
         display: grid;
         align-items: center;
-        grid-template-columns: minmax(150px, 1fr) 55px 100px minmax(145px, 1fr) 60px 100px;
         gap: 16px;
         > :last-child,
         > .table-row > :last-child {
           padding-right: 10px;
+        }
+        &.users-table {
+          grid-template-columns: minmax(150px, 1fr) 55px 100px minmax(145px, 1fr) 60px 100px;
+        }
+        &.resources-table {
+          grid-template-columns: minmax(150px, 1fr) minmax(145px, 1fr) 100px;
         }
       }
 
@@ -81,6 +86,7 @@
             display: contents;
 
             > .display-name,
+            > .resource-name,
             > .reason {
               overflow: hidden;
               text-overflow: ellipsis;

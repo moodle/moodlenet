@@ -319,7 +319,7 @@ export const whistleblowOptions: WhistleblowResourceOptionType[] = [
   { id: '6', name: 'Other' },
 ]
 
-const resourceFactories: WhistleblowResource[] = [
+export const resourceFactories: WhistleblowResource[] = [
   {
     title: 'Forest of the world',
     imageUrl:

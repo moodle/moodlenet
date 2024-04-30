@@ -1,6 +1,7 @@
 import { href } from '@moodlenet/react-app/common'
 import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
 import {
+  ModerationResource,
   reportOptionTypes,
   type ReportProfileReasonName,
   type UserReport,
@@ -11,6 +12,10 @@ import type { ModerationProps, ModerationUser, SortReportedUsers } from '@moodle
 import { Moderation, ModerationMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react'
+import {
+  generateRandomUserWhistleblows,
+  resourceFactories,
+} from '../Resource/ResourceData.props.js'
 
 const names = [
   'Maria Anders',
@@ -126,10 +131,10 @@ const generateRandomUserStatusChanges = (n: number): UserStatusChange[] => {
 
 const emails = names.map((name, i) => `${name.split(' ').join('.')}${i}@school.edu`.toLowerCase())
 
-function getRandomUser(
+const getRandomUser = (
   deleteReports: (email: string) => void,
   changeStatus: (newStatus: UserStatus, email: string) => void,
-): ModerationUser {
+): ModerationUser => {
   const randomIndex = Math.floor(Math.random() * names.length)
   return {
     user: {
@@ -170,6 +175,39 @@ function getRandomUser(
       deleteReports(emails[randomIndex] || '')
     }, // Add the missing deleteReports property
   }
+}
+
+const getRandomModerationResource = (): ModerationResource => {
+  const randomIndex = Math.floor(Math.random() * names.length)
+  const { title, resourceHref, imageUrl } = resourceFactories[
+    Math.floor(Math.random() * resourceFactories.length)
+  ] || {
+    title: 'Resource title',
+    imageUrl: 'https://via.placeholder.com/150',
+    resourceHref: href('Pages/Resource/Creator'),
+  }
+
+  return {
+    title: title, // Assign an empty string as the default value
+    imageUrl: imageUrl,
+    resourceHref: resourceHref,
+    whistleblows: generateRandomUserWhistleblows(Math.floor(Math.random() * 15) + 2),
+    user: {
+      displayName: names[randomIndex] || '', // Assign an empty string as the default value
+      email: emails[randomIndex] || '', // Assign an empty string as the default value
+      profileHref: href('Pages/Profile/Admin'),
+      currentStatus: getRandomStatus(),
+      statusHistory: generateRandomUserStatusChanges(Math.floor(Math.random() * 10) + 1),
+    },
+  }
+}
+
+const getModerationResources = (x: number): ModerationResource[] => {
+  const moderationResources: ModerationResource[] = []
+  for (let i = 0; i < x; i++) {
+    moderationResources.push(getRandomModerationResource())
+  }
+  return moderationResources
 }
 
 const createRandomUsers = (
@@ -289,6 +327,7 @@ export const useModerationStoryProps = (overrides?: {
 
   return {
     users,
+    resources: getModerationResources(10),
     sort,
     tableItems: [],
     ...overrides?.props,
@@ -314,6 +353,7 @@ const ModerationItem: FC = () => {
   return (
     <Moderation
       users={useModerationStoryProps().users}
+      resources={useModerationStoryProps().resources}
       search={action('Searching users')}
       sort={useModerationStoryProps().sort}
       // users={currentUsers}

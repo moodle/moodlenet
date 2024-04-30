@@ -20,6 +20,7 @@ import {
 } from '@mui/icons-material'
 import { useEffect, useMemo, useState, type FC } from 'react'
 import type {
+  ModerationResource,
   ReportProfileReasonName,
   User,
   UserReport,
@@ -51,6 +52,7 @@ export type SortReportedUsers = {
 
 export type ModerationProps = {
   users: ModerationUser[]
+  resources: ModerationResource[]
   search(str: string): unknown
   sort: SortReportedUsers
   tableItems: (ReportTableItem | null)[]
@@ -58,7 +60,7 @@ export type ModerationProps = {
 
 export const ModerationMenu = () => <abbr title="Moderation">Moderation</abbr>
 
-const Row: FC<{
+const UserRow: FC<{
   id: number
   moderationUser: ModerationUser
   bodyItems: (AddonItem | null)[]
@@ -234,7 +236,187 @@ const Row: FC<{
   )
 }
 
-export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItems }) => {
+const ResourceRow: FC<{
+  id: number
+  moderationResource: ModerationResource
+  // bodyItems: (AddonItem | null)[]
+  // toggleShowFlagsModal: React.Dispatch<React.SetStateAction<number | undefined>>
+  // setShowReasonsModal: React.Dispatch<React.SetStateAction<number | undefined>>
+  // setShowStatusModal: React.Dispatch<React.SetStateAction<number | undefined>>
+  // setIsToDelete: React.Dispatch<React.SetStateAction<number | undefined>>
+  // setShowDeleteReportsSnackbar: React.Dispatch<React.SetStateAction<string | undefined>>
+  // setDisplayNameToDelete: React.Dispatch<React.SetStateAction<string>>
+}> = ({
+  id,
+  moderationResource,
+  // toggleShowFlagsModal,
+  // setShowReasonsModal,
+  // setShowStatusModal,
+  // setIsToDelete,
+  // setShowDeleteReportsSnackbar,
+  // setDisplayNameToDelete,
+  //bodyItems,
+}) => {
+  const { title, resourceHref, user, whistleblows } = moderationResource
+  const { displayName, email, profileHref, currentStatus, statusHistory } = user
+  // const { user, toggleIsPublisher, deleteReports } = moderationUser
+
+  // const statusIcons = {
+  //   'Admin': { icon: <ManageAccountsOutlined />, title: 'Admin\nShow status changes' },
+  //   'Publisher': { icon: <HowToRegOutlined />, title: 'Publisher\nShow status changes' },
+  //   'Non-publisher': {
+  //     icon: <PersonOutlineOutlined />,
+  //     title: 'Non publisher\nShow status changes',
+  //   },
+  //   'Deleted': { icon: <PersonOffOutlined />, title: 'Deleted' },
+  // }
+
+  // const statusInfo = statusIcons[currentStatus as keyof typeof statusIcons]
+
+  // const accountStatus = statusInfo && (
+  //   <abbr title={statusInfo.title} key={currentStatus} onClick={() => setShowStatusModal(id)}>
+  //     {statusInfo.icon}
+  //   </abbr>
+  // )
+
+  // const lastReport =
+  //   user.reports.length > 0
+  //     ? user.reports.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+  //     : null
+  // const lastReportDateRaw = lastReport ? new Date(lastReport.date) : null
+  // const lastReportDate = lastReportDateRaw
+  //   ? lastReportDateRaw
+  //       .toLocaleString('default', {
+  //         day: '2-digit',
+  //         month: 'short',
+  //         year: 'numeric',
+  //       })
+  //       .replace(',', '')
+  //   : ''
+  // const lastReportTime = lastReportDateRaw
+  //   ? lastReportDateRaw.toLocaleString('default', {
+  //       hour: '2-digit',
+  //       minute: '2-digit',
+  //       hour12: false,
+  //     })
+  //   : ''
+
+  return (
+    <div className="table-row" key={id}>
+      <abbr className={`resource-name`} title={`Go to resource page`}>
+        <Link href={resourceHref} target="_blank">
+          {title}
+        </Link>
+      </abbr>
+      <abbr
+        className={`display-name ${currentStatus === 'Deleted' ? 'deleted' : ''}`}
+        title={
+          currentStatus === 'Deleted' ? 'Deleted user, anonymous' : `Go to profile page\n${email}`
+        }
+      >
+        {currentStatus !== 'Deleted' ? (
+          <Link href={profileHref} target="_blank">
+            {displayName}
+          </Link>
+        ) : (
+          `Deleted - ${
+            statusHistory[0]?.date
+              ? new Date(statusHistory[0].date)
+                  .toLocaleString('default', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                  })
+                  .replace(',', '')
+              : ''
+          }`
+        )}
+      </abbr>
+      <abbr
+        className="reports"
+        title="Show report details"
+        onClick={() => {
+          // toggleShowFlagsModal(id)
+        }}
+      >
+        {whistleblows.length}
+      </abbr>
+      {/* <abbr className="last-flag" title={`${lastReportDate}, ${lastReportTime}`}>
+        {lastReportDate}
+      </abbr>
+      <abbr
+        className="reason"
+        title="Show reason details"
+        onClick={() => {
+          setShowReasonsModal(id)
+        }}
+      >
+        {mainReportReason}
+      </abbr>
+      <div className="status">{accountStatus}</div>
+      <div className="actions">
+        <abbr
+          onClick={() => {
+            if (currentStatus !== 'Deleted') {
+              deleteReports()
+              setShowDeleteReportsSnackbar(user.title)
+            }
+          }}
+          className={`remove-flags ${currentStatus === 'Deleted' ? 'disabled' : ''}`}
+          title={currentStatus === 'Deleted' ? 'Cannot remove flags from a deleted user' : 'Remove'}
+        >
+          <RemoveFlag />
+        </abbr>
+        <abbr
+          onClick={() => toggleIsPublisher()}
+          className={`unapprove ${
+            (['Non-authenticated', 'Admin', 'Deleted'] as UserStatus[]).includes(currentStatus)
+              ? 'disabled'
+              : ''
+          }`}
+          title={
+            currentStatus === 'Admin'
+              ? 'Cannot unapprove an admin'
+              : currentStatus === 'Publisher'
+              ? 'Unapprove user'
+              : currentStatus === 'Deleted'
+              ? 'Cannot unapprove a deleted user'
+              : currentStatus === 'Non-publisher'
+              ? 'Approve user'
+              : currentStatus === 'Non-authenticated'
+              ? 'Cannot unapprove a non-authenticated user'
+              : undefined
+          }
+        >
+          {currentStatus === 'Non-publisher' ? <CheckCircleOutline /> : <Unpublished />}
+        </abbr>
+        <abbr
+          onClick={() => {
+            if (currentStatus !== 'Admin') {
+              setIsToDelete(id)
+              setDisplayNameToDelete(user.title)
+            }
+          }}
+          className={`delete ${
+            currentStatus === 'Admin' || currentStatus === 'Deleted' ? 'disabled' : ''
+          }`}
+          title={currentStatus === 'Admin' ? 'Cannot delete an admin' : 'Delete user'}
+        >
+          <PersonOffOutlined />
+        </abbr>
+      </div>  */}
+      {/* {bodyItems.map((item, i) => {
+        return (
+          <div key={(item && item.key) ?? i} id={item ? item.key.toString() : ''}>
+            {item && item.Item ? <item.Item key={item.key} /> : null}
+          </div>
+        )
+      })} */}
+    </div>
+  )
+}
+
+export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search, tableItems }) => {
   const usersTableItems: (AddonItem | null)[][] = users.map(() => [])
   users.map(({ user }, i) /* user */ => {
     const newUserTableItem = usersTableItems && usersTableItems[i]
@@ -249,7 +431,7 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
 
   const [activeSort, setActiveSort] = useState<keyof ModerationProps['sort'] | undefined>(undefined)
 
-  const tableHeader = () => {
+  const userTableHeader = () => {
     const createSortColumn = (
       sortKey: keyof ModerationProps['sort'],
       label: string,
@@ -268,13 +450,45 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
     )
 
     return (
-      <div className="table-header">
+      <div className="table-header users-table">
         {createSortColumn('sortByDisplayName', 'Display name', 'display-name')}
         {createSortColumn('sortByFlags', 'Flags', 'flags')}
         {createSortColumn('sortByLastFlag', 'Last flag', 'last-flag')}
         {createSortColumn('sortByMainReason', 'Main reason', 'reason')}
         {createSortColumn('sortByStatus', 'Status', 'status')}
         <div className="actions">Actions</div>
+      </div>
+    )
+  }
+
+  const resourceTableHeader = () => {
+    const createSortColumn = (
+      sortKey: keyof ModerationProps['sort'],
+      label: string,
+      className: string,
+    ) => (
+      <div
+        className={`${className} ${activeSort === sortKey ? 'active' : ''}`}
+        onClick={() => {
+          setActiveSort(activeSort === sortKey ? undefined : sortKey)
+          sort[sortKey]()
+        }}
+      >
+        <div className="label">{label}</div>
+        {activeSort === sortKey ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+      </div>
+    )
+
+    return (
+      <div className="table-header resources-table">
+        {createSortColumn('sortByDisplayName', 'Name', 'resource-name')}
+        {createSortColumn('sortByDisplayName', 'User', 'display-name')}
+        {createSortColumn('sortByDisplayName', 'Reports', 'reports')}
+        {/* {createSortColumn('sortByFlags', 'Flags', 'flags')}
+        {createSortColumn('sortByLastFlag', 'Last flag', 'last-flag')}
+        {createSortColumn('sortByMainReason', 'Main reason', 'reason')}
+        {createSortColumn('sortByStatus', 'Status', 'status')}
+        <div className="actions">Actions</div> */}
       </div>
     )
   }
@@ -536,6 +750,80 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
     </Snackbar>
   ) : null
 
+  const reportedUsersCard = (
+    <Card className="column reported-users">
+      <div className="subtitle">Reported users</div>
+      <Searchbox
+        key="users-searchbox"
+        placeholder="Search by display name or email"
+        searchText={''}
+        setSearchText={search}
+        search={search}
+        showSearchButton={false}
+      />
+      <div className="table-container">
+        {userTableHeader()}
+        <div className="table-body-container">
+          <div className="table-body users-table">
+            {users.map((moderationUser, i) /* user */ => {
+              return (
+                <UserRow
+                  id={i}
+                  moderationUser={moderationUser}
+                  bodyItems={usersTableItems[i] ?? []}
+                  toggleShowFlagsModal={toggleShowFlagsModal}
+                  setShowReasonsModal={setShowReasonsModal}
+                  setShowStatusModal={setShowStatusModal}
+                  setIsToDelete={setIsToDelete}
+                  setShowDeleteReportsSnackbar={setShowDeleteReportsSnackbar}
+                  setDisplayNameToDelete={setDisplayNameToDelete}
+                  key={i}
+                />
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </Card>
+  )
+
+  const reportedResourcesCard = (
+    <Card className="column reported-users">
+      <div className="subtitle">Reported resources</div>
+      <Searchbox
+        key="users-searchbox"
+        placeholder="Search by name or user (name or email)"
+        searchText={''}
+        setSearchText={search}
+        search={search}
+        showSearchButton={false}
+      />
+      <div className="table-container">
+        {resourceTableHeader()}
+        <div className="table-body-container">
+          <div className="table-body resources-table">
+            {resources.map((moderationResource, i) /* user */ => {
+              return (
+                <ResourceRow
+                  id={i}
+                  moderationResource={moderationResource}
+                  // bodyItems={usersTableItems[i] ?? []}
+                  // toggleShowFlagsModal={toggleShowFlagsModal}
+                  // setShowReasonsModal={setShowReasonsModal}
+                  // setShowStatusModal={setShowStatusModal}
+                  // setIsToDelete={setIsToDelete}
+                  // setShowDeleteReportsSnackbar={setShowDeleteReportsSnackbar}
+                  // setDisplayNameToDelete={setDisplayNameToDelete}
+                  key={i}
+                />
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </Card>
+  )
+
   const snackbars = <SnackbarStack snackbarList={[DeleteReportsSnackbar, DeletedUserSnackbar]} />
   const modals = [flagsModal, ReasonsModal(), statusModal, deleteConfirmation]
 
@@ -546,40 +834,8 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
       <Card className="column">
         <div className="title">Moderation</div>
       </Card>
-      <Card className="column reported-users">
-        <div className="subtitle">Reported users</div>
-        <Searchbox
-          key="users-searchbox"
-          placeholder="Search by display name or email"
-          searchText={''}
-          setSearchText={search}
-          search={search}
-          showSearchButton={false}
-        />
-        <div className="table-container">
-          {tableHeader()}
-          <div className="table-body-container">
-            <div className="table-body">
-              {users.map((moderationUser, i) /* user */ => {
-                return (
-                  <Row
-                    id={i}
-                    moderationUser={moderationUser}
-                    bodyItems={usersTableItems[i] ?? []}
-                    toggleShowFlagsModal={toggleShowFlagsModal}
-                    setShowReasonsModal={setShowReasonsModal}
-                    setShowStatusModal={setShowStatusModal}
-                    setIsToDelete={setIsToDelete}
-                    setShowDeleteReportsSnackbar={setShowDeleteReportsSnackbar}
-                    setDisplayNameToDelete={setDisplayNameToDelete}
-                    key={i}
-                  />
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      </Card>
+      {reportedUsersCard}
+      {reportedResourcesCard}
     </div>
   )
 }

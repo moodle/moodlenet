@@ -249,3 +249,14 @@ export type WhistleblownResourceData = WhistleblowResourceData & {
   resource: WhistleblowResource
   user: WhistleblowUser
 }
+
+export type ModerationResource = WhistleblowResource & {
+  user: {
+    displayName: string
+    email: string
+    profileHref: Href
+    currentStatus: UserStatus
+    statusHistory: UserStatusChange[]
+  }
+  whistleblows: WhistleblowResourceData[]
+}
