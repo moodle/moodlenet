@@ -214,4 +214,37 @@
       }
     }
   }
+
+  &.status-modal {
+    > .modal {
+      max-height: min(calc(100vh - 40px), 800px);
+
+      > .content {
+        overflow: auto;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        > .status-changes {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          > .status-change {
+            display: flex;
+            gap: 4px;
+            display: flex;
+            gap: 5px;
+            > .date {
+              min-width: 147px;
+            }
+            > abbr {
+              cursor: pointer;
+              font-weight: 600;
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

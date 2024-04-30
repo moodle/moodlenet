@@ -62,16 +62,18 @@ const Row: FC<{
   id: number
   moderationUser: ModerationUser
   bodyItems: (AddonItem | null)[]
-  toggleShowFlagModal: React.Dispatch<React.SetStateAction<number | undefined>>
+  toggleShowFlagsModal: React.Dispatch<React.SetStateAction<number | undefined>>
   setShowReasonsModal: React.Dispatch<React.SetStateAction<number | undefined>>
+  setShowStatusModal: React.Dispatch<React.SetStateAction<number | undefined>>
   setIsToDelete: React.Dispatch<React.SetStateAction<number | undefined>>
   setShowDeleteReportsSnackbar: React.Dispatch<React.SetStateAction<string | undefined>>
   setDisplayNameToDelete: React.Dispatch<React.SetStateAction<string>>
 }> = ({
   id,
   moderationUser,
-  toggleShowFlagModal,
+  toggleShowFlagsModal,
   setShowReasonsModal,
+  setShowStatusModal,
   setIsToDelete,
   setShowDeleteReportsSnackbar,
   setDisplayNameToDelete,
@@ -80,31 +82,23 @@ const Row: FC<{
   const { user, toggleIsPublisher, deleteReports } = moderationUser
   const { mainReportReason, currentStatus, statusHistory } = user
 
-  console.log('currentStatus', currentStatus)
-  const accontStatus =
-    currentStatus === 'Admin' ? (
-      <abbr title={`Admin\nShow status changes`} key="admin">
-        <ManageAccountsOutlined />
-      </abbr>
-    ) : currentStatus === 'Publisher' ? (
-      <abbr title={`Publisher\nShow status changes`} key="publisher">
-        <HowToRegOutlined />
-      </abbr>
-    ) : currentStatus === 'Non-publisher' ? (
-      <abbr title={`Non publisher\nShow status changes`} key="authorised">
-        <PersonOutlineOutlined />
-      </abbr>
-    ) : currentStatus === 'Deleted' ? (
-      <abbr title="Deleted" key="deleted">
-        <PersonOffOutlined />
-      </abbr>
-    ) : null
+  const statusIcons = {
+    'Admin': { icon: <ManageAccountsOutlined />, title: 'Admin\nShow status changes' },
+    'Publisher': { icon: <HowToRegOutlined />, title: 'Publisher\nShow status changes' },
+    'Non-publisher': {
+      icon: <PersonOutlineOutlined />,
+      title: 'Non publisher\nShow status changes',
+    },
+    'Deleted': { icon: <PersonOffOutlined />, title: 'Deleted' },
+  }
 
-  // : (
-  //   <abbr title="Automatically unapproved" key="auto-unapprove">
-  //     <PersonRemoveOutlined />
-  //   </abbr>
-  // )
+  const statusInfo = statusIcons[currentStatus as keyof typeof statusIcons]
+
+  const accountStatus = statusInfo && (
+    <abbr title={statusInfo.title} key={currentStatus} onClick={() => setShowStatusModal(id)}>
+      {statusInfo.icon}
+    </abbr>
+  )
 
   const lastReport =
     user.reports.length > 0
@@ -156,7 +150,7 @@ const Row: FC<{
         className="flags"
         title="Show flag details"
         onClick={() => {
-          toggleShowFlagModal(id)
+          toggleShowFlagsModal(id)
         }}
       >
         {user.reports.length}
@@ -173,7 +167,7 @@ const Row: FC<{
       >
         {mainReportReason}
       </abbr>
-      <div className="status">{accontStatus}</div>
+      <div className="status">{accountStatus}</div>
       <div className="actions">
         <abbr
           onClick={() => {
@@ -295,7 +289,7 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
     </Snackbar>
   ) : null
 
-  const [showFlagModal, toggleShowFlagModal] = useState<number | undefined>(undefined)
+  const [showFlagsModal, toggleShowFlagsModal] = useState<number | undefined>(undefined)
 
   const flagRow = (user: UserReporter, date: Date, i: number) => {
     return (
@@ -316,15 +310,15 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
       </div>
     )
   }
-  const flagModal =
-    typeof showFlagModal === 'number' ? (
+  const flagsModal =
+    typeof showFlagsModal === 'number' ? (
       <Modal
         className="flag-modal"
         key="flag-modal"
         title="Reported by"
-        onClose={() => toggleShowFlagModal(undefined)}
+        onClose={() => toggleShowFlagsModal(undefined)}
       >
-        {users[showFlagModal]?.user.reports.map((report, index) =>
+        {users[showFlagsModal]?.user.reports.map((report, index) =>
           flagRow(report.user, report.date, index),
         )}
       </Modal>
@@ -361,6 +355,51 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
       <b>{users[isToDelete]?.user.title}</b> will be <b>totally removed from the system</b>.<br />
       <br />
       Notice: All user content will be deleted, only report logs will be kept anonymously.
+    </Modal>
+  )
+
+  const [showStatusModal, setShowStatusModal] = useState<number | undefined>(undefined)
+
+  const getStatusVerb = (status: UserStatus): string =>
+    ({
+      'Non-authenticated': 'Unauthenticated ',
+      'Non-publisher': 'Unapproved',
+      'Admin': 'Made admin',
+      'Publisher': 'Approved',
+      'Deleted': 'Deleted',
+    }[status])
+
+  const statusModal = typeof showStatusModal === 'number' && (
+    <Modal
+      className="status-modal"
+      title="Status changes"
+      onClose={() => setShowStatusModal(undefined)}
+      key="report-reasons-modal"
+      style={{ maxWidth: '800px' }}
+    >
+      <div className="status-changes">
+        {users[showStatusModal]?.user.statusHistory.map((statusChange, index) => (
+          <div key={index} className="status-change">
+            <div className="status">{getStatusVerb(statusChange.status)} by</div>
+            <abbr title={`Go to profile page\n${statusChange.userChangedStatus.email}`}>
+              {statusChange.userChangedStatus.displayName}
+            </abbr>{' '}
+            on
+            <div className="date">
+              {statusChange.date
+                .toLocaleString('default', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: false,
+                })
+                .replace(',', '')}
+            </div>
+          </div>
+        ))}
+      </div>
     </Modal>
   )
 
@@ -484,7 +523,7 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
   ) : null
 
   const snackbars = <SnackbarStack snackbarList={[DeleteReportsSnackbar, DeletedUserSnackbar]} />
-  const modals = [flagModal, ReasonsModal(), deleteConfirmation]
+  const modals = [flagsModal, ReasonsModal(), statusModal, deleteConfirmation]
 
   return (
     <div className="moderation" key="Moderation">
@@ -513,8 +552,9 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
                     id={i}
                     moderationUser={moderationUser}
                     bodyItems={usersTableItems[i] ?? []}
-                    toggleShowFlagModal={toggleShowFlagModal}
+                    toggleShowFlagsModal={toggleShowFlagsModal}
                     setShowReasonsModal={setShowReasonsModal}
+                    setShowStatusModal={setShowStatusModal}
                     setIsToDelete={setIsToDelete}
                     setShowDeleteReportsSnackbar={setShowDeleteReportsSnackbar}
                     setDisplayNameToDelete={setDisplayNameToDelete}
