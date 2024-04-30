@@ -1,44 +1,88 @@
 .moderation {
   > .card {
-    > .users-table {
-      font-family: arial, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-      font-size: 14px;
+    > .table-container {
+      overflow-x: auto;
+      // display: block;
+      > .users-table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 14px;
+        white-space: nowrap;
+        table-layout: auto;
 
-      > tbody > tr > td,
-      > thead > tr > td {
-        text-align: left;
-        padding: 8px;
-      }
-      > thead > tr > td {
-        font-weight: bold;
-      }
-
-      > tbody {
-        > tr {
-          > .status {
+        > tbody > tr > td,
+        > thead > tr > th {
+          text-align: left;
+          padding: 8px;
+          // border: 1px solid blue;
+        }
+        > thead > tr > th {
+          font-weight: bold;
+          &.status {
             text-align: center;
-            > abbr {
-              > svg {
-                margin-left: -6px;
-                color: #838383;
-              }
-            }
+            padding-left: 5px;
           }
-          > .actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            > * {
-              cursor: pointer;
-              color: #7a7a7a;
-              &:hover {
-                color: #535353;
+
+          &.actions {
+            text-align: center;
+            padding-left: 12px;
+          }
+        }
+
+        > thead {
+          width: 100%;
+          table-layout: auto;
+          border-collapse: collapse;
+        }
+
+        > tbody {
+          width: 100%;
+          table-layout: auto;
+          border-collapse: collapse;
+          > tr {
+            > .display-name,
+            > .reason {
+              > abbr {
+                width: 100%;
+                white-space: nowrap;
+                display: block;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                > a {
+                  width: 100%;
+                }
               }
             }
-            > .ignore > svg {
-              height: 23px;
+            > .flags {
+              text-align: center;
+            }
+            > .status {
+              padding-left: 5px;
+              text-align: center;
+              > abbr {
+                > svg {
+                  margin-left: -6px;
+                  color: #838383;
+                }
+              }
+            }
+            > .actions {
+              padding-left: 12px;
+              display: flex;
+              gap: 6px;
+              align-items: center;
+              justify-content: space-between;
+              > * {
+                cursor: pointer;
+                color: #7a7a7a;
+                &:hover {
+                  color: #535353;
+                }
+              }
+              > .ignore > svg {
+                height: 23px;
+              }
             }
           }
         }

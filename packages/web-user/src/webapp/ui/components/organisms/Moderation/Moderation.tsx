@@ -5,8 +5,8 @@ import {
   DeleteOutline,
   DoNotDisturb,
   HowToRegOutlined,
-  PersonAddAlt1Outlined,
   PersonOffOutlined,
+  PersonOutlineOutlined,
   PersonRemoveOutlined,
   VisibilityOff,
 } from '@mui/icons-material'
@@ -22,37 +22,44 @@ function randomDate(start: Date, end: Date): Date {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()))
 }
 
-function randomTimeGenerator(): string {
+function randomTimeGenerator() {
   const randomDay: Date = randomDate(new Date(2023, 0, 1), new Date(2024, 11, 31))
   const randomHour: number = Math.floor(Math.random() * 24)
   const randomMinute: number = Math.floor(Math.random() * 60)
   randomDay.setHours(randomHour, randomMinute, 0, 0)
-  return (
+
+  const date =
     `${randomDay.getDate().toString().padStart(2, '0')} ` +
     `${randomDay.toLocaleString('default', { month: 'short' })} ` +
-    `${randomDay.getFullYear()}, ` +
+    `${randomDay.getFullYear()}`
+
+  const time =
     `${randomDay.getHours().toString().padStart(2, '0')}:` +
     `${randomDay.getMinutes().toString().padStart(2, '0')}`
-  )
+
+  return {
+    date: date,
+    time: time,
+  }
 }
 
 const reportReasons: string[] = [
   'Inappropriate behavior',
   'Impersonation',
   'Spamming',
-  'Violation of terms of service',
+  'Terms of service violation',
   'Other',
 ]
 
 const accountStatuses = [
   <abbr title="Automatically unapproved" key="auto-unapprove">
-    <PersonAddAlt1Outlined />
+    <PersonRemoveOutlined />
   </abbr>,
   <abbr title="Publisher" key="publisher">
     <HowToRegOutlined />
   </abbr>,
   <abbr title="Authorised" key="authorised">
-    <PersonRemoveOutlined />
+    <PersonOutlineOutlined />
   </abbr>,
   <abbr title="Deleted" key="deleted">
     <PersonOffOutlined />
@@ -87,18 +94,25 @@ const Row: FC<{
   //bodyItems,
   user,
 }) => {
+  const { date, time } = randomTimeGenerator()
   return (
     <tr>
-      <td>
+      <td className="display-name">
         <abbr title={user.email}>
           <Link href={user.profileHref} target="_blank">
             {user.title}
           </Link>
         </abbr>
       </td>
-      <td>{Math.floor(Math.random() * (15 - 1 + 1)) + 1}</td>
-      <td className="last-flag">{randomTimeGenerator()}</td>
-      <td className="reason">{reportReasons[Math.floor(Math.random() * reportReasons.length)]}</td>
+      <td className="flags">{Math.floor(Math.random() * (15 - 1 + 1)) + 1}</td>
+      <td className="last-flag">
+        <abbr title={time}>{date}</abbr>
+      </td>
+      <td className="reason">
+        <abbr title="Show more info">
+          {reportReasons[Math.floor(Math.random() * reportReasons.length)]}
+        </abbr>
+      </td>
       <td className="status">
         {accountStatuses[Math.floor(Math.random() * accountStatuses.length)]}
       </td>
@@ -157,17 +171,18 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
           search={search}
           showSearchButton={false}
         />
-        <table className="users-table">
-          <thead>
-            <tr>
-              <td>Display name</td>
-              {/* <td>Email</td> */}
-              <td className="flags">Flags</td>
-              <td className="last-flag">Last flag</td>
-              <td className="reason">Reason</td>
-              <td className="status">Status</td>
-              <td className="actions">Actions</td>
-              {/* {tableItems &&
+        <div className="table-container">
+          <table className="users-table">
+            <thead>
+              <tr>
+                <th className="display-name">Display name</th>
+                {/* <td>Email</td> */}
+                <th className="flags">Flags</th>
+                <th className="last-flag">Last flag</th>
+                <th className="reason">Reason</th>
+                <th className="status">Status</th>
+                <th className="actions">Actions</th>
+                {/* {tableItems &&
                 tableItems.map((item, i) => {
                   return item && item.head ? (
                     <td key={i} id={item ? item.head.key.toString() : ''}>
@@ -175,23 +190,24 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
                     </td>
                   ) : null
                 })} */}
-            </tr>
-          </thead>
-          <tbody>
-            {}
-            {users.map(({ user, toggleIsAdmin, toggleIsPublisher }, i) /* user */ => {
-              return (
-                <Row
-                  user={user}
-                  toggleIsAdmin={toggleIsAdmin}
-                  bodyItems={usersTableItems[i] ?? []}
-                  toggleIsPublisher={toggleIsPublisher}
-                  key={i}
-                />
-              )
-            })}
-          </tbody>
-        </table>
+              </tr>
+            </thead>
+            <tbody>
+              {}
+              {users.map(({ user, toggleIsAdmin, toggleIsPublisher }, i) /* user */ => {
+                return (
+                  <Row
+                    user={user}
+                    toggleIsAdmin={toggleIsAdmin}
+                    bodyItems={usersTableItems[i] ?? []}
+                    toggleIsPublisher={toggleIsPublisher}
+                    key={i}
+                  />
+                )
+              })}
+            </tbody>
+          </table>{' '}
+        </div>
       </Card>
     </div>
   )

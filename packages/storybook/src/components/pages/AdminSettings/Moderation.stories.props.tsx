@@ -62,6 +62,52 @@ export const useModerationStoryProps = (overrides?: {
         toggleIsAdmin: action('Toggeling user type'),
         toggleIsPublisher: action('Toggeling user type'),
       },
+
+      {
+        user: {
+          title: 'Lisa Monroe',
+          email: 'lisa.monroe@creativespace.edu',
+          profileHref: href('Pages/Profile/Admin'),
+          isAdmin: false,
+          isPublisher: false,
+        },
+        toggleIsAdmin: action('Toggeling user type'),
+        toggleIsPublisher: action('Toggeling user type'),
+      },
+      {
+        user: {
+          title: 'Ethan Hunt',
+          email: 'ethan.hunt@missionpossible.edu',
+          profileHref: href('Pages/Profile/Admin'),
+          isAdmin: true,
+          isPublisher: false,
+        },
+        toggleIsAdmin: action('Toggeling user type'),
+        toggleIsPublisher: action('Toggeling user type'),
+      },
+
+      {
+        user: {
+          title: 'Noah Clarke',
+          email: 'noah.clarke@innovators.edu',
+          profileHref: href('Pages/Profile/Admin'),
+          isAdmin: false,
+          isPublisher: false,
+        },
+        toggleIsAdmin: action('Toggeling user type'),
+        toggleIsPublisher: action('Toggeling user type'),
+      },
+      {
+        user: {
+          title: 'Sophia Bernard',
+          email: 'sophia.bernard@frenchculinary.edu',
+          profileHref: href('Pages/Profile/Admin'),
+          isAdmin: true,
+          isPublisher: true,
+        },
+        toggleIsAdmin: action('Toggeling user type'),
+        toggleIsPublisher: action('Toggeling user type'),
+      },
     ],
     tableItems: [jiraLinkButtons],
     ...overrides?.props,
