@@ -97,7 +97,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
         on: {
           'cancel-meta-generation': {
             target: 'Unpublished',
-            cond: 'issuer is creator',
+            cond: 'issuer is creator or admin',
           },
 
           'generated-meta-suggestions': {
@@ -129,7 +129,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
 
           'trash': {
             target: 'Destroyed',
-            cond: 'issuer is creator',
+            cond: 'issuer is creator or admin',
           },
 
           'store-edits': {
@@ -201,7 +201,7 @@ image is optional`,
         on: {
           'provide-resource-edits': {
             target: 'Unpublished',
-            cond: 'issuer is creator',
+            cond: 'issuer is creator or admin',
             actions: 'assign_resource_edits',
           },
         },

@@ -213,7 +213,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
     </div>
   )
   function getLearningOutcomeName(byCode: string) {
-    return learningOutcomeOptions.find(({ code }) => code === byCode)?.name ?? 'N/A'
+    return learningOutcomeOptions.find(({ code }) => code === byCode)?.name ?? 'unknown'
   }
 }
 

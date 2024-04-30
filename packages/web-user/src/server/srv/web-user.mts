@@ -1,28 +1,19 @@
 import type { Patch } from '@moodlenet/arangodb/server'
 import { isArangoError } from '@moodlenet/arangodb/server'
-import { delCollection } from '@moodlenet/collection/server'
-import { nameMatcher } from '@moodlenet/core-domain/resource'
 import type { JwtToken } from '@moodlenet/crypto/server'
 import { jwt } from '@moodlenet/crypto/server'
-import { stdEdResourceMachine } from '@moodlenet/ed-resource/server'
 import { getCurrentHttpCtx, getMyRpcBaseUrl } from '@moodlenet/http-server/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
-import {
-  create,
-  getPkgCurrentUser,
-  matchRootPassword,
-  setCurrentSystemUser,
-  setPkgCurrentUser,
-} from '@moodlenet/system-entities/server'
+import { create, matchRootPassword } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import dot from 'dot'
 import type { CookieOptions } from 'express'
-import { waitFor } from 'xstate/lib/waitFor.js'
 import {
   WEB_USER_SESSION_TOKEN_AUTHENTICATED_BY_COOKIE_NAME,
   WEB_USER_SESSION_TOKEN_COOKIE_NAME,
 } from '../../common/exports.mjs'
+import type { AdminSearchUserSortType } from '../../common/expose-def.mjs'
 import { Profile } from '../exports.mjs'
 import { WebUserCollection, db } from '../init/arangodb.mjs'
 import { kvStore } from '../init/kvStore.mjs'
@@ -36,18 +27,9 @@ import type {
   VerifiedTokenCtx,
   WebUserAccountDeletionToken,
   WebUserDataType,
-  WebUserEvents,
   WebUserJwtPayload,
   WebUserRecord,
 } from '../types.mjs'
-import { reduceToKnownFeaturedEntities } from './known-entity-types.mjs'
-import {
-  entityFeatureAction,
-  getProfileOwnKnownEntities,
-  getProfileRecord,
-  setProfileAvatar,
-  setProfileBackgroundImage,
-} from './profile.mjs'
 
 const VALID_JWT_VERSION: TokenVersion = 1
 export async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
@@ -220,11 +202,13 @@ export async function createWebUser(createRequest: CreateRequest) {
     profileKey: newProfile._key,
     displayName: newProfile.displayName,
     isAdmin,
+    publisher: createData.publisher,
     contacts,
     moderation: {
-      ignoredReports: { items: [] },
-      reports: { amount: 0, items: [], lastItem: null, mainReasonName: null },
-      status: { history: [] },
+      reports: { amount: 0, items: [], mainReasonName: null },
+      status: {
+        history: [],
+      },
     },
   }
 
@@ -238,13 +222,6 @@ export async function createWebUser(createRequest: CreateRequest) {
     profileKey: newProfile._key,
     webUserKey: newWebUser._key,
   })
-  if (newProfile.publisher) {
-    shell.events.emit('user-publishing-permission-change', {
-      type: 'given',
-      profile: newProfile,
-      moderator: await getPkgCurrentUser(),
-    })
-  }
   const jwtToken = await signWebUserJwt({
     v: VALID_JWT_VERSION,
     webUser: {
@@ -366,23 +343,84 @@ export async function setWebUserIsAdmin(
   return patchedUser
 }
 
-export async function searchUsers(search: string): Promise<WebUserRecord[]> {
-  const cursor = await db.query(
-    `
-    FOR webUser in @@WebUserCollection
-    let matchScore = LENGTH(@search) < 1 ? 1 
-                      : NGRAM_POSITIONAL_SIMILARITY(webUser.name, @search, 2)
-                      + NGRAM_POSITIONAL_SIMILARITY(webUser.contacts.email, @search, 2)
-    SORT matchScore DESC
-    FILTER matchScore > 0.05
-    LIMIT 10
-    RETURN webUser`,
-    { search, '@WebUserCollection': WebUserCollection.name },
-  )
+export type WebUserSearchOpts = {
+  fetchReporters: boolean
+  sortType: AdminSearchUserSortType // | 'SearchMatch'
+  searchString: string
+  filterNoFlag: boolean
+}
+type WebUserSearchType = WebUserRecord & {
+  moderation: {
+    reports: { items: { reporter?: null | WebUserRecord }[] }
+    status: { history: { reporter?: null | WebUserRecord }[] }
+  }
+}
+
+export async function searchUsers({
+  fetchReporters,
+  searchString,
+  sortType,
+  filterNoFlag,
+}: WebUserSearchOpts): Promise<WebUserSearchType[]> {
+  const sort = searchString
+    ? 'matchScore DESC'
+    : sortType === 'DisplayName'
+    ? 'webUser.displayName ASC'
+    : sortType === 'MainReason'
+    ? 'webUser.moderation.reports.mainReasonName ASC'
+    : sortType === 'Flags'
+    ? 'webUser.moderation.reports.amount DESC'
+    : sortType === 'LastFlag'
+    ? 'webUser.moderation.reports[0].date DESC'
+    : sortType === 'Status'
+    ? '(webUser.deleted ? 3 : webUser.isAdmin ? 1 : webUser.publisher ? 2 : 4) ASC'
+    : 'webUser.displayName ASC'
+
+  const returnWebUser = fetchReporters
+    ? `MERGE_RECURSIVE(webUser, { 
+                        moderation: { 
+                          reports: { 
+                            items: (FOR item IN webUser.moderation.reports.items 
+                                    LET reporter = DOCUMENT(@@WebUserCollection, item.reporterWebUserKey) 
+                                    RETURN MERGE_RECURSIVE( item, { reporter } ))
+                          },
+                          status: { 
+                            history: (FOR item IN webUser.moderation.status.history 
+                                      LET reporter = DOCUMENT(@@WebUserCollection, item.byWebUserKey) 
+                                      RETURN MERGE_RECURSIVE( item, { reporter } ))
+                          }
+                        }
+                      })`
+    : `webUser`
+  const filterNoFlagQuery = filterNoFlag ? `webUser.moderation.reports.amount > 0 &&` : ''
+  const searchQuery = `
+FOR webUser in @@WebUserCollection
+let matchScore = LENGTH(@searchString) < 1 ? 1 
+                  : MAX([ 
+                    NGRAM_SIMILARITY(webUser.displayName, @searchString, 3),
+                    NGRAM_SIMILARITY(webUser.contacts.email, @searchString, 3)
+                  ])
+FILTER ${filterNoFlagQuery} matchScore > 0.3
+SORT ${sort} 
+LIMIT 40
+LET returnWebUser = ${returnWebUser}
+RETURN returnWebUser`
+
+  const cursor = await db.query<WebUserSearchType>(searchQuery, {
+    searchString,
+    '@WebUserCollection': WebUserCollection.name,
+  })
 
   const webUsers = await cursor.all()
-
   return webUsers
+}
+
+export async function ignoreUserReports({ forWebUserKey }: { forWebUserKey: string }) {
+  return WebUserCollection.update(
+    { _key: forWebUserKey },
+    { moderation: { reports: { amount: 0, items: [], mainReasonName: null } } },
+    { returnNew: true },
+  )
 }
 
 export async function currentWebUserDeletionAccountRequest() {
@@ -423,154 +461,6 @@ export async function currentWebUserDeletionAccountRequest() {
   }
 }
 
-export async function deleteWebUserAccountConfirmedByToken(token: string) {
-  const webUserAccountDeletionToken = await jwt.verify<WebUserAccountDeletionToken>(
-    token,
-    isWebUserAccountDeletionToken,
-  )
-  if (!webUserAccountDeletionToken) {
-    return
-  }
-
-  return _deleteWebUserAccountNow(webUserAccountDeletionToken.payload.webUserKey)
-}
-
-async function _deleteWebUserAccountNow(webUserKey: string) {
-  return await shell.initiateCall(async () => {
-    await setPkgCurrentUser()
-    const { old: webUser } = await patchWebUser({ _key: webUserKey }, { deleting: true })
-    if (!webUser) {
-      return { status: 'not-found' } as const
-    }
-    if (webUser.deleting) {
-      return { status: 'deleting' } as const
-    }
-    const profileRecord = await getProfileRecord(webUser.profileKey)
-    assert(profileRecord, '_deleteWebUserAccountNow: profile#${webUser.profileKey} not found')
-    const profile = profileRecord.entity
-    if (profile.publisher) {
-      const knownFeaturedEntities = reduceToKnownFeaturedEntities(profile.knownFeaturedEntities)
-      const allDiscardingFeatures = [
-        ...knownFeaturedEntities.follow.collection.map(
-          ({ _key }) => ({ entityType: 'collection', feature: 'follow', _key } as const),
-        ),
-        ...knownFeaturedEntities.follow.profile.map(
-          ({ _key }) => ({ entityType: 'profile', feature: 'follow', _key } as const),
-        ),
-        ...knownFeaturedEntities.follow.subject.map(
-          ({ _key }) => ({ entityType: 'subject', feature: 'follow', _key } as const),
-        ),
-        ...knownFeaturedEntities.like.resource.map(
-          ({ _key }) => ({ entityType: 'resource', feature: 'like', _key } as const),
-        ),
-      ]
-      await shell.initiateCall(async () => {
-        await setCurrentSystemUser({
-          type: 'entity',
-          entityIdentifier: { _key: profile._key, entityClass: profileRecord.meta.entityClass },
-          restrictToScopes: false,
-        })
-        await Promise.all(
-          allDiscardingFeatures.map(
-            ({ _key, entityType, feature }) =>
-              entityFeatureAction({
-                _key,
-                entityType,
-                feature,
-                action: 'remove',
-                profileKey: profile._key,
-              }),
-            // shell.log('debug', `remove entityFeatureAction ${entityType} ${feature} ${_key}`),
-          ),
-        )
-      })
-    }
-    const ownCollections = await getProfileOwnKnownEntities({
-      knownEntity: 'collection',
-      profileKey: profile._key,
-    })
-
-    const ownResources = await getProfileOwnKnownEntities({
-      knownEntity: 'resource',
-      profileKey: profile._key,
-    })
-
-    const leftCollectionsRecords = ownCollections.filter(({ entity: { published } }) => published)
-    const leftResourcesRecords = ownResources.filter(({ entity: { published } }) => published)
-    const deletedCollectionsRecords = ownCollections.filter(
-      ({ entity: { published } }) => !published,
-    )
-    const deletedResourcesRecords = ownResources.filter(({ entity: { published } }) => !published)
-
-    await shell.initiateCall(async () => {
-      await setCurrentSystemUser({
-        type: 'entity',
-        entityIdentifier: { _key: profile._key, entityClass: profileRecord.meta.entityClass },
-        restrictToScopes: false,
-      })
-      await Promise.all(
-        deletedCollectionsRecords.map(async ({ entity: { _key } }) => {
-          await delCollection(_key)
-          // shell.log('debug', { delCollection: _key })
-          return { _key }
-        }),
-      )
-      await Promise.all(
-        deletedResourcesRecords.map(async data => {
-          const [interpreter /* , initializeContext, machine, configs */] =
-            await stdEdResourceMachine({
-              by: 'data',
-              data,
-            })
-          if (interpreter.getSnapshot().can('trash')) {
-            interpreter.send('trash')
-            await waitFor(interpreter, nameMatcher('Destroyed'))
-          }
-          interpreter.stop()
-          // shell.log('debug', { delResource: _key })
-          return { _key: data.entity._key }
-        }),
-      )
-    })
-
-    await setProfileAvatar({ _key: profile._key, rpcFile: null })
-    await setProfileBackgroundImage({ _key: profile._key, rpcFile: null })
-    await Profile.collection.update(profile._key, {
-      deleted: true,
-      aboutMe: '',
-      displayName: 'deleted user',
-      knownFeaturedEntities: [],
-      location: '',
-      organizationName: '',
-      points: 0,
-      publisher: false,
-      settings: { interests: null },
-      popularity: null,
-      siteUrl: null,
-      webslug: 'deleted-user',
-    })
-    await WebUserCollection.update(webUser._key, {
-      contacts: {},
-      deleted: true,
-      deleting: false,
-      displayName: 'deleted user',
-      isAdmin: false,
-    })
-
-    const event: WebUserEvents['deleted-web-user-account'] = {
-      displayName: profile.displayName,
-      profile: { ...profileRecord.entity, _meta: profileRecord.meta },
-      webUser: webUser,
-      deletedCollections: deletedCollectionsRecords.map(({ entity: { _key } }) => ({ _key })),
-      deletedResources: deletedResourcesRecords.map(({ entity: { _key } }) => ({ _key })),
-      leftCollections: leftCollectionsRecords.map(({ entity: { _key } }) => ({ _key })),
-      leftResources: leftResourcesRecords.map(({ entity: { _key } }) => ({ _key })),
-    }
-    shell.events.emit('deleted-web-user-account', event)
-    return { status: 'done', event } as const
-  })
-}
-
 export async function signWebUserAccountDeletionToken(webUserKey: string) {
   const webUserAccountDeletionToken: WebUserAccountDeletionToken = {
     scope: 'web-user-account-deletion',
@@ -579,7 +469,9 @@ export async function signWebUserAccountDeletionToken(webUserKey: string) {
   return jwt.sign(webUserAccountDeletionToken, { expirationTime: '1d' })
 }
 
-function isWebUserAccountDeletionToken(payload: any): payload is WebUserAccountDeletionToken {
+export function isWebUserAccountDeletionToken(
+  payload: any,
+): payload is WebUserAccountDeletionToken {
   return payload?.scope === 'web-user-account-deletion'
 }
 

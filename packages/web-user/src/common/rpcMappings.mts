@@ -1,17 +1,28 @@
 import { href } from '@moodlenet/react-app/common'
-import type { UserReport, UserReportRPC, UserStatusChange, UserStatusChangeRPC } from '../types.mjs'
-import { getProfileHomePageRoutePath } from '../webapp-routes.mjs'
+import type {
+  UserReport,
+  UserReportRPC,
+  UserStatus,
+  UserStatusChange,
+  UserStatusChangeRPC,
+} from './types.mjs'
+import { getProfileHomePageRoutePath } from './webapp-routes.mjs'
 
-export function userReportRPC2UserReport({
-  date,
-  reason,
-  status,
-  user,
-}: UserReportRPC): UserReport {
+export function getUserStatus(
+  mix: null | { publisher: boolean; isAdmin: boolean; deleted?: boolean },
+): UserStatus {
+  if (!mix) return 'Non-authenticated'
+  else if (mix.deleted) return 'Deleted'
+  else if (mix.isAdmin) return 'Admin'
+  else if (mix.publisher) return 'Publisher'
+  else if (!mix.publisher) return 'Non-publisher'
+  return 'Non-authenticated'
+}
+
+export function userReportRPC2UserReport({ date, reason, user }: UserReportRPC): UserReport {
   return {
     date,
     reason,
-    status,
     user: {
       displayName: user.displayName,
       email: user.email,

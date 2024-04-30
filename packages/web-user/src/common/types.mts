@@ -99,7 +99,6 @@ export type UserReport = {
   date: string
   user: UserReporter
   reason: ReportProfileData
-  status: UserStatus
 }
 
 export type ReportProfileReasonName =
@@ -126,7 +125,6 @@ export type UserReportRPC = {
   date: string
   user: UserReporterRPC
   reason: ReportProfileData
-  status: UserStatus
 }
 export type UserReporterRPC = {
   displayName: string

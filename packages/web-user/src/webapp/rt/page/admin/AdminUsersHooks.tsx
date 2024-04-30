@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   UserStatusChangeRPC2UserStatusChange,
   userReportRPC2UserReport,
-} from '../../../../common/reports/rpcMappings.mjs'
+} from '../../../../common/rpcMappings.mjs'
 import type { User, WebUserDataRPC } from '../../../../common/types.mjs'
 import type { UsersProps } from '../../../ui/exports/ui.mjs'
 import { shell } from '../../shell.mjs'

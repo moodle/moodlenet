@@ -131,6 +131,8 @@ export type WebUserExposeType = PkgExposeDef<{
     'webapp/admin/roles/searchUsers'(body: {
       search: string
       sortType?: AdminSearchUserSortType
+      forReports?: boolean
+      filterNoFlag?: boolean
     }): Promise<WebUserDataRPC[]>
     'webapp/admin/roles/setIsAdmin'(
       body: { isAdmin: boolean } & ({ profileKey: string } | { userKey: string }),
@@ -140,13 +142,13 @@ export type WebUserExposeType = PkgExposeDef<{
       isPublisher: boolean
     }): Promise<boolean>
     //report
-    'webapp/admin/moderation/___delete-user/:_key'(
+    'webapp/admin/moderation/___delete-user/:webUserKey'(
       body: null,
-      params: { _key: string },
+      params: { webUserKey: string },
     ): Promise<unknown>
-    'webapp/admin/moderation/delete-user-reports/:_key'(
+    'webapp/admin/moderation/ignore-user-reports/:webUserKey'(
       body: null,
-      params: { _key: string },
+      params: { webUserKey: string },
     ): Promise<unknown>
     'webapp/profile/report/:_key'(
       body: {
@@ -158,4 +160,4 @@ export type WebUserExposeType = PkgExposeDef<{
   }
 }>
 
-export type AdminSearchUserSortType = 'DispalyName' | 'Flags' | 'LastFlag' | 'MainReason' | 'Status'
+export type AdminSearchUserSortType = 'DisplayName' | 'Flags' | 'LastFlag' | 'MainReason' | 'Status'

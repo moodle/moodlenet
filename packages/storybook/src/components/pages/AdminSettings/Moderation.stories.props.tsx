@@ -94,7 +94,6 @@ const generateRandomUserReport = (): UserReport => {
       type: reportOptionTypes[Math.floor(Math.random() * reportOptionTypes.length)]!,
       comment: getRandomComment(reason),
     },
-    status: getRandomStatus(),
   }
   return randomUserReport
 }
@@ -250,7 +249,7 @@ export const useModerationStoryProps = (overrides?: {
   }, [defaultUsers]) // Include 'defaultUsers' as a dependency
 
   const sort: SortReportedUsers = {
-    sortByDispalyName: () =>
+    sortByDisplayName: () =>
       setUsers(prevUsers =>
         [...prevUsers].sort((a, b) => a.user.title.localeCompare(b.user.title)),
       ),

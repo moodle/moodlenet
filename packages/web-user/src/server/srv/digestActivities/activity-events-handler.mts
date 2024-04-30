@@ -1,6 +1,5 @@
 import type { EventPayload } from '@moodlenet/core'
 import { reportOptionTypeMap } from '../../../common/exports.mjs'
-import { getUserStatus } from '../../../common/util.mjs'
 import {
   getProfileRecord,
   getWebUser,
@@ -118,22 +117,16 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
       if (!(targetWebUser && targetProfile)) {
         return
       }
-      const targetUserStatus = getUserStatus({ ...targetWebUser, ...targetProfile.entity })
       const report: ReportItem = {
         comment,
         date: at,
-        reporter: {
-          webUserKey: reporterWebUser._key,
-          profileKey: reporterWebUser.profileKey,
-          displayName: reporterWebUser.displayName,
-          email: reporterWebUser.contacts.email ?? 'N/A',
-        },
+        reporterWebUserKey: reporterWebUser._key,
         reportTypeId: reportOptionTypeId,
-        status: targetUserStatus,
       }
       const webUserId = targetWebUser._id
-      const curs = await db.query({
-        query: `
+      const curs = await db.query(
+        {
+          query: `
 LET user = DOCUMENT(@webUserId)
 LET newReportItems = UNSHIFT(user.moderation.reports.items, @report)
 LET newReportItemsAmount = LENGTH(newReportItems)
@@ -159,13 +152,15 @@ UPDATE user WITH {
 } IN @@WebUserCollectionName
 RETURN user ? true : false
 `,
-        bindVars: {
-          '@WebUserCollectionName': WebUserCollection.name,
-          webUserId,
-          report,
-          reportOptionTypeMap,
+          bindVars: {
+            '@WebUserCollectionName': WebUserCollection.name,
+            webUserId,
+            report,
+            reportOptionTypeMap,
+          },
         },
-      })
+        { retryOnConflict: 15 },
+      )
       await curs.all()
       await curs.kill()
     }

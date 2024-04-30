@@ -5,52 +5,57 @@ import type { AdminSearchUserSortType } from '../../../../common/expose-def.mjs'
 import {
   UserStatusChangeRPC2UserStatusChange,
   userReportRPC2UserReport,
-} from '../../../../common/reports/rpcMappings.mjs'
+} from '../../../../common/rpcMappings.mjs'
 import type { User, WebUserDataRPC } from '../../../../common/types.mjs'
 import type { ModerationProps, ModerationUser, SortReportedUsers } from '../../../ui/exports/ui.mjs'
 import { shell } from '../../shell.mjs'
 
 export const useAdminModerationProps = (): ModerationProps => {
-  const [sortType, setSortType] = useState<AdminSearchUserSortType>('LastFlag')
-  const sort = useMemo<SortReportedUsers>(() => {
-    return {
-      sortByDispalyName() {
-        setSortType('DispalyName')
-      },
-      sortByFlags() {
-        setSortType('Flags')
-      },
-      sortByLastFlag() {
-        setSortType('LastFlag')
-      },
-      sortByMainReason() {
-        setSortType('MainReason')
-      },
-      sortByStatus() {
-        setSortType('Status')
-      },
-    }
-  }, [])
-
-  // const [search, setSearch] = useState<string>('')
-  const [usersCache, setUsersCache] = useState<WebUserDataRPC[]>([])
-
-  const searchUser = useCallback(
-    (str: string) => {
-      shell.rpc
-        .me('webapp/admin/roles/searchUsers', { rpcId: 'webapp/admin/roles/searchUsers' })({
-          search: str,
-          sortType: sortType,
-        })
-        .then(setUsersCache)
-        .catch(silentCatchAbort)
-      // setSearch(str)
+  const [sortType, setSortType] = useState<AdminSearchUserSortType | ''>('')
+  const setSort = useCallback(
+    (type: AdminSearchUserSortType) => {
+      setSortType(type === sortType ? '' : type)
     },
     [sortType],
   )
+  const sort = useMemo<SortReportedUsers>(() => {
+    return {
+      sortByDisplayName() {
+        setSort('DisplayName')
+      },
+      sortByFlags() {
+        setSort('Flags')
+      },
+      sortByLastFlag() {
+        setSort('LastFlag')
+      },
+      sortByMainReason() {
+        setSort('MainReason')
+      },
+      sortByStatus() {
+        setSort('Status')
+      },
+    }
+  }, [setSort])
+
+  const [searchStr, setSearch] = useState<string>('')
+  const [usersCache, setUsersCache] = useState<WebUserDataRPC[]>([])
+
+  const searchUser = useCallback(() => {
+    shell.rpc
+      .me('webapp/admin/roles/searchUsers', { rpcId: 'webapp/admin/moderation/searchUsers' })({
+        search: searchStr,
+        sortType: sortType || 'LastFlag',
+        filterNoFlag: true,
+        forReports: true,
+      })
+      .then(setUsersCache)
+      .catch(silentCatchAbort)
+    // setSearch(str)
+  }, [sortType, searchStr])
 
   useEffect(() => {
-    searchUser('')
+    searchUser()
   }, [searchUser])
 
   const userProps = useMemo<ModerationProps>(() => {
@@ -61,7 +66,7 @@ export const useAdminModerationProps = (): ModerationProps => {
         statusHistory,
         mainReportReason,
         isPublisher,
-        _key,
+        _key: webUserKey,
         name: title,
         email,
         isAdmin,
@@ -69,11 +74,15 @@ export const useAdminModerationProps = (): ModerationProps => {
         profileHomePath,
       }) => {
         const deleteUser = async () => {
-          return shell.rpc.me('webapp/admin/moderation/___delete-user/:_key')(null, { _key })
+          return shell.rpc.me('webapp/admin/moderation/___delete-user/:webUserKey')(null, {
+            webUserKey: webUserKey,
+          })
           ///.then(() => searchUser(search))
         }
         const deleteReports = async () => {
-          return shell.rpc.me('webapp/admin/moderation/delete-user-reports/:_key')(null, { _key })
+          return shell.rpc.me('webapp/admin/moderation/ignore-user-reports/:webUserKey')(null, {
+            webUserKey: webUserKey,
+          })
           //  .then(() => searchUser(search))
         }
         const toggleIsPublisher = async () => {
@@ -105,12 +114,12 @@ export const useAdminModerationProps = (): ModerationProps => {
     )
     const moderationProps: ModerationProps = {
       users,
-      search: searchUser,
+      search: setSearch,
       sort,
       tableItems: [],
     }
     return moderationProps
-  }, [searchUser, sort, usersCache])
+  }, [setSearch, sort, usersCache])
 
   return userProps
 }

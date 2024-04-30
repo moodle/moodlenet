@@ -36,7 +36,7 @@ interface EnsureUnpubOpts {
   onlyIfPublished?: boolean
 }
 export async function ensureUnpublish(provideBy: ProvideBy, opts?: EnsureUnpubOpts) {
-  const [interpreter] = await stdEdResourceMachine(provideBy)
+  const [interpreter, , , , storedStatus] = await stdEdResourceMachine(provideBy)
   const snap = interpreter.getSnapshot()
   const event =
     opts?.onlyIfPublished && !matchState(snap, 'Published')
@@ -51,9 +51,14 @@ export async function ensureUnpublish(provideBy: ProvideBy, opts?: EnsureUnpubOp
   // console.log(snap.value, '-> event', event)
   if (event) {
     interpreter.send(event)
-    await waitFor(interpreter, nameMatcher('Unpublished'))
-    // console.log(event, 'event done')
+    await waitFor(interpreter, nameMatcher('Unpublished')) /* .catch(e => {
+      console.error(event, 'event not done error', e)
+      throw e
+    }) */
+    // console.log(event, 'event done', interpreter.getSnapshot().context.doc.id)
+    interpreter.stop()
+    await storedStatus
   }
   interpreter.stop()
-  return new Promise(r => setTimeout(r, 300))
+  return
 }

@@ -42,7 +42,7 @@ export type ModerationUser = {
 }
 
 export type SortReportedUsers = {
-  sortByDispalyName(): unknown
+  sortByDisplayName(): unknown
   sortByFlags(): unknown
   sortByLastFlag(): unknown
   sortByMainReason(): unknown
@@ -218,7 +218,7 @@ const Row: FC<{
           className={`delete ${
             currentStatus === 'Admin' || currentStatus === 'Deleted' ? 'disabled' : ''
           }`}
-          title={currentStatus ? 'Cannot delete an admin' : 'Delete user'}
+          title={currentStatus === 'Admin' ? 'Cannot delete an admin' : 'Delete user'}
         >
           <PersonOffOutlined />
         </abbr>
@@ -269,7 +269,7 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
 
     return (
       <div className="table-header">
-        {createSortColumn('sortByDispalyName', 'Display name', 'display-name')}
+        {createSortColumn('sortByDisplayName', 'Display name', 'display-name')}
         {createSortColumn('sortByFlags', 'Flags', 'flags')}
         {createSortColumn('sortByLastFlag', 'Last flag', 'last-flag')}
         {createSortColumn('sortByMainReason', 'Main reason', 'reason')}
@@ -310,7 +310,13 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
             })
             .replace(',', '')}
         </div>{' '}
-        by <abbr title={`Go to profile page\n${user.email}`}>{user.displayName}</abbr>
+        by{' '}
+        <abbr title={`Go to profile page\n${user.email}`}>
+          {' '}
+          <Link href={user.profileHref} target="_blank">
+            {user.displayName}
+          </Link>
+        </abbr>
       </div>
     )
   }
@@ -386,7 +392,9 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
           <div key={index} className="status-change">
             <div className="status">{getStatusVerb(statusChange.status)} by</div>
             <abbr title={`Go to profile page\n${statusChange.userChangedStatus.email}`}>
-              {statusChange.userChangedStatus.displayName}
+              <Link href={statusChange.userChangedStatus.profileHref} target="_blank">
+                {statusChange.userChangedStatus.displayName}
+              </Link>
             </abbr>{' '}
             on
             <div className="date">
@@ -500,7 +508,9 @@ export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItem
                             .replace(',', '')}
                         </div>
                         <abbr className="user" title={`Go to profile page\n${report.user.email}`}>
-                          {report.user.displayName}
+                          <Link href={report.user.profileHref} target="_blank">
+                            {report.user.displayName}
+                          </Link>
                         </abbr>
                       </div>
                       <div className="comment">{report.reason.comment}</div>

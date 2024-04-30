@@ -10,7 +10,6 @@ import type {
   EntityDocument,
   EntityFullDocument,
   EntityUser,
-  PkgUser,
 } from '@moodlenet/system-entities/server'
 import type {
   KnownEntityFeature,
@@ -92,21 +91,9 @@ export type ImageUploaded = { kind: 'file'; directAccessId: string }
 
 export type ReportItem = {
   date: string
-  reporter: {
-    profileKey: string
-    webUserKey: string
-    displayName: string
-    email: string
-  }
+  reporterWebUserKey: string
   reportTypeId: ReportOptionTypeId
   comment: string
-  status: UserStatus
-}
-export type IgnoredReportItem = ReportItem & {
-  ignored: {
-    byWebUserKey: string
-    date: string
-  }
 }
 export type UserStatusItem = {
   status: UserStatus
@@ -118,6 +105,7 @@ export type WebUserDataType = {
   displayName: string
   contacts: Contacts
   isAdmin: boolean
+  publisher: boolean
   profileKey: string
   deleting?: boolean
   deleted?: boolean
@@ -125,11 +113,11 @@ export type WebUserDataType = {
     reports: {
       items: ReportItem[]
       amount: number
-      lastItem: null | ReportItem
       mainReasonName: null | ReportProfileReasonName
     }
-    ignoredReports: { items: IgnoredReportItem[] }
-    status: { history: UserStatusItem[] }
+    status: {
+      history: UserStatusItem[]
+    }
   }
 }
 
@@ -251,7 +239,7 @@ export type WebUserActivityEvents = {
   }
   'user-publishing-permission-change': {
     type: 'given' | 'revoked'
-    moderator: EntityUser | PkgUser
+    moderator: EntityUser //| PkgUser
     profile: EntityFullDocument<ProfileDataType>
   }
   'feature-entity': {

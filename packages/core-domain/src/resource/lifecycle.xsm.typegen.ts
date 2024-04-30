@@ -68,11 +68,15 @@ export interface Typegen0 {
   'eventsCausingGuards': {
     'issuer has no read permission': ''
     'issuer is admin': 'reject-publish'
-    'issuer is creator': 'cancel-meta-generation' | 'provide-resource-edits' | 'trash'
+    'issuer is creator': 'provide-resource-edits'
     'issuer is creator and edits are valid': 'store-edits'
     'issuer is creator and issuer is publisher and meta valid for publishing': 'publish'
     'issuer is creator and meta generator enabled': 'request-meta-generation'
-    'issuer is creator or admin': 'unpublish'
+    'issuer is creator or admin':
+      | 'cancel-meta-generation'
+      | 'provide-resource-edits'
+      | 'trash'
+      | 'unpublish'
     'issuer is not an authenticated user': 'provide-new-resource'
     'issuer is system': 'generated-meta-suggestions'
     'meta generator enabled': 'done.invoke.EdResource.Storing-New-Resource:invocation[0]'
