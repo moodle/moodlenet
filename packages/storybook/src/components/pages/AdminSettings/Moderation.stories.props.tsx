@@ -120,11 +120,12 @@ const getRandomUser = (deleteReports: (email: string) => void): ModerationUser =
       mainReportReason: getRandomReason(),
     },
     toggleIsPublisher: () => console.log('Toggling user type'),
-    deleteUser: () => console.log('Deleting user'), // Add the missing deleteUser property
+    deleteUser: () => {
+      deleteReports(emails[randomIndex] || '')
+      console.log('Deleting reports')
+    }, // Add the missing deleteReports property
     deleteReports: () => {
       deleteReports(emails[randomIndex] || '')
-      console.log('Email:', emails[randomIndex])
-      console.log('Deleting reports')
     }, // Add the missing deleteReports property
   }
 }
@@ -178,7 +179,10 @@ export const useModerationStoryProps = (overrides?: {
           console.log('Deleting maria.anders@school.edu reports')
           deleteReports('maria.anders@school.edu')
         },
-        deleteUser: () => console.log('Deleting user'),
+        deleteUser: () => {
+          console.log('Deleting maria.anders@school.edu')
+          deleteReports('maria.anders@school.edu')
+        },
       },
       ...createRandomUsers(5, deleteReports),
     ],

@@ -39,9 +39,18 @@ export type ModerationUser = {
   toggleIsPublisher(): unknown
 }
 
+export type SortReportedUsers = {
+  sortByDispalyName(): unknown
+  sortByFlags(): unknown
+  sortByLastFlag(): unknown
+  sortByMainReason(): unknown
+  sortByStatus(): unknown
+}
+
 export type ModerationProps = {
   users: ModerationUser[]
   search(str: string): unknown
+  sort: SortReportedUsers
   tableItems: (ReportTableItem | null)[]
 }
 
@@ -55,6 +64,7 @@ const Row: FC<{
   setShowReasonsModal: React.Dispatch<React.SetStateAction<number | undefined>>
   setIsToDelete: React.Dispatch<React.SetStateAction<number | undefined>>
   setShowDeleteReportsSnackbar: React.Dispatch<React.SetStateAction<string | undefined>>
+  setDisplayNameToDelete: React.Dispatch<React.SetStateAction<string>>
 }> = ({
   id,
   moderationUser,
@@ -62,6 +72,7 @@ const Row: FC<{
   setShowReasonsModal,
   setIsToDelete,
   setShowDeleteReportsSnackbar,
+  setDisplayNameToDelete,
   //bodyItems,
 }) => {
   const { user, toggleIsPublisher, deleteReports } = moderationUser
@@ -166,7 +177,12 @@ const Row: FC<{
           <Unpublished />
         </abbr>
         <abbr
-          onClick={() => !isAdmin && setIsToDelete(id)}
+          onClick={() => {
+            if (!isAdmin) {
+              setIsToDelete(id)
+              setDisplayNameToDelete(user.title)
+            }
+          }}
           className={`delete ${isAdmin ? 'disabled' : ''}`}
           title={isAdmin ? 'Cannot delete an admin' : 'Delete user'}
         >
@@ -184,7 +200,7 @@ const Row: FC<{
   )
 }
 
-export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) => {
+export const Moderation: FC<ModerationProps> = ({ users, sort, search, tableItems }) => {
   const usersTableItems: (AddonItem | null)[][] = users.map(() => [])
   users.map(({ user }, i) /* user */ => {
     const newUserTableItem = usersTableItems && usersTableItems[i]
@@ -196,6 +212,38 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
         newUserTableItem.push(email === user.email ? tableItem.body.element : null)
     })
   })
+
+  const [activeSort, setActiveSort] = useState<keyof ModerationProps['sort'] | undefined>(undefined)
+
+  const tableHeader = () => {
+    const createSortColumn = (
+      sortKey: keyof ModerationProps['sort'],
+      label: string,
+      className: string,
+    ) => (
+      <div
+        className={`${className} ${activeSort === sortKey ? 'active' : ''}`}
+        onClick={() => {
+          setActiveSort(activeSort === sortKey ? undefined : sortKey)
+          sort[sortKey]()
+        }}
+      >
+        <div className="label">{label}</div>
+        {activeSort === sortKey ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+      </div>
+    )
+
+    return (
+      <div className="table-header">
+        {createSortColumn('sortByDispalyName', 'Display name', 'display-name')}
+        {createSortColumn('sortByFlags', 'Flags', 'flags')}
+        {createSortColumn('sortByLastFlag', 'Last flag', 'last-flag')}
+        {createSortColumn('sortByMainReason', 'Main reason', 'reason')}
+        {createSortColumn('sortByStatus', 'Status', 'status')}
+        <div className="actions">Actions</div>
+      </div>
+    )
+  }
 
   const [showDeleteReportsSnackbar, setShowDeleteReportsSnackbar] = useState<string | undefined>(
     undefined,
@@ -247,6 +295,8 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
     ) : null
 
   const [isToDelete, setIsToDelete] = useState<number | undefined>(undefined)
+  const [displayNameToDelete, setDisplayNameToDelete] = useState<string>('')
+
   const deleteConfirmation = typeof isToDelete === 'number' && (
     <Modal
       title={`Alert`}
@@ -259,7 +309,7 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
           }}
           color="red"
         >
-          Delete user
+          Delete {displayNameToDelete}
         </PrimaryButton>
       }
       onPressEnter={() => {
@@ -274,7 +324,7 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
     >
       <b>{users[isToDelete]?.user.title}</b> will be <b>totally removed from the system</b>.<br />
       <br />
-      Notice: only report logs and non deleted content will be kept anonymously.
+      Notice: All user content will be deleted, only report logs will be kept anonymously.
     </Modal>
   )
 
@@ -393,12 +443,11 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
       type="success"
       key={'delete-user-snackbar'}
     >
-      User deleted
+      {`${displayNameToDelete} deleted`}
     </Snackbar>
   ) : null
 
   const snackbars = <SnackbarStack snackbarList={[DeleteReportsSnackbar, DeletedUserSnackbar]} />
-
   const modals = [flagModal, ReasonsModal(), deleteConfirmation]
 
   return (
@@ -419,14 +468,7 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
           showSearchButton={false}
         />
         <div className="table-container">
-          <div className="table-header">
-            <div className="display-name">Display name</div>
-            <div className="flags">Flags</div>
-            <div className="last-flag">Last flag</div>
-            <div className="reason">Main reason</div>
-            <div className="status">Status</div>
-            <div className="actions">Actions</div>
-          </div>
+          {tableHeader()}
           <div className="table-body-container">
             <div className="table-body">
               {users.map((moderationUser, i) /* user */ => {
@@ -439,6 +481,7 @@ export const Moderation: FC<ModerationProps> = ({ users, search, tableItems }) =
                     setShowReasonsModal={setShowReasonsModal}
                     setIsToDelete={setIsToDelete}
                     setShowDeleteReportsSnackbar={setShowDeleteReportsSnackbar}
+                    setDisplayNameToDelete={setDisplayNameToDelete}
                     key={i}
                   />
                 )
