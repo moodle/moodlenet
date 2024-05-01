@@ -231,6 +231,7 @@ export type WhistleblowUser = {
   displayName: string
   avatarUrl: string
   profileHref: Href
+  email: string
 }
 
 export type WhistleblowResourceData = {
@@ -249,14 +250,15 @@ export type WhistleblownResourceData = WhistleblowResourceData & {
   resource: WhistleblowResource
   user: WhistleblowUser
 }
-
 export type ModerationResource = WhistleblowResource & {
   user: {
     displayName: string
     email: string
     profileHref: Href
     currentStatus: UserStatus
+
     statusHistory: UserStatusChange[]
   }
-  whistleblows: WhistleblowResourceData[]
+  whistleblows: WhistleblownResourceData[]
+  mainReportReason: WhistleblowResourceReasonName
 }

@@ -347,7 +347,7 @@ const getRandomComment = (reason: WhistleblowResourceReasonName): string => {
   return possibleComments[Math.floor(Math.random() * possibleComments.length)] ?? ''
 }
 
-const getRandomReason = (): WhistleblowResourceReasonName => {
+export const getRandomWhistleblownReason = (): WhistleblowResourceReasonName => {
   const reasons: WhistleblowResourceReasonName[] = whistleblowOptions.map(reason => reason.name)
 
   return reasons[Math.floor(Math.random() * reasons.length)] ?? 'Other'
@@ -355,14 +355,17 @@ const getRandomReason = (): WhistleblowResourceReasonName => {
 
 let emailCounter = 0
 
+const emails = names.map((name, i) => `${name.split(' ').join('.')}${i}@school.edu`.toLowerCase())
+
 const generateRandomUserWhistleblow = (): WhistleblownResourceData => {
   emailCounter++
-  const reason = getRandomReason()
+  const reason = getRandomWhistleblownReason()
   const randomUserWhislteblow: WhistleblownResourceData = {
     user: {
-      avatarUrl: `https://i.pravatar.cc/150?img=${emailCounter}`,
+      avatarUrl: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 10)}`,
       displayName: names[Math.floor(Math.random() * names.length)] || '',
       profileHref: href('Pages/Profile/Admin'),
+      email: emails[Math.floor(Math.random() * emails.length)] || '',
     },
     date: new Date(getRandomDate()), // Convert the string to a Date object
     type: {

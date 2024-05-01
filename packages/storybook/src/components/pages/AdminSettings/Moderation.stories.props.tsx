@@ -14,6 +14,7 @@ import { action } from '@storybook/addon-actions'
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react'
 import {
   generateRandomUserWhistleblows,
+  getRandomWhistleblownReason,
   resourceFactories,
 } from '../Resource/ResourceData.props.js'
 
@@ -192,6 +193,7 @@ const getRandomModerationResource = (): ModerationResource => {
     imageUrl: imageUrl,
     resourceHref: resourceHref,
     whistleblows: generateRandomUserWhistleblows(Math.floor(Math.random() * 15) + 2),
+    mainReportReason: getRandomWhistleblownReason(),
     user: {
       displayName: names[randomIndex] || '', // Assign an empty string as the default value
       email: emails[randomIndex] || '', // Assign an empty string as the default value

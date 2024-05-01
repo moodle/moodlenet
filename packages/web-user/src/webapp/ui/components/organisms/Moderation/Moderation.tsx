@@ -28,6 +28,7 @@ import type {
   UserStatus,
 } from '../../../../../common/types.mjs'
 import { ReactComponent as RemoveFlag } from '../../../assets/icons/remove-flag.svg'
+import WhistleblownResourcesModal from '../../molecules/WhistleblownResourcesModal/WhistleblownResourcesModal.js'
 import './Moderation.scss'
 
 export type ReportTableItem = {
@@ -64,7 +65,7 @@ const UserRow: FC<{
   id: number
   moderationUser: ModerationUser
   bodyItems: (AddonItem | null)[]
-  toggleShowFlagsModal: React.Dispatch<React.SetStateAction<number | undefined>>
+  toggleShowUserFlagsModal: React.Dispatch<React.SetStateAction<number | undefined>>
   setShowReasonsModal: React.Dispatch<React.SetStateAction<number | undefined>>
   setShowStatusModal: React.Dispatch<React.SetStateAction<number | undefined>>
   setIsToDelete: React.Dispatch<React.SetStateAction<number | undefined>>
@@ -73,7 +74,7 @@ const UserRow: FC<{
 }> = ({
   id,
   moderationUser,
-  toggleShowFlagsModal,
+  toggleShowUserFlagsModal,
   setShowReasonsModal,
   setShowStatusModal,
   setIsToDelete,
@@ -156,7 +157,7 @@ const UserRow: FC<{
         className="flags"
         title="Show flag details"
         onClick={() => {
-          toggleShowFlagsModal(id)
+          toggleShowUserFlagsModal(id)
         }}
       >
         {user.reports.length}
@@ -239,8 +240,10 @@ const UserRow: FC<{
 const ResourceRow: FC<{
   id: number
   moderationResource: ModerationResource
+  setShowResourceWhistleblowModal: React.Dispatch<React.SetStateAction<boolean>>
+  setResourceWhistleblowModal: React.Dispatch<React.SetStateAction<JSX.Element | null>>
+  toggleShowResourceFlagsModal: React.Dispatch<React.SetStateAction<number | undefined>>
   // bodyItems: (AddonItem | null)[]
-  // toggleShowFlagsModal: React.Dispatch<React.SetStateAction<number | undefined>>
   // setShowReasonsModal: React.Dispatch<React.SetStateAction<number | undefined>>
   // setShowStatusModal: React.Dispatch<React.SetStateAction<number | undefined>>
   // setIsToDelete: React.Dispatch<React.SetStateAction<number | undefined>>
@@ -249,7 +252,9 @@ const ResourceRow: FC<{
 }> = ({
   id,
   moderationResource,
-  // toggleShowFlagsModal,
+  setResourceWhistleblowModal,
+  setShowResourceWhistleblowModal,
+  toggleShowResourceFlagsModal,
   // setShowReasonsModal,
   // setShowStatusModal,
   // setIsToDelete,
@@ -257,7 +262,7 @@ const ResourceRow: FC<{
   // setDisplayNameToDelete,
   //bodyItems,
 }) => {
-  const { title, resourceHref, user, whistleblows } = moderationResource
+  const { title, resourceHref, user, whistleblows, mainReportReason } = moderationResource
   const { displayName, email, profileHref, currentStatus, statusHistory } = user
   // const { user, toggleIsPublisher, deleteReports } = moderationUser
 
@@ -279,27 +284,27 @@ const ResourceRow: FC<{
   //   </abbr>
   // )
 
-  // const lastReport =
-  //   user.reports.length > 0
-  //     ? user.reports.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
-  //     : null
-  // const lastReportDateRaw = lastReport ? new Date(lastReport.date) : null
-  // const lastReportDate = lastReportDateRaw
-  //   ? lastReportDateRaw
-  //       .toLocaleString('default', {
-  //         day: '2-digit',
-  //         month: 'short',
-  //         year: 'numeric',
-  //       })
-  //       .replace(',', '')
-  //   : ''
-  // const lastReportTime = lastReportDateRaw
-  //   ? lastReportDateRaw.toLocaleString('default', {
-  //       hour: '2-digit',
-  //       minute: '2-digit',
-  //       hour12: false,
-  //     })
-  //   : ''
+  const lastReport =
+    whistleblows.length > 0
+      ? whistleblows.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+      : null
+  const lastReportDateRaw = lastReport ? new Date(lastReport.date) : null
+  const lastReportDate = lastReportDateRaw
+    ? lastReportDateRaw
+        .toLocaleString('default', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        })
+        .replace(',', '')
+    : ''
+  const lastReportTime = lastReportDateRaw
+    ? lastReportDateRaw.toLocaleString('default', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
+    : ''
 
   return (
     <div className="table-row" key={id}>
@@ -307,6 +312,33 @@ const ResourceRow: FC<{
         <Link href={resourceHref} target="_blank">
           {title}
         </Link>
+      </abbr>
+      <abbr
+        className="reports"
+        title="Show report details"
+        onClick={() => {
+          toggleShowResourceFlagsModal(id)
+        }}
+      >
+        {whistleblows.length}
+      </abbr>
+      <abbr className="last-flag" title={`${lastReportDate}, ${lastReportTime}`}>
+        {lastReportDate}
+      </abbr>
+      <abbr
+        className="reason"
+        title="Show reason details"
+        onClick={() => {
+          setShowResourceWhistleblowModal(true)
+          setResourceWhistleblowModal(
+            <WhistleblownResourcesModal
+              whistleblows={whistleblows}
+              setIsShowingWhistleblows={setShowResourceWhistleblowModal}
+            />,
+          )
+        }}
+      >
+        {mainReportReason}
       </abbr>
       <abbr
         className={`display-name ${currentStatus === 'Deleted' ? 'deleted' : ''}`}
@@ -332,34 +364,12 @@ const ResourceRow: FC<{
           }`
         )}
       </abbr>
-      <abbr
-        className="reports"
-        title="Show report details"
-        onClick={() => {
-          // toggleShowFlagsModal(id)
-        }}
-      >
-        {whistleblows.length}
-      </abbr>
-      {/* <abbr className="last-flag" title={`${lastReportDate}, ${lastReportTime}`}>
-        {lastReportDate}
-      </abbr>
-      <abbr
-        className="reason"
-        title="Show reason details"
-        onClick={() => {
-          setShowReasonsModal(id)
-        }}
-      >
-        {mainReportReason}
-      </abbr>
-      <div className="status">{accountStatus}</div>
       <div className="actions">
         <abbr
           onClick={() => {
             if (currentStatus !== 'Deleted') {
-              deleteReports()
-              setShowDeleteReportsSnackbar(user.title)
+              // deleteReports()
+              // setShowDeleteReportsSnackbar(user.title)
             }
           }}
           className={`remove-flags ${currentStatus === 'Deleted' ? 'disabled' : ''}`}
@@ -368,7 +378,7 @@ const ResourceRow: FC<{
           <RemoveFlag />
         </abbr>
         <abbr
-          onClick={() => toggleIsPublisher()}
+          // onClick={() => toggleIsPublisher()}
           className={`unapprove ${
             (['Non-authenticated', 'Admin', 'Deleted'] as UserStatus[]).includes(currentStatus)
               ? 'disabled'
@@ -393,8 +403,8 @@ const ResourceRow: FC<{
         <abbr
           onClick={() => {
             if (currentStatus !== 'Admin') {
-              setIsToDelete(id)
-              setDisplayNameToDelete(user.title)
+              // setIsToDelete(id)
+              // setDisplayNameToDelete(user.title)
             }
           }}
           className={`delete ${
@@ -404,7 +414,7 @@ const ResourceRow: FC<{
         >
           <PersonOffOutlined />
         </abbr>
-      </div>  */}
+      </div>
       {/* {bodyItems.map((item, i) => {
         return (
           <div key={(item && item.key) ?? i} id={item ? item.key.toString() : ''}>
@@ -481,14 +491,13 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
 
     return (
       <div className="table-header resources-table">
-        {createSortColumn('sortByDisplayName', 'Name', 'resource-name')}
-        {createSortColumn('sortByDisplayName', 'User', 'display-name')}
-        {createSortColumn('sortByDisplayName', 'Reports', 'reports')}
-        {/* {createSortColumn('sortByFlags', 'Flags', 'flags')}
+        {createSortColumn('sortByResourceName', 'Name', 'resource-name')}
+        {createSortColumn('sortByFlags', 'Flags', 'flags')}
         {createSortColumn('sortByLastFlag', 'Last flag', 'last-flag')}
         {createSortColumn('sortByMainReason', 'Main reason', 'reason')}
-        {createSortColumn('sortByStatus', 'Status', 'status')}
-        <div className="actions">Actions</div> */}
+        {createSortColumn('sortByDisplayName', 'Creator', 'display-name')}
+        {/* {createSortColumn('sortByStatus', 'Status', 'status')} */}
+        <div className="actions">Actions</div>
       </div>
     )
   }
@@ -507,13 +516,17 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
     </Snackbar>
   ) : null
 
-  const [showFlagsModal, toggleShowFlagsModal] = useState<number | undefined>(undefined)
+  const [showUserFlagsModal, toggleShowUserFlagsModal] = useState<number | undefined>(undefined)
+  const [showResourceFlagsModal, toggleShowResourceFlagsModal] = useState<number | undefined>(
+    undefined,
+  )
 
-  const flagRow = (user: UserReporter, date: string, i: number) => {
+  const flagRow = (user: UserReporter, date: string | Date, i: number) => {
+    const newDate = typeof date === 'string' ? new Date(date) : date
     return (
       <div className="flag-row" key={i}>
         <div className="date">
-          {new Date(date)
+          {newDate
             .toLocaleString('default', {
               day: '2-digit',
               month: 'short',
@@ -534,16 +547,30 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
       </div>
     )
   }
-  const flagsModal =
-    typeof showFlagsModal === 'number' ? (
+  const userFlagsModal =
+    typeof showUserFlagsModal === 'number' ? (
       <Modal
         className="flag-modal"
         key="flag-modal"
         title="Reported by"
-        onClose={() => toggleShowFlagsModal(undefined)}
+        onClose={() => toggleShowUserFlagsModal(undefined)}
       >
-        {users[showFlagsModal]?.user.reports.map((report, index) =>
+        {users[showUserFlagsModal]?.user.reports.map((report, index) =>
           flagRow(report.user, report.date, index),
+        )}
+      </Modal>
+    ) : null
+
+  const resourceFlagsModal =
+    typeof showResourceFlagsModal === 'number' ? (
+      <Modal
+        className="flag-modal"
+        key="flag-modal"
+        title="Reported by"
+        onClose={() => toggleShowResourceFlagsModal(undefined)}
+      >
+        {resources[showResourceFlagsModal]?.whistleblows.map((whistleblow, index) =>
+          flagRow(whistleblow.user, whistleblow.date, index),
         )}
       </Modal>
     ) : null
@@ -771,7 +798,7 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
                   id={i}
                   moderationUser={moderationUser}
                   bodyItems={usersTableItems[i] ?? []}
-                  toggleShowFlagsModal={toggleShowFlagsModal}
+                  toggleShowUserFlagsModal={toggleShowUserFlagsModal}
                   setShowReasonsModal={setShowReasonsModal}
                   setShowStatusModal={setShowStatusModal}
                   setIsToDelete={setIsToDelete}
@@ -786,6 +813,9 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
       </div>
     </Card>
   )
+
+  const [resourceWhistleblowModal, setResourceWhistleblowModal] = useState<JSX.Element | null>(null)
+  const [showResourceWhistleblowModal, setShowResourceWhistleblowModal] = useState<boolean>(false)
 
   const reportedResourcesCard = (
     <Card className="column reported-users">
@@ -807,8 +837,10 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
                 <ResourceRow
                   id={i}
                   moderationResource={moderationResource}
+                  setResourceWhistleblowModal={setResourceWhistleblowModal}
+                  setShowResourceWhistleblowModal={setShowResourceWhistleblowModal}
+                  toggleShowResourceFlagsModal={toggleShowResourceFlagsModal}
                   // bodyItems={usersTableItems[i] ?? []}
-                  // toggleShowFlagsModal={toggleShowFlagsModal}
                   // setShowReasonsModal={setShowReasonsModal}
                   // setShowStatusModal={setShowStatusModal}
                   // setIsToDelete={setIsToDelete}
@@ -825,7 +857,14 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
   )
 
   const snackbars = <SnackbarStack snackbarList={[DeleteReportsSnackbar, DeletedUserSnackbar]} />
-  const modals = [flagsModal, ReasonsModal(), statusModal, deleteConfirmation]
+  const modals = [
+    userFlagsModal,
+    resourceFlagsModal,
+    ReasonsModal(),
+    statusModal,
+    deleteConfirmation,
+    showResourceWhistleblowModal && resourceWhistleblowModal,
+  ]
 
   return (
     <div className="moderation" key="Moderation">
