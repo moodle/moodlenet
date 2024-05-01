@@ -74,23 +74,26 @@ export const useAdminModerationProps = (): ModerationProps => {
         profileHomePath,
       }) => {
         const deleteUser = async () => {
-          return shell.rpc.me('webapp/admin/moderation/___delete-user/:webUserKey')(null, {
-            webUserKey: webUserKey,
-          })
-          ///.then(() => searchUser(search))
+          return shell.rpc
+            .me('webapp/admin/moderation/___delete-user/:webUserKey')(null, {
+              webUserKey: webUserKey,
+            })
+            .then(() => searchUser())
         }
         const deleteReports = async () => {
-          return shell.rpc.me('webapp/admin/moderation/ignore-user-reports/:webUserKey')(null, {
-            webUserKey: webUserKey,
-          })
-          //  .then(() => searchUser(search))
+          return shell.rpc
+            .me('webapp/admin/moderation/ignore-user-reports/:webUserKey')(null, {
+              webUserKey: webUserKey,
+            })
+            .then(() => searchUser())
         }
         const toggleIsPublisher = async () => {
-          return shell.rpc.me('webapp/admin/roles/setIsPublisher')({
-            profileKey,
-            isPublisher: !isPublisher,
-          })
-          //    .then(() => searchUser(search))
+          return shell.rpc
+            .me('webapp/admin/roles/setIsPublisher')({
+              profileKey,
+              isPublisher: !isPublisher,
+            })
+            .then(() => searchUser())
         }
         const user: User = {
           currentStatus,
@@ -119,7 +122,7 @@ export const useAdminModerationProps = (): ModerationProps => {
       tableItems: [],
     }
     return moderationProps
-  }, [setSearch, sort, usersCache])
+  }, [searchUser, sort, usersCache])
 
   return userProps
 }
