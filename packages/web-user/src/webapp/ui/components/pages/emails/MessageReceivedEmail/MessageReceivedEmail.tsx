@@ -5,6 +5,7 @@ import EmailLayout, {
 export type MessageReceivedEmailProps = Partial<EmailLayoutProps> & {
   displayName: string
   message: string
+  instanceName: string
 }
 
 export const MessageReceivedEmail = ({
@@ -12,6 +13,7 @@ export const MessageReceivedEmail = ({
   displayName,
   actionUrl,
   receiverEmail,
+  instanceName,
 }: MessageReceivedEmailProps) => {
   const title = `${displayName} send you a message 📨`
   return (
@@ -19,10 +21,9 @@ export const MessageReceivedEmail = ({
       subject={title}
       content={message}
       title={title}
-      actionTitle="Reply at MoodleNet"
+      actionTitle={`Reply at ${instanceName}`}
       actionUrl={actionUrl}
       receiverEmail={receiverEmail}
-      // actionButtonStyle={{ backgroundColor: '#4CAF50', color: 'white' }}
     />
   )
 }

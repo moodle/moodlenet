@@ -13,25 +13,30 @@ export type EmailLayoutProps = {
   receiverEmail: string
   title: React.ReactNode
   content: React.ReactNode
+  logoSrc?: string
   logoOnClickUrl: string
   actionTitle?: string
   actionUrl?: string
   actionButtonStyle?: React.CSSProperties
+  location?: string
+  locationUrl?: string
+  copyright?: string
 }
 
-const EmailLayout = ({
+export const EmailLayout = ({
   title,
   receiverEmail,
   content,
   subject,
+  logoSrc,
   logoOnClickUrl,
   actionTitle,
   actionUrl,
   actionButtonStyle,
+  location,
+  locationUrl,
+  copyright,
 }: EmailLayoutProps) => {
-  console.log('actionTitle', actionTitle)
-  const currentYear = new Date().getFullYear()
-
   return (
     <Html lang="en" className="html">
       <Head />
@@ -40,7 +45,7 @@ const EmailLayout = ({
         <Container className="container" style={containerStyle}>
           <Section className="logo-header" style={logo}>
             <a href={logoOnClickUrl} target="_blank">
-              <Img width={162} src={`https://i.ibb.co/cDZ97rk/Moodle-Net-Logo-Colour-RGB.png`} />
+              <Img width={162} src={logoSrc} />
             </a>
           </Section>
           <Section className="title" style={titleSection}>
@@ -61,19 +66,14 @@ const EmailLayout = ({
               </Button>
             </Section>
           )}
-          <div style={ignoreMessage}>Not you? Just ignore this message.</div>
+          <div style={ignoreMessage}>Not you? Just ignore this message</div>
         </Container>
         <Container style={containerBottom}>
-          <a
-            href="https://www.google.com/maps/place/Moodle/@-31.9489919,115.8403923,15z/data=!4m5!3m4!1s0x0:0x2bff7bedf43b4fc7!8m2!3d-31.9489919!4d115.8403923"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={addressButton}
-          >
-            PO Box 303, West Perth WA 6872, Australia
+          <a href={locationUrl} target="_blank" rel="noopener noreferrer" style={addressButton}>
+            {location}
           </a>
-          <div style={copyright}>
-            Copyright © {currentYear} Moodle Pty Ltd, All rights reserved.
+          <div style={copyrightStyle}>
+            {copyright}
             <br />
             This email was intended for {receiverEmail}. This is a service email.
           </div>
@@ -83,9 +83,19 @@ const EmailLayout = ({
   )
 }
 
+const currentYear = new Date().getFullYear()
 EmailLayout.defaultProps = {
-  subject: 'Alan',
+  subject: 'Email from MoodleNet',
+  logoSrc: 'https://i.ibb.co/cDZ97rk/Moodle-Net-Logo-Colour-RGB.png',
+  instanceName: 'MoodleNet',
+  receiverEmail: 'caterine.z.pons@temail.com',
   logoOnClickUrl: 'http://moodle.com',
+  location: 'PO Box 303, West Perth WA 6872, Australia',
+  copyright: `Copyright © ${currentYear} Moodle Pty Ltd, All rights reserved.`,
+  locationUrl:
+    'https://www.google.com/maps/place/Moodle/@-31.9489919,115.8403923,15z/data=!4m5!3m4!1s0x0:0x2bff7bedf43b4fc7!8m2!3d-31.9489919!4d115.8403923',
+  title: 'Title goes here',
+  content: 'Content goes here',
 } as EmailLayoutProps
 
 export default EmailLayout
@@ -186,7 +196,7 @@ const addressButton = {
   lineHeight: '150%',
 }
 
-const copyright = {
+const copyrightStyle = {
   margin: '10px 0',
   padding: '0',
   color: '#656565',
