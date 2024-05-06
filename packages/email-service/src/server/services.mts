@@ -8,17 +8,23 @@ import type { EmailObj, NodemailerTransport, SendResp } from './types.mjs'
 export type { SentMessageInfo } from 'nodemailer'
 
 export async function send({ emailObj }: { emailObj: EmailObj }): Promise<SendResp> {
+  const receiverEmail = env.__development_env__send_all_emails_to ?? emailObj.to
+  const subject = `${
+    env.__development_env__send_all_emails_to
+      ? `## DEV EMAIL it would have been sent to <${emailObj.to}> ## `
+      : ''
+  }${emailObj.subject}`
   const { from, html, replyTo } = await buildEmailTemplate({
     emailBody: emailObj.html,
     emailTitle: emailObj.title,
-    receiverEmail: emailObj.to,
+    receiverEmail,
   })
   return createTransport(env.nodemailerTransport)
     .sendMail({
       from,
       replyTo,
       to: emailObj.to,
-      subject: emailObj.subject,
+      subject,
       html,
     })
     .then(messageInfo => {
