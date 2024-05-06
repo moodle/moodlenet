@@ -13,12 +13,12 @@ export const NewPublisherEmail = ({ instanceName, actionUrl }: NewPublisherEmail
       community&apos;s quality and integrity.
       <br />
       <br />
-      As a valued publisher, appart from making your content public, you can also flag users that
+      As a valued publisher, apart from making your content public, you can also flag users that
       don&apos;t align to {instanceName} values.
       <br />
       <br />
-      By contributing, you increase the recognition and reach of your resources, making the
-      education world better.
+      By contributing, you increase the recognition and reach of your content, making the education
+      world better.
     </>
   )
 

@@ -16,7 +16,7 @@ export const DeleteAccountEmail = ({ instanceName, actionUrl }: DeleteAccountEma
         <li>
           All your personal information <span style={contentDeleteSpan}>will be removed.</span>
         </li>
-        <li>Your contributions will be kept as anonymous.</li>
+        <li>Your contributions will be kept anonymous.</li>
       </ul>
       Feel free to remove any content you don&apos;t want to be kept.
     </div>
@@ -46,7 +46,7 @@ const listStyle: React.CSSProperties = {
 
 const contentDeleteSpan: React.CSSProperties = {
   borderRadius: '5px',
-  padding: '3px 6px',
-  background: '#ff0000b5',
+  padding: '3px 7px',
+  background: '#ff0000',
   color: '#ffffff',
 }
