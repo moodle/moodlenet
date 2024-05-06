@@ -33,7 +33,7 @@
           grid-template-columns: minmax(150px, 1fr) 55px 100px minmax(145px, 1fr) 60px 100px;
         }
         &.resources-table {
-          grid-template-columns: minmax(150px, 1fr) 55px 100px minmax(135px, 1fr) 70px 100px;
+          grid-template-columns: minmax(150px, 1fr) minmax(85px, 1fr) 55px 100px minmax(125px, 1fr) 100px;
         }
       }
 
@@ -208,7 +208,7 @@
                 display: flex;
                 gap: 5px;
                 > .date {
-                  min-width: 147px;
+                  min-width: 85px;
                 }
                 > abbr {
                   cursor: pointer;

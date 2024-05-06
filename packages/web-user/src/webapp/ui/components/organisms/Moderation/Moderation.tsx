@@ -7,6 +7,7 @@ import {
   Snackbar,
   SnackbarStack,
 } from '@moodlenet/component-library'
+import { getTimeAgo } from '@moodlenet/component-library/common'
 import { Link } from '@moodlenet/react-app/ui'
 import {
   CheckCircleOutline,
@@ -263,7 +264,7 @@ const ResourceRow: FC<{
   //bodyItems,
 }) => {
   const { title, resourceHref, user, whistleblows, mainReportReason } = moderationResource
-  const { displayName, email, profileHref, currentStatus, statusHistory } = user
+  const { displayName, email, profileHref, currentStatus, statusHistory, isAdmin } = user
   // const { user, toggleIsPublisher, deleteReports } = moderationUser
 
   // const statusIcons = {
@@ -314,33 +315,6 @@ const ResourceRow: FC<{
         </Link>
       </abbr>
       <abbr
-        className="reports"
-        title="Show report details"
-        onClick={() => {
-          toggleShowResourceFlagsModal(id)
-        }}
-      >
-        {whistleblows.length}
-      </abbr>
-      <abbr className="last-flag" title={`${lastReportDate}, ${lastReportTime}`}>
-        {lastReportDate}
-      </abbr>
-      <abbr
-        className="reason"
-        title="Show reason details"
-        onClick={() => {
-          setShowResourceWhistleblowModal(true)
-          setResourceWhistleblowModal(
-            <WhistleblownResourcesModal
-              whistleblows={whistleblows}
-              setIsShowingWhistleblows={setShowResourceWhistleblowModal}
-            />,
-          )
-        }}
-      >
-        {mainReportReason}
-      </abbr>
-      <abbr
         className={`display-name ${currentStatus === 'Deleted' ? 'deleted' : ''}`}
         title={
           currentStatus === 'Deleted' ? 'Deleted user, anonymous' : `Go to profile page\n${email}`
@@ -364,6 +338,35 @@ const ResourceRow: FC<{
           }`
         )}
       </abbr>
+      <abbr
+        className="reports"
+        title="Show report details"
+        onClick={() => {
+          toggleShowResourceFlagsModal(id)
+        }}
+      >
+        {whistleblows.length}
+      </abbr>
+      <abbr className="last-flag" title={`${lastReportDate}, ${lastReportTime}`}>
+        {lastReportDate}
+      </abbr>
+      <abbr
+        className="reason"
+        title="Show reason details"
+        onClick={() => {
+          setShowResourceWhistleblowModal(true)
+          setResourceWhistleblowModal(
+            <WhistleblownResourcesModal
+              isModerator={isAdmin}
+              whistleblows={whistleblows}
+              setIsShowingWhistleblows={setShowResourceWhistleblowModal}
+            />,
+          )
+        }}
+      >
+        {mainReportReason}
+      </abbr>
+
       <div className="actions">
         <abbr
           onClick={() => {
@@ -492,10 +495,10 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
     return (
       <div className="table-header resources-table">
         {createSortColumn('sortByResourceName', 'Name', 'resource-name')}
+        {createSortColumn('sortByDisplayName', 'Creator', 'display-name')}
         {createSortColumn('sortByFlags', 'Flags', 'flags')}
         {createSortColumn('sortByLastFlag', 'Last flag', 'last-flag')}
         {createSortColumn('sortByMainReason', 'Main reason', 'reason')}
-        {createSortColumn('sortByDisplayName', 'Creator', 'display-name')}
         {/* {createSortColumn('sortByStatus', 'Status', 'status')} */}
         <div className="actions">Actions</div>
       </div>
@@ -736,18 +739,7 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
                   reports.map((report, index) => (
                     <div key={index} className="reason">
                       <div className="date-user">
-                        <div className="date">
-                          {new Date(report.date)
-                            .toLocaleString('default', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              hour12: false,
-                            })
-                            .replace(',', '')}
-                        </div>
+                        <div className="date">{getTimeAgo(new Date(report.date))}</div> by
                         <abbr className="user" title={`Go to profile page\n${report.user.email}`}>
                           <Link href={report.user.profileHref} target="_blank">
                             {report.user.displayName}

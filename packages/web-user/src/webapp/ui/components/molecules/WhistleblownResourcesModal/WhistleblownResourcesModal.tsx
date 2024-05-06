@@ -1,22 +1,25 @@
 import { Modal } from '@moodlenet/component-library'
+import { getTimeAgo } from '@moodlenet/component-library/common'
 import { Link } from '@moodlenet/react-app/ui'
 import { type FC, type SetStateAction } from 'react'
-import { WhistleblownResourceData } from '../../../../../common/types.mjs'
+import type { WhistleblownResourceData } from '../../../../../common/types.mjs'
 import './WhistleblownResourcesModal.scss'
 
 export type WhistleblownResourcesModalProps = {
   whistleblows: WhistleblownResourceData[]
+  isModerator: boolean
   setIsShowingWhistleblows: (value: SetStateAction<boolean>) => void
 }
 
 export const WhistleblownResourcesModal: FC<WhistleblownResourcesModalProps> = ({
   whistleblows,
+  isModerator,
   setIsShowingWhistleblows,
 }) => {
   return (
     <Modal
       className={'whistleblown-resources-modal'}
-      title="User reports"
+      title={isModerator ? 'Resource reports' : 'User reports'}
       onClose={() => setIsShowingWhistleblows(false)}
       style={{ maxWidth: '600px' }}
     >
@@ -36,16 +39,7 @@ export const WhistleblownResourcesModal: FC<WhistleblownResourcesModalProps> = (
                   </abbr>
                   reported for <b>{type.name.toLowerCase()}</b>
                 </div>
-                <div className="whistleblow-date">
-                  {date.toLocaleString('default', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                  })}
-                </div>
+                <div className="whistleblow-date">{getTimeAgo(date)}</div>
               </div>
             </div>
             {comment && comment !== '' && (

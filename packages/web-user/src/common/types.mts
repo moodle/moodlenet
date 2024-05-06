@@ -256,7 +256,7 @@ export type ModerationResource = WhistleblowResource & {
     email: string
     profileHref: Href
     currentStatus: UserStatus
-
+    isAdmin: boolean
     statusHistory: UserStatusChange[]
   }
   whistleblows: WhistleblownResourceData[]
