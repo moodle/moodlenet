@@ -10,9 +10,14 @@ import type {
   EntityDocument,
   EntityFullDocument,
   EntityUser,
-  PkgUser,
 } from '@moodlenet/system-entities/server'
-import type { KnownEntityFeature, KnownEntityType } from '../common/types.mjs'
+import type {
+  KnownEntityFeature,
+  KnownEntityType,
+  ReportOptionTypeId,
+  ReportProfileReasonName,
+  UserStatus,
+} from '../common/types.mjs'
 
 // TODO //@ALE ProfileEntity _meta { webUserKey }
 
@@ -54,6 +59,7 @@ export type ProfileDataType = ProfileMeta & {
   webslug: string
   settings: ProfileSettings
   points?: null | number
+  deleted?: boolean
   popularity?: null | {
     overall: number
     items: {
@@ -83,13 +89,36 @@ export type ImageUploaded = { kind: 'file'; directAccessId: string }
 
 // export type Profile = ProfileDataType & { _key: string }
 
+export type ReportItem = {
+  date: string
+  reporterWebUserKey: string
+  reportTypeId: ReportOptionTypeId
+  comment: string
+}
+export type UserStatusItem = {
+  status: UserStatus
+  date: string
+  byWebUserKey: string
+}
 export type WebUserRecord = WebUserDataType & DocumentMetadata
 export type WebUserDataType = {
   displayName: string
   contacts: Contacts
   isAdmin: boolean
+  publisher: boolean
   profileKey: string
   deleting?: boolean
+  deleted?: boolean
+  moderation: {
+    reports: {
+      items: ReportItem[]
+      amount: number
+      mainReasonName: null | ReportProfileReasonName
+    }
+    status: {
+      history: UserStatusItem[]
+    }
+  }
 }
 
 export type Contacts = {
@@ -210,7 +239,7 @@ export type WebUserActivityEvents = {
   }
   'user-publishing-permission-change': {
     type: 'given' | 'revoked'
-    moderator: EntityUser | PkgUser
+    moderator: EntityUser //| PkgUser
     profile: EntityFullDocument<ProfileDataType>
   }
   'feature-entity': {
@@ -253,6 +282,13 @@ export type WebUserActivityEvents = {
   'web-user-logged-in': {
     webUserKey: string
     profileKey: string
+  }
+  //
+  'web-user-reported': {
+    targetWebUserKey: string
+    reporterWebUserKey: string
+    comment: string
+    reportOptionTypeId: ReportOptionTypeId
   }
 }
 // export type WebUserActivityEvents = {

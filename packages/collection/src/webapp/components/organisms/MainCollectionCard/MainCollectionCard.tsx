@@ -504,7 +504,7 @@ export const MainCollectionCard: FC<MainCollectionCardProps> = ({
     <>
       {showUrlCopiedAlert && (
         <Snackbar type="success" position="bottom" autoHideDuration={3000} showCloseButton={false}>
-          Copied to clipoard
+          Link copied to clipoard
         </Snackbar>
       )}
     </>

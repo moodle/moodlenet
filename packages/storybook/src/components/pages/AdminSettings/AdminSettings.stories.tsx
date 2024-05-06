@@ -5,6 +5,7 @@ import type { AdminSettingsProps } from '@moodlenet/react-app/ui'
 import { AdminSettings } from '@moodlenet/react-app/ui'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
+import { useModerationAdminSettingsElements } from './Moderation.stories.props.js'
 import { useUserAdminSettingsElements } from './Users.stories.props.js'
 // import { href } from '../../../elements/link'
 
@@ -44,6 +45,11 @@ export const AdminSettingsDefaultStoryProps = (): AdminSettingsProps => {
         Menu: useUserAdminSettingsElements().Menu,
         Content: useUserAdminSettingsElements().Content,
         key: 'users',
+      },
+      {
+        Menu: useModerationAdminSettingsElements().Menu,
+        Content: useModerationAdminSettingsElements().Content,
+        key: 'moderation',
       },
       // {
       //   Menu: AdvancedStories.useElements().Menu,

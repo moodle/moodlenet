@@ -20,7 +20,7 @@ FOR profile IN \`${Profile.collection.name}\`
   UPDATE profile WITH { knownFeaturedEntities: filteredFeats } IN \`${Profile.collection.name}\`
 `,
     { featuredEntityId },
-    { retryOnConflict: 5 },
+    { retryOnConflict: 15 },
   )
 }
 export async function removeResourceFromAllCollections({ resourceKey }: { resourceKey: string }) {
@@ -33,7 +33,7 @@ FOR collection IN \`${collectionSrv.Collection.collection.name}\`
   RETURN NEW
 `,
     { resourceKey },
-    { retryOnConflict: 5 },
+    { retryOnConflict: 15 },
   )
 }
 

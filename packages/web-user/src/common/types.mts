@@ -53,14 +53,62 @@ export type Profile = {
   avatarUrl: string | undefined | null
 }
 export type User = {
-  title: string
-  email: string
   isAdmin: boolean
   isPublisher: boolean
+  title: string
+  email: string
+  currentStatus: UserStatus
   profileHref: Href
+  reports: UserReport[]
+  statusHistory: UserStatusChange[]
+  mainReportReason?: ReportProfileReasonName
 }
 
-export type WebUserData = {
+export type UserStatus = 'Non-authenticated' | 'Non-publisher' | 'Admin' | 'Publisher' | 'Deleted'
+
+export type UserStatusChange = {
+  status: UserStatus
+  date: string
+  userChangedStatus: UserChangedStatus
+}
+
+export type ReportOptionTypeId =
+  | 'inappropriate_behavior'
+  | 'impersonation'
+  | 'spamming'
+  | 'terms_of_service_violation'
+  | 'other'
+export type ReportOptionType = {
+  id: ReportOptionTypeId
+  name: ReportProfileReasonName
+}
+
+export type ReportProfileData = {
+  type: ReportOptionType
+  comment: string | undefined
+}
+
+export type UserReporter = {
+  displayName: string
+  email: string
+  profileHref: Href
+}
+export type UserChangedStatus = UserReporter
+
+export type UserReport = {
+  date: string
+  user: UserReporter
+  reason: ReportProfileData
+}
+
+export type ReportProfileReasonName =
+  | 'Inappropriate behavior'
+  | 'Impersonation'
+  | 'Spamming'
+  | 'Terms of service violation'
+  | 'Other'
+
+export type WebUserDataRPC = {
   _key: string
   profileKey: string
   name: string
@@ -68,8 +116,26 @@ export type WebUserData = {
   isAdmin: boolean
   isPublisher: boolean
   profileHomePath: string
+  reports: UserReportRPC[]
+  statusHistory: UserStatusChangeRPC[]
+  mainReportReason?: ReportProfileReasonName
+  currentStatus: UserStatus
 }
-
+export type UserReportRPC = {
+  date: string
+  user: UserReporterRPC
+  reason: ReportProfileData
+}
+export type UserReporterRPC = {
+  displayName: string
+  email: string
+  profileKey: string
+}
+export type UserStatusChangeRPC = {
+  status: UserStatus
+  date: string
+  userChangedStatus: UserReporterRPC
+}
 export type AuthDataRpc = {
   isRoot: false
   access: { isAdmin: boolean; isAuthenticated: boolean }
@@ -93,6 +159,7 @@ export type ProfileData = {
   displayName: string
   profileHref: Href
   points: number
+  reportOptions: ReportOptionType[]
 }
 
 export type ProfileFormValues = {
@@ -116,6 +183,7 @@ export type ProfileState = {
 
 export type ProfileActions = {
   toggleFollow(): void
+  reportProfile(values: ReportProfileData): void
   editProfile(values: ProfileFormValues): void
   sendMessage(msg: string): void
   setAvatar(file: File | undefined | null): void

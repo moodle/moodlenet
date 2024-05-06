@@ -41,13 +41,12 @@
     "vscode-generate-index-standalone": "^1.6.0"
   },
   "scripts": {
-    "prepublish": "node align_pkg_mn-peer-deps_to_mn-dev-deps.mjs",
     "postinstall": "npm run prj-cleanup-build && npm run prj-husky-init && npm run prj-bs",
     "prepare": "npm run prj-cleanup-build && npm run prj-build",
     "prj-husky-init": "rimraf .husky && husky install && husky add .husky/pre-commit \"npm run pre-commit\"",
     "prj-bs": "lerna bootstrap --hoist",
     "dev-assistant": "lerna run --parallel --stream dev-assistant --",
-    "prj-build": "tsc --build packages/arangodb packages/component-library packages/system-entities packages/core packages/crypto packages/email-service packages/extensions-manager packages/http-server packages/key-value-store packages/organization packages/react-app packages/simple-email-auth packages/ed-resource packages/collection packages/ed-meta packages/simple-file-store packages/openid packages/web-user packages/unsplash packages/moodle-lms-integration packages/mn-central-jira-simple-moderations packages/core-domain packages/openai-autofill packages/storybook",
+    "prj-build": "tsc --build packages/arangodb packages/component-library packages/system-entities packages/core packages/crypto packages/email-service packages/extensions-manager packages/http-server packages/key-value-store packages/organization packages/react-app packages/simple-email-auth packages/ed-resource packages/collection packages/ed-meta packages/simple-file-store packages/openid packages/web-user packages/unsplash packages/moodle-lms-integration packages/mn-central-jira-simple-moderations packages/core-domain packages/openai-autofill",
     "prj-build-watch": "npm run prj-build -- --watch",
     "prj-build-clean": "npm run prj-build -- --clean",
     "dev-install-backend": "node bin/install.mjs",

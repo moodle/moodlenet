@@ -298,13 +298,24 @@
         align-items: center;
       }
 
-      > .floating-menu > .hover-element > .more {
-        &.small {
-          padding: 0 6px;
+      > .floating-menu {
+        > .hover-element > .more {
+          &.small {
+            padding: 0 6px;
+          }
+          > .three-dots {
+            margin-top: -12px;
+            font-size: 20px;
+          }
         }
-        > .three-dots {
-          margin-top: -12px;
-          font-size: 20px;
+        > .menu > .content > * > * {
+          &.disabled {
+            color: #e8e8e8;
+            cursor: text;
+            > svg {
+              fill: #e8e8e8;
+            }
+          }
         }
       }
     }

@@ -13,14 +13,19 @@ import type { EntityDocument, EntityFullDocument } from '@moodlenet/system-entit
 import assert from 'assert'
 import type { SchemaOf } from 'yup'
 import { array, object, string } from 'yup'
+import { getReportOptionType } from '../common/exports.mjs'
 import type { WebUserExposeType } from '../common/expose-def.mjs'
+import { getUserStatus } from '../common/rpcMappings.mjs'
 import type {
   ClientSessionDataRpc,
   LeaderBoardContributor,
   Profile,
   ProfileGetRpc,
   UserInterests,
-  WebUserData,
+  UserReportRPC,
+  UserReporterRPC,
+  UserStatusChangeRPC,
+  WebUserDataRPC,
 } from '../common/types.mjs'
 import {
   DELETE_ACCOUNT_SUCCESS_PAGE_PATH,
@@ -30,6 +35,10 @@ import {
 import { messageFormValidationSchema, profileValidationSchema, validationsConfig } from './env.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
 import { shell } from './shell.mjs'
+import {
+  adminDeletesWebUserAccountNow,
+  deleteWebUserAccountConfirmedByToken,
+} from './srv/delete-account.mjs'
 import {
   isAllowedKnownEntityFeature,
   reduceToKnownFeaturedEntities,
@@ -47,6 +56,7 @@ import {
   getProfilePointLeaders,
   getProfileRecord,
   getValidations,
+  reportUser,
   searchProfiles,
   sendMessageToProfile as sendMessageToProfileIntent,
   setProfileAvatar,
@@ -54,9 +64,10 @@ import {
 } from './srv/profile.mjs'
 import {
   currentWebUserDeletionAccountRequest,
-  deleteWebUserAccountConfirmedByToken,
   getCurrentProfileIds,
+  getCurrentWebUserIds,
   getWebUser,
+  ignoreUserReports,
   loginAsRoot,
   searchUsers,
   sendWebUserTokenCookie,
@@ -392,6 +403,21 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         }
       },
     },
+    'webapp/profile/report/:_key': {
+      guard: () => void 0,
+      async fn({ comment = '', reportOptionTypeId }, { _key }) {
+        const currWebUserIds = await getCurrentWebUserIds()
+        if (!currWebUserIds) {
+          throw RpcStatus('Unauthorized')
+        }
+        reportUser({
+          profileKey: _key,
+          reportOptionTypeId,
+          comment,
+          reporterWebUserKey: currWebUserIds._key,
+        })
+      },
+    },
     'webapp/my-interests/save': {
       guard: body => {
         const schema: SchemaOf<UserInterests> = object({
@@ -507,37 +533,76 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     },
     'webapp/admin/roles/searchUsers': {
       guard: () => void 0,
-      async fn({ search }) {
-        const users_and_profiles = await searchUsers(search)
-        const webUsers = Promise.all(
-          users_and_profiles.map(user => {
-            return getProfileRecord(user.profileKey).then(profile => {
-              assert(
-                profile,
-                `RPC 'webapp/admin/roles/searchUsers': found user but not profile! (webUserKey:${user._key} | profileKey:${user.profileKey})`,
-              )
+      async fn({
+        filterNoFlag = false,
+        search,
+        forReports = false,
+        sortType = forReports ? 'Flags' : 'Status',
+      }) {
+        const users_and_profiles = await searchUsers({
+          fetchReporters: forReports,
+          searchString: search,
+          sortType,
+          filterNoFlag,
+        })
+        const webUsers = users_and_profiles.map(user => {
+          const reports = user.moderation.reports.items.map((_, index) => {
+            const { comment, date, reportTypeId, reporter } =
+              // HACK: doing this because items.map() type inference looses `reporter` property from the mixed type WebUserSearchType
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              user.moderation.reports.items[index]!
 
-              const webUserData: WebUserData = {
-                _key: user._key,
-                isAdmin: user.isAdmin,
-                name: user.displayName,
-                isPublisher: profile.entity.publisher,
-                profileKey: user.profileKey,
-                profileHomePath: getProfileHomePageRoutePath({
-                  _key: profile.entity._key,
-                  displayName: profile.entity.displayName,
-                }),
-                //@BRU actually email *could* not be defined for a web-user,
-                // using our email authentication it will always be indeed..
-                // but with some other auth system it may not
-                // indeed a web user would need to have at least 1 contact/message/notification method
-                // be it an email or something else ...
-                email: user.contacts.email ?? 'N/A',
+            const userReport: UserReportRPC = {
+              date,
+              reason: { comment, type: getReportOptionType(reportTypeId) },
+              user: {
+                displayName: reporter?.displayName || 'unknown',
+                email: reporter?.contacts.email || 'unknown',
+                profileKey: reporter?.profileKey || 'unknown',
+              },
+            }
+            return userReport
+          })
+          const statusHistory: UserStatusChangeRPC[] = user.moderation.status.history.map(
+            (_, index) => {
+              const { date, status, reporter } =
+                // HACK: doing this because history.map() type inference looses `reporter` property from the mixed type WebUserSearchType
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                user.moderation.status.history[index]!
+
+              const userChangedStatus: UserReporterRPC = {
+                displayName: reporter?.displayName || 'unknown',
+                email: reporter?.contacts.email || 'unknown',
+                profileKey: reporter?.profileKey || 'unknown',
               }
-              return webUserData
-            })
-          }),
-        )
+              const userStatusChange: UserStatusChangeRPC = { date, status, userChangedStatus }
+              return userStatusChange
+            },
+          )
+          const mainReportReason = user.moderation.reports.mainReasonName ?? undefined
+          const webUserData: WebUserDataRPC = {
+            currentStatus: getUserStatus(user),
+            reports,
+            statusHistory,
+            mainReportReason,
+            _key: user._key,
+            isAdmin: user.isAdmin,
+            name: user.displayName || 'no name',
+            isPublisher: user.publisher,
+            profileKey: user.profileKey,
+            profileHomePath: getProfileHomePageRoutePath({
+              _key: user.profileKey,
+              displayName: user.displayName,
+            }),
+            //@BRU actually email *could* not be defined for a web-user,
+            // using our email authentication it will always be indeed..
+            // but with some other auth system it may not
+            // indeed a web user would need to have at least 1 contact/message/notification method
+            // be it an email or something else ...
+            email: user.contacts.email ?? 'unknown',
+          }
+          return webUserData
+        })
         return webUsers
       },
     },
@@ -554,6 +619,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         const response = await changeProfilePublisherPerm({
           profileKey,
           setIsPublisher: isPublisher,
+          forceUnpublish: false,
         })
         return !!response?.ok
       },
@@ -565,6 +631,25 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     'webapp/admin/general/set-appearance': {
       guard: () => void 0,
       fn: setAppearance,
+    },
+    'webapp/admin/moderation/___delete-user/:webUserKey': {
+      guard: () => void 0,
+      async fn(_, { webUserKey }) {
+        const resp = await adminDeletesWebUserAccountNow({ webUserKey })
+        if (resp.status === 'non-admins-cannot-delete-others') {
+          throw RpcStatus('Unauthorized')
+        }
+        if (resp.status === 'not-found') {
+          throw RpcStatus('Not Found')
+        }
+        return true
+      },
+    },
+    'webapp/admin/moderation/ignore-user-reports/:webUserKey': {
+      guard: () => void 0,
+      async fn(_, { webUserKey }) {
+        return ignoreUserReports({ forWebUserKey: webUserKey })
+      },
     },
     // 'webapp/admin/packages/update-all-pkgs': {
     //   guard: () => void 0,

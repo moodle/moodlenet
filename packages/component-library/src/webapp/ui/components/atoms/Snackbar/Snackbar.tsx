@@ -148,7 +148,7 @@ Snackbar.defaultProps = {
   position: 'bottom',
   type: 'info',
   showCloseButton: false,
-  autoHideDuration: 6000,
+  autoHideDuration: 4000,
 }
 
 export default Snackbar

@@ -5,7 +5,7 @@ import { getWp } from './config.mjs'
 import { getBuildContext } from './get-build-context.mjs'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
-const baseBuildFolder = resolve(
+const devMachinesFolder = resolve(
   __dirname,
   '..',
   '..',
@@ -14,7 +14,15 @@ const baseBuildFolder = resolve(
   '..',
   '.dev-machines',
   String(process.argv[2]),
-  'fs',
+)
+const config = await import(resolve(devMachinesFolder, 'default.config.json'), {
+  assert: {
+    type: 'json',
+  },
+})
+
+const baseBuildFolder = resolve(
+  config.default.pkgs['@moodlenet/core'].baseFsFolder,
   '@moodlenet',
   'react-app',
   'webapp-build',

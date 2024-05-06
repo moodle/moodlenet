@@ -1,4 +1,4 @@
-import { State } from 'xstate'
+import type { State } from 'xstate'
 import type { /* StateContext,  */ StateOf, TypegenT } from './types'
 
 // export function matchContext<

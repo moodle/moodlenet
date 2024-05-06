@@ -284,7 +284,13 @@ export async function stdEdResourceMachine(by: ProvideBy) {
   })
   const oldState = initializeContext.state
 
-  interpreter.onStop(async () => {
+  let resolveStoredStatus: (changed: boolean) => void
+  let rejectStoredStatus: (e: any) => void
+  const storedStatus = new Promise<boolean>((_resolveStoredStatus, _rejectStoredStatus) => {
+    resolveStoredStatus = _resolveStoredStatus
+    rejectStoredStatus = _rejectStoredStatus
+  })
+  interpreter.onStop(() => {
     if (!tx) return
     const state = interpreter.getSnapshot()
     // https://github.com/statelyai/xstate/discussions/1294
@@ -297,6 +303,7 @@ export async function stdEdResourceMachine(by: ProvideBy) {
       'Publish-Rejected',
     ]
     if (!saveOnStates.includes(currentState)) {
+      resolveStoredStatus(false)
       return
     }
     //if (state.history && !state.history.matches(currentState)) {
@@ -308,38 +315,44 @@ export async function stdEdResourceMachine(by: ProvideBy) {
       publishingErrors: currentState === 'Unpublished' ? state.context.publishingErrors : null,
     }
 
-    const updateResult = await Resource.collection.update(
-      state.context.doc.id.resourceKey,
-      {
-        persistentContext,
-        published: currentState === 'Published',
-      },
-      { mergeObjects: false, keepNull: true, returnNew: true, returnOld: true },
-    )
-    if (!(updateResult?.new && updateResult?.old)) {
-      throw new Error('update failed for unknown reasons')
-    }
-    const publishEvent =
-      oldState === currentState
-        ? undefined
-        : currentState === 'Published'
-        ? 'published'
-        : oldState === 'Published' && currentState === 'Unpublished'
-        ? 'unpublished'
-        : undefined
-    // console.log('\n*****'.repeat(5), {
-    //   oldState,
-    //   currentState,
-    //   publishEvent,
-    // })
-    const userId = await getCurrentEntityUserIdentifier()
+    Resource.collection
+      .update(
+        state.context.doc.id.resourceKey,
+        {
+          persistentContext,
+          published: currentState === 'Published',
+        },
+        { mergeObjects: false, keepNull: true, returnNew: true, returnOld: true },
+      )
+      .then(async updateResult => {
+        if (!(updateResult?.new && updateResult?.old)) {
+          rejectStoredStatus(new Error('update failed for unknown reasons'))
+          return
+        }
+        const publishEvent =
+          oldState === currentState
+            ? undefined
+            : currentState === 'Published'
+            ? 'published'
+            : oldState === 'Published' && currentState === 'Unpublished'
+            ? 'unpublished'
+            : undefined
+        // console.log('\n*****'.repeat(5), {
+        //   oldState,
+        //   currentState,
+        //   publishEvent,
+        // })
+        const userId = await getCurrentEntityUserIdentifier()
 
-    if (publishEvent && userId) {
-      shell.events.emit(publishEvent, {
-        resource: updateResult.new,
-        userId,
+        if (publishEvent && userId) {
+          shell.events.emit(publishEvent, {
+            resource: updateResult.new,
+            userId,
+          })
+        }
+        // console.log('resolveStoredStatus(true)')
+        resolveStoredStatus(true)
       })
-    }
     // .then(
     //   () => console.log(`updated ${state.context.doc.id.resourceKey} ${currentState}`),
     //   e => console.log(`could not update ${state.context.doc.id.resourceKey} ${currentState}`, e),
@@ -348,5 +361,5 @@ export async function stdEdResourceMachine(by: ProvideBy) {
   })
   interpreter.start(initializeContext.state)
 
-  return [interpreter, initializeContext, machine, configs] as const
+  return [interpreter, initializeContext, machine, configs, storedStatus] as const
 }

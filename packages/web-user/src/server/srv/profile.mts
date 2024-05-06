@@ -1,10 +1,10 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
 import * as collection from '@moodlenet/collection/server'
 import { RpcStatus, type RpcFile } from '@moodlenet/core'
-import * as resCore from '@moodlenet/core-domain/resource'
 import type { IscedFieldDataType } from '@moodlenet/ed-meta/server'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import * as resource from '@moodlenet/ed-resource/server'
+import { ensureUnpublish } from '@moodlenet/ed-resource/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import {
@@ -32,13 +32,18 @@ import {
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import dot from 'dot'
-import { waitFor } from 'xstate/lib/waitFor.js'
 import type { EditProfileDataRpc } from '../../common/expose-def.mjs'
-import type { KnownEntityFeature, KnownEntityType, SortTypeRpc } from '../../common/types.mjs'
+import type {
+  KnownEntityFeature,
+  KnownEntityType,
+  ReportOptionTypeId,
+  SortTypeRpc,
+} from '../../common/types.mjs'
 import type { ValidationsConfig } from '../../common/validationSchema.mjs'
 import { getValidationSchemas } from '../../common/validationSchema.mjs'
 import { getProfileHomePageRoutePath } from '../../common/webapp-routes.mjs'
 import { WebUserEntitiesTools } from '../entities.mjs'
+import { WebUserCollection } from '../init/arangodb.mjs'
 import { publicFiles } from '../init/fs.mjs'
 import { kvStore } from '../init/kvStore.mjs'
 import { Profile } from '../init/sys-entities.mjs'
@@ -57,6 +62,7 @@ import {
 } from './known-entity-types.mjs'
 import {
   getCurrentProfileIds,
+  getCurrentWebUserIds,
   getWebUserByProfileKey,
   patchWebUserDisplayName,
   verifyCurrentTokenCtx,
@@ -269,44 +275,70 @@ export async function getProfilePointLeaders(): Promise<EntityFullDocument<Profi
 export async function changeProfilePublisherPerm({
   profileKey,
   setIsPublisher,
+  forceUnpublish,
 }: {
   profileKey: string
   setIsPublisher: boolean
+  forceUnpublish: boolean
 }) {
+  // console.log('changeProfilePublisherPerm', {
+  //   profileKey,
+  //   setIsPublisher,
+  //   forceUnpublish,
+  // })
   const moderator = await getCurrentSystemUser()
-  assert(moderator.type === 'pkg' || moderator.type === 'entity')
+  const moderatorIds = await getCurrentWebUserIds()
+  assert(moderator.type === 'entity' && moderatorIds?.isAdmin, 'should be an admin user')
 
-  const profile = await getProfileRecord(profileKey)
-  if (!profile) return { type: 'not-found', ok: false }
-  if (profile.entity.publisher === setIsPublisher) return { type: 'no-change', ok: true }
-
-  const patchResult = await patchEntity(Profile.entityClass, profileKey, {
-    publisher: setIsPublisher,
-  })
-  if (!patchResult) {
-    return { type: 'not-found', ok: false }
-  }
-
-  const [collections, resources] = await Promise.all([
-    getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection' }),
-    getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource' }),
+  const [profile, webUser] = await Promise.all([
+    getProfileRecord(profileKey),
+    getWebUserByProfileKey({ profileKey }),
   ])
-  await Promise.all(
-    collections
-      .filter(({ entity: { published } }) => published)
-      .map(({ entity: { _key } }) => collection.setPublished(_key, false)),
-  )
-  await Promise.all(
-    resources
-      .filter(({ entity: { published } }) => published)
-      .map(async data => {
-        const [interpreter] = await resource.stdEdResourceMachine({ by: 'data', data })
-        interpreter.send('unpublish')
-        await waitFor(interpreter, resCore.nameMatcher('Unpublished'))
-        interpreter.stop()
-      }),
-  )
+  if (!(profile && webUser)) return { type: 'not-found', ok: false }
+  if (webUser.publisher === setIsPublisher) return { type: 'no-change', ok: true }
 
+  await Promise.all([
+    patchEntity(Profile.entityClass, profileKey, {
+      publisher: setIsPublisher,
+    }),
+    WebUserCollection.update(webUser._key, {
+      publisher: setIsPublisher,
+      moderation: {
+        status: {
+          history: [
+            {
+              byWebUserKey: moderatorIds._key,
+              date: shell.now().toISOString(),
+              status: setIsPublisher ? 'Publisher' : 'Non-publisher',
+            },
+            ...webUser.moderation.status.history,
+          ],
+        },
+      },
+    }),
+  ])
+
+  if (!setIsPublisher) {
+    const [collections, resources] = await Promise.all([
+      getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection', limit: 100000 }),
+      getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource', limit: 100000 }),
+    ])
+    await Promise.all(
+      collections
+        .filter(({ entity: { published } }) => published)
+        .map(async ({ entity: { _key } }) => {
+          await collection.setPublished(_key, false)
+          // console.log('unpublished collection', _key)
+        }),
+    )
+    await Promise.all(
+      resources.map(async data => {
+        await ensureUnpublish({ by: 'data', data }, { onlyIfPublished: !forceUnpublish })
+        // console.log('unpublished resource', data.entity._key)
+      }),
+    )
+  }
+  // console.log('changeProfilePublisherPerm unpublised all')
   shell.events.emit('user-publishing-permission-change', {
     type: setIsPublisher ? 'given' : 'revoked',
     profile: { ...profile.entity, _meta: profile.meta },
@@ -646,6 +678,44 @@ export async function getProfileOwnKnownEntities<
     : KT extends 'resource'
     ? AccessEntitiesRecordType<ResourceDataType, unknown, EntityAccess>[]
     : never
+}
+
+export async function reportUser({
+  comment,
+  profileKey,
+  reportOptionTypeId,
+  reporterWebUserKey,
+}: {
+  profileKey: string
+  reportOptionTypeId: ReportOptionTypeId
+  comment: string
+  reporterWebUserKey: string
+}) {
+  // const currWebUserIds = await getCurrentWebUserIds()
+  // const currProfileIds = await getCurrentProfileIds()
+  // if (!(currWebUserIds && currProfileIds?.publisher)) {
+  //   throw RpcStatus('Unauthorized')
+  // }
+
+  const targetWebUser = await getWebUserByProfileKey({ profileKey })
+  if (!targetWebUser) {
+    throw RpcStatus('Not Found', 'Target web user not found')
+  }
+  if (targetWebUser.isAdmin) {
+    throw RpcStatus('Unauthorized', 'cannot report an admin user')
+  }
+  const targetProfile = await getProfileRecord(profileKey)
+  if (!targetProfile) {
+    throw RpcStatus('Not Found', 'Target profile not found')
+  }
+
+  const report = shell.events.emit('web-user-reported', {
+    comment,
+    reporterWebUserKey,
+    targetWebUserKey: targetWebUser._key,
+    reportOptionTypeId,
+  })
+  return report
 }
 
 export async function editMyProfileInterests({

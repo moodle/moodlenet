@@ -1,5 +1,5 @@
 import { matchStateName, nameStateMatcher, stateNameMatcher } from '../../common/exports'
-import { Typegen0 } from '../lifecycle.xsm.typegen'
+import type { Typegen0 } from '../lifecycle.xsm.typegen'
 
 export * from './document'
 export * from './issuer'

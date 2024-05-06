@@ -9,9 +9,10 @@ import type {
   LeaderBoardContributor,
   ProfileGetRpc,
   ProfileSearchResultRpc,
+  ReportOptionTypeId,
   SortTypeRpc,
   UserInterests,
-  WebUserData,
+  WebUserDataRPC,
 } from './types.mjs'
 import type { ValidationsConfig } from './validationSchema.mjs'
 export type { EntityIdentifier } from '@moodlenet/system-entities/common'
@@ -127,7 +128,12 @@ export type WebUserExposeType = PkgExposeDef<{
       appearanceData: AppearanceData
     }): Promise<{ valid: boolean }>
     // 'webapp/admin/packages/update-all-pkgs'(): Promise<{ updatePkgs: Record<string, string> }>
-    'webapp/admin/roles/searchUsers'(body: { search: string }): Promise<WebUserData[]>
+    'webapp/admin/roles/searchUsers'(body: {
+      search: string
+      sortType?: AdminSearchUserSortType
+      forReports?: boolean
+      filterNoFlag?: boolean
+    }): Promise<WebUserDataRPC[]>
     'webapp/admin/roles/setIsAdmin'(
       body: { isAdmin: boolean } & ({ profileKey: string } | { userKey: string }),
     ): Promise<boolean>
@@ -135,5 +141,23 @@ export type WebUserExposeType = PkgExposeDef<{
       profileKey: string
       isPublisher: boolean
     }): Promise<boolean>
+    //report
+    'webapp/admin/moderation/___delete-user/:webUserKey'(
+      body: null,
+      params: { webUserKey: string },
+    ): Promise<unknown>
+    'webapp/admin/moderation/ignore-user-reports/:webUserKey'(
+      body: null,
+      params: { webUserKey: string },
+    ): Promise<unknown>
+    'webapp/profile/report/:_key'(
+      body: {
+        reportOptionTypeId: ReportOptionTypeId
+        comment: string | undefined
+      },
+      params: { _key: string },
+    ): Promise<unknown>
   }
 }>
+
+export type AdminSearchUserSortType = 'DisplayName' | 'Flags' | 'LastFlag' | 'MainReason' | 'Status'

@@ -14,7 +14,8 @@ import {
 } from '@moodlenet/react-app/webapp'
 import { FilterNone, Grade, PermIdentity } from '@mui/icons-material'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import type { ProfileGetRpc } from '../../../../common/types.mjs'
+import { reportOptionTypes } from '../../../../common/reports/consts.mjs'
+import type { ProfileGetRpc, ReportProfileData } from '../../../../common/types.mjs'
 import {
   getProfileFollowersRoutePath,
   getProfileFollowingRoutePath,
@@ -143,6 +144,17 @@ export const useProfileProps = ({
     },
     [profileKey, updateMyLocalProfile],
   )
+  const reportProfile = useCallback(
+    (reportProfileData: ReportProfileData): void => {
+      shell.rpc.me('webapp/profile/report/:_key', { rpcId: `webapp/profile/report#${profileKey}` })(
+        { reportOptionTypeId: reportProfileData.type.id, comment: reportProfileData.comment },
+        {
+          _key: profileKey,
+        },
+      )
+    },
+    [profileKey],
+  )
 
   useEffect(() => {
     setProfileGetRpc(undefined)
@@ -232,6 +244,7 @@ export const useProfileProps = ({
               avatarUrl: upAvatarTaskCurrentObjectUrl,
             }
           : {}),
+        reportOptions: reportOptionTypes,
       },
       state: {
         isPublisher: profileGetRpc.isPublisher,
@@ -241,6 +254,7 @@ export const useProfileProps = ({
         numFollowers: profileGetRpc.numFollowers,
       },
       actions: {
+        reportProfile,
         approveUser: toggleIsPublisher,
         unapproveUser: toggleIsPublisher,
         editProfile,
@@ -341,6 +355,7 @@ export const useProfileProps = ({
     upAvatarTaskCurrentObjectUrl,
     showAccountApprovedSuccessAlert,
     follow,
+    reportProfile,
     toggleIsPublisher,
     editProfile,
     plugins,
