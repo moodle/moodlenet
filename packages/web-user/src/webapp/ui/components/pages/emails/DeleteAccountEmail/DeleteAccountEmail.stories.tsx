@@ -1,6 +1,7 @@
 import { render } from '@react-email/render'
 import { MessageReceivedEmail } from '../MessageReceivedEmail/MessageReceivedEmail.js'
-import { DeleteAccountEmail, DeleteAccountEmailProps } from './DeleteAccountEmail.js'
+import type { DeleteAccountEmailProps } from './DeleteAccountEmail.js'
+import { DeleteAccountEmail } from './DeleteAccountEmail.js'
 
 export default {
   title: 'Pages/Emails/Access/DeleteAccountEmail',
@@ -10,6 +11,7 @@ export default {
 
 const EmailTemplate = () => {
   const props: DeleteAccountEmailProps = {
+    instanceName: 'MoodleNet',
     actionUrl: 'https://moodle.net/notfound',
   }
 

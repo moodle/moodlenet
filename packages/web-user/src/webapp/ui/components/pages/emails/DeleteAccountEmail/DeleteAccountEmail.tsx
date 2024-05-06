@@ -1,8 +1,7 @@
-import { EmailLayout, EmailLayoutProps } from '@moodlenet/component-library'
+import type { EmailLayoutProps } from '@moodlenet/component-library'
+import { EmailLayout } from '@moodlenet/component-library'
 
 export type DeleteAccountEmailProps = Partial<EmailLayoutProps> & {
-  displayName: string
-  message: string
   instanceName: string
 }
 
@@ -19,7 +18,7 @@ export const DeleteAccountEmail = ({ instanceName, actionUrl }: DeleteAccountEma
         </li>
         <li>Your contributions will be kept as anonymous.</li>
       </ul>
-      Feel free to remove any content you don't want to be kept.
+      Feel free to remove any content you don&apos;t want to be kept.
     </div>
   )
 
@@ -35,17 +34,17 @@ export const DeleteAccountEmail = ({ instanceName, actionUrl }: DeleteAccountEma
   )
 }
 
-const contentStyle = {
+const contentStyle: React.CSSProperties = {
   textAlign: 'left',
 }
 
-const listStyle = {
+const listStyle: React.CSSProperties = {
   textAlign: 'left',
   margin: '22px 22px',
   paddingLeft: '30px',
 }
 
-const contentDeleteSpan = {
+const contentDeleteSpan: React.CSSProperties = {
   borderRadius: '5px',
   padding: '3px 6px',
   background: '#ff0000b5',

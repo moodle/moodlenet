@@ -1,6 +1,7 @@
-import { EmailLayout, EmailLayoutProps } from '@moodlenet/component-library'
+import type { EmailLayoutProps } from '@moodlenet/component-library'
+import { EmailLayout } from '@moodlenet/component-library'
 
-export type RecoverPasswordEmailProps = Partial<EmailLayoutProps> & {}
+export type RecoverPasswordEmailProps = Partial<EmailLayoutProps>
 
 export const RecoverPasswordEmail = ({ actionUrl }: RecoverPasswordEmailProps) => {
   const title = `Ready to change your password 🔑`
@@ -13,6 +14,7 @@ export const RecoverPasswordEmail = ({ actionUrl }: RecoverPasswordEmailProps) =
       title={title}
       actionTitle={`Change password`}
       actionUrl={actionUrl}
+      showIgnoreMesage={true}
     />
   )
 }
