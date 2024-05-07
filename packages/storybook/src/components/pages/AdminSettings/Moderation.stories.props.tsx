@@ -1,14 +1,19 @@
 import { href } from '@moodlenet/react-app/common'
 import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
+import type { ModerationResource } from '@moodlenet/web-user/common'
 import {
-  ModerationResource,
   reportOptionTypes,
   type ReportProfileReasonName,
   type UserReport,
   type UserStatus,
   type UserStatusChange,
 } from '@moodlenet/web-user/common'
-import type { ModerationProps, ModerationUser, SortReportedUsers } from '@moodlenet/web-user/ui'
+import type {
+  ModerationProps,
+  ModerationUser,
+  SortReportedResources,
+  SortReportedUsers,
+} from '@moodlenet/web-user/ui'
 import { Moderation, ModerationMenu } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react'
@@ -198,6 +203,7 @@ const getRandomModerationResource = (): ModerationResource => {
       displayName: names[randomIndex] || '', // Assign an empty string as the default value
       email: emails[randomIndex] || '', // Assign an empty string as the default value
       profileHref: href('Pages/Profile/Admin'),
+      isAdmin: false,
       currentStatus: getRandomStatus(),
       statusHistory: generateRandomUserStatusChanges(Math.floor(Math.random() * 10) + 1),
     },
@@ -224,6 +230,7 @@ export const useModerationStoryProps = (overrides?: {
   props?: Partial<ModerationProps>
 }): Omit<ModerationProps, 'search'> => {
   const [users, setUsers] = useState<ModerationUser[]>([])
+  const [resources, setResources] = useState<ModerationUser[]>([])
 
   const deleteReports = useCallback((email: string) => {
     setUsers(prevUsers => prevUsers.filter(user => user.user.email !== email))
@@ -283,12 +290,20 @@ export const useModerationStoryProps = (overrides?: {
     [deleteReports, changeStatus],
   )
 
+  const searchUser = (str: string) => {
+    action(`search user: ${str}`)
+  }
+
+  const searchResource = (str: string) => {
+    action(`search resource: ${str}`)
+  }
+
   useEffect(() => {
     setUsers(defaultUsers)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultUsers]) // Include 'defaultUsers' as a dependency
 
-  const sort: SortReportedUsers = {
+  const sortUsers: SortReportedUsers = {
     sortByDisplayName: () =>
       setUsers(prevUsers =>
         [...prevUsers].sort((a, b) => a.user.title.localeCompare(b.user.title)),
@@ -327,10 +342,52 @@ export const useModerationStoryProps = (overrides?: {
     },
   }
 
+  const sortResources: SortReportedResources = {
+    sortByResourceName: () =>
+      setResources(prevUsers =>
+        [...prevUsers].sort((a, b) => a.user.title.localeCompare(b.user.title)),
+      ),
+    sortByDisplayName: () =>
+      setResources(prevUsers =>
+        [...prevUsers].sort((a, b) => a.user.title.localeCompare(b.user.title)),
+      ),
+    sortByFlags: () =>
+      setResources(prevUsers =>
+        [...prevUsers].sort((a, b) => a.user.reports.length - b.user.reports.length),
+      ),
+    sortByLastFlag: () => {
+      setResources(prevUsers =>
+        [...prevUsers].sort((a, b) => {
+          const getLastReportDate = (reports: UserReport[]) =>
+            new Date(
+              reports.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+                ?.date || 0,
+            )
+          return (
+            getLastReportDate(b.user.reports).getTime() -
+            getLastReportDate(a.user.reports).getTime()
+          )
+        }),
+      )
+    },
+    sortByMainReason: () => {
+      setResources(prevUsers =>
+        [...prevUsers].sort((a, b) => {
+          const reasonA = a.user.mainReportReason || '' // Fallback to empty string if undefined
+          const reasonB = b.user.mainReportReason || '' // Fallback to empty string if undefined
+          return reasonA.localeCompare(reasonB)
+        }),
+      )
+    },
+  }
+
   return {
     users,
     resources: getModerationResources(10),
-    sort,
+    searchUser,
+    searchResource,
+    sortUsers,
+    sortResources,
     tableItems: [],
     ...overrides?.props,
   }
@@ -338,7 +395,8 @@ export const useModerationStoryProps = (overrides?: {
 
 const ModerationItem: FC = () => {
   // const canSubmit = form.dirty && form.isValid && !form.isSubmitting && !form.isValidating
-  // const [searchText, setSearchText] = useState('')
+  const [searchUserText, setSearchUserText] = useState('')
+  const [searchResourceText, setSearchResourceText] = useState('')
   // const [currentUsers, setCurrentUsers] = useState(useUsersStoryProps().users)
 
   // useEffect(() => {
@@ -356,10 +414,10 @@ const ModerationItem: FC = () => {
     <Moderation
       users={useModerationStoryProps().users}
       resources={useModerationStoryProps().resources}
-      search={action('Searching users')}
-      sort={useModerationStoryProps().sort}
-      // users={currentUsers}
-      // search={setSearchText}
+      sortUsers={useModerationStoryProps().sortUsers}
+      sortResources={useModerationStoryProps().sortResources}
+      searchUser={setSearchUserText}
+      searchResource={setSearchResourceText}
       tableItems={useModerationStoryProps().tableItems}
     />
   )

@@ -52,11 +52,21 @@ export type SortReportedUsers = {
   sortByStatus(): unknown
 }
 
+export type SortReportedResources = {
+  sortByResourceName(): unknown
+  sortByDisplayName(): unknown
+  sortByFlags(): unknown
+  sortByLastFlag(): unknown
+  sortByMainReason(): unknown
+}
+
 export type ModerationProps = {
   users: ModerationUser[]
   resources: ModerationResource[]
-  search(str: string): unknown
-  sort: SortReportedUsers
+  searchUser(str: string): unknown
+  searchResource(str: string): unknown
+  sortUsers: SortReportedUsers
+  sortResources: SortReportedResources
   tableItems: (ReportTableItem | null)[]
 }
 
@@ -429,7 +439,15 @@ const ResourceRow: FC<{
   )
 }
 
-export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search, tableItems }) => {
+export const Moderation: FC<ModerationProps> = ({
+  users,
+  resources,
+  sortUsers,
+  sortResources,
+  searchUser,
+  searchResource,
+  tableItems,
+}) => {
   const usersTableItems: (AddonItem | null)[][] = users.map(() => [])
   users.map(({ user }, i) /* user */ => {
     const newUserTableItem = usersTableItems && usersTableItems[i]
@@ -442,23 +460,24 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
     })
   })
 
-  const [activeSort, setActiveSort] = useState<keyof ModerationProps['sort'] | undefined>(undefined)
-
+  const [activeSortUsers, setActiveSortUsers] = useState<
+    keyof ModerationProps['sortUsers'] | undefined
+  >(undefined)
   const userTableHeader = () => {
     const createSortColumn = (
-      sortKey: keyof ModerationProps['sort'],
+      sortKey: keyof ModerationProps['sortUsers'],
       label: string,
       className: string,
     ) => (
       <div
-        className={`${className} ${activeSort === sortKey ? 'active' : ''}`}
+        className={`${className} ${activeSortUsers === sortKey ? 'active' : ''}`}
         onClick={() => {
-          setActiveSort(activeSort === sortKey ? undefined : sortKey)
-          sort[sortKey]()
+          setActiveSortUsers(activeSortUsers === sortKey ? undefined : sortKey)
+          sortUsers[sortKey]()
         }}
       >
         <div className="label">{label}</div>
-        {activeSort === sortKey ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+        {activeSortUsers === sortKey ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
       </div>
     )
 
@@ -474,21 +493,24 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
     )
   }
 
+  const [activeSortResources, setActiveSortResources] = useState<
+    keyof ModerationProps['sortResources'] | undefined
+  >(undefined)
   const resourceTableHeader = () => {
     const createSortColumn = (
-      sortKey: keyof ModerationProps['sort'],
+      sortKey: keyof ModerationProps['sortResources'],
       label: string,
       className: string,
     ) => (
       <div
-        className={`${className} ${activeSort === sortKey ? 'active' : ''}`}
+        className={`${className} ${activeSortResources === sortKey ? 'active' : ''}`}
         onClick={() => {
-          setActiveSort(activeSort === sortKey ? undefined : sortKey)
-          sort[sortKey]()
+          setActiveSortResources(activeSortResources === sortKey ? undefined : sortKey)
+          sortResources[sortKey]()
         }}
       >
         <div className="label">{label}</div>
-        {activeSort === sortKey ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+        {activeSortResources === sortKey ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
       </div>
     )
 
@@ -776,8 +798,8 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
         key="users-searchbox"
         placeholder="Search by display name or email"
         searchText={''}
-        setSearchText={search}
-        search={search}
+        setSearchText={searchUser}
+        search={searchUser}
         showSearchButton={false}
       />
       <div className="table-container">
@@ -816,8 +838,8 @@ export const Moderation: FC<ModerationProps> = ({ users, resources, sort, search
         key="users-searchbox"
         placeholder="Search by name or user (name or email)"
         searchText={''}
-        setSearchText={search}
-        search={search}
+        setSearchText={searchResource}
+        search={searchResource}
         showSearchButton={false}
       />
       <div className="table-container">
