@@ -119,10 +119,14 @@ export type WebUserExposeType = PkgExposeDef<{
       },
     ): Promise<ProfileSearchResultRpc>
     'webapp/web-user/delete-account-request'(): Promise<void>
-    'webapp/admin/general/set-org-data'(body: {
-      orgData: OrganizationData
-    }): Promise<{ valid: boolean }>
-    'webapp/react-app/get-org-data'(): Promise<{ data: OrganizationData }>
+    'webapp/admin/general/set-org-data'(body: { rawData: OrganizationData }): Promise<{
+      data: OrganizationData
+      rawData: OrganizationData
+    }>
+    'webapp/react-app/get-org-data'(): Promise<{
+      data: OrganizationData
+      rawData: OrganizationData
+    }>
     'webapp/react-app/get-appearance'(): Promise<{ data: AppearanceData }>
     'webapp/admin/general/set-appearance'(body: {
       appearanceData: AppearanceData

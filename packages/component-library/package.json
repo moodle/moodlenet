@@ -37,7 +37,8 @@
     ".": "./dist/ui.mjs",
     "./stories": "./dist/stories.mjs",
     "./common": "./dist/common.mjs",
-    "./ui/scss/application": "./dist/webapp/ui/styles/application.scss"
+    "./ui/scss/application": "./dist/webapp/ui/styles/application.scss",
+    "./email-templates": "./dist/email-templates/index.mjs"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-ui-index & npm-watch create-stories-index",
@@ -83,13 +84,17 @@
     "@types/react-dom": "18.2.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "5.4"
+    "typescript": "5.4",
+    "@react-email/components": "^0.0.16",
+    "react-email": "^2.1.1"
   },
   "peerDependencies": {
     "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
+    "@react-email/components": "^0.0.16",
+    "react-email": "^2.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

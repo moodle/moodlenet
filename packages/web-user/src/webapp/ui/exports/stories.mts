@@ -3,13 +3,4 @@ export * as AccessButtonsStories from '../components/molecules/AccessButtons/Acc
 export * as AvatarMenuStories from '../components/molecules/AvatarMenu/AvatarMenu.stories.props.js'
 export * as MinimalisticAccessButtonsStories from '../components/molecules/MinimalisticAccessButtons/MinimalisticAccessButtons.stories.props.js'
 export * as AdvancedStories from '../components/pages/UserSettings/Advanced/Advanced.stories.props.js'
-export * as DeleteAccountEmailStories from '../components/pages/emails/Access/DeleteAccountEmail/DeleteAccountEmail.stories.js'
-export * as NewUserRequestEmailStories from '../components/pages/emails/Access/NewUserRequestEmail/NewUserRequestEmail.stories.js'
-export * as PasswordChangedEmailStories from '../components/pages/emails/Access/PasswordChangedEmail/PasswordChangedEmail.stories.js'
-export * as RecoverPasswordEmailStories from '../components/pages/emails/Access/RecoverPasswordEmail/RecoverPasswordEmail.stories.js'
-export * as FirstContributionEmailStories from '../components/pages/emails/FirstContributionEmail/FirstContributionEmail.stories.js'
-export * as LevelUpEmailStories from '../components/pages/emails/Gamification/LevelUpEmail/LevelUpEmail.stories.js'
-export * as NewPublisherEmailStories from '../components/pages/emails/NewPublisherEmail/NewPublisherEmail.stories.js'
-export * as SecondContributionEmailStories from '../components/pages/emails/Publisher/SecondContributionEmail/SecondContributionEmail.stories.js'
-export * as MessageReceivedEmailStories from '../components/pages/emails/Social/MessageReceivedEmail/MessageReceivedEmail.stories.js'
 // @endindex

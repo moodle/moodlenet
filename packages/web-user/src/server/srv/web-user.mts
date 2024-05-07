@@ -2,13 +2,13 @@ import type { Patch } from '@moodlenet/arangodb/server'
 import { isArangoError } from '@moodlenet/arangodb/server'
 import type { JwtToken } from '@moodlenet/crypto/server'
 import { jwt } from '@moodlenet/crypto/server'
+import { send } from '@moodlenet/email-service/server'
 import { getCurrentHttpCtx, getMyRpcBaseUrl } from '@moodlenet/http-server/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import { create, matchRootPassword } from '@moodlenet/system-entities/server'
-import assert from 'assert'
-import dot from 'dot'
 import type { CookieOptions } from 'express'
+import { deleteAccountEmail } from '../../common/emails/Access/DeleteAccountEmail/DeleteAccountEmail.js'
 import {
   WEB_USER_SESSION_TOKEN_AUTHENTICATED_BY_COOKIE_NAME,
   WEB_USER_SESSION_TOKEN_COOKIE_NAME,
@@ -16,7 +16,6 @@ import {
 import type { AdminSearchUserSortType } from '../../common/expose-def.mjs'
 import { Profile } from '../exports.mjs'
 import { WebUserCollection, db } from '../init/arangodb.mjs'
-import { kvStore } from '../init/kvStore.mjs'
 import { shell } from '../shell.mjs'
 import type {
   CreateRequest,
@@ -426,39 +425,35 @@ export async function ignoreUserReports({ forWebUserKey }: { forWebUserKey: stri
 export async function currentWebUserDeletionAccountRequest() {
   //Confirm account deletion 🥀
 
-  const currWebUser = await getCurrentWebUserIds()
+  const currWebUserIds = await getCurrentWebUserIds()
+  if (!currWebUserIds) {
+    return
+  }
+  const currWebUser = await getWebUser({ _key: currWebUserIds._key })
   if (!currWebUser) {
     return
   }
-  const msgTemplates = (await kvStore.get('message-templates', '')).value
-  assert(msgTemplates, 'missing message-templates:: record in KeyValueStore')
-  const token = await signWebUserAccountDeletionToken(currWebUser._key)
+  const token = await signWebUserAccountDeletionToken(currWebUserIds._key)
   const orgData = await getOrgData()
+  const actionUrl = `${await shell.call(
+    getMyRpcBaseUrl,
+  )()}webapp/web-user/delete-account-request/confirm/${token}`
 
-  const msgVars: DelAccountMsgVars = {
-    actionButtonUrl: `${await shell.call(
-      getMyRpcBaseUrl,
-    )()}webapp/web-user/delete-account-request/confirm/${token}`,
-    instanceName: orgData.data.instanceName,
-  }
-  const html = dot.compile(msgTemplates.deleteAccountConfirmation)(msgVars)
-
-  shell.events.emit('request-send-message-to-web-user', {
-    message: { html, text: html },
-    subject: 'Confirm account deletion 🥀',
-    title: 'Confirm account deletion 🥀',
-    toWebUser: {
-      _key: currWebUser._key,
-      displayName: currWebUser.displayName,
-    },
+  shell.events.emit('web-user-delete-account-intent', {
+    actionUrl,
+    webUserKey: currWebUserIds._key,
   })
 
-  return
-
-  type DelAccountMsgVars = {
-    instanceName: string
-    actionButtonUrl: string
+  if (currWebUser.contacts.email) {
+    send(
+      deleteAccountEmail({
+        actionUrl,
+        instanceName: orgData.data.instanceName,
+        receiverEmail: currWebUser.contacts.email,
+      }),
+    )
   }
+  return
 }
 
 export async function signWebUserAccountDeletionToken(webUserKey: string) {

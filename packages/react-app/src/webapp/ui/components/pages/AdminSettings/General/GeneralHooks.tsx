@@ -5,11 +5,11 @@ import { OrganizationCtx } from '../../../../../context/OrganizationCtx.js'
 import type { GeneralProps } from './General.js'
 
 export const useGeneralProps = (): GeneralProps => {
-  const { organizationData, saveOrganization } = useContext(OrganizationCtx)
+  const { organization, saveOrganization } = useContext(OrganizationCtx)
   // const { updateAllPackages } = useContext(AdminSettingsCtx)
 
   const form = useFormik<OrganizationData>({
-    initialValues: organizationData,
+    initialValues: organization.rawData,
     async onSubmit(data) {
       await saveOrganization(data)
     },

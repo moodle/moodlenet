@@ -1,34 +1,40 @@
+import { renderAsync } from '@react-email/render'
 import assert from 'assert'
-import dot from 'dot'
 import { kvStore } from './init/kvStore.mjs'
 
-import { instanceDomain } from '@moodlenet/core'
+import type {
+  EmailContentProps,
+  EmailOrganizationProps,
+} from '@moodlenet/component-library/email-templates'
+import { EmailLayout } from '@moodlenet/component-library/email-templates'
 import { getOrgData } from '@moodlenet/organization/server'
-import type { DynEmailLayoutTemplateVars, EmailLayoutTemplateSystemVars } from './types.mjs'
+import { getAppearance, getWebappUrl } from '@moodlenet/react-app/server'
 export type { SentMessageInfo } from 'nodemailer'
 
-export async function buildEmailTemplate(vars: DynEmailLayoutTemplateVars): Promise<{
-  from: string
-  replyTo: string
-  html: string
-}> {
-  const mailerCfg = (await kvStore.get('mailerCfg', '')).value
-  assert(mailerCfg, 'missing mailerCfg:: record in KeyValueStore')
-  const emailTemplateStr = (await kvStore.get('email-layout', '')).value
-  assert(emailTemplateStr, 'missing emailTemplateStr:: record in KeyValueStore')
+const mailerCfg = (await kvStore.get('mailerCfg', '')).value
+assert(mailerCfg, 'missing mailerCfg:: record in KeyValueStore')
+export async function renderEmailTemplate({
+  content,
+}: {
+  content: EmailContentProps
+}): Promise<string> {
   const orgData = await getOrgData()
-  const emailLayoutTemplateSystemVars: EmailLayoutTemplateSystemVars = {
-    domainUrl: instanceDomain,
-    instanceName: orgData.data.instanceName,
+  const webapp = await getAppearance()
+  const organization: EmailOrganizationProps = {
+    name: orgData.data.instanceName,
+    logoOnClickUrl: getWebappUrl(),
+    logoSrc: webapp.data.smallLogo,
+    copyright: orgData.data.copyright,
+    location: {
+      address: orgData.data.locationAddress,
+      url: orgData.data.locationUrl,
+    },
   }
-  const html = dot.compile(emailTemplateStr)({
-    ...mailerCfg.baseEmailLayoutTemplateVars,
-    ...emailLayoutTemplateSystemVars,
-    ...vars,
-  })
-  return {
-    from: mailerCfg.defaultFrom,
-    replyTo: mailerCfg.defaultReplyTo,
-    html,
-  }
+  const html = await renderAsync(
+    EmailLayout({
+      organization,
+      content,
+    }),
+  )
+  return html
 }
