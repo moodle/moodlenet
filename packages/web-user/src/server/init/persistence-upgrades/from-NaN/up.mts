@@ -25,7 +25,7 @@ const [deleteAccountConfirmationTemplate, messageFromUserTemplate] = await Promi
 )
 assert(deleteAccountConfirmationTemplate && messageFromUserTemplate)
 
-kvStore.set('message-templates', '', {
+kvStore.set('message-templates' as any, '', {
   messageFromUser: messageFromUserTemplate,
   deleteAccountConfirmation: deleteAccountConfirmationTemplate,
 })

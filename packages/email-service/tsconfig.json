@@ -12,6 +12,9 @@
       "path": "../organization"
     },
     {
+      "path": "../react-app"
+    },
+    {
       "path": "../key-value-store"
     }
   ]

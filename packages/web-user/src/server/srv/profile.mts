@@ -5,6 +5,7 @@ import type { IscedFieldDataType } from '@moodlenet/ed-meta/server'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import * as resource from '@moodlenet/ed-resource/server'
 import { ensureUnpublish } from '@moodlenet/ed-resource/server'
+import { send } from '@moodlenet/email-service/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import {
@@ -31,7 +32,7 @@ import {
   toaql,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
-import dot from 'dot'
+import { messageReceivedEmail } from '../../common/emails/Social/MessageReceivedEmail/MessageReceivedEmail.js'
 import type { EditProfileDataRpc } from '../../common/expose-def.mjs'
 import type {
   KnownEntityFeature,
@@ -45,7 +46,6 @@ import { getProfileHomePageRoutePath } from '../../common/webapp-routes.mjs'
 import { WebUserEntitiesTools } from '../entities.mjs'
 import { WebUserCollection } from '../init/arangodb.mjs'
 import { publicFiles } from '../init/fs.mjs'
-import { kvStore } from '../init/kvStore.mjs'
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
 import type {
@@ -600,7 +600,7 @@ export async function searchProfiles({
   }
 }
 
-export async function sendMessageToProfile({
+export async function sendMessageToProfileIntent({
   message,
   profileKey,
 }: {
@@ -609,39 +609,37 @@ export async function sendMessageToProfile({
 }) {
   const tokenCtx = await verifyCurrentTokenCtx()
   if (!tokenCtx || tokenCtx.payload.isRoot || !tokenCtx.payload.webUser) return
-  const templates = (await kvStore.get('message-templates', '')).value
-  assert(templates)
 
-  //TODO //@ALE prepare formatted messages
   const toWebUser = await getWebUserByProfileKey({ profileKey })
   if (!toWebUser) return
   const fromProfile = (await getProfileRecord(tokenCtx.payload.profile._key))?.entity
   assert(fromProfile)
+  const fromWebUser = await getWebUserByProfileKey({ profileKey: fromProfile._key })
+  assert(fromWebUser)
   const orgData = await getOrgData()
 
-  const msgVars: SendMsgToUserVars = {
-    actionButtonUrl: getWebappUrl(
-      getProfileHomePageRoutePath({ _key: fromProfile._key, displayName: fromProfile.displayName }),
-    ),
-    instanceName: orgData.data.instanceName,
-    message,
-  }
-  const html = dot.compile(templates.messageFromUser)(msgVars)
-
   shell.events.emit('request-send-message-to-web-user', {
-    message: {
-      text: html,
-      html: html,
-    },
-    subject: `${fromProfile.displayName} sent you a message 📨`,
-    title: `${fromProfile.displayName} sent you a message 📨`,
-    toWebUser: {
-      _key: toWebUser._key,
-      displayName: toWebUser.displayName,
-    },
+    message,
+    toWebUserKey: toWebUser._key,
+    fromWebUserKey: fromWebUser._key,
   })
 
-  type SendMsgToUserVars = Record<'actionButtonUrl' | 'instanceName' | 'message', string>
+  if (toWebUser.contacts.email) {
+    send(
+      messageReceivedEmail({
+        actionUrl: getWebappUrl(
+          getProfileHomePageRoutePath({
+            _key: fromProfile._key,
+            displayName: fromProfile.displayName,
+          }),
+        ),
+        senderDisplayName: fromProfile.displayName,
+        message,
+        instanceName: orgData.data.instanceName,
+        receiverEmail: toWebUser.contacts.email,
+      }),
+    )
+  }
 }
 
 export async function getProfileOwnKnownEntities<

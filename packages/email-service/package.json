@@ -13,11 +13,7 @@
   },
   "exports": {
     "./init": "./dist/server/init.mjs",
-    "./server": "./dist/server/exports.mjs",
-    "./common": "./dist/common/exports.mjs",
-    "./ui": "./dist/webapp/exports/ui.mjs",
-    "./stories": "./dist/webapp/exports/stories.mjs",
-    "./webapp": "./dist/webapp/exports/webapp.mjs"
+    "./server": "./dist/server/exports.mjs"
   },
   "moodlenet": {
     "creator": "MoodleNet",
@@ -37,15 +33,19 @@
   "dependencies": {
     "@moodlenet/key-value-store": "^0.8.1",
     "dot": "1.1.3",
-    "nodemailer": "6.6.1"
+    "nodemailer": "6.6.1",
+    "@react-email/render": "^0.0.12"
   },
   "peerDependencies": {
     "@moodlenet/core": "^0.8.1",
-    "@moodlenet/organization": "^0.8.1"
+    "@moodlenet/organization": "^0.8.1",
+    "@moodlenet/react-app": "^0.8.1"
   },
   "devDependencies": {
+    "react": "18.2.0",
     "@moodlenet/core": "^0.8.1",
     "@moodlenet/organization": "^0.8.1",
+    "@moodlenet/react-app": "^0.8.1",
     "@types/dot": "1.1.5",
     "@types/node": "17.0.35",
     "@types/nodemailer": "6.4.5",

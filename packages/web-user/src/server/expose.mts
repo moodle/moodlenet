@@ -58,7 +58,7 @@ import {
   getValidations,
   reportUser,
   searchProfiles,
-  sendMessageToProfile as sendMessageToProfileIntent,
+  sendMessageToProfileIntent,
   setProfileAvatar,
   setProfileBackgroundImage,
 } from './srv/profile.mjs'
@@ -504,18 +504,22 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         if (!result) {
           throw RpcStatus('Unauthorized')
         }
-        if (result.status === 'done') {
-          getCurrentHttpCtx()?.response.redirect(
-            getWebappUrl(`${DELETE_ACCOUNT_SUCCESS_PAGE_PATH}?${SESSION_CHANGE_REDIRECT_Q_NAME}=.`),
-          )
-          return
+        if (result.status !== 'done') {
+          throw RpcStatus('Unprocessable Entity', result.status)
         }
-        throw RpcStatus('Unprocessable Entity', result.status)
+        // TODO: should be something managed by http-server pkg
+        getCurrentHttpCtx()?.response.redirect(
+          getWebappUrl(`${DELETE_ACCOUNT_SUCCESS_PAGE_PATH}?${SESSION_CHANGE_REDIRECT_Q_NAME}=.`),
+        )
       },
     },
     'webapp/react-app/get-org-data': {
       guard: () => void 0,
       fn: getOrgData,
+    },
+    'webapp/admin/general/set-org-data': {
+      guard: () => void 0,
+      fn: setOrgData,
     },
     'webapp/react-app/get-appearance': {
       guard: () => void 0,
@@ -623,10 +627,6 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         })
         return !!response?.ok
       },
-    },
-    'webapp/admin/general/set-org-data': {
-      guard: () => void 0,
-      fn: setOrgData,
     },
     'webapp/admin/general/set-appearance': {
       guard: () => void 0,

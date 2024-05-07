@@ -103,6 +103,54 @@ export const General: FC<GeneralProps> = ({ form /* , updateSuccess, updateExten
             />
           </div>
         </div>
+
+        <div className="parameter">
+          <div className="name">Organization location address</div>
+          <div className="actions">
+            <InputTextField
+              isTextarea
+              className="location-address"
+              placeholder="Give a location address"
+              value={form.values.locationAddress}
+              onChange={form.handleChange}
+              name="locationAddress"
+              edit
+              // error={shouldShowErrors && editForm.errors.displayName}
+            />
+          </div>
+        </div>
+
+        <div className="parameter">
+          <div className="name">Location url</div>
+          <div className="actions">
+            <InputTextField
+              isTextarea
+              className="location-url"
+              placeholder="Give a location url"
+              value={form.values.locationUrl}
+              onChange={form.handleChange}
+              name="locationUrl"
+              edit
+              // error={shouldShowErrors && editForm.errors.displayName}
+            />
+          </div>
+        </div>
+
+        <div className="parameter">
+          <div className="name">Copyright</div>
+          <div className="actions">
+            <InputTextField
+              isTextarea
+              className="copyright"
+              placeholder="Organization copyright statement"
+              value={form.values.copyright}
+              onChange={form.handleChange}
+              name="copyright"
+              edit
+              // error={shouldShowErrors && editForm.errors.displayName}
+            />
+          </div>
+        </div>
       </Card>
     </div>
   )

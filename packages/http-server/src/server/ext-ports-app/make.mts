@@ -77,6 +77,9 @@ export function makeExtPortsApp() {
         await rpcDefItem
           .fn(...rpcArgs)
           .then(async _rpcResponse => {
+            if (httpResp.headersSent) {
+              return
+            }
             const rpcResponse = await getRpcResponse(_rpcResponse)
             const { rpcStatusCode: statusCode } = getCurrentRpcStatusCode() ?? {
               rpcStatusCode: 200,

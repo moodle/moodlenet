@@ -16,7 +16,7 @@ const [newUserRequestTemplate, recoverPasswordTemplate, passwordChangedTemplate]
   )
 assert(newUserRequestTemplate && recoverPasswordTemplate && passwordChangedTemplate)
 
-kvStore.set('email-templates', '', {
+kvStore.set('email-templates' as any, '', {
   'new-user-request': newUserRequestTemplate,
   'recover-password': recoverPasswordTemplate,
   'password-changed': passwordChangedTemplate,

@@ -98,6 +98,8 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
     case 'web-user-logged-in': {
       break
     }
+    case 'web-user-delete-account-intent':
+      break
     case 'web-user-reported': {
       const {
         at,
@@ -163,6 +165,7 @@ RETURN user ? true : false
       )
       await curs.all()
       await curs.kill()
+      break
     }
   }
 }

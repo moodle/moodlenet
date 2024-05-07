@@ -15,11 +15,11 @@ export const LandingHookPlugin = createPlugin<LandingPlugin>()
 
 export const useLandingPageProps = (): LandingProps => {
   const plugins = LandingHookPlugin.usePluginHooks()
-  const { organizationData } = useContext(OrganizationCtx)
+  const { organization } = useContext(OrganizationCtx)
   return {
     mainLayoutProps: useMainLayoutProps(),
-    title: organizationData.landingTitle,
-    subtitle: organizationData.landingSubtitle,
+    title: organization.data.landingTitle,
+    subtitle: organization.data.landingSubtitle,
     mainColumnItems: plugins.getKeyedAddons('mainColumnItems'),
     headerCardItems: plugins.getKeyedAddons('headerCardItems'),
   }
