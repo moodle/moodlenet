@@ -9,6 +9,9 @@
       "path": "../core"
     },
     {
+      "path": "../component-library"
+    },
+    {
       "path": "../organization"
     },
     {
