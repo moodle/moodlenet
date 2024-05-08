@@ -38,12 +38,14 @@
   },
   "peerDependencies": {
     "@moodlenet/core": "^0.8.1",
+    "@moodlenet/component-library": "^0.8.1",
     "@moodlenet/organization": "^0.8.1",
     "@moodlenet/react-app": "^0.8.1"
   },
   "devDependencies": {
     "react": "18.2.0",
     "@moodlenet/core": "^0.8.1",
+    "@moodlenet/component-library": "^0.8.1",
     "@moodlenet/organization": "^0.8.1",
     "@moodlenet/react-app": "^0.8.1",
     "@types/dot": "1.1.5",

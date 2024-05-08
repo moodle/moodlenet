@@ -27,6 +27,9 @@
       "path": "../ed-resource"
     },
     {
+      "path": "../email-service"
+    },
+    {
       "path": "../http-server"
     },
     {
