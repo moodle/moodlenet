@@ -23,7 +23,7 @@ export async function renderEmailTemplate({
   const organization: EmailOrganizationProps = {
     name: orgData.data.instanceName,
     logoOnClickUrl: getWebappUrl(),
-    logoSrc: webapp.data.smallLogo,
+    logoSrc: webapp.data.logo,
     copyright: orgData.data.copyright,
     location: {
       address: orgData.data.locationAddress,

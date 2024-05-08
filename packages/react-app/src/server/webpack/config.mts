@@ -342,7 +342,7 @@ export function getWp(
           test: /\.js(\?.*)?$/i,
         }),
       new CopyPlugin({
-        patterns: [{ from: './_redirects' }, { from: './public/favicon.ico' }],
+        patterns: [{ from: './_redirects' }, { from: './public/*' }],
       }),
       new BundleAnalyzerPlugin({
         analyzerMode: isDevServer ? 'server' : 'static',
