@@ -40,6 +40,10 @@ export type ProfileGetRpc = {
     resources: { _key: string }[]
     collections: { _key: string }[]
   }
+  publishedContributions: {
+    collections: number
+    resources: number
+  }
 }
 
 export type Profile = {

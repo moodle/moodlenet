@@ -66,6 +66,10 @@ export type ProfileDataType = ProfileMeta & {
       followers?: ProfilePopularityItem
     } & { [key: string]: ProfilePopularityItem }
   }
+  publishedContributions: {
+    resources: number
+    collections: number
+  }
 }
 
 export type EntityPointsDataType = {

@@ -195,17 +195,21 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
 
         const [collections, resources, currentProfileIds, currToken, numFollowers] =
           await Promise.all([
-            getProfileOwnKnownEntities({
-              knownEntity: 'collection',
-              profileKey: _key,
-              limit: ownContribLimit,
-            }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
+            !ownContribLimit
+              ? []
+              : getProfileOwnKnownEntities({
+                  knownEntity: 'collection',
+                  profileKey: _key,
+                  limit: ownContribLimit,
+                }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
 
-            getProfileOwnKnownEntities({
-              knownEntity: 'resource',
-              profileKey: _key,
-              limit: ownContribLimit,
-            }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
+            !ownContribLimit
+              ? []
+              : getProfileOwnKnownEntities({
+                  knownEntity: 'resource',
+                  profileKey: _key,
+                  limit: ownContribLimit,
+                }).then(_ => _.map(({ entity: { _key } }) => ({ _key }))),
             getCurrentProfileIds(),
             verifyCurrentTokenCtx(),
             getEntityFeaturesCount({ _key, entityType: 'profile', feature: 'follow' }).then(
@@ -234,6 +238,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           profileHref: href(profileHomePagePath),
           profileUrl: getWebappUrl(profileHomePagePath),
           data,
+          publishedContributions: profileRecord.entity.publishedContributions,
           ownKnownEntities: {
             collections,
             resources,

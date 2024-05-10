@@ -1,7 +1,10 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
 import * as collectionSrv from '@moodlenet/collection/server'
+import type { EventPayload } from '@moodlenet/core'
+import { getEntityIdentifiersByKey } from '@moodlenet/system-entities/common'
 import type { EntityFullDocument } from '@moodlenet/system-entities/server'
-import { sysEntitiesDB } from '@moodlenet/system-entities/server'
+import { isSameClass, sysEntitiesDB } from '@moodlenet/system-entities/server'
+import type { ProfileDataType, WebUserActivityEvents } from '../../exports.mjs'
 import { Profile } from '../../exports.mjs'
 import { EntityPoints } from '../../init/sys-entities.mjs'
 import type { UpsertDeltaPointsCfg } from './lib.mjs'
@@ -114,4 +117,61 @@ FOR deltaPointsElem IN ${DELTA_POINTS_ARRAY_AQL_VAR}
         throw err
       })
   })
+}
+
+export async function maintainProfilePublishedContributionCount(
+  activity: EventPayload<
+    Pick<
+      WebUserActivityEvents,
+      | 'collection-published'
+      | 'collection-unpublished'
+      | 'resource-published'
+      | 'resource-unpublished'
+    >
+  >,
+) {
+  if (!isSameClass(activity.data.userId.entityClass, Profile.entityClass)) {
+    return
+  }
+  const profileKey = activity.data.userId._key
+  const { _id: profileId } = getEntityIdentifiersByKey({
+    ...activity.data.userId.entityClass,
+    _key: profileKey,
+  })
+
+  const contribEdits = ((): null | {
+    contribType: keyof ProfileDataType['publishedContributions']
+    delta: number
+  } => {
+    switch (activity.event) {
+      case 'collection-published':
+        return { contribType: 'collections', delta: 1 }
+      case 'collection-unpublished':
+        return { contribType: 'collections', delta: -1 }
+      case 'resource-published':
+        return { contribType: 'resources', delta: 1 }
+      case 'resource-unpublished':
+        return { contribType: 'resources', delta: -1 }
+      default:
+        return null
+    }
+  })()
+
+  if (!contribEdits) {
+    return
+  }
+  const { contribType, delta } = contribEdits
+  const curs = await sysEntitiesDB.query(
+    `
+    LET profile = DOCUMENT(@profileId)
+    UPDATE profile WITH { 
+      publishedContributions: {
+        ${contribType}: profile.publishedContributions.${contribType} + (@delta) 
+      } 
+    } IN @@ProfileCollection
+    RETURN null
+  `,
+    { '@ProfileCollection': Profile.collection.name, profileId, delta },
+  )
+  await curs.kill()
 }

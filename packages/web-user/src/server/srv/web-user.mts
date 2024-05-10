@@ -189,6 +189,10 @@ export async function createWebUser(createRequest: CreateRequest) {
     points: 0,
     webslug: webSlug(profileData.displayName),
     settings: {},
+    publishedContributions: {
+      collections: 0,
+      resources: 0,
+    },
     ...profileData,
   }
   const newProfile = await create(Profile.entityClass, createData, { pkgCreator: true })
