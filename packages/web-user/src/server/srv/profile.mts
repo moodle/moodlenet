@@ -644,7 +644,7 @@ export async function sendMessageToProfileIntent({
 
 export async function getProfileOwnKnownEntities<
   KT extends Exclude<KnownEntityType, 'profile' | 'subject'>,
->({ profileKey, knownEntity, limit }: { profileKey: string; knownEntity: KT; limit?: number }) {
+>({ profileKey, knownEntity, limit }: { profileKey: string; knownEntity: KT; limit: number }) {
   const { entityIdentifier: profileIdentifier } = WebUserEntitiesTools.getIdentifiersByKey({
     _key: profileKey,
     type: 'Profile',

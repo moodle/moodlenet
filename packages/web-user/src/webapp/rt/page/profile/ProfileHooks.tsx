@@ -330,7 +330,7 @@ export const useProfileProps = ({
           Icon: FilterNone,
           name: 'Resources',
           className: 'resources',
-          value: profileGetRpc.ownKnownEntities.resources.length,
+          value: profileGetRpc.publishedContributions.resources,
         },
 
         ...plugins.getKeyedAddons('overallCardItems'),

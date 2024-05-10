@@ -8,6 +8,7 @@ import {
 } from '../../exports.mjs'
 import { WebUserCollection, db } from '../../init/arangodb.mjs'
 import {
+  maintainProfilePublishedContributionCount,
   removeFeaturedFromAllUsers,
   removeResourceFromAllCollections,
   upsertDeltaPoints,
@@ -38,10 +39,12 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
     }
     case 'collection-published': {
       await upsertDeltaPoints(PCFG.switchCollectionPublishing(activity.data, true))
+      await maintainProfilePublishedContributionCount(activity)
       break
     }
     case 'collection-unpublished': {
       await upsertDeltaPoints(PCFG.switchCollectionPublishing(activity.data, false))
+      await maintainProfilePublishedContributionCount(activity)
       break
     }
     case 'collection-resource-list-curation': {
@@ -78,10 +81,12 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
     }
     case 'resource-unpublished': {
       await upsertDeltaPoints(PCFG.switchResourcePublishing(activity.data, false))
+      await maintainProfilePublishedContributionCount(activity)
       break
     }
     case 'resource-published': {
       await upsertDeltaPoints(PCFG.switchResourcePublishing(activity.data, true))
+      await maintainProfilePublishedContributionCount(activity)
       break
     }
     case 'resource-request-metadata-generation': {
