@@ -32,6 +32,7 @@ import {
   toaql,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
+import { newPublisherEmail } from '../../common/emails/NewPublisherEmail/NewPublisherEmail.js'
 import { messageReceivedEmail } from '../../common/emails/Social/MessageReceivedEmail/MessageReceivedEmail.js'
 import type { EditProfileDataRpc } from '../../common/expose-def.mjs'
 import type {
@@ -54,6 +55,7 @@ import type {
   ProfileDataType,
   ProfileInterests,
   ProfileMeta,
+  UserStatusItem,
 } from '../types.mjs'
 import {
   getEntityClassByKnownEntity,
@@ -286,9 +288,12 @@ export async function changeProfilePublisherPerm({
   //   setIsPublisher,
   //   forceUnpublish,
   // })
-  const moderator = await getCurrentSystemUser()
-  const moderatorIds = await getCurrentWebUserIds()
-  assert(moderator.type === 'entity' && moderatorIds?.isAdmin, 'should be an admin user')
+  const currentSysUser = await getCurrentSystemUser()
+  const currentUserIds = await getCurrentWebUserIds()
+  assert(
+    currentSysUser.type === 'pkg' || (currentSysUser.type === 'entity' && currentUserIds?.isAdmin),
+    'should be an admin user',
+  )
 
   const [profile, webUser] = await Promise.all([
     getProfileRecord(profileKey),
@@ -297,6 +302,15 @@ export async function changeProfilePublisherPerm({
   if (!(profile && webUser)) return { type: 'not-found', ok: false }
   if (webUser.publisher === setIsPublisher) return { type: 'no-change', ok: true }
 
+  const moderationHistoryItem: UserStatusItem[] = currentUserIds
+    ? [
+        {
+          byWebUserKey: currentUserIds._key,
+          date: shell.now().toISOString(),
+          status: setIsPublisher ? 'Publisher' : 'Non-publisher',
+        },
+      ]
+    : []
   await Promise.all([
     patchEntity(Profile.entityClass, profileKey, {
       publisher: setIsPublisher,
@@ -305,14 +319,7 @@ export async function changeProfilePublisherPerm({
       publisher: setIsPublisher,
       moderation: {
         status: {
-          history: [
-            {
-              byWebUserKey: moderatorIds._key,
-              date: shell.now().toISOString(),
-              status: setIsPublisher ? 'Publisher' : 'Non-publisher',
-            },
-            ...webUser.moderation.status.history,
-          ],
+          history: [...moderationHistoryItem, ...webUser.moderation.status.history],
         },
       },
     }),
@@ -337,12 +344,27 @@ export async function changeProfilePublisherPerm({
         // console.log('unpublished resource', data.entity._key)
       }),
     )
+  } else if (webUser.contacts.email) {
+    const instanceName = (await getOrgData()).data.instanceName
+    const keepContributingActionUrl = getWebappUrl(
+      getProfileHomePageRoutePath({
+        _key: profile.entity._key,
+        displayName: profile.entity.displayName,
+      }),
+    )
+    send(
+      newPublisherEmail({
+        instanceName,
+        receiverEmail: webUser.contacts.email,
+        keepContributingActionUrl,
+      }),
+    )
   }
   // console.log('changeProfilePublisherPerm unpublised all')
   shell.events.emit('user-publishing-permission-change', {
     type: setIsPublisher ? 'given' : 'revoked',
     profile: { ...profile.entity, _meta: profile.meta },
-    moderator,
+    moderator: currentSysUser,
   })
   return { type: 'done', ok: true }
 }

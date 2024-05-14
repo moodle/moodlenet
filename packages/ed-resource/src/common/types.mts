@@ -1,5 +1,5 @@
 import type { IconTextOptionProps, TextOptionProps } from '@moodlenet/component-library'
-import { getDomainUrl } from '@moodlenet/component-library'
+import { getDomainUrl } from '@moodlenet/component-library/common'
 import type { StateName } from '@moodlenet/core-domain/resource'
 import type { Href } from '@moodlenet/react-app/common'
 // import { AuthDataRpc } from '@moodlenet/web-user/common'
