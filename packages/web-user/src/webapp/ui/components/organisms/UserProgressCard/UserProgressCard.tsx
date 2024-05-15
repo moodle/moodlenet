@@ -8,7 +8,7 @@ import {
   actionsAndPointsObtained,
   getUserLevelDetails,
   userLevels,
-} from '../../../../../common/gamification/user-levels.mjs'
+} from '../../../../gamification/user-levels.mjs'
 import { ReactComponent as LeafIcon } from '../../../assets/icons/leaf.svg'
 import './UserProgressCard.scss'
 

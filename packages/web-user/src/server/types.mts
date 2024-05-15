@@ -10,6 +10,7 @@ import type {
   EntityDocument,
   EntityFullDocument,
   EntityUser,
+  PkgUser,
 } from '@moodlenet/system-entities/server'
 import type {
   KnownEntityFeature,
@@ -243,7 +244,7 @@ export type WebUserActivityEvents = {
   }
   'user-publishing-permission-change': {
     type: 'given' | 'revoked'
-    moderator: EntityUser //| PkgUser
+    moderator: EntityUser | PkgUser
     profile: EntityFullDocument<ProfileDataType>
   }
   'feature-entity': {
