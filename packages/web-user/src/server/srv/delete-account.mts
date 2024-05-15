@@ -2,7 +2,11 @@ import { delCollection } from '@moodlenet/collection/server'
 import { nameMatcher } from '@moodlenet/core-domain/resource'
 import { jwt } from '@moodlenet/crypto/server'
 import { stdEdResourceMachine } from '@moodlenet/ed-resource/server'
-import { setCurrentSystemUser, setPkgCurrentUser } from '@moodlenet/system-entities/server'
+import {
+  getCurrentSystemUser,
+  setCurrentSystemUser,
+  setPkgCurrentUser,
+} from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import { waitFor } from 'xstate/lib/waitFor.js'
 import { Profile } from '../exports.mjs'
@@ -39,9 +43,15 @@ export async function deleteWebUserAccountConfirmedByToken(token: string) {
   })
 }
 
+export async function pkgDeletesWebUserAccountNow({ webUserKey }: { webUserKey: string }) {
+  const currentSysUser = await getCurrentSystemUser()
+  assert(currentSysUser.type === 'pkg')
+  return adminDeletesWebUserAccountNow({ webUserKey })
+}
 export async function adminDeletesWebUserAccountNow({ webUserKey }: { webUserKey: string }) {
+  const currentSysUser = await getCurrentSystemUser()
   const currWebUser = await getCurrentWebUserIds()
-  if (!currWebUser?.isAdmin) {
+  if (currentSysUser.type !== 'pkg' && !currWebUser?.isAdmin) {
     return { status: 'non-admins-cannot-delete-others' } as const
   }
   const targetWebUser = await getWebUser({ _key: webUserKey })

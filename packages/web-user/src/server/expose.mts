@@ -534,7 +534,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       guard: () => void 0,
       fn: async () => {
         const _ = await betterTokenContext()
-        if (!_.isRootOrAdmin) {
+        if (!_.isRootOrAdminOrPkg) {
           throw RpcStatus('Unauthorized')
         }
         throw RpcNext()

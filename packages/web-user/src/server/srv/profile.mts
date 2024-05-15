@@ -585,11 +585,13 @@ export async function searchProfiles({
   sortType = 'Popular',
   text = '',
   after = '0',
+  showDeleted = false,
 }: {
   sortType?: SortTypeRpc | 'Points'
   text?: string
   after?: string
   limit?: number
+  showDeleted?: boolean
 }) {
   const sort =
     sortType === 'Points'
@@ -612,6 +614,7 @@ export async function searchProfiles({
       limit,
       skip,
       sort,
+      preAccessBody: showDeleted ? undefined : `FILTER !${currentEntityVar}.deleted`,
     },
   )
 

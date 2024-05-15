@@ -213,6 +213,9 @@ export async function createWebUser(createRequest: CreateRequest) {
         history: [],
       },
     },
+    lastLogin: {
+      at: new Date().toISOString(),
+    },
   }
 
   const { new: newWebUser } = await WebUserCollection.save(webUserData, { returnNew: true })
@@ -245,7 +248,13 @@ export async function createWebUser(createRequest: CreateRequest) {
     jwtToken,
   }
 }
-export async function signWebUserJwtToken({ webUserkey }: { webUserkey: string }) {
+export async function signWebUserJwtToken({
+  webUserkey,
+  noLogin,
+}: {
+  webUserkey: string
+  noLogin?: boolean
+}) {
   const webUser = await getWebUser({ _key: webUserkey })
   if (!webUser) {
     return
@@ -271,10 +280,13 @@ export async function signWebUserJwtToken({ webUserkey }: { webUserkey: string }
       publisher: profile.publisher,
     },
   })
-  shell.events.emit('web-user-logged-in', {
-    profileKey: profile._key,
-    webUserKey: webUser._key,
-  })
+  if (!noLogin) {
+    shell.call(sendWebUserTokenCookie)(jwtToken)
+    shell.events.emit('web-user-logged-in', {
+      profileKey: profile._key,
+      webUserKey: webUser._key,
+    })
+  }
   return jwtToken
 }
 export async function getWebUser({

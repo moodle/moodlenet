@@ -124,6 +124,10 @@ export type WebUserDataType = {
       history: UserStatusItem[]
     }
   }
+  lastLogin: {
+    at: string
+    inactiveNotificationSent?: boolean
+  }
 }
 
 export type Contacts = {

@@ -5,6 +5,12 @@ import { shell } from './shell.mjs'
 
 type Env = {
   noBgProc: boolean
+  deleteInactiveUsers:
+    | false
+    | {
+        afterNoLogInForDays: number
+        notifyBeforeDays: number
+      }
 }
 
 export const env = getEnv()
@@ -23,6 +29,20 @@ function getEnv(): Env {
   const config = shell.config ?? {}
   const env: Env = {
     noBgProc: !!config.noBgProc,
+    deleteInactiveUsers: (() => {
+      if (!config.deleteInactiveUsers) return false
+      const afterNoLogInForDays = Math.floor(config.deleteInactiveUsers.afterNoLogInForDays)
+      const notifyBeforeDays = Math.floor(config.deleteInactiveUsers.notifyBeforeDays)
+      if (!afterNoLogInForDays || !notifyBeforeDays) {
+        throw new Error(
+          `deleteInactiveUsers config is invalid :${JSON.stringify(config.deleteInactiveUsers)}`,
+        )
+      }
+      return {
+        afterNoLogInForDays,
+        notifyBeforeDays,
+      }
+    })(),
   }
 
   return env

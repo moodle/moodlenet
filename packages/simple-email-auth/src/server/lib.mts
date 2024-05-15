@@ -40,7 +40,6 @@ export async function login({ email, password }: { email: string; password: stri
 
   const jwtToken = await shell.call(signWebUserJwtToken)({ webUserkey: user.webUserKey })
   assert(jwtToken, `Couldn't sign token for webUserKey:${user.webUserKey}`)
-  shell.call(sendWebUserTokenCookie)(jwtToken)
   return { success: true } as const
 }
 
