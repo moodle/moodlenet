@@ -2,7 +2,11 @@ import { delCollection } from '@moodlenet/collection/server'
 import { nameMatcher } from '@moodlenet/core-domain/resource'
 import { jwt } from '@moodlenet/crypto/server'
 import { stdEdResourceMachine } from '@moodlenet/ed-resource/server'
-import { setCurrentSystemUser, setPkgCurrentUser } from '@moodlenet/system-entities/server'
+import {
+  getCurrentSystemUser,
+  setCurrentSystemUser,
+  setPkgCurrentUser,
+} from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import { waitFor } from 'xstate/lib/waitFor.js'
 import { Profile } from '../exports.mjs'
@@ -18,12 +22,7 @@ import {
   setProfileAvatar,
   setProfileBackgroundImage,
 } from './profile.mjs'
-import {
-  getCurrentWebUserIds,
-  getWebUser,
-  isWebUserAccountDeletionToken,
-  patchWebUser,
-} from './web-user.mjs'
+import { getCurrentWebUserIds, isWebUserAccountDeletionToken, patchWebUser } from './web-user.mjs'
 
 export async function deleteWebUserAccountConfirmedByToken(token: string) {
   const webUserAccountDeletionToken = await jwt.verify<WebUserAccountDeletionToken>(
@@ -35,28 +34,32 @@ export async function deleteWebUserAccountConfirmedByToken(token: string) {
   }
   return await shell.initiateCall(async () => {
     await setPkgCurrentUser()
-    return _deleteWebUserAccountNow(webUserAccountDeletionToken.payload.webUserKey)
+    return deleteWebUserAccountNow(webUserAccountDeletionToken.payload.webUserKey, {
+      deletionReason: 'user-request',
+    })
   })
 }
 
-export async function adminDeletesWebUserAccountNow({ webUserKey }: { webUserKey: string }) {
-  const currWebUser = await getCurrentWebUserIds()
-  if (!currWebUser?.isAdmin) {
-    return { status: 'non-admins-cannot-delete-others' } as const
+type UserAccountDeletionReason = 'moderation' | 'user-request' | 'inactivity'
+
+export async function deleteWebUserAccountNow(
+  webUserKey: string,
+  { deletionReason }: { deletionReason: UserAccountDeletionReason },
+) {
+  const currentSysUser = await getCurrentSystemUser()
+  const currWebUserIds = await getCurrentWebUserIds()
+  const isPkg = currentSysUser.type === 'pkg'
+  const isAdmin = currWebUserIds?.isAdmin === true
+  const isPkgOrAdmin = isPkg || isAdmin
+  if (deletionReason === 'moderation' && isPkgOrAdmin) {
+    return { status: 'only-admins-and-system-can-delete-for-moderation' } as const
   }
-  const targetWebUser = await getWebUser({ _key: webUserKey })
-  if (!targetWebUser) {
-    return { status: 'not-found' } as const
+  if (deletionReason === 'inactivity' && isPkgOrAdmin) {
+    return { status: 'only-admins-and-system-can-delete-for-inactivity' } as const
   }
-  /*  const changeProfilePublisherPermResp = */ await changeProfilePublisherPerm({
-    profileKey: targetWebUser.profileKey,
-    setIsPublisher: false,
-    forceUnpublish: true,
-  })
-  // console.log('changeProfilePublisherPermResp ', changeProfilePublisherPermResp)
-  return _deleteWebUserAccountNow(webUserKey)
-}
-async function _deleteWebUserAccountNow(webUserKey: string) {
+  if (deletionReason === 'user-request' && isPkg) {
+    return { status: 'only-system-can-delete-by-user-request' } as const
+  }
   const { old: webUser } = await patchWebUser({ _key: webUserKey }, { deleting: true })
   if (!webUser) {
     return { status: 'not-found' } as const
@@ -67,6 +70,15 @@ async function _deleteWebUserAccountNow(webUserKey: string) {
   const profileRecord = await getProfileRecord(webUser.profileKey)
   assert(profileRecord, '_deleteWebUserAccountNow: profile#${webUser.profileKey} not found')
   const profile = profileRecord.entity
+
+  if (deletionReason === 'moderation' && profile.publisher) {
+    /*  const changeProfilePublisherPermResp = */ await changeProfilePublisherPerm({
+      profileKey: profile._key,
+      setIsPublisher: false,
+      forceUnpublish: true,
+    })
+  }
+
   if (profile.publisher) {
     const knownFeaturedEntities = reduceToKnownFeaturedEntities(profile.knownFeaturedEntities)
     const allDiscardingFeatures = [
@@ -167,13 +179,13 @@ async function _deleteWebUserAccountNow(webUserKey: string) {
     {
       deleted: true,
       aboutMe: '',
-      displayName: 'deleted user',
+      displayName: `deleted user`,
       knownFeaturedEntities: [],
       location: '',
       organizationName: '',
-      publisher: false,
+      //publisher: false,
       settings: { interests: null },
-      popularity: null,
+      //  popularity: null,
       siteUrl: null,
       webslug: 'deleted-user',
     },
@@ -185,9 +197,9 @@ async function _deleteWebUserAccountNow(webUserKey: string) {
       contacts: { email: '###@###.###' },
       deleted: true,
       deleting: false,
-      displayName: 'deleted user by moderator',
+      displayName: `deleted user for ${deletionReason}`,
       isAdmin: false,
-      publisher: false,
+      // publisher: false,
     },
     { keepNull: true },
   )

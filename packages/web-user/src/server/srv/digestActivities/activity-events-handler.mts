@@ -101,6 +101,10 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
       break
     }
     case 'web-user-logged-in': {
+      WebUserCollection.update(
+        { _key: activity.data.webUserKey },
+        { lastLogin: { at: activity.at } },
+      )
       break
     }
     case 'web-user-delete-account-intent':

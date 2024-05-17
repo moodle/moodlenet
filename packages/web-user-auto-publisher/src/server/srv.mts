@@ -1,4 +1,5 @@
 import { send } from '@moodlenet/email-service/server'
+import { getOrgData } from '@moodlenet/organization/server'
 import { getWebappUrl } from '@moodlenet/react-app/server'
 import { getProfileHomePageRoutePath } from '@moodlenet/web-user/common'
 import {
@@ -6,19 +7,14 @@ import {
   getProfileOwnKnownEntities,
   getWebUserByProfileKey,
 } from '@moodlenet/web-user/server'
-import { firstContributionEmail } from '../common/emails/FirstContributionEmail/FirstContributionEmail.js'
-import { lastContributionEmail } from '../common/emails/LastContributionEmail/LastContributionEmail.js'
+import { firstContributionEmail } from '../common/emails/FirstContributionEmail.js'
+import { lastContributionEmail } from '../common/emails/LastContributionEmail.js'
+import { welcomeEmail } from '../common/emails/WelcomeEmail.js'
 import type { ReadFlowStatus, UserDetails } from './ctrl/types.mjs'
 import { env } from './env.mjs'
 import type { FlowStatus } from './init/kvStore.mjs'
 import { kvStore } from './init/kvStore.mjs'
-type StatusType = ReadFlowStatus['type']
-function defaultFlowStatusValue<S extends StatusType>(type: S): FlowStatus & { type: S } {
-  return {
-    type,
-    sentEmails: { last: false, first: false },
-  }
-}
+const NO_SENT_EMAILS = { last: false, first: false, welcome: false } as const
 
 export async function readApprovalFlowStatus({
   profileKey,
@@ -29,15 +25,21 @@ export async function readApprovalFlowStatus({
   const webUser = await getWebUserByProfileKey({ profileKey })
 
   if (webUser?.publisher) {
-    return setFlowStatus(profileKey, defaultFlowStatusValue('ended'))
+    return setFlowStatus({ profileKey, flowStatus: { type: 'ended', sentEmails: NO_SENT_EMAILS } })
   }
   if (!webUser?.contacts.email) {
-    return setFlowStatus(profileKey, defaultFlowStatusValue('no-webuser-email'))
+    return setFlowStatus({
+      profileKey,
+      flowStatus: { type: 'no-webuser-email', sentEmails: NO_SENT_EMAILS },
+    })
   }
 
   const flowStatus =
     (await getFlowStatus(profileKey)) ??
-    (await setFlowStatus(profileKey, defaultFlowStatusValue('ongoing')))
+    (await setFlowStatus({
+      profileKey,
+      flowStatus: { type: 'ongoing', sentEmails: NO_SENT_EMAILS },
+    }))
 
   if (flowStatus.type === 'no-webuser-email') {
     return { type: flowStatus.type }
@@ -74,10 +76,13 @@ async function getCurrentCreatedResourceLeastAmount(
   return currentCreatedResourceLeastAmountList.length
 }
 
-export async function setFlowStatus<FS extends FlowStatus>(
-  profileKey: string,
-  flowStatus: FS,
-): Promise<FS> {
+export async function setFlowStatus<FS extends FlowStatus>({
+  flowStatus,
+  profileKey,
+}: {
+  profileKey: string
+  flowStatus: FS
+}): Promise<FS> {
   await kvStore.set('flow-status', profileKey, flowStatus)
   return flowStatus
 }
@@ -88,16 +93,11 @@ export async function doSendLastContributionEmail({
   profileKey,
   user,
   currentCreatedResourceLeastAmount,
-  flowStatus,
 }: {
   user: UserDetails
   profileKey: string
   currentCreatedResourceLeastAmount: number
-  flowStatus: FlowStatus
 }) {
-  if (flowStatus.type !== 'ongoing') {
-    return
-  }
   await send(
     lastContributionEmail({
       amountSoFar: currentCreatedResourceLeastAmount,
@@ -110,27 +110,19 @@ export async function doSendLastContributionEmail({
       receiverEmail: user.email,
     }),
   )
-  setFlowStatus(profileKey, {
-    type: 'ongoing',
-    sentEmails: { first: flowStatus.sentEmails.first, last: true },
-  })
 }
 export async function doSendFirstContributionEmail({
   profileKey,
   user,
   yetTocreate,
-  flowStatus,
-  instanceName,
 }: {
   user: UserDetails
   profileKey: string
   yetTocreate: number
-  flowStatus: FlowStatus
-  instanceName: string
 }) {
-  if (flowStatus.type !== 'ongoing') {
-    return
-  }
+  const {
+    data: { instanceName },
+  } = await getOrgData()
   await send(
     firstContributionEmail({
       yetTocreate,
@@ -144,24 +136,36 @@ export async function doSendFirstContributionEmail({
       receiverEmail: user.email,
     }),
   )
-  setFlowStatus(profileKey, { type: 'ongoing', sentEmails: { last: false, first: true } })
 }
 
-export async function setProfileAsPublisher({
-  profileKey,
-  flowStatus,
-}: {
-  profileKey: string
-  flowStatus: FlowStatus
-}) {
-  if (flowStatus.type !== 'ongoing') {
-    return
-  }
+export async function setProfileAsPublisher({ profileKey }: { profileKey: string }) {
   await changeProfilePublisherPerm({
     profileKey,
     setIsPublisher: true,
     forceUnpublish: false,
   })
+}
 
-  await setFlowStatus(profileKey, { type: 'ended', sentEmails: flowStatus.sentEmails })
+export async function doSendWelcomeEmail({
+  user: { displayName, email },
+  profileKey,
+}: {
+  user: UserDetails
+  profileKey: string
+}) {
+  const orgData = await getOrgData()
+  await send(
+    welcomeEmail({
+      amountResourceToGainPublishingRights: env.amountForAutoApproval,
+      contributeActionUrl: getWebappUrl(
+        getProfileHomePageRoutePath({
+          _key: profileKey,
+          displayName,
+        }),
+      ),
+      receiverEmail: email,
+      displayName,
+      instanceName: orgData.data.instanceName,
+    }),
+  )
 }

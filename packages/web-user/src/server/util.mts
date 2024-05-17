@@ -1,3 +1,4 @@
+import { getCurrentSystemUser } from '@moodlenet/system-entities/server'
 import { platform } from 'os'
 import { verifyCurrentTokenCtx } from './exports.mjs'
 export function fixModuleLocForWebpackByOS(moduleLoc: string) {
@@ -11,21 +12,28 @@ export function fixModuleLocForWebpackByOS(moduleLoc: string) {
 
 //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
 export async function betterTokenContext() {
+  const sysUser = await getCurrentSystemUser()
+  if (sysUser.type === 'pkg') {
+    return {
+      isRootOrAdminOrPkg: true,
+      anon: false,
+    } as const
+  }
   const mTokenCtx = await verifyCurrentTokenCtx()
 
   if (!mTokenCtx) {
     return {
-      isRootOrAdmin: false,
+      isRootOrAdminOrPkg: false,
       anon: true,
-      currentWebUser: undefined,
+      // currentWebUser: undefined,
     } as const
   } else {
-    const isRootOrAdmin =
+    const isRootOrAdminOrPkg =
       !!mTokenCtx && (mTokenCtx.payload.isRoot || mTokenCtx.payload.webUser.isAdmin)
     return {
-      isRootOrAdmin,
+      isRootOrAdminOrPkg,
       anon: false,
-      currentWebUser: mTokenCtx.payload,
+      // currentWebUser: mTokenCtx.payload,
     } as const
   }
 }

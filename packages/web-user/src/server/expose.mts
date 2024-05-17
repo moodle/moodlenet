@@ -36,8 +36,8 @@ import { messageFormValidationSchema, profileValidationSchema, validationsConfig
 import { publicFilesHttp } from './init/fs.mjs'
 import { shell } from './shell.mjs'
 import {
-  adminDeletesWebUserAccountNow,
   deleteWebUserAccountConfirmedByToken,
+  deleteWebUserAccountNow,
 } from './srv/delete-account.mjs'
 import {
   isAllowedKnownEntityFeature,
@@ -534,7 +534,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
       guard: () => void 0,
       fn: async () => {
         const _ = await betterTokenContext()
-        if (!_.isRootOrAdmin) {
+        if (!_.isRootOrAdminOrPkg) {
           throw RpcStatus('Unauthorized')
         }
         throw RpcNext()
@@ -640,12 +640,12 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
     'webapp/admin/moderation/___delete-user/:webUserKey': {
       guard: () => void 0,
       async fn(_, { webUserKey }) {
-        const resp = await adminDeletesWebUserAccountNow({ webUserKey })
-        if (resp.status === 'non-admins-cannot-delete-others') {
-          throw RpcStatus('Unauthorized')
-        }
+        const resp = await deleteWebUserAccountNow(webUserKey, { deletionReason: 'moderation' })
         if (resp.status === 'not-found') {
           throw RpcStatus('Not Found')
+        }
+        if (!(resp.status === 'done' || resp.status === 'deleting')) {
+          throw RpcStatus('Unauthorized')
         }
         return true
       },
