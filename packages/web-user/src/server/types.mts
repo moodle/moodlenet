@@ -126,7 +126,7 @@ export type WebUserDataType = {
   }
   lastLogin: {
     at: string
-    inactiveNotificationSent?: boolean
+    inactiveNotificationSentAt?: null | string
   }
 }
 

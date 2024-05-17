@@ -3,7 +3,7 @@ import type { ReadFlowStatus } from '../ctrl/types.mjs'
 import { shell } from '../shell.mjs'
 
 export type FlowStatusType = FlowStatus['type']
-export type SentEmails = Record<'first' | 'last', boolean>
+export type SentEmails = Record<'first' | 'last' | 'welcome', boolean>
 export type FlowStatus = {
   type: ReadFlowStatus['type']
   sentEmails: SentEmails

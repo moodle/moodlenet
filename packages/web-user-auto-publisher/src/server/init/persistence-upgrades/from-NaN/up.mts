@@ -1,7 +1,7 @@
 import { Resource } from '@moodlenet/ed-resource/server'
 import { sysEntitiesDB } from '@moodlenet/system-entities/server'
 import { env } from '../../../env.mjs'
-import { webUserCreatedResource } from '../../../exports.mjs'
+import { profileCreatedResource } from '../../../exports.mjs'
 import { shell } from '../../../shell.mjs'
 
 const curs = await sysEntitiesDB.query<{
@@ -38,7 +38,7 @@ shell.log('info', `first setup todo: ${curs.count}`)
 let done = 0
 while (curs.batches.hasNext) {
   const batch = (await curs.batches.next()) ?? []
-  await Promise.all(batch.map(({ profileKey }) => webUserCreatedResource({ profileKey })))
+  await Promise.all(batch.map(({ profileKey }) => profileCreatedResource({ profileKey })))
   done += batch.length
   !(done % 500) && shell.log('info', `first setup done: ${done}`)
 }

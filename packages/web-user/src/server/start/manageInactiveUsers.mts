@@ -7,7 +7,7 @@ import { LOGIN_PAGE_ROUTE_BASE_PATH } from '../../common/webapp-routes.mjs'
 import { env } from '../env.mjs'
 import { WebUserCollection } from '../init/arangodb.mjs'
 import { shell } from '../shell.mjs'
-import { pkgDeletesWebUserAccountNow } from '../srv/delete-account.mjs'
+import { deleteWebUserAccountNow } from '../srv/delete-account.mjs'
 import type { WebUserRecord } from '../types.mjs'
 
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -29,13 +29,13 @@ function start() {
 
     const orgData = await getOrgData()
 
-    await Promise.all(
-      records.map(async ({ displayName, _id, contacts: { email } }) =>
-        shell.initiateCall(async () => {
+    shell.initiateCall(async () => {
+      await setPkgCurrentUser()
+      return Promise.all(
+        records.map(async ({ displayName, _id, contacts: { email } }) => {
           if (!email) {
             return
           }
-          await setPkgCurrentUser()
           await send(
             inactivityDeletionNotificationEmail({
               displayName,
@@ -45,10 +45,12 @@ function start() {
               receiverEmail: email,
             }),
           )
-          await WebUserCollection.update(_id, { lastLogin: { inactiveNotificationSent: true } })
+          await WebUserCollection.update(_id, {
+            lastLogin: { inactiveNotificationSentAt: new Date().toISOString() },
+          })
         }),
-      ),
-    )
+      )
+    })
     setTimeout(
       queryBatchForInactivityNotifications,
       records.length === BATCH_SIZE ? 0 : TIMEOUT_WHEN_NO_MORE_SO_FAR_MS,
@@ -57,14 +59,14 @@ function start() {
   async function queryBatchForInactiveUsersDeletions() {
     const records = await queryUsersFor('deletion')
 
-    await Promise.all(
-      records.map(({ _key }) =>
-        shell.initiateCall(async () => {
-          await setPkgCurrentUser()
-          await pkgDeletesWebUserAccountNow({ webUserKey: _key })
+    shell.initiateCall(async () => {
+      await setPkgCurrentUser()
+      return Promise.all(
+        records.map(async ({ _key }) => {
+          await deleteWebUserAccountNow(_key, { deletionReason: 'inactivity' })
         }),
-      ),
-    )
+      )
+    })
     setTimeout(
       queryBatchForInactiveUsersDeletions,
       records.length === BATCH_SIZE ? 0 : TIMEOUT_WHEN_NO_MORE_SO_FAR_MS,
@@ -75,14 +77,14 @@ function start() {
     const deleteBeforeDateMs = Date.now() - afterNoLogInForMs + TIMEOUT_WHEN_NO_MORE_SO_FAR_MS
     const notifyBeforeDateMs = deleteBeforeDateMs + notifyBeforeMs
 
-    const bInactiveSent = scope === 'deletion' ? '' : '!'
+    const boolNotifSent = scope === 'deletion' ? '' : '!'
     const lastLoginBeforeDateMs = scope === 'deletion' ? deleteBeforeDateMs : notifyBeforeDateMs
     return (
       await sysEntitiesDB.query<WebUserRecord>(
         `
     FOR webUser IN @@webUserCollection
       FILTER  webUser.lastLogin.at < @lastLoginBeforeDate
-              && ${bInactiveSent}webUser.lastLogin.inactiveNotificationSent
+              && ${boolNotifSent}webUser.lastLogin.inactiveNotificationSentAt
       LIMIT ${BATCH_SIZE}
       RETURN webUser
       `,

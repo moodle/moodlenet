@@ -1,4 +1,4 @@
-export type SentEmails = Record<'first' | 'last', boolean>
+export type SentEmails = Record<'first' | 'last' | 'welcome', boolean>
 export type ReadFlowStatus =
   | {
       type: 'no-webuser-email'
