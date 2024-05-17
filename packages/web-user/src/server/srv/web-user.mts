@@ -31,7 +31,7 @@ import type {
 } from '../types.mjs'
 
 const VALID_JWT_VERSION: TokenVersion = 1
-export async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
+async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
   const sessionToken = await shell.call(jwt.sign)(webUserJwtPayload, {
     expirationTime: '1w',
     subject: webUserJwtPayload.isRoot ? undefined : webUserJwtPayload.webUser._key,
@@ -250,10 +250,10 @@ export async function createWebUser(createRequest: CreateRequest) {
 }
 export async function signWebUserJwtToken({
   webUserkey,
-  noLogin,
+  sendTokenCookie,
 }: {
   webUserkey: string
-  noLogin?: boolean
+  sendTokenCookie: boolean
 }) {
   const webUser = await getWebUser({ _key: webUserkey })
   if (!webUser) {
@@ -280,7 +280,7 @@ export async function signWebUserJwtToken({
       publisher: profile.publisher,
     },
   })
-  if (!noLogin) {
+  if (sendTokenCookie) {
     shell.call(sendWebUserTokenCookie)(jwtToken)
     shell.events.emit('web-user-logged-in', {
       profileKey: profile._key,
