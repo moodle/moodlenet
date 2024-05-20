@@ -1,4 +1,5 @@
 import { useFooterProps, useMinimalisticHeaderProps } from '@moodlenet/react-app/webapp'
+import { LOGIN_PAGE_ROUTE_BASE_PATH } from '@moodlenet/web-user/common'
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { shell } from '../../shell.mjs'
@@ -14,7 +15,7 @@ export function useNewPasswordProps({ token }: { token: string }) {
         .me('webapp/change-password-using-token')({ password, token })
         .then(({ success }) => {
           if (success) {
-            nav('/login')
+            nav(LOGIN_PAGE_ROUTE_BASE_PATH)
           }
         })
     },

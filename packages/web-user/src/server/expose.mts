@@ -33,6 +33,7 @@ import {
   getProfileHomePageRoutePath,
 } from '../common/webapp-routes.mjs'
 import { messageFormValidationSchema, profileValidationSchema, validationsConfig } from './env.mjs'
+import { WebUserCollection } from './init/arangodb.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
 import { shell } from './shell.mjs'
 import {
@@ -69,9 +70,10 @@ import {
   getWebUser,
   ignoreUserReports,
   loginAsRoot,
-  searchUsers,
+  searchUsersForModeration,
   sendWebUserTokenCookie,
   setWebUserIsAdmin,
+  signWebUserJwt,
   verifyCurrentTokenCtx,
 } from './srv/web-user.mjs'
 import type { ProfileDataType } from './types.mjs'
@@ -130,6 +132,24 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
           isRoot: false,
           myProfile: { ...myProfile, webUserKey: webUser._key },
         }
+        const jwtToken = await signWebUserJwt({
+          isRoot: false,
+          profile: {
+            _id: profileRecord.entity._id,
+            _key: profileRecord.entity._key,
+            publisher: profileRecord.entity.publisher,
+          },
+          webUser: {
+            _key: webUser._key,
+            displayName: webUser.displayName,
+            isAdmin: webUser.isAdmin,
+          },
+        })
+        sendWebUserTokenCookie(jwtToken)
+        WebUserCollection.update(
+          { _key: webUser._key },
+          { lastVisit: { at: new Date().toISOString() } },
+        )
         return clientSessionDataRpc
       },
     },
@@ -415,12 +435,13 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         if (!currWebUserIds) {
           throw RpcStatus('Unauthorized')
         }
-        reportUser({
+        const { done } = await reportUser({
           profileKey: _key,
-          reportOptionTypeId,
+          reportTypeId: reportOptionTypeId,
           comment,
           reporterWebUserKey: currWebUserIds._key,
         })
+        return { done }
       },
     },
     'webapp/my-interests/save': {
@@ -548,7 +569,7 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         forReports = false,
         sortType = forReports ? 'Flags' : 'Status',
       }) {
-        const users_and_profiles = await searchUsers({
+        const users_and_profiles = await searchUsersForModeration({
           fetchReporters: forReports,
           searchString: search,
           sortType,

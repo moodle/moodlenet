@@ -1,7 +1,7 @@
+import { CREATE_RESOURCE_PAGE_ROUTE_PATH } from '@moodlenet/ed-resource/common'
 import { send } from '@moodlenet/email-service/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { getWebappUrl } from '@moodlenet/react-app/server'
-import { getProfileHomePageRoutePath } from '@moodlenet/web-user/common'
 import {
   changeProfilePublisherPerm,
   getProfileOwnKnownEntities,
@@ -86,38 +86,34 @@ export async function setFlowStatus<FS extends FlowStatus>({
   await kvStore.set('flow-status', profileKey, flowStatus)
   return flowStatus
 }
+
 export async function getFlowStatus(profileKey: string) {
   return (await kvStore.get('flow-status', profileKey)).value
 }
+export async function delFlowStatus({ profileKey }: { profileKey: string }) {
+  await kvStore.unset('flow-status', profileKey)
+}
+
 export async function doSendLastContributionEmail({
-  profileKey,
   user,
   currentCreatedResourceLeastAmount,
 }: {
   user: UserDetails
-  profileKey: string
   currentCreatedResourceLeastAmount: number
 }) {
   await send(
     lastContributionEmail({
       amountSoFar: currentCreatedResourceLeastAmount,
-      keepContributingActionUrl: getWebappUrl(
-        getProfileHomePageRoutePath({
-          _key: profileKey,
-          displayName: user.displayName,
-        }),
-      ),
+      keepContributingActionUrl: getWebappUrl(CREATE_RESOURCE_PAGE_ROUTE_PATH),
       receiverEmail: user.email,
     }),
   )
 }
 export async function doSendFirstContributionEmail({
-  profileKey,
   user,
   yetTocreate,
 }: {
   user: UserDetails
-  profileKey: string
   yetTocreate: number
 }) {
   const {
@@ -126,12 +122,7 @@ export async function doSendFirstContributionEmail({
   await send(
     firstContributionEmail({
       yetTocreate,
-      keepContributingActionUrl: getWebappUrl(
-        getProfileHomePageRoutePath({
-          _key: profileKey,
-          displayName: user.displayName,
-        }),
-      ),
+      keepContributingActionUrl: getWebappUrl(CREATE_RESOURCE_PAGE_ROUTE_PATH),
       instanceName,
       receiverEmail: user.email,
     }),
@@ -146,23 +137,12 @@ export async function setProfileAsPublisher({ profileKey }: { profileKey: string
   })
 }
 
-export async function doSendWelcomeEmail({
-  user: { displayName, email },
-  profileKey,
-}: {
-  user: UserDetails
-  profileKey: string
-}) {
+export async function doSendWelcomeEmail({ user: { displayName, email } }: { user: UserDetails }) {
   const orgData = await getOrgData()
   await send(
     welcomeEmail({
       amountResourceToGainPublishingRights: env.amountForAutoApproval,
-      contributeActionUrl: getWebappUrl(
-        getProfileHomePageRoutePath({
-          _key: profileKey,
-          displayName,
-        }),
-      ),
+      contributeActionUrl: getWebappUrl(CREATE_RESOURCE_PAGE_ROUTE_PATH),
       receiverEmail: email,
       displayName,
       instanceName: orgData.data.instanceName,

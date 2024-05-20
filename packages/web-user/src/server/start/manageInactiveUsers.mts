@@ -1,11 +1,11 @@
 import { send } from '@moodlenet/email-service/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { getWebappUrl } from '@moodlenet/react-app/server'
-import { setPkgCurrentUser, sysEntitiesDB } from '@moodlenet/system-entities/server'
+import { setPkgCurrentUser } from '@moodlenet/system-entities/server'
 import { inactivityDeletionNotificationEmail } from '../../common/emails/Access/DeleteAccountEmail/InactivityDeletionNotification.js'
 import { LOGIN_PAGE_ROUTE_BASE_PATH } from '../../common/webapp-routes.mjs'
 import { env } from '../env.mjs'
-import { WebUserCollection } from '../init/arangodb.mjs'
+import { WebUserCollection, db } from '../init/arangodb.mjs'
 import { shell } from '../shell.mjs'
 import { deleteWebUserAccountNow } from '../srv/delete-account.mjs'
 import type { WebUserRecord } from '../types.mjs'
@@ -22,16 +22,42 @@ function start() {
   const { afterNoLogInForDays, notifyBeforeDays } = inactivityConfig
   const afterNoLogInForMs = afterNoLogInForDays * DAY_MS
   const notifyBeforeMs = notifyBeforeDays * DAY_MS
-  queryBatchForInactivityNotifications()
-  queryBatchForInactiveUsersDeletions()
-  async function queryBatchForInactivityNotifications() {
+  startInactivityNotifications()
+  startInactiveUsersDeletions()
+
+  async function queryUsersFor(scope: 'notification' | 'deletion') {
+    const lastVisitBeforeDateMs_delete =
+      Date.now() - afterNoLogInForMs - TIMEOUT_WHEN_NO_MORE_SO_FAR_MS
+    const lastVisitBeforeDateMs_notify = lastVisitBeforeDateMs_delete - notifyBeforeMs
+
+    const lastVisitBeforeDateMs =
+      scope === 'deletion' ? lastVisitBeforeDateMs_delete : lastVisitBeforeDateMs_notify
+    return (
+      await db.query<WebUserRecord>(
+        `
+    FOR webUser IN @@webUserCollection
+      FILTER  !webUser.deleted && !webUser.deleting
+              && webUser.lastVisit.at < @lastVisitBeforeDate
+              && ${scope === 'deletion' ? '' : '!'}webUser.lastVisit.inactiveNotificationSentAt
+      SORT webUser.lastVisit.at
+      LIMIT ${BATCH_SIZE}
+      RETURN webUser
+      `,
+        {
+          '@webUserCollection': WebUserCollection.name,
+          'lastVisitBeforeDate': new Date(lastVisitBeforeDateMs).toISOString(),
+        },
+      )
+    ).all()
+  }
+  async function startInactivityNotifications() {
     const records = await queryUsersFor('notification')
 
     const orgData = await getOrgData()
 
     shell.initiateCall(async () => {
       await setPkgCurrentUser()
-      return Promise.all(
+      return Promise.allSettled(
         records.map(async ({ displayName, _id, contacts: { email } }) => {
           if (!email) {
             return
@@ -46,53 +72,30 @@ function start() {
             }),
           )
           await WebUserCollection.update(_id, {
-            lastLogin: { inactiveNotificationSentAt: new Date().toISOString() },
+            lastVisit: { inactiveNotificationSentAt: new Date().toISOString() },
           })
         }),
       )
     })
     setTimeout(
-      queryBatchForInactivityNotifications,
+      startInactivityNotifications,
       records.length === BATCH_SIZE ? 0 : TIMEOUT_WHEN_NO_MORE_SO_FAR_MS,
     )
   }
-  async function queryBatchForInactiveUsersDeletions() {
+  async function startInactiveUsersDeletions() {
     const records = await queryUsersFor('deletion')
 
     shell.initiateCall(async () => {
       await setPkgCurrentUser()
-      return Promise.all(
+      return Promise.allSettled(
         records.map(async ({ _key }) => {
           await deleteWebUserAccountNow(_key, { deletionReason: 'inactivity' })
         }),
       )
     })
     setTimeout(
-      queryBatchForInactiveUsersDeletions,
+      startInactiveUsersDeletions,
       records.length === BATCH_SIZE ? 0 : TIMEOUT_WHEN_NO_MORE_SO_FAR_MS,
     )
-  }
-
-  async function queryUsersFor(scope: 'notification' | 'deletion') {
-    const deleteBeforeDateMs = Date.now() - afterNoLogInForMs + TIMEOUT_WHEN_NO_MORE_SO_FAR_MS
-    const notifyBeforeDateMs = deleteBeforeDateMs + notifyBeforeMs
-
-    const boolNotifSent = scope === 'deletion' ? '' : '!'
-    const lastLoginBeforeDateMs = scope === 'deletion' ? deleteBeforeDateMs : notifyBeforeDateMs
-    return (
-      await sysEntitiesDB.query<WebUserRecord>(
-        `
-    FOR webUser IN @@webUserCollection
-      FILTER  webUser.lastLogin.at < @lastLoginBeforeDate
-              && ${boolNotifSent}webUser.lastLogin.inactiveNotificationSentAt
-      LIMIT ${BATCH_SIZE}
-      RETURN webUser
-      `,
-        {
-          '@webUserCollection': WebUserCollection.name,
-          'lastLoginBeforeDate': new Date(lastLoginBeforeDateMs).toISOString(),
-        },
-      )
-    ).all()
   }
 }

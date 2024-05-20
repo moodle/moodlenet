@@ -125,22 +125,11 @@ export async function deleteWebUserAccountNow(
     profileKey: profile._key,
     limit: 100000,
   })
-  // console.log({
-  //   ownCollections: ownCollections.map(_ => ({
-  //     _key: _.entity._key,
-  //     published: _.entity.published,
-  //   })),
-  //   ownResources: ownResources.map(_ => ({ _key: _.entity._key, published: _.entity.published })),
-  // })
 
   const leftCollectionsRecords = ownCollections.filter(({ entity: { published } }) => published)
   const leftResourcesRecords = ownResources.filter(({ entity: { published } }) => published)
   const deletedCollectionsRecords = ownCollections.filter(({ entity: { published } }) => !published)
   const deletedResourcesRecords = ownResources.filter(({ entity: { published } }) => !published)
-  // console.log('leftCollectionsRecords', leftCollectionsRecords.length)
-  // console.log('leftResourcesRecords', leftResourcesRecords.length)
-  // console.log('deletedCollectionsRecords', deletedCollectionsRecords.length)
-  // console.log('deletedResourcesRecords', deletedResourcesRecords.length)
   await shell.initiateCall(async () => {
     await setCurrentSystemUser({
       type: 'entity',
@@ -150,7 +139,6 @@ export async function deleteWebUserAccountNow(
     await Promise.all(
       deletedCollectionsRecords.map(async ({ entity: { _key } }) => {
         await delCollection(_key)
-        // shell.log('debug', { delCollection: _key })
         return { _key }
       }),
     )
@@ -166,7 +154,6 @@ export async function deleteWebUserAccountNow(
           await waitFor(interpreter, nameMatcher('Destroyed'))
         }
         interpreter.stop()
-        // shell.log('debug', { delResource: _key })
         return { _key: data.entity._key }
       }),
     )
@@ -183,9 +170,7 @@ export async function deleteWebUserAccountNow(
       knownFeaturedEntities: [],
       location: '',
       organizationName: '',
-      //publisher: false,
       settings: { interests: null },
-      //  popularity: null,
       siteUrl: null,
       webslug: 'deleted-user',
     },
@@ -199,7 +184,6 @@ export async function deleteWebUserAccountNow(
       deleting: false,
       displayName: `deleted user for ${deletionReason}`,
       isAdmin: false,
-      // publisher: false,
     },
     { keepNull: true },
   )

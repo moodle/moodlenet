@@ -1,6 +1,7 @@
 import { setPkgCurrentUser } from '@moodlenet/system-entities/server'
 import { shell } from '../shell.mjs'
 import {
+  delFlowStatus,
   doSendFirstContributionEmail,
   doSendLastContributionEmail,
   doSendWelcomeEmail,
@@ -9,6 +10,11 @@ import {
   setProfileAsPublisher,
 } from '../srv.mjs'
 
+export async function deletedProfile({ profileKey }: { profileKey: string }) {
+  await delFlowStatus({
+    profileKey,
+  })
+}
 export async function welcomeNewWebUser({ profileKey }: { profileKey: string }) {
   return shell.initiateCall(async () => {
     await setPkgCurrentUser()
@@ -20,7 +26,6 @@ export async function welcomeNewWebUser({ profileKey }: { profileKey: string }) 
     const { user } = flowStatus
     await doSendWelcomeEmail({
       user,
-      profileKey,
     })
   })
 }
@@ -44,7 +49,6 @@ export async function profileCreatedResource({ profileKey }: { profileKey: strin
     } else if (yetTocreate === 1 && !sentEmails.last) {
       await doSendLastContributionEmail({
         user,
-        profileKey,
         currentCreatedResourceLeastAmount,
       })
 
@@ -56,7 +60,7 @@ export async function profileCreatedResource({ profileKey }: { profileKey: strin
         },
       })
     } else if (currentCreatedResourceLeastAmount === 1 && !sentEmails.first) {
-      await doSendFirstContributionEmail({ user, profileKey, yetTocreate })
+      await doSendFirstContributionEmail({ user, yetTocreate })
       await setFlowStatus({
         profileKey,
         flowStatus: { type: 'ongoing', sentEmails: { ...flowStatus.sentEmails, first: true } },

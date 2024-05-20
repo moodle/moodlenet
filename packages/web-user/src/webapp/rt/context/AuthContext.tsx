@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { Profile } from '../../../common/exports.mjs'
 import {
+  LOGIN_PAGE_ROUTE_BASE_PATH,
   SESSION_CHANGE_REDIRECT_Q_NAME,
   WEB_USER_SESSION_TOKEN_COOKIE_NAME,
 } from '../../../common/exports.mjs'
@@ -183,7 +184,7 @@ wrapFetch((url, reqInit, next) => {
   })
 })
 
-export function useNeedsWebUserLogin(): {
+export function useNeedsWebUserLogin(opts?: { disable?: boolean }): {
   isAdmin: boolean
   myProfile: Profile
 } | null {
@@ -191,13 +192,13 @@ export function useNeedsWebUserLogin(): {
   const loc = useLocation()
   const authCtx = useContext(AuthCtx)
   useEffect(() => {
-    if (authCtx.isAuthenticated && authCtx.clientSessionData.myProfile) {
+    if (opts?.disable || (authCtx.isAuthenticated && authCtx.clientSessionData.myProfile)) {
       return
     }
     const usp = new URLSearchParams()
     usp.append(SESSION_CHANGE_REDIRECT_Q_NAME, `${loc.pathname}${loc.search}${loc.hash}`)
-    nav(`/login?${usp.toString()}`)
-  }, [authCtx.clientSessionData?.myProfile, authCtx.isAuthenticated, loc, nav])
+    nav(`${LOGIN_PAGE_ROUTE_BASE_PATH}?${usp.toString()}`)
+  }, [opts?.disable, authCtx.clientSessionData?.myProfile, authCtx.isAuthenticated, loc, nav])
   return authCtx.clientSessionData?.myProfile
     ? {
         isAdmin: authCtx.clientSessionData.isAdmin,

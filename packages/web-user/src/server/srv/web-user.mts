@@ -31,12 +31,17 @@ import type {
 } from '../types.mjs'
 
 const VALID_JWT_VERSION: TokenVersion = 1
-async function signWebUserJwt(webUserJwtPayload: WebUserJwtPayload): Promise<JwtToken> {
-  const sessionToken = await shell.call(jwt.sign)(webUserJwtPayload, {
-    expirationTime: '1w',
-    subject: webUserJwtPayload.isRoot ? undefined : webUserJwtPayload.webUser._key,
-    scope: [/* 'full-user',  */ 'openid'],
-  })
+export async function signWebUserJwt(
+  webUserJwtPayload: Omit<WebUserJwtPayload, 'v'>,
+): Promise<JwtToken> {
+  const sessionToken = await shell.call(jwt.sign)(
+    { ...webUserJwtPayload, v: VALID_JWT_VERSION },
+    {
+      expirationTime: '1w',
+      subject: webUserJwtPayload.isRoot ? undefined : webUserJwtPayload.webUser?._key,
+      scope: [/* 'full-user',  */ 'openid'],
+    },
+  )
   return sessionToken
 }
 
@@ -90,7 +95,7 @@ export async function loginAsRoot(rootPassword: string): Promise<boolean> {
   if (!rootPasswordMatch) {
     return false
   }
-  const jwtToken = await signWebUserJwt({ isRoot: true, v: VALID_JWT_VERSION })
+  const jwtToken = await signWebUserJwt({ isRoot: true })
   shell.call(sendWebUserTokenCookie)(jwtToken)
   return true
 }
@@ -168,6 +173,7 @@ export async function getWebUserByProfileKey({
       FOR user in @@WebUserCollection
         FILTER user.profileKey == @profileKey
         LIMIT 1
+        FILTER !user.deleted && !user.deleting
       RETURN user
     `,
     { profileKey, '@WebUserCollection': WebUserCollection.name },
@@ -213,7 +219,7 @@ export async function createWebUser(createRequest: CreateRequest) {
         history: [],
       },
     },
-    lastLogin: {
+    lastVisit: {
       at: new Date().toISOString(),
     },
   }
@@ -229,7 +235,6 @@ export async function createWebUser(createRequest: CreateRequest) {
     webUserKey: newWebUser._key,
   })
   const jwtToken = await signWebUserJwt({
-    v: VALID_JWT_VERSION,
     webUser: {
       _key: newWebUser._key,
       displayName: newWebUser.displayName,
@@ -268,7 +273,6 @@ export async function signWebUserJwtToken({
     return
   }
   const jwtToken = await signWebUserJwt({
-    v: VALID_JWT_VERSION,
     webUser: {
       _key: webUser._key,
       displayName: webUser.displayName,
@@ -295,7 +299,7 @@ export async function getWebUser({
   _key: string
 }): Promise<WebUserRecord | undefined | null> {
   const foundUser = await WebUserCollection.document({ _key }, { graceful: true })
-  return foundUser
+  return foundUser.deleted || foundUser.deleting ? null : foundUser
 }
 
 export async function patchWebUserDisplayName({
@@ -343,6 +347,7 @@ export async function setWebUserIsAdmin(
       FOR user in @@WebUserCollection
         FILTER user.${byUserKey ? '_key' : 'profileKey'} == @key
         LIMIT 1
+        FILTER !user.deleted && !user.deleting
         UPDATE user
         WITH { isAdmin: @isAdmin }
         INTO @@WebUserCollection
@@ -371,7 +376,7 @@ type WebUserSearchType = WebUserRecord & {
   }
 }
 
-export async function searchUsers({
+export async function searchUsersForModeration({
   fetchReporters,
   searchString,
   sortType,

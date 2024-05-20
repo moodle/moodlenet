@@ -124,7 +124,7 @@ export type WebUserDataType = {
       history: UserStatusItem[]
     }
   }
-  lastLogin: {
+  lastVisit: {
     at: string
     inactiveNotificationSentAt?: null | string
   }
@@ -142,6 +142,8 @@ export type TokenVersion = 1
 export type WebUserJwtPayload = { v: TokenVersion & 1 } & (
   | {
       isRoot: true
+      webUser?: undefined
+      profile?: undefined
     }
   | {
       isRoot?: false
