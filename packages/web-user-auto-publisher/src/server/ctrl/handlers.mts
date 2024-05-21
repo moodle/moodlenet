@@ -1,4 +1,5 @@
 import { setPkgCurrentUser } from '@moodlenet/system-entities/server'
+import { unsetTokenContext } from '@moodlenet/web-user/server'
 import { shell } from '../shell.mjs'
 import {
   delFlowStatus,
@@ -18,6 +19,7 @@ export async function deletedProfile({ profileKey }: { profileKey: string }) {
 
 export async function manageProfile({ profileKey }: { profileKey: string }) {
   return shell.initiateCall(async () => {
+    await unsetTokenContext()
     await setPkgCurrentUser()
     const flowStatus = await readApprovalFlowStatus({ profileKey })
     // console.log('manageProfile', profileKey, flowStatus)

@@ -77,7 +77,7 @@ export async function verifyCurrentTokenCtx() {
     isWebUserJwtPayload,
   )
   if (!jwtVerifyResult) {
-    shell.myAsyncCtx.unset()
+    unsetTokenContext()
     return
   }
   const { payload } = jwtVerifyResult
@@ -90,6 +90,10 @@ export async function verifyCurrentTokenCtx() {
   return verifiedTokenCtx
 }
 
+export function unsetTokenContext() {
+  shell.myAsyncCtx.unset()
+}
+
 export async function loginAsRoot(rootPassword: string): Promise<boolean> {
   const rootPasswordMatch = await matchRootPassword(rootPassword)
   if (!rootPasswordMatch) {
@@ -100,7 +104,7 @@ export async function loginAsRoot(rootPassword: string): Promise<boolean> {
   return true
 }
 
-async function setCurrentTokenCtx(tokenCtx: TokenCtx) {
+export async function setCurrentTokenCtx(tokenCtx: TokenCtx) {
   shell.myAsyncCtx.set(current => ({ ...current, tokenCtx }))
 }
 

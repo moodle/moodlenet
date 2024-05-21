@@ -72,6 +72,8 @@ import {
   getWebUser,
   getWebUserByProfileKey,
   patchWebUserDisplayName,
+  setCurrentUnverifiedJwtToken,
+  signWebUserJwt,
   verifyCurrentTokenCtx,
 } from './web-user.mjs'
 
@@ -337,6 +339,21 @@ export async function changeProfilePublisherPerm({
         entityIdentifier: { _key: profileKey, entityClass: Profile.entityClass },
         restrictToScopes: false,
       })
+      await setCurrentUnverifiedJwtToken(
+        await signWebUserJwt({
+          webUser: {
+            _key: webUser._key,
+            displayName: webUser.displayName,
+            isAdmin: webUser.isAdmin,
+          },
+          profile: {
+            _key: profile.entity._key,
+            _id: profile.entity._id,
+            publisher: true,
+          },
+        }),
+      )
+
       const [collections, resources] = await Promise.all([
         getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection', limit: 100000 }),
         getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource', limit: 100000 }),
