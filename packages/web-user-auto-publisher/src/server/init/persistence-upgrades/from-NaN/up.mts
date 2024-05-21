@@ -33,6 +33,7 @@ import { shell } from '../../../shell.mjs'
 //   },
 //   { ttl: 60 * 10, batchSize: 50, fullCount: true, count: true },
 // )
+const BATCH_SIZE = 1
 const curs = await sysEntitiesDB.query<{
   profileKey: string
 }>(
@@ -46,7 +47,7 @@ RETURN { profileKey: profile._key}
   {
     '@ProfileCollection': Profile.collection.name,
   },
-  { ttl: 60 * 10, batchSize: 50, fullCount: true, count: true },
+  { ttl: 60 * 10, batchSize: BATCH_SIZE, fullCount: true, count: true },
 )
 
 shell.log('info', `first setup todo: ${curs.count}`)
