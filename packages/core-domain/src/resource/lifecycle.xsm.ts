@@ -97,7 +97,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
         on: {
           'cancel-meta-generation': {
             target: 'Unpublished',
-            cond: 'issuer is creator or admin',
+            cond: 'issuer is creator or system or admin',
           },
 
           'generated-meta-suggestions': {
@@ -129,7 +129,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
 
           'trash': {
             target: 'Destroyed',
-            cond: 'issuer is creator or admin',
+            cond: 'issuer is creator or system or admin',
           },
 
           'store-edits': {
@@ -154,12 +154,12 @@ Just check upper bound size`,
         on: {
           'reject-publish': {
             target: '#EdResource.Publish-Rejected',
-            cond: 'issuer is admin',
+            cond: 'issuer is system or admin',
           },
 
           'unpublish': {
             target: 'Unpublished',
-            cond: 'issuer is creator or admin',
+            cond: 'issuer is creator or system or admin',
           },
         },
 
@@ -174,7 +174,7 @@ image is optional`,
         on: {
           unpublish: {
             target: 'Unpublished',
-            cond: 'issuer is creator or admin',
+            cond: 'issuer is creator or system or admin',
           },
         },
 
@@ -201,7 +201,7 @@ image is optional`,
         on: {
           'provide-resource-edits': {
             target: 'Unpublished',
-            cond: 'issuer is creator or admin',
+            cond: 'issuer is creator or system or admin',
             actions: 'assign_resource_edits',
           },
         },
@@ -269,11 +269,15 @@ link: url string format`,
       'meta generator enabled'({ metaGeneratorEnabled }) {
         return metaGeneratorEnabled
       },
-      'issuer is admin'({ issuer }) {
-        return issuer.type === 'user' && issuer.feats.admin
+      'issuer is system or admin'({ issuer }) {
+        return issuer.type === 'system' || (issuer.type === 'user' && issuer.feats.admin)
       },
-      'issuer is creator or admin'({ issuer }) {
-        return issuer.type === 'user' && (issuer.feats.admin || issuer.feats.creator)
+      'issuer is creator or system or admin'({ issuer }) {
+        console.log('issuer is creator or system or admin', issuer)
+        return (
+          issuer.type === 'system' ||
+          (issuer.type === 'user' && (issuer.feats.admin || issuer.feats.creator))
+        )
       },
       'issuer is creator'({ issuer }) {
         return issuer.type === 'user' && issuer.feats.creator

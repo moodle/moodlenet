@@ -14,14 +14,14 @@ export function welcomeEmail({
   contributeActionUrl,
   receiverEmail,
 }: WelcomeEmailProps): EmailObj {
-  const title = `Welcome ${displayName} to ${instanceName}! ✨`
+  const title = `Welcome to ${instanceName}, ${displayName}! ✨`
   const body = (
     <>
       Hi {displayName},
       <br />
       You will start your journey in {instanceName} as a non-publisher user
       <br />
-      Start contributing, create <b>{amountResourceToGainPublishingRights} resources</b> to become a
+      Start contributing, create <b>{amountResourceToGainPublishingRights} resources</b> to become a{' '}
       <b>publisher</b>, and make your content accessible to all.
     </>
   )

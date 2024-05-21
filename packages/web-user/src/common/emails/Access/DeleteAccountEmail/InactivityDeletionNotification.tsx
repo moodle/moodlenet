@@ -21,8 +21,9 @@ export function inactivityDeletionNotificationEmail({
     <div style={contentStyle}>
       Hi {displayName} we noticed you are not logging in for a while.
       <br />
-      Our policies require us to delete inactive accounts. If you don&apos;t log in within the next{' '}
-      ${daysBeforeDeletion} days, your account{' '}
+      Our policies require us to delete inactive accounts.
+      <br />
+      If you don&apos;t log in within the next {daysBeforeDeletion} days, your account{' '}
       <span style={contentDeleteSpan}>will be deleted permanently</span>.
       <br />
       All your personal information and contributions{' '}

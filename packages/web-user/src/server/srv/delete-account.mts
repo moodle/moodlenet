@@ -1,7 +1,7 @@
 import { delCollection } from '@moodlenet/collection/server'
 import { nameMatcher } from '@moodlenet/core-domain/resource'
 import { jwt } from '@moodlenet/crypto/server'
-import { stdEdResourceMachine } from '@moodlenet/ed-resource/server'
+import { ensureUnpublish, stdEdResourceMachine } from '@moodlenet/ed-resource/server'
 import {
   getCurrentSystemUser,
   setCurrentSystemUser,
@@ -51,13 +51,13 @@ export async function deleteWebUserAccountNow(
   const isPkg = currentSysUser.type === 'pkg'
   const isAdmin = currWebUserIds?.isAdmin === true
   const isPkgOrAdmin = isPkg || isAdmin
-  if (deletionReason === 'moderation' && isPkgOrAdmin) {
+  if (deletionReason === 'moderation' && !isPkgOrAdmin) {
     return { status: 'only-admins-and-system-can-delete-for-moderation' } as const
   }
-  if (deletionReason === 'inactivity' && isPkgOrAdmin) {
+  if (deletionReason === 'inactivity' && !isPkgOrAdmin) {
     return { status: 'only-admins-and-system-can-delete-for-inactivity' } as const
   }
-  if (deletionReason === 'user-request' && isPkg) {
+  if (deletionReason === 'user-request' && !isPkg) {
     return { status: 'only-system-can-delete-by-user-request' } as const
   }
   const { old: webUser } = await patchWebUser({ _key: webUserKey }, { deleting: true })
@@ -130,34 +130,40 @@ export async function deleteWebUserAccountNow(
   const leftResourcesRecords = ownResources.filter(({ entity: { published } }) => published)
   const deletedCollectionsRecords = ownCollections.filter(({ entity: { published } }) => !published)
   const deletedResourcesRecords = ownResources.filter(({ entity: { published } }) => !published)
-  await shell.initiateCall(async () => {
-    await setCurrentSystemUser({
-      type: 'entity',
-      entityIdentifier: { _key: profile._key, entityClass: profileRecord.meta.entityClass },
-      restrictToScopes: false,
-    })
-    await Promise.all(
-      deletedCollectionsRecords.map(async ({ entity: { _key } }) => {
-        await delCollection(_key)
-        return { _key }
-      }),
-    )
-    await Promise.all(
-      deletedResourcesRecords.map(async data => {
-        const [interpreter /* , initializeContext, machine, configs */] =
-          await stdEdResourceMachine({
-            by: 'data',
-            data,
-          })
-        if (interpreter.getSnapshot().can('trash')) {
-          interpreter.send('trash')
-          await waitFor(interpreter, nameMatcher('Destroyed'))
-        }
-        interpreter.stop()
-        return { _key: data.entity._key }
-      }),
-    )
-  })
+  // await shell.initiateCall(async () => {
+  //   await setCurrentSystemUser({
+  //     type: 'entity',
+  //     entityIdentifier: { _key: profile._key, entityClass: profileRecord.meta.entityClass },
+  //     restrictToScopes: false,
+  //   })
+  await Promise.all(
+    deletedCollectionsRecords.map(async ({ entity: { _key } }) => {
+      await delCollection(_key)
+      return { _key }
+    }),
+  )
+  await Promise.all(
+    deletedResourcesRecords.map(async data => {
+      await ensureUnpublish({ key: data.entity._key, by: 'key' })
+      const [interpreter, , , , writeStatus] = await stdEdResourceMachine({
+        key: data.entity._key,
+        by: 'key',
+      })
+      console.log(
+        '.can(trash)',
+        interpreter.getSnapshot().can('trash'),
+        interpreter.getSnapshot().context,
+      )
+      if (interpreter.getSnapshot().can('trash')) {
+        interpreter.send('trash')
+        await waitFor(interpreter, nameMatcher('Destroyed'))
+      }
+      interpreter.stop()
+      await writeStatus
+      return { _key: data.entity._key }
+    }),
+  )
+  //  })//
 
   await setProfileAvatar({ _key: profile._key, rpcFile: null })
   await setProfileBackgroundImage({ _key: profile._key, rpcFile: null })

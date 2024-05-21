@@ -8,8 +8,9 @@ type Env = {
   deleteInactiveUsers:
     | false
     | {
-        afterNoLogInForDays: number
+        afterNoVisitsForDays: number
         notifyBeforeDays: number
+        dayMs: number
       }
 }
 
@@ -31,16 +32,22 @@ function getEnv(): Env {
     noBgProc: !!config.noBgProc,
     deleteInactiveUsers: (() => {
       if (!config.deleteInactiveUsers) return false
-      const afterNoLogInForDays = Math.floor(config.deleteInactiveUsers.afterNoLogInForDays)
+      const __DO_DOWNSCALE_TIME__ =
+        shell.isDevEnv && config.deleteInactiveUsers.__downscaleDaysToMinutes === true
+
+      const minutesMs = 60 * 1000
+      const dayMs = 24 * 60 * minutesMs
+      const afterNoVisitsForDays = Math.floor(config.deleteInactiveUsers.afterNoVisitsForDays)
       const notifyBeforeDays = Math.floor(config.deleteInactiveUsers.notifyBeforeDays)
-      if (!afterNoLogInForDays || !notifyBeforeDays) {
+      if (!afterNoVisitsForDays || !notifyBeforeDays) {
         throw new Error(
           `deleteInactiveUsers config is invalid :${JSON.stringify(config.deleteInactiveUsers)}`,
         )
       }
       return {
-        afterNoLogInForDays,
+        afterNoVisitsForDays,
         notifyBeforeDays,
+        dayMs: __DO_DOWNSCALE_TIME__ ? minutesMs : dayMs,
       }
     })(),
   }

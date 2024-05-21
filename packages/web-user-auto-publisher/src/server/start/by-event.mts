@@ -1,10 +1,11 @@
 import { getEntityIdentifiersById } from '@moodlenet/system-entities/common'
 import { Profile, on } from '@moodlenet/web-user/server'
-import { deletedProfile, profileCreatedResource, welcomeNewWebUser } from '../ctrl/handlers.mjs'
+import { deletedProfile, manageProfile } from '../ctrl/handlers.mjs'
 import { env } from '../env.mjs'
 if (!env.noBgProc) {
   on('created-web-user-account', ({ data: { profileKey } }) => {
-    welcomeNewWebUser({ profileKey })
+    console.log('created-web-user-account', profileKey)
+    manageProfile({ profileKey })
   })
   on('deleted-web-user-account', ({ data: { profile } }) => {
     deletedProfile({ profileKey: profile._key })
@@ -22,6 +23,6 @@ if (!env.noBgProc) {
       return
     }
     const profileKey = profileIds.entityIdentifier._key
-    profileCreatedResource({ profileKey })
+    manageProfile({ profileKey })
   })
 }

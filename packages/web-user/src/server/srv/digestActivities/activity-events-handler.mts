@@ -97,7 +97,7 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
     case 'web-user-logged-in': {
       WebUserCollection.update(
         { _key: activity.data.webUserKey },
-        { lastVisit: { at: activity.at } },
+        { lastVisit: { at: activity.at, inactiveNotificationSentAt: null } },
       )
       break
     }

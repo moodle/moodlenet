@@ -33,14 +33,14 @@ export interface Typegen0 {
     delays: never
     guards:
       | 'issuer has no read permission'
-      | 'issuer is admin'
       | 'issuer is creator'
       | 'issuer is creator and edits are valid'
       | 'issuer is creator and issuer is publisher and meta valid for publishing'
       | 'issuer is creator and meta generator enabled'
-      | 'issuer is creator or admin'
+      | 'issuer is creator or system or admin'
       | 'issuer is not an authenticated user'
       | 'issuer is system'
+      | 'issuer is system or admin'
       | 'meta generator enabled'
       | 'provided content+meta are not valid'
     services: 'StoreNewResource' | 'StoreResourceEdits'
@@ -67,18 +67,18 @@ export interface Typegen0 {
   'eventsCausingDelays': {}
   'eventsCausingGuards': {
     'issuer has no read permission': ''
-    'issuer is admin': 'reject-publish'
     'issuer is creator': 'provide-resource-edits'
     'issuer is creator and edits are valid': 'store-edits'
     'issuer is creator and issuer is publisher and meta valid for publishing': 'publish'
     'issuer is creator and meta generator enabled': 'request-meta-generation'
-    'issuer is creator or admin':
+    'issuer is creator or system or admin':
       | 'cancel-meta-generation'
       | 'provide-resource-edits'
       | 'trash'
       | 'unpublish'
     'issuer is not an authenticated user': 'provide-new-resource'
     'issuer is system': 'generated-meta-suggestions'
+    'issuer is system or admin': 'reject-publish'
     'meta generator enabled': 'done.invoke.EdResource.Storing-New-Resource:invocation[0]'
     'provided content+meta are not valid': 'store-new-resource'
   }

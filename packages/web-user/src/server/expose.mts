@@ -148,8 +148,9 @@ export const expose = await shell.expose<WebUserExposeType & ServiceRpc>({
         sendWebUserTokenCookie(jwtToken)
         WebUserCollection.update(
           { _key: webUser._key },
-          { lastVisit: { at: new Date().toISOString() } },
+          { lastVisit: { at: new Date().toISOString(), inactiveNotificationSentAt: null } },
         )
+
         return clientSessionDataRpc
       },
     },

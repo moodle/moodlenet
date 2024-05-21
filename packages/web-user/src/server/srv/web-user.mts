@@ -299,6 +299,9 @@ export async function getWebUser({
   _key: string
 }): Promise<WebUserRecord | undefined | null> {
   const foundUser = await WebUserCollection.document({ _key }, { graceful: true })
+  if (!foundUser) {
+    return null
+  }
   return foundUser.deleted || foundUser.deleting ? null : foundUser
 }
 

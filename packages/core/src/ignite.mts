@@ -6,6 +6,7 @@ import type { PackageJson } from 'type-fest'
 import type { CoreConfigs } from './types.mjs'
 export const MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES =
   process.env.MOODLENET_CORE_DEV_LOCAL_FOLDER_PACKAGES === 'true'
+export const isDevEnv = process.env.NODE_ENV !== 'production'
 
 type Reboot = () => unknown
 type Shutdown = () => unknown
@@ -20,6 +21,7 @@ type Ignites = {
   configs: Configs
   reboot: Reboot
   shutdown: Shutdown
+  isDevEnv: boolean
 }
 
 export const pkgDepGraph = new DepGraph()

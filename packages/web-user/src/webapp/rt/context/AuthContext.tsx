@@ -5,9 +5,9 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { Profile } from '../../../common/exports.mjs'
 import {
-  LOGIN_PAGE_ROUTE_BASE_PATH,
   SESSION_CHANGE_REDIRECT_Q_NAME,
   WEB_USER_SESSION_TOKEN_COOKIE_NAME,
+  useLoginPageRoutePathRedirectToCurrent,
 } from '../../../common/exports.mjs'
 import defaultAvatarUrl from '../../ui/assets/img/default-avatar.svg'
 import rootAvatarUrl from '../../ui/assets/img/root-avatar.svg'
@@ -125,10 +125,10 @@ export function useAuthCtxValue() {
     sessionTokenCookieChanged = () => {
       fetchClientSessionDataRpc().finally(() => {
         const redirectTo = new URLSearchParams(loc.search).get(SESSION_CHANGE_REDIRECT_Q_NAME)
-        if (redirectTo === '.') {
+        if (!redirectTo || redirectTo === '.') {
           return
         }
-        nav(redirectTo || '/')
+        nav(redirectTo)
       })
     }
   }, [fetchClientSessionDataRpc, loc.search, loc.state, nav])
@@ -189,16 +189,20 @@ export function useNeedsWebUserLogin(opts?: { disable?: boolean }): {
   myProfile: Profile
 } | null {
   const nav = useNavigate()
-  const loc = useLocation()
+  const loginRedirectCurrentPath = useLoginPageRoutePathRedirectToCurrent()
   const authCtx = useContext(AuthCtx)
   useEffect(() => {
     if (opts?.disable || (authCtx.isAuthenticated && authCtx.clientSessionData.myProfile)) {
       return
     }
-    const usp = new URLSearchParams()
-    usp.append(SESSION_CHANGE_REDIRECT_Q_NAME, `${loc.pathname}${loc.search}${loc.hash}`)
-    nav(`${LOGIN_PAGE_ROUTE_BASE_PATH}?${usp.toString()}`)
-  }, [opts?.disable, authCtx.clientSessionData?.myProfile, authCtx.isAuthenticated, loc, nav])
+    nav(loginRedirectCurrentPath)
+  }, [
+    opts?.disable,
+    authCtx.clientSessionData?.myProfile,
+    authCtx.isAuthenticated,
+    nav,
+    loginRedirectCurrentPath,
+  ])
   return authCtx.clientSessionData?.myProfile
     ? {
         isAdmin: authCtx.clientSessionData.isAdmin,

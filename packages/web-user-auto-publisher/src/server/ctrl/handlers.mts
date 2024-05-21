@@ -15,36 +15,25 @@ export async function deletedProfile({ profileKey }: { profileKey: string }) {
     profileKey,
   })
 }
-export async function welcomeNewWebUser({ profileKey }: { profileKey: string }) {
+
+export async function manageProfile({ profileKey }: { profileKey: string }) {
   return shell.initiateCall(async () => {
     await setPkgCurrentUser()
-
     const flowStatus = await readApprovalFlowStatus({ profileKey })
-    if (!(flowStatus.type === 'ongoing' && !flowStatus.sentEmails.welcome)) {
-      return
-    }
-    const { user } = flowStatus
-    await doSendWelcomeEmail({
-      user,
-    })
-  })
-}
-export async function profileCreatedResource({ profileKey }: { profileKey: string }) {
-  return shell.initiateCall(async () => {
-    const flowStatus = await readApprovalFlowStatus({ profileKey })
+    console.log('manageProfile', profileKey, flowStatus)
     if (flowStatus.type !== 'ongoing') {
       return
     }
     flowStatus.type === 'ongoing'
-    await setPkgCurrentUser()
     const { amountForAutoApproval, currentCreatedResourceLeastAmount, sentEmails, user } =
       flowStatus
     const yetTocreate = amountForAutoApproval - currentCreatedResourceLeastAmount
+    console.log({ yetTocreate, sentEmails, currentCreatedResourceLeastAmount })
     if (yetTocreate === 0) {
       await setProfileAsPublisher({ profileKey })
       await setFlowStatus({
         profileKey,
-        flowStatus: { type: 'ended', sentEmails: flowStatus.sentEmails },
+        flowStatus: { type: 'ended', sentEmails },
       })
     } else if (yetTocreate === 1 && !sentEmails.last) {
       await doSendLastContributionEmail({
@@ -56,14 +45,20 @@ export async function profileCreatedResource({ profileKey }: { profileKey: strin
         profileKey,
         flowStatus: {
           type: 'ongoing',
-          sentEmails: { ...flowStatus.sentEmails, last: true },
+          sentEmails: { ...sentEmails, last: true },
         },
       })
     } else if (currentCreatedResourceLeastAmount === 1 && !sentEmails.first) {
       await doSendFirstContributionEmail({ user, yetTocreate })
       await setFlowStatus({
         profileKey,
-        flowStatus: { type: 'ongoing', sentEmails: { ...flowStatus.sentEmails, first: true } },
+        flowStatus: { type: 'ongoing', sentEmails: { ...sentEmails, first: true } },
+      })
+    } else if (currentCreatedResourceLeastAmount === 0 && !sentEmails.welcome) {
+      await doSendWelcomeEmail({ user })
+      await setFlowStatus({
+        profileKey,
+        flowStatus: { type: 'ongoing', sentEmails: { ...sentEmails, welcome: true } },
       })
     }
   })
