@@ -160,7 +160,7 @@ export type WebUserExposeType = PkgExposeDef<{
         comment: string | undefined
       },
       params: { _key: string },
-    ): Promise<unknown>
+    ): Promise<{ done: boolean }>
   }
 }>
 

@@ -2,6 +2,7 @@ import type { CollectionDataType } from '@moodlenet/collection/server'
 import * as collection from '@moodlenet/collection/server'
 import { RpcStatus, type RpcFile } from '@moodlenet/core'
 import type { IscedFieldDataType } from '@moodlenet/ed-meta/server'
+import { CREATE_RESOURCE_PAGE_ROUTE_PATH } from '@moodlenet/ed-resource/common'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import * as resource from '@moodlenet/ed-resource/server'
 import { ensureUnpublish } from '@moodlenet/ed-resource/server'
@@ -28,12 +29,14 @@ import {
   patchEntity,
   queryEntities,
   searchEntities,
+  setCurrentSystemUser,
   sysEntitiesDB,
   toaql,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
 import { newPublisherEmail } from '../../common/emails/NewPublisherEmail/NewPublisherEmail.js'
 import { messageReceivedEmail } from '../../common/emails/Social/MessageReceivedEmail/MessageReceivedEmail.js'
+import { reportOptionTypeMap } from '../../common/exports.mjs'
 import type { EditProfileDataRpc } from '../../common/expose-def.mjs'
 import type {
   KnownEntityFeature,
@@ -45,7 +48,7 @@ import type { ValidationsConfig } from '../../common/validationSchema.mjs'
 import { getValidationSchemas } from '../../common/validationSchema.mjs'
 import { getProfileHomePageRoutePath } from '../../common/webapp-routes.mjs'
 import { WebUserEntitiesTools } from '../entities.mjs'
-import { WebUserCollection } from '../init/arangodb.mjs'
+import { WebUserCollection, db } from '../init/arangodb.mjs'
 import { publicFiles } from '../init/fs.mjs'
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
@@ -55,6 +58,7 @@ import type {
   ProfileDataType,
   ProfileInterests,
   ProfileMeta,
+  ReportItem,
   UserStatusItem,
 } from '../types.mjs'
 import {
@@ -65,8 +69,11 @@ import {
 import {
   getCurrentProfileIds,
   getCurrentWebUserIds,
+  getWebUser,
   getWebUserByProfileKey,
   patchWebUserDisplayName,
+  setCurrentUnverifiedJwtToken,
+  signWebUserJwt,
   verifyCurrentTokenCtx,
 } from './web-user.mjs'
 
@@ -326,39 +333,58 @@ export async function changeProfilePublisherPerm({
   ])
 
   if (!setIsPublisher) {
-    const [collections, resources] = await Promise.all([
-      getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection', limit: 100000 }),
-      getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource', limit: 100000 }),
-    ])
-    await Promise.all(
-      collections
-        .filter(({ entity: { published } }) => published)
-        .map(async ({ entity: { _key } }) => {
-          await collection.setPublished(_key, false)
-          // console.log('unpublished collection', _key)
+    await shell.initiateCall(async () => {
+      await setCurrentSystemUser({
+        type: 'entity',
+        entityIdentifier: { _key: profileKey, entityClass: Profile.entityClass },
+        restrictToScopes: false,
+      })
+      await setCurrentUnverifiedJwtToken(
+        await signWebUserJwt({
+          webUser: {
+            _key: webUser._key,
+            displayName: webUser.displayName,
+            isAdmin: webUser.isAdmin,
+          },
+          profile: {
+            _key: profile.entity._key,
+            _id: profile.entity._id,
+            publisher: true,
+          },
         }),
-    )
-    await Promise.all(
-      resources.map(async data => {
-        await ensureUnpublish({ by: 'data', data }, { onlyIfPublished: !forceUnpublish })
-        // console.log('unpublished resource', data.entity._key)
-      }),
-    )
-  } else if (webUser.contacts.email) {
-    const instanceName = (await getOrgData()).data.instanceName
-    const keepContributingActionUrl = getWebappUrl(
-      getProfileHomePageRoutePath({
-        _key: profile.entity._key,
-        displayName: profile.entity.displayName,
-      }),
-    )
-    send(
-      newPublisherEmail({
-        instanceName,
-        receiverEmail: webUser.contacts.email,
-        keepContributingActionUrl,
-      }),
-    )
+      )
+
+      const [collections, resources] = await Promise.all([
+        getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection', limit: 100000 }),
+        getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource', limit: 100000 }),
+      ])
+      await Promise.all(
+        collections
+          .filter(({ entity: { published } }) => published)
+          .map(async ({ entity: { _key } }) => {
+            await collection.setPublished(_key, false)
+            // console.log('unpublished collection', _key)
+          }),
+      )
+      await Promise.all(
+        resources.map(async data => {
+          await ensureUnpublish({ by: 'data', data }, { onlyIfPublished: !forceUnpublish })
+          // console.log('unpublished resource', data.entity._key)
+        }),
+      )
+    })
+  } else {
+    if (webUser.contacts.email) {
+      const instanceName = (await getOrgData()).data.instanceName
+      const keepContributingActionUrl = getWebappUrl(CREATE_RESOURCE_PAGE_ROUTE_PATH)
+      send(
+        newPublisherEmail({
+          instanceName,
+          receiverEmail: webUser.contacts.email,
+          keepContributingActionUrl,
+        }),
+      )
+    }
   }
   // console.log('changeProfilePublisherPerm unpublised all')
   shell.events.emit('user-publishing-permission-change', {
@@ -614,7 +640,7 @@ export async function searchProfiles({
       limit,
       skip,
       sort,
-      preAccessBody: showDeleted ? undefined : `FILTER !${currentEntityVar}.deleted`,
+      postAccessBody: showDeleted ? undefined : `FILTER !${currentEntityVar}.deleted`,
     },
   )
 
@@ -706,20 +732,18 @@ export async function getProfileOwnKnownEntities<
 export async function reportUser({
   comment,
   profileKey,
-  reportOptionTypeId,
+  reportTypeId,
   reporterWebUserKey,
 }: {
   profileKey: string
-  reportOptionTypeId: ReportOptionTypeId
+  reportTypeId: ReportOptionTypeId
   comment: string
   reporterWebUserKey: string
 }) {
-  // const currWebUserIds = await getCurrentWebUserIds()
-  // const currProfileIds = await getCurrentProfileIds()
-  // if (!(currWebUserIds && currProfileIds?.publisher)) {
-  //   throw RpcStatus('Unauthorized')
-  // }
-
+  const reporterWebUser = await getWebUser({ _key: reporterWebUserKey })
+  if (!(reporterWebUser?.publisher || reporterWebUser?.isAdmin)) {
+    throw RpcStatus('Unauthorized', 'only publishers and admin users can report ')
+  }
   const targetWebUser = await getWebUserByProfileKey({ profileKey })
   if (!targetWebUser) {
     throw RpcStatus('Not Found', 'Target web user not found')
@@ -732,13 +756,66 @@ export async function reportUser({
     throw RpcStatus('Not Found', 'Target profile not found')
   }
 
-  const report = shell.events.emit('web-user-reported', {
+  const webUserId = targetWebUser._id
+  const report: ReportItem = {
     comment,
     reporterWebUserKey,
-    targetWebUserKey: targetWebUser._key,
-    reportOptionTypeId,
-  })
-  return report
+    reportTypeId,
+    date: new Date().toISOString(),
+  }
+
+  const curs = await db.query(
+    {
+      query: `
+    LET user = DOCUMENT(@webUserId)
+    FILTER user && !user.deleted && !user.deleting
+
+    LET newReportItems = UNSHIFT(user.moderation.reports.items, @report)
+    LET newReportItemsAmount = LENGTH(newReportItems)
+    LET mainReportTypeIdAndAmount = (
+      FOR item in newReportItems
+      COLLECT reportTypeId = item.reportTypeId WITH COUNT INTO amount
+      SORT amount DESC
+      LIMIT 1
+      LET mainReportTypeIdAndAmount = {reportTypeId, amount}
+      RETURN mainReportTypeIdAndAmount
+    )[0]
+
+    LET mainReasonName = @reportOptionTypeMap[mainReportTypeIdAndAmount.reportTypeId] 
+
+    UPDATE user WITH {
+      moderation: {
+        reports:{
+          items: newReportItems,
+          amount: newReportItemsAmount,
+          mainReasonName,
+          lastItem: @report,
+        }
+      }
+    } IN @@WebUserCollectionName
+
+    RETURN user ? true : false
+`,
+      bindVars: {
+        '@WebUserCollectionName': WebUserCollection.name,
+        webUserId,
+        report,
+        reportOptionTypeMap,
+      },
+    },
+    { retryOnConflict: 15 },
+  )
+  const done = (await curs.all()).length === 1
+  await curs.kill()
+  if (done) {
+    shell.events.emit('web-user-reported', {
+      comment: report.comment,
+      reporterWebUserKey: reporterWebUser._key,
+      reportOptionTypeId: report.reportTypeId,
+      targetWebUserKey: targetWebUser._key,
+    })
+  }
+  return { done, report }
 }
 
 export async function editMyProfileInterests({

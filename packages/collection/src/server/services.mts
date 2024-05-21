@@ -290,10 +290,6 @@ export async function updateCollectionContent(
 //   return exisingResourcesInCollectionInfo
 // }
 export async function delCollection(_key: string) {
-  const userId = await getCurrentEntityUserIdentifier()
-  if (!userId) {
-    return
-  }
   const found = await shell.call(getEntity)(Collection.entityClass, _key)
   if (!found) {
     return
@@ -308,10 +304,14 @@ export async function delCollection(_key: string) {
   const imageLogicalFilename = getImageLogicalFilename(_key)
   await publicFiles.del(imageLogicalFilename)
 
-  shell.events.emit('deleted', {
-    collection: { ...deleted.entity, _meta: deleted.meta },
-    userId,
-  })
+  const userId = await getCurrentEntityUserIdentifier()
+  if (userId) {
+    shell.events.emit('deleted', {
+      collection: { ...deleted.entity, _meta: deleted.meta },
+      userId,
+    })
+  }
+
   return found
 }
 

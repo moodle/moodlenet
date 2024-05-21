@@ -9,9 +9,9 @@ import type { LandingPlugin } from '@moodlenet/react-app/webapp'
 import { LandingHookPlugin } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 import {
-  LOGIN_PAGE_ROUTE_BASE_PATH,
   SETTINGS_PAGE_ROUTE_PATH,
   SIGNUP_PAGE_ROUTE_BASE_PATH,
+  loginPageRoutePath,
 } from '../../../common/webapp-routes.mjs'
 import type { InterestInfoProps, PublishContentProps } from '../../ui/exports/ui.mjs'
 import {
@@ -81,10 +81,11 @@ const publishContentPanelAddon: AddonItemNoKey = {
     const { createResource } = useContext(ResourceContext)
     const { createCollection } = useContext(CollectionContext)
     const { isAuthenticated } = useContext(AuthCtx)
+    const loginPagePath = loginPageRoutePath()
     const publishContentProps = useMemo(() => {
       const props: PublishContentProps = {
         publishContentHrefs: {
-          loginHref: href(LOGIN_PAGE_ROUTE_BASE_PATH),
+          loginHref: href(loginPagePath),
           signUpHref: href(SIGNUP_PAGE_ROUTE_BASE_PATH),
           createResource,
           createCollection,
@@ -92,7 +93,7 @@ const publishContentPanelAddon: AddonItemNoKey = {
         isAuthenticated,
       }
       return props
-    }, [createCollection, createResource, isAuthenticated])
+    }, [createCollection, createResource, isAuthenticated, loginPagePath])
 
     return <PublishContent {...publishContentProps} />
   },

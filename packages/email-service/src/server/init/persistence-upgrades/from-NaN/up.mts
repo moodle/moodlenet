@@ -1,15 +1,13 @@
 import { instanceDomain } from '@moodlenet/core'
-import { readFile } from 'fs/promises'
-import { dirname, resolve } from 'path'
-import { fileURLToPath, URL } from 'url'
+import { URL } from 'url'
 import type { MailerCfg } from '../../../types.mjs'
 import { kvStore } from '../../kvStore.mjs'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const defaultEmailTemplate = await readFile(
-  resolve(__dirname, '..', '..', '..', '..', '..', 'email-templates/default-layout.html'),
-  'utf-8',
-)
+// const __dirname = dirname(fileURLToPath(import.meta.url))
+// const defaultEmailTemplate = await readFile(
+//   resolve(__dirname, '..', '..', '..', '..', '..', 'email-templates/default-layout.html'),
+//   'utf-8',
+// )
 const instanceHostname = new URL(instanceDomain).hostname
 const mailerCfg: MailerCfg = {
   defaultFrom: `noreply@${instanceHostname}`,
@@ -23,6 +21,6 @@ const mailerCfg: MailerCfg = {
 }
 
 kvStore.set('mailerCfg', '', mailerCfg)
-kvStore.set('email-layout', '', defaultEmailTemplate)
+// kvStore.set('email-layout', '', defaultEmailTemplate)
 
 export default 1

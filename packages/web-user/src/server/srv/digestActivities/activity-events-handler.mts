@@ -1,12 +1,6 @@
 import type { EventPayload } from '@moodlenet/core'
-import { reportOptionTypeMap } from '../../../common/exports.mjs'
-import {
-  getProfileRecord,
-  getWebUser,
-  type ReportItem,
-  type WebUserActivityEvents,
-} from '../../exports.mjs'
-import { WebUserCollection, db } from '../../init/arangodb.mjs'
+import { type WebUserActivityEvents } from '../../exports.mjs'
+import { WebUserCollection } from '../../init/arangodb.mjs'
 import {
   maintainProfilePublishedContributionCount,
   removeFeaturedFromAllUsers,
@@ -103,77 +97,13 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
     case 'web-user-logged-in': {
       WebUserCollection.update(
         { _key: activity.data.webUserKey },
-        { lastLogin: { at: activity.at } },
+        { lastVisit: { at: activity.at, inactiveNotificationSentAt: null } },
       )
       break
     }
     case 'web-user-delete-account-intent':
       break
     case 'web-user-reported': {
-      const {
-        at,
-        data: { comment, reportOptionTypeId, reporterWebUserKey, targetWebUserKey },
-      } = activity
-      const [targetWebUser, reporterWebUser] = await Promise.all([
-        getWebUser({ _key: targetWebUserKey }),
-        getWebUser({ _key: reporterWebUserKey }),
-      ])
-      if (!(reporterWebUser && targetWebUser)) {
-        return
-      }
-      const [targetProfile /* , reporterProfile */] = await Promise.all([
-        getProfileRecord(targetWebUser.profileKey),
-        // getProfileRecord(reporterWebUser.profileKey),
-      ])
-      if (!(targetWebUser && targetProfile)) {
-        return
-      }
-      const report: ReportItem = {
-        comment,
-        date: at,
-        reporterWebUserKey: reporterWebUser._key,
-        reportTypeId: reportOptionTypeId,
-      }
-      const webUserId = targetWebUser._id
-      const curs = await db.query(
-        {
-          query: `
-LET user = DOCUMENT(@webUserId)
-LET newReportItems = UNSHIFT(user.moderation.reports.items, @report)
-LET newReportItemsAmount = LENGTH(newReportItems)
-LET mainReportTypeIdAndAmount = (
-  FOR item in newReportItems
-    COLLECT reportTypeId = item.reportTypeId WITH COUNT INTO amount
-    SORT amount DESC
-    LIMIT 1
-    LET mainReportTypeIdAndAmount = {reportTypeId, amount}
-    RETURN mainReportTypeIdAndAmount)[0]
-
-LET mainReasonName = @reportOptionTypeMap[mainReportTypeIdAndAmount.reportTypeId] 
-
-UPDATE user WITH {
-  moderation: {
-    reports:{
-      items: newReportItems,
-      amount: newReportItemsAmount,
-      mainReasonName,
-      lastItem: @report,
-    }
-  }
-} IN @@WebUserCollectionName
-RETURN user ? true : false
-`,
-          bindVars: {
-            '@WebUserCollectionName': WebUserCollection.name,
-            webUserId,
-            report,
-            reportOptionTypeMap,
-          },
-        },
-        { retryOnConflict: 15 },
-      )
-      await curs.all()
-      await curs.kill()
       break
     }
   }

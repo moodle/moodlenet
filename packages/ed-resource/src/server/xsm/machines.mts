@@ -285,10 +285,10 @@ export async function stdEdResourceMachine(by: ProvideBy) {
   const oldState = initializeContext.state
 
   let resolveStoredStatus: (changed: boolean) => void
-  let rejectStoredStatus: (e: any) => void
-  const storedStatus = new Promise<boolean>((_resolveStoredStatus, _rejectStoredStatus) => {
+  //let rejectStoredStatus: (e: any) => void
+  const storedStatus = new Promise<boolean>((_resolveStoredStatus /* , _rejectStoredStatus */) => {
     resolveStoredStatus = _resolveStoredStatus
-    rejectStoredStatus = _rejectStoredStatus
+    // rejectStoredStatus = _rejectStoredStatus
   })
   interpreter.onStop(() => {
     if (!tx) return
@@ -324,35 +324,39 @@ export async function stdEdResourceMachine(by: ProvideBy) {
         },
         { mergeObjects: false, keepNull: true, returnNew: true, returnOld: true },
       )
-      .then(async updateResult => {
-        if (!(updateResult?.new && updateResult?.old)) {
-          rejectStoredStatus(new Error('update failed for unknown reasons'))
-          return
-        }
-        const publishEvent =
-          oldState === currentState
-            ? undefined
-            : currentState === 'Published'
-            ? 'published'
-            : oldState === 'Published' && currentState === 'Unpublished'
-            ? 'unpublished'
-            : undefined
-        // console.log('\n*****'.repeat(5), {
-        //   oldState,
-        //   currentState,
-        //   publishEvent,
-        // })
-        const userId = await getCurrentEntityUserIdentifier()
+      .then(
+        async updateResult => {
+          if (!(updateResult?.new && updateResult?.old)) {
+            // rejectStoredStatus(new Error('update failed for unknown reasons'))
+            resolveStoredStatus(false)
+            return
+          }
+          const publishEvent =
+            oldState === currentState
+              ? undefined
+              : currentState === 'Published'
+              ? 'published'
+              : oldState === 'Published' && currentState === 'Unpublished'
+              ? 'unpublished'
+              : undefined
+          // console.log('\n*****'.repeat(5), {
+          //   oldState,
+          //   currentState,
+          //   publishEvent,
+          // })
+          const userId = await getCurrentEntityUserIdentifier()
 
-        if (publishEvent && userId) {
-          shell.events.emit(publishEvent, {
-            resource: updateResult.new,
-            userId,
-          })
-        }
-        // console.log('resolveStoredStatus(true)')
-        resolveStoredStatus(true)
-      })
+          if (publishEvent && userId) {
+            shell.events.emit(publishEvent, {
+              resource: updateResult.new,
+              userId,
+            })
+          }
+          // console.log('resolveStoredStatus(true)')
+          resolveStoredStatus(true)
+        }, // rejectStoredStatus )
+        () => resolveStoredStatus(false),
+      )
     // .then(
     //   () => console.log(`updated ${state.context.doc.id.resourceKey} ${currentState}`),
     //   e => console.log(`could not update ${state.context.doc.id.resourceKey} ${currentState}`, e),
