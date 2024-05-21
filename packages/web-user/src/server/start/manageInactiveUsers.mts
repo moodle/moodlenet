@@ -26,8 +26,6 @@ function start() {
   const notifyBeforeMs = notifyBeforeDays * DAY_MS
   startInactivityNotifications()
   startInactiveUsersDeletions()
-  console.log({ afterNoLogInForMs, notifyBeforeMs })
-
   async function queryUsersFor(scope: 'notification' | 'deletion') {
     const lastVisitBeforeDateMs_delete =
       Date.now() - afterNoLogInForMs - TIMEOUT_WHEN_NO_MORE_SO_FAR_MS
@@ -64,17 +62,18 @@ function start() {
     }
     const cursor = await db.query<WebUserRecord>(query, bindVars)
     const result = await cursor.all()
-    console.log(
-      [
-        `queryUsersFor ${scope}`,
-        //query,
-        //JSON.stringify(bindVars, null, 2),
-        'results:',
-        result.length,
-        //JSON.stringify(result, null, 2),
-        '\n',
-      ].join(`\n`),
-    )
+    // console.log(
+    //   { afterNoLogInForMs, notifyBeforeMs },
+    //   [
+    //     `queryUsersFor ${scope}`,
+    //     //query,
+    //     //JSON.stringify(bindVars, null, 2),
+    //     'results:',
+    //     result.length,
+    //     //JSON.stringify(result, null, 2),
+    //     '\n',
+    //   ].join(`\n`),
+    // )
     return result
   }
 
@@ -119,7 +118,7 @@ function start() {
       const userDeletionResults = await Promise.allSettled(
         records.map(({ _key }) => deleteWebUserAccountNow(_key, { deletionReason: 'inactivity' })),
       )
-      console.log('userDeletionResults', JSON.stringify(userDeletionResults, null, 2))
+      //console.log('userDeletionResults', JSON.stringify(userDeletionResults, null, 2))
       return userDeletionResults
     })
     setTimeout(

@@ -29,6 +29,7 @@ import {
   patchEntity,
   queryEntities,
   searchEntities,
+  setCurrentSystemUser,
   sysEntitiesDB,
   toaql,
 } from '@moodlenet/system-entities/server'
@@ -330,34 +331,43 @@ export async function changeProfilePublisherPerm({
   ])
 
   if (!setIsPublisher) {
-    const [collections, resources] = await Promise.all([
-      getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection', limit: 100000 }),
-      getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource', limit: 100000 }),
-    ])
-    await Promise.all(
-      collections
-        .filter(({ entity: { published } }) => published)
-        .map(async ({ entity: { _key } }) => {
-          await collection.setPublished(_key, false)
-          // console.log('unpublished collection', _key)
+    await shell.initiateCall(async () => {
+      await setCurrentSystemUser({
+        type: 'entity',
+        entityIdentifier: { _key: profileKey, entityClass: Profile.entityClass },
+        restrictToScopes: false,
+      })
+      const [collections, resources] = await Promise.all([
+        getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection', limit: 100000 }),
+        getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource', limit: 100000 }),
+      ])
+      await Promise.all(
+        collections
+          .filter(({ entity: { published } }) => published)
+          .map(async ({ entity: { _key } }) => {
+            await collection.setPublished(_key, false)
+            // console.log('unpublished collection', _key)
+          }),
+      )
+      await Promise.all(
+        resources.map(async data => {
+          await ensureUnpublish({ by: 'data', data }, { onlyIfPublished: !forceUnpublish })
+          // console.log('unpublished resource', data.entity._key)
         }),
-    )
-    await Promise.all(
-      resources.map(async data => {
-        await ensureUnpublish({ by: 'data', data }, { onlyIfPublished: !forceUnpublish })
-        // console.log('unpublished resource', data.entity._key)
-      }),
-    )
-  } else if (webUser.contacts.email) {
-    const instanceName = (await getOrgData()).data.instanceName
-    const keepContributingActionUrl = getWebappUrl(CREATE_RESOURCE_PAGE_ROUTE_PATH)
-    send(
-      newPublisherEmail({
-        instanceName,
-        receiverEmail: webUser.contacts.email,
-        keepContributingActionUrl,
-      }),
-    )
+      )
+    })
+  } else {
+    if (webUser.contacts.email) {
+      const instanceName = (await getOrgData()).data.instanceName
+      const keepContributingActionUrl = getWebappUrl(CREATE_RESOURCE_PAGE_ROUTE_PATH)
+      send(
+        newPublisherEmail({
+          instanceName,
+          receiverEmail: webUser.contacts.email,
+          keepContributingActionUrl,
+        }),
+      )
+    }
   }
   // console.log('changeProfilePublisherPerm unpublised all')
   shell.events.emit('user-publishing-permission-change', {

@@ -20,7 +20,7 @@ export async function manageProfile({ profileKey }: { profileKey: string }) {
   return shell.initiateCall(async () => {
     await setPkgCurrentUser()
     const flowStatus = await readApprovalFlowStatus({ profileKey })
-    console.log('manageProfile', profileKey, flowStatus)
+    // console.log('manageProfile', profileKey, flowStatus)
     if (flowStatus.type !== 'ongoing') {
       return
     }
@@ -28,7 +28,7 @@ export async function manageProfile({ profileKey }: { profileKey: string }) {
     const { amountForAutoApproval, currentCreatedResourceLeastAmount, sentEmails, user } =
       flowStatus
     const yetTocreate = amountForAutoApproval - currentCreatedResourceLeastAmount
-    console.log({ yetTocreate, sentEmails, currentCreatedResourceLeastAmount })
+    // console.log({ yetTocreate, sentEmails, currentCreatedResourceLeastAmount })
     if (yetTocreate === 0) {
       await setProfileAsPublisher({ profileKey })
       await setFlowStatus({

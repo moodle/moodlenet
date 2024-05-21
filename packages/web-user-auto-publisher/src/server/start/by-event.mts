@@ -4,7 +4,7 @@ import { deletedProfile, manageProfile } from '../ctrl/handlers.mjs'
 import { env } from '../env.mjs'
 if (!env.noBgProc) {
   on('created-web-user-account', ({ data: { profileKey } }) => {
-    console.log('created-web-user-account', profileKey)
+    // console.log('created-web-user-account', profileKey)
     manageProfile({ profileKey })
   })
   on('deleted-web-user-account', ({ data: { profile } }) => {

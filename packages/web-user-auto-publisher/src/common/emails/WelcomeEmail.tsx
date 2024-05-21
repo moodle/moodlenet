@@ -32,7 +32,7 @@ export function welcomeEmail({
     subject: title,
     title,
     action: {
-      title: `Keep contributing`,
+      title: `Start contributing`,
       url: contributeActionUrl,
     },
     hideIgnoreMessage: true,

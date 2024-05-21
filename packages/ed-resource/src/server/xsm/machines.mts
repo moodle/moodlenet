@@ -352,7 +352,7 @@ export async function stdEdResourceMachine(by: ProvideBy) {
         }
         // console.log('resolveStoredStatus(true)')
         resolveStoredStatus(true)
-      })
+      }, rejectStoredStatus)
     // .then(
     //   () => console.log(`updated ${state.context.doc.id.resourceKey} ${currentState}`),
     //   e => console.log(`could not update ${state.context.doc.id.resourceKey} ${currentState}`, e),

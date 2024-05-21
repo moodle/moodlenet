@@ -78,29 +78,30 @@ export async function deleteWebUserAccountNow(
       forceUnpublish: true,
     })
   }
+  await shell.initiateCall(async () => {
+    await setCurrentSystemUser({
+      type: 'entity',
+      entityIdentifier: { _key: profile._key, entityClass: profileRecord.meta.entityClass },
+      restrictToScopes: false,
+    })
 
-  if (profile.publisher) {
-    const knownFeaturedEntities = reduceToKnownFeaturedEntities(profile.knownFeaturedEntities)
-    const allDiscardingFeatures = [
-      ...knownFeaturedEntities.follow.collection.map(
-        ({ _key }) => ({ entityType: 'collection', feature: 'follow', _key } as const),
-      ),
-      ...knownFeaturedEntities.follow.profile.map(
-        ({ _key }) => ({ entityType: 'profile', feature: 'follow', _key } as const),
-      ),
-      ...knownFeaturedEntities.follow.subject.map(
-        ({ _key }) => ({ entityType: 'subject', feature: 'follow', _key } as const),
-      ),
-      ...knownFeaturedEntities.like.resource.map(
-        ({ _key }) => ({ entityType: 'resource', feature: 'like', _key } as const),
-      ),
-    ]
-    await shell.initiateCall(async () => {
-      await setCurrentSystemUser({
-        type: 'entity',
-        entityIdentifier: { _key: profile._key, entityClass: profileRecord.meta.entityClass },
-        restrictToScopes: false,
-      })
+    if (profile.publisher) {
+      const knownFeaturedEntities = reduceToKnownFeaturedEntities(profile.knownFeaturedEntities)
+      const allDiscardingFeatures = [
+        ...knownFeaturedEntities.follow.collection.map(
+          ({ _key }) => ({ entityType: 'collection', feature: 'follow', _key } as const),
+        ),
+        ...knownFeaturedEntities.follow.profile.map(
+          ({ _key }) => ({ entityType: 'profile', feature: 'follow', _key } as const),
+        ),
+        ...knownFeaturedEntities.follow.subject.map(
+          ({ _key }) => ({ entityType: 'subject', feature: 'follow', _key } as const),
+        ),
+        ...knownFeaturedEntities.like.resource.map(
+          ({ _key }) => ({ entityType: 'resource', feature: 'like', _key } as const),
+        ),
+      ]
+
       await Promise.all(
         allDiscardingFeatures.map(({ _key, entityType, feature }) =>
           entityFeatureAction({
@@ -112,58 +113,65 @@ export async function deleteWebUserAccountNow(
           }),
         ),
       )
+    }
+    const ownCollections = await getProfileOwnKnownEntities({
+      knownEntity: 'collection',
+      profileKey: profile._key,
+      limit: 100000,
     })
-  }
-  const ownCollections = await getProfileOwnKnownEntities({
-    knownEntity: 'collection',
-    profileKey: profile._key,
-    limit: 100000,
-  })
 
-  const ownResources = await getProfileOwnKnownEntities({
-    knownEntity: 'resource',
-    profileKey: profile._key,
-    limit: 100000,
-  })
+    const ownResources = await getProfileOwnKnownEntities({
+      knownEntity: 'resource',
+      profileKey: profile._key,
+      limit: 100000,
+    })
 
-  const leftCollectionsRecords = ownCollections.filter(({ entity: { published } }) => published)
-  const leftResourcesRecords = ownResources.filter(({ entity: { published } }) => published)
-  const deletedCollectionsRecords = ownCollections.filter(({ entity: { published } }) => !published)
-  const deletedResourcesRecords = ownResources.filter(({ entity: { published } }) => !published)
-  // await shell.initiateCall(async () => {
-  //   await setCurrentSystemUser({
-  //     type: 'entity',
-  //     entityIdentifier: { _key: profile._key, entityClass: profileRecord.meta.entityClass },
-  //     restrictToScopes: false,
-  //   })
-  await Promise.all(
-    deletedCollectionsRecords.map(async ({ entity: { _key } }) => {
-      await delCollection(_key)
-      return { _key }
-    }),
-  )
-  await Promise.all(
-    deletedResourcesRecords.map(async data => {
-      await ensureUnpublish({ key: data.entity._key, by: 'key' })
-      const [interpreter, , , , writeStatus] = await stdEdResourceMachine({
-        key: data.entity._key,
-        by: 'key',
-      })
-      console.log(
-        '.can(trash)',
-        interpreter.getSnapshot().can('trash'),
-        interpreter.getSnapshot().context,
-      )
-      if (interpreter.getSnapshot().can('trash')) {
-        interpreter.send('trash')
-        await waitFor(interpreter, nameMatcher('Destroyed'))
-      }
-      interpreter.stop()
-      await writeStatus
-      return { _key: data.entity._key }
-    }),
-  )
-  //  })//
+    const leftCollectionsRecords = ownCollections.filter(({ entity: { published } }) => published)
+    const leftResourcesRecords = ownResources.filter(({ entity: { published } }) => published)
+    const deletedCollectionsRecords = ownCollections.filter(
+      ({ entity: { published } }) => !published,
+    )
+    const deletedResourcesRecords = ownResources.filter(({ entity: { published } }) => !published)
+    // await shell.initiateCall(async () => {
+    //   await setCurrentSystemUser({
+    //     type: 'entity',
+    //     entityIdentifier: { _key: profile._key, entityClass: profileRecord.meta.entityClass },
+    //     restrictToScopes: false,
+    //   })
+    await Promise.allSettled(
+      deletedCollectionsRecords.map(async ({ entity: { _key } }) => {
+        await delCollection(_key).catch(e => e)
+        return { _key }
+      }),
+    )
+    await Promise.allSettled(
+      deletedResourcesRecords.map(async data => {
+        await ensureUnpublish({ key: data.entity._key, by: 'key' })
+        const [interpreter, , , , writeStatus] = await stdEdResourceMachine({
+          key: data.entity._key,
+          by: 'key',
+        })
+        if (interpreter.getSnapshot().can('trash')) {
+          interpreter.send('trash')
+          await waitFor(interpreter, nameMatcher('Destroyed'))
+        }
+        interpreter.stop()
+        await writeStatus
+        return { _key: data.entity._key }
+      }),
+    )
+
+    const event: WebUserEvents['deleted-web-user-account'] = {
+      displayName: profile.displayName,
+      profile: { ...profileRecord.entity, _meta: profileRecord.meta },
+      webUser: webUser,
+      deletedCollections: deletedCollectionsRecords.map(({ entity: { _key } }) => ({ _key })),
+      deletedResources: deletedResourcesRecords.map(({ entity: { _key } }) => ({ _key })),
+      leftCollections: leftCollectionsRecords.map(({ entity: { _key } }) => ({ _key })),
+      leftResources: leftResourcesRecords.map(({ entity: { _key } }) => ({ _key })),
+    }
+    shell.events.emit('deleted-web-user-account', event)
+  })
 
   await setProfileAvatar({ _key: profile._key, rpcFile: null })
   await setProfileBackgroundImage({ _key: profile._key, rpcFile: null })
@@ -194,15 +202,5 @@ export async function deleteWebUserAccountNow(
     { keepNull: true },
   )
 
-  const event: WebUserEvents['deleted-web-user-account'] = {
-    displayName: profile.displayName,
-    profile: { ...profileRecord.entity, _meta: profileRecord.meta },
-    webUser: webUser,
-    deletedCollections: deletedCollectionsRecords.map(({ entity: { _key } }) => ({ _key })),
-    deletedResources: deletedResourcesRecords.map(({ entity: { _key } }) => ({ _key })),
-    leftCollections: leftCollectionsRecords.map(({ entity: { _key } }) => ({ _key })),
-    leftResources: leftResourcesRecords.map(({ entity: { _key } }) => ({ _key })),
-  }
-  shell.events.emit('deleted-web-user-account', event)
   return { status: 'done', event } as const
 }

@@ -273,7 +273,6 @@ link: url string format`,
         return issuer.type === 'system' || (issuer.type === 'user' && issuer.feats.admin)
       },
       'issuer is creator or system or admin'({ issuer }) {
-        console.log('issuer is creator or system or admin', issuer)
         return (
           issuer.type === 'system' ||
           (issuer.type === 'user' && (issuer.feats.admin || issuer.feats.creator))
