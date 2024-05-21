@@ -12,7 +12,7 @@ import type { WebUserRecord } from '../types.mjs'
 
 const DAY_MS = env.deleteInactiveUsers === false ? NaN : env.deleteInactiveUsers.dayMs
 const TIMEOUT_WHEN_NO_MORE_SO_FAR_MS = 0.5 * DAY_MS
-const BATCH_SIZE = 100
+const BATCH_SIZE = 1
 if (env.deleteInactiveUsers) {
   start()
 }
@@ -82,7 +82,7 @@ function start() {
 
     const orgData = await getOrgData()
 
-    shell.initiateCall(async () => {
+    await shell.initiateCall(async () => {
       await setPkgCurrentUser()
       return Promise.allSettled(
         records.map(async ({ displayName, _id, contacts: { email } }) => {
@@ -113,7 +113,7 @@ function start() {
   async function startInactiveUsersDeletions() {
     const records = await queryUsersFor('deletion')
 
-    shell.initiateCall(async () => {
+    await shell.initiateCall(async () => {
       await setPkgCurrentUser()
       const userDeletionResults = await Promise.allSettled(
         records.map(({ _key }) => deleteWebUserAccountNow(_key, { deletionReason: 'inactivity' })),
