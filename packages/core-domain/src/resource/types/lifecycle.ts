@@ -50,6 +50,8 @@ export interface Context extends PersistentContext {
   }
   providedContent: null | ProvidedCreationContent
   metaGeneratorEnabled: boolean
+  publishingErrors?: ResourceMetaValidationErrors
+  publishRejected?: ReasonString
 }
 
 interface GeneratedData {
@@ -60,8 +62,6 @@ interface GeneratedData {
 export interface PersistentContext {
   doc: ResourceDoc
   generatedData: null | GeneratedData
-  publishRejected: null | ReasonString
-  publishingErrors: null | ResourceMetaValidationErrors
   state: StateName
 }
 

@@ -16,6 +16,8 @@ export interface LinkContent {
   url: string
 }
 
+export type ResourcePersistentContext = Pick<PersistentContext, 'generatedData' | 'state'>
+
 export type ResourceDataType = {
   title: string
   description: string
@@ -37,7 +39,7 @@ export type ResourceDataType = {
       downloads?: ResourcePopularityItem
     } & { [key: string]: ResourcePopularityItem }
   }
-  persistentContext: Omit<PersistentContext, 'doc'>
+  persistentContext: ResourcePersistentContext
 }
 export type ResourcePopularityItem = { value: number }
 export type Credits = {
@@ -65,6 +67,7 @@ export type ResourceActivityEvents = {
     meta: EventResourceMeta
     oldMeta: EventResourceMeta
   }
+
   'published': {
     userId: EntityIdentifier
     resource: EntityFullDocument<ResourceDataType>

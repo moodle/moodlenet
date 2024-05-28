@@ -6,8 +6,13 @@ import type {
   ImageEdit,
   ResourceDoc,
   StateName,
+  ValidationConfigs,
 } from '@moodlenet/core-domain/resource'
-import { DEFAULT_CONTEXT, getEdResourceMachine } from '@moodlenet/core-domain/resource'
+import {
+  DEFAULT_CONTEXT,
+  getEdResourceMachine,
+  getValidationSchemas,
+} from '@moodlenet/core-domain/resource'
 import { interpret } from 'xstate'
 
 import type { RpcFile } from '@moodlenet/core'
@@ -82,10 +87,12 @@ export async function provideEdResourceMachineDepsAndInits(
   }
 
   const persistentContext = map.db.doc_2_persistentContext(resourceRecord.entity)
+  const schemas = getResourceValidationSchemas()
 
   const initialContext: Context = {
     ...DEFAULT_CONTEXT,
     ...persistentContext,
+    publishingErrors: schemas.publishable(persistentContext.doc.meta).errors,
     issuer: await providers.getIssuer(
       resourceRecord.meta.creatorEntityId
         ? ['current-resource-creator-id', resourceRecord.meta.creatorEntityId]
@@ -253,19 +260,28 @@ function getEdResourceMachineDeps(): EdResourceMachineDeps {
       },
     },
 
-    validationConfigs: {
-      content: { sizeBytes: { max: validationsConfigs.contentMaxUploadSize } },
-      image: { sizeBytes: { max: validationsConfigs.imageMaxUploadSize } },
-      meta: {
-        description: { length: validationsConfigs.descriptionLength },
-        title: { length: validationsConfigs.titleLength },
-        learningOutcomes: {
-          amount: validationsConfigs.learningOutcomes.amount,
-          sentence: { length: validationsConfigs.learningOutcomes.sentenceLength },
-        },
+    validationConfigs: getValidationConfigs(),
+  }
+}
+
+export function getValidationConfigs(): ValidationConfigs {
+  return {
+    content: { sizeBytes: { max: validationsConfigs.contentMaxUploadSize } },
+    image: { sizeBytes: { max: validationsConfigs.imageMaxUploadSize } },
+    meta: {
+      description: { length: validationsConfigs.descriptionLength },
+      title: { length: validationsConfigs.titleLength },
+      learningOutcomes: {
+        amount: validationsConfigs.learningOutcomes.amount,
+        sentence: { length: validationsConfigs.learningOutcomes.sentenceLength },
       },
     },
   }
+}
+
+export function getResourceValidationSchemas() {
+  const schemas = getValidationSchemas(getValidationConfigs())
+  return schemas
 }
 
 export async function stdEdResourceMachine(by: ProvideBy) {
@@ -310,9 +326,9 @@ export async function stdEdResourceMachine(by: ProvideBy) {
     const persistentContext: ResourceDataType['persistentContext'] = {
       generatedData:
         currentState === 'Meta-Suggestion-Available' ? state.context.generatedData : null,
-      publishRejected: currentState === 'Publish-Rejected' ? state.context.publishRejected : null,
       state: currentState,
-      publishingErrors: currentState === 'Unpublished' ? state.context.publishingErrors : null,
+      // publishRejected: currentState === 'Publish-Rejected' ? state.context.publishRejected : undefined,
+      // publishingErrors: currentState === 'Unpublished' ? state.context.publishingErrors : undefined,
     }
 
     Resource.collection

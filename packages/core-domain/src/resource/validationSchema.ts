@@ -1,19 +1,11 @@
-import {
-  array,
-  mixed,
-  number,
-  NumberSchema,
-  object,
-  SchemaOf,
-  string,
-  StringSchema,
-  ValidationError,
-} from 'yup'
+import type { NumberSchema, SchemaOf, StringSchema } from 'yup'
+import { ValidationError, array, mixed, number, object, string } from 'yup'
 import { humanFileSize } from '../common/utils/validations.js'
-import {
+import type {
   ProvidedCreationContent,
   ProvidedImage,
   ResourceMeta,
+  ResourceMetaValidationErrors,
   ValidationConfigs,
 } from './exports.js'
 
@@ -106,13 +98,15 @@ export function getValidationSchemas(validationConfigs: ValidationConfigs) {
     return schema
   }
 
-  function produceResourceMetaValidationErrorsInCatch(e: any) {
+  function produceResourceMetaValidationErrorsInCatch(
+    e: any,
+  ): ResourceMetaValidationErrors | undefined {
     // console.log(`produceResourceMetaValidationErrorsInCatch`, e, e instanceof ValidationError)
     if (!(e instanceof ValidationError)) {
       throw e
     }
     if (!e.inner.length) {
-      return null
+      return undefined
     }
     return e.inner.reduce((acc, err) => {
       const k = err.path ?? `?`
