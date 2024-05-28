@@ -26,8 +26,6 @@ export const DEFAULT_CONTEXT: T.Context = {
   contentRejected: null,
   noAccess: null,
   generatedData: null,
-  publishRejected: null,
-  publishingErrors: null,
   resourceEdits: null,
   state: 'Checking-In-Content',
   metaGeneratorEnabled: false,
@@ -302,16 +300,8 @@ link: url string format`,
     actions: {
       assign_validations: assign(context => {
         const publishingErrors = schemas.publishable(context.doc.meta).errors
-        // console.log(
-        //   // event.type,
-        //   context.resourceEdits,
-        //   // providedResourceEditsValidation_or_currentMetaValidations,
-        //   publishingErrors,
-        //   'assign_validations',
-        // )
 
         return produce(context, proxy => {
-          // proxy.resourceEdits = providedResourceEditsValidation_or_currentMetaValidations
           proxy.publishingErrors = publishingErrors
         })
       }),
@@ -404,10 +394,10 @@ link: url string format`,
     if (!(resourceMetaResponse || imageResponse)) {
       return null
     }
-    const resourceMetaErrors: null | Partial<T.ResourceEditsValidationErrors> =
-      !resourceMetaResponse || resourceMetaResponse.valid ? null : resourceMetaResponse.errors
-    const imageErrors: null | Partial<T.ResourceEditsValidationErrors> =
-      !imageResponse || imageResponse.valid ? null : imageResponse.errors
+    const resourceMetaErrors: undefined | Partial<T.ResourceEditsValidationErrors> =
+      !resourceMetaResponse || resourceMetaResponse.valid ? undefined : resourceMetaResponse.errors
+    const imageErrors: undefined | Partial<T.ResourceEditsValidationErrors> =
+      !imageResponse || imageResponse.valid ? undefined : imageResponse.errors
 
     const errors: T.ResourceEditsValidationErrors | null = !(resourceMetaErrors || imageErrors)
       ? null

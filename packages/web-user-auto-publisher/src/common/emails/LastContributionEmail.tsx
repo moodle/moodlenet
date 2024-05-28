@@ -1,20 +1,23 @@
 import type { EmailObj } from '@moodlenet/email-service/server'
 export type LastContributionEmailProps = {
-  amountSoFar: number
-  keepContributingActionUrl: string
+  createdAmount: number
+  homePageActionUrl: string
   receiverEmail: string
 }
 export function lastContributionEmail({
   receiverEmail,
-  amountSoFar,
-  keepContributingActionUrl,
+  createdAmount,
+  homePageActionUrl,
 }: LastContributionEmailProps): EmailObj {
-  const title = `One resource away to become a publisher ✨`
+  const title = `Just one last step to become a publisher ✨`
   const body = (
     <>
-      Congrats on your first {amountSoFar} resources!
+      Congrats on you finalized {createdAmount} resources!
       <br />
-      <b>Upload one more</b> and become a publisher.
+      To finally gain <b>publishing</b> permission, and make your content accessible to all, ensure
+      your resources to be publishable by filling in all of their fields
+      <br />
+      Hint: Click <b>Check publish</b> on your resources edit page to see if they are publishable.
     </>
   )
 
@@ -24,8 +27,8 @@ export function lastContributionEmail({
     subject: title,
     title,
     action: {
-      title: `Keep contributing`,
-      url: keepContributingActionUrl,
+      title: `Finalize your resources`,
+      url: homePageActionUrl,
     },
     hideIgnoreMessage: true,
   }

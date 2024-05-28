@@ -1,79 +1,67 @@
-import { CREATE_RESOURCE_PAGE_ROUTE_PATH } from '@moodlenet/ed-resource/common'
-import { send } from '@moodlenet/email-service/server'
-import { getOrgData } from '@moodlenet/organization/server'
-import { getWebappUrl } from '@moodlenet/react-app/server'
+import { setPkgCurrentUser } from '@moodlenet/system-entities/server'
 import {
-  changeProfilePublisherPerm,
   getProfileOwnKnownEntities,
+  getWebUser,
   getWebUserByProfileKey,
+  unsetTokenContext,
 } from '@moodlenet/web-user/server'
-import { firstContributionEmail } from '../common/emails/FirstContributionEmail.js'
-import { lastContributionEmail } from '../common/emails/LastContributionEmail.js'
-import { welcomeEmail } from '../common/emails/WelcomeEmail.js'
-import type { ReadFlowStatus, UserDetails } from './ctrl/types.mjs'
+import { getResourceValidationSchemas } from '../../../ed-resource/src/server/xsm/machines.mjs'
+import { doc_2_persistentContext } from '../../../ed-resource/src/server/xsm/mappings/db.mjs'
+import { getContributionStatus } from './control.mjs'
 import { env } from './env.mjs'
-import type { FlowStatus } from './init/kvStore.mjs'
 import { kvStore } from './init/kvStore.mjs'
-const NO_SENT_EMAILS = { last: false, first: false, welcome: false } as const
+import { shell } from './shell.mjs'
+import type { FlowStatus, ResourceAmounts, UserDetails } from './types.mjs'
 
-export async function readApprovalFlowStatus({
-  profileKey,
-}: {
-  profileKey: string
-}): Promise<ReadFlowStatus> {
-  const { amountForAutoApproval } = env
-  const webUser = await getWebUserByProfileKey({ profileKey })
-
-  if (webUser?.publisher) {
-    return setFlowStatus({ profileKey, flowStatus: { type: 'ended', sentEmails: NO_SENT_EMAILS } })
-  }
-  if (!webUser?.contacts.email) {
-    return setFlowStatus({
-      profileKey,
-      flowStatus: { type: 'no-webuser-email', sentEmails: NO_SENT_EMAILS },
-    })
-  }
-
-  const flowStatus =
-    (await getFlowStatus(profileKey)) ??
-    (await setFlowStatus({
-      profileKey,
-      flowStatus: { type: 'ongoing', sentEmails: NO_SENT_EMAILS },
-    }))
-
-  if (flowStatus.type === 'no-webuser-email') {
-    return { type: flowStatus.type }
-  }
-  if (flowStatus.type === 'ended') {
-    return { type: flowStatus.type, sentEmails: flowStatus.sentEmails }
-  }
-  const currentCreatedResourceLeastAmount = await getCurrentCreatedResourceLeastAmount(
-    profileKey,
-    amountForAutoApproval,
-  )
-  flowStatus.type === 'ongoing'
-  return {
-    type: flowStatus.type,
-    currentCreatedResourceLeastAmount,
-    amountForAutoApproval,
-    sentEmails: flowStatus.sentEmails,
-    user: {
-      displayName: webUser.displayName,
-      email: webUser.contacts.email,
-    },
-  }
-}
-
-async function getCurrentCreatedResourceLeastAmount(
-  profileKey: string,
-  amountForAutoApproval: number,
-): Promise<number> {
-  const currentCreatedResourceLeastAmountList = await getProfileOwnKnownEntities({
-    profileKey,
-    knownEntity: 'resource',
-    limit: amountForAutoApproval,
+export async function getUserDetails(key: { webUserKey: string } | { profileKey: string }) {
+  const webUser = await shell.initiateCall(async () => {
+    await unsetTokenContext()
+    await setPkgCurrentUser()
+    return 'profileKey' in key
+      ? getWebUserByProfileKey({ profileKey: key.profileKey })
+      : getWebUser({ _key: key.webUserKey })
   })
-  return currentCreatedResourceLeastAmountList.length
+  if (!webUser?.contacts.email) {
+    return
+  }
+  const userDetails: UserDetails = {
+    webUserkey: webUser._key,
+    displayName: webUser.displayName,
+    email: webUser.contacts.email,
+    publisher: webUser.publisher,
+  }
+  return userDetails
+}
+export async function fetchContributionStatus({ profileKey }: { profileKey: string }) {
+  return shell.initiateCall(async () => {
+    await unsetTokenContext()
+    await setPkgCurrentUser()
+    const { amountForAutoApproval } = env
+    const currentCreatedResourceList = await getProfileOwnKnownEntities({
+      profileKey,
+      knownEntity: 'resource',
+      limit: 100000,
+    })
+    const currentPublishableResourceList = currentCreatedResourceList.filter(({ entity }) => {
+      if (entity.persistentContext.state !== 'Unpublished') {
+        return false
+      }
+      const schemas = getResourceValidationSchemas()
+
+      const publishingErrors = schemas.publishable(doc_2_persistentContext(entity).doc.meta).errors
+
+      return !publishingErrors
+    })
+    const currentPublishableResourceAmount = currentPublishableResourceList.length
+    const currentCreatedResourceAmount = currentCreatedResourceList.length
+
+    const resourceAmounts: ResourceAmounts = {
+      amountForAutoApproval,
+      currentPublishableResourceAmount,
+      currentCreatedResourceAmount,
+    }
+    return getContributionStatus({ resourceAmounts })
+  })
 }
 
 export async function setFlowStatus<FS extends FlowStatus>({
@@ -87,65 +75,28 @@ export async function setFlowStatus<FS extends FlowStatus>({
   return flowStatus
 }
 
-export async function getFlowStatus(profileKey: string) {
+export async function getFlowStatus({ profileKey }: { profileKey: string }) {
   return (await kvStore.get('flow-status', profileKey)).value
 }
 export async function delFlowStatus({ profileKey }: { profileKey: string }) {
   await kvStore.unset('flow-status', profileKey)
 }
 
-export async function doSendLastContributionEmail({
-  user,
-  currentCreatedResourceLeastAmount,
+/*
+export async function updateFlowStatus({
+  profileKey,
+  map,
 }: {
-  user: UserDetails
-  currentCreatedResourceLeastAmount: number
-}) {
-  await send(
-    lastContributionEmail({
-      amountSoFar: currentCreatedResourceLeastAmount,
-      keepContributingActionUrl: getWebappUrl(CREATE_RESOURCE_PAGE_ROUTE_PATH),
-      receiverEmail: user.email,
-    }),
-  )
+  profileKey: string
+  map: (flowStatus: FlowStatus | undefined) => FlowStatus | undefined
+}): Promise<FlowStatus | undefined> {
+  const currFlowStatus = await getFlowStatus({ profileKey })
+  const newFlowStatus = map(currFlowStatus)
+  if (!newFlowStatus) {
+    await delFlowStatus({ profileKey })
+    return undefined
+  }
+  await setFlowStatus({ profileKey, flowStatus: newFlowStatus })
+  return newFlowStatus
 }
-export async function doSendFirstContributionEmail({
-  user,
-  yetTocreate,
-}: {
-  user: UserDetails
-  yetTocreate: number
-}) {
-  const {
-    data: { instanceName },
-  } = await getOrgData()
-  await send(
-    firstContributionEmail({
-      yetTocreate,
-      keepContributingActionUrl: getWebappUrl(CREATE_RESOURCE_PAGE_ROUTE_PATH),
-      instanceName,
-      receiverEmail: user.email,
-    }),
-  )
-}
-
-export async function setProfileAsPublisher({ profileKey }: { profileKey: string }) {
-  await changeProfilePublisherPerm({
-    profileKey,
-    setIsPublisher: true,
-    forceUnpublish: false,
-  })
-}
-
-export async function doSendWelcomeEmail({ user: { displayName, email } }: { user: UserDetails }) {
-  const orgData = await getOrgData()
-  await send(
-    welcomeEmail({
-      amountResourceToGainPublishingRights: env.amountForAutoApproval,
-      contributeActionUrl: getWebappUrl(CREATE_RESOURCE_PAGE_ROUTE_PATH),
-      receiverEmail: email,
-      displayName,
-      instanceName: orgData.data.instanceName,
-    }),
-  )
-}
+ */

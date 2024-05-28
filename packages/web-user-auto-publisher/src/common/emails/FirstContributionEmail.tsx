@@ -1,13 +1,13 @@
 import type { EmailObj } from '@moodlenet/email-service/server'
 export type FirstContributionEmailProps = {
-  yetTocreate: number
+  yetToCreate: number
   instanceName: string
   keepContributingActionUrl: string
   receiverEmail: string
 }
 
 export function firstContributionEmail({
-  yetTocreate,
+  yetToCreate,
   instanceName,
   keepContributingActionUrl,
   receiverEmail,
@@ -15,8 +15,8 @@ export function firstContributionEmail({
   const title = `First contribution to ${instanceName}! Congrats! 🔥`
   const body = (
     <>
-      Create <b>{yetTocreate} more resources</b> to become a <b>publisher</b>, and make your content
-      accessible to all.
+      Create <b>{yetToCreate} more resources</b> and carefully fill in all fields to become a{' '}
+      <b>publisher</b>, and make your content accessible to all.
     </>
   )
 

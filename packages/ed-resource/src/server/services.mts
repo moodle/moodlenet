@@ -128,8 +128,6 @@ export async function createResource(
     persistentContext: {
       state: 'Storing-New-Resource',
       generatedData: null,
-      publishRejected: null,
-      publishingErrors: null,
     },
   })
   if (!newResource) return
