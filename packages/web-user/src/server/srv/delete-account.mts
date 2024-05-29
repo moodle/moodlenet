@@ -183,35 +183,42 @@ export async function deleteWebUserAccountNow(
 
     return event
   })
-  await setProfileAvatar({ _key: profile._key, rpcFile: null })
-  await setProfileBackgroundImage({ _key: profile._key, rpcFile: null })
-  await Profile.collection.update(
-    profile._key,
-    {
-      deleted: true,
-      aboutMe: '',
-      displayName: `deleted user`,
-      knownFeaturedEntities: [],
-      location: '',
-      organizationName: '',
-      settings: { interests: null },
-      siteUrl: null,
-      webslug: 'deleted-user',
-    },
-    { keepNull: true },
-  )
-  await WebUserCollection.update(
-    webUser._key,
-    {
-      contacts: { email: '###@###.###' },
-      deleted: true,
-      deleting: false,
-      displayName: `deleted user for ${deletionReason}`,
-      isAdmin: false,
-    },
-    { keepNull: true },
-  )
+  const isLeavingContributions =
+    deletedEvent.leftCollections.length + deletedEvent.leftResources.length > 0
 
+  if (isLeavingContributions) {
+    await setProfileAvatar({ _key: profile._key, rpcFile: null })
+    await setProfileBackgroundImage({ _key: profile._key, rpcFile: null })
+    await Profile.collection.update(
+      profile._key,
+      {
+        deleted: true,
+        aboutMe: '',
+        displayName: `deleted user`,
+        knownFeaturedEntities: [],
+        location: '',
+        organizationName: '',
+        settings: { interests: null },
+        siteUrl: null,
+        webslug: 'deleted-user',
+      },
+      { keepNull: true },
+    )
+    await WebUserCollection.update(
+      webUser._key,
+      {
+        contacts: { email: '###@###.###' },
+        deleted: true,
+        deleting: false,
+        displayName: `deleted user for ${deletionReason}`,
+        isAdmin: false,
+      },
+      { keepNull: true },
+    )
+  } else {
+    await WebUserCollection.remove(webUser._key)
+    await Profile.collection.remove(profile._key)
+  }
   shell.events.emit('deleted-web-user-account', deletedEvent)
   return { status: 'done', deletedEvent } as const
 }
