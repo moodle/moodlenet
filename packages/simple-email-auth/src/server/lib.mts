@@ -1,5 +1,6 @@
 import type { JwtToken } from '@moodlenet/crypto/server'
 import * as crypto from '@moodlenet/crypto/server'
+import { send } from '@moodlenet/email-service/server'
 import { getMyRpcBaseUrl } from '@moodlenet/http-server/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { getWebappUrl } from '@moodlenet/react-app/server'
@@ -10,7 +11,6 @@ import {
   verifyCurrentTokenCtx,
 } from '@moodlenet/web-user/server'
 import assert from 'assert'
-import { send } from '../../../email-service/dist/server/exports.mjs'
 import { newUserRequestEmail } from '../common/emails/NewUserRequestEmail/NewUserRequestEmail.js'
 import { passwordChangedEmail } from '../common/emails/PasswordChangedEmail/PasswordChangedEmail.js'
 import { recoverPasswordEmail } from '../common/emails/RecoverPasswordEmail/RecoverPasswordEmail.js'

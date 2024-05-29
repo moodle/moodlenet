@@ -1,6 +1,7 @@
 import type { EventPayload } from '@moodlenet/core'
 import { type WebUserActivityEvents } from '../../exports.mjs'
 import { WebUserCollection } from '../../init/arangodb.mjs'
+import { deleteEntityPointsRecord } from '../entity-points-actions.mjs'
 import {
   maintainProfilePublishedContributionCount,
   removeFeaturedFromAllUsers,
@@ -16,12 +17,14 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
       await Promise.all([
         removeFeaturedFromAllUsers({ featuredEntityId: resource._id }),
         removeResourceFromAllCollections({ resourceKey: resource._key }),
+        deleteEntityPointsRecord({ entity: { type: 'resource', key: resource._key } }),
       ])
       break
     }
     case 'collection-deleted': {
       const { collection } = activity.data
       await removeFeaturedFromAllUsers({ featuredEntityId: collection._id })
+      deleteEntityPointsRecord({ entity: { type: 'collection', key: collection._key } })
       break
     }
     case 'feature-entity': {
@@ -54,6 +57,8 @@ export async function digestActivityEvent(activity: EventPayload<WebUserActivity
       break
     }
     case 'deleted-web-user-account': {
+      const { profile } = activity.data
+      deleteEntityPointsRecord({ entity: { type: 'profile', key: profile._key } })
       break
     }
     case 'edit-profile-interests': {
