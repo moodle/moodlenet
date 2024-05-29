@@ -1,3 +1,4 @@
+import { getResourceValidationSchemas, map } from '@moodlenet/ed-resource/server'
 import { setPkgCurrentUser } from '@moodlenet/system-entities/server'
 import {
   getProfileOwnKnownEntities,
@@ -5,8 +6,6 @@ import {
   getWebUserByProfileKey,
   unsetTokenContext,
 } from '@moodlenet/web-user/server'
-import { getResourceValidationSchemas } from '../../../ed-resource/src/server/xsm/machines.mjs'
-import { doc_2_persistentContext } from '../../../ed-resource/src/server/xsm/mappings/db.mjs'
 import { getContributionStatus } from './control.mjs'
 import { env } from './env.mjs'
 import { kvStore } from './init/kvStore.mjs'
@@ -48,7 +47,9 @@ export async function fetchContributionStatus({ profileKey }: { profileKey: stri
       }
       const schemas = getResourceValidationSchemas()
 
-      const publishingErrors = schemas.publishable(doc_2_persistentContext(entity).doc.meta).errors
+      const publishingErrors = schemas.publishable(
+        map.db.doc_2_persistentContext(entity).doc.meta,
+      ).errors
 
       return !publishingErrors
     })
