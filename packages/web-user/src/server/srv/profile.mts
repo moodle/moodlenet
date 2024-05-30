@@ -298,8 +298,10 @@ export async function changeProfilePublisherPerm({
   const currentSysUser = await getCurrentSystemUser()
   const currentUserIds = await getCurrentWebUserIds()
   assert(
-    currentSysUser.type === 'pkg' || (currentSysUser.type === 'entity' && currentUserIds?.isAdmin),
-    'should be an admin user',
+    currentSysUser.type === 'root' ||
+      currentSysUser.type === 'pkg' ||
+      (currentSysUser.type === 'entity' && currentUserIds?.isAdmin),
+    'should be root or pkg or an admin user',
   )
 
   const [profile, webUser] = await Promise.all([

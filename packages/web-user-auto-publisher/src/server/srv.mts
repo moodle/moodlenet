@@ -12,14 +12,18 @@ import { kvStore } from './init/kvStore.mjs'
 import { shell } from './shell.mjs'
 import type { FlowStatus, ResourceAmounts, UserDetails } from './types.mjs'
 
-export async function getUserDetails(key: { webUserKey: string } | { profileKey: string }) {
-  const webUser = await shell.initiateCall(async () => {
+export function initiateAsMe<F extends () => any>(f: F) {
+  return shell.initiateCall(async () => {
     await unsetTokenContext()
     await setPkgCurrentUser()
-    return 'profileKey' in key
-      ? getWebUserByProfileKey({ profileKey: key.profileKey })
-      : getWebUser({ _key: key.webUserKey })
+    return f()
   })
+}
+export async function getUserDetails(key: { webUserKey: string } | { profileKey: string }) {
+  const webUser = await ('profileKey' in key
+    ? getWebUserByProfileKey({ profileKey: key.profileKey })
+    : getWebUser({ _key: key.webUserKey }))
+
   if (!webUser?.contacts.email) {
     return
   }
@@ -32,37 +36,33 @@ export async function getUserDetails(key: { webUserKey: string } | { profileKey:
   return userDetails
 }
 export async function fetchContributionStatus({ profileKey }: { profileKey: string }) {
-  return shell.initiateCall(async () => {
-    await unsetTokenContext()
-    await setPkgCurrentUser()
-    const { amountForAutoApproval } = env
-    const currentCreatedResourceList = await getProfileOwnKnownEntities({
-      profileKey,
-      knownEntity: 'resource',
-      limit: 100000,
-    })
-    const currentPublishableResourceList = currentCreatedResourceList.filter(({ entity }) => {
-      if (entity.persistentContext.state !== 'Unpublished') {
-        return false
-      }
-      const schemas = getResourceValidationSchemas()
-
-      const publishingErrors = schemas.publishable(
-        map.db.doc_2_persistentContext(entity).doc.meta,
-      ).errors
-
-      return !publishingErrors
-    })
-    const currentPublishableResourceAmount = currentPublishableResourceList.length
-    const currentCreatedResourceAmount = currentCreatedResourceList.length
-
-    const resourceAmounts: ResourceAmounts = {
-      amountForAutoApproval,
-      currentPublishableResourceAmount,
-      currentCreatedResourceAmount,
-    }
-    return getContributionStatus({ resourceAmounts })
+  const { amountForAutoApproval } = env
+  const currentCreatedResourceList = await getProfileOwnKnownEntities({
+    profileKey,
+    knownEntity: 'resource',
+    limit: 100000,
   })
+  const currentPublishableResourceList = currentCreatedResourceList.filter(({ entity }) => {
+    if (entity.persistentContext.state !== 'Unpublished') {
+      return false
+    }
+    const schemas = getResourceValidationSchemas()
+
+    const publishingErrors = schemas.publishable(
+      map.db.doc_2_persistentContext(entity).doc.meta,
+    ).errors
+
+    return !publishingErrors
+  })
+  const currentPublishableResourceAmount = currentPublishableResourceList.length
+  const currentCreatedResourceAmount = currentCreatedResourceList.length
+
+  const resourceAmounts: ResourceAmounts = {
+    amountForAutoApproval,
+    currentPublishableResourceAmount,
+    currentCreatedResourceAmount,
+  }
+  return getContributionStatus({ resourceAmounts })
 }
 
 export async function setFlowStatus<FS extends FlowStatus>({
