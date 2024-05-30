@@ -16,24 +16,26 @@ import {
   profileDeleted,
   userPublisherPermissionChange,
 } from '../control.mjs'
-import { fetchContributionStatus, getFlowStatus, getUserDetails } from '../srv.mjs'
+import { fetchContributionStatus, getFlowStatus, getUserDetails, initiateAsMe } from '../srv.mjs'
 
 on('created-web-user-account', async ({ data: { profileKey, webUserKey } }) => {
   // console.log('created-web-user-account', profileKey)
-  const userDetails = await getUserDetails({ webUserKey })
-  if (!userDetails) {
-    return
-  }
-  const todo = await profileCreated({ isPublisher: userDetails.publisher })
-  switch (todo) {
-    case 'welcome': {
-      await welcomeActions({ userDetails, profileKey })
-      break
+  return initiateAsMe(async () => {
+    const userDetails = await getUserDetails({ webUserKey })
+    if (!userDetails) {
+      return
     }
-    case 'approved': {
-      await userApprovedActions({ profileKey })
+    const todo = await profileCreated({ isPublisher: userDetails.publisher })
+    switch (todo) {
+      case 'welcome': {
+        await welcomeActions({ userDetails, profileKey })
+        break
+      }
+      case 'approved': {
+        await userApprovedActions({ profileKey })
+      }
     }
-  }
+  })
 })
 
 on(
@@ -43,13 +45,15 @@ on(
       profile: { _key: profileKey },
     },
   }) => {
-    const todo = await profileDeleted()
-    switch (todo) {
-      case 'delete': {
-        await deletedUserActions({ profileKey })
-        break
+    return initiateAsMe(async () => {
+      const todo = await profileDeleted()
+      switch (todo) {
+        case 'delete': {
+          await deletedUserActions({ profileKey })
+          break
+        }
       }
-    }
+    })
   },
 )
 
@@ -65,60 +69,64 @@ on(
       type,
     },
   }) => {
-    const todo = userPublisherPermissionChange({ permission: type })
-    switch (todo) {
-      case 'approved': {
-        userApprovedActions({ profileKey })
-        break
+    return initiateAsMe(async () => {
+      const todo = userPublisherPermissionChange({ permission: type })
+      switch (todo) {
+        case 'approved': {
+          userApprovedActions({ profileKey })
+          break
+        }
+        case null: {
+          break
+        }
       }
-      case null: {
-        break
-      }
-    }
+    })
   },
 )
 
 async function ongoingHandler({ userId }: { userId: EntityIdentifier }) {
-  const profileKey = isOfSameClass(Profile.entityClass, userId.entityClass) ? userId._key : null
+  return initiateAsMe(async () => {
+    const profileKey = isOfSameClass(Profile.entityClass, userId.entityClass) ? userId._key : null
 
-  if (!profileKey) {
-    return
-  }
+    if (!profileKey) {
+      return
+    }
 
-  const flowStatus = await getFlowStatus({ profileKey })
-  if (flowStatus?.status !== 'ongoing') {
-    return
-  }
+    const flowStatus = await getFlowStatus({ profileKey })
+    if (flowStatus?.status !== 'ongoing') {
+      return
+    }
 
-  const contributionStatus = await fetchContributionStatus({ profileKey })
-  const action = ongoingNextAction({ contributionStatus, flowStatus })
+    const contributionStatus = await fetchContributionStatus({ profileKey })
+    const action = ongoingNextAction({ contributionStatus, flowStatus })
 
-  const { userDetails } = flowStatus
-  const { yetToCreate, currentCreatedResourceAmount } = contributionStatus
-  switch (action) {
-    case 'none': {
-      break
+    const { userDetails } = flowStatus
+    const { yetToCreate, currentCreatedResourceAmount } = contributionStatus
+    switch (action) {
+      case 'none': {
+        break
+      }
+      case 'user gains publishing permission': {
+        await enoughPublishableActions({ profileKey })
+        break
+      }
+      case 'first contribution actions': {
+        await firstContributionActions({ userDetails, yetToCreate, profileKey })
+        break
+      }
+      case 'last contribution actions': {
+        await lastContributionActions({
+          currentCreatedResourceAmount,
+          profileKey,
+          userDetails,
+        })
+        break
+      }
+      case 'second-last contribution actions': {
+        secondLastContributionActions({ currentCreatedResourceAmount, userDetails, profileKey })
+        break
+      }
     }
-    case 'user gains publishing permission': {
-      await enoughPublishableActions({ profileKey })
-      break
-    }
-    case 'first contribution actions': {
-      await firstContributionActions({ userDetails, yetToCreate, profileKey })
-      break
-    }
-    case 'last contribution actions': {
-      await lastContributionActions({
-        currentCreatedResourceAmount,
-        profileKey,
-        userDetails,
-      })
-      break
-    }
-    case 'second-last contribution actions': {
-      secondLastContributionActions({ currentCreatedResourceAmount, userDetails, profileKey })
-      break
-    }
-  }
-  return { action, contributionStatus }
+    return { action, contributionStatus }
+  })
 }
