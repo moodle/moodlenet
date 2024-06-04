@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/component-library",
-  "version": "0.8.1",
+  "version": "0.9.0-alpha.0",
   "publishConfig": {
     "access": "public"
   },
@@ -9,10 +9,7 @@
     "displayName": "MoodleNet Component Library",
     "icon": "https://moodle.net/moodlenet-logo-small.svg"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://gitlab.com/moodlenet/moodlenet"
-  },
+  "repository": "https://github.com/moodle/moodlenet",
   "keywords": [
     "moodlenetPackage"
   ],

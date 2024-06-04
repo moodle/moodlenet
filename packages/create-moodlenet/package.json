@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/create",
-  "version": "4.2.1",
+  "version": "4.3.0-alpha.0",
   "license": "AGPL-3.0",
   "type": "module",
   "engines": {
@@ -16,7 +16,7 @@
   "scripts": {
     "start": "node ./bin/install.mjs"
   },
-  "repository": "https://gitlab.com/moodlenet/moodlenet",
+  "repository": "https://github.com/moodle/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
     "execa": "7.1.1",

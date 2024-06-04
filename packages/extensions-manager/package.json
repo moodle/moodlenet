@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/extensions-manager",
-  "version": "0.8.1",
+  "version": "0.9.0-alpha.0",
   "publishConfig": {
     "access": "public"
   },
@@ -32,10 +32,10 @@
     "dist/",
     "src/"
   ],
-  "repository": "https://gitlab.com/moodlenet/moodlenet",
+  "repository": "https://github.com/moodle/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "@moodlenet/component-library": "^0.8.1",
+    "@moodlenet/component-library": "^0.9.0-alpha.0",
     "axios": "1.6.2",
     "formik": "2.2.9",
     "react-markdown": "8.0.3",
@@ -46,12 +46,12 @@
   "peerDependencies": {
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
-    "@moodlenet/core": "^0.8.1",
-    "@moodlenet/react-app": "^0.8.1"
+    "@moodlenet/core": "^0.9.0-alpha.0",
+    "@moodlenet/react-app": "^0.9.0-alpha.0"
   },
   "devDependencies": {
-    "@moodlenet/core": "^0.8.1",
-    "@moodlenet/react-app": "^0.8.1",
+    "@moodlenet/core": "^0.9.0-alpha.0",
+    "@moodlenet/react-app": "^0.9.0-alpha.0",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@storybook/addon-actions": "7.4.2",
