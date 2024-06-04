@@ -26,7 +26,7 @@ export function loginPageRoutePath(opts?: { redirectTo?: string }) {
   return `${LOGIN_PAGE_ROUTE_BASE_PATH}?${usp.toString()}`
 }
 
-export const profileHomePageRoutePath = compile<KeySlugParams>(PROFILE_HOME_PAGE_ROUTE_PATH)
+const profileHomePageRoutePath = compile<KeySlugParams>(PROFILE_HOME_PAGE_ROUTE_PATH)
 
 export function getProfileHomePageRoutePath({
   _key,
