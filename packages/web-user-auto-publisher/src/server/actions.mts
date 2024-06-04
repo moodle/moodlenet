@@ -2,7 +2,7 @@ import { CREATE_RESOURCE_PAGE_ROUTE_PATH } from '@moodlenet/ed-resource/common'
 import { send } from '@moodlenet/email-service/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { getWebappUrl } from '@moodlenet/react-app/server'
-import { profileHomePageRoutePath } from '@moodlenet/web-user/common'
+import { getProfileHomePageRoutePath } from '@moodlenet/web-user/common'
 import { changeProfilePublisherPerm } from '@moodlenet/web-user/server'
 import { firstContributionEmail } from '../common/emails/FirstContributionEmail.js'
 import { lastContributionEmail } from '../common/emails/LastContributionEmail.js'
@@ -36,7 +36,7 @@ export async function lastContributionActions({
       receiverEmail: userDetails.email,
       createdAmount: currentCreatedResourceAmount,
       homePageActionUrl: getWebappUrl(
-        profileHomePageRoutePath({ key: profileKey, slug: userDetails.displayName }),
+        getProfileHomePageRoutePath({ _key: profileKey, displayName: userDetails.displayName }),
       ),
     }),
   )

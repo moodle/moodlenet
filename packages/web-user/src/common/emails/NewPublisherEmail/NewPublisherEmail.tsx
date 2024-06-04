@@ -10,7 +10,7 @@ export function newPublisherEmail({
   keepContributingActionUrl,
   receiverEmail,
 }: NewPublisherEmailProps): EmailObj {
-  const title = `Your are now a ${instanceName} publisher! 🌟`
+  const title = `You are now a ${instanceName} publisher! 🌟`
   const body = (
     <>
       Congratulations! This upgrade reflects your active engagement in upholding our

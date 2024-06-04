@@ -22,14 +22,14 @@ function start() {
     return
   }
   const { afterNoVisitsForDays, notifyBeforeDays } = inactivityConfig
-  const afterNoLogInForMs = afterNoVisitsForDays * DAY_MS
+  const afterNoVisitsForMs = afterNoVisitsForDays * DAY_MS
   const notifyBeforeMs = notifyBeforeDays * DAY_MS
   startInactivityNotifications()
   startInactiveUsersDeletions()
   async function queryUsersFor(scope: 'notification' | 'deletion') {
     const lastVisitBeforeDateMs_delete =
-      Date.now() - afterNoLogInForMs - TIMEOUT_WHEN_NO_MORE_SO_FAR_MS
-    const lastVisitBeforeDateMs_notify = lastVisitBeforeDateMs_delete - notifyBeforeMs
+      Date.now() - afterNoVisitsForMs - TIMEOUT_WHEN_NO_MORE_SO_FAR_MS
+    const lastVisitBeforeDateMs_notify = lastVisitBeforeDateMs_delete + notifyBeforeMs
 
     const lastVisitBeforeDateMs =
       scope === 'deletion' ? lastVisitBeforeDateMs_delete : lastVisitBeforeDateMs_notify

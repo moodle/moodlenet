@@ -30,7 +30,6 @@ export type SendResp =
 export type MailerCfg = {
   defaultFrom: EmailAddr
   defaultReplyTo: EmailAddr
-  baseEmailLayoutTemplateVars: BaseEmailLayoutTemplateVars
 }
 
 export type EmailAddr = string

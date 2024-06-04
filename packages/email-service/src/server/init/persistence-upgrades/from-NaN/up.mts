@@ -12,12 +12,12 @@ const instanceHostname = new URL(instanceDomain).hostname
 const mailerCfg: MailerCfg = {
   defaultFrom: `noreply@${instanceHostname}`,
   defaultReplyTo: `noreply@${instanceHostname}`,
-  baseEmailLayoutTemplateVars: {
-    instanceLogoUrl: 'https://i.ibb.co/cDZ97rk/Moodle-Net-Logo-Colour-RGB.png',
-    copyright: 'Copyright © 2021 Moodle Pty Ltd, All rights reserved.',
-    location: 'PO Box 303, West Perth WA 6872, Australia',
-    locationUrl: '',
-  },
+  // baseEmailLayoutTemplateVars: {
+  //   instanceLogoUrl: 'https://i.ibb.co/cDZ97rk/Moodle-Net-Logo-Colour-RGB.png',
+  //   copyright: 'Copyright © 2021 Moodle Pty Ltd, All rights reserved.',
+  //   location: 'PO Box 303, West Perth WA 6872, Australia',
+  //   locationUrl: '',
+  // },
 }
 
 kvStore.set('mailerCfg', '', mailerCfg)
