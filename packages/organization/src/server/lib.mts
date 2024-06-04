@@ -21,7 +21,7 @@ export function interpolateOrgData(rawData: OrganizationData) {
   try {
     return JSON.parse(eval(`\`${JSON.stringify(rawData)}\``)) as OrganizationData
   } catch (e) {
-    shell.log('error', 'getOrgData iunterpolation error', e, `won't interpolate`)
+    shell.log('error', 'getOrgData interpolation error', e, `won't interpolate`)
     return rawData
   }
 }
