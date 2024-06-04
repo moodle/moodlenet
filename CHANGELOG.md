@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [4.3.0]
+
+### Added
+
+- Report users
+  - Users can now report other users specifying a reason
+  - Admins can manage reported users, check details and take actions in place
+- Introduced react-email: to compose emails as react components
+- Inactive web-user management options :
+  - Email notification after a configured time of inactivity
+  - Account deletion after a configured time of inactivity
+- Optional new `@moodlenet/web-user-auto-publisher` package:
+  - Engages non-publisher users to create and finalize `n` resources to automatically gain publishing permissions
+
+### Fixed
+
+- User card published resources count
+- Various issues related to account deletion cascade relations
+
+### Improvements
+
+- Webapp authentication token refresh on page load
+- Various UI improvements
+- On dev environment configs
+
 ## [4.2.1]
 
 ### Improvements
