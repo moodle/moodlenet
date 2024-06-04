@@ -7,8 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 -Report users
-  - Users can now report other users specifying a reason
-  - Admins can manage reported users, check details and take actions in place
+
+- Users can now report other users specifying a reason
+- Admins can manage reported users, check details and take actions in place
 
 ## [4.2.1]
 
