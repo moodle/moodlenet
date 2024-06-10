@@ -29,7 +29,7 @@ export const {
 function getEnv(): Env {
   const config = shell.config ?? {}
   const env: Env = {
-    noBgProc: !!config.noBgProc,
+    noBgProc: config.noBgProc === true,
     deleteInactiveUsers: (() => {
       if (!config.deleteInactiveUsers) return false
       const __DO_DOWNSCALE_TIME__ =

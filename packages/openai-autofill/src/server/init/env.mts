@@ -13,7 +13,7 @@ function getEnv(): Env {
     tikaUrl: String(config.tikaUrl),
     apiKey: config.apiKey,
     cutContentToCharsAmount: Number(config.cutContentToCharsAmount ?? 20_000),
-    noBgProc: !!config.noBgProc,
+    noBgProc: config.noBgProc === true,
   }
 
   return env
