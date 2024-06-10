@@ -3,6 +3,7 @@ import getBloomsCognitivesFineTuning from './meta-data/bloomsCognitivesFineTunin
 import getIscedFields4CharsFineTuning from './meta-data/iscedFields4CharsFineTuning.mjs'
 import getIscedGradesFineTuning from './meta-data/iscedGradesFineTuning.mjs'
 import getLangFineTuning from './meta-data/langFineTuning.mjs'
+import getLicenseFineTuning from './meta-data/licenseFineTuning.mjs'
 import getResTypeFineTuning from './meta-data/resTypeFineTuning.mjs'
 import { FN_NAME } from './types.mjs'
 export default async function () {
@@ -11,12 +12,14 @@ export default async function () {
     iscedGradesFineTuning,
     resTypeFineTuning,
     langFineTuning,
+    licenseFineTuning,
     bloomsCognitivesFineTuning,
   ] = await Promise.all([
     getIscedFields4CharsFineTuning(),
     getIscedGradesFineTuning(),
     getResTypeFineTuning(),
     getLangFineTuning(),
+    getLicenseFineTuning(),
     getBloomsCognitivesFineTuning(),
   ])
 
@@ -31,6 +34,7 @@ export default async function () {
     ...iscedGradesFineTuning.openaiSystem,
     ...resTypeFineTuning.openaiSystem,
     ...langFineTuning.openaiSystem,
+    ...licenseFineTuning.openaiSystem,
     ...bloomsCognitivesFineTuning.openaiSystem,
   ]
 
@@ -52,6 +56,7 @@ export default async function () {
     iscedGradesFineTuning,
     resTypeFineTuning,
     langFineTuning,
+    licenseFineTuning,
     bloomsCognitivesFineTuning,
     systemMessagesJsonl,
   }
