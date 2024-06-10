@@ -32,6 +32,7 @@ export async function getUserDetails(key: { webUserKey: string } | { profileKey:
     displayName: webUser.displayName,
     email: webUser.contacts.email,
     publisher: webUser.publisher,
+    deleted: webUser.deleted === true,
   }
   return userDetails
 }

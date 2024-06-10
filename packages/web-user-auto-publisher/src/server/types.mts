@@ -38,6 +38,7 @@ export interface UserDetails {
   displayName: string
   email: string
   publisher: boolean
+  deleted: boolean
 }
 
 export type ResourceAmounts = {
