@@ -69,7 +69,6 @@ import {
 import {
   getCurrentProfileIds,
   getCurrentWebUserIds,
-  getWebUser,
   getWebUserByProfileKey,
   patchWebUserDisplayName,
   setCurrentUnverifiedJwtToken,
@@ -742,10 +741,6 @@ export async function reportUser({
   comment: string
   reporterWebUserKey: string
 }) {
-  const reporterWebUser = await getWebUser({ _key: reporterWebUserKey })
-  if (!(reporterWebUser?.publisher || reporterWebUser?.isAdmin)) {
-    throw RpcStatus('Unauthorized', 'only publishers and admin users can report ')
-  }
   const targetWebUser = await getWebUserByProfileKey({ profileKey })
   if (!targetWebUser) {
     throw RpcStatus('Not Found', 'Target web user not found')
@@ -812,7 +807,7 @@ export async function reportUser({
   if (done) {
     shell.events.emit('web-user-reported', {
       comment: report.comment,
-      reporterWebUserKey: reporterWebUser._key,
+      reporterWebUserKey,
       reportOptionTypeId: report.reportTypeId,
       targetWebUserKey: targetWebUser._key,
     })
