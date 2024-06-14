@@ -1,7 +1,7 @@
 import type { EventOf, StateOf } from '../../common/xsm-typegen-extract/types'
 import type { Typegen0 } from '../lifecycle.xsm.typegen'
-import { Credits, ResourceDoc, ResourceMeta } from './document'
-import { Issuer } from './issuer'
+import type { Credits, ResourceDoc, ResourceMeta } from './document'
+import type { Issuer } from './issuer'
 
 export type StateName = StateOf<Typegen0>
 
@@ -50,6 +50,8 @@ export interface Context extends PersistentContext {
   }
   providedContent: null | ProvidedCreationContent
   metaGeneratorEnabled: boolean
+  publishingErrors?: ResourceMetaValidationErrors
+  publishRejected?: ReasonString
 }
 
 interface GeneratedData {
@@ -60,8 +62,6 @@ interface GeneratedData {
 export interface PersistentContext {
   doc: ResourceDoc
   generatedData: null | GeneratedData
-  publishRejected: null | ReasonString
-  publishingErrors: null | ResourceMetaValidationErrors
   state: StateName
 }
 
@@ -115,7 +115,7 @@ export interface Actor_StoreNewResource_Data {
 //       }
 // }
 
-export interface Actor_ScheduleDestroy_Data {}
+export type Actor_ScheduleDestroy_Data = NonNullable<unknown>
 
 // EVENTS
 export type Event = EventOf<
@@ -138,9 +138,9 @@ export interface Event_GeneratedMetaSuggestions_Data {
   generatedData: ProvidedGeneratedData
 }
 
-export interface Event_StoreEdits_Data {}
-export interface Event_StoreNewResource_Data {}
-// export interface Event_AcceptMetaSuggestions_Data {}
+export type Event_StoreEdits_Data = NonNullable<unknown>
+export type Event_StoreNewResource_Data = NonNullable<unknown>
+// type interface Event_AcceptMetaSuggestions_Data = NonNullable<unknown>
 export interface ProvidedCreationFileContent {
   kind: 'file'
   size: number
@@ -150,23 +150,23 @@ export interface ProvidedCreationLinkContent {
   url: string
 }
 export type ProvidedCreationContent = ProvidedCreationFileContent | ProvidedCreationLinkContent
-export interface Event_Restore_Data {}
+export type Event_Restore_Data = NonNullable<unknown>
 export interface Event_ProvideResourceEdits_Data {
   edits: ResourceEdits
 }
-// export interface Event_RequestPublish_Data {}
+// type interface Event_RequestPublish_Data = NonNullable<unknown>
 
 export interface Event_RejectPublish_Data {
   reason: string
 }
-export interface Event_Unpublish_Data {}
-export interface Event_Publish_Data {}
+export type Event_Unpublish_Data = NonNullable<unknown>
+export type Event_Publish_Data = NonNullable<unknown>
 export interface Event_ProvideNewResource_Data {
   content: ProvidedCreationContent
   meta?: Partial<ResourceMeta>
   image?: ProvidedImage
 }
 
-export interface Event_Trash_Data {}
-export interface Event_RequestMetaGeneration_Data {}
-export interface Event_CancelMetaAutogen_Data {}
+export type Event_Trash_Data = NonNullable<unknown>
+export type Event_RequestMetaGeneration_Data = NonNullable<unknown>
+export type Event_CancelMetaAutogen_Data = NonNullable<unknown>

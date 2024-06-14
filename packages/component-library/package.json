@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/component-library",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "publishConfig": {
     "access": "public"
   },
@@ -9,10 +9,7 @@
     "displayName": "MoodleNet Component Library",
     "icon": "https://moodle.net/moodlenet-logo-small.svg"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://gitlab.com/moodlenet/moodlenet"
-  },
+  "repository": "https://github.com/moodle/moodlenet",
   "keywords": [
     "moodlenetPackage"
   ],
@@ -37,7 +34,8 @@
     ".": "./dist/ui.mjs",
     "./stories": "./dist/stories.mjs",
     "./common": "./dist/common.mjs",
-    "./ui/scss/application": "./dist/webapp/ui/styles/application.scss"
+    "./ui/scss/application": "./dist/webapp/ui/styles/application.scss",
+    "./email-templates": "./dist/email-templates/index.mjs"
   },
   "scripts": {
     "dev-assistant": "npm-watch copy-assets & npm-watch create-ui-index & npm-watch create-stories-index",
@@ -81,8 +79,8 @@
     "@types/node": "17.0.35",
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "typescript": "5.4"
   },
   "peerDependencies": {
@@ -90,10 +88,18 @@
     "@emotion/styled": "11.11.0",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "dependencies": {
+    "@react-email/button": "^0.0.15",
+    "@react-email/container": "^0.0.12",
+    "@react-email/head": "^0.0.9",
+    "@react-email/html": "^0.0.8",
+    "@react-email/img": "^0.0.8",
+    "@react-email/preview": "^0.0.9",
+    "@react-email/section": "^0.0.12",
+    "@react-email/text": "^0.0.8",
     "@types/lodash": "4.14.198",
     "lodash": "4.17.21",
     "lottie-react": "2.4.0"

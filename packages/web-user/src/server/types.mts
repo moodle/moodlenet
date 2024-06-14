@@ -11,8 +11,15 @@ import type {
   EntityFullDocument,
   EntityUser,
   PkgUser,
+  RootUser,
 } from '@moodlenet/system-entities/server'
-import type { KnownEntityFeature, KnownEntityType } from '../common/types.mjs'
+import type {
+  KnownEntityFeature,
+  KnownEntityType,
+  ReportOptionTypeId,
+  ReportProfileReasonName,
+  UserStatus,
+} from '../common/types.mjs'
 
 // TODO //@ALE ProfileEntity _meta { webUserKey }
 
@@ -54,11 +61,16 @@ export type ProfileDataType = ProfileMeta & {
   webslug: string
   settings: ProfileSettings
   points?: null | number
+  deleted?: boolean
   popularity?: null | {
     overall: number
     items: {
       followers?: ProfilePopularityItem
     } & { [key: string]: ProfilePopularityItem }
+  }
+  publishedContributions: {
+    resources: number
+    collections: number
   }
 }
 
@@ -83,13 +95,40 @@ export type ImageUploaded = { kind: 'file'; directAccessId: string }
 
 // export type Profile = ProfileDataType & { _key: string }
 
+export type ReportItem = {
+  date: string
+  reporterWebUserKey: string
+  reportTypeId: ReportOptionTypeId
+  comment: string
+}
+export type UserStatusItem = {
+  status: UserStatus
+  date: string
+  byWebUserKey: string
+}
 export type WebUserRecord = WebUserDataType & DocumentMetadata
 export type WebUserDataType = {
   displayName: string
   contacts: Contacts
   isAdmin: boolean
+  publisher: boolean
   profileKey: string
   deleting?: boolean
+  deleted?: boolean
+  moderation: {
+    reports: {
+      items: ReportItem[]
+      amount: number
+      mainReasonName: null | ReportProfileReasonName
+    }
+    status: {
+      history: UserStatusItem[]
+    }
+  }
+  lastVisit: {
+    at: string
+    inactiveNotificationSentAt?: null | string
+  }
 }
 
 export type Contacts = {
@@ -104,6 +143,8 @@ export type TokenVersion = 1
 export type WebUserJwtPayload = { v: TokenVersion & 1 } & (
   | {
       isRoot: true
+      webUser?: undefined
+      profile?: undefined
     }
   | {
       isRoot?: false
@@ -210,7 +251,7 @@ export type WebUserActivityEvents = {
   }
   'user-publishing-permission-change': {
     type: 'given' | 'revoked'
-    moderator: EntityUser | PkgUser
+    moderator: EntityUser | PkgUser | RootUser
     profile: EntityFullDocument<ProfileDataType>
   }
   'feature-entity': {
@@ -233,13 +274,13 @@ export type WebUserActivityEvents = {
   }
   ///
   'request-send-message-to-web-user': {
-    message: {
-      text: string
-      html: string
-    }
-    toWebUser: Pick<WebUserRecord, '_key' | 'displayName'>
-    subject: string
-    title: string
+    message: string
+    fromWebUserKey: string
+    toWebUserKey: string
+  }
+  'web-user-delete-account-intent': {
+    actionUrl: string
+    webUserKey: string
   }
   'deleted-web-user-account': {
     displayName: string
@@ -254,110 +295,11 @@ export type WebUserActivityEvents = {
     webUserKey: string
     profileKey: string
   }
+  //
+  'web-user-reported': {
+    targetWebUserKey: string
+    reporterWebUserKey: string
+    comment: string
+    reportOptionTypeId: ReportOptionTypeId
+  }
 }
-// export type WebUserActivityEvents = {
-//   'resource-downloaded': {
-//     resourceKey: string
-//     userId: EntityIdentifier
-//   }
-//   'resource-created': {
-//     resourceKey: string
-//     userId: EntityIdentifier
-//   }
-//   'resource-updated': {
-//     resourceKey: string
-//     updatedMeta: EventResourceMeta
-//     userId: EntityIdentifier
-//   }
-//   'resource-published': {
-//     resourceKey: string
-//     userId: EntityIdentifier
-//   }
-//   'resource-request-metadata-generation': {
-//     resourceKey: string
-//     userId: EntityIdentifier
-//   }
-//   'resource-unpublished': {
-//     resourceKey: string
-//     userId: EntityIdentifier
-//   }
-//   'resource-deleted': {
-//     resourceKey: string
-//     userId: EntityIdentifier
-//   }
-
-//   'collection-created': {
-//     collectionKey: string
-//     userId: EntityIdentifier
-//   }
-//   'collection-updated': {
-//     collectionKey: string
-//     updatedMeta: CollectionMeta
-//     userId: EntityIdentifier
-//   }
-//   'collection-published': {
-//     collectionKey: string
-//     userId: EntityIdentifier
-//   }
-//   'collection-resource-list-curation': {
-//     collectionKey: string
-//     action: 'add' | 'remove'
-//     resourceKey: string
-//     userId: EntityIdentifier
-//   }
-//   'collection-unpublished': {
-//     collectionKey: string
-//     userId: EntityIdentifier
-//   }
-//   'collection-deleted': {
-//     collectionKey: string
-//     userId: EntityIdentifier
-//   }
-
-//   'created-web-user-account': {
-//     webUserKey: string
-//     profileKey: string
-//   }
-//   'user-publishing-permission-change': {
-//     profileKey: string
-//     type: 'given' | 'revoked'
-//     moderator: EntityUser | PkgUser
-//   }
-//   'feature-entity': {
-//     profileKey: string
-//     action: 'add' | 'remove'
-//     item: KnownFeaturedEntityItem
-//     currentItemsOfSameType: KnownFeaturedEntityItem[]
-//   }
-//   'edit-profile-interests': {
-//     profileKey: string
-//     profileInterests: ProfileInterests
-//   }
-//   'edit-profile-meta': {
-//     profileKey: string
-//     meta: ProfileMeta
-//   }
-//   ///
-//   'request-send-message-to-web-user': {
-//     message: {
-//       text: string
-//       html: string
-//     }
-//     toWebUser: Pick<WebUserRecord, '_key' | 'displayName'>
-//     subject: string
-//     title: string
-//   }
-//   'deleted-web-user-account': {
-//     webUserKey: string
-//     profileKey: string
-//     displayName: string
-//     leftResources: { _key: string }[]
-//     leftCollections: { _key: string }[]
-//     deletedCollections: { _key: string }[]
-//     deletedResources: { _key: string }[]
-//   }
-//   'web-user-logged-in': {
-//     webUserKey: string
-//     profileKey: string
-//   }
-// }

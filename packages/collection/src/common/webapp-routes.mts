@@ -2,7 +2,7 @@ import { compile, match, webSlug } from '@moodlenet/react-app/common'
 
 export const COLLECTION_HOME_PAGE_ROUTE_PATH = '/collection/:key/:slug'
 type KeySlugParams = { key: string; slug: string }
-export const collectionHomePageRoutePath = compile<KeySlugParams>(COLLECTION_HOME_PAGE_ROUTE_PATH)
+const collectionHomePageRoutePath = compile<KeySlugParams>(COLLECTION_HOME_PAGE_ROUTE_PATH)
 
 export function getCollectionHomePageRoutePath({ _key, title }: { _key: string; title: string }) {
   const slug = webSlug(title)

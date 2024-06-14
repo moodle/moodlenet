@@ -45,6 +45,14 @@ export async function generateMeta(doc: ResourceDoc): Promise<null | {
           },
         }),
       ),
+      license: openAiResponse.data.ccLicense ? { code: openAiResponse.data.ccLicense } : null,
+      originalPublicationInfo:
+        openAiResponse.data.creationYear && openAiResponse.data.creationMonth
+          ? {
+              year: Number(openAiResponse.data.creationYear),
+              month: Number(openAiResponse.data.creationMonth),
+            }
+          : null,
       language: openAiResponse.data.languageCode
         ? { code: openAiResponse.data.languageCode }
         : null,

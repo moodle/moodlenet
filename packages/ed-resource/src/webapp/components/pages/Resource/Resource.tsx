@@ -429,7 +429,7 @@ export const Resource: FC<ResourceProps> = ({
       : null
 
   const publishCheckButton: AddonItem | null =
-    isEditing && canPublish && !isPublished && (hasAllData || disableFields)
+    isEditing && /* canPublish && */ !isPublished && (hasAllData || disableFields)
       ? {
           Item: () => (
             <PrimaryButton onClick={publishCheck} color="green" disabled={disableFields}>

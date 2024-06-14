@@ -241,6 +241,19 @@ export const UserAgreement: FC<UserAgreementProps> = ({ footerProps, headerProps
           notice. By using this website you are agreeing to be bound by the then current version of
           these terms.
         </p>
+        <h2>6. Privacy and Policies</h2>
+        <h3>
+          6.1.
+          <a href="https://moodle.com/cookies-policy/" target="_blank" rel="noreferrer">
+            Cookies Policy
+          </a>
+        </h3>
+        <h3>
+          6.2.
+          <a href="https://moodle.com/privacy-notice/" target="_blank" rel="noreferrer">
+            Privacy Notice
+          </a>
+        </h3>
       </div>
     </SimpleLayout>
   )

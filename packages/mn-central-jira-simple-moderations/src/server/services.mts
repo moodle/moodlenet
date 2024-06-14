@@ -47,7 +47,11 @@ export async function getUserRequestState({
   const userApprovalRequest = (await kvStore.get('user-approval-request', profileKey)).value
   const serviceConfigs = await getServiceConfigs()
   if (!userApprovalRequest) {
-    const ownResources = await getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource' })
+    const ownResources = await getProfileOwnKnownEntities({
+      profileKey,
+      knownEntity: 'resource',
+      limit: serviceConfigs.publishingApproval.resourceAmount,
+    })
 
     return {
       type: 'no-request',
@@ -59,7 +63,11 @@ export async function getUserRequestState({
   })
   if (!jiraIssueMetaEntity) {
     kvStore.unset('user-approval-request', profileKey)
-    const ownResources = await getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource' })
+    const ownResources = await getProfileOwnKnownEntities({
+      profileKey,
+      knownEntity: 'resource',
+      limit: serviceConfigs.publishingApproval.resourceAmount,
+    })
 
     return {
       type: 'no-request',

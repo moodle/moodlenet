@@ -3,6 +3,9 @@ export interface ClassifyPars {
   resourceSummary: string
   resourceTypeCode: string
   iscedGradeCode: string
+  ccLicense: string
+  creationYear: number
+  creationMonth: number
   languageCode: string
   iscedFieldCode: string
   bloomsCognitive: BloomsCognitiveElem[]

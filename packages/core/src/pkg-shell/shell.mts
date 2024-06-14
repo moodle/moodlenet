@@ -11,7 +11,7 @@ import {
   setNow,
 } from '../async-context/lib.mjs'
 import { pkgEmitter } from '../events/main-event-emitter.mjs'
-import { getConfig, pkgDepGraph } from '../ignite.mjs'
+import { getConfig, isDevEnv, pkgDepGraph } from '../ignite.mjs'
 import { getChildLogger, type LogLevel } from '../logger/init-logger.mjs'
 import { coreConfigs } from '../main/env.mjs'
 import {
@@ -36,6 +36,7 @@ export async function getMyShell<PkgAsyncCtx = never, Events = any>(pkg_module_r
   const events = pkgEmitter<Events>(myId)
 
   const pkgShell = {
+    isDevEnv,
     events,
     log(level: LogLevel, ...msgs: any[]) {
       msgs.forEach(msg => {

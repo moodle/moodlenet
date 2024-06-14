@@ -1,9 +1,11 @@
+import type { EmailContentProps } from '@moodlenet/component-library/email-templates'
 import type { SentMessageInfo } from 'nodemailer'
 import type JSONTransport from 'nodemailer/lib/json-transport'
 import type SendmailTransport from 'nodemailer/lib/sendmail-transport'
 import type SESTransport from 'nodemailer/lib/ses-transport'
 import type SMTPTransport from 'nodemailer/lib/smtp-transport'
 import type StreamTransport from 'nodemailer/lib/stream-transport'
+import type React from 'react'
 
 export type NodemailerTransport =
   | string
@@ -28,17 +30,16 @@ export type SendResp =
 export type MailerCfg = {
   defaultFrom: EmailAddr
   defaultReplyTo: EmailAddr
-  baseEmailLayoutTemplateVars: BaseEmailLayoutTemplateVars
 }
 
 export type EmailAddr = string
-
-export type EmailObj = {
-  subject: string
+export type EmailActionBtnProps = {
   title: string
-  to: EmailAddr
-  html: string
+  url: string
+  buttonStyle?: React.CSSProperties
 }
+
+export type EmailObj = EmailContentProps
 
 export type EmailLayoutTemplateVars = Record<
   | 'instanceName'

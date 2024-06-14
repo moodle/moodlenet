@@ -1,5 +1,5 @@
+import type { DocumentSelector } from '@moodlenet/arangodb/server'
 import assert from 'assert'
-import type { DocumentSelector } from '../../../arangodb/dist/server/exports.mjs'
 import { db, EmailPwdUserCollection } from './init/arangodb.mjs'
 import { shell } from './shell.mjs'
 import type { Email, EmailPwdUser, EmailPwdUserData, EmailPwdUserDoc } from './store/types.mjs'

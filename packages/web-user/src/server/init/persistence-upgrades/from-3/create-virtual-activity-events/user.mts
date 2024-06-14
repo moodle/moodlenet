@@ -6,7 +6,7 @@ import { IscedField } from '@moodlenet/ed-meta/server'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import { Resource } from '@moodlenet/ed-resource/server'
 import type { EntityFullDocument } from '@moodlenet/system-entities/server'
-import { getPkgCurrentUser, sysEntitiesDB } from '@moodlenet/system-entities/server'
+import { sysEntitiesDB } from '@moodlenet/system-entities/server'
 import type {
   KnownFeaturedEntityItem,
   ProfileDataType,
@@ -123,7 +123,7 @@ RETURN {
       memoryLimit: 0,
     },
   )
-  const thisPkgUser = await getPkgCurrentUser()
+  // const thisPkgUser = await getPkgCurrentUser()
   const pkgId = shell.myId
   // let done = 0
   // let sec = 0
@@ -184,18 +184,18 @@ RETURN {
         }
 
         // user-publishing-permission-change
-        if (profile.publisher) {
-          userActivities.push({
-            event: 'user-publishing-permission-change',
-            pkgId,
-            at: initialEventsNowISO,
-            data: {
-              moderator: thisPkgUser,
-              profile: { ...profile, knownFeaturedEntities: [] },
-              type: 'given',
-            },
-          })
-        }
+        // if (profile.publisher) {
+        //   userActivities.push({
+        //     event: 'user-publishing-permission-change',
+        //     pkgId,
+        //     at: initialEventsNowISO,
+        //     data: {
+        //       moderator: thisPkgUser,
+        //       profile: { ...profile, knownFeaturedEntities: [] },
+        //       type: 'given',
+        //     },
+        //   })
+        // }
 
         // feature-entity
         featuredItemsAndTargets.forEach(
