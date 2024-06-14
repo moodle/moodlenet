@@ -12,19 +12,16 @@
       "path": "../ed-resource"
     },
     {
-      "path": "../http-server"
+      "path": "../email-service"
     },
     {
-      "path": "../react-app"
+      "path": "../organization"
     },
     {
       "path": "../system-entities"
     },
     {
       "path": "../web-user"
-    },
-    {
-      "path": "../component-library"
     },
     {
       "path": "../key-value-store"

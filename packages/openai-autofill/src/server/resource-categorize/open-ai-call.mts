@@ -128,6 +128,10 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
       ([, code]) => code === data.languageCode,
     ) ?? [undefined, undefined]
 
+    const [foundLicenseDesc, foundLicenseCode] = prompts.licenseFineTuning.data.find(
+      ([, code]) => code === data.ccLicense,
+    ) ?? [undefined, undefined]
+
     const [foundResourceTypeDesc, foundResourceTypeCode] = prompts.resTypeFineTuning.data.find(
       ([, code]) => code === data.resourceTypeCode,
     ) ?? [undefined, undefined]
@@ -135,6 +139,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
     data.iscedFieldCode = foundIscedFieldCode
     data.iscedGradeCode = foundIscedGradeCode
     data.languageCode = foundLanguageCode
+    data.ccLicense = foundLicenseCode
     data.resourceTypeCode = foundResourceTypeCode
 
     return {
@@ -142,6 +147,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
       foundIscedFieldDesc,
       foundIscedGradeDesc,
       foundLanguageDesc,
+      foundLicenseDesc,
       foundResourceTypeDesc,
     }
   }
@@ -244,6 +250,23 @@ and the most suitable natural language for descriptive parameters ("${par(
             description: 'the most suitable resource language code for this resource scope',
             enum: prompts.langFineTuning.data.map(([, code]) => code),
           },
+          [par('ccLicense')]: {
+            type: 'string',
+            description: 'the most suitable Creative Commons license code this resource',
+            enum: prompts.langFineTuning.data.map(([, code]) => code),
+          },
+          [par('creationYear')]: {
+            type: 'number',
+            description: 'The resource creation year, inferred from the content',
+            minimum: 1900,
+            maximum: new Date().getFullYear(),
+          },
+          [par('creationMonth')]: {
+            type: 'number',
+            description: 'The resource creation month (1-12), inferred from the content',
+            minimum: 1,
+            maximum: 12,
+          },
           [par('bloomsCognitive')]: {
             type: 'array',
             description: 'a set of learning outcomes for this resource',
@@ -296,6 +319,9 @@ and the most suitable natural language for descriptive parameters ("${par(
           par('iscedGradeCode'),
           par('resourceTypeCode'),
           par('languageCode'),
+          par('ccLicense'),
+          par('creationYear'),
+          par('creationMonth'),
           par('bloomsCognitive'),
         ],
         additionalProperties: false,
@@ -304,8 +330,8 @@ and the most suitable natural language for descriptive parameters ("${par(
 
     const messages = [...prompts.systemMessagesJsonl.messages, /*  ...examples, */ prompt]
 
-    const completionConfig = {
-      model: 'gpt-3.5-turbo-16k',
+    const completionConfig: ChatCompletionCreateParams = {
+      model: 'gpt-4o',
       temperature: 0.0,
       messages,
       functions: [classifyResourceFn],

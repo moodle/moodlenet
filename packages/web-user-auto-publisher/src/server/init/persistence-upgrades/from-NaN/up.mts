@@ -1,6 +1,7 @@
 import { sysEntitiesDB } from '@moodlenet/system-entities/server'
 import { Profile } from '@moodlenet/web-user/server'
 import {
+  deletedUserActions,
   enoughPublishableActions,
   firstContributionActions,
   lastContributionActions,
@@ -37,10 +38,10 @@ while (curs.batches.hasNext) {
     batch.map(({ profileKey }) =>
       initiateAsMe(async () => {
         const userDetails = await getUserDetails({ profileKey })
-        if (!userDetails) {
+        if (!userDetails || userDetails.deleted) {
+          await deletedUserActions({ profileKey })
           return
         }
-
         if (userDetails.publisher) {
           await userApprovedActions({ profileKey })
           return

@@ -31,7 +31,7 @@
     "./stories": "./dist/webapp/exports/stories.mjs",
     "./webapp": "./dist/webapp/exports/webapp.mjs"
   },
-  "repository": "https://gitlab.com/moodlenet/moodlenet",
+  "repository": "https://github.com/moodle/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
     "@moodlenet/component-library": "file:../component-library",
@@ -54,7 +54,7 @@
     "@types/passport-google-oauth20": "2.0.11",
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
-    "react-dom": "18.2.0",
+    "react-dom": "18.3.1",
     "react-router-dom": "6.4.1",
     "typescript": "5.4"
   },
