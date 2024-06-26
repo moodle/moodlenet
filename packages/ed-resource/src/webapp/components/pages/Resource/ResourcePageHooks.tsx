@@ -75,6 +75,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     extraDetailsItems: [],
   }
   const resourceProps: ProxiedResourceProps = {
+    isCreating,
     saveState,
     mainLayoutProps,
     mainResourceCardSlots,
