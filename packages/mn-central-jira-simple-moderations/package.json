@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/mn-central-jira-simple-moderations",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -34,21 +34,21 @@
   "peerDependencies": {
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
-    "@moodlenet/core": "^0.9.0",
-    "@moodlenet/react-app": "^0.9.0",
-    "@moodlenet/web-user": "^0.9.0"
+    "@moodlenet/core": "^0.9.1",
+    "@moodlenet/react-app": "^0.9.1",
+    "@moodlenet/web-user": "^0.9.1"
   },
   "dependencies": {
-    "@moodlenet/component-library": "^0.9.0",
-    "@moodlenet/key-value-store": "^0.9.0",
+    "@moodlenet/component-library": "^0.9.1",
+    "@moodlenet/key-value-store": "^0.9.1",
     "formik": "2.2.9",
     "jira-client": "8.2.2",
     "yup": "0.32.11"
   },
   "devDependencies": {
-    "@moodlenet/core": "^0.9.0",
-    "@moodlenet/react-app": "^0.9.0",
-    "@moodlenet/web-user": "^0.9.0",
+    "@moodlenet/core": "^0.9.1",
+    "@moodlenet/react-app": "^0.9.1",
+    "@moodlenet/web-user": "^0.9.1",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@types/jira-client": "7.1.6",
