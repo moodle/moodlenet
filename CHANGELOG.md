@@ -8,6 +8,20 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [4.3.1]
+
+### Added
+
+- Always show contributor card in resource and collection pages
+
+### Fixed
+
+- Fixed subtle exceptions in text extraction procedures, also added fallback
+
+### Improvements
+
+- Added fallback page for not-found resources (401/404)
+
 ## [4.3.0]
 
 ### Added
