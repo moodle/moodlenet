@@ -51,6 +51,7 @@ export const useResourceBaseProps = ({ resourceKey }: myProps) => {
 
       .then(res => {
         if (!res) {
+          setResource(null)
           return
         }
         // res.state.value === 'Autogenerating-Meta' && schedulePolling()
