@@ -286,9 +286,9 @@ export const Collection: FC<CollectionProps> = ({
     />
   )
 
-  const contributorCard = isPublished ? (
+  const contributorCard = (
     <CollectionContributorCard {...collectionContributorCardProps} key="contributor-card" />
-  ) : null
+  )
 
   const publishButton = !isEditing && canPublish && !isPublished /*  && !isEditing */ && (
     <PrimaryButton onClick={checkFormsAndPublish} color="green">
