@@ -56,6 +56,10 @@ function fileExtractor({ rpcFile }: { rpcFile: RpcFile }) {
     image: imageExtractor,
   }
 
-  const extractor = extensionExtractor[ext] ?? typeKindExtractor[typeKind] ?? defaultExtractor
+  const extractor = extensionExtractor[ext] ?? typeKindExtractor[typeKind] ?? (async () => null)
+
   return extractor({ rpcFile })
+    .catch(() => null)
+    .then(extr => extr ?? defaultExtractor({ rpcFile }))
+    .catch(() => null)
 }

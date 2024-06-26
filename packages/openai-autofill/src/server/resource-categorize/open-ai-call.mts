@@ -1,5 +1,4 @@
 import type { ResourceDoc } from '@moodlenet/core-domain/resource'
-import domain from 'domain'
 import type {
   ChatCompletion,
   ChatCompletionCreateParams,
@@ -21,16 +20,10 @@ interface OpenAiResponse {
 }
 
 export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | null> {
-  const d = domain.create()
-  d.on('error', err => {
-    shell.log('error', 'TEXT EXTRACTION OR OPEN AI CALL ERROR ! caught by DOMAIN Aborting', err)
+  const resourceExtraction = await extractResourceData(doc).catch(err => {
+    shell.log('warn', 'resourceExtraction err', err)
+    return null
   })
-  const resourceExtraction = await d.run(() =>
-    extractResourceData(doc).catch(err => {
-      shell.log('warn', 'resourceExtraction err', err)
-      return null
-    }),
-  )
   if (!resourceExtraction) {
     return null
   }
@@ -62,7 +55,6 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   // type: ${foundResourceTypeDesc ? `of type "${foundResourceTypeDesc}"` : ''}
 
   const openAiProvideImage = provideImage ?? (await generateProvideImage())
-  d.exit()
   return {
     data,
     resourceExtraction: {
@@ -185,7 +177,6 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
         shell.log('warn', 'openai dall-e-3 call failed', err)
         return undefined
       })
-    // console.log(imageGenResp)
     const imageUrl = imageGenResp?.data[0]?.url
     if (!imageUrl) {
       return undefined
