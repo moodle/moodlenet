@@ -1,5 +1,4 @@
 import type { ResourceDoc } from '@moodlenet/core-domain/resource'
-import domain from 'domain'
 import type {
   ChatCompletion,
   ChatCompletionCreateParams,
@@ -21,16 +20,10 @@ interface OpenAiResponse {
 }
 
 export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | null> {
-  const d = domain.create()
-  d.on('error', err => {
-    shell.log('error', 'TEXT EXTRACTION OR OPEN AI CALL ERROR ! caught by DOMAIN Aborting', err)
+  const resourceExtraction = await extractResourceData(doc).catch(err => {
+    shell.log('warn', 'resourceExtraction err', err)
+    return null
   })
-  const resourceExtraction = await d.run(() =>
-    extractResourceData(doc).catch(err => {
-      shell.log('warn', 'resourceExtraction err', err)
-      return null
-    }),
-  )
   if (!resourceExtraction) {
     return null
   }
@@ -62,7 +55,6 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   // type: ${foundResourceTypeDesc ? `of type "${foundResourceTypeDesc}"` : ''}
 
   const openAiProvideImage = provideImage ?? (await generateProvideImage())
-  d.exit()
   return {
     data,
     resourceExtraction: {
@@ -128,6 +120,10 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
       ([, code]) => code === data.languageCode,
     ) ?? [undefined, undefined]
 
+    const [foundLicenseDesc, foundLicenseCode] = prompts.licenseFineTuning.data.find(
+      ([, code]) => code === data.ccLicense,
+    ) ?? [undefined, undefined]
+
     const [foundResourceTypeDesc, foundResourceTypeCode] = prompts.resTypeFineTuning.data.find(
       ([, code]) => code === data.resourceTypeCode,
     ) ?? [undefined, undefined]
@@ -135,6 +131,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
     data.iscedFieldCode = foundIscedFieldCode
     data.iscedGradeCode = foundIscedGradeCode
     data.languageCode = foundLanguageCode
+    data.ccLicense = foundLicenseCode
     data.resourceTypeCode = foundResourceTypeCode
 
     return {
@@ -142,6 +139,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
       foundIscedFieldDesc,
       foundIscedGradeDesc,
       foundLanguageDesc,
+      foundLicenseDesc,
       foundResourceTypeDesc,
     }
   }
@@ -179,7 +177,6 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
         shell.log('warn', 'openai dall-e-3 call failed', err)
         return undefined
       })
-    // console.log(imageGenResp)
     const imageUrl = imageGenResp?.data[0]?.url
     if (!imageUrl) {
       return undefined
@@ -244,6 +241,23 @@ and the most suitable natural language for descriptive parameters ("${par(
             description: 'the most suitable resource language code for this resource scope',
             enum: prompts.langFineTuning.data.map(([, code]) => code),
           },
+          [par('ccLicense')]: {
+            type: 'string',
+            description: 'the most suitable Creative Commons license code this resource',
+            enum: prompts.langFineTuning.data.map(([, code]) => code),
+          },
+          [par('creationYear')]: {
+            type: 'number',
+            description: 'The resource creation year, inferred from the content',
+            minimum: 1900,
+            maximum: new Date().getFullYear(),
+          },
+          [par('creationMonth')]: {
+            type: 'number',
+            description: 'The resource creation month (1-12), inferred from the content',
+            minimum: 1,
+            maximum: 12,
+          },
           [par('bloomsCognitive')]: {
             type: 'array',
             description: 'a set of learning outcomes for this resource',
@@ -296,6 +310,9 @@ and the most suitable natural language for descriptive parameters ("${par(
           par('iscedGradeCode'),
           par('resourceTypeCode'),
           par('languageCode'),
+          par('ccLicense'),
+          par('creationYear'),
+          par('creationMonth'),
           par('bloomsCognitive'),
         ],
         additionalProperties: false,
@@ -304,8 +321,8 @@ and the most suitable natural language for descriptive parameters ("${par(
 
     const messages = [...prompts.systemMessagesJsonl.messages, /*  ...examples, */ prompt]
 
-    const completionConfig = {
-      model: 'gpt-3.5-turbo-16k',
+    const completionConfig: ChatCompletionCreateParams = {
+      model: 'gpt-4o',
       temperature: 0.0,
       messages,
       functions: [classifyResourceFn],

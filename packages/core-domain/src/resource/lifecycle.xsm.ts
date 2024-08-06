@@ -26,8 +26,6 @@ export const DEFAULT_CONTEXT: T.Context = {
   contentRejected: null,
   noAccess: null,
   generatedData: null,
-  publishRejected: null,
-  publishingErrors: null,
   resourceEdits: null,
   state: 'Checking-In-Content',
   metaGeneratorEnabled: false,
@@ -97,7 +95,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
         on: {
           'cancel-meta-generation': {
             target: 'Unpublished',
-            cond: 'issuer is creator',
+            cond: 'issuer is creator or system or admin',
           },
 
           'generated-meta-suggestions': {
@@ -129,7 +127,7 @@ export function getEdResourceMachine(deps: EdResourceMachineDeps) {
 
           'trash': {
             target: 'Destroyed',
-            cond: 'issuer is creator',
+            cond: 'issuer is creator or system or admin',
           },
 
           'store-edits': {
@@ -154,12 +152,12 @@ Just check upper bound size`,
         on: {
           'reject-publish': {
             target: '#EdResource.Publish-Rejected',
-            cond: 'issuer is admin',
+            cond: 'issuer is system or admin',
           },
 
           'unpublish': {
             target: 'Unpublished',
-            cond: 'issuer is creator',
+            cond: 'issuer is creator or system or admin',
           },
         },
 
@@ -174,7 +172,7 @@ image is optional`,
         on: {
           unpublish: {
             target: 'Unpublished',
-            cond: 'issuer is creator',
+            cond: 'issuer is creator or system or admin',
           },
         },
 
@@ -201,7 +199,7 @@ image is optional`,
         on: {
           'provide-resource-edits': {
             target: 'Unpublished',
-            cond: 'issuer is creator',
+            cond: 'issuer is creator or system or admin',
             actions: 'assign_resource_edits',
           },
         },
@@ -269,8 +267,14 @@ link: url string format`,
       'meta generator enabled'({ metaGeneratorEnabled }) {
         return metaGeneratorEnabled
       },
-      'issuer is admin'({ issuer }) {
-        return issuer.type === 'user' && issuer.feats.admin
+      'issuer is system or admin'({ issuer }) {
+        return issuer.type === 'system' || (issuer.type === 'user' && issuer.feats.admin)
+      },
+      'issuer is creator or system or admin'({ issuer }) {
+        return (
+          issuer.type === 'system' ||
+          (issuer.type === 'user' && (issuer.feats.admin || issuer.feats.creator))
+        )
       },
       'issuer is creator'({ issuer }) {
         return issuer.type === 'user' && issuer.feats.creator
@@ -292,19 +296,12 @@ link: url string format`,
         return issuer.type === 'user' && issuer.feats.creator && !resourceEdits?.errors
       },
     },
+    delays: {},
     actions: {
       assign_validations: assign(context => {
         const publishingErrors = schemas.publishable(context.doc.meta).errors
-        // console.log(
-        //   // event.type,
-        //   context.resourceEdits,
-        //   // providedResourceEditsValidation_or_currentMetaValidations,
-        //   publishingErrors,
-        //   'assign_validations',
-        // )
 
         return produce(context, proxy => {
-          // proxy.resourceEdits = providedResourceEditsValidation_or_currentMetaValidations
           proxy.publishingErrors = publishingErrors
         })
       }),
@@ -397,10 +394,10 @@ link: url string format`,
     if (!(resourceMetaResponse || imageResponse)) {
       return null
     }
-    const resourceMetaErrors: null | Partial<T.ResourceEditsValidationErrors> =
-      !resourceMetaResponse || resourceMetaResponse.valid ? null : resourceMetaResponse.errors
-    const imageErrors: null | Partial<T.ResourceEditsValidationErrors> =
-      !imageResponse || imageResponse.valid ? null : imageResponse.errors
+    const resourceMetaErrors: undefined | Partial<T.ResourceEditsValidationErrors> =
+      !resourceMetaResponse || resourceMetaResponse.valid ? undefined : resourceMetaResponse.errors
+    const imageErrors: undefined | Partial<T.ResourceEditsValidationErrors> =
+      !imageResponse || imageResponse.valid ? undefined : imageResponse.errors
 
     const errors: T.ResourceEditsValidationErrors | null = !(resourceMetaErrors || imageErrors)
       ? null

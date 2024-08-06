@@ -1,5 +1,14 @@
+/* eslint-disable prefer-const */
 import defaultsDeep from 'lodash/defaultsDeep.js'
 import type { PartialDeep } from 'type-fest'
+
+export const getDomainUrl = (url: string): string | undefined => {
+  try {
+    return new URL(url).hostname.replace('www.', '')
+  } catch (e) {
+    return undefined
+  }
+}
 
 export const overrideDeep = <T>(base: T, overrides: PartialDeep<T> | undefined): T => {
   return defaultsDeep(overrides, base)

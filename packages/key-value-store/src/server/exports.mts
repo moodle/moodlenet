@@ -1,7 +1,7 @@
 import type { Document } from '@moodlenet/arangodb/server'
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import type { Shell } from '@moodlenet/core'
-import type { KVStore, KVSTypeMap, ValueObj } from './types.js'
+import type { KVSTypeMap, KVStore, ValueObj } from './types.js'
 export * from './types.js'
 export const KV_COLLECTION_NAME = 'Moodlenet_simple_key_value_store'
 
@@ -54,7 +54,9 @@ export default async function kvStoreFactory<TMap extends KVSTypeMap>(
   }
 
   async function unset(type: string, key: string): Promise<{ old: ValueObj }> {
-    const { old } = await KVCollection.remove(fullKeyOf(type, key), { returnOld: true })
+    const { old } = await KVCollection.remove(fullKeyOf(type, key), { returnOld: true }).catch(
+      () => ({ old: undefined }),
+    )
     return { old: valObj(old) }
   }
 }

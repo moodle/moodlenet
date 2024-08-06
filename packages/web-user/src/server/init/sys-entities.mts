@@ -62,8 +62,8 @@ function isContributionClass(entityClass: EntityClass<any>) {
 }
 await shell.call(registerAccessController)({
   async u({ entityClass }) {
-    const { isRootOrAdmin } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
-    if (isRootOrAdmin) {
+    const { isRootOrAdminOrPkg } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
+    if (isRootOrAdminOrPkg) {
       return true
     }
     if (isSameClass(Profile.entityClass, entityClass)) {
@@ -78,8 +78,8 @@ await shell.call(registerAccessController)({
     return false
   },
   async d({ entityClass }) {
-    const { isRootOrAdmin } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
-    if (isRootOrAdmin) {
+    const { isRootOrAdminOrPkg } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
+    if (isRootOrAdminOrPkg) {
       return true
     }
     if (isContributionClass(entityClass)) {
@@ -91,13 +91,13 @@ await shell.call(registerAccessController)({
     return false
   },
   async r({ entityClass }) {
-    const { isRootOrAdmin } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
+    const { isRootOrAdminOrPkg } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
     const published_and_publisher = `${currentEntityVar}.published && (!${creatorEntityDocVar} || ${creatorEntityDocVar}.publisher)`
-    if (isRootOrAdmin) {
+    if (isRootOrAdminOrPkg) {
       return true
     }
     if (isSameClass(Profile.entityClass, entityClass)) {
-      return `${isCurrentUserEntity()} || ${currentEntityVar}.publisher`
+      return `${isCurrentUserEntity()} || ${currentEntityVar}.publisher || ${currentEntityVar}.deleted`
     }
     if (isContributionClass(entityClass)) {
       return `${isCurrentUserCreatorOfCurrentEntity()} 
@@ -109,8 +109,8 @@ await shell.call(registerAccessController)({
     return false
   },
   async c(entityClass) {
-    const { isRootOrAdmin } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
-    if (isRootOrAdmin) {
+    const { isRootOrAdminOrPkg } = await betterTokenContext() //BEWARE ! this token is valued by webapp only!! e.g. won't be by oauth !!
+    if (isRootOrAdminOrPkg) {
       return true
     }
     if (isContributionClass(entityClass)) {

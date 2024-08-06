@@ -29,6 +29,7 @@ await shell.call(addMiddlewares)({
         assert(webUser, `Couldn't find web User for <webUserKey#${profileKey}>`)
         const jwtToken = await signWebUserJwtToken({
           webUserkey: webUser._key,
+          sendTokenCookie: false,
         })
         assert(jwtToken, `Couldn't sign token for <webUserKey#${profileKey}>`)
         await setCurrentUnverifiedJwtToken(jwtToken)

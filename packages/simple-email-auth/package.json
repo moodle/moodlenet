@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/simple-email-auth",
-  "version": "0.8.1",
+  "version": "0.9.1",
   "publishConfig": {
     "access": "public"
   },
@@ -31,11 +31,11 @@
     "./stories": "./dist/webapp/exports/stories.mjs",
     "./webapp": "./dist/webapp/exports/webapp.mjs"
   },
-  "repository": "https://gitlab.com/moodlenet/moodlenet",
+  "repository": "https://github.com/moodle/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "@moodlenet/component-library": "^0.8.1",
-    "@moodlenet/key-value-store": "^0.8.1",
+    "@moodlenet/component-library": "^0.9.1",
+    "@moodlenet/key-value-store": "^0.9.1",
     "dot": "1.1.3",
     "formik": "2.2.9",
     "yup": "0.32.11"
@@ -43,24 +43,24 @@
   "peerDependencies": {
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
-    "@moodlenet/arangodb": "^0.8.1",
-    "@moodlenet/core": "^0.8.1",
-    "@moodlenet/crypto": "^0.8.1",
-    "@moodlenet/email-service": "^0.8.1",
-    "@moodlenet/http-server": "^0.8.1",
-    "@moodlenet/organization": "^0.8.1",
-    "@moodlenet/react-app": "^0.8.1",
-    "@moodlenet/web-user": "^0.8.1"
+    "@moodlenet/arangodb": "^0.9.1",
+    "@moodlenet/core": "^0.9.1",
+    "@moodlenet/crypto": "^0.9.1",
+    "@moodlenet/email-service": "^0.9.1",
+    "@moodlenet/http-server": "^0.9.1",
+    "@moodlenet/organization": "^0.9.1",
+    "@moodlenet/react-app": "^0.9.1",
+    "@moodlenet/web-user": "^0.9.1"
   },
   "devDependencies": {
-    "@moodlenet/arangodb": "^0.8.1",
-    "@moodlenet/core": "^0.8.1",
-    "@moodlenet/crypto": "^0.8.1",
-    "@moodlenet/email-service": "^0.8.1",
-    "@moodlenet/http-server": "^0.8.1",
-    "@moodlenet/organization": "^0.8.1",
-    "@moodlenet/react-app": "^0.8.1",
-    "@moodlenet/web-user": "^0.8.1",
+    "@moodlenet/arangodb": "^0.9.1",
+    "@moodlenet/core": "^0.9.1",
+    "@moodlenet/crypto": "^0.9.1",
+    "@moodlenet/email-service": "^0.9.1",
+    "@moodlenet/http-server": "^0.9.1",
+    "@moodlenet/organization": "^0.9.1",
+    "@moodlenet/react-app": "^0.9.1",
+    "@moodlenet/web-user": "^0.9.1",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@storybook/addon-actions": "7.4.2",

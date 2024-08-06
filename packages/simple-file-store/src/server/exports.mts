@@ -1,3 +1,4 @@
+import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import type { RpcFile, Shell } from '@moodlenet/core'
 import { assertRpcFileReadable, readableRpcFile } from '@moodlenet/core'
 import { mountApp } from '@moodlenet/http-server/server'
@@ -6,7 +7,6 @@ import { mkdir, open, readdir, readFile, rmdir, stat, writeFile } from 'fs/promi
 import { resolve } from 'path'
 import rimraf from 'rimraf'
 import sanitizeFilename from 'sanitize-filename'
-import { ensureDocumentCollection, getMyDB } from '../../../arangodb/dist/server/exports.mjs'
 import type { DbRecord, DbRecordData, FsItem, LsOpts } from './types.mjs'
 export * from './types.mjs'
 export const BASE_COLLECTION_NAME = 'Moodlenet_simple_file_store'

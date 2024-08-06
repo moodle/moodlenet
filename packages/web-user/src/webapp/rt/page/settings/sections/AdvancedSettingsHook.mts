@@ -18,7 +18,7 @@ export function useAdvancedSettingsProps() {
   }, [])
   const plugins = AdvancedSettingsPlugin.usePluginHooks()
   const advancedProps: AdvancedProps = {
-    instanceName: org.organizationData.instanceName,
+    instanceName: org.organization.data.instanceName,
     deleteAccount,
     deleteAccountSuccess,
     mainColumnItems: plugins.getKeyedAddons('mainColumn'),

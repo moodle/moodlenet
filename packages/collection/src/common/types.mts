@@ -115,17 +115,6 @@ export type CollectionCardState = Pick<CollectionStateProps, 'isPublished' | 'nu
 export type CollectionCardActions = Pick<CollectionActions, 'publish' | 'unpublish'>
 export type CollectionCardAccess = Pick<CollectionAccessProps, 'isCreator' | 'canPublish'>
 
-export type Organization = {
-  name: string
-  shortName: string
-  title: string
-  subtitle: string
-  url: string
-  logo: string
-  smallLogo: string
-  color: string // description: string
-}
-
 export type CollectionSearchResultRpc = {
   endCursor?: string
   list: { _key: string }[]

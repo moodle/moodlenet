@@ -11,6 +11,13 @@ export const validationSchema: SchemaOf<OrganizationData> = object({
   instanceName: string().max(160).min(3).required(/* t */ `Please provide an instance name`),
   landingTitle: string().max(160).min(3).required(/* t */ `Please provide a landing title`),
   landingSubtitle: string().max(4096).min(3).required(/* t */ `Please provide a landing subtitle`),
+  locationAddress: string().max(160).min(3).required(/* t */ `Please provide a location address`),
+  locationUrl: string()
+    .max(50)
+    .min(3)
+    .url(/* t */ `Please provide a valid URL`)
+    .required(/* t */ `Please provide a location URL`),
+  copyright: string().max(160).required(/* t */ `Please provide a location address`),
 })
 
 export const useAdvancedStoryProps = (overrides?: {

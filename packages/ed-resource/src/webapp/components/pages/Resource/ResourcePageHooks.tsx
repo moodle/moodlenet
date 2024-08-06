@@ -19,7 +19,7 @@ export const ResourcePagePlugins = createPlugin<
   },
   {
     resourceKey: string
-    info: null | undefined | { name: string; isCreator: boolean }
+    info: null | undefined | { name: string; isCreator: boolean; isCreating: boolean }
     resourceCommonProps: null | undefined | ResourceCommonProps
   }
 >()
@@ -36,10 +36,11 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
   const info = useMemo(
     () =>
       resourceCommonProps && {
+        isCreating,
         name: resourceCommonProps.props.resourceForm.title,
         isCreator: resourceCommonProps.props.access.isCreator,
       },
-    [resourceCommonProps],
+    [resourceCommonProps, isCreating],
   )
 
   const plugins = ResourcePagePlugins.usePluginHooks({
@@ -74,6 +75,7 @@ export const useResourcePageProps = ({ resourceKey }: ResourcePageHookArg) => {
     extraDetailsItems: [],
   }
   const resourceProps: ProxiedResourceProps = {
+    isCreating,
     saveState,
     mainLayoutProps,
     mainResourceCardSlots,

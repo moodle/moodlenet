@@ -2,7 +2,7 @@ import type { OrganizationData } from '@moodlenet/organization/common'
 import { createContext } from 'react'
 
 export type TOrganizationCtx = {
-  organizationData: OrganizationData
+  organization: { data: OrganizationData; rawData: OrganizationData }
   saveOrganization: (data: OrganizationData) => void
 }
 

@@ -12,6 +12,13 @@ export const validationSchema: SchemaOf<OrganizationData> = object({
   instanceName: string().max(160).min(3).required(/* t */ `Please provide an instance name`),
   landingTitle: string().max(160).min(3).required(/* t */ `Please provide a landing title`),
   landingSubtitle: string().max(4096).min(3).required(/* t */ `Please provide a landing subtitle`),
+  locationAddress: string().max(160).min(3).required(/* t */ `Please provide a location address`),
+  locationUrl: string()
+    .max(50)
+    .min(3)
+    .url(/* t */ `Please provide a valid URL`)
+    .required(/* t */ `Please provide a location URL`),
+  copyright: string().max(160).required(/* t */ `Please provide a location address`),
 })
 
 export const useGeneralStoryProps = (overrides?: {
@@ -26,6 +33,10 @@ export const useGeneralStoryProps = (overrides?: {
         instanceName: 'MoodleNet',
         landingTitle: 'Find, share and curate open educational resources',
         landingSubtitle: 'Search for resources, subjects, collections or people',
+        locationAddress: 'PO Box 303, West Perth WA 6872, Australia',
+        locationUrl:
+          'https://www.google.com/maps/place/Moodle/@-31.9489919,115.8403923,15z/data=!4m5!3m4!1s0x0:0x2bff7bedf43b4fc7!8m2!3d-31.9489919!4d115.8403923',
+        copyright: `Copyright © ${new Date().getFullYear()} Moodle Pty Ltd, All rights reserved.`,
         ...overrides?.editFormValues,
       },
     }),

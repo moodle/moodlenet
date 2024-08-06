@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig-base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../ed-resource"
+    },
+    {
+      "path": "../email-service"
+    },
+    {
+      "path": "../organization"
+    },
+    {
+      "path": "../system-entities"
+    },
+    {
+      "path": "../web-user"
+    },
+    {
+      "path": "../key-value-store"
+    }
+  ]
+}

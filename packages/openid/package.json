@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/openid",
-  "version": "0.8.1",
+  "version": "0.9.1",
   "publishConfig": {
     "access": "public"
   },
@@ -27,20 +27,20 @@
     "dist/",
     "src/"
   ],
-  "repository": "https://gitlab.com/moodlenet/moodlenet",
+  "repository": "https://github.com/moodle/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "@moodlenet/component-library": "^0.8.1",
+    "@moodlenet/component-library": "^0.9.1",
     "oidc-provider": "8.1.0"
   },
   "devDependencies": {
-    "@moodlenet/arangodb": "^0.8.1",
-    "@moodlenet/core": "^0.8.1",
-    "@moodlenet/crypto": "^0.8.1",
-    "@moodlenet/http-server": "^0.8.1",
-    "@moodlenet/react-app": "^0.8.1",
-    "@moodlenet/system-entities": "^0.8.1",
-    "@moodlenet/web-user": "^0.8.1",
+    "@moodlenet/arangodb": "^0.9.1",
+    "@moodlenet/core": "^0.9.1",
+    "@moodlenet/crypto": "^0.9.1",
+    "@moodlenet/http-server": "^0.9.1",
+    "@moodlenet/react-app": "^0.9.1",
+    "@moodlenet/system-entities": "^0.9.1",
+    "@moodlenet/web-user": "^0.9.1",
     "@types/node": "17.0.35",
     "@types/oidc-provider": "8.1.0",
     "@types/react": "18.2.22",
@@ -49,13 +49,13 @@
     "typescript": "5.4"
   },
   "peerDependencies": {
-    "@moodlenet/arangodb": "^0.8.1",
-    "@moodlenet/core": "^0.8.1",
-    "@moodlenet/crypto": "^0.8.1",
-    "@moodlenet/http-server": "^0.8.1",
-    "@moodlenet/react-app": "^0.8.1",
-    "@moodlenet/system-entities": "^0.8.1",
-    "@moodlenet/web-user": "^0.8.1"
+    "@moodlenet/arangodb": "^0.9.1",
+    "@moodlenet/core": "^0.9.1",
+    "@moodlenet/crypto": "^0.9.1",
+    "@moodlenet/http-server": "^0.9.1",
+    "@moodlenet/react-app": "^0.9.1",
+    "@moodlenet/system-entities": "^0.9.1",
+    "@moodlenet/web-user": "^0.9.1"
   },
   "scripts": {},
   "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"

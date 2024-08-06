@@ -1,5 +1,6 @@
 import { compile, match, webSlug } from '@moodlenet/react-app/common'
-export const SESSION_CHANGE_REDIRECT_Q_NAME = 'redirectTo'
+import { useLocation } from 'react-router-dom'
+export const SESSION_CHANGE_REDIRECT_Q_NAME = '_sr'
 export const PROFILE_HOME_PAGE_ROUTE_PATH = '/profile/:key/:slug'
 export const BOOKMARKS_PAGE_ROUTE_PATH = '/bookmarks'
 export const SETTINGS_PAGE_ROUTE_PATH = '/settings'
@@ -11,7 +12,21 @@ export const DELETE_ACCOUNT_SUCCESS_PAGE_PATH = '/static/deleted-account-success
 
 type KeySlugParams = { key: string; slug: string }
 
-export const profileHomePageRoutePath = compile<KeySlugParams>(PROFILE_HOME_PAGE_ROUTE_PATH)
+export function useLoginPageRoutePathRedirectToCurrent() {
+  const loc = useLocation()
+
+  return loginPageRoutePath({ redirectTo: `${loc.pathname}${loc.search}${loc.hash}` })
+}
+
+export function loginPageRoutePath(opts?: { redirectTo?: string }) {
+  const redirectTo = opts?.redirectTo || '/'
+  const usp = new URLSearchParams()
+  usp.append(SESSION_CHANGE_REDIRECT_Q_NAME, redirectTo)
+
+  return `${LOGIN_PAGE_ROUTE_BASE_PATH}?${usp.toString()}`
+}
+
+const profileHomePageRoutePath = compile<KeySlugParams>(PROFILE_HOME_PAGE_ROUTE_PATH)
 
 export function getProfileHomePageRoutePath({
   _key,

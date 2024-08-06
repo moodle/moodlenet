@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/crypto",
-  "version": "0.8.1",
+  "version": "0.9.1",
   "publishConfig": {
     "access": "public"
   },
@@ -22,7 +22,7 @@
   "files": [
     "dist/"
   ],
-  "repository": "https://gitlab.com/moodlenet/moodlenet",
+  "repository": "https://github.com/moodle/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
     "argon2": "0.31.0",
@@ -31,10 +31,10 @@
     "ulidx": "2.2.1"
   },
   "peerDependencies": {
-    "@moodlenet/core": "^0.8.1"
+    "@moodlenet/core": "^0.9.1"
   },
   "devDependencies": {
-    "@moodlenet/core": "^0.8.1",
+    "@moodlenet/core": "^0.9.1",
     "@types/argon2": "0.15.0",
     "@types/node": "17.0.35",
     "typescript": "5.4"

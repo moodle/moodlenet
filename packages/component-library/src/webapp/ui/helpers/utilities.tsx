@@ -1,6 +1,7 @@
 import assert from 'assert'
 import type { ReactElement } from 'react'
 import { useEffect, useMemo, useState } from 'react'
+import { getDomainUrl } from '../../../common.mjs'
 import type { AssetInfo } from '../../../common/types.mjs'
 import type { AddonItem } from '../../../ui.mjs'
 import { getYouTubeEmbed, getYouTubeThumbnail } from '../../../ui.mjs'
@@ -161,14 +162,6 @@ export const getThumbnailFromUrl = (url: string): ThumbnailType => {
       return getVimeoThumbnail(url)
     default:
       return null
-  }
-}
-
-export const getDomainUrl = (url: string): string | undefined => {
-  try {
-    return new URL(url).hostname.replace('www.', '')
-  } catch (e) {
-    return undefined
   }
 }
 

@@ -1,10 +1,12 @@
 import type { CollectionDataType } from '@moodlenet/collection/server'
 import * as collection from '@moodlenet/collection/server'
 import { RpcStatus, type RpcFile } from '@moodlenet/core'
-import * as resCore from '@moodlenet/core-domain/resource'
 import type { IscedFieldDataType } from '@moodlenet/ed-meta/server'
+import { CREATE_RESOURCE_PAGE_ROUTE_PATH } from '@moodlenet/ed-resource/common'
 import type { ResourceDataType } from '@moodlenet/ed-resource/server'
 import * as resource from '@moodlenet/ed-resource/server'
+import { ensureUnpublish } from '@moodlenet/ed-resource/server'
+import { send } from '@moodlenet/email-service/server'
 import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import {
@@ -27,20 +29,27 @@ import {
   patchEntity,
   queryEntities,
   searchEntities,
+  setCurrentSystemUser,
   sysEntitiesDB,
   toaql,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
-import dot from 'dot'
-import { waitFor } from 'xstate/lib/waitFor.js'
+import { newPublisherEmail } from '../../common/emails/NewPublisherEmail/NewPublisherEmail.js'
+import { messageReceivedEmail } from '../../common/emails/Social/MessageReceivedEmail/MessageReceivedEmail.js'
+import { reportOptionTypeMap } from '../../common/exports.mjs'
 import type { EditProfileDataRpc } from '../../common/expose-def.mjs'
-import type { KnownEntityFeature, KnownEntityType, SortTypeRpc } from '../../common/types.mjs'
+import type {
+  KnownEntityFeature,
+  KnownEntityType,
+  ReportOptionTypeId,
+  SortTypeRpc,
+} from '../../common/types.mjs'
 import type { ValidationsConfig } from '../../common/validationSchema.mjs'
 import { getValidationSchemas } from '../../common/validationSchema.mjs'
 import { getProfileHomePageRoutePath } from '../../common/webapp-routes.mjs'
 import { WebUserEntitiesTools } from '../entities.mjs'
+import { WebUserCollection, db } from '../init/arangodb.mjs'
 import { publicFiles } from '../init/fs.mjs'
-import { kvStore } from '../init/kvStore.mjs'
 import { Profile } from '../init/sys-entities.mjs'
 import { shell } from '../shell.mjs'
 import type {
@@ -49,6 +58,8 @@ import type {
   ProfileDataType,
   ProfileInterests,
   ProfileMeta,
+  ReportItem,
+  UserStatusItem,
 } from '../types.mjs'
 import {
   getEntityClassByKnownEntity,
@@ -57,8 +68,11 @@ import {
 } from './known-entity-types.mjs'
 import {
   getCurrentProfileIds,
+  getCurrentWebUserIds,
   getWebUserByProfileKey,
   patchWebUserDisplayName,
+  setCurrentUnverifiedJwtToken,
+  signWebUserJwt,
   verifyCurrentTokenCtx,
 } from './web-user.mjs'
 
@@ -269,48 +283,115 @@ export async function getProfilePointLeaders(): Promise<EntityFullDocument<Profi
 export async function changeProfilePublisherPerm({
   profileKey,
   setIsPublisher,
+  forceUnpublish,
 }: {
   profileKey: string
   setIsPublisher: boolean
+  forceUnpublish: boolean
 }) {
-  const moderator = await getCurrentSystemUser()
-  assert(moderator.type === 'pkg' || moderator.type === 'entity')
+  // console.log('changeProfilePublisherPerm', {
+  //   profileKey,
+  //   setIsPublisher,
+  //   forceUnpublish,
+  // })
+  const currentSysUser = await getCurrentSystemUser()
+  const currentUserIds = await getCurrentWebUserIds()
+  assert(
+    currentSysUser.type === 'root' ||
+      currentSysUser.type === 'pkg' ||
+      (currentSysUser.type === 'entity' && currentUserIds?.isAdmin),
+    'should be root or pkg or an admin user',
+  )
 
-  const profile = await getProfileRecord(profileKey)
-  if (!profile) return { type: 'not-found', ok: false }
-  if (profile.entity.publisher === setIsPublisher) return { type: 'no-change', ok: true }
-
-  const patchResult = await patchEntity(Profile.entityClass, profileKey, {
-    publisher: setIsPublisher,
-  })
-  if (!patchResult) {
-    return { type: 'not-found', ok: false }
-  }
-
-  const [collections, resources] = await Promise.all([
-    getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection' }),
-    getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource' }),
+  const [profile, webUser] = await Promise.all([
+    getProfileRecord(profileKey),
+    getWebUserByProfileKey({ profileKey }),
   ])
-  await Promise.all(
-    collections
-      .filter(({ entity: { published } }) => published)
-      .map(({ entity: { _key } }) => collection.setPublished(_key, false)),
-  )
-  await Promise.all(
-    resources
-      .filter(({ entity: { published } }) => published)
-      .map(async data => {
-        const [interpreter] = await resource.stdEdResourceMachine({ by: 'data', data })
-        interpreter.send('unpublish')
-        await waitFor(interpreter, resCore.nameMatcher('Unpublished'))
-        interpreter.stop()
-      }),
-  )
+  if (!(profile && webUser)) return { type: 'not-found', ok: false }
+  if (webUser.publisher === setIsPublisher) return { type: 'no-change', ok: true }
 
+  const moderationHistoryItem: UserStatusItem[] = currentUserIds
+    ? [
+        {
+          byWebUserKey: currentUserIds._key,
+          date: shell.now().toISOString(),
+          status: setIsPublisher ? 'Publisher' : 'Non-publisher',
+        },
+      ]
+    : []
+  await Promise.all([
+    patchEntity(Profile.entityClass, profileKey, {
+      publisher: setIsPublisher,
+    }),
+    WebUserCollection.update(webUser._key, {
+      publisher: setIsPublisher,
+      moderation: {
+        status: {
+          history: [...moderationHistoryItem, ...webUser.moderation.status.history],
+        },
+      },
+    }),
+  ])
+
+  if (!setIsPublisher) {
+    await shell.initiateCall(async () => {
+      await setCurrentSystemUser({
+        type: 'entity',
+        entityIdentifier: { _key: profileKey, entityClass: Profile.entityClass },
+        restrictToScopes: false,
+      })
+      await setCurrentUnverifiedJwtToken(
+        await signWebUserJwt({
+          webUser: {
+            _key: webUser._key,
+            displayName: webUser.displayName,
+            isAdmin: webUser.isAdmin,
+          },
+          profile: {
+            _key: profile.entity._key,
+            _id: profile.entity._id,
+            publisher: true,
+          },
+        }),
+      )
+
+      const [collections, resources] = await Promise.all([
+        getProfileOwnKnownEntities({ profileKey, knownEntity: 'collection', limit: 100000 }),
+        getProfileOwnKnownEntities({ profileKey, knownEntity: 'resource', limit: 100000 }),
+      ])
+      await Promise.all(
+        collections
+          .filter(({ entity: { published } }) => published)
+          .map(async ({ entity: { _key } }) => {
+            await collection.setPublished(_key, false)
+            // console.log('unpublished collection', _key)
+          }),
+      )
+      await Promise.all(
+        resources.map(async data => {
+          await ensureUnpublish({ by: 'data', data }, { onlyIfPublished: !forceUnpublish })
+          // console.log('unpublished resource', data.entity._key)
+        }),
+      )
+    })
+  } else {
+    if (webUser.contacts.email) {
+      const instanceName = (await getOrgData()).data.instanceName
+      const keepContributingActionUrl = getWebappUrl(CREATE_RESOURCE_PAGE_ROUTE_PATH)
+      send(
+        newPublisherEmail({
+          instanceName,
+          receiverEmail: webUser.contacts.email,
+          keepContributingActionUrl,
+        }),
+      )
+    }
+  }
+  // console.log('changeProfilePublisherPerm unpublised all')
   shell.events.emit('user-publishing-permission-change', {
     type: setIsPublisher ? 'given' : 'revoked',
     profile: { ...profile.entity, _meta: profile.meta },
-    moderator,
+    moderator: currentSysUser,
   })
   return { type: 'done', ok: true }
 }
@@ -531,11 +612,13 @@ export async function searchProfiles({
   sortType = 'Popular',
   text = '',
   after = '0',
+  showDeleted = false,
 }: {
   sortType?: SortTypeRpc | 'Points'
   text?: string
   after?: string
   limit?: number
+  showDeleted?: boolean
 }) {
   const sort =
     sortType === 'Points'
@@ -558,6 +641,7 @@ export async function searchProfiles({
       limit,
       skip,
       sort,
+      postAccessBody: showDeleted ? undefined : `FILTER !${currentEntityVar}.deleted`,
     },
   )
 
@@ -568,7 +652,7 @@ export async function searchProfiles({
   }
 }
 
-export async function sendMessageToProfile({
+export async function sendMessageToProfileIntent({
   message,
   profileKey,
 }: {
@@ -577,44 +661,42 @@ export async function sendMessageToProfile({
 }) {
   const tokenCtx = await verifyCurrentTokenCtx()
   if (!tokenCtx || tokenCtx.payload.isRoot || !tokenCtx.payload.webUser) return
-  const templates = (await kvStore.get('message-templates', '')).value
-  assert(templates)
 
-  //TODO //@ALE prepare formatted messages
   const toWebUser = await getWebUserByProfileKey({ profileKey })
   if (!toWebUser) return
   const fromProfile = (await getProfileRecord(tokenCtx.payload.profile._key))?.entity
   assert(fromProfile)
+  const fromWebUser = await getWebUserByProfileKey({ profileKey: fromProfile._key })
+  assert(fromWebUser)
   const orgData = await getOrgData()
 
-  const msgVars: SendMsgToUserVars = {
-    actionButtonUrl: getWebappUrl(
-      getProfileHomePageRoutePath({ _key: fromProfile._key, displayName: fromProfile.displayName }),
-    ),
-    instanceName: orgData.data.instanceName,
-    message,
-  }
-  const html = dot.compile(templates.messageFromUser)(msgVars)
-
   shell.events.emit('request-send-message-to-web-user', {
-    message: {
-      text: html,
-      html: html,
-    },
-    subject: `${fromProfile.displayName} sent you a message 📨`,
-    title: `${fromProfile.displayName} sent you a message 📨`,
-    toWebUser: {
-      _key: toWebUser._key,
-      displayName: toWebUser.displayName,
-    },
+    message,
+    toWebUserKey: toWebUser._key,
+    fromWebUserKey: fromWebUser._key,
   })
 
-  type SendMsgToUserVars = Record<'actionButtonUrl' | 'instanceName' | 'message', string>
+  if (toWebUser.contacts.email) {
+    send(
+      messageReceivedEmail({
+        actionUrl: getWebappUrl(
+          getProfileHomePageRoutePath({
+            _key: fromProfile._key,
+            displayName: fromProfile.displayName,
+          }),
+        ),
+        senderDisplayName: fromProfile.displayName,
+        message,
+        instanceName: orgData.data.instanceName,
+        receiverEmail: toWebUser.contacts.email,
+      }),
+    )
+  }
 }
 
 export async function getProfileOwnKnownEntities<
   KT extends Exclude<KnownEntityType, 'profile' | 'subject'>,
->({ profileKey, knownEntity, limit }: { profileKey: string; knownEntity: KT; limit?: number }) {
+>({ profileKey, knownEntity, limit }: { profileKey: string; knownEntity: KT; limit: number }) {
   const { entityIdentifier: profileIdentifier } = WebUserEntitiesTools.getIdentifiersByKey({
     _key: profileKey,
     type: 'Profile',
@@ -646,6 +728,91 @@ export async function getProfileOwnKnownEntities<
     : KT extends 'resource'
     ? AccessEntitiesRecordType<ResourceDataType, unknown, EntityAccess>[]
     : never
+}
+
+export async function reportUser({
+  comment,
+  profileKey,
+  reportTypeId,
+  reporterWebUserKey,
+}: {
+  profileKey: string
+  reportTypeId: ReportOptionTypeId
+  comment: string
+  reporterWebUserKey: string
+}) {
+  const targetWebUser = await getWebUserByProfileKey({ profileKey })
+  if (!targetWebUser) {
+    throw RpcStatus('Not Found', 'Target web user not found')
+  }
+  if (targetWebUser.isAdmin) {
+    throw RpcStatus('Unauthorized', 'cannot report an admin user')
+  }
+  const targetProfile = await getProfileRecord(profileKey)
+  if (!targetProfile) {
+    throw RpcStatus('Not Found', 'Target profile not found')
+  }
+
+  const webUserId = targetWebUser._id
+  const report: ReportItem = {
+    comment,
+    reporterWebUserKey,
+    reportTypeId,
+    date: new Date().toISOString(),
+  }
+
+  const curs = await db.query(
+    {
+      query: `
+    LET user = DOCUMENT(@webUserId)
+    FILTER user && !user.deleted && !user.deleting
+
+    LET newReportItems = UNSHIFT(user.moderation.reports.items, @report)
+    LET newReportItemsAmount = LENGTH(newReportItems)
+    LET mainReportTypeIdAndAmount = (
+      FOR item in newReportItems
+      COLLECT reportTypeId = item.reportTypeId WITH COUNT INTO amount
+      SORT amount DESC
+      LIMIT 1
+      LET mainReportTypeIdAndAmount = {reportTypeId, amount}
+      RETURN mainReportTypeIdAndAmount
+    )[0]
+
+    LET mainReasonName = @reportOptionTypeMap[mainReportTypeIdAndAmount.reportTypeId] 
+
+    UPDATE user WITH {
+      moderation: {
+        reports:{
+          items: newReportItems,
+          amount: newReportItemsAmount,
+          mainReasonName,
+          lastItem: @report,
+        }
+      }
+    } IN @@WebUserCollectionName
+
+    RETURN user ? true : false
+`,
+      bindVars: {
+        '@WebUserCollectionName': WebUserCollection.name,
+        webUserId,
+        report,
+        reportOptionTypeMap,
+      },
+    },
+    { retryOnConflict: 15 },
+  )
+  const done = (await curs.all()).length === 1
+  await curs.kill()
+  if (done) {
+    shell.events.emit('web-user-reported', {
+      comment: report.comment,
+      reporterWebUserKey,
+      reportOptionTypeId: report.reportTypeId,
+      targetWebUserKey: targetWebUser._key,
+    })
+  }
+  return { done, report }
 }
 
 export async function editMyProfileInterests({
