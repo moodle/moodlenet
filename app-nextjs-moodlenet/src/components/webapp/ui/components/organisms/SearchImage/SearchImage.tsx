@@ -1,14 +1,14 @@
 // import { Trans } from '@lingui/macro'
-import { Search } from '@mui/icons-material'
-import type React from 'react'
-import type { ReactElement } from 'react'
-import { useEffect, useRef, useState } from 'react'
-import type { AssetInfo } from '../../../../../common/types.mjs'
-import InputTextField from '../../atoms/InputTextField/InputTextField.js'
-import Loading from '../../atoms/Loading/Loading.js'
-import Modal from '../../atoms/Modal/Modal.js'
-import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js'
-import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton.js'
+import { Search } from '@mui/icons-material';
+import type React from 'react';
+import type { ReactElement } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { AssetInfo } from '../../../../../../common/types.mjs';
+import InputTextField from '../../atoms/InputTextField/InputTextField.js';
+import Loading from '../../atoms/Loading/Loading.js';
+import Modal from '../../atoms/Modal/Modal.js';
+import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton.js';
+import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton.js';
 // import { useUnsplash } from '../../../../helpers/unsplash'
 // import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
 // import { AssetInfo } from '../../../types'
@@ -17,36 +17,38 @@ import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton.js'
 // import Modal from '../../atoms/Modal/Modal'
 // import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 // import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
-import './styles.scss'
+import './styles.scss';
 
 export type SearchImageProps = {
-  setImage: (photo: AssetInfo | undefined) => void
-  onClose: () => void
-}
+  setImage: (photo: AssetInfo | undefined) => void;
+  onClose: () => void;
+};
 
 // const stopPropagation = (event: React.MouseEvent) => event.stopPropagation()
 
-export const SearchImage: React.FC<SearchImageProps> = ({ onClose /* , setImage */ }) => {
+export const SearchImage: React.FC<SearchImageProps> = ({
+  onClose /* , setImage */,
+}) => {
   // const { getUnsplashImages } = useUnsplash()
-  const [searchQuery, setSearchQuery] = useState('')
-  const [tmpSearchQuery, setTmpSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState('');
+  const [tmpSearchQuery, setTmpSearchQuery] = useState('');
   const [unsplashImages, setUnsplashImages] = useState<
     (AssetInfo & { location: string; height: number; width: number })[] | null
-  >()
-  const [column1, setColumn1] = useState<ReactElement[] | undefined>()
-  const [column2, setColumn2] = useState<ReactElement[] | undefined>()
+  >();
+  const [column1, setColumn1] = useState<ReactElement[] | undefined>();
+  const [column2, setColumn2] = useState<ReactElement[] | undefined>();
   // const [columnBreakIndex, setColumnBreakIndex] = useState(0)
   // const [leftColumnHeight, setLeftColumnHeight] = useState(0)
   // const [rightColumnHeight, setRightColumnHeight] = useState(0)
-  const [showImages, setShowImages] = useState(false)
-  const [loadedImages /* , setLoadedImages */] = useState(0)
-  const [totalPages, setTotalPages] = useState(0)
+  const [showImages, setShowImages] = useState(false);
+  const [loadedImages /* , setLoadedImages */] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
-  const searchInput = useRef<HTMLInputElement>(null)
+  const searchInput = useRef<HTMLInputElement>(null);
 
   const searchUnsplashImages = (_query: string, newQuery: boolean) => {
-    const page = newQuery ? 1 : totalPages + 1
-    setTotalPages(page)
+    const page = newQuery ? 1 : totalPages + 1;
+    setTotalPages(page);
     // const photos = getUnsplashImages(query, page)
     // photos
     //   .then((photos) => {
@@ -63,12 +65,12 @@ export const SearchImage: React.FC<SearchImageProps> = ({ onClose /* , setImage 
     //     window.open(`https://unsplash.com/s/photos/${query}`, '_blank')
     //     onClose()
     //   })
-  }
+  };
 
   useEffect(() => {
-    searchInput.current?.focus()
-    searchInput.current?.select()
-  }, [])
+    searchInput.current?.focus();
+    searchInput.current?.select();
+  }, []);
 
   // const getImagesColumn = useCallback(
   //   (photos: (AssetInfo & { location: string })[] | undefined) => {
@@ -147,26 +149,28 @@ export const SearchImage: React.FC<SearchImageProps> = ({ onClose /* , setImage 
   // }
 
   useEffect(() => {
-    loadedImages === unsplashImages?.length && unsplashImages?.length !== 0 && setShowImages(true)
+    loadedImages === unsplashImages?.length &&
+      unsplashImages?.length !== 0 &&
+      setShowImages(true);
     // setLoadedPages((currentState) => currentState++)
-  }, [loadedImages, unsplashImages])
+  }, [loadedImages, unsplashImages]);
 
   useEffect(() => {
     if (tmpSearchQuery === '') {
-      setSearchQuery('')
-      setColumn1([])
-      setColumn2([])
+      setSearchQuery('');
+      setColumn1([]);
+      setColumn2([]);
     }
-  }, [tmpSearchQuery, searchQuery])
+  }, [tmpSearchQuery, searchQuery]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' && tmpSearchQuery !== searchQuery) {
-      setSearchQuery(tmpSearchQuery)
-      tmpSearchQuery !== '' && searchUnsplashImages(tmpSearchQuery, true)
-      setColumn1([])
-      setColumn2([])
+      setSearchQuery(tmpSearchQuery);
+      tmpSearchQuery !== '' && searchUnsplashImages(tmpSearchQuery, true);
+      setColumn1([]);
+      setColumn2([]);
     }
-  }
+  };
 
   const sampleQuerySet = () => {
     const querySet = [
@@ -188,28 +192,28 @@ export const SearchImage: React.FC<SearchImageProps> = ({ onClose /* , setImage 
       'physics',
       'biology',
       'environment',
-    ]
+    ];
     return querySet.map((query, i) => {
       return (
         <PrimaryButton
           key={i}
           color="card"
           onClick={() => {
-            setTmpSearchQuery(query)
-            setSearchQuery(query)
-            setUnsplashImages(undefined)
-            setColumn1([])
-            setColumn2([])
-            searchUnsplashImages(query, true)
-            searchInput.current?.focus()
-            searchInput.current?.select()
+            setTmpSearchQuery(query);
+            setSearchQuery(query);
+            setUnsplashImages(undefined);
+            setColumn1([]);
+            setColumn2([]);
+            searchUnsplashImages(query, true);
+            searchInput.current?.focus();
+            searchInput.current?.select();
           }}
         >
           {query}
         </PrimaryButton>
-      )
-    })
-  }
+      );
+    });
+  };
 
   const searchBox = (
     <div className="image-search-box">
@@ -218,19 +222,22 @@ export const SearchImage: React.FC<SearchImageProps> = ({ onClose /* , setImage 
         edit={true}
         onKeyDown={handleKeyDown}
         value={tmpSearchQuery}
-        onChange={v => setTmpSearchQuery(v.currentTarget.value)}
+        onChange={(v) => setTmpSearchQuery(v.currentTarget.value)}
         ref={searchInput}
       />
       <PrimaryButton
         className="search-button"
         color="blue"
-        disabled={(tmpSearchQuery === '' && searchQuery === '') || tmpSearchQuery === searchQuery}
+        disabled={
+          (tmpSearchQuery === '' && searchQuery === '') ||
+          tmpSearchQuery === searchQuery
+        }
         onClick={() => searchUnsplashImages(tmpSearchQuery, true)}
       >
         <Search />
       </PrimaryButton>
     </div>
-  )
+  );
 
   return (
     <Modal className="search-image" onClose={onClose} closeButton={false}>
@@ -239,32 +246,41 @@ export const SearchImage: React.FC<SearchImageProps> = ({ onClose /* , setImage 
         <div className="sample-queries-container">{sampleQuerySet()}</div>
       ) : (
         <>
-          <div className="images-container" style={{ display: showImages ? 'flex' : 'none' }}>
+          <div
+            className="images-container"
+            style={{ display: showImages ? 'flex' : 'none' }}
+          >
             <div className="images">
               <div className="column-1">{column1}</div>
               <div className="column-2">{column2}</div>
             </div>
-            {unsplashImages && unsplashImages.length > 0 && unsplashImages.length % 30 === 0 && (
-              <SecondaryButton
-                className="load-more"
-                color="grey"
-                onClick={() => searchUnsplashImages(tmpSearchQuery, false)}
-              >
-                Load more
-              </SecondaryButton>
-            )}
+            {unsplashImages &&
+              unsplashImages.length > 0 &&
+              unsplashImages.length % 30 === 0 && (
+                <SecondaryButton
+                  className="load-more"
+                  color="grey"
+                  onClick={() => searchUnsplashImages(tmpSearchQuery, false)}
+                >
+                  Load more
+                </SecondaryButton>
+              )}
           </div>
 
-          {unsplashImages?.length !== 0 && !showImages && <Loading size={'30px'} />}
+          {unsplashImages?.length !== 0 && !showImages && (
+            <Loading size={'30px'} />
+          )}
           {!unsplashImages ||
             (unsplashImages?.length === 0 && (
-              <div className="error-msg">No matching images, try with another word</div>
+              <div className="error-msg">
+                No matching images, try with another word
+              </div>
             ))}
         </>
       )}
     </Modal>
-  )
-}
-SearchImage.defaultProps = {}
+  );
+};
+SearchImage.defaultProps = {};
 
-export default SearchImage
+export default SearchImage;

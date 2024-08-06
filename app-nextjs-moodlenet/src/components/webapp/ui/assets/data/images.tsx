@@ -1,20 +1,23 @@
-import type { AssetInfo } from '../../../../common/types.mjs'
-import ashleywhitlatch from '../img/contentBackup/ashleywhitlatch.jpg'
-import dvlden from '../img/contentBackup/dvlden.jpg'
-import dvlden2 from '../img/contentBackup/dvlden2.jpg'
-import fakurian from '../img/contentBackup/fakurian.jpg'
-import fakurian2 from '../img/contentBackup/fakurian2.jpg'
-import gradienta from '../img/contentBackup/gradienta.jpg'
-import gradienta2 from '../img/contentBackup/gradienta2.jpg'
-import { default as gradienta3, default as gradienta4 } from '../img/contentBackup/gradienta3.jpg'
-import gradienta5 from '../img/contentBackup/gradienta5.jpg'
-import hendrikkay from '../img/contentBackup/hendrikkay.jpg'
-import lukechesser from '../img/contentBackup/lukechesser.jpg'
-import lukechesser2 from '../img/contentBackup/lukechesser2.jpg'
-import mymind from '../img/contentBackup/mymind.jpg'
-import seanwsinclair from '../img/contentBackup/seanwsinclair.jpg'
-import solenfeyisa from '../img/contentBackup/solenfeyissa.jpg'
-import vackground from '../img/contentBackup/vackground.jpg'
+import type { AssetInfo } from '../../../../../common/types.mjs';
+import ashleywhitlatch from '../img/contentBackup/ashleywhitlatch.jpg';
+import dvlden from '../img/contentBackup/dvlden.jpg';
+import dvlden2 from '../img/contentBackup/dvlden2.jpg';
+import fakurian from '../img/contentBackup/fakurian.jpg';
+import fakurian2 from '../img/contentBackup/fakurian2.jpg';
+import gradienta from '../img/contentBackup/gradienta.jpg';
+import gradienta2 from '../img/contentBackup/gradienta2.jpg';
+import {
+  default as gradienta3,
+  default as gradienta4,
+} from '../img/contentBackup/gradienta3.jpg';
+import gradienta5 from '../img/contentBackup/gradienta5.jpg';
+import hendrikkay from '../img/contentBackup/hendrikkay.jpg';
+import lukechesser from '../img/contentBackup/lukechesser.jpg';
+import lukechesser2 from '../img/contentBackup/lukechesser2.jpg';
+import mymind from '../img/contentBackup/mymind.jpg';
+import seanwsinclair from '../img/contentBackup/seanwsinclair.jpg';
+import solenfeyisa from '../img/contentBackup/solenfeyissa.jpg';
+import vackground from '../img/contentBackup/vackground.jpg';
 
 export const ContentBackupImages: AssetInfo[] = [
   {
@@ -238,4 +241,4 @@ export const ContentBackupImages: AssetInfo[] = [
       },
     },
   },
-]
+];
