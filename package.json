@@ -4,9 +4,14 @@
   "license": "MIT",
   "scripts": {},
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "next": "14.2.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
   "devDependencies": {
     "@nx/js": "19.5.6",
+    "@nx/next": "19.5.6",
     "@nx/workspace": "19.5.6",
     "nx": "19.5.6"
   }
