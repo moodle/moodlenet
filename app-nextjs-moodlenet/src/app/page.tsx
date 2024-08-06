@@ -1,13 +1,18 @@
+import { _test1 } from '#server/_test';
+import Cmp from './cmp';
 import styles from './page.module.css';
 
-export default function Index() {
+export default async function Index() {
   /*
    * Replace the elements below with your own.
    *
    * Note: The corresponding styles are in the ./index.css file.
    */
+  const pageA = await _test1('page', { ms: 50 });
   return (
     <div className={styles.page}>
+      {pageA}
+      <Cmp />
       <div className="wrapper">
         <div className="container">
           <div id="welcome">
