@@ -4,7 +4,7 @@ import { MainFooter } from '../../../../exports/ui.mjs'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import type { MinimalisticHeaderProps } from '../../organisms/Header/Minimalistic/MinimalisticHeader.js'
 import { MinimalisticHeader } from '../../organisms/Header/Minimalistic/MinimalisticHeader.js'
-import { LayoutContainer } from '../LayoutContainer/LayoutContainer.js'
+import { LayoutContainer } from '../../../../../../../../../app-nextjs-moodlenet/src/app/LayoutContainer.js'
 import './SimpleLayout.scss'
 // import { StateContext } from './Providers'
 

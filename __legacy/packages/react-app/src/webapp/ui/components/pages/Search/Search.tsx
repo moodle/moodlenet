@@ -1,6 +1,6 @@
 import type { FC } from 'react'
-import type { MainLayoutProps } from '../../layout/MainLayout/MainLayout.js'
-import MainLayout from '../../layout/MainLayout/MainLayout.js'
+import type { MainLayoutProps } from '../../../../../../../../../app-nextjs-moodlenet/src/app/MainLayout.js'
+import MainLayout from '../../../../../../../../../app-nextjs-moodlenet/src/app/MainLayout.js'
 import type { BrowserPropsData } from '../../organisms/Browser/Browser.js'
 import Browser from '../../organisms/Browser/Browser.js'
 import './Search.scss'
