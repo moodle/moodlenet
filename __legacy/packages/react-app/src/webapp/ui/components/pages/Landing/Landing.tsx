@@ -4,8 +4,8 @@ import { useContext } from 'react'
 import { MainHeaderContext } from '../../../../exports/ui.mjs'
 import defaultBackground from '../../../assets/img/default-landing-background.png'
 import { MainSearchBox } from '../../atoms/MainSearchBox/MainSearchBox.js'
-import type { MainLayoutProps } from '../../../../../../../../../app-nextjs-moodlenet/src/app/MainLayout.js'
-import MainLayout from '../../../../../../../../../app-nextjs-moodlenet/src/app/MainLayout.js'
+import type { MainLayoutProps } from '../../../../../../../../../app-nextjs-moodlenet/src/layouts/MainLayout.js'
+import MainLayout from '../../../../../../../../../app-nextjs-moodlenet/src/layouts/MainLayout.js'
 import './Landing.scss'
 
 export type LandingProps = {

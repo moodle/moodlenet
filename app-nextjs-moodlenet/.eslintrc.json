@@ -1,19 +1,15 @@
 {
-  "extends": [
-    "plugin:@nx/react-typescript",
-    "next",
-    "next/core-web-vitals",
-    "../.eslintrc.json"
-  ],
+  "extends": ["plugin:@nx/react-typescript", "next", "next/core-web-vitals", "../.eslintrc.json"],
   "ignorePatterns": ["!**/*", ".next/**/*"],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error"
+  },
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@next/next/no-html-link-for-pages": [
-          "error",
-          "app-nextjs-moodlenet/pages"
-        ]
+        "@next/next/no-html-link-for-pages": ["error", "app-nextjs-moodlenet/pages"]
       }
     },
     {

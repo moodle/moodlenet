@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 import { ReactComponent as HatLogo } from '../../../../assets/icons/hat-moodle.svg'
-import type { MainLayoutProps } from '../../../../../../../../../../app-nextjs-moodlenet/src/app/MainLayout.js'
-import MainLayout from '../../../../../../../../../../app-nextjs-moodlenet/src/app/MainLayout.js'
+import type { MainLayoutProps } from '../../../../../../../../../../app-nextjs-moodlenet/src/layouts/MainLayout.js'
+import MainLayout from '../../../../../../../../../../app-nextjs-moodlenet/src/layouts/MainLayout.js'
 import './styles.scss'
 
 export type MaintenanceProps = {
