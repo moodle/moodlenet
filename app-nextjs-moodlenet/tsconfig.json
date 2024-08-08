@@ -17,13 +17,13 @@
       }
     ],
     "types": ["jest", "node"],
-    "baseUrl": ".",
+    "baseUrl": "./src/",
     "paths": {
-      "#context": ["src/server/types/context"],
-      "#server/*": ["src/server/*"],
-      "#components/*": ["src/components/*"],
-      "#assets/*": ["src/assets/*"],
-      "#common/*": ["src/common/*"]
+      //"@/context": ["server/types/context"],
+      "@/server/*": ["server/*"],
+      "@/components/*": ["components/*"],
+      "@/assets/*": ["assets/*"],
+      "@/common/*": ["common/*"]
     }
   },
   "include": [

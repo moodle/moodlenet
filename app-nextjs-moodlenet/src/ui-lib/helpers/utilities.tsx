@@ -1,11 +1,11 @@
-import { ContentBackupImages } from '#assets/data/images'
-import type { AssetInfo } from '#common/types'
-import { getDomainUrl } from '#common/utilities'
-import { getVimeoEmbed, getVimeoThumbnail } from '#components/molecules/embeds/Vimeo/Vimeo'
+import { ContentBackupImages } from '@/assets/data/images'
+import type { AssetInfo } from '@/common/types'
+import { getDomainUrl } from '@/common/utilities'
+import { getVimeoEmbed, getVimeoThumbnail } from '@/components/molecules/embeds/Vimeo/Vimeo'
 import {
   getYouTubeEmbed,
   getYouTubeThumbnail,
-} from '#components/molecules/embeds/Youtube/Youtube.jsx'
+} from '@/components/molecules/embeds/Youtube/Youtube.jsx'
 import assert from 'assert'
 import type { ReactElement } from 'react'
 import { useEffect, useMemo, useState } from 'react'

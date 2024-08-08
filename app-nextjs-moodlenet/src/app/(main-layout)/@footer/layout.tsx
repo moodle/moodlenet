@@ -1,5 +1,4 @@
-import Footer from './Footer'
+import layout from '@/server/layout'
+import LayoutFooter from './layout-footer'
 
-export default async function Layout(props: any) {
-  return <Footer {...props} />
-}
+export default layout(LayoutFooter)

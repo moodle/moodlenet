@@ -1,5 +1,4 @@
-import Header from './Header'
+import layout from '@/server/layout'
+import LayoutHeader from './layout-header'
 
-export default async function Layout(props: any) {
-  return <Header {...props} />
-}
+export default layout(LayoutHeader)

@@ -1,5 +1,4 @@
-import MainLayout from './MainLayout'
+import layout from '@/server/layout'
+import LayoutMain from './layout-main'
 
-export default async function Layout(props: any) {
-  return <MainLayout {...props} />
-}
+export default layout(LayoutMain)
