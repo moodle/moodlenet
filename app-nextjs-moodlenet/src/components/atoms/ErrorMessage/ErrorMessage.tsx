@@ -1,3 +1,4 @@
+"use client"
 import type { FC, ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import './ErrorMessage.scss'

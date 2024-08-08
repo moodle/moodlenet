@@ -1,3 +1,4 @@
+"use client"
 import type React from 'react'
 import type { FC, KeyboardEvent, ReactElement } from 'react'
 import { useRef, useState } from 'react'

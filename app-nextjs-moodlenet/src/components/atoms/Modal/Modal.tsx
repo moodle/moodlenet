@@ -1,3 +1,4 @@
+"use client"
 import { CloseRounded as CloseRoundedIcon } from '@mui/icons-material'
 import type React from 'react'
 import type { ReactNode } from 'react'

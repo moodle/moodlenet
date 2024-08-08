@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react'
 import { setOpacity } from './utilities'
 
 export const baseMoodleColor = '#f88012'
@@ -35,9 +36,9 @@ export type BaseStyleType = {
   '--warning-color': string
   '--info-color': string
   '--success-color': string
-}
-
-export const baseStyle = (baseColor = baseMoodleColor): BaseStyleType => {
+} & CSSProperties
+export const defaultStyle = baseStyle()
+export function baseStyle(baseColor = baseMoodleColor): BaseStyleType {
   return {
     '--base-moodle-color': baseMoodleColor,
 

@@ -1,14 +1,20 @@
-import { ServerContext } from './types/context'
+import { ServerContext } from '@/lib-server/types/context'
 
 export default async function getServerContext() {
   const serverContext: ServerContext = {
     config: {
       webapp: {
         mainLayout: {
+          landing: {
+            slots: {
+              hero: ['defaultHero'],
+              content: [],
+            },
+          },
           header: {
             slots: {
               left: [],
-              center: [],
+              center: ['searchbox'],
               right: [
                 //  'rightItems',
                 // {

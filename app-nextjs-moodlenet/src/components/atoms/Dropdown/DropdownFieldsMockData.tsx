@@ -1,3 +1,4 @@
+"use client"
 import { ReactComponent as ByIcon } from '../../../assets/icons/license/by.svg'
 import { ReactComponent as CcIcon } from '../../../assets/icons/license/cc.svg'
 import { ReactComponent as NcIcon } from '../../../assets/icons/license/nc.svg'

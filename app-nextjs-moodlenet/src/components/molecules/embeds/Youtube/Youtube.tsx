@@ -1,3 +1,4 @@
+"use client"
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 import type { EmbedType, ThumbnailType } from '../../../../helpers/utilities.js'

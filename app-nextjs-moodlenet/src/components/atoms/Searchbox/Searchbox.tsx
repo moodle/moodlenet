@@ -1,56 +1,30 @@
-import type { ChangeEventHandler, Dispatch, FC, SetStateAction } from 'react'
-import { useCallback, useEffect, useRef } from 'react'
-import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
-import { elementFullyInViewPort } from '../../../helpers/utilities.js'
-import PrimaryButton from '../PrimaryButton/PrimaryButton.js'
+'use client'
+// import { ReactComponent as SearchIcon } from '@/assets/icons/search.svg'
+import SearchIcon from '@/assets/icons/search.svg'
+// import Image from 'next/image'
+import PrimaryButton from '../PrimaryButton/PrimaryButton'
 import './Searchbox.scss'
 
 export type SearchboxProps = {
-  searchText: string
+  initialSearchText: string
   placeholder: string
-  setSearchText(text: string): void
-  search(text: string): void
-  setIsSearchboxInViewport?: Dispatch<SetStateAction<boolean>>
+  searchTextChange(text: string): void
+  triggerSearch(): void
   size?: 'small' | 'big'
-  marginTop?: number
   showSearchButton?: boolean
 }
 
-export const Searchbox: FC<SearchboxProps> = ({
-  searchText,
+export default function Searchbox({
+  initialSearchText,
   placeholder,
-  size,
-  marginTop,
+  size = 'small',
   showSearchButton,
-  search,
-  setSearchText,
-  setIsSearchboxInViewport,
-}) => {
-  const setSearchTextCB = useCallback<ChangeEventHandler<HTMLInputElement>>(
-    ev => setSearchText(ev.currentTarget.value),
-    [setSearchText],
-  )
-  const searchboxRef = useRef<HTMLDivElement>(null)
-
-  const setElementFullyInViewPort = useCallback(() => {
-    if (setIsSearchboxInViewport) {
-      searchboxRef.current && elementFullyInViewPort(searchboxRef.current, { marginTop: marginTop })
-        ? setIsSearchboxInViewport(true)
-        : setIsSearchboxInViewport(false)
-    }
-  }, [searchboxRef, marginTop, setIsSearchboxInViewport])
-
-  useEffect(() => {
-    setIsSearchboxInViewport && setElementFullyInViewPort()
-    setIsSearchboxInViewport && window.addEventListener('scroll', setElementFullyInViewPort, true)
-    return () => {
-      setIsSearchboxInViewport &&
-        document.removeEventListener('scroll', setElementFullyInViewPort, true)
-    }
-  }, [setElementFullyInViewPort, setIsSearchboxInViewport])
-
+  triggerSearch,
+  searchTextChange,
+}: SearchboxProps) {
+  console.log({ SearchIcon })
   return (
-    <div className={`searchbox size-${size}`} ref={searchboxRef}>
+    <div className={`searchbox size-${size}`}>
       <SearchIcon />
       <label htmlFor="search-text" className="sr-only" hidden>
         Search
@@ -60,28 +34,17 @@ export const Searchbox: FC<SearchboxProps> = ({
         id="search-text"
         placeholder={placeholder}
         autoFocus
-        // defaultValue={''}
-        defaultValue={searchText}
-        onChange={setSearchTextCB}
-        onKeyDown={e => e.code === 'Enter' && search(searchText)}
+        defaultValue={initialSearchText}
+        onChange={e => searchTextChange(e.target.value)}
+        onKeyDown={e => e.code === 'Enter' && triggerSearch()}
       />
       {showSearchButton && (
-        <PrimaryButton
-          onClick={() => search(searchText)}
-          // {...(size === 'small' ? { color: 'blue' } : {})}
-        >
+        <PrimaryButton onClick={() => triggerSearch()}>
           <span>Search</span>
+          {/* <Image src={SearchIcon} alt="search" width={15} /> */}
           <SearchIcon />
         </PrimaryButton>
       )}
     </div>
   )
 }
-
-Searchbox.defaultProps = {
-  size: 'small',
-  showSearchButton: true,
-}
-
-Searchbox.displayName = 'Searchbox'
-export default Searchbox

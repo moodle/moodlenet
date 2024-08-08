@@ -1,3 +1,4 @@
+"use client"
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ExpandLess, ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import type { FC, ReactNode } from 'react'

@@ -1,3 +1,4 @@
+"use client"
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { ColorpickerProps } from './Colorpicker.js'
 import Colorpicker from './Colorpicker.js'

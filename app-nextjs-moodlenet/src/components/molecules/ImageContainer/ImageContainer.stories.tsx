@@ -1,3 +1,4 @@
+"use client"
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { default as image } from '../../../assets/img/contentBackup/fakurian2.jpg'
 import { default as backupImage } from '../../../assets/img/contentBackup/gradienta3.jpg'

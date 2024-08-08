@@ -1,4 +1,4 @@
-import layout from '@/server/layout'
-import LayoutFooter from './layout-footer'
+import layout from '@/lib-server/layout'
+import LayoutFooter from './layout.footer'
 
 export default layout(LayoutFooter)

@@ -1,3 +1,4 @@
+"use client"
 import { ArrowDropDown } from '@mui/icons-material'
 import type { FC } from 'react'
 import { Fragment } from 'react'

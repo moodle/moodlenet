@@ -1,3 +1,4 @@
+"use client"
 import type { FC } from 'react'
 import { useState } from 'react'
 import type { DropdownProps, TextOptionProps } from '../Dropdown.js'

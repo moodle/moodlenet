@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactNode } from 'react'
-import './layout-main.scss'
+import './layout.main.scss'
 
 export default async function LayoutMain({
   children,

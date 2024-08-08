@@ -1,3 +1,4 @@
+"use client"
 import type React from 'react'
 import type { FC } from 'react'
 import { useMemo } from 'react'

@@ -1,3 +1,4 @@
+"use client"
 import { LibraryAdd as LibraryAddIcon, NoteAdd as NoteAddIcon } from '@mui/icons-material'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import addIcon from '../../../assets/icons/add-round.svg'

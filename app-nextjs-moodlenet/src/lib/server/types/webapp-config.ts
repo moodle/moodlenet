@@ -10,5 +10,8 @@ export interface WebappConfig {
     footer: {
       slots: Slots<'left' | 'center' | 'right' | 'copyright'>
     }
+    landing: {
+      slots: Slots<'hero' | 'content'>
+    }
   }
 }

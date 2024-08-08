@@ -1,6 +1,6 @@
-import { layoutHelper } from '@/server/ctx'
+import { layoutHelper } from '@/lib-server/ctx'
 import type { PropsWithChildren } from 'react'
-import './layout-header.scss'
+import './layout.header.scss'
 
 export default async function LayoutHeader(props: PropsWithChildren) {
   const { slots, ctx } = await layoutHelper(props)

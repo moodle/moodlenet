@@ -1,3 +1,4 @@
+"use client"
 import type { CSSProperties } from 'react'
 import { forwardRef, useRef, useState } from 'react'
 import type { Credits } from '../../../../../common.mjs'

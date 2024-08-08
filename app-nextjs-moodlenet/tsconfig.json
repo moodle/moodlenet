@@ -20,7 +20,9 @@
     "baseUrl": "./src/",
     "paths": {
       //"@/context": ["server/types/context"],
-      "@/server/*": ["server/*"],
+      "@/lib-server/*": ["lib/server/*"],
+      "@/lib-ui/*": ["lib/ui/*"],
+      "@/lib-mock/*": ["lib/mock/*"],
       "@/components/*": ["components/*"],
       "@/assets/*": ["assets/*"],
       "@/common/*": ["common/*"]

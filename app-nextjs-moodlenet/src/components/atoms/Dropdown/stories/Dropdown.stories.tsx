@@ -1,3 +1,4 @@
+"use client"
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { Dropdown, IconPill, IconTextOption, SimplePill, TextOption } from '../Dropdown.js'
 import { LevelDropdown, LicenseDropdown } from './DropdownProps.stories.props.js'

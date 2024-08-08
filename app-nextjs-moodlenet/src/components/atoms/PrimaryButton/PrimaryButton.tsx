@@ -1,4 +1,5 @@
-import type { FC, ReactNode } from 'react'
+'use client'
+import type { ReactNode } from 'react'
 import './PrimaryButton.scss'
 
 export type PrimaryButtonProps = {
@@ -7,26 +8,26 @@ export type PrimaryButtonProps = {
   abbr?: string
   hiddenText?: string
   disabled?: boolean
-  color?: '' | 'green' | 'red' | 'grey' | 'blue' | 'card' | 'light-grey'
+  color?: '' | 'green' | 'red' | 'orange' | 'grey' | 'blue' | 'card' | 'light-grey'
   onHoverColor?: '' | 'green' | 'orange' | 'red' | 'green'
   noHover?: boolean
   children?: ReactNode
   innerRef?: React.LegacyRef<HTMLElement>
-} & React.ButtonHTMLAttributes<HTMLButtonElement>
+} & React.HTMLAttributes<HTMLElement>
 
-export const PrimaryButton: FC<PrimaryButtonProps> = ({
+export default function PrimaryButton({
   children,
   className,
   abbr,
   hiddenText,
-  color,
-  onHoverColor,
+  color = '',
+  onHoverColor = '',
   noHover,
   disabled,
   onClick,
   innerRef,
   ...props
-}) => {
+}: PrimaryButtonProps) {
   return (
     <abbr
       ref={innerRef}
@@ -45,10 +46,3 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({
     </abbr>
   )
 }
-
-PrimaryButton.defaultProps = {
-  color: '',
-  onHoverColor: '',
-}
-
-export default PrimaryButton

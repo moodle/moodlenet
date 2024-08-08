@@ -1,3 +1,4 @@
+"use client"
 import { Button } from '@react-email/button'
 import { Container } from '@react-email/container'
 import { Head } from '@react-email/head'

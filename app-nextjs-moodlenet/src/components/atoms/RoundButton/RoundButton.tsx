@@ -1,3 +1,4 @@
+"use client"
 import {
   Cached as CachedIcon,
   CloseRounded as CloseRoundedIcon,

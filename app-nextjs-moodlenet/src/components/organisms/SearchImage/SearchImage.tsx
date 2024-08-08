@@ -1,3 +1,4 @@
+"use client"
 // import { Trans } from '@lingui/macro'
 import { Search } from '@mui/icons-material';
 import type React from 'react';

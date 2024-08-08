@@ -1,3 +1,4 @@
+"use client"
 import type { FC, PropsWithChildren, ReactElement } from 'react'
 import './MinimalisticHeader.scss'
 

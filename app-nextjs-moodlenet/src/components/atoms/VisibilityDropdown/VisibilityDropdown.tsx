@@ -1,3 +1,4 @@
+"use client"
 import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,

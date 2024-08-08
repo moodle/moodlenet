@@ -1,3 +1,4 @@
+"use client"
 import type { ChangeEvent, FC } from 'react'
 import { useEffect, useRef } from 'react'
 import './Colorpicker.scss'

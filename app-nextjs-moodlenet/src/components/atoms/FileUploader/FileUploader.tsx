@@ -1,3 +1,4 @@
+"use client"
 // import { Trans } from '@lingui/macro'
 import type { FC } from 'react'
 import { ReactComponent as UploadFileIcon } from '../../../../static/icons/upload-file.svg'

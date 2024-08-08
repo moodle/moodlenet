@@ -1,3 +1,4 @@
+"use client"
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { LoadingProps } from './Loading.js'
 import { Loading } from './Loading.js'

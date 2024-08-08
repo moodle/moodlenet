@@ -1,7 +1,7 @@
-import { baseStyle } from '@/common/config'
+import { defaultStyle } from '@/common/config'
 import { GlobalProviders } from 'app/global-providers'
 import type { PropsWithChildren } from 'react'
-import './layout-root.scss'
+import './layout.root.scss'
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   return (
@@ -9,7 +9,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <body>
         <GlobalProviders>
           <section id="root">
-            <div className={`layout-container`} id={`layout-container`} style={{ ...baseStyle }}>
+            <div className={`layout-container`} id={`layout-container`} style={{ ...defaultStyle }}>
               {children}
             </div>
           </section>

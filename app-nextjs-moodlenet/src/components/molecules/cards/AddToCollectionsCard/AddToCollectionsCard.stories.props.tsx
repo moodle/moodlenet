@@ -1,3 +1,4 @@
+"use client"
 // import { action } from '@storybook/addon-actions'
 // import { ComponentMeta } from '@storybook/react'
 // import { useFormik } from 'formik'

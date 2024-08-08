@@ -10,6 +10,7 @@
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.9",
     "@react-email/components": "0.0.22",
+    "@svgr/webpack": "^8.1.0",
     "@types/lodash": "^4.17.7",
     "lodash": "^4.17.21",
     "next": "14.2.3",

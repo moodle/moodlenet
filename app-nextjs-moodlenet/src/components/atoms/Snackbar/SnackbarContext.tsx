@@ -1,3 +1,4 @@
+"use client"
 import type { ReactElement, ReactNode } from 'react'
 import React, { createContext, useCallback, useContext, useState } from 'react'
 import type { SnackbarProps } from './Snackbar.js'

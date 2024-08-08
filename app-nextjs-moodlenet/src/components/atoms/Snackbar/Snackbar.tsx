@@ -1,3 +1,4 @@
+"use client"
 import {
   CheckCircleOutlineOutlined as CheckCircleOutlineOutlinedIcon,
   CloseRounded as CloseRoundedIcon,

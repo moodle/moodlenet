@@ -1,3 +1,4 @@
+"use client"
 import { action } from '@storybook/addon-actions'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { useState } from 'react'

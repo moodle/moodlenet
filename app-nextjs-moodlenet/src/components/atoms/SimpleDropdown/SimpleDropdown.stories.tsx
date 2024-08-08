@@ -1,3 +1,4 @@
+"use client"
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import type { SimpleDropdownProps } from './SimpleDropdown.js'
 import { SimpleDropdown } from './SimpleDropdown.js'
