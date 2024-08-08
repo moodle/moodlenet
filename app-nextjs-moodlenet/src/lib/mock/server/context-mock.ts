@@ -4,13 +4,18 @@ export default async function getServerContext() {
   const serverContext: ServerContext = {
     config: {
       webapp: {
-        mainLayout: {
-          landing: {
-            slots: {
-              hero: ['defaultHero'],
-              content: [],
-            },
+        labels: {
+          searchPlaceholder: 'Search for open educational content',
+        },
+        title: 'Search for resources, subjects, collections or people',
+        subtitle: 'Find, share and curate open educational resources',
+        landing: {
+          slots: {
+            header: ['shareButton'],
+            content: [],
           },
+        },
+        mainLayout: {
           header: {
             slots: {
               left: [],

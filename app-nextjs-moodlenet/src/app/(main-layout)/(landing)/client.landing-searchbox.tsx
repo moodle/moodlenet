@@ -5,7 +5,7 @@ interface Props {
   initialSearchText: string
   placeholder: string
 }
-export default function ClientHeaderSearchbox({ initialSearchText, placeholder }: Props) {
+export default function ClientLandingHeaderSearchbox({ initialSearchText, placeholder }: Props) {
   return (
     <Searchbox
       {...{
@@ -14,7 +14,7 @@ export default function ClientHeaderSearchbox({ initialSearchText, placeholder }
         searchTextChange: () => undefined,
         triggerSearch: () => undefined,
         showSearchButton: true,
-        size: 'small',
+        size: 'big',
       }}
     />
   )

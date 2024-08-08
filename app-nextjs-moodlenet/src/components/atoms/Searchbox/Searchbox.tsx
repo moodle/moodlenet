@@ -22,7 +22,6 @@ export default function Searchbox({
   triggerSearch,
   searchTextChange,
 }: SearchboxProps) {
-  console.log({ SearchIcon })
   return (
     <div className={`searchbox size-${size}`}>
       <SearchIcon />
