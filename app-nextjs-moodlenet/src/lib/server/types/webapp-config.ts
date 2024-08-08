@@ -5,6 +5,11 @@ export type Slots<K extends string = string> = Record<K, SlotItem[]>
 export interface WebappConfig {
   title: string
   subtitle: string
+  user: {
+    permissions: {
+      createDraftContent?: boolean
+    }
+  }
   labels: {
     searchPlaceholder: string
   }

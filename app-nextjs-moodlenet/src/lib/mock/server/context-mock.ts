@@ -4,6 +4,7 @@ export default async function getServerContext() {
   const serverContext: ServerContext = {
     config: {
       webapp: {
+        user: { permissions: { createDraftContent: true } },
         labels: {
           searchPlaceholder: 'Search for open educational content',
         },
@@ -19,24 +20,15 @@ export default async function getServerContext() {
           header: {
             slots: {
               left: [],
-              center: ['searchbox'],
-              right: [
-                //  'rightItems',
-                // {
-                //   type: 'div',
-                //   props: { children: 'alalala', style: { background: 'red' } },
-                //   key: 'ooo',
-                // },
-              ],
+              center: [],
+              right: [],
             },
           },
           footer: {
             slots: {
               left: [],
               center: [],
-              right: [
-                // 'rightItems'
-              ],
+              right: [],
               copyright: [],
             },
           },
