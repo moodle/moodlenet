@@ -1,7 +1,7 @@
 import defaultBackground from '@/assets/img/default-landing-background.png'
 import { utils } from '@/lib-server/layout'
 import { PropsWithChildren } from 'react'
-import { HeadSearchbox_Cli, ShareButton_Cli } from './client.landing'
+import { LandingHeadSearchbox, LandingHeadShareButton } from './client.landing'
 import './layout.landing.scss'
 
 export default async function LayoutLanding(props: PropsWithChildren) {
@@ -23,8 +23,8 @@ export default async function LayoutLanding(props: PropsWithChildren) {
           <div className="title">{title}</div>
           <div className="subtitle">{subtitle}</div>
         </div>
-        <HeadSearchbox_Cli defaultValue="" placeholder="" />
-        {permissions.createDraftContent && <ShareButton_Cli />}
+        <LandingHeadSearchbox defaultValue="" placeholder="" />
+        {permissions.createDraftContent && <LandingHeadShareButton />}
         {head}
       </div>
       {content}

@@ -1,6 +1,5 @@
-"use client"
+'use client'
 import { ArrowDropDown } from '@mui/icons-material'
-import type { FC } from 'react'
 import { Fragment } from 'react'
 import type { TextOptionProps } from '../Dropdown/Dropdown.js'
 import type { FloatingMenuContentItem } from '../FloatingMenu/FloatingMenu.js'
@@ -19,7 +18,7 @@ export type SimpleDropdownProps = {
   notHighlightInitialSelection?: boolean
 }
 
-export const SimpleDropdown: FC<SimpleDropdownProps> = ({
+export default function SimpleDropdown({
   options,
   className,
   selected,
@@ -27,7 +26,7 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
   label,
   notHighlightInitialSelection,
   initialSelection,
-}) => {
+}: SimpleDropdownProps) {
   const currentName: string[] = []
   const menuContent = options.map(({ value, label }, i) => {
     const isCurrent = selected.indexOf(value) > -1
@@ -44,13 +43,12 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
             <div
               className={`border ${isCurrent ? 'selected' : ''} ${
                 prevSelected ? 'prev-selected' : ''
-              } ${nextSelected ? 'next-selected' : ''}
-               `}
+              } ${nextSelected ? 'next-selected' : ''}`}
             />
           </div>
           <div
             onClick={() => onClick(value)}
-            className={`content ${isCurrent ? 'selected' : ''} 
+            className={`content ${isCurrent ? 'selected' : ''}
             ${prevSelected ? 'prev-selected' : ''}
           `}
           >
@@ -93,7 +91,3 @@ export const SimpleDropdown: FC<SimpleDropdownProps> = ({
     />
   )
 }
-
-SimpleDropdown.defaultProps = {}
-SimpleDropdown.displayName = 'SimpleDropdown'
-export default SimpleDropdown

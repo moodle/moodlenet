@@ -1,3 +1,4 @@
 import { ReactNode } from 'react'
+import { plugins } from '../../common/plugins'
 
-export type UiSlots<k extends string> = Partial<Record<k, ReactNode[]>>
+export type slots<k extends string> = plugins<k, ReactNode>

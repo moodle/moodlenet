@@ -2,51 +2,77 @@
 // import { ReactComponent as SearchIcon } from '@/assets/icons/search.svg'
 import SearchIconSVG from '@/assets/icons/search.svg'
 // import Image from 'next/image'
-import { UiSlots } from '@/lib-ui/utils/types'
-import { DetailedHTMLProps, InputHTMLAttributes, PropsWithChildren, ReactNode } from 'react'
+import { isEnter } from '@/lib-ui/utils/keyboard'
+import { slots } from '@/lib-ui/utils/types'
+import { DetailedHTMLProps, InputHTMLAttributes, PropsWithChildren, ReactNode, useRef } from 'react'
 import PrimaryButton, { PrimaryButtonProps } from '../PrimaryButton/PrimaryButton'
 import './Searchbox.scss'
-
-export type SearchboxProps = {
+export type triggerProps = PropsWithChildren<{ label?: ReactNode } & PrimaryButtonProps>
+export type searchboxProps = {
   boxSize?: 'small' | 'big'
-  slots?: UiSlots<'left' | 'right'>
-  trigger?: TriggerProps
+  slots?: slots<'left' | 'right'>
+  triggerOnEnter?: boolean
+  triggerBtn?: boolean | triggerProps
+  search(text: string): void
   icon?: boolean
 } & DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 
 export default function Searchbox({
-  icon,
-  trigger,
   boxSize = 'small',
   slots,
+  triggerOnEnter = true,
+  triggerBtn,
+  search,
+  icon,
   ...inputProps
-}: SearchboxProps) {
+}: searchboxProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
   return (
     <div className={`searchbox size-${boxSize}`}>
       {icon && <SearchIcon />}
       {slots?.left}
       <label htmlFor="search-text" className="sr-only" hidden>
-        {inputProps.placeholder ?? 'Search'}
+        {inputProps.placeholder}
       </label>
-      <input className="search-text" id="search-text" {...inputProps} />
+      <input
+        ref={inputRef}
+        className="search-text"
+        id="search-text"
+        {...inputProps}
+        onKeyDown={
+          !inputProps.disabled
+            ? e => {
+                // console.log(inputRef.current, e)
+                triggerOnEnter && isEnter(e) && triggerSearch()
+                inputProps.onKeyDown?.(e)
+              }
+            : undefined
+        }
+      />
       {slots?.right}
-      {trigger && <TriggerButton {...trigger} />}
+      {triggerBtn && <TriggerButton {...(triggerBtn === true ? {} : triggerBtn)} />}
     </div>
   )
-}
+  function SearchIcon() {
+    return <SearchIconSVG />
+  }
+  function triggerSearch() {
+    search(inputRef.current?.value ?? '??')
+  }
 
-type TriggerProps = PropsWithChildren<{ text?: ReactNode } & PrimaryButtonProps>
-
-export function TriggerButton({ text, children, ...priProps }: TriggerProps) {
-  return (
-    <PrimaryButton {...priProps}>
-      <span>{text}</span>
-      {children}
-      <SearchIcon />
-    </PrimaryButton>
-  )
-}
-
-export function SearchIcon() {
-  return <SearchIconSVG />
+  function TriggerButton({ children, ...priProps }: triggerProps) {
+    return (
+      <PrimaryButton
+        {...priProps}
+        onClick={e => {
+          triggerSearch()
+          priProps.onClick?.(e)
+        }}
+      >
+        {priProps.label && <span>{priProps.label}</span>}
+        {children}
+        <SearchIcon />
+      </PrimaryButton>
+    )
+  }
 }

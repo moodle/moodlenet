@@ -2,7 +2,7 @@
 import PrimaryButton from '@/components/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '@/components/atoms/Searchbox/Searchbox'
 
-export function ShareButton_Cli() {
+export function LandingHeadShareButton() {
   return (
     <PrimaryButton className="share-content" color="blue" onClick={undefined}>
       Publish content
@@ -10,7 +10,7 @@ export function ShareButton_Cli() {
   )
 }
 
-export function HeadSearchbox_Cli({
+export function LandingHeadSearchbox({
   defaultValue,
   placeholder,
 }: {
@@ -24,8 +24,8 @@ export function HeadSearchbox_Cli({
         icon: true,
         defaultValue,
         placeholder,
-        onChange: console.log,
-        trigger: { text: 'Search', onClick: console.log },
+        search: console.log,
+        triggerBtn: { label: 'Search' },
       }}
     />
   )

@@ -1,9 +1,8 @@
 'use client'
-import type { ReactNode } from 'react'
+import type { KeyboardEvent, ReactNode } from 'react'
 import './PrimaryButton.scss'
 
 export type PrimaryButtonProps = {
-  onClick?(arg0?: unknown): unknown
   className?: string
   abbr?: string
   hiddenText?: string
@@ -13,7 +12,8 @@ export type PrimaryButtonProps = {
   noHover?: boolean
   children?: ReactNode
   innerRef?: React.LegacyRef<HTMLElement>
-} & React.HTMLAttributes<HTMLElement>
+  onClick?: (e: React.MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => void
+} & Omit<React.HTMLAttributes<HTMLElement>, 'onClick'>
 
 export default function PrimaryButton({
   children,
@@ -26,7 +26,7 @@ export default function PrimaryButton({
   disabled,
   onClick,
   innerRef,
-  ...props
+  ...abbrProps
 }: PrimaryButtonProps) {
   return (
     <abbr
@@ -37,9 +37,16 @@ export default function PrimaryButton({
       tabIndex={!disabled ? 0 : undefined}
       style={{ pointerEvents: noHover ? 'none' : 'unset' }}
       title={abbr}
-      onClick={!disabled ? onClick : () => null}
-      onKeyDown={e => !disabled && onClick && e.key === 'Enter' && onClick()}
-      {...props}
+      {...abbrProps}
+      onClick={disabled ? undefined : onClick}
+      onKeyDown={
+        disabled
+          ? undefined
+          : e => {
+              e.key === 'Enter' && onClick?.(e)
+              abbrProps.onKeyDown?.(e)
+            }
+      }
     >
       {children}
       {hiddenText && <span className="visually-hidden">{hiddenText}</span>}

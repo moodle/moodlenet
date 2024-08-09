@@ -6,9 +6,9 @@ export default function HeaderSearchbox({ placeholder }: { placeholder: string }
     <Searchbox
       {...{
         placeholder,
-        onChange: console.log,
+        search: console.log,
         boxSize: 'small',
-        trigger: { onClick: console.log },
+        triggerBtn: true,
       }}
     />
   )

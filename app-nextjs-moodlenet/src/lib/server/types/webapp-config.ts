@@ -1,7 +1,9 @@
+import { plugins } from 'lib/common/plugins'
 import { ReactElement } from 'react'
 
-export type SlotItem = string | ReactElement
-export type Slots<K extends string = string> = Record<K, SlotItem[]>
+export type slotItem = string | ReactElement
+export type layoutSlots<k extends string = string, t = slotItem> = plugins<k, t>
+
 export interface WebappConfig {
   title: string
   subtitle: string
@@ -14,14 +16,14 @@ export interface WebappConfig {
     searchPlaceholder: string
   }
   landing: {
-    slots: Slots<'head' | 'content'>
+    slots: layoutSlots<'head' | 'content'>
   }
   mainLayout: {
     header: {
-      slots: Slots<'left' | 'center' | 'right'>
+      slots: layoutSlots<'left' | 'center' | 'right'>
     }
     footer: {
-      slots: Slots<'left' | 'center' | 'right' | 'copyright'>
+      slots: layoutSlots<'left' | 'center' | 'right' | 'copyright'>
     }
   }
 }
