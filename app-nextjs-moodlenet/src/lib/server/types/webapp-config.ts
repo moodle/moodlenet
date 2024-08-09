@@ -7,6 +7,9 @@ export type layoutSlots<k extends string = string, t = slotItem> = plugins<k, t>
 export interface WebappConfig {
   title: string
   subtitle: string
+  basePath: string
+  logo: string
+  smallLogo: string
   user: {
     permissions: {
       createDraftContent?: boolean
