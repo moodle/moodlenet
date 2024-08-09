@@ -2,7 +2,7 @@
 import PrimaryButton from '@/components/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '@/components/atoms/Searchbox/Searchbox'
 
-export async function ShareButton() {
+export function ShareButton_Cli() {
   return (
     <PrimaryButton className="share-content" color="blue" onClick={undefined}>
       Publish content
@@ -10,22 +10,22 @@ export async function ShareButton() {
   )
 }
 
-export function HeaderSearchbox({
-  initialSearchText,
+export function HeadSearchbox_Cli({
+  defaultValue,
   placeholder,
 }: {
-  initialSearchText: string
+  defaultValue: string
   placeholder: string
 }) {
   return (
     <Searchbox
       {...{
-        initialSearchText,
+        boxSize: 'big',
+        icon: true,
+        defaultValue,
         placeholder,
-        searchTextChange: () => undefined,
-        triggerSearch: () => undefined,
-        showSearchButton: true,
-        size: 'big',
+        onChange: console.log,
+        trigger: { text: 'Search', onClick: console.log },
       }}
     />
   )

@@ -12,7 +12,7 @@ export default async function getServerContext() {
         subtitle: 'Find, share and curate open educational resources',
         landing: {
           slots: {
-            header: ['shareButton'],
+            header: [],
             content: [],
           },
         },

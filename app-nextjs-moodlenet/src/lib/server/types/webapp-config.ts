@@ -14,7 +14,7 @@ export interface WebappConfig {
     searchPlaceholder: string
   }
   landing: {
-    slots: Slots<'header' | 'content'>
+    slots: Slots<'head' | 'content'>
   }
   mainLayout: {
     header: {
