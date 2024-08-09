@@ -1,4 +1,4 @@
-import { plugins } from 'lib/common/plugins'
+import { plugins } from 'lib/common/utils/plugins'
 import { ReactElement } from 'react'
 
 export type slotItem = string | ReactElement
@@ -10,11 +10,6 @@ export interface WebappConfig {
   basePath: string
   logo: string
   smallLogo: string
-  user: {
-    permissions: {
-      createDraftContent?: boolean
-    }
-  }
   labels: {
     searchPlaceholder: string
   }

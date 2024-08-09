@@ -1,13 +1,13 @@
-import { utils } from '@/lib-server/layout'
+import { layoutUtils } from '@/lib-server/layout'
 import Link from 'next/link'
 import type { PropsWithChildren } from 'react'
-import HeaderSearchbox from './client.header'
+import HeaderSearchbox, { LoginHeaderButton, SignupHeaderButton } from './client.header'
 import './layout.header.scss'
 
 export default async function LayoutHeader(props: PropsWithChildren) {
-  const { slots, ctx } = await utils(props)
+  const { slots, ctx, currUser } = await layoutUtils(props)
   const {
-    config: {
+    session: {
       webapp: {
         basePath,
         logo,
@@ -16,7 +16,7 @@ export default async function LayoutHeader(props: PropsWithChildren) {
       },
     },
   } = ctx
-  const { center, left, right } = slots(ctx.config.webapp.mainLayout.header.slots)
+  const { center, left, right } = slots(ctx.session.webapp.mainLayout.header.slots)
   return (
     <div className="header">
       <div className="content">
@@ -35,6 +35,12 @@ export default async function LayoutHeader(props: PropsWithChildren) {
         </div>
         <div className="right" key="right">
           {right}
+          {currUser.isGuest() ? (
+            <>
+              <LoginHeaderButton />
+              <SignupHeaderButton />
+            </>
+          ) : null}
         </div>
       </div>
     </div>

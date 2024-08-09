@@ -1,10 +1,10 @@
-import { utils } from '@/lib-server/layout'
+import { layoutUtils } from '@/lib-server/layout'
 import type { PropsWithChildren } from 'react'
 import './layout.footer.scss'
 
 export default async function LayoutFooter(props: PropsWithChildren) {
-  const { slots, ctx } = await utils(props)
-  const { center, left, right, copyright } = slots(ctx.config.webapp.mainLayout.footer.slots)
+  const { slots, ctx } = await layoutUtils(props)
+  const { center, left, right, copyright } = slots(ctx.session.webapp.mainLayout.footer.slots)
   return (
     <div className="footer">
       <div className="top">

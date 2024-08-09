@@ -113,3 +113,39 @@
     }
   }
 }
+
+.header {
+  > .content {
+    > .left {
+      gap: 10px;
+    }
+
+    > .right {
+      > .login-button {
+        > .primary-button {
+          svg {
+            display: none;
+          }
+        }
+      }
+
+      @media screen and (max-width: 450px) {
+        > .login-button {
+          > .primary-button {
+            padding: 10px 4px;
+            > span {
+              display: none;
+            }
+            > svg {
+              display: block;
+            }
+          }
+        }
+
+        > .signup-button > .tertiary-button {
+          display: none;
+        }
+      }
+    }
+  }
+}
