@@ -1,7 +1,7 @@
 import { ContentBackupImages } from '@/assets/data/images'
 import type { AssetInfo } from '@/common/types'
 import { getDomainUrl } from '@/common/utilities'
-import { getVimeoEmbed, getVimeoThumbnail } from '@/components/molecules/embeds/Vimeo/Vimeo'
+import { getVimeoEmbed, getVimeoThumbnail } from '@/components/molecules/embeds/Vimeo/Vimeo.jsx'
 import {
   getYouTubeEmbed,
   getYouTubeThumbnail,

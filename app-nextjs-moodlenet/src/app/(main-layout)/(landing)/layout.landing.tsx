@@ -1,5 +1,5 @@
 import defaultBackground from '@/assets/img/default-landing-background.png'
-import { layoutUtils } from '@/lib-server/layout'
+import { layoutUtils } from '@/lib-server/utils'
 import { PropsWithChildren } from 'react'
 import { LandingHeadSearchbox, LandingHeadShareButton } from './client.landing'
 import './layout.landing.scss'
@@ -7,7 +7,7 @@ import './layout.landing.scss'
 export default async function LayoutLanding(props: PropsWithChildren) {
   const { slots, ctx } = await layoutUtils(props)
   const {
-    webapp: { subtitle, title, landing },
+    website: { subtitle, title, landing },
     permissions,
   } = ctx.session
   const { head, content } = slots(landing.slots)

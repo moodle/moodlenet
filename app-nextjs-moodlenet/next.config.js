@@ -20,12 +20,16 @@ const plugins = [
 ];
 
 const nextConfigFn = composePlugins(...plugins)(nextConfig);
+
+// @ts-expect-error Parameter 'name' implicitly has an 'any' type.ts(7006)
 module.exports = async (...args) => {
 
+  // @ts-expect-error Parameter 'name' implicitly has an 'any' type.ts(7006)
   const config = await nextConfigFn(...args);
 
   const webpack = config.webpack
   config.webpack = (config, options) => {
+    // @ts-expect-error Parameter 'name' implicitly has an 'any' type.ts(7006)
     const fileLoaderRule = config.module.rules.find((rule) =>
       rule.test?.test?.('.svg'),
     )

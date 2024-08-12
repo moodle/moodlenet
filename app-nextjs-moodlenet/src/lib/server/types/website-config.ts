@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 export type slotItem = string | ReactElement
 export type layoutSlots<k extends string = string, t = slotItem> = plugins<k, t>
 
-export interface WebappConfig {
+export interface WebsiteConfig {
   title: string
   subtitle: string
   basePath: string
@@ -16,12 +16,22 @@ export interface WebappConfig {
   landing: {
     slots: layoutSlots<'head' | 'content'>
   }
-  mainLayout: {
-    header: {
-      slots: layoutSlots<'left' | 'center' | 'right'>
+  layout: {
+    main: {
+      header: {
+        slots: layoutSlots<'left' | 'center' | 'right'>
+      }
+      footer: {
+        slots: layoutSlots<'left' | 'center' | 'right' | 'bottom'>
+      }
     }
-    footer: {
-      slots: layoutSlots<'left' | 'center' | 'right' | 'copyright'>
+    simple: {
+      header: {
+        slots: layoutSlots<'left' | 'center' | 'right'>
+      }
+      footer: {
+        slots: layoutSlots<'left' | 'center' | 'right' | 'bottom'>
+      }
     }
   }
 }

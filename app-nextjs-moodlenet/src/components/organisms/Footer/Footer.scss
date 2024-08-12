@@ -1,3 +1,10 @@
+.footer {
+  > .content {
+    > .left {
+      gap: 10px;
+    }
+  }
+}
 
 .footer {
   padding: 70px 0 40px;

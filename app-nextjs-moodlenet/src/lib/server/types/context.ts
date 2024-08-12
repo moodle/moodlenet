@@ -1,18 +1,12 @@
 import { SomeOf } from 'lib/common/utils/types'
-import { WebappConfig } from './webapp-config'
+import { WebsiteConfig } from './website-config'
 
-// export interface PageProps {
-//   v: '1.0'
-// }
-// export type PagePropsFactories = {
-//   [k in keyof PageProps]: (() => PageProps[k] | Promise<PageProps[k]>) | PageProps[k]
-// }
 export interface ServerContext {
   // pageProps: PagePropsFactories
   session: {
     currentUser: SomeOf<CurrentUser>
     permissions: Partial<Permissions>
-    webapp: WebappConfig
+    website: WebsiteConfig
   }
 }
 

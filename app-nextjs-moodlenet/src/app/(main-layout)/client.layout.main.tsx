@@ -30,7 +30,7 @@ export function SignupHeaderButton() {
   )
 }
 
-export default function HeaderSearchbox({ placeholder }: { placeholder: string }) {
+export function HeaderSearchbox({ placeholder }: { placeholder: string }) {
   return (
     <Searchbox
       {...{

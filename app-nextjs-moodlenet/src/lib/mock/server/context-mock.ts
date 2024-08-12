@@ -5,7 +5,7 @@ export default async function getServerContext() {
     session: {
       currentUser: { t: 'guest' },
       permissions: { createDraftContent: true },
-      webapp: {
+      website: {
         basePath: '/',
         logo: 'https://moodle.net/08469f8073a8f969253823d5d6ed6ffa.png',
         smallLogo: 'https://moodle.net/e80d311942d3ce22651b33968a87ecb1.png',
@@ -20,20 +20,39 @@ export default async function getServerContext() {
             content: [],
           },
         },
-        mainLayout: {
-          header: {
-            slots: {
-              left: [],
-              center: [],
-              right: [],
+        layout: {
+          simple: {
+            header: {
+              slots: {
+                left: [],
+                center: [],
+                right: [],
+              },
+            },
+            footer: {
+              slots: {
+                left: [],
+                center: [],
+                right: [],
+                bottom: [],
+              },
             },
           },
-          footer: {
-            slots: {
-              left: [],
-              center: [],
-              right: [],
-              copyright: [],
+          main: {
+            header: {
+              slots: {
+                left: [],
+                center: [],
+                right: [],
+              },
+            },
+            footer: {
+              slots: {
+                left: [],
+                center: [],
+                right: [],
+                bottom: [],
+              },
             },
           },
         },

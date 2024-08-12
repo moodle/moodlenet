@@ -1,22 +1,18 @@
-"use client"
-import type { FC, PropsWithChildren, ReactElement } from 'react'
+'use client'
+import { slots } from '@/lib-ui/utils/types'
 import './MinimalisticHeader.scss'
 
-export type MinimalisticHeaderProps = {
-  leftItems?: ReactElement[]
-  centerItems?: ReactElement[]
-  rightItems?: ReactElement[]
-}
-
-export const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = (
-  { leftItems, centerItems, rightItems } /* { devMode, setDevMode } */,
-) => {
+export default function MinimalisticHeader({
+  slots: { left, center, right },
+}: {
+  slots: slots<'left' | 'center' | 'right'>
+}) {
   return (
     <div className="minimalistic-header">
       <div className="content">
-        <div className="left">{leftItems}</div>
-        <div className="center">{centerItems}</div>
-        <div className="right">{rightItems}</div>
+        <div className="left">{left}</div>
+        <div className="center">{center}</div>
+        <div className="right">{right}</div>
       </div>
     </div>
   )

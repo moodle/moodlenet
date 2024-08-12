@@ -25,7 +25,8 @@
       "@/lib-mock/*": ["lib/mock/*"],
       "@/components/*": ["components/*"],
       "@/assets/*": ["assets/*"],
-      "@/common/*": ["common/*"]
+      "@/common/*": ["common/*"],
+      "@/_common/*": ["app/_common/*"]
     }
   },
   "include": [
