@@ -1,15 +1,11 @@
 'use server'
 import HeaderLogo from '@/components/organisms/Header/HeaderLogo/HeaderLogo'
-import { serverUtils } from '@/lib-server/utils'
+import { sessionContext } from '@/lib-server/sessionContext'
 
 export async function LayoutHeaderLogo() {
-  const srvUtils = await serverUtils()
   const {
-    ctx: {
-      session: {
-        website: { logo, smallLogo, basePath },
-      },
-    },
-  } = srvUtils
+    website: { info },
+  } = await sessionContext()
+  const { logo, smallLogo, basePath } = await info()
   return <HeaderLogo {...{ logo, smallLogo, href: basePath }} />
 }
