@@ -10,10 +10,10 @@ export const pages: SessionContext['website']['layouts']['pages'] = async functi
       },
     },
     login: {
-      slots: {
-        login: [],
-        signup: [],
-      },
+      methods: [
+        { label: 'Email and password', item: 'emailPwd' },
+        { label: 'ciccio pwd', item: 'ciccio' },
+      ],
     },
   }
 

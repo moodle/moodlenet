@@ -1,6 +1,6 @@
 'use client'
-import PrimaryButton from '@/components/atoms/PrimaryButton/PrimaryButton'
-import Searchbox from '@/components/atoms/Searchbox/Searchbox'
+import PrimaryButton from 'ui-cmps/atoms/PrimaryButton/PrimaryButton'
+import Searchbox from 'ui-cmps/atoms/Searchbox/Searchbox'
 
 export function LandingHeadShareButton() {
   return (

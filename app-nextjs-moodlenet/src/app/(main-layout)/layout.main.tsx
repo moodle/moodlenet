@@ -1,19 +1,17 @@
 import { LayoutHeaderLogo } from '@/_common/header-logo.server'
-import Footer, { FooterProps } from '@/components/organisms/Footer/Footer'
-import MainHeader, { MainHeaderProps } from '@/components/organisms/Header/MainHeader/MainHeader'
 import { sessionContext } from '@/lib-server/sessionContext'
-import { slots } from '@/lib-server/utils/slots'
+import { layoutPropsWithChildren, slots } from '@/lib-server/utils/slots'
 import { isGuest } from '@/lib-server/utils/user'
-import type { PropsWithChildren } from 'react'
+import Footer, { FooterProps } from 'ui-cmps/organisms/Footer/Footer'
+import MainHeader, { MainHeaderProps } from 'ui-cmps/organisms/Header/MainHeader/MainHeader'
 import { HeaderSearchbox, LoginHeaderButton, SignupHeaderButton } from './client.layout.main'
 import './layout.main.scss'
 
-export default async function LayoutMain(props: PropsWithChildren) {
+export default async function LayoutMain(props: layoutPropsWithChildren) {
   const {
     website: { layouts },
     currentUser,
   } = await sessionContext()
-  const searchbox = await layouts.components('searchbox')
   const { footer, header } = await layouts.roots('main')
   const user = await currentUser()
 
@@ -28,7 +26,7 @@ export default async function LayoutMain(props: PropsWithChildren) {
   function headerSlots(): MainHeaderProps['slots'] {
     const { center, left, right } = slots(props, header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
-    const defaultCenters = [<HeaderSearchbox placeholder={searchbox.placeholder} key="searchbox" />]
+    const defaultCenters = [<HeaderSearchbox key="searchbox" />]
     const defaultRights = isGuest(user)
       ? [
           <LoginHeaderButton key="login-header-button" />,

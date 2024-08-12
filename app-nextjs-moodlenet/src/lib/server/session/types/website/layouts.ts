@@ -1,41 +1,47 @@
-import { layoutSlots } from '../misc'
+import { ReactElement } from 'react'
+import { layoutSlotItem } from '../misc'
+
+export type ReactNodeSer = ReactElement | string | number | ReactNodeSer[]
 
 export interface Layouts {
   pages: PageLayouts
   roots: RootLayouts
-  components: ComponentLayouts
 }
 
 export interface RootLayouts {
   main: {
     header: {
-      slots: layoutSlots<'left' | 'center' | 'right'>
+      slots: { left: layoutSlotItem[]; center: layoutSlotItem[]; right: layoutSlotItem[] }
     }
     footer: {
-      slots: layoutSlots<'left' | 'center' | 'right' | 'bottom'>
+      slots: {
+        left: layoutSlotItem[]
+        center: layoutSlotItem[]
+        right: layoutSlotItem[]
+        bottom: layoutSlotItem[]
+      }
     }
   }
   simple: {
     header: {
-      slots: layoutSlots<'left' | 'center' | 'right'>
+      slots: { left: layoutSlotItem[]; center: layoutSlotItem[]; right: layoutSlotItem[] }
     }
     footer: {
-      slots: layoutSlots<'left' | 'center' | 'right' | 'bottom'>
+      slots: {
+        left: layoutSlotItem[]
+        center: layoutSlotItem[]
+        right: layoutSlotItem[]
+        bottom: layoutSlotItem[]
+      }
     }
   }
 }
 
 export interface PageLayouts {
   landing: {
-    slots: layoutSlots<'head' | 'content'>
+    slots: { head: layoutSlotItem[]; content: layoutSlotItem[] }
   }
   login: {
-    slots: layoutSlots<'login' | 'signup'>
-  }
-}
-
-export interface ComponentLayouts {
-  searchbox: {
-    placeholder: string
+    methods: { label: ReactNodeSer; item: string }[]
   }
 }

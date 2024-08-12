@@ -1,10 +1,11 @@
 'use client'
-import PrimaryButton from '@/components/atoms/PrimaryButton/PrimaryButton'
-import Searchbox from '@/components/atoms/Searchbox/Searchbox'
-import TertiaryButton from '@/components/atoms/TertiaryButton/TertiaryButton'
 import { Person } from '@mui/icons-material'
+import { t } from 'i18next'
 import { siteUrls } from 'lib/common/utils/site-urls'
 import Link from 'next/link'
+import PrimaryButton from 'ui-cmps/atoms/PrimaryButton/PrimaryButton'
+import Searchbox from 'ui-cmps/atoms/Searchbox/Searchbox'
+import TertiaryButton from 'ui-cmps/atoms/TertiaryButton/TertiaryButton'
 
 export function LoginHeaderButton() {
   const { access } = siteUrls()
@@ -33,11 +34,11 @@ export function SignupHeaderButton() {
   )
 }
 
-export function HeaderSearchbox({ placeholder }: { placeholder: string }) {
+export function HeaderSearchbox() {
   return (
     <Searchbox
       {...{
-        placeholder,
+        placeholder: t('Search for open educational content'),
         search: console.log,
         boxSize: 'small',
         triggerBtn: true,

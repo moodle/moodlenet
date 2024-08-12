@@ -1,21 +1,21 @@
 import { LayoutHeaderLogo } from '@/_common/header-logo.server'
-import Footer, { FooterProps } from '@/components/organisms/Footer/Footer'
-import { MainHeaderProps } from '@/components/organisms/Header/MainHeader/MainHeader'
-import type { PropsWithChildren, ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import Footer, { FooterProps } from 'ui-cmps/organisms/Footer/Footer'
+import { MainHeaderProps } from 'ui-cmps/organisms/Header/MainHeader/MainHeader'
 // import { } from './client.layout.simple'
-import MinimalisticHeader from '@/components/organisms/Header/Minimalistic/MinimalisticHeader'
 import { sessionContext } from '@/lib-server/sessionContext'
-import { slots } from '@/lib-server/utils/slots'
+import { layoutPropsWithChildren, slots } from '@/lib-server/utils/slots'
+import MinimalisticHeader from 'ui-cmps/organisms/Header/Minimalistic/MinimalisticHeader'
 import './layout.simple.scss'
 
-export default async function LayoutSimple(props: PropsWithChildren) {
+export default async function LayoutSimple(props: layoutPropsWithChildren) {
   const {
     website: { layouts },
   } = await sessionContext()
   const { footer, header } = await layouts.roots('main')
 
   return (
-    <div className={`main-layout`}>
+    <div className={`simple-layout`}>
       <MinimalisticHeader slots={headerSlots()} />
       <div className="content">{props.children}</div>
       <Footer slots={footerSlots()} />

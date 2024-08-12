@@ -1,7 +1,7 @@
 import { Permissions } from './permissions'
 import { user } from './user'
 import { WebsiteInfo } from './website'
-import { ComponentLayouts, PageLayouts, RootLayouts } from './website/layouts'
+import { PageLayouts, RootLayouts } from './website/layouts'
 
 type getter<T> = <k extends keyof T>(k: k) => Promise<T[k]>
 export interface SessionContext {
@@ -12,7 +12,6 @@ export interface SessionContext {
     layouts: {
       pages: getter<PageLayouts>
       roots: getter<RootLayouts>
-      components: getter<ComponentLayouts>
     }
   }
 }

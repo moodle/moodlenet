@@ -1,3 +1,3 @@
-export default function LandingPage() {
-  return null
-}
+import LandingPage from './page.landing'
+
+export default LandingPage

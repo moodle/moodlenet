@@ -11,6 +11,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
+    "noUncheckedIndexedAccess": true,
     "plugins": [
       {
         "name": "next"
@@ -23,7 +24,7 @@
       "@/lib-server/*": ["lib/server/*"],
       "@/lib-ui/*": ["lib/ui/*"],
       "@/lib-mock/*": ["lib/mock/*"],
-      "@/components/*": ["components/*"],
+      "@/components/*": ["ui-cmps/*"],
       "@/assets/*": ["assets/*"],
       "@/common/*": ["common/*"],
       "@/_common/*": ["app/_common/*"]
