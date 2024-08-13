@@ -1,8 +1,23 @@
-import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
+import InputTextField from '@/ui/atoms/InputTextField/InputTextField';
+import PrimaryButton from '@/ui/atoms/PrimaryButton/PrimaryButton';
+import TertiaryButton from '@/ui/atoms/TertiaryButton/TertiaryButton';
 import type { Href } from '@moodlenet/react-app/common'
 import { Link } from '@moodlenet/react-app/ui'
 import type { useFormik } from 'formik'
 import type { FC } from 'react'
+
+
+export type LoginFormValues = { email: string; password: string; };
+
+export const LoginIcon: FC = () => {
+  return <PrimaryButton color="blue">Using email</PrimaryButton>;
+};
+
+export type LoginProps = {
+  form: ReturnType<typeof useFormik<LoginFormValues>>;
+  recoverPasswordHref: Href;
+  wrongCreds: boolean;
+};
 
 /*** TEST  IS LINT REACT WORK --> this give error missing display name
 

@@ -2,8 +2,8 @@ import { useFooterProps, useMinimalisticHeaderProps } from '@moodlenet/react-app
 import { loginPageRoutePath } from '@moodlenet/web-user/common'
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { shell } from '../../shell.mjs'
-import type { NewPasswordProps } from './NewPassword.js'
+import { shell } from '../../../../../../../zz__legacy/packages/simple-email-auth/src/webapp/shell.mjs'
+import type { NewPasswordProps } from './NewPassword.jsx'
 
 export function useNewPasswordProps({ token }: { token: string }) {
   const nav = useNavigate()

@@ -1,3 +1,3 @@
-import LayoutLogin from './layout.email-pwd-login'
+import LayoutEmailPwdLogin from './layout.email-pwd-login'
 
-export default LayoutLogin
+export default LayoutEmailPwdLogin

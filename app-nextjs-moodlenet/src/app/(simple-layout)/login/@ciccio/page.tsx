@@ -1,3 +1,3 @@
-import EmailPwdLoginPage from './page.email-pwd-login'
+import CiccioLoginPage from './page.ciccio-login'
 
-export default EmailPwdLoginPage
+export default CiccioLoginPage

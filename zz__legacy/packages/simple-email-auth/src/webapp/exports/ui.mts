@@ -1,8 +1,8 @@
 // @index(['../ui/**/!(*.stories|*Hooks|*Hook|*Container|*Context|*Route)*.{mts,tsx}'], f => `export * from '${f.path}${f.ext==='.tsx'?'.js':f.ext==='.mts'?'.mjs':f.ext}'`)
-export * from '../ui/AdminSettings.js'
-export * from '../ui/Login/Login.js'
-export * from '../ui/NewPassword/NewPassword.js'
-export * from '../ui/RecoverPassword/RecoverPassword.js'
-export * from '../ui/Signup/Signup.js'
-export * from '../ui/UserSettings.js'
+export * from '../../../../../../app-nextjs-moodlenet/src/app/(simple-layout)/signup/AdminSettings.js'
+export * from '../../../../../../app-nextjs-moodlenet/src/app/(simple-layout)/login/@emailPwd/Login/Login.js'
+export * from '../../../../../../app-nextjs-moodlenet/src/app/(simple-layout)/login/@emailPwd/NewPassword/NewPassword.js'
+export * from '../../../../../../app-nextjs-moodlenet/src/app/(simple-layout)/login/@emailPwd/RecoverPassword/RecoverPassword.js'
+export * from '../../../../../../app-nextjs-moodlenet/src/app/(simple-layout)/signup/Signup/Signup.js'
+export * from '../../../../../../app-nextjs-moodlenet/src/app/(simple-layout)/signup/UserSettings.js'
 // @endindex

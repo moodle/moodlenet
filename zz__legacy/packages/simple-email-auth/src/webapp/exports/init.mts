@@ -3,10 +3,10 @@ import { GeneralSettingsPlugin, LoginPlugins, SignupPlugins } from '@moodlenet/w
 import { useMemo } from 'react'
 import { routes } from '../routes.js'
 import '../shell.mjs'
-import { LoginIcon } from '../ui/Login/Login.js'
-import { LoginPanelContainer } from '../ui/Login/LoginContainer.js'
-import { SignUpPanelContainer } from '../ui/Signup/SignUpHooks.js'
-import { SimpleEmailUserSettingsContainer } from '../ui/SimpleEmailUserSettingsContainer.js'
+import { LoginIcon } from '../../../../../../app-nextjs-moodlenet/src/app/(simple-layout)/login/@emailPwd/Login/Login.js'
+import { LoginPanelContainer } from '../../../../../../app-nextjs-moodlenet/src/app/(simple-layout)/login/@emailPwd/Login/LoginContainer.js'
+import { SignUpPanelContainer } from '../../../../../../app-nextjs-moodlenet/src/app/(simple-layout)/signup/Signup/SignUpHooks.js'
+import { SimpleEmailUserSettingsContainer } from '../../../../../../app-nextjs-moodlenet/src/app/(simple-layout)/signup/SimpleEmailUserSettingsContainer.js'
 import { SignupIcon } from './ui.mjs'
 
 registerAppRoutes({ routes })

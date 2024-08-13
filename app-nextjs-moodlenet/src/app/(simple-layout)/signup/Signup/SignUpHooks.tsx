@@ -1,9 +1,9 @@
 import { useFormik } from 'formik'
 import type { FC, PropsWithChildren } from 'react'
 import { useMemo, useState } from 'react'
-import { shell } from '../../shell.mjs'
-import type { SignupFormValues, SignupProps } from './Signup.js'
-import * as SignUpAddon from './Signup.js'
+import { shell } from '../../../../../../zz__legacy/packages/simple-email-auth/src/webapp/shell.mjs'
+import type { SignupFormValues, SignupProps } from './Signup.jsx'
+import * as SignUpAddon from './Signup.jsx'
 
 export const usePanelProps = (): SignupProps => {
   const [emailSent, setEmailSent] = useState(false)

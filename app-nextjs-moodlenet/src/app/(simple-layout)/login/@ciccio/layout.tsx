@@ -1,3 +1,3 @@
-import LayoutLogin from './layout.email-pwd-login'
+import LayoutCiccioLogin from './layout.ciccio-login'
 
-export default LayoutLogin
+export default LayoutCiccioLogin

@@ -1,9 +1,9 @@
 import { href } from '@moodlenet/react-app/common'
 import { useFormik } from 'formik'
 import { useMemo, useState } from 'react'
-import { RECOVER_PASSWORD_PATH } from '../../../common/webapp-routes.mjs'
-import { shell } from '../../shell.mjs'
-import type { LoginFormValues, LoginProps } from './Login.js'
+import { RECOVER_PASSWORD_PATH } from '../../../../../../../zz__legacy/packages/simple-email-auth/src/common/webapp-routes.mjs'
+import { shell } from '../../../../../../../zz__legacy/packages/simple-email-auth/src/webapp/shell.mjs'
+import type { LoginFormValues, LoginProps } from './Login.jsx'
 
 export const usePanelProps = (): LoginProps => {
   const [wrongCreds, setWrongCreds] = useState(false)

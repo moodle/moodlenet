@@ -1,35 +1,11 @@
+import { layoutProps, layoutPropsWithChildren } from '@/lib/server/utils/slots'
+import './layout.email-pwd-login.scss'
 import { InputTextField, PrimaryButton, TertiaryButton } from '@moodlenet/component-library'
-import type { Href } from '@moodlenet/react-app/common'
 import { Link } from '@moodlenet/react-app/ui'
-import type { useFormik } from 'formik'
 import type { FC } from 'react'
+import { LoginProps } from './client.email-pwd-login.tsx'
 
-/*** TEST  IS LINT REACT WORK --> this give error missing display name
-
-const Hello = React.memo(({ a }: { a: string }) => {
-  return <>{a}</>
-})
- */
-
-export type LoginFormValues = { email: string; password: string }
-
-export const LoginIcon: FC = () => {
-  return <PrimaryButton color="blue">Using email</PrimaryButton>
-}
-
-export type LoginProps = {
-  form: ReturnType<typeof useFormik<LoginFormValues>>
-  recoverPasswordHref: Href
-  wrongCreds: boolean
-}
-
-export const LoginPanel: FC<LoginProps> = ({ wrongCreds, form, recoverPasswordHref }) => {
-  /* const { pkgs } = useContext(MainContext)
-  const [authPkgApis] = pkgs
-
-  const auth = useContext(AuthCtx)
-  const [wrongCreds, setWrongCreds] = useState(false)
-*/
+export async function LayoutEmailPwdLogin (props:layoutProps) {
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
   return (

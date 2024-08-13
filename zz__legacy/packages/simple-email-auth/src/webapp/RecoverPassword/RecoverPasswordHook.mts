@@ -1,7 +1,7 @@
 import { useFooterProps, useMinimalisticHeaderProps } from '@moodlenet/react-app/webapp'
 import { useCallback, useMemo, useState } from 'react'
-import { shell } from '../../shell.mjs'
-import type { RecoverPasswordProps } from './RecoverPassword.js'
+import { shell } from '../../../../../../../zz__legacy/packages/simple-email-auth/src/webapp/shell.mjs'
+import type { RecoverPasswordProps } from './RecoverPassword.jsx'
 
 export function useRecoverPasswordProps() {
   const [requestSent, setRequestSent] = useState(false)
