@@ -1,9 +1,0 @@
-query IscedfCard($id: ID!) {
-  node(id: $id) {
-    ... on IscedField {
-      name
-      image
-      id
-    }
-  }
-}
