@@ -11,7 +11,7 @@ export const pages: SessionContext['website']['layouts']['pages'] = async functi
     },
     login: {
       methods: [
-        { label: 'Email and password', item: 'emailPwd' },
+        { label: 'Use email', item: 'emailPwd' },
         { label: 'ciccio pwd', item: 'ciccio' },
       ],
     },

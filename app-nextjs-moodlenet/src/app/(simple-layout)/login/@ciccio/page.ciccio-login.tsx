@@ -1,3 +1,3 @@
-export default async function EmailPwdLoginPage() {
+export default async function CiccioLoginPage() {
   return 'CICCIO LOGIN!!'
 }

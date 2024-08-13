@@ -1,55 +1,37 @@
-import InputTextField from '@/ui/atoms/InputTextField/InputTextField';
-import PrimaryButton from '@/ui/atoms/PrimaryButton/PrimaryButton';
-import TertiaryButton from '@/ui/atoms/TertiaryButton/TertiaryButton';
-import type { Href } from '@moodlenet/react-app/common'
-import { Link } from '@moodlenet/react-app/ui'
-import type { useFormik } from 'formik'
-import type { FC } from 'react'
+'use client'
+import InputTextField from '@/ui/atoms/InputTextField/InputTextField'
+import PrimaryButton from '@/ui/atoms/PrimaryButton/PrimaryButton'
+import TertiaryButton from '@/ui/atoms/TertiaryButton/TertiaryButton'
+import { useFormik } from 'formik'
+import Link from 'next/link'
+import { login, LoginFormValues } from './actions'
 
-
-export type LoginFormValues = { email: string; password: string; };
-
-export const LoginIcon: FC = () => {
-  return <PrimaryButton color="blue">Using email</PrimaryButton>;
-};
-
-export type LoginProps = {
-  form: ReturnType<typeof useFormik<LoginFormValues>>;
-  recoverPasswordHref: Href;
-  wrongCreds: boolean;
-};
-
-/*** TEST  IS LINT REACT WORK --> this give error missing display name
-
-const Hello = React.memo(({ a }: { a: string }) => {
-  return <>{a}</>
-})
- */
-
-export type LoginFormValues = { email: string; password: string }
-
-export const LoginIcon: FC = () => {
+export function LoginIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
 
+export interface FormConfigs {
+  email: { max: number; min: number }
+  password: { max: number; min: number }
+}
 export type LoginProps = {
-  form: ReturnType<typeof useFormik<LoginFormValues>>
-  recoverPasswordHref: Href
+  recoverPasswordUrl: string
   wrongCreds: boolean
+  configs?: FormConfigs
 }
 
-export const LoginPanel: FC<LoginProps> = ({ wrongCreds, form, recoverPasswordHref }) => {
-  /* const { pkgs } = useContext(MainContext)
-  const [authPkgApis] = pkgs
-
-  const auth = useContext(AuthCtx)
-  const [wrongCreds, setWrongCreds] = useState(false)
-*/
+export default function LoginPanel({ wrongCreds, recoverPasswordUrl, configs }: LoginProps) {
+  const form = useFormik<LoginFormValues>({
+    onSubmit: values => login(values),
+    initialValues: { email: '', password: '' },
+  })
+  console.log(form)
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
+
   return (
     <>
-      <form onSubmit={form.handleSubmit}>
+      <form action={form.submitForm}>
         <InputTextField
           className="email"
           placeholder={`Email`}
@@ -77,7 +59,7 @@ export const LoginPanel: FC<LoginProps> = ({ wrongCreds, form, recoverPasswordHr
         <div className="content">
           <div className="left">
             <PrimaryButton onClick={canSubmit ? form.submitForm : undefined}>Log in</PrimaryButton>
-            <Link href={recoverPasswordHref}>
+            <Link href={recoverPasswordUrl}>
               <TertiaryButton>or recover password</TertiaryButton>
             </Link>
           </div>

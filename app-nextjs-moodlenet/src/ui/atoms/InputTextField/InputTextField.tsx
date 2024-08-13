@@ -2,8 +2,8 @@
 import type React from 'react'
 import type { ReactNode } from 'react'
 import { forwardRef, useEffect, useRef, useState } from 'react'
-import { useForwardedRef } from '../../../lib/useForwardedRef'
 import './InputTextField.scss'
+import { useForwardedRef } from '@/lib/ui/useForwardedRef'
 
 export type InputTextFieldProps = {
   label?: string
@@ -29,7 +29,7 @@ export const InputTextField = forwardRef<
 >((props, forwRef) => {
   const {
     label,
-    edit,
+    edit=true,
     noBorder,
     textAreaAutoSize,
     isTextarea,
@@ -137,6 +137,5 @@ const _removeTextAreaProp = (_ = {}) => {
   return rest
 }
 
-InputTextField.defaultProps = { edit: true }
 InputTextField.displayName = 'InputTextField'
 export default InputTextField
