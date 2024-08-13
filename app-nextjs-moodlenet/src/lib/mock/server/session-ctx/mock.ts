@@ -1,4 +1,4 @@
-import { SessionContext } from '@/lib-server/session/types/context'
+import { SessionContext } from '@/lib/server/session/types/context'
 import { pages } from './layouts/pages'
 import { roots } from './layouts/roots'
 import { permission } from './permission'

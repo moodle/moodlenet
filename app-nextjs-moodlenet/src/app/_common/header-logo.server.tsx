@@ -1,6 +1,6 @@
 'use server'
-import { sessionContext } from '@/lib-server/sessionContext'
-import HeaderLogo from 'ui-cmps/organisms/Header/HeaderLogo/HeaderLogo'
+import { sessionContext } from '@/lib/server/sessionContext'
+import HeaderLogo from '@/ui/organisms/Header/HeaderLogo/HeaderLogo'
 
 export async function LayoutHeaderLogo() {
   const {

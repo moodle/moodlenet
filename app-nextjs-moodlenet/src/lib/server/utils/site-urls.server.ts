@@ -1,4 +1,4 @@
-import { siteUrls } from 'lib/common/utils/site-urls'
+import { siteUrls } from '@/lib/common/utils/site-urls'
 import { sessionContext } from '../sessionContext'
 
 export async function srvSiteUrls() {

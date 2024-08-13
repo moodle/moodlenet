@@ -1,6 +1,6 @@
-import { getAuthToken } from '@/lib-server/auth'
-import { user as _user } from '@/lib-server/session/types/user'
-import { siteUrls } from 'lib/common/utils/site-urls'
+import { getAuthToken } from '@/lib/server/auth'
+import { user as _user } from '@/lib/server/session/types/user'
+import { siteUrls } from '@/lib/common/utils/site-urls'
 
 export async function user() {
   const url = siteUrls('http://localhost:3000')

@@ -20,14 +20,7 @@
     "types": ["jest", "node"],
     "baseUrl": "./src/",
     "paths": {
-      //"@/context": ["server/types/context"],
-      "@/lib-server/*": ["lib/server/*"],
-      "@/lib-ui/*": ["lib/ui/*"],
-      "@/lib-mock/*": ["lib/mock/*"],
-      "@/components/*": ["ui-cmps/*"],
-      "@/assets/*": ["assets/*"],
-      "@/common/*": ["common/*"],
-      "@/_common/*": ["app/_common/*"]
+      "@/*": ["./*"],
     }
   },
   "include": [

@@ -1,5 +1,5 @@
-import { SessionContext } from '@/lib-server/session/types/context'
-import { ComponentLayouts } from '@/lib-server/session/types/website/layouts'
+import { SessionContext } from '@/lib/server/session/types/context'
+import { ComponentLayouts } from '@/lib/server/session/types/website/layouts'
 
 export const components: SessionContext['website']['layouts']['components'] =
   async function componentLayout(k) {

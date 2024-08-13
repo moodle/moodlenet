@@ -4,6 +4,6 @@ export type keyCodes = 'Enter' | 'NumpadEnter'
 export function isKC(event: KeyboardEvent, key: keyCodes) {
   return event.code === key
 }
-export function isEnter(event: KeyboardEvent) {
+export function isEnterKeyEv(event: KeyboardEvent) {
   return isKC(event, 'Enter') || isKC(event, 'NumpadEnter')
 }

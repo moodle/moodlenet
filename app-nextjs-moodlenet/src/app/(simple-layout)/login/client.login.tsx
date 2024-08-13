@@ -1,9 +1,9 @@
 'use client'
 
-import { Card } from '@/components/atoms/Card/Card'
-import { ReactNodeSer } from '@/lib-server/session/types/website/layouts'
-import { CallMade as CallMadeIcon } from '@mui/icons-material'
-import { siteUrls } from 'lib/common/utils/site-urls'
+import Card from '@/ui/atoms/Card/Card'
+import { ReactNodeSer } from '@/lib/server/session/types/website/layouts'
+import CallMadeIcon from '@mui/icons-material/CallMade'
+import { siteUrls } from '@/lib/common/utils/site-urls'
 import Link from 'next/link'
 import { useState, type CSSProperties } from 'react'
 import { Trans } from 'react-i18next'

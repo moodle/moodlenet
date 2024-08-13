@@ -1,5 +1,5 @@
 import { defaultStyle } from '@/common/config'
-import { GlobalProviders } from 'app/global-providers'
+import { GlobalProviders } from '@/app/global-providers'
 import type { PropsWithChildren } from 'react'
 import './layout.root.scss'
 

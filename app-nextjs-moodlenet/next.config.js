@@ -28,13 +28,13 @@ module.exports = async (...args) => {
   const config = await nextConfigFn(...args);
 
   const webpack = config.webpack
-  config.webpack = (config, options) => {
+  config.webpack = (wpConfig, options) => {
     // @ts-expect-error Parameter 'name' implicitly has an 'any' type.ts(7006)
-    const fileLoaderRule = config.module.rules.find((rule) =>
+    const fileLoaderRule = wpConfig.module.rules.find((rule) =>
       rule.test?.test?.('.svg'),
     )
 
-    config.module.rules.push(
+    wpConfig.module.rules.push(
       // Reapply the existing rule, but only for svg imports ending in ?url
       {
         ...fileLoaderRule,
@@ -50,11 +50,22 @@ module.exports = async (...args) => {
       },
     )
 
+
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
     fileLoaderRule.exclude = /\.svg$/i
 
-    return webpack?.(config, options)
-
+    return webpack?.(wpConfig, options)
   }
+  config.experimental = {
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
+  }
+  // console.log(JSON.stringify(config, null, 2), config)
   return config
 }

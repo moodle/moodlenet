@@ -1,5 +1,5 @@
-// import { sessionContext } from '@/lib-server/sessionContext'
-// import { siteUrls } from 'lib/common/utils/site-urls'
+// import { sessionContext } from '@/lib/server/sessionContext'
+// import { siteUrls } from '@/lib/common/utils/site-urls'
 // import { redirect } from 'next/navigation'
 
 // export default async function LoginBasePathPage() {

@@ -1,11 +1,11 @@
-import { LayoutHeaderLogo } from '@/_common/header-logo.server'
+import { LayoutHeaderLogo } from '@/app/_common/header-logo.server'
 import type { ReactNode } from 'react'
-import Footer, { FooterProps } from 'ui-cmps/organisms/Footer/Footer'
-import { MainHeaderProps } from 'ui-cmps/organisms/Header/MainHeader/MainHeader'
+import Footer, { FooterProps } from '@/ui/organisms/Footer/Footer'
+import { MainHeaderProps } from '@/ui/organisms/Header/MainHeader/MainHeader'
 // import { } from './client.layout.simple'
-import { sessionContext } from '@/lib-server/sessionContext'
-import { layoutPropsWithChildren, slots } from '@/lib-server/utils/slots'
-import MinimalisticHeader from 'ui-cmps/organisms/Header/Minimalistic/MinimalisticHeader'
+import { sessionContext } from '@/lib/server/sessionContext'
+import { layoutPropsWithChildren, slots } from '@/lib/server/utils/slots'
+import MinimalisticHeader from '@/ui/organisms/Header/Minimalistic/MinimalisticHeader'
 import './layout.simple.scss'
 
 export default async function LayoutSimple(props: layoutPropsWithChildren) {
