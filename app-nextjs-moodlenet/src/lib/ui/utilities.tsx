@@ -4,9 +4,10 @@ import { getDomainUrl } from '@/common/utilities'
 import assert from 'assert'
 import type { ReactElement } from 'react'
 import { useEffect, useMemo, useState } from 'react'
-import { getVimeoEmbed, getVimeoThumbnail } from '@/ui/molecules/embeds/Vimeo/Vimeo.jsx'
-import { getYouTubeEmbed, getYouTubeThumbnail } from '@/ui/molecules/embeds/Youtube/Youtube.jsx'
+import { getVimeoEmbed, getVimeoThumbnail } from '@/ui/molecules/embeds/Vimeo/Vimeo'
+import { getYouTubeEmbed, getYouTubeThumbnail } from '@/ui/molecules/embeds/Youtube/Youtube'
 import { AddonItem } from '../types.jsx'
+
 
 export const elementFullyInViewPort = (
   el: Element,

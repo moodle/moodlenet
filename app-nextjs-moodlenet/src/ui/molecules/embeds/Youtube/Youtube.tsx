@@ -1,7 +1,7 @@
-"use client"
+'use client'
+import type { EmbedType, ThumbnailType } from '@/lib/ui/utilities'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
-import type { EmbedType, ThumbnailType } from '../../../../helpers/utilities.js'
 import './Youtube.scss'
 
 export const getYouTubeId = (url: string) => {

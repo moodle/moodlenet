@@ -1,9 +1,9 @@
 'use client'
-import { slots } from '@/lib/ui/utils/types'
+import { ReactNode } from 'react'
 import './MainHeader.scss'
 
 export interface MainHeaderProps {
-  slots: slots<'center' | 'left' | 'right'>
+  slots: Record<'center' | 'left' | 'right', ReactNode>
 }
 
 export default function MainHeader({ slots: { center, left, right } }: MainHeaderProps) {

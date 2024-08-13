@@ -12,28 +12,13 @@
     "isolatedModules": true,
     "incremental": true,
     "noUncheckedIndexedAccess": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "types": ["jest", "node"],
     "baseUrl": "./src/",
-    "sourceRoot": "./src/",
     "paths": {
       "@/*": ["./*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.jsx",
-    "../app-nextjs-moodlenet/.next/types/**/*.ts",
-    "../dist/app-nextjs-moodlenet/.next/types/**/*.ts",
-    "next-env.d.ts",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": [
     "zz__legacy",
     "ui-cmps",

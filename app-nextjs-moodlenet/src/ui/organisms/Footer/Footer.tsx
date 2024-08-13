@@ -1,9 +1,9 @@
 'use client'
-import { slots } from '@/lib/ui/utils/types'
+import { ReactNode } from 'react'
 import './Footer.scss'
 
 export interface FooterProps {
-  slots: slots<'center' | 'left' | 'right' | 'bottom'>
+  slots: Record<'center' | 'left' | 'right' | 'bottom', ReactNode>
 }
 
 export default function Footer({ slots: { bottom, center, left, right } }: FooterProps) {

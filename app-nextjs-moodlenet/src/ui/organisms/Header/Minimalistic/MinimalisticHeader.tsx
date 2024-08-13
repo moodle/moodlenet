@@ -1,11 +1,11 @@
 'use client'
-import { slots } from '@/lib/ui/utils/types'
+import { ReactNode } from 'react'
 import './MinimalisticHeader.scss'
 
 export default function MinimalisticHeader({
   slots: { left, center, right },
 }: {
-  slots: slots<'left' | 'center' | 'right'>
+  slots: Record<'left' | 'center' | 'right', ReactNode>
 }) {
   return (
     <div className="minimalistic-header">

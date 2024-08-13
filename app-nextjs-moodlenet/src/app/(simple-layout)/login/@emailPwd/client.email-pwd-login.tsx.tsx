@@ -4,28 +4,27 @@ import PrimaryButton from '@/ui/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '@/ui/atoms/TertiaryButton/TertiaryButton'
 import { useFormik } from 'formik'
 import Link from 'next/link'
-import { login, LoginFormValues } from './actions'
+import { login } from './actions'
+import getSchema, { loginFormConfigs, loginFormValues } from './schema'
+import { toFormikValidationSchema } from 'zod-formik-adapter'
 
 export function LoginIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
 
-export interface FormConfigs {
-  email: { max: number; min: number }
-  password: { max: number; min: number }
-}
 export type LoginProps = {
   recoverPasswordUrl: string
   wrongCreds: boolean
-  configs?: FormConfigs
+  configs: loginFormConfigs
 }
 
 export default function LoginPanel({ wrongCreds, recoverPasswordUrl, configs }: LoginProps) {
-  const form = useFormik<LoginFormValues>({
+  const zod = getSchema(configs)
+  const form = useFormik<loginFormValues>({
     onSubmit: values => login(values),
     initialValues: { email: '', password: '' },
+    validationSchema: toFormikValidationSchema(zod),
   })
-  console.log(form)
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
 

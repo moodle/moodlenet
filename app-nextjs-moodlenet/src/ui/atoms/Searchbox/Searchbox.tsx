@@ -3,14 +3,13 @@
 import SearchIconSVG from 'assets/icons/search.svg'
 // import Image from 'next/image'
 import { isEnterKeyEv } from '@/lib/ui/utils/keyboard'
-import { slots } from '@/lib/ui/utils/types'
 import { DetailedHTMLProps, InputHTMLAttributes, PropsWithChildren, ReactNode, useRef } from 'react'
-import PrimaryButton, { PrimaryButtonProps } from '../PrimaryButton/PrimaryButton'
+import PrimaryButton, { PrimaryButtonProps } from '@/ui/atoms/PrimaryButton/PrimaryButton'
 import './Searchbox.scss'
 export type triggerProps = PropsWithChildren<{ label?: ReactNode } & PrimaryButtonProps>
 export type searchboxProps = {
   boxSize?: 'small' | 'big'
-  slots?: slots<'left' | 'right'>
+  slots?: Record<'left' | 'right', ReactNode>
   triggerOnEnter?: boolean
   triggerBtn?: boolean | triggerProps
   search(text: string): void

@@ -1,27 +1,25 @@
-import type { AssetInfo } from '../../../../../common/types.mjs';
-import ashleywhitlatch from '../img/contentBackup/ashleywhitlatch.jpg';
-import dvlden from '../img/contentBackup/dvlden.jpg';
-import dvlden2 from '../img/contentBackup/dvlden2.jpg';
-import fakurian from '../img/contentBackup/fakurian.jpg';
-import fakurian2 from '../img/contentBackup/fakurian2.jpg';
-import gradienta from '../img/contentBackup/gradienta.jpg';
-import gradienta2 from '../img/contentBackup/gradienta2.jpg';
-import {
-  default as gradienta3,
-  default as gradienta4,
-} from '../img/contentBackup/gradienta3.jpg';
-import gradienta5 from '../img/contentBackup/gradienta5.jpg';
-import hendrikkay from '../img/contentBackup/hendrikkay.jpg';
-import lukechesser from '../img/contentBackup/lukechesser.jpg';
-import lukechesser2 from '../img/contentBackup/lukechesser2.jpg';
-import mymind from '../img/contentBackup/mymind.jpg';
-import seanwsinclair from '../img/contentBackup/seanwsinclair.jpg';
-import solenfeyisa from '../img/contentBackup/solenfeyissa.jpg';
-import vackground from '../img/contentBackup/vackground.jpg';
+import { AssetInfo } from '@/common/types'
+import ashleywhitlatch from '../img/contentBackup/ashleywhitlatch.jpg'
+import dvlden from '../img/contentBackup/dvlden.jpg'
+import dvlden2 from '../img/contentBackup/dvlden2.jpg'
+import fakurian from '../img/contentBackup/fakurian.jpg'
+import fakurian2 from '../img/contentBackup/fakurian2.jpg'
+import gradienta from '../img/contentBackup/gradienta.jpg'
+import gradienta2 from '../img/contentBackup/gradienta2.jpg'
+import { default as gradienta3, default as gradienta4 } from '../img/contentBackup/gradienta3.jpg'
+import gradienta5 from '../img/contentBackup/gradienta5.jpg'
+import hendrikkay from '../img/contentBackup/hendrikkay.jpg'
+import lukechesser from '../img/contentBackup/lukechesser.jpg'
+import lukechesser2 from '../img/contentBackup/lukechesser2.jpg'
+import mymind from '../img/contentBackup/mymind.jpg'
+import seanwsinclair from '../img/contentBackup/seanwsinclair.jpg'
+import solenfeyisa from '../img/contentBackup/solenfeyissa.jpg'
+import vackground from '../img/contentBackup/vackground.jpg'
+
 
 export const ContentBackupImages: AssetInfo[] = [
   {
-    location: solenfeyisa,
+    location: solenfeyisa.src,
     credits: {
       owner: {
         name: 'Solen Feyissa',
@@ -34,7 +32,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: seanwsinclair,
+    location: seanwsinclair.src,
     credits: {
       owner: {
         name: 'Sean Sinclair',
@@ -47,7 +45,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: fakurian,
+    location: fakurian.src,
     credits: {
       owner: {
         name: 'Milad Fakurian',
@@ -60,7 +58,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: fakurian2,
+    location: fakurian2.src,
     credits: {
       owner: {
         name: 'Milad Fakurian',
@@ -73,7 +71,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: mymind,
+    location: mymind.src,
     credits: {
       owner: {
         name: 'mymind',
@@ -86,7 +84,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: ashleywhitlatch,
+    location: ashleywhitlatch.src,
     credits: {
       owner: {
         name: 'Ashley Whitlatch',
@@ -99,7 +97,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: gradienta,
+    location: gradienta.src,
     credits: {
       owner: {
         name: 'Gradienta',
@@ -112,7 +110,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: gradienta2,
+    location: gradienta2.src,
     credits: {
       owner: {
         name: 'Gradienta',
@@ -125,7 +123,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: gradienta3,
+    location: gradienta3.src,
     credits: {
       owner: {
         name: 'Gradienta',
@@ -138,7 +136,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: gradienta4,
+    location: gradienta4.src,
     credits: {
       owner: {
         name: 'Gradienta',
@@ -151,7 +149,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: gradienta5,
+    location: gradienta5.src,
     credits: {
       owner: {
         name: 'Gradienta',
@@ -164,7 +162,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: hendrikkay,
+    location: hendrikkay.src,
     credits: {
       owner: {
         name: 'Hendrik Kespohl',
@@ -177,7 +175,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: lukechesser,
+    location: lukechesser.src,
     credits: {
       owner: {
         name: 'Luke Chesser',
@@ -190,7 +188,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: lukechesser2,
+    location: lukechesser2.src,
     credits: {
       owner: {
         name: 'Luke Chesser',
@@ -203,7 +201,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: vackground,
+    location: vackground.src,
     credits: {
       owner: {
         name: 'Vackground',
@@ -216,7 +214,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: dvlden,
+    location: dvlden.src,
     credits: {
       owner: {
         name: 'Nenad Novaković',
@@ -229,7 +227,7 @@ export const ContentBackupImages: AssetInfo[] = [
     },
   },
   {
-    location: dvlden2,
+    location: dvlden2.src,
     credits: {
       owner: {
         name: 'Nenad Novaković',
@@ -241,4 +239,4 @@ export const ContentBackupImages: AssetInfo[] = [
       },
     },
   },
-];
+]
