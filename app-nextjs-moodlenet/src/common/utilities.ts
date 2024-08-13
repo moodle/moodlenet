@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import defaultsDeep from 'lodash/defaultsDeep.js'
+import defaultsDeep from 'lodash-es/defaultsDeep'
 import type { PartialDeep } from 'type-fest'
 
 export const getDomainUrl = (url: string): string | undefined => {
