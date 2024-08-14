@@ -5,7 +5,7 @@
   height: 100%;
   margin-top: 30px;
 
-  > .content {
+  >.content {
     display: flex;
     margin-left: calc((100vw - 525px) / 2);
     height: 100%;
@@ -17,21 +17,24 @@
       margin: 0 25px;
     }
 
-    > .card {
+    >.card {
       height: 100%;
     }
-    > .login-card {
+
+    >.login-card {
       width: 525px;
       min-height: 340px;
       height: min-content;
       min-width: 0;
 
       background-color: white;
+
       @media (max-width: 900px) {
         max-width: 525px;
         width: 100%;
       }
-      > .content {
+
+      >.content {
         flex-direction: column;
         justify-content: space-between;
         display: flex;
@@ -44,17 +47,18 @@
           padding: 53px calc(25px + 5%);
         }
 
-        > .title {
+        >.title {
           color: #b6bacb;
           font-size: 32px;
         }
 
-        > form {
+        >form {
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
           gap: 15px;
-          > .input-text-field > .input-container {
+
+          >.input-text-field>.input-container {
             box-shadow: none;
             height: 46px;
             border-style: solid;
@@ -62,19 +66,22 @@
             border-radius: 45px;
             padding: 0 25px;
 
-            > input {
+            >input {
               padding: 0;
+
               &::placeholder {
                 font-weight: 500;
                 font-size: 17px;
                 color: #b6bacb;
                 opacity: 1;
               }
+
               &::-ms-input-placeholder {
                 font-weight: 500;
                 font-size: 17px;
                 color: #b6bacb;
               }
+
               &:-ms-input-placeholder {
                 font-weight: 500;
                 font-size: 17px;
@@ -90,32 +97,37 @@
               }
             }
           }
-          > .input-text-field.highlight > .input-container {
+
+          >.input-text-field.highlight>.input-container {
             box-shadow: 0 0 0 2px red;
             border: none;
           }
 
-          > .email {
+          >.email {
             max-width: 335px;
-            &:not(.highlight) > .input-container {
+
+            &:not(.highlight)>.input-container {
               border-color: var(--primary-color);
             }
-            &:not(.highlight).focused > .input-container {
+
+            &:not(.highlight).focused>.input-container {
               box-shadow: 0 0 5px var(--primary-color);
             }
           }
 
-          > .password {
+          >.password {
             max-width: 250px;
-            &:not(.highlight) > .input-container {
+
+            &:not(.highlight)>.input-container {
               border-color: #b6bacb;
             }
-            &:not(.highlight).focused > .input-container {
+
+            &:not(.highlight).focused>.input-container {
               box-shadow: 0 0 5px #b6bacb;
             }
           }
 
-          > .error {
+          >.error {
             width: fit-content;
             font-size: 12px;
             align-items: center;
@@ -129,6 +141,7 @@
                 height: 0;
                 opacity: 0;
               }
+
               to {
                 font-size: 12px;
                 color: var(--error-color);
@@ -139,26 +152,30 @@
           }
         }
 
-        > .bottom {
+        >.bottom {
           display: flex;
           flex-direction: column;
 
-          > .content {
+          >.content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            > .left {
+
+            >.left {
               display: flex;
               gap: 10px;
-              > .tertiary-button {
+
+              >.tertiary-button {
                 @media (max-width: 450px) {
                   display: none;
                 }
               }
             }
-            > .right {
+
+            >.right {
               display: flex;
-              > .icon {
+
+              >.icon {
                 cursor: pointer;
                 height: 33px;
                 width: 33px;
@@ -169,12 +186,13 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                > img {
+
+                >img {
                   height: 55%;
                 }
               }
 
-              > .icon:first-child {
+              >.icon:first-child {
                 margin-right: 10px;
               }
             }
@@ -182,7 +200,8 @@
         }
       }
     }
-    > .card:last-child {
+
+    >.card:last-child {
       max-height: 400px;
       cursor: pointer;
       margin-left: 30px;
@@ -200,7 +219,7 @@
         display: none;
       }
 
-      > a {
+      >a {
         text-decoration: none;
         height: 100%;
         width: 100%;
@@ -210,7 +229,8 @@
         align-items: flex-start;
         flex-direction: column;
         color: white;
-        > svg {
+
+        >svg {
           -webkit-transform: rotate(45deg);
           -ms-transform: rotate(45deg);
           transform: rotate(45deg);

@@ -14,6 +14,7 @@ body {
   width: 100%;
   height: 100%;
 }
+
 .main-layout {
   position: relative;
   display: flex;
@@ -28,22 +29,25 @@ body {
   @media (max-width: 450px) {
     background-color: white;
   }
+
   // background-color: var(--color-light-gray-14);
 
   &.streched {
-    > .header {
+    >.header {
       padding: 0 20px;
-      > .content {
+
+      >.content {
         max-width: none;
       }
     }
-    > .content {
+
+    >.content {
       max-width: none;
       padding: 100px 20px 0;
     }
   }
 
-  > .header {
+  >.header {
     width: -webkit-fill-available;
     display: flex;
     position: fixed;
@@ -54,12 +58,13 @@ body {
 
     @media screen and (max-width: 675px) {
       padding: 0 25px;
-      > .content {
+
+      >.content {
         gap: 15px;
       }
     }
 
-    > .content {
+    >.content {
       height: 100%;
       width: 100%;
       max-width: 1100px;
@@ -68,14 +73,15 @@ body {
       justify-content: space-between;
       flex: 1;
 
-      > .right {
+      >.right {
         display: flex;
 
-        > .dev-mode {
+        >.dev-mode {
           display: flex;
           align-items: center;
           gap: 10px;
-          > .label {
+
+          >.label {
             font-size: 13px;
             color: #7e7e7e;
           }
@@ -84,7 +90,7 @@ body {
     }
   }
 
-  > .content {
+  >.content {
     height: fit-content;
     width: 100%;
     padding: 100px 100px 0;
@@ -93,7 +99,7 @@ body {
     align-items: center;
     justify-content: space-between;
 
-    > *:not(.snackbar) {
+    >*:not(.snackbar) {
       width: 100%;
       max-width: 1100px;
     }
@@ -101,7 +107,8 @@ body {
     @media (max-width: 450px) {
       background: white;
       padding: 85px 0 0;
-      > * > * {
+
+      >*>* {
         padding: 0 25px;
       }
     }
@@ -111,7 +118,7 @@ body {
     }
   }
 
-  > .side-menu {
+  >.side-menu {
     width: 160px;
     height: 100%;
     background: #1d6bbf;

@@ -4,9 +4,9 @@ import PrimaryButton from '@/ui/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '@/ui/atoms/TertiaryButton/TertiaryButton'
 import { useFormik } from 'formik'
 import Link from 'next/link'
-import { login } from './actions'
-import getSchema, { loginFormConfigs, loginFormValues } from './schema'
 import { toFormikValidationSchema } from 'zod-formik-adapter'
+import getSchema, { loginFormConfigs, loginFormValues } from './moodle-simple-email-access.common'
+import { login } from './moodle-simple-email-access.server'
 
 export function LoginIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>

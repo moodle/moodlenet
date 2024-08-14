@@ -11,7 +11,7 @@ export const pages: SessionContext['website']['layouts']['pages'] = async functi
     },
     login: {
       methods: [
-        { label: 'Use email', item: 'emailPwd' },
+        { label: 'Use email', item: 'moodle-simple-email-access' },
         { label: 'ciccio pwd', item: 'ciccio' },
       ],
     },

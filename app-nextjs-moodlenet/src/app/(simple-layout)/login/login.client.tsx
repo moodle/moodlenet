@@ -1,9 +1,9 @@
 'use client'
 
-import Card from '@/ui/atoms/Card/Card'
-import { ReactNodeSer } from '@/lib/server/session/types/website/layouts'
-import CallMadeIcon from '@mui/icons-material/CallMade'
 import { siteUrls } from '@/lib/common/utils/site-urls'
+import { ReactNodeSer } from '@/lib/server/session/types/website/layouts'
+import Card from '@/ui/atoms/Card/Card'
+import CallMadeIcon from '@mui/icons-material/CallMade'
 import Link from 'next/link'
 import { useState, type CSSProperties } from 'react'
 import { Trans } from 'react-i18next'
@@ -33,7 +33,7 @@ export function LoginCard({ loginMethods }: LoginCardProps) {
             </div>
           )}
           {currentPanel}
-          {loginMethods.map(({ label, key, panel }) => {
+          {loginMethods.map(({ label, key }) => {
             const isCurrent = key === currKey
             const css: CSSProperties = {
               float: 'left',

@@ -1,3 +1,3 @@
-import LayoutMain from './layout.main'
+import MainLayoutLayout from './main-layout.layout'
 
-export default LayoutMain
+export default MainLayoutLayout

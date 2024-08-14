@@ -1,3 +1,3 @@
-import LayoutLogin from './layout.login'
+import LoginLayout from './login.layout'
 
-export default LayoutLogin
+export default LoginLayout

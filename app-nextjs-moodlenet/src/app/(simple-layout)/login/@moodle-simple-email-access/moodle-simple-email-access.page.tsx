@@ -1,6 +1,6 @@
-import LoginPanel from './client.email-pwd-login.tsx';
+import LoginPanel from './moodle-simple-email-access.client'
 
-export default async function EmailPwdLoginPage() {
+export default function MoodleSimpleEmailAccessPage() {
   return (
     <LoginPanel
       {...{

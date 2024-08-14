@@ -1,3 +1,3 @@
-import LayoutMain from './layout.simple'
+import SimpleLayoutLayout from './simple-layout.layout'
 
-export default LayoutMain
+export default SimpleLayoutLayout

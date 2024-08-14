@@ -1,3 +1,3 @@
-import LoginBasePath from './page.login'
+import LoginPage from './login.page'
 
-export default LoginBasePath
+export default LoginPage

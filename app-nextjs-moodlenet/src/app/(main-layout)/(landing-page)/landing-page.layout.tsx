@@ -1,10 +1,10 @@
-import defaultBackground from 'assets/img/default-landing-background.png'
 import { sessionContext } from '@/lib/server/sessionContext'
 import { layoutPropsWithChildren, slots } from '@/lib/server/utils/slots'
-import { LandingHeadSearchbox, LandingHeadShareButton } from './client.landing'
-import './layout.landing.scss'
+import defaultBackground from 'assets/img/default-landing-background.png'
+import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
+import './landing-page.style.scss'
 
-export default async function LayoutLanding(props: layoutPropsWithChildren) {
+export default async function LandingPageLayout(props: layoutPropsWithChildren) {
   const { website, permission } = await sessionContext()
   const info = await website.info()
   const layout = await website.layouts.pages('landing')

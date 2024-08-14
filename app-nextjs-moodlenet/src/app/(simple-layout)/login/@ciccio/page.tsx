@@ -1,3 +1,3 @@
-import CiccioLoginPage from './page.ciccio-login'
-
-export default CiccioLoginPage
+export default function C() {
+  return 'CICCIO LOGIN'
+}
