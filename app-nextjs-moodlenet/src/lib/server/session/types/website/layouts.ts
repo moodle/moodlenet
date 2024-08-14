@@ -1,7 +1,7 @@
+import { clientSlotItem } from '@/lib/common/pages'
 import { ReactElement } from 'react'
-import { layoutSlotItem } from '../misc'
 
-export type ReactNodeSer = ReactElement | string | number | ReactNodeSer[]
+export type layoutSlotItem = ReactElement | string
 
 export interface Layouts {
   pages: PageLayouts
@@ -42,6 +42,10 @@ export interface PageLayouts {
     slots: { head: layoutSlotItem[]; content: layoutSlotItem[] }
   }
   login: {
-    methods: { label: ReactNodeSer; item: string }[]
+    methods: { label: clientSlotItem; item: string }[]
+  }
+  signup: {
+    methods: { label: clientSlotItem; item: string }[]
+    slots: { subCard: layoutSlotItem[] }
   }
 }

@@ -8,11 +8,9 @@ export default async function LoginLayout(props: layoutPropsWithChildren) {
   const layout = await website.layouts.pages('login')
   const loginCardProps: LoginCardProps = {
     loginMethods: layout.methods.map(({ label, item }) => ({
-      label,
       key: item,
-      panel:
-        slotItem(props, item) ??
-        'NO PANEL should never happen as it comes from injected parallel routes',
+      label,
+      panel: slotItem(props, item),
     })),
   }
   return (

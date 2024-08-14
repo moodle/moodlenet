@@ -4,6 +4,7 @@ import { roots } from './layouts/roots'
 import { permission } from './permission'
 import { user } from './user'
 import { websiteInfo as info } from './websiteInfo'
+import { modules } from './layouts/modules'
 
 export default async function getServerContext() {
   const sessionCtx: SessionContext = {
@@ -13,6 +14,7 @@ export default async function getServerContext() {
         pages,
         roots,
       },
+      modules,
     },
     permission,
     currentUser: user,

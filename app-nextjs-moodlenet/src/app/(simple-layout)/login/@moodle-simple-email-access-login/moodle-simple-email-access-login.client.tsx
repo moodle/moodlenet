@@ -4,9 +4,13 @@ import PrimaryButton from '@/ui/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '@/ui/atoms/TertiaryButton/TertiaryButton'
 import { useFormik } from 'formik'
 import Link from 'next/link'
+import { Trans } from 'react-i18next'
 import { toFormikValidationSchema } from 'zod-formik-adapter'
-import getSchema, { loginFormConfigs, loginFormValues } from './moodle-simple-email-access.common'
-import { login } from './moodle-simple-email-access.server'
+import getSchema, {
+  loginFormConfigs,
+  loginFormValues,
+} from './moodle-simple-email-access-login.common'
+import { login } from './moodle-simple-email-access-login.server'
 
 export function LoginIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
@@ -51,7 +55,11 @@ export default function LoginPanel({ wrongCreds, recoverPasswordUrl, configs }: 
           onChange={form.handleChange}
           error={shouldShowErrors && form.errors.password}
         />
-        {wrongCreds && <div className="error">Incorrect username or password</div>}
+        {wrongCreds && (
+          <div className="error">
+            <Trans>Incorrect username or password</Trans>
+          </div>
+        )}
         <button type="submit" style={{ display: 'none' }} />
       </form>
       <div className="bottom">

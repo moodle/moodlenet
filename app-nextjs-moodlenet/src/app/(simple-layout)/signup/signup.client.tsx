@@ -8,37 +8,44 @@ import Link from 'next/link'
 import { useState, type CSSProperties } from 'react'
 import { Trans } from 'react-i18next'
 
-export interface LoginMethod {
+export interface SignupMethod {
   label: clientSlotItem
   panel: clientSlotItem
   key: string
 }
 
-export interface LoginCardProps {
-  loginMethods: LoginMethod[]
+export interface SignupCardProps {
+  signupMethods: SignupMethod[]
+  slots: Record<'subCard', clientSlotItem[]>
 }
 
-export function LoginCard({ loginMethods }: LoginCardProps) {
-  const [currMethod, setCurrMethod] = useState(loginMethods[0])
+export function SignupCard({ signupMethods, slots }: SignupCardProps) {
+  const [currMethod, setCurrMethod] = useState(signupMethods[0])
   const hrefs = siteUrls()
   return (
     <>
-      <Card className="login-card">
+      <Card className="login-card" hover={true}>
+        <Link href={hrefs.access.login}>
+          <Trans>Log in</Trans>
+          <CallMadeIcon />
+        </Link>
+      </Card>
+      <Card className="signup-card">
         <div className="content">
           <div className="title">
-            <Trans>Log in</Trans>
+            <Trans>Sign up</Trans>
           </div>
           {!currMethod ? (
             <div>
-              <Trans>No authentication methods available</Trans>
+              <Trans>No sign up methods available</Trans>
             </div>
           ) : (
             <>
               {currMethod?.panel}
               <div>
-                <Trans>Log in with</Trans>
+                <Trans>Sighn up with</Trans>
               </div>
-              {loginMethods.map(meth => {
+              {signupMethods.map(meth => {
                 const { label, key } = meth
                 const isCurrent = meth === currMethod
                 const css: CSSProperties = {
@@ -55,15 +62,10 @@ export function LoginCard({ loginMethods }: LoginCardProps) {
                   </div>
                 )
               })}
+              {slots.subCard}
             </>
           )}
         </div>
-      </Card>
-      <Card hover={true}>
-        <Link href={hrefs.access.signup}>
-          <Trans>Sign up</Trans>
-          <CallMadeIcon />
-        </Link>
       </Card>
     </>
   )

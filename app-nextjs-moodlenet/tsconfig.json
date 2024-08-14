@@ -32,7 +32,8 @@
     "../app-nextjs-moodlenet/.next/types/**/*.ts",
     "../dist/app-nextjs-moodlenet/.next/types/**/*.ts",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/lib/mock/server/session-ctx/layouts/module.stsx"
   ],
   "exclude": [
     "zz__legacy",
