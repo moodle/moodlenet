@@ -7,13 +7,14 @@ import { sessionContext } from '@/lib/server/sessionContext'
 import { layoutPropsWithChildren, slots } from '@/lib/server/utils/slots'
 import MinimalisticHeader from '@/ui/organisms/Header/Minimalistic/MinimalisticHeader'
 import './simple-layout.style.scss'
+import { asyncCtx } from '@/lib/server/sessionContext'
 
 export default async function SimpleLayoutLayout(props: layoutPropsWithChildren) {
   const {
     website: { layouts },
   } = await sessionContext()
   const { footer, header } = await layouts.roots('main')
-
+  console.log('getStore', asyncCtx.getStore())
   return (
     <div className={`simple-layout`}>
       <MinimalisticHeader slots={headerSlots()} />

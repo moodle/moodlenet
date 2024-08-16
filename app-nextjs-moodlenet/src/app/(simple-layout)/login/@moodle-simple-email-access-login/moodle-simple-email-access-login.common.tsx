@@ -5,6 +5,7 @@ export interface loginFormConfigs {
   email: { max: number; min: number }
   password: { max: number; min: number }
 }
+
 export default function getSchema(configs: loginFormConfigs): ZodType<loginFormValues> {
   return object({
     email: string().email().min(configs.email.min).max(configs.email.max),

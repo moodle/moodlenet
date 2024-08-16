@@ -3,7 +3,7 @@ import { Modules } from '@/lib/server/session/types/website'
 
 export const modules: SessionContext['website']['modules'] = async function modules(k) {
   const mod: Modules = {
-    moodleSimpleEmailAccess: {
+    'moodle-simple-email-access': {
       configs: {
         loginForm: {
           email: { min: 5, max: 35 },

@@ -67,10 +67,18 @@ export default function LoginPanel({ wrongCreds, recoverPasswordUrl, configs }: 
           <div className="left">
             <PrimaryButton onClick={canSubmit ? form.submitForm : undefined}>Log in</PrimaryButton>
             <Link href={recoverPasswordUrl}>
-              <TertiaryButton>or recover password</TertiaryButton>
+              <TertiaryButton>
+                <Trans>or recover password</Trans>
+              </TertiaryButton>
             </Link>
           </div>
-          {/* <div className="right" hidden>
+        </div>
+      </div>
+    </>
+  )
+}
+
+/*                <div className="right" hidden>
                     <div className="icon">
                       <img
                         alt="apple login"
@@ -83,9 +91,5 @@ export default function LoginPanel({ wrongCreds, recoverPasswordUrl, configs }: 
                         src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
                       />
                     </div>
-                  </div> */}
-        </div>
-      </div>
-    </>
-  )
-}
+                  </div>
+*/

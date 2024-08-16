@@ -1,7 +1,7 @@
 'use client'
 
 import { clientSlotItem } from '@/lib/common/pages'
-import { siteUrls } from '@/lib/common/utils/site-urls'
+import { sitepaths } from '@/lib/common/utils/sitepaths'
 import Card from '@/ui/atoms/Card/Card'
 import CallMadeIcon from '@mui/icons-material/CallMade'
 import Link from 'next/link'
@@ -21,7 +21,7 @@ export interface SignupCardProps {
 
 export function SignupCard({ signupMethods, slots }: SignupCardProps) {
   const [currMethod, setCurrMethod] = useState(signupMethods[0])
-  const hrefs = siteUrls()
+  const hrefs = sitepaths()
   return (
     <>
       <Card className="login-card" hover={true}>

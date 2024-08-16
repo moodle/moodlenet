@@ -1,18 +1,19 @@
 import { Permissions } from './permissions'
 import { user } from './user'
-import { Modules, WebsiteInfo } from './website'
+import { DeploymentInfo, Modules, WebsiteInfo } from './website'
 import { PageLayouts, RootLayouts } from './website/layouts'
 
-type getter<T> = <k extends keyof T>(k: k) => Promise<T[k]>
+type get<T> = <k extends keyof T>(k: k) => Promise<T[k]>
 export interface SessionContext {
   currentUser(): Promise<user>
-  permission: getter<Permissions>
+  permission: get<Permissions>
   website: {
-    modules: getter<Modules>
+    modules: get<Modules>
     info(): Promise<WebsiteInfo>
+    deployment(): Promise<DeploymentInfo>
     layouts: {
-      pages: getter<PageLayouts>
-      roots: getter<RootLayouts>
+      pages: get<PageLayouts>
+      roots: get<RootLayouts>
     }
   }
 }

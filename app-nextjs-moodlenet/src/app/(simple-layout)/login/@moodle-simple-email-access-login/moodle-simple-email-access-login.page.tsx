@@ -3,7 +3,7 @@ import LoginPanel from './moodle-simple-email-access-login.client'
 
 export default async function MoodleSimpleEmailAccessLoginPage() {
   const { website } = await sessionContext()
-  const mod = await website.modules('moodleSimpleEmailAccess')
+  const mod = await website.modules('moodle-simple-email-access')
 
   return (
     <LoginPanel

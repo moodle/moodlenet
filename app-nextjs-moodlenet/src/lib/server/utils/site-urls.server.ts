@@ -1,14 +1,14 @@
-import { siteUrls } from '@/lib/common/utils/site-urls'
+import { sitepaths } from '@/lib/common/utils/sitepaths'
 import { sessionContext } from '../sessionContext'
 
 export async function srvSiteUrls() {
   const {
-    website: { info },
+    website: { deployment },
   } = await sessionContext()
-  const { basePath, domain, secure } = await info()
+  const { basePath, domain, secure } = await deployment()
   const baseUrl = `${secure ? 'https' : 'http'}://${domain}${basePath}`
   return {
-    full: siteUrls(baseUrl),
-    site: siteUrls(basePath),
+    full: sitepaths(baseUrl),
+    site: sitepaths(basePath),
   }
 }

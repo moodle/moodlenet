@@ -1,5 +1,5 @@
 'use client'
-import { siteUrls } from '@/lib/common/utils/site-urls'
+import { sitepaths } from '@/lib/common/utils/sitepaths'
 import PrimaryButton from '@/ui/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '@/ui/atoms/Searchbox/Searchbox'
 import TertiaryButton from '@/ui/atoms/TertiaryButton/TertiaryButton'
@@ -8,7 +8,7 @@ import { t } from 'i18next'
 import Link from 'next/link'
 
 export function LoginHeaderButton() {
-  const { access } = siteUrls()
+  const { access } = sitepaths()
   return (
     <Link href={access.login} className="login-button access-button">
       <PrimaryButton>
@@ -22,7 +22,7 @@ export function LoginHeaderButton() {
 }
 
 export function SignupHeaderButton() {
-  const { access } = siteUrls()
+  const { access } = sitepaths()
   return (
     <Link href={access.signup} className="signup-button access-button">
       <TertiaryButton>

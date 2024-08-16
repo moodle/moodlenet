@@ -1,7 +1,7 @@
 import { defaultStyle } from '@/common/config'
-import { GlobalProviders } from '@/app/global-providers'
 import type { PropsWithChildren } from 'react'
-import './layout.root.scss'
+import { GlobalProviders } from './root-layout.client'
+import './root-layout.scss'
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   return (

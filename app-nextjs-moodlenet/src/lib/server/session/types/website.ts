@@ -9,7 +9,7 @@ export interface Website {
 }
 
 export interface Modules {
-  moodleSimpleEmailAccess: {
+  'moodle-simple-email-access': {
     configs: {
       loginForm: loginFormConfigs
       signupForm: signupFormConfigs
@@ -17,10 +17,13 @@ export interface Modules {
   }
 }
 
-export interface WebsiteInfo {
+export interface DeploymentInfo {
   domain: string
   secure: boolean
   basePath: string
+}
+
+export interface WebsiteInfo {
   title: string
   subtitle: string
   logo: string
