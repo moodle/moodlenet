@@ -1,9 +1,9 @@
 import { sessionContext } from '@/lib/server/sessionContext'
-import SignupPanel from './moodle-simple-email-access-signup.client'
+import SignupPanel from './moodle-email-pwd-authentication.client'
 
-export default async function MoodleSimpleEmailAccessSignupPage() {
+export default async function MoodleEmailPwdAuthenticationPage() {
   const { website } = await sessionContext()
-  const mod = await website.modules('moodle-simple-email-access')
+  const mod = await website.modules('moodle-email-pwd-authentication')
 
   return (
     <SignupPanel

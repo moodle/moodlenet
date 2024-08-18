@@ -6,8 +6,8 @@ import { toFormikValidationSchema } from 'zod-formik-adapter'
 import getSchema, {
   signupFormConfigs,
   signupFormValues,
-} from './moodle-simple-email-access-signup.common'
-import { signup } from './moodle-simple-email-access-signup.server'
+} from './moodle-email-pwd-authentication.common'
+import { signup } from './moodle-email-pwd-authentication.server'
 
 export function SignupIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>

@@ -9,8 +9,8 @@ import { toFormikValidationSchema } from 'zod-formik-adapter'
 import getSchema, {
   loginFormConfigs,
   loginFormValues,
-} from './moodle-simple-email-access-login.common'
-import { login } from './moodle-simple-email-access-login.server'
+} from './moodle-email-pwd-authentication.common'
+import { login } from './moodle-email-pwd-authentication.server'
 
 export function LoginIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>

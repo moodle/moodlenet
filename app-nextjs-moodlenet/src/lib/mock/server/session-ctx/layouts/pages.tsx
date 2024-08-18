@@ -11,13 +11,13 @@ export const pages: SessionContext['website']['layouts']['pages'] = async functi
     },
     login: {
       methods: [
-        { label: 'Email and password', item: 'moodle-simple-email-access-login' },
+        { label: 'Email and password', item: 'moodle-email-pwd-authentication' },
         { label: 'ciccio login', item: 'ciccio' },
       ],
     },
     signup: {
       methods: [
-        { label: 'Email and password', item: 'moodle-simple-email-access-signup' },
+        { label: 'Email and password', item: 'moodle-email-pwd-authentication' },
         { label: 'ciccio signup', item: 'ciccio' },
       ],
       slots: {
