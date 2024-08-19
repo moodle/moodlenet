@@ -1,9 +1,0 @@
-{
-  "name": "app-nextjs-moodlenet",
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "app-nextjs-moodlenet",
-  "projectType": "application",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project app-nextjs-moodlenet --web",
-  "targets": {}
-}
