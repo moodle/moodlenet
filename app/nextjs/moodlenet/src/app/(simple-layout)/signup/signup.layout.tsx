@@ -1,5 +1,5 @@
 import { sessionContext } from '@/lib/server/sessionContext'
-import { layoutPropsWithChildren, slotItem, slots } from '@/lib/server/utils/slots'
+import { layoutPropsWithChildren, slotItem, slotsMap } from '@/lib/server/utils/slots'
 import { SignupCard, SignupCardProps } from './signup.client'
 import './signup.style.scss'
 
@@ -7,12 +7,12 @@ export default async function SignupLayout(props: layoutPropsWithChildren) {
   const { website } = await sessionContext()
   const layout = await website.layouts.pages('signup')
   const signupCardProps: SignupCardProps = {
-    signupMethods: layout.methods.map(({ label, item }) => ({
-      key: item,
-      label,
-      panel: slotItem(props, item),
+    signupMethods: layout.methods.map(({ label, panel }) => ({
+      key: `${panel}#${label}`,
+      label: slotItem(props, label),
+      panel: slotItem(props, panel),
     })),
-    slots: slots(props, layout.slots),
+    slots: slotsMap(props, layout.slots),
   }
 
   return (

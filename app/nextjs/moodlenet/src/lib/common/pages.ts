@@ -1,3 +1,3 @@
 import { ReactElement } from 'react'
 
-export type clientSlotItem = ReactElement | string | clientSlotItem[]
+export type clientSlotItem = ReactElement //  | string | clientSlotItem[]

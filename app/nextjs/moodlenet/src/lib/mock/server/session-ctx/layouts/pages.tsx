@@ -11,20 +11,20 @@ export const pages: SessionContext['website']['layouts']['pages'] = async functi
     },
     login: {
       methods: [
-        { label: 'Email and password', item: 'moodle-email-pwd-authentication' },
-        { label: 'ciccio login', item: 'ciccio' },
+        { label: 'Email and password', panel: 'moodle-email-pwd-authentication' },
+        { label: 'ciccio login', panel: 'ciccio' },
       ],
     },
     signup: {
       methods: [
-        { label: 'Email and password', item: 'moodle-email-pwd-authentication' },
-        { label: 'ciccio signup', item: 'ciccio' },
+        { label: 'Email and password', panel: 'moodle-email-pwd-authentication' },
+        { label: 'ciccio signup', panel: 'ciccio' },
       ],
       slots: {
         subCard: [
-          <a key="terms" href="http://moodle.com" target="__blank">
+          `<a key="terms" href="http://moodle.com" target="__blank">
             <span>You agree to our Terms &amp; Conditions</span>
-          </a>,
+          </a>`,
         ],
       },
     },

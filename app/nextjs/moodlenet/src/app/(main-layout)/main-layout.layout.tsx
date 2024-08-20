@@ -1,6 +1,6 @@
 import { LayoutHeaderLogo } from '@/app/_common/header-logo.server'
 import { sessionContext } from '@/lib/server/sessionContext'
-import { layoutPropsWithChildren, slots } from '@/lib/server/utils/slots'
+import { layoutPropsWithChildren, slotsMap } from '@/lib/server/utils/slots'
 import { isGuest } from '@/lib/server/utils/user'
 import Footer, { FooterProps } from '@/ui/organisms/Footer/Footer'
 import MainHeader, { MainHeaderProps } from '@/ui/organisms/Header/MainHeader/MainHeader'
@@ -25,7 +25,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   )
 
   function headerSlots(): MainHeaderProps['slots'] {
-    const { center, left, right } = slots(props, header.slots)
+    const { center, left, right } = slotsMap(props, header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
     const defaultRights = isGuest(user)
@@ -43,7 +43,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   }
 
   function footerSlots(): FooterProps['slots'] {
-    const { center, left, right, bottom } = slots(props, footer.slots)
+    const { center, left, right, bottom } = slotsMap(props, footer.slots)
     return {
       left: [...left],
       center: [...center],

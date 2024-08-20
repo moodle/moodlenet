@@ -14,6 +14,7 @@
     "@types/lodash": "^4.17.7",
     "formik": "^2.4.6",
     "i18next": "^23.12.2",
+    "interweave": "^13.1.0",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "next": "14.2.5",

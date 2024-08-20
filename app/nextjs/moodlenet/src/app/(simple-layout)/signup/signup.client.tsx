@@ -43,7 +43,7 @@ export function SignupCard({ signupMethods, slots }: SignupCardProps) {
             <>
               {currMethod?.panel}
               <div>
-                <Trans>Sighn up with</Trans>
+                <Trans>Sign up with</Trans>
               </div>
               {signupMethods.map(meth => {
                 const { label, key } = meth

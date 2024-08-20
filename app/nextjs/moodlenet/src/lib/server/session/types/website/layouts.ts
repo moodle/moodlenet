@@ -1,9 +1,4 @@
-import { clientSlotItem } from '@/lib/common/pages'
-import { ReactElement } from 'react'
-
-type parallelRoute = string
-
-export type layoutSlotItem = ReactElement | parallelRoute
+export type layoutSlotItem = string
 
 export interface Layouts {
   pages: PageLayouts
@@ -44,10 +39,10 @@ export interface PageLayouts {
     slots: { head: layoutSlotItem[]; content: layoutSlotItem[] }
   }
   login: {
-    methods: { label: clientSlotItem; item: parallelRoute }[]
+    methods: { label: layoutSlotItem; panel: layoutSlotItem }[]
   }
   signup: {
-    methods: { label: clientSlotItem; item: parallelRoute }[]
+    methods: { label: layoutSlotItem; panel: layoutSlotItem }[]
     slots: { subCard: layoutSlotItem[] }
   }
 }

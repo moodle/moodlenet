@@ -1,5 +1,5 @@
 import { sessionContext } from '@/lib/server/sessionContext'
-import { layoutPropsWithChildren, slots } from '@/lib/server/utils/slots'
+import { layoutPropsWithChildren, slotsMap } from '@/lib/server/utils/slots'
 import defaultBackground from 'assets/img/default-landing-background.png'
 import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
 import './landing-page.style.scss'
@@ -8,7 +8,7 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
   const { website, permission } = await sessionContext()
   const info = await website.info()
   const layout = await website.layouts.pages('landing')
-  const { head, content } = slots(props, layout.slots)
+  const { head, content } = slotsMap(props, layout.slots)
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,
     backgroundSize: 'cover',
