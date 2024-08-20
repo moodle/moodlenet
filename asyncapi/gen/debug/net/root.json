@@ -1,0 +1,429 @@
+{
+  "title": "MoodleNet API",
+  "params": {},
+  "originalAsyncAPIStr": "asyncapi: \"3.0.0\"\ninfo:\n  title: MoodleNet API\n  version: 1.0.0\n  description: |-\n    MoodleNet API\n  license:\n    name: Apache AGPL-3.0\n    url: https://www.gnu.org/licenses/agpl-3.0.en.html\ndefaultContentType: application/json\nchannels:\n  config:\n    address: config\n    messages:\n      read-config:\n        $ref: \"com/.api.yml#/components/messages/null\"\noperations:\n  read-config:\n    action: receive\n    channel:\n      $ref: \"#/channels/config\"\n    messages:\n      - $ref: \"#/channels/config/messages/read-config\"\n    reply:\n      address:\n        $ref: \"com/.api.yml#/components/replyAddresses/std\"\n      messages:\n        - $ref: \"#/components/messages/current-config\"\ncomponents:\n  messages:\n    current-config:\n      payload:\n        $ref: \"net.sch.yml#/definitions/config\"\n",
+  "props": {
+    "asyncapi": {
+      "_json": {
+        "asyncapi": "3.0.0",
+        "info": {
+          "title": "MoodleNet API",
+          "version": "1.0.0",
+          "description": "MoodleNet API",
+          "license": {
+            "name": "Apache AGPL-3.0",
+            "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
+          }
+        },
+        "defaultContentType": "application/json",
+        "channels": {
+          "config": {
+            "address": "config",
+            "messages": {
+              "read-config": {
+                "payload": {
+                  "type": "null",
+                  "x-parser-schema-id": "<anonymous-schema-1>"
+                },
+                "x-parser-unique-object-id": "read-config",
+                "x-parser-message-name": "read-config"
+              }
+            },
+            "x-parser-unique-object-id": "config"
+          }
+        },
+        "operations": {
+          "read-config": {
+            "action": "receive",
+            "channel": {
+              "address": "config",
+              "messages": {
+                "read-config": {
+                  "payload": {
+                    "type": "null",
+                    "x-parser-schema-id": "<anonymous-schema-1>"
+                  },
+                  "x-parser-unique-object-id": "read-config",
+                  "x-parser-message-name": "read-config"
+                }
+              },
+              "x-parser-unique-object-id": "config"
+            },
+            "messages": [
+              {
+                "payload": {
+                  "type": "null",
+                  "x-parser-schema-id": "<anonymous-schema-1>"
+                },
+                "x-parser-unique-object-id": "read-config",
+                "x-parser-message-name": "read-config"
+              }
+            ],
+            "reply": {
+              "address": {
+                "location": "$message.header#reply-to"
+              },
+              "messages": [
+                {
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "deployment": {
+                        "type": "object",
+                        "properties": {
+                          "domain": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-4>"
+                          },
+                          "basePath": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-5>"
+                          },
+                          "secure": {
+                            "type": "boolean",
+                            "x-parser-schema-id": "<anonymous-schema-6>"
+                          }
+                        },
+                        "required": [
+                          "domain",
+                          "basePath",
+                          "secure"
+                        ],
+                        "x-parser-schema-id": "<anonymous-schema-3>"
+                      },
+                      "info": {
+                        "type": "object",
+                        "properties": {
+                          "logo": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-8>"
+                          },
+                          "smallLogo": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-9>"
+                          },
+                          "title": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-10>"
+                          },
+                          "subtitle": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-11>"
+                          }
+                        },
+                        "required": [
+                          "logo",
+                          "smallLogo",
+                          "title",
+                          "subtitle"
+                        ],
+                        "x-parser-schema-id": "<anonymous-schema-7>"
+                      }
+                    },
+                    "required": [
+                      "deployment",
+                      "info"
+                    ],
+                    "x-parser-schema-id": "<anonymous-schema-2>"
+                  },
+                  "x-parser-unique-object-id": "current-config",
+                  "x-parser-message-name": "current-config"
+                }
+              ]
+            },
+            "x-parser-unique-object-id": "read-config"
+          }
+        },
+        "components": {
+          "messages": {
+            "current-config": {
+              "payload": {
+                "type": "object",
+                "properties": {
+                  "deployment": {
+                    "type": "object",
+                    "properties": {
+                      "domain": {
+                        "type": "string",
+                        "x-parser-schema-id": "<anonymous-schema-4>"
+                      },
+                      "basePath": {
+                        "type": "string",
+                        "x-parser-schema-id": "<anonymous-schema-5>"
+                      },
+                      "secure": {
+                        "type": "boolean",
+                        "x-parser-schema-id": "<anonymous-schema-6>"
+                      }
+                    },
+                    "required": [
+                      "domain",
+                      "basePath",
+                      "secure"
+                    ],
+                    "x-parser-schema-id": "<anonymous-schema-3>"
+                  },
+                  "info": {
+                    "type": "object",
+                    "properties": {
+                      "logo": {
+                        "type": "string",
+                        "x-parser-schema-id": "<anonymous-schema-8>"
+                      },
+                      "smallLogo": {
+                        "type": "string",
+                        "x-parser-schema-id": "<anonymous-schema-9>"
+                      },
+                      "title": {
+                        "type": "string",
+                        "x-parser-schema-id": "<anonymous-schema-10>"
+                      },
+                      "subtitle": {
+                        "type": "string",
+                        "x-parser-schema-id": "<anonymous-schema-11>"
+                      }
+                    },
+                    "required": [
+                      "logo",
+                      "smallLogo",
+                      "title",
+                      "subtitle"
+                    ],
+                    "x-parser-schema-id": "<anonymous-schema-7>"
+                  }
+                },
+                "required": [
+                  "deployment",
+                  "info"
+                ],
+                "x-parser-schema-id": "<anonymous-schema-2>"
+              },
+              "x-parser-unique-object-id": "current-config",
+              "x-parser-message-name": "current-config"
+            }
+          }
+        },
+        "x-parser-spec-parsed": true,
+        "x-parser-api-version": 3
+      },
+      "_meta": {
+        "asyncapi": {
+          "source": "asyncapi/srv/net.api.yml",
+          "input": "asyncapi: \"3.0.0\"\ninfo:\n  title: MoodleNet API\n  version: 1.0.0\n  description: |-\n    MoodleNet API\n  license:\n    name: Apache AGPL-3.0\n    url: https://www.gnu.org/licenses/agpl-3.0.en.html\ndefaultContentType: application/json\nchannels:\n  config:\n    address: config\n    messages:\n      read-config:\n        $ref: \"com/.api.yml#/components/messages/null\"\noperations:\n  read-config:\n    action: receive\n    channel:\n      $ref: \"#/channels/config\"\n    messages:\n      - $ref: \"#/channels/config/messages/read-config\"\n    reply:\n      address:\n        $ref: \"com/.api.yml#/components/replyAddresses/std\"\n      messages:\n        - $ref: \"#/components/messages/current-config\"\ncomponents:\n  messages:\n    current-config:\n      payload:\n        $ref: \"net.sch.yml#/definitions/config\"\n",
+          "parsed": {
+            "asyncapi": "3.0.0",
+            "info": {
+              "title": "MoodleNet API",
+              "version": "1.0.0",
+              "description": "MoodleNet API",
+              "license": {
+                "name": "Apache AGPL-3.0",
+                "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
+              }
+            },
+            "defaultContentType": "application/json",
+            "channels": {
+              "config": {
+                "address": "config",
+                "messages": {
+                  "read-config": {
+                    "payload": {
+                      "type": "null",
+                      "x-parser-schema-id": "<anonymous-schema-1>"
+                    },
+                    "x-parser-unique-object-id": "read-config",
+                    "x-parser-message-name": "read-config"
+                  }
+                },
+                "x-parser-unique-object-id": "config"
+              }
+            },
+            "operations": {
+              "read-config": {
+                "action": "receive",
+                "channel": {
+                  "address": "config",
+                  "messages": {
+                    "read-config": {
+                      "payload": {
+                        "type": "null",
+                        "x-parser-schema-id": "<anonymous-schema-1>"
+                      },
+                      "x-parser-unique-object-id": "read-config",
+                      "x-parser-message-name": "read-config"
+                    }
+                  },
+                  "x-parser-unique-object-id": "config"
+                },
+                "messages": [
+                  {
+                    "payload": {
+                      "type": "null",
+                      "x-parser-schema-id": "<anonymous-schema-1>"
+                    },
+                    "x-parser-unique-object-id": "read-config",
+                    "x-parser-message-name": "read-config"
+                  }
+                ],
+                "reply": {
+                  "address": {
+                    "location": "$message.header#reply-to"
+                  },
+                  "messages": [
+                    {
+                      "payload": {
+                        "type": "object",
+                        "properties": {
+                          "deployment": {
+                            "type": "object",
+                            "properties": {
+                              "domain": {
+                                "type": "string",
+                                "x-parser-schema-id": "<anonymous-schema-4>"
+                              },
+                              "basePath": {
+                                "type": "string",
+                                "x-parser-schema-id": "<anonymous-schema-5>"
+                              },
+                              "secure": {
+                                "type": "boolean",
+                                "x-parser-schema-id": "<anonymous-schema-6>"
+                              }
+                            },
+                            "required": [
+                              "domain",
+                              "basePath",
+                              "secure"
+                            ],
+                            "x-parser-schema-id": "<anonymous-schema-3>"
+                          },
+                          "info": {
+                            "type": "object",
+                            "properties": {
+                              "logo": {
+                                "type": "string",
+                                "x-parser-schema-id": "<anonymous-schema-8>"
+                              },
+                              "smallLogo": {
+                                "type": "string",
+                                "x-parser-schema-id": "<anonymous-schema-9>"
+                              },
+                              "title": {
+                                "type": "string",
+                                "x-parser-schema-id": "<anonymous-schema-10>"
+                              },
+                              "subtitle": {
+                                "type": "string",
+                                "x-parser-schema-id": "<anonymous-schema-11>"
+                              }
+                            },
+                            "required": [
+                              "logo",
+                              "smallLogo",
+                              "title",
+                              "subtitle"
+                            ],
+                            "x-parser-schema-id": "<anonymous-schema-7>"
+                          }
+                        },
+                        "required": [
+                          "deployment",
+                          "info"
+                        ],
+                        "x-parser-schema-id": "<anonymous-schema-2>"
+                      },
+                      "x-parser-unique-object-id": "current-config",
+                      "x-parser-message-name": "current-config"
+                    }
+                  ]
+                },
+                "x-parser-unique-object-id": "read-config"
+              }
+            },
+            "components": {
+              "messages": {
+                "current-config": {
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "deployment": {
+                        "type": "object",
+                        "properties": {
+                          "domain": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-4>"
+                          },
+                          "basePath": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-5>"
+                          },
+                          "secure": {
+                            "type": "boolean",
+                            "x-parser-schema-id": "<anonymous-schema-6>"
+                          }
+                        },
+                        "required": [
+                          "domain",
+                          "basePath",
+                          "secure"
+                        ],
+                        "x-parser-schema-id": "<anonymous-schema-3>"
+                      },
+                      "info": {
+                        "type": "object",
+                        "properties": {
+                          "logo": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-8>"
+                          },
+                          "smallLogo": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-9>"
+                          },
+                          "title": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-10>"
+                          },
+                          "subtitle": {
+                            "type": "string",
+                            "x-parser-schema-id": "<anonymous-schema-11>"
+                          }
+                        },
+                        "required": [
+                          "logo",
+                          "smallLogo",
+                          "title",
+                          "subtitle"
+                        ],
+                        "x-parser-schema-id": "<anonymous-schema-7>"
+                      }
+                    },
+                    "required": [
+                      "deployment",
+                      "info"
+                    ],
+                    "x-parser-schema-id": "<anonymous-schema-2>"
+                  },
+                  "x-parser-unique-object-id": "current-config",
+                  "x-parser-message-name": "current-config"
+                }
+              }
+            },
+            "x-parser-spec-parsed": true,
+            "x-parser-api-version": 3
+          },
+          "semver": {
+            "version": "3.0.0",
+            "major": 3,
+            "minor": 0,
+            "patch": 0
+          }
+        },
+        "pointer": "/"
+      }
+    },
+    "params": {},
+    "originalAsyncAPI": "asyncapi: \"3.0.0\"\ninfo:\n  title: MoodleNet API\n  version: 1.0.0\n  description: |-\n    MoodleNet API\n  license:\n    name: Apache AGPL-3.0\n    url: https://www.gnu.org/licenses/agpl-3.0.en.html\ndefaultContentType: application/json\nchannels:\n  config:\n    address: config\n    messages:\n      read-config:\n        $ref: \"com/.api.yml#/components/messages/null\"\noperations:\n  read-config:\n    action: receive\n    channel:\n      $ref: \"#/channels/config\"\n    messages:\n      - $ref: \"#/channels/config/messages/read-config\"\n    reply:\n      address:\n        $ref: \"com/.api.yml#/components/replyAddresses/std\"\n      messages:\n        - $ref: \"#/components/messages/current-config\"\ncomponents:\n  messages:\n    current-config:\n      payload:\n        $ref: \"net.sch.yml#/definitions/config\"\n"
+  }
+}
+

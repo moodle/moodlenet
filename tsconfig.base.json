@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@moodle/lib/js/asyncapi": ["lib/js/asyncapi/src/index.ts"]
+      "@moodle/asyncapi": ["asyncapi/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

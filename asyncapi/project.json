@@ -1,0 +1,19 @@
+{
+  "name": "asyncapi",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "asyncapi/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/asyncapi",
+        "main": "asyncapi/src/index.ts",
+        "tsConfig": "asyncapi/tsconfig.lib.json",
+        "assets": ["asyncapi/*.md"]
+      }
+    }
+  }
+}

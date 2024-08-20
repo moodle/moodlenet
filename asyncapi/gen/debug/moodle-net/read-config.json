@@ -1,0 +1,238 @@
+{
+  "messageName": "read-config",
+  "messageJson": {
+    "payload": {
+      "type": "null",
+      "x-parser-schema-id": "<anonymous-schema-1>"
+    },
+    "x-parser-unique-object-id": "read-config",
+    "x-parser-message-name": "read-config"
+  },
+  "props": {
+    "asyncapi": {
+      "_json": {
+        "asyncapi": "3.0.0",
+        "info": {
+          "title": "MoodleNet API",
+          "version": "1.0.0",
+          "description": "MoodleNet API",
+          "license": {
+            "name": "Apache AGPL-3.0",
+            "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
+          }
+        },
+        "defaultContentType": "application/json",
+        "channels": {
+          "config": {
+            "address": "config",
+            "messages": {
+              "read-config": {
+                "payload": {
+                  "type": "null",
+                  "x-parser-schema-id": "<anonymous-schema-1>"
+                },
+                "x-parser-unique-object-id": "read-config",
+                "x-parser-message-name": "read-config"
+              }
+            },
+            "x-parser-unique-object-id": "config"
+          }
+        },
+        "operations": {
+          "read-config": {
+            "action": "receive",
+            "channel": {
+              "address": "config",
+              "messages": {
+                "read-config": {
+                  "payload": {
+                    "type": "null",
+                    "x-parser-schema-id": "<anonymous-schema-1>"
+                  },
+                  "x-parser-unique-object-id": "read-config",
+                  "x-parser-message-name": "read-config"
+                }
+              },
+              "x-parser-unique-object-id": "config"
+            },
+            "messages": [
+              {
+                "payload": {
+                  "type": "null",
+                  "x-parser-schema-id": "<anonymous-schema-1>"
+                },
+                "x-parser-unique-object-id": "read-config",
+                "x-parser-message-name": "read-config"
+              }
+            ],
+            "x-parser-unique-object-id": "read-config"
+          }
+        },
+        "x-parser-spec-parsed": true,
+        "x-parser-api-version": 3
+      },
+      "_meta": {
+        "asyncapi": {
+          "source": "asyncapi/srv/moodle-net.api.yml",
+          "input": "asyncapi: \"3.0.0\"\ninfo:\n  title: MoodleNet API\n  version: 1.0.0\n  description: |-\n    MoodleNet API\n  license:\n    name: Apache AGPL-3.0\n    url: https://www.gnu.org/licenses/agpl-3.0.en.html\ndefaultContentType: application/json\nchannels:\n  config:\n    address: config\n    messages:\n      read-config:\n        $ref: \"../com.api.yml#/components/messages/null\"\noperations:\n  read-config:\n    action: receive\n    channel:\n      $ref: \"#/channels/config\"\n    messages:\n      - $ref: \"#/channels/config/messages/read-config\"\n",
+          "parsed": {
+            "asyncapi": "3.0.0",
+            "info": {
+              "title": "MoodleNet API",
+              "version": "1.0.0",
+              "description": "MoodleNet API",
+              "license": {
+                "name": "Apache AGPL-3.0",
+                "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
+              }
+            },
+            "defaultContentType": "application/json",
+            "channels": {
+              "config": {
+                "address": "config",
+                "messages": {
+                  "read-config": {
+                    "payload": {
+                      "type": "null",
+                      "x-parser-schema-id": "<anonymous-schema-1>"
+                    },
+                    "x-parser-unique-object-id": "read-config",
+                    "x-parser-message-name": "read-config"
+                  }
+                },
+                "x-parser-unique-object-id": "config"
+              }
+            },
+            "operations": {
+              "read-config": {
+                "action": "receive",
+                "channel": {
+                  "address": "config",
+                  "messages": {
+                    "read-config": {
+                      "payload": {
+                        "type": "null",
+                        "x-parser-schema-id": "<anonymous-schema-1>"
+                      },
+                      "x-parser-unique-object-id": "read-config",
+                      "x-parser-message-name": "read-config"
+                    }
+                  },
+                  "x-parser-unique-object-id": "config"
+                },
+                "messages": [
+                  {
+                    "payload": {
+                      "type": "null",
+                      "x-parser-schema-id": "<anonymous-schema-1>"
+                    },
+                    "x-parser-unique-object-id": "read-config",
+                    "x-parser-message-name": "read-config"
+                  }
+                ],
+                "x-parser-unique-object-id": "read-config"
+              }
+            },
+            "x-parser-spec-parsed": true,
+            "x-parser-api-version": 3
+          },
+          "semver": {
+            "version": "3.0.0",
+            "major": 3,
+            "minor": 0,
+            "patch": 0
+          }
+        },
+        "pointer": "/"
+      }
+    },
+    "params": {},
+    "originalAsyncAPI": "asyncapi: \"3.0.0\"\ninfo:\n  title: MoodleNet API\n  version: 1.0.0\n  description: |-\n    MoodleNet API\n  license:\n    name: Apache AGPL-3.0\n    url: https://www.gnu.org/licenses/agpl-3.0.en.html\ndefaultContentType: application/json\nchannels:\n  config:\n    address: config\n    messages:\n      read-config:\n        $ref: \"../com.api.yml#/components/messages/null\"\noperations:\n  read-config:\n    action: receive\n    channel:\n      $ref: \"#/channels/config\"\n    messages:\n      - $ref: \"#/channels/config/messages/read-config\"\n",
+    "messageName": "read-config",
+    "message": {
+      "_json": {
+        "payload": {
+          "type": "null",
+          "x-parser-schema-id": "<anonymous-schema-1>"
+        },
+        "x-parser-unique-object-id": "read-config",
+        "x-parser-message-name": "read-config"
+      },
+      "_meta": {
+        "id": "read-config",
+        "pointer": "/channels/config/messages/read-config",
+        "asyncapi": {
+          "source": "asyncapi/srv/moodle-net.api.yml",
+          "input": "asyncapi: \"3.0.0\"\ninfo:\n  title: MoodleNet API\n  version: 1.0.0\n  description: |-\n    MoodleNet API\n  license:\n    name: Apache AGPL-3.0\n    url: https://www.gnu.org/licenses/agpl-3.0.en.html\ndefaultContentType: application/json\nchannels:\n  config:\n    address: config\n    messages:\n      read-config:\n        $ref: \"../com.api.yml#/components/messages/null\"\noperations:\n  read-config:\n    action: receive\n    channel:\n      $ref: \"#/channels/config\"\n    messages:\n      - $ref: \"#/channels/config/messages/read-config\"\n",
+          "parsed": {
+            "asyncapi": "3.0.0",
+            "info": {
+              "title": "MoodleNet API",
+              "version": "1.0.0",
+              "description": "MoodleNet API",
+              "license": {
+                "name": "Apache AGPL-3.0",
+                "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
+              }
+            },
+            "defaultContentType": "application/json",
+            "channels": {
+              "config": {
+                "address": "config",
+                "messages": {
+                  "read-config": {
+                    "payload": {
+                      "type": "null",
+                      "x-parser-schema-id": "<anonymous-schema-1>"
+                    },
+                    "x-parser-unique-object-id": "read-config",
+                    "x-parser-message-name": "read-config"
+                  }
+                },
+                "x-parser-unique-object-id": "config"
+              }
+            },
+            "operations": {
+              "read-config": {
+                "action": "receive",
+                "channel": {
+                  "address": "config",
+                  "messages": {
+                    "read-config": {
+                      "payload": {
+                        "type": "null",
+                        "x-parser-schema-id": "<anonymous-schema-1>"
+                      },
+                      "x-parser-unique-object-id": "read-config",
+                      "x-parser-message-name": "read-config"
+                    }
+                  },
+                  "x-parser-unique-object-id": "config"
+                },
+                "messages": [
+                  {
+                    "payload": {
+                      "type": "null",
+                      "x-parser-schema-id": "<anonymous-schema-1>"
+                    },
+                    "x-parser-unique-object-id": "read-config",
+                    "x-parser-message-name": "read-config"
+                  }
+                ],
+                "x-parser-unique-object-id": "read-config"
+              }
+            },
+            "x-parser-spec-parsed": true,
+            "x-parser-api-version": 3
+          },
+          "semver": {
+            "version": "3.0.0",
+            "major": 3,
+            "minor": 0,
+            "patch": 0
+          }
+        }
+      }
+    }
+  }
+}

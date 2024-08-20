@@ -1,0 +1,54 @@
+{
+  "title": "CIUCU APIooo",
+  "params": {},
+  "originalAsyncAPIStr": "asyncapi: 3.0.0\ninfo:\n  title: CIUCU APIooo\n  version: 1.0.0\n  description: |-\n    CIUCU APIsaa\n  license:\n    name: Apache AGPL-3.0\n    url: https://www.gnu.org/licenses/agpl-3.0.en.html\ndefaultContentType: application/json\n",
+  "props": {
+    "asyncapi": {
+      "_json": {
+        "asyncapi": "3.0.0",
+        "info": {
+          "title": "CIUCU APIooo",
+          "version": "1.0.0",
+          "description": "CIUCU APIsaa",
+          "license": {
+            "name": "Apache AGPL-3.0",
+            "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
+          }
+        },
+        "defaultContentType": "application/json",
+        "x-parser-spec-parsed": true,
+        "x-parser-api-version": 3
+      },
+      "_meta": {
+        "asyncapi": {
+          "source": "lib/js/asyncapi/srv/cucu.yml",
+          "input": "asyncapi: 3.0.0\ninfo:\n  title: CIUCU APIooo\n  version: 1.0.0\n  description: |-\n    CIUCU APIsaa\n  license:\n    name: Apache AGPL-3.0\n    url: https://www.gnu.org/licenses/agpl-3.0.en.html\ndefaultContentType: application/json\n",
+          "parsed": {
+            "asyncapi": "3.0.0",
+            "info": {
+              "title": "CIUCU APIooo",
+              "version": "1.0.0",
+              "description": "CIUCU APIsaa",
+              "license": {
+                "name": "Apache AGPL-3.0",
+                "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
+              }
+            },
+            "defaultContentType": "application/json",
+            "x-parser-spec-parsed": true,
+            "x-parser-api-version": 3
+          },
+          "semver": {
+            "version": "3.0.0",
+            "major": 3,
+            "minor": 0,
+            "patch": 0
+          }
+        },
+        "pointer": "/"
+      }
+    },
+    "params": {},
+    "originalAsyncAPI": "asyncapi: 3.0.0\ninfo:\n  title: CIUCU APIooo\n  version: 1.0.0\n  description: |-\n    CIUCU APIsaa\n  license:\n    name: Apache AGPL-3.0\n    url: https://www.gnu.org/licenses/agpl-3.0.en.html\ndefaultContentType: application/json\n"
+  }
+}

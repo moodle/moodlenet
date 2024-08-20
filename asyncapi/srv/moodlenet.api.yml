@@ -1,0 +1,33 @@
+asyncapi: "3.0.0"
+info:
+  title: MoodleNet API
+  version: 1.0.0
+  description: |-
+    MoodleNet API
+  license:
+    name: Apache AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+defaultContentType: application/json
+channels:
+  config:
+    # address: config
+    messages:
+      read-config:
+        $ref: "com/.api.yml#/components/messages/null"
+operations:
+  read-config:
+    action: receive
+    channel:
+      $ref: "#/channels/config"
+    messages:
+      - $ref: "#/channels/config/messages/read-config"
+    reply:
+      address:
+        $ref: "com/.api.yml#/components/replyAddresses/std"
+      messages:
+        - $ref: "#/components/messages/current-config"
+components:
+  messages:
+    current-config:
+      payload:
+        $ref: "moodlenet.sch.yml#/definitions/config"

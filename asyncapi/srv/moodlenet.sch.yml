@@ -1,0 +1,41 @@
+definitions:
+  config:
+    type: object
+    properties:
+      deployment:
+        type: object
+        properties:
+          domain:
+            type: string
+            format: url
+          basePath:
+            type: string
+            format: path
+          secure:
+            type: boolean
+        required:
+          - domain
+          - basePath
+          - secure
+        additionalProperties: false
+      info:
+        type: object
+        properties:
+          logo:
+            type: string
+          smallLogo:
+            type: string
+          title:
+            type: string
+          subtitle:
+            type: string
+        required:
+          - logo
+          - smallLogo
+          - title
+          - subtitle
+        additionalProperties: false
+    required:
+      - deployment
+      - info
+    additionalProperties: false
