@@ -8,6 +8,13 @@ components:
     null:
       payload:
         type: "null"
+    dada:
+      payload:
+        type: object
+        properties:
+          dada:
+            type: string
+
   replyAddresses:
     std:
       location: "$message.header#reply-to"

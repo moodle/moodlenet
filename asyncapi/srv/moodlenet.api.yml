@@ -10,6 +10,7 @@ info:
 defaultContentType: application/json
 channels:
   config:
+
     # address: config
     messages:
       read-config:
@@ -22,10 +23,12 @@ operations:
     messages:
       - $ref: "#/channels/config/messages/read-config"
     reply:
+      # channel:
+      #   $ref: "#/channels/config"
       address:
         $ref: "com/.api.yml#/components/replyAddresses/std"
       messages:
-        - $ref: "#/components/messages/current-config"
+        - $ref:  "com/.api.yml#/components/messages/dada"
 components:
   messages:
     current-config:
