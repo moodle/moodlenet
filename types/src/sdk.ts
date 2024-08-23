@@ -1,55 +1,63 @@
-import { app, apps } from './app'
-import { _ddp } from './map'
+import { d_t_u } from './map'
+import { mod, mods } from './mod'
 
-type kind_pusher<_apps extends apps, kind extends keyof app<any>> = <
-  app_name extends _apps[_ddp],
-  ch_name extends (_apps & {
-    [n in _ddp]: app_name
-  })[kind][_ddp],
-  ev_name extends (((_apps & {
-    [n in _ddp]: app_name
-  })[kind] & {
-    [n in _ddp]: ch_name
-  })['msg'] & {
-    op: {
-      t: kind
-    }
-  })[_ddp],
-  ev extends ((_apps & {
-    [n in _ddp]: app_name
-  })[kind] & {
-    [n in _ddp]: ch_name
-  })['msg'] & {
-    [n in _ddp]: ev_name
-  },
+type kind_pusher<_mods extends mods, kind extends keyof mod<any>> = <
+  // _mod_name extends keyof _mods,
+  // _mod extends _mods[_mod_name],
+  // _ch_name extends keyof _mod[kind],
+  // _ch extends _mod[kind][_ch_name] & ch,
+  // _ch_msgs extends _ch['msg'],
+  // _msg_name extends _ch_msgs[_ddp],
+  // _msg extends _ch_msgs & {
+  //   [n in _ddp]: _msg_name
+  // },
+  //----//
+  _mod_name extends keyof _mods,
+  _ch_name extends keyof _mods[_mod_name][kind],
+  _msg_name extends keyof _mods[_mod_name][kind][_ch_name]['msg'],
+  _msg extends _mods[_mod_name][kind][_ch_name]['msg'][_msg_name],
+  // payload extends _msg['payload'],
+  // reply extends _msg['reply'],
 >(
-  app: app_name,
-  ch: ch_name,
-  ev: ev_name,
-  // tgt: ev['op']['t'] ,
-  payload: ev['payload'],
-) => Promise<ev['reply']>
+  mod: _mod_name,
+  ch: _ch_name,
+  msg: _msg_name,
+  // tgt: ev['op']['t'] ,,
+  payload: _msg['payload'],
+) => Promise<access_status<_msg['reply']>>
 
-export type pusher<_apps extends apps> = <kind extends keyof app<any>>(
+export type pusher<_mods extends mods> = <kind extends keyof mod<any>>(
   k: kind,
-) => kind_pusher<_apps, kind>
-export type priAccess<_apps extends apps> = kind_pusher<_apps, 'receives'>
-export type secAccess<_apps extends apps> = kind_pusher<_apps, 'sends'>
-export type appEmitter<_apps extends apps> = kind_pusher<_apps, 'emits'>
+) => kind_pusher<_mods, kind>
+export type priAccess<_mods extends mods> = kind_pusher<_mods, 'receives'>
+export type secAccess<_mods extends mods> = kind_pusher<_mods, 'sends'>
+export type modEmitter<_mods extends mods> = kind_pusher<_mods, 'emits'>
 
-export abstract class AccessError extends Error {
-  cause?: Error
-  constructor(message: string) {
-    super(message)
+export type ctrl<_mods extends mods> = handle<_mods, 'receives'>
+export type handle<_mods extends mods, kind extends keyof mod<any>> = {
+  [mod_name in keyof _mods]: mod_handle<_mods[mod_name], kind>
+}
+
+export type mod_ctrl<_mod extends mod<any>> = mod_handle<_mod, 'receives'>
+
+export type mod_handle<_mod extends mod<any>, kind extends keyof mod<any>> = (
+  config: _mod['config'],
+) => {
+  [ch_name in keyof _mod[kind]]: {
+    [msg_name in keyof _mod[kind][ch_name]['msg']]: (
+      payload: _mod[kind][ch_name]['msg'][msg_name]['payload'],
+    ) => Promise<_mod[kind][ch_name]['msg'][msg_name]['reply']>
+    // ) => Promise<access_status<_mods[mod_name][kind][ch_name]['msg'][msg_name]['reply']>>
   }
 }
-export class UnauthorizedError extends AccessError {
-  constructor(message: string) {
-    super(message)
-  }
+
+export type access_status<r> = d_t_u<AccessStatusErr<r>>
+export type err<T = unknown> = T & {
+  message?: string
 }
-export class NotFoundError extends AccessError {
-  constructor(message: string) {
-    super(message)
-  }
+export interface AccessStatusErr<reply> {
+  // 'ok': reply
+  'unauthorized': err<{ erdr: string }>
+  'not-found': err<{ exrr: string }>
+  'forbidden': err<{ aerr: string }>
 }

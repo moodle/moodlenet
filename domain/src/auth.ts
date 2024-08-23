@@ -8,7 +8,9 @@ export interface Users {
 }
 
 export interface AuthenticatedUser {
+  // id: string in some entity wrapper ?
   displayName: string
-  homePage: string
+  // homePage: string
+  // homePages: Record<appname, string> ?
   avatarUrl: null | string
 }

@@ -24,7 +24,17 @@ export type discriminated_union<nmap extends m_map, p extends _any_k = _DEF_DISC
   nmap,
   p
 >[keyof d_m<nmap, p>]
+
+export type d_t_m<nmap extends m_map> = discriminated_tuple_map<nmap>
+export type discriminated_tuple_map<nmap extends m_map> = {
+  [name in keyof nmap]: nmap[name] extends never | void | undefined
+    ? readonly [name]
+    : readonly [name, nmap[name]]
+}
+
+export type discriminated_tuple_union<nmap extends m_map> = d_t_m<nmap>[keyof nmap]
+export type d_t_u<nmap extends m_map> = discriminated_tuple_union<nmap>
+
 // discr_map<nmap, p> extends infer m ? m[keyof m] : never
 
 export type _t<t> = { [k in string & keyof t]: t[k] }
-
