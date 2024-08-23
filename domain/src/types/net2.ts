@@ -1,4 +1,4 @@
-import { ch, event, mod, mod_ctrl, receive, send } from '@moodle/types'
+import { ch, event, mod, mod_ctrl, receive, send } from '../mod'
 
 export interface Moodlenet2 {
   info: {
@@ -52,10 +52,9 @@ export type def = mod<{
   config: { a: number }
 }>
 
-export const ctrl: mod_ctrl<def> = c => ({
+export const ctrl: mod_ctrl<def> = {
   chr2: {
     async a2r21(pl) {
-      c.a.toExponential
       pl.a2r21
       // return {status:'done',reply:{a2r11_r:'a2r11_r'}}
       // return ['done', { a2r21_r: 'a2r21_r', message:'',aerr:'' }]
@@ -89,4 +88,4 @@ export const ctrl: mod_ctrl<def> = c => ({
       return { a2r12_r: 'a2r12_r' }
     },
   },
-})
+}

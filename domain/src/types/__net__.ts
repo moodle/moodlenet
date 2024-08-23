@@ -1,4 +1,4 @@
-import { ch, event, mod, receive, send } from '@moodle/types'
+import { ch, event, mod, receive, send } from 'domain/src/src'
 
 export interface Moodlenet {
   info: {

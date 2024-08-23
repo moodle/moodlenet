@@ -1,5 +1,5 @@
-import { d_t_u } from './map'
-import { mod, mods } from './mod'
+import { d_t_u } from '@moodle/t-utils'
+import { mod, mods } from './types'
 
 type kind_pusher<_mods extends mods, kind extends keyof mod<any>> = <
   // _mod_name extends keyof _mods,
@@ -40,9 +40,7 @@ export type handle<_mods extends mods, kind extends keyof mod<any>> = {
 
 export type mod_ctrl<_mod extends mod<any>> = mod_handle<_mod, 'receives'>
 
-export type mod_handle<_mod extends mod<any>, kind extends keyof mod<any>> = (
-  config: _mod['config'],
-) => {
+export type mod_handle<_mod extends mod<any>, kind extends keyof mod<any>> = {
   [ch_name in keyof _mod[kind]]: {
     [msg_name in keyof _mod[kind][ch_name]['msg']]: (
       payload: _mod[kind][ch_name]['msg'][msg_name]['payload'],

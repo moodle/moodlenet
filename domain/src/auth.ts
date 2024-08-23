@@ -1,4 +1,4 @@
-import { d_u } from '@moodle/types'
+import { d_u } from '@moodle/t-utils'
 
 export type user = d_u<Users>
 

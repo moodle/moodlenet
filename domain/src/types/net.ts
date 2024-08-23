@@ -1,4 +1,4 @@
-import { ch, event, mod, mod_ctrl, receive, send } from '@moodle/types'
+import { ch, event, mod, mod_ctrl, receive, send } from '../mod'
 
 export interface Moodlenet {
   info: {
@@ -13,14 +13,14 @@ export interface Moodlenet {
   }
   webapp: {
     basePath: string
-    session: {
-      currentUser(): Promise<user>
-      permission: get<Permissions>
-      layouts: {
-        pages: PageLayouts
-        roots: RootLayouts
-      }
-    }
+    // session: {
+    //   currentUser(): Promise<user>
+    //   permission: get<Permissions>
+    //   layouts: {
+    //     pages: PageLayouts
+    //     roots: RootLayouts
+    //   }
+    // }
   }
 }
 
@@ -62,10 +62,9 @@ export type def = mod<{
   config: { a: number }
 }>
 
-export const ctrl: mod_ctrl<def> = c => ({
+export const ctrl: mod_ctrl<def> = {
   chr2: {
     async a1r21(pl) {
-      c.a.toExponential
       pl.a1r21
       // return {status:'done',reply:{a1r11_r:'a1r11_r'}}
       // return ['done', { a1r21_r: 'a1r21_r', message:'',aerr:'' }]
@@ -99,4 +98,4 @@ export const ctrl: mod_ctrl<def> = c => ({
       return { a1r12_r: 'a1r12_r' }
     },
   },
-})
+}

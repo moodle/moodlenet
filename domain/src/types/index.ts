@@ -1,4 +1,4 @@
-import { _t, ctrl, modEmitter, mods, priAccess, pusher, secAccess } from '@moodle/types'
+import { _t, ctrl, modEmitter, mods, priAccess, pusher, secAccess } from 'domain/src/src'
 import * as net from './net'
 import * as net2 from './net2'
 
@@ -11,7 +11,7 @@ type moodle = mods<_t<Moodle>>
 
 const c: ctrl<moodle> = {
   net: net.ctrl,
-  net2: net2.ctrl
+  net2: net2.ctrl,
 }
 
 declare const p: priAccess<moodle>

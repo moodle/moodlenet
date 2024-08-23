@@ -1,4 +1,4 @@
-import { d_m, map } from './map'
+import { d_m, map } from 't-utils/src/map'
 
 export type mods<mods extends map<mod<any>> = map<mod<any>>> = d_m<mods>
 
@@ -15,13 +15,11 @@ type mod_def = {
   receives: map<ch>
   emits: map<ch>
   sends: map<ch>
-  config: object
 }
 export type mod<def extends mod_def> = {
   receives: d_m<def['receives']>
   emits: d_m<def['emits']>
   sends: d_m<def['sends']>
-  config: def['config']
 }
 
 export type ch<msg_map extends map<msg> = map<msg>> = {

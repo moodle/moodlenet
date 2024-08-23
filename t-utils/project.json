@@ -1,7 +1,7 @@
 {
-  "name": "types",
+  "name": "t-utils",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "types/src",
+  "sourceRoot": "t-utils/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,10 +9,10 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/types",
-        "main": "types/src/index.ts",
-        "tsConfig": "types/tsconfig.lib.json",
-        "assets": ["types/*.md"]
+        "outputPath": "dist/t-utils",
+        "main": "t-utils/src/index.ts",
+        "tsConfig": "t-utils/tsconfig.lib.json",
+        "assets": ["t-utils/*.md"]
       }
     }
   }
