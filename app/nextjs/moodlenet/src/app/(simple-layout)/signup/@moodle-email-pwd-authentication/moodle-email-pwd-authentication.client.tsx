@@ -1,6 +1,6 @@
 'use client'
-import InputTextField from '@/ui/atoms/InputTextField/InputTextField'
-import PrimaryButton from '@/ui/atoms/PrimaryButton/PrimaryButton'
+import InputTextField from '#ui/atoms/InputTextField/InputTextField'
+import PrimaryButton from '#ui/atoms/PrimaryButton/PrimaryButton'
 import { useFormik } from 'formik'
 import { toFormikValidationSchema } from 'zod-formik-adapter'
 import getSchema, {

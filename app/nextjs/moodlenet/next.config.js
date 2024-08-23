@@ -53,6 +53,7 @@ module.exports = async (...args) => {
     return webpack?.(wpConfig, options)
   }
   config.experimental = {
+    externalDir: true,
     turbo: {
       rules: {
         '*.svg': {

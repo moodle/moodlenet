@@ -1,4 +1,4 @@
-import { Permissions } from '@/lib/server/session/types/permissions'
+import { Permissions } from '#lib/server/session/types/permissions'
 
 export async function permission(k: keyof Permissions) {
   const perm: Permissions = {

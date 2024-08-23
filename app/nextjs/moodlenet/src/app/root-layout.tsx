@@ -1,4 +1,4 @@
-import { defaultStyle } from '@/common/config'
+import { defaultStyle } from '#common/config'
 import type { PropsWithChildren } from 'react'
 import { GlobalProviders } from './root-layout.client'
 import './root-layout.scss'

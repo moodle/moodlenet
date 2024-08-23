@@ -1,5 +1,5 @@
-import { SessionContext } from '@/lib/server/session/types/context'
-import { RootLayouts } from '@/lib/server/session/types/website/layouts'
+import { SessionContext } from '#lib/server/session/types/context'
+import { RootLayouts } from '#lib/server/session/types/website/layouts'
 
 export const roots: SessionContext['website']['layouts']['roots'] = async function rootLayout(k) {
   const rootLayouts: RootLayouts = {

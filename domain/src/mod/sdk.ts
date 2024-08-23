@@ -1,7 +1,7 @@
 import { d_t_u } from '@moodle/t-utils'
-import { mod, mods } from './types'
+import { domain, mod } from './types'
 
-type kind_pusher<_mods extends mods, kind extends keyof mod<any>> = <
+type kind_pusher<_mods extends domain, kind extends keyof mod<any>> = <
   // _mod_name extends keyof _mods,
   // _mod extends _mods[_mod_name],
   // _ch_name extends keyof _mod[kind],
@@ -26,15 +26,15 @@ type kind_pusher<_mods extends mods, kind extends keyof mod<any>> = <
   payload: _msg['payload'],
 ) => Promise<access_status<_msg['reply']>>
 
-export type pusher<_mods extends mods> = <kind extends keyof mod<any>>(
+export type pusher<_mods extends domain> = <kind extends keyof mod<any>>(
   k: kind,
 ) => kind_pusher<_mods, kind>
-export type priAccess<_mods extends mods> = kind_pusher<_mods, 'receives'>
-export type secAccess<_mods extends mods> = kind_pusher<_mods, 'sends'>
-export type modEmitter<_mods extends mods> = kind_pusher<_mods, 'emits'>
+export type priAccess<_mods extends domain> = kind_pusher<_mods, 'receives'>
+export type secAccess<_mods extends domain> = kind_pusher<_mods, 'sends'>
+export type modEmitter<_mods extends domain> = kind_pusher<_mods, 'emits'>
 
-export type ctrl<_mods extends mods> = handle<_mods, 'receives'>
-export type handle<_mods extends mods, kind extends keyof mod<any>> = {
+export type ctrl<_mods extends domain> = handle<_mods, 'receives'>
+export type handle<_mods extends domain, kind extends keyof mod<any>> = {
   [mod_name in keyof _mods]: mod_handle<_mods[mod_name], kind>
 }
 

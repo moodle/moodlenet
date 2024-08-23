@@ -1,4 +1,4 @@
-import { clientSlotItem } from '@/lib/common/pages'
+import { clientSlotItem } from '#lib/common/pages'
 import { PropsWithChildren, ReactElement } from 'react'
 import { layoutSlotItem } from '../session/types/website/layouts'
 

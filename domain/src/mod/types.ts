@@ -1,22 +1,16 @@
 import { d_m, map } from 't-utils/src/map'
 
-export type mods<mods extends map<mod<any>> = map<mod<any>>> = d_m<mods>
+export type domain<mods extends map<mod<any>> = map<mod<any>>> = d_m<mods>
 
-// type mod_def<
-//   receives extends map<ch> | undefined = map<ch> | undefined,
-//   sends extends map<ch> | undefined = map<ch> | undefined,
-//   emits extends map<ch> | undefined = map<ch> | undefined,
-// > = {
-//   receives?: receives
-//   sends?: sends
-//   emits?: emits
-// }
 type mod_def = {
+  name: string
   receives: map<ch>
   emits: map<ch>
   sends: map<ch>
 }
+
 export type mod<def extends mod_def> = {
+  name: def['name']
   receives: d_m<def['receives']>
   emits: d_m<def['emits']>
   sends: d_m<def['sends']>

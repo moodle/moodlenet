@@ -1,4 +1,4 @@
-import { SessionContext } from '@/lib/server/session/types/context'
+import { SessionContext } from '#lib/server/session/types/context'
 import { currentUser } from './currentUser'
 import { modules } from './layouts/modules'
 import { pages } from './layouts/pages'

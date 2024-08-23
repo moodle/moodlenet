@@ -1,4 +1,4 @@
-import { SomeOf } from '@/lib/common/utils/types'
+import { SomeOf } from '#lib/common/utils/types'
 
 export type user = SomeOf<Users>
 

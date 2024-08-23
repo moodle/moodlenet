@@ -4,7 +4,7 @@ export async function middleware(request: NextRequest) {
   // const requestHeaders = new Headers(request.headers)
   // requestHeaders.set('x-hello-from-middleware1', 'hello')
 
-  // const sessionCtx = await (await import('@/lib/mock/server/session-ctx/mock')).default()
+  // const sessionCtx = await (await import('#lib/mock/server/session-ctx/mock')).default()
   // console.log(`*-*\n` || { sessionCtx })
   // const response = await asyncCtx.run({ a: 1 }, () => {
   //;(request as any)._ = { a: 1 }

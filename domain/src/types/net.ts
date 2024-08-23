@@ -1,5 +1,11 @@
 import { ch, event, mod, mod_ctrl, receive, send } from '../mod'
 
+declare module '@moodle/domain' {
+  export interface MoodleDomain {
+    net: mod_moodlenet
+  }
+}
+
 export interface Moodlenet {
   info: {
     title: string
@@ -24,7 +30,8 @@ export interface Moodlenet {
   }
 }
 
-export type def = mod<{
+export type mod_moodlenet = mod<{
+  name: 'net'
   receives: {
     chr1: ch<{
       a1r11: receive<{ a1r11: 'a1r11' }, { a1r11_r: 'a1r11_r' }>
@@ -62,7 +69,7 @@ export type def = mod<{
   config: { a: number }
 }>
 
-export const ctrl: mod_ctrl<def> = {
+export const ctrl: mod_ctrl<mod_moodlenet> = {
   chr2: {
     async a1r21(pl) {
       pl.a1r21
