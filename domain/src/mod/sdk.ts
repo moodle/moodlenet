@@ -33,6 +33,7 @@ export type priAccess<_mods extends domain> = kind_pusher<_mods, 'receives'>
 export type secAccess<_mods extends domain> = kind_pusher<_mods, 'sends'>
 export type modEmitter<_mods extends domain> = kind_pusher<_mods, 'emits'>
 
+
 export type ctrl<_mods extends domain> = handle<_mods, 'receives'>
 export type handle<_mods extends domain, kind extends keyof mod<any>> = {
   [mod_name in keyof _mods]: mod_handle<_mods[mod_name], kind>

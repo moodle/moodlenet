@@ -1,4 +1,4 @@
-import { clientSlotItem } from '#lib/common/pages'
+import { clientSlotItem } from '@/lib/common/pages'
 import { PropsWithChildren, ReactElement } from 'react'
 import { layoutSlotItem } from '../session/types/website/layouts'
 
@@ -29,7 +29,12 @@ export function slotItem(
   item: layoutSlotItem,
   //_default: ReactElement = <>{`SHOULD NEVER HAPPEN: NO SLOT ITEM for [${item}]`}</>,
 ) {
-  return props[item] ? props[item] : <div key={item} dangerouslySetInnerHTML={{ __html: item }} />
+  const camelCaseItem = item.replace(/-([a-z])/g, g => (g[1] ? g[1].toUpperCase() : ''))
+  return props[camelCaseItem] ? (
+    props[camelCaseItem]
+  ) : (
+    <div key={item} dangerouslySetInnerHTML={{ __html: item }} />
+  )
 }
 
 // export function isParallelRouteItem(item: layoutSlotItem): item is parallelRouteItem {

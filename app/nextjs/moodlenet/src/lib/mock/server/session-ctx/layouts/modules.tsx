@@ -1,5 +1,5 @@
-import { SessionContext } from '#lib/server/session/types/context'
-import { Modules } from '#lib/server/session/types/website'
+import { SessionContext } from '@/lib/server/session/types/context'
+import { Modules } from '@/lib/server/session/types/website'
 
 export const modules: SessionContext['website']['modules'] = async function modules(k) {
   const mod: Modules = {

@@ -1,5 +1,5 @@
-import { loginFormConfigs } from '#app/(simple-layout)/login/@moodle-email-pwd-authentication/moodle-email-pwd-authentication.common'
-import { signupFormConfigs } from '#app/(simple-layout)/signup/@moodle-email-pwd-authentication/moodle-email-pwd-authentication.common'
+import { loginFormConfigs } from '@/app/(simple-layout)/login/@moodleEmailPwdAuthentication/moodle-email-pwd-authentication.common'
+import { signupFormConfigs } from '@/app/(simple-layout)/signup/@moodleEmailPwdAuthentication/moodle-email-pwd-authentication.common'
 
 export interface Modules {
   'moodle-email-pwd-authentication': {

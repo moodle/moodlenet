@@ -1,4 +1,4 @@
-import { sessionContext } from '#lib/server/sessionContext'
+import { sessionContext } from '@/lib/server/sessionContext'
 import SignupPanel from './moodle-email-pwd-authentication.client'
 
 export default async function MoodleEmailPwdAuthenticationPage() {

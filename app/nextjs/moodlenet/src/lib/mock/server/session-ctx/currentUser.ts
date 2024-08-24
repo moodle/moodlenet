@@ -1,6 +1,6 @@
-import { sitepaths } from '#lib/common/utils/sitepaths'
-import { getAuthToken } from '#lib/server/auth'
-import { user as _user } from '#lib/server/session/types/user'
+import { sitepaths } from '@/lib/common/utils/sitepaths'
+import { getAuthToken } from '@/lib/server/auth'
+import { user as _user } from '@/lib/server/session/types/user'
 
 export async function currentUser() {
   const url = sitepaths('http://localhost:3000')

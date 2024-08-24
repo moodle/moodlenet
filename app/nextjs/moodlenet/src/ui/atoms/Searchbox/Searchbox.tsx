@@ -1,9 +1,9 @@
 'use client'
-// import { ReactComponent as SearchIcon } from '#assets/icons/search.svg'
-import SearchIconSVG from '#assets/icons/search.svg'
+// import { ReactComponent as SearchIcon } from '@/assets/icons/search.svg'
+import SearchIconSVG from '@/assets/icons/search.svg'
 // import Image from 'next/image'
-import { isEnterKeyEv } from '#lib/ui/utils/keyboard'
-import PrimaryButton, { PrimaryButtonProps } from '#ui/atoms/PrimaryButton/PrimaryButton'
+import { isEnterKeyEv } from '@/lib/ui/utils/keyboard'
+import PrimaryButton, { PrimaryButtonProps } from '@/ui/atoms/PrimaryButton/PrimaryButton'
 import { DetailedHTMLProps, InputHTMLAttributes, PropsWithChildren, ReactNode, useRef } from 'react'
 import './Searchbox.scss'
 export type triggerProps = PropsWithChildren<{ label?: ReactNode } & PrimaryButtonProps>

@@ -1,5 +1,5 @@
 'use client'
-import { isEnterKeyEv } from '#lib/ui/utils/keyboard'
+import { isEnterKeyEv } from '@/lib/ui/utils/keyboard'
 import type { KeyboardEvent, ReactNode } from 'react'
 import './PrimaryButton.scss'
 

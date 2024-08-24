@@ -1,5 +1,5 @@
-import { sessionContext } from '#lib/server/sessionContext'
-import { layoutPropsWithChildren, slotItem, slotsMap } from '#lib/server/utils/slots'
+import { sessionContext } from '@/lib/server/sessionContext'
+import { layoutPropsWithChildren, slotItem, slotsMap } from '@/lib/server/utils/slots'
 import { SignupCard, SignupCardProps } from './signup.client'
 import './signup.style.scss'
 

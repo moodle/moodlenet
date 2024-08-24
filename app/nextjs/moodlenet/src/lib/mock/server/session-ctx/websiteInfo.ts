@@ -1,4 +1,4 @@
-import { DeploymentInfo, WebsiteInfo } from '#lib/server/session/types/website'
+import { DeploymentInfo, WebsiteInfo } from '@/lib/server/session/types/website'
 
 export async function websiteInfo() {
   const websiteInfo: WebsiteInfo = {

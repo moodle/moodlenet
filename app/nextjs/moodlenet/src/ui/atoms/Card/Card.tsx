@@ -1,5 +1,5 @@
 'use client'
-import { useForwardedRef } from '#lib/ui/useForwardedRef'
+import { useForwardedRef } from '@/lib/ui/useForwardedRef'
 import type { CSSProperties, ReactNode } from 'react'
 import { forwardRef } from 'react'
 import './Card.scss'

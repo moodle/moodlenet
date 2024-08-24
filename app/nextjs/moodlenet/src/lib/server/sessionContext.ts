@@ -15,5 +15,5 @@ export async function sessionContext(): Promise<SessionContext> {
   //      throw new Error('NO SessionStorage in AsyncLocalContext')
   //    })()
   //  )
-  return (await import('#lib/mock/server/session-ctx/mock')).default()
+  return (await import('@/lib/mock/server/session-ctx/mock')).default()
 }

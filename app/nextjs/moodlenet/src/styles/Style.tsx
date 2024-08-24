@@ -1,4 +1,4 @@
-import { baseStyle, BaseStyleType } from '#common/config'
+import { baseStyle, BaseStyleType } from '@/common/config'
 import type { CSSProperties } from 'react'
 import { createContext } from 'react'
 // import type { BaseStyleType } from '../../../../common/config.jsx';

@@ -54,6 +54,7 @@ module.exports = async (...args) => {
   }
   config.experimental = {
     externalDir: true,
+    instrumentationHook: true,
     turbo: {
       rules: {
         '*.svg': {
@@ -63,6 +64,9 @@ module.exports = async (...args) => {
       },
     },
   }
+  config.transpilePackages = [...(config.transpilePackages ?? []), '@moodle/domain', '@moodle/t-utils']
+  // config.serverRuntimeConfig = require('../../../domain/src/index')
+  // config.serverRuntimeConfig = require('@moodle/domain')
   // console.log(JSON.stringify(config, null, 2), config)
   return config
 }

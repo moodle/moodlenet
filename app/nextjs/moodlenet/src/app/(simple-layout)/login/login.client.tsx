@@ -1,8 +1,8 @@
 'use client'
 
-import { clientSlotItem } from '#lib/common/pages'
-import { sitepaths } from '#lib/common/utils/sitepaths'
-import Card from '#ui/atoms/Card/Card'
+import { clientSlotItem } from '@/lib/common/pages'
+import { sitepaths } from '@/lib/common/utils/sitepaths'
+import Card from '@/ui/atoms/Card/Card'
 import CallMadeIcon from '@mui/icons-material/CallMade'
 import Link from 'next/link'
 import { useState, type CSSProperties } from 'react'

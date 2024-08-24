@@ -1,2 +1,2 @@
-npx nx run app-nextjs-moodlenet:dev --args=--turbo  --verbose
+npx nx run app-nextjs-moodlenet:dev --args=--turbo
 

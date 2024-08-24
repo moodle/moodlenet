@@ -1,5 +1,5 @@
 'use client'
-import type { EmbedType, ThumbnailType } from '#lib/ui/utilities'
+import type { EmbedType, ThumbnailType } from '@/lib/ui/utilities'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
 import './Vimeo.scss'

@@ -1,4 +1,4 @@
-import { sitepaths } from '#lib/common/utils/sitepaths'
+import { sitepaths } from '@/lib/common/utils/sitepaths'
 import { sessionContext } from '../sessionContext'
 
 export async function srvSiteUrls() {

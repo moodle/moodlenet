@@ -1,6 +1,6 @@
-import defaultBackground from '#assets/img/default-landing-background.png'
-import { sessionContext } from '#lib/server/sessionContext'
-import { layoutPropsWithChildren, slotsMap } from '#lib/server/utils/slots'
+import defaultBackground from '@/assets/img/default-landing-background.png'
+import { sessionContext } from '@/lib/server/sessionContext'
+import { layoutPropsWithChildren, slotsMap } from '@/lib/server/utils/slots'
 import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
 import './landing-page.style.scss'
 
