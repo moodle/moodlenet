@@ -1,11 +1,13 @@
 import { __removeme_b } from '@moodle/domain'
+import { moodle_domain, sessionAccess } from '@moodle/domain'
+import { d_t_u } from '@moodle/t-utils'
 import { factories, trans_kind } from './types'
 
 export default getApiTransport
 async function getApiTransport(kind: trans_kind, cfg: string) {
   const [impl_type, ..._rest] = cfg.split('::')
   const fact_cfg = _rest.join('::')
-  const factories: factories = (await import(`./lib/${impl_type}`)).default
+  const factories: factories = (await import(`./impl/${impl_type}`)).default
   return factories[kind](fact_cfg)
 }
 
