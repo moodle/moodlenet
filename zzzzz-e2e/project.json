@@ -1,9 +1,0 @@
-{
-  "name": "zzzzz-e2e",
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "zzzzz-e2e/src",
-  "tags": [],
-  "implicitDependencies": ["zzzzz"],
-  "// targets": "to see all targets run: nx show project zzzzz-e2e --web",
-  "targets": {}
-}
