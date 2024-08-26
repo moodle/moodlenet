@@ -1,9 +1,19 @@
 import { moodle_domain, sessionAccess } from '@moodle/domain'
 import { factories } from '../types'
-import assert = require('assert')
+
+function assert(t: any, msg: string): void {
+  if (!t) {
+    throw new Error(msg)
+  }
+}
+
 const factories: factories = {
   async sessionAccess(cfg) {
     const { fetch, Agent } = await import('undici')
+    // const { fetch, Agent } = {
+    //   async fetch(...args: any[]): Promise<any> {},
+    //   Agent(...args: any[]) {},
+    // }
     const [url] = cfg.split('|')
     assert(url, 'url must be a string')
 
@@ -28,16 +38,18 @@ const factories: factories = {
 
     return sessionAccess
   },
+
   async ctrl(cfg) {
     return async accessCtrl => {
-      const express = await import('express')
+      const express_mod = await import('express')
+      const express = express_mod.default
 
       const [port_str, baseUrl = '/'] = cfg.split('|')
       const port = parseInt(port_str)
       assert(port, 'port must be a number')
       const app = express()
       app.post(baseUrl, express.json(), async (req, res) => {
-        const [priSession, mod_name, ch_name, msg_name, msg_payload] = JSON.parse(req.body)
+        const [priSession, mod_name, ch_name, msg_name, msg_payload] = req.body
 
         const controller = (await accessCtrl(priSession)) as any
         const handler = controller[mod_name]?.[ch_name]?.[msg_name]

@@ -1,6 +1,6 @@
-import { d_m, map } from '@moodle/t-utils/src/map'
+import { d_m, map } from '@moodle/t-utils'
 
-export type domain<mods extends map<mod<any>> = map<mod<any>>> = d_m<mods>
+export type domain<_domain extends map<mod<any>> = map<mod<any>>> = d_m<_domain>
 
 type mod_def = {
   name: string
