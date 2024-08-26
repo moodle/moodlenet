@@ -14,6 +14,13 @@
     ],
     "sharedGlobals": []
   },
+  "targetDefaults": {
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    }
+  },
   "plugins": [
     {
       "plugin": "@nx/next/plugin",
@@ -49,13 +56,6 @@
         "style": "css",
         "linter": "eslint"
       }
-    }
-  },
-  "targetDefaults": {
-    "@nx/js:tsc": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
     }
   }
 }

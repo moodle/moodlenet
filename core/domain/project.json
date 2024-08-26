@@ -1,0 +1,19 @@
+{
+  "name": "core-domain",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "core/domain/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/core/domain",
+        "main": "core/domain/src/index.ts",
+        "tsConfig": "core/domain/tsconfig.lib.json",
+        "assets": ["core/domain/*.md"]
+      }
+    }
+  }
+}

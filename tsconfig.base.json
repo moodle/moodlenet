@@ -15,9 +15,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@moodle/asyncapi": ["asyncapi/src/index.ts"],
-      "@moodle/domain": ["domain/src/index.ts"],
-      "@moodle/types": ["types/src/index.ts"]
+      "@moodle/core/domain": ["core/domain/src/index.ts"],
+      "@moodle/core/transport": ["core/transport/src/index.ts"],
+      "@moodle/lib/types": ["lib/types/src/index.ts"],
+      "@moodle/mod/eml-pwd-auth": ["mod/eml-pwd-auth/src/index.ts"],
+      "@moodle/mod/net": ["mod/net/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

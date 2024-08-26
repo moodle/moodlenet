@@ -1,0 +1,19 @@
+{
+  "name": "lib-types",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/types/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/lib/types",
+        "main": "lib/types/src/index.ts",
+        "tsConfig": "lib/types/tsconfig.lib.json",
+        "assets": ["lib/types/*.md"]
+      }
+    }
+  }
+}
