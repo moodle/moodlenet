@@ -5,10 +5,5 @@
     "declaration": true,
     "types": ["node"]
   },
-  "include": ["../domain/src/types/**/*.ts", "../domain/src/types/appsts"],
-  "exclude": [
-    "jest.config.ts",
-    "../domain/src/types/**/*.spec.ts",
-    "../domain/src/types/**/*.test.ts"
-  ]
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }
