@@ -1,0 +1,19 @@
+{
+  "name": "mod-eml-pwd-auth",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "mod/eml-pwd-auth/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/mod/eml-pwd-auth",
+        "main": "mod/eml-pwd-auth/src/index.ts",
+        "tsConfig": "mod/eml-pwd-auth/tsconfig.lib.json",
+        "assets": ["mod/eml-pwd-auth/*.md"]
+      }
+    }
+  }
+}
