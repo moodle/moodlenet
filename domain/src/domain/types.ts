@@ -1,16 +1,18 @@
-import { d_m, map } from 't-utils/src/map'
+import { d_m, map } from '@moodle/t-utils/src/map'
 
 export type domain<mods extends map<mod<any>> = map<mod<any>>> = d_m<mods>
 
 type mod_def = {
   name: string
+  version: string
   receives: map<ch>
   emits: map<ch>
   sends: map<ch>
 }
-
+export type mod_id = Pick<mod_def, 'name' | 'version'>
 export type mod<def extends mod_def> = {
   name: def['name']
+  version: def['version']
   receives: d_m<def['receives']>
   emits: d_m<def['emits']>
   sends: d_m<def['sends']>

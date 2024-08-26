@@ -21,6 +21,7 @@
     "baseUrl": "./src/",
     // "sourceRoot": "./src/"
     "paths": {
+      "@moodle/api-transport": ["../../../../dist/api-transport/src/index"],
       // "@moodle/domain": ["../../../../domain/src/index.ts"],
       // "@moodle/t-utils": ["../../../../t-utils/src/index.ts"],
       "@/*": ["./*"]

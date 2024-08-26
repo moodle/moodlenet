@@ -1,4 +1,3 @@
 {
-  // "recommendations": [ "ms-playwright.playwright" ]
   "recommendations": ["esbenp.prettier-vscode", "firsttris.vscode-jest-runner"]
 }

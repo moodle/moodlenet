@@ -32,6 +32,7 @@ export interface Moodlenet {
 
 export type mod_moodlenet = mod<{
   name: 'net'
+  version: '0.1'
   receives: {
     chr1: ch<{
       a1r11: receive<{ a1r11: 'a1r11' }, { a1r11_r: 'a1r11_r' }>
