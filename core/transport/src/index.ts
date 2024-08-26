@@ -1,4 +1,4 @@
-import { __removeme_b } from '@moodle/core/domain'
+// import { __removeme_b } from '@moodle/core/domain'
 import { factories, trans_kind } from './types'
 
 export default getApiTransport
@@ -9,7 +9,7 @@ async function getApiTransport(kind: trans_kind, cfg: string) {
   return factories[kind](fact_cfg)
 }
 
-export function __removeme_a(a: string) {
-  console.log({ a })
-  __removeme_b('trnsp')
-}
+// export function __removeme_a(a: string) {
+//   console.log({ a })
+//   __removeme_b('trnsp')
+// }

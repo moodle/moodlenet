@@ -1,7 +1,7 @@
 'use server'
-import getApiTransport, { __removeme_a } from '@moodle/core/transport'
+import getApiTransport /* , { __removeme_a } */ from '@moodle/core/transport'
 import { SessionContext } from './session/types/context'
-__removeme_a('mnetapp')
+// __removeme_a('mnetapp')
 
 //  export const asyncCtx = new AsyncLocalStorage<SessionContext>()
 
@@ -28,7 +28,6 @@ export async function sessionContext(): Promise<SessionContext> {
     protocol: 'proto',
     mod: { name: 'mod name', version: '1' },
   })
-  console.log({ f })
   // @ts-expect-error dlsdspd
   f('moo', 'ch', 'msg', { p: 'load' })
 

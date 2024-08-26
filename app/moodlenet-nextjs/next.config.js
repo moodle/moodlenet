@@ -21,10 +21,8 @@ const plugins = [
 
 const nextConfigFn = composePlugins(...plugins)(nextConfig)
 
-// @ts-expect-error Parameter 'name' implicitly has an 'any' type.ts(7006)
-const wp = require('webpack')
+// @ts-expect-error Parameter 'phase, context' implicitly has an 'any' type.ts(7006)
 module.exports = async (phase, context) => {
-  // @ts-expect-error Parameter 'name' implicitly has an 'any' type.ts(7006)
   const config = await nextConfigFn(phase, context)
 
   const webpack = config.webpack

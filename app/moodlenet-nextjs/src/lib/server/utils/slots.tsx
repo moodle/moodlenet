@@ -1,8 +1,13 @@
 import { PropsWithChildren, ReactElement } from 'react'
-import { clientSlotItem } from '../../lib/common/pages'
+import { clientSlotItem } from '../../common/pages'
 import { layoutSlotItem } from '../session/types/website/layouts'
 
-export type layoutProps = Record<string, ReactElement>
+export type layoutProps = {
+  params?: {
+    tag: string
+    item: string
+  }
+} //& { [n: string]: ReactElement | undefined }
 export type layoutPropsWithChildren = PropsWithChildren<layoutProps>
 export function slotsMap<S extends Record<string, layoutSlotItem[]>>(props: layoutProps, slots: S) {
   return Object.entries(slots).reduce(
@@ -30,8 +35,8 @@ export function slotItem(
   //_default: ReactElement = <>{`SHOULD NEVER HAPPEN: NO SLOT ITEM for [${item}]`}</>,
 ) {
   const camelCaseItem = item.replace(/-([a-z])/g, g => (g[1] ? g[1].toUpperCase() : ''))
-  return props[camelCaseItem] ? (
-    props[camelCaseItem]
+  return (props as any)[camelCaseItem] ? (
+    ((props as any)[camelCaseItem] as ReactElement)
   ) : (
     <div key={item} dangerouslySetInnerHTML={{ __html: item }} />
   )
