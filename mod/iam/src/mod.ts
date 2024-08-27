@@ -12,8 +12,8 @@ type moodle_iam_mod = mod<{
   name: 'iam'
   version: '0.1'
   receives: {
-    'current-user': ch<{
-      get: receive<void, { user: user; permissions: Permissions }>
+    'current-session': ch<{
+      auth: receive<void, { user: user; permissions: Permissions }>
     }>
   }
   emits: {

@@ -1,10 +1,10 @@
-import { mod_ctrl, statusOk } from '@moodle/core/domain'
+import { mod_ctrl, replyOk } from '@moodle/core/domain'
 
 export const ctrl: mod_ctrl<'net'> = {
   net: {
     read: {
       async 'website-info'() {
-        return statusOk({
+        return replyOk({
           info: {
             logo: 'https://moodle.net/08469f8073a8f969253823d5d6ed6ffa.png',
             smallLogo: 'https://moodle.net/e80d311942d3ce22651b33968a87ecb1.png',
@@ -19,7 +19,7 @@ export const ctrl: mod_ctrl<'net'> = {
         })
       },
       async 'layouts'() {
-        return statusOk({
+        return replyOk({
           layouts: {
             roots: {
               main: {

@@ -9,7 +9,7 @@ declare module '@moodle/core/domain' {
 
 export default moodle_eml_pwd_auth_mod
 type moodle_eml_pwd_auth_mod = mod<{
-  name: 'moodle-eml-pwd-auth'
+  // name: 'moodle-eml-pwd-auth'
   version: '0.1'
   receives: {
     read: ch<{

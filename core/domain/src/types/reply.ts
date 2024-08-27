@@ -1,64 +1,69 @@
-export interface AccessStatusSuccess<body> {
+export interface ReplySuccess<body> {
   success: true
-  name: status_name_success
-  code: status_code_success
+  desc: status_desc_success
+  status: status_code_success
   body: body
 }
-export interface AccessStatusFail<body = unknown> {
+export interface ReplyFail<body = unknown> {
   success: false
-  name: status_name_fail
-  code: status_code_fail
+  desc: status_name_fail
+  status: status_code_fail
   body: body
 }
 
-export type access_status<body> = AccessStatusSuccess<body> | AccessStatusFail<unknown>
+export type reply<body> = ReplySuccess<body> | ReplyFail<unknown>
 
-export function statusOk<body>(body: body) {
-  return statusSuccess('200', body)
+export function replyOk<body>(body: body) {
+  return replySuccess('200', body)
 }
 
-export function isStatusOk<p>(status: access_status<p>): status is AccessStatusSuccess<p> {
-  return status.success === true
+export function isReplySuccess<p>(reply: reply<p>): reply is ReplySuccess<p> {
+  return reply.success === true
+}
+export function isStatusSuccess<p>(
+  st: status_code_success | status_code_fail,
+): st is status_code_success {
+  return st.startsWith('2')
 }
 
-export function statusSuccess<body>(
-  st: status_name_success | status_code_success,
+export function replySuccess<body>(
+  st: status_desc_success | status_code_success,
   body: body,
-): AccessStatusSuccess<body> {
-  return st in by_name_success
+): ReplySuccess<body> {
+  return st in status_map_by_desc_success
     ? {
         success: true,
-        code: by_name_success[st as status_name_success],
-        name: st as status_name_success,
+        status: status_map_by_desc_success[st as status_desc_success],
+        desc: st as status_desc_success,
         body,
       }
-    : st in by_code_success
+    : st in status_map_by_code_success
       ? {
           success: true,
-          code: st as status_code_success,
-          name: by_code_success[st as status_code_success],
+          status: st as status_code_success,
+          desc: status_map_by_code_success[st as status_code_success],
           body,
         }
       : (() => {
-          throw new Error(`Invalid status: ${st}`)
+          throw new Error(`Invalid reply: ${st}`)
         })()
 }
-export function statusFail<body>(
+export function replyFail<body>(
   st: status_name_fail | status_code_fail,
   body: body,
-): AccessStatusFail<body> {
-  return st in by_name_fail
+): ReplyFail<body> {
+  return st in status_map_by_desc_fail
     ? {
         success: false,
-        code: by_name_fail[st as status_name_fail],
-        name: st as status_name_fail,
+        status: status_map_by_desc_fail[st as status_name_fail],
+        desc: st as status_name_fail,
         body,
       }
-    : st in by_code_fail
+    : st in status_map_by_code_fail
       ? {
           success: false,
-          code: st as status_code_fail,
-          name: by_code_fail[st as status_code_fail],
+          status: st as status_code_fail,
+          desc: status_map_by_code_fail[st as status_code_fail],
           body,
         }
       : (() => {
@@ -66,7 +71,7 @@ export function statusFail<body>(
         })()
 }
 
-export const list = {
+export const status_lists = {
   success: [
     // ['Continue', '100'],
     // ['Switching Protocols', '101'],
@@ -79,7 +84,7 @@ export const list = {
     ['No Content', '204'],
     ['Reset Content', '205'],
     ['Partial Content', '206'],
-    ['Multi-Status', '207'],
+    ['Multi-Reply', '207'],
     ['Already Reported', '208'],
     ['IM Used', '226'],
     // ['Multiple Choices', '300'],
@@ -136,22 +141,22 @@ export const list = {
   ] as const,
 } as const
 
-export const by_name_success = Object.fromEntries(list.success) as Record<
-  status_name_success,
+export const status_map_by_desc_success = Object.fromEntries(status_lists.success) as Record<
+  status_desc_success,
   status_code_success
 >
-export const by_code_success = Object.fromEntries(
-  list.success.map(([name, code]) => [code, name]),
-) as Record<status_code_success, status_name_success>
+export const status_map_by_code_success = Object.fromEntries(
+  status_lists.success.map(([name, code]) => [code, name]),
+) as Record<status_code_success, status_desc_success>
 
-export const by_name_fail = Object.fromEntries(list.fail) as Record<
+export const status_map_by_desc_fail = Object.fromEntries(status_lists.fail) as Record<
   status_name_fail,
   status_code_fail
 >
-export const by_code_fail = Object.fromEntries(
-  list.fail.map(([name, code]) => [code, name]),
+export const status_map_by_code_fail = Object.fromEntries(
+  status_lists.fail.map(([name, code]) => [code, name]),
 ) as Record<status_code_fail, status_name_fail>
-export type status_name_success = (typeof list.success)[number][0]
-export type status_code_success = (typeof list.success)[number][1]
-export type status_name_fail = (typeof list.fail)[number][0]
-export type status_code_fail = (typeof list.fail)[number][1]
+export type status_desc_success = (typeof status_lists.success)[number][0]
+export type status_code_success = (typeof status_lists.success)[number][1]
+export type status_name_fail = (typeof status_lists.fail)[number][0]
+export type status_code_fail = (typeof status_lists.fail)[number][1]

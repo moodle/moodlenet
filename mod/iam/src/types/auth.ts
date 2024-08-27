@@ -1,6 +1,6 @@
 import { d_u } from '@moodle/lib/types'
 
-export type user = d_u<UsersMap, 'kind'>
+export type user = d_u<UsersMap, 'type'>
 
 interface UsersMap {
   guest: unknown

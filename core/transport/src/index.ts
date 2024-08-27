@@ -1,11 +1,11 @@
-import { factories, trans_kind } from './types'
+import { factories, transport_layer } from './types'
 
-export async function getTransport<k extends trans_kind>(
-  kind: k,
+export async function getTransport<layer extends transport_layer>(
+  layer: layer,
   cfg: string,
-): Promise<Awaited<ReturnType<factories[k]>>> {
+): Promise<Awaited<ReturnType<factories[layer]>>> {
   const [impl_type, ..._rest] = cfg.split('::')
   const fact_cfg = _rest.join('::')
   const factories: factories = (await import(`./impl/${impl_type}`)).default
-  return factories[kind](fact_cfg) as any
+  return factories[layer](fact_cfg) as any
 }
