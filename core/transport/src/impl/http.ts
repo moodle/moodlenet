@@ -67,6 +67,7 @@ const factories: factories = {
         const handler = controller[mod_name]?.[ch_name]?.[msg_name]
 
         if (!handler) {
+          console.log({ accessCtrl, accessArgs, controller })
           throw new Error('NOT IMPLEMENTED')
         }
         return handler(msg_payload)

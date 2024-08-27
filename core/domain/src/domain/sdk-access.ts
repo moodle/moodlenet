@@ -1,4 +1,4 @@
-import { d_u } from '@moodle/lib/types'
+import { d_u, map } from '@moodle/lib/types'
 import { domain_ctrl, priAccess } from './sdk'
 import { mod_id } from './types'
 
@@ -14,11 +14,17 @@ export interface PrimarySession {
 
 interface ProtocolData {
   http: {
-    userAgent: UserAgent
+    ua: UserAgent
+    geo?: {
+      city?: string
+      country?: string
+      region?: string
+    }
+    ip?: string
+    url?: string
   }
-  other: any
+  other: map
 }
-
 interface UserAgent {
   isBot: boolean
   ua: string

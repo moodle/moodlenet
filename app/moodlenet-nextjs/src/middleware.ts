@@ -1,11 +1,15 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function middleware(/* request: NextRequest */) {
+export async function middleware(request: NextRequest) {
+  const ip = request.ip ?? request.headers.get('X-Forwarded-For')
+  ip && request.headers.set('x-ip', ip)
+  const geo = request.geo
+  geo && request.headers.set('x-geo', JSON.stringify(geo))
   const response =
     await NextResponse.next(/* {
     request: {
       // New request headers
-      headers: requestHeaders,
+      // headers: request.headers.append('x-ip',ip)),
       },
       } */)
   // })

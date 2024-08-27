@@ -1,10 +1,11 @@
 'use server'
-import { priAccess } from '@moodle/core/domain'
+import { priAccess, PrimarySession } from '@moodle/core/domain'
 import { getTransport } from '@moodle/core/transport'
 import { headers } from 'next/headers'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'
 import { getAuthToken } from './auth'
+import { inspect } from 'node:util'
 
 const TRANSPORT_CGF_ENV_VAR = 'MOODLE_NET_NEXTJS_TRANSPORT_CGF'
 const transportCfg = process.env[TRANSPORT_CGF_ENV_VAR] ?? 'http::http://localhost:8100'
@@ -13,14 +14,25 @@ export async function getAccess(): Promise<priAccess> {
   const sessionAccess = await _sessionAccess_p
   const _headers = headers()
   const host = _headers.get('host')
+  const ip = _headers.get('x-ip') ?? undefined
+  const url = _headers.get('x-url') ?? undefined
+
+  const geo_header_str = _headers.get('x-geo') ?? undefined
+  const geo = geo_header_str ? JSON.parse(geo_header_str) : undefined
+  const ua = userAgent({ headers: _headers })
   assert(host, 'No host in headers')
-  return sessionAccess({
+  const primarySession: PrimarySession = {
     mod: { name: 'moodlenet-nextjs', version: '1.0' },
     host,
     authToken: getAuthToken(),
     meta: {
       proto: 'http',
-      userAgent: userAgent({ headers: _headers }),
+      ua,
+      geo,
+      ip,
+      url,
     },
-  })
+  }
+  console.log(inspect({ primarySession }, true, 10, true))
+  return sessionAccess(primarySession)
 }

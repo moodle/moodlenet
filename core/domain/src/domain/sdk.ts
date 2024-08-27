@@ -46,19 +46,28 @@ export type modEmitter = kind_pusher<'emits'>
 export type domain_ctrl = domain_handles<'receives'>
 
 export type domain_handles<kind extends access_kind> = {
-  [mod_name in keyof moodle_domain]: mod_kind_handle<moodle_domain[mod_name], kind>
+  [mod_name in keyof moodle_domain]: mod_kind_handle<mod_name, kind>
 }
 
-export type mod_ctrl<_mod extends mod<any>> = mod_kind_handle<_mod, 'receives'>
+export type mod_ctrl<mod_name extends keyof moodle_domain> = mod_kind_handle<mod_name, 'receives'>
 
-export type mod_kind_handle<_mod extends mod<any>, kind extends access_kind> = {
-  [ch_name in keyof _mod[kind]]: {
-    [msg_name in keyof _mod[kind][ch_name]['msg']]: (
-      payload: _mod[kind][ch_name]['msg'][msg_name]['payload'],
-    ) => Promise<access_status<_mod[kind][ch_name]['msg'][msg_name]['reply']>>
-    // ) => Promise<access_status<moodle_domain[mod_name][kind][ch_name]['msg'][msg_name]['reply']>>
-  }
-}
+export type mod_kind_handle<
+  mod_name extends keyof moodle_domain,
+  kind extends access_kind,
+> = moodle_domain[mod_name] extends infer _mod
+  ? _mod extends mod<any>
+    ? {
+        [_mod_name in mod_name]: {
+          [ch_name in keyof _mod[kind]]: {
+            [msg_name in keyof _mod[kind][ch_name]['msg']]: (
+              payload: _mod[kind][ch_name]['msg'][msg_name]['payload'],
+            ) => Promise<access_status<_mod[kind][ch_name]['msg'][msg_name]['reply']>>
+            // ) => Promise<access_status<moodle_domain[mod_name][kind][ch_name]['msg'][msg_name]['reply']>>
+          }
+        }
+      }
+    : never
+  : never
 
 // export type access_status<r> = d_t_u<AccessStatusErr<r>>
 // export type err<T = unknown> = T & {
