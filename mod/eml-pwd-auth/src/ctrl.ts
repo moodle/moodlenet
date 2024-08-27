@@ -1,10 +1,10 @@
-import { mod_ctrl, statusOk } from '@moodle/core/domain'
+import { mod_ctrl, replyOk } from '@moodle/core/domain'
 
 export const ctrl: mod_ctrl<'moodle-eml-pwd-auth'> = {
   'moodle-eml-pwd-auth': {
     read: {
       async configs() {
-        return statusOk({
+        return replyOk({
           configs: {
             loginForm: {
               email: { min: 5, max: 35 },

@@ -1,7 +1,7 @@
+import { isGuest } from '@moodle/mod/iam'
 import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
 import { getAccess } from '../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
-import { isGuest } from '../../lib/server/utils/user'
 import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'
 import MainHeader, { MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 import { HeaderSearchbox, LoginHeaderButton, SignupHeaderButton } from './main-layout.client'
@@ -17,8 +17,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
       },
     },
   } = await access('net', 'read', 'layouts', void 0).val
-  // const user = await currentUser()
-  const user = { kind: 'guest' } as const
+  const { user } = await access('iam', 'current-session', 'auth', void 0).val
 
   return (
     <div className={`main-layout`}>

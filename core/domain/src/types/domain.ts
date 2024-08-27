@@ -1,17 +1,21 @@
 import { d_m, map } from '@moodle/lib/types'
+import { moodle_domain } from '../moodle-domain'
 
 export type domain<_domain extends map<mod<any>> = map<mod<any>>> = d_m<_domain>
 
 type mod_def = {
-  name: string
+  // name: string
   version: string
   receives: map<ch>
   emits: map<ch>
   sends: map<ch>
 }
-export type mod_id = Pick<mod_def, 'name' | 'version'>
+export type mod_id<mod_name extends keyof moodle_domain = keyof moodle_domain> = {
+  name: mod_name
+  version: moodle_domain[mod_name]['version']
+}
 export type mod<def extends mod_def> = {
-  name: def['name']
+  // name: def['name']
   version: def['version']
   receives: d_m<def['receives']>
   emits: d_m<def['emits']>

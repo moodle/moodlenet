@@ -8,6 +8,7 @@ import { getAuthToken } from './auth'
 import { inspect } from 'node:util'
 
 const TRANSPORT_CGF_ENV_VAR = 'MOODLE_NET_NEXTJS_TRANSPORT_CGF'
+const APP_NAME_ENV_VAR = 'MOODLE_NET_NEXTJS_APP_NAME'
 const transportCfg = process.env[TRANSPORT_CGF_ENV_VAR] ?? 'http::http://localhost:8100'
 const _sessionAccess_p = getTransport('sessionAccess', transportCfg)
 export async function getAccess(): Promise<priAccess> {
@@ -22,7 +23,7 @@ export async function getAccess(): Promise<priAccess> {
   const ua = userAgent({ headers: _headers })
   assert(host, 'No host in headers')
   const primarySession: PrimarySession = {
-    mod: { name: 'moodlenet-nextjs', version: '1.0' },
+    app: { name: APP_NAME_ENV_VAR, pkg: 'moodlenet-nextjs', version: '0.1' },
     host,
     authToken: getAuthToken(),
     meta: {

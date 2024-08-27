@@ -53,6 +53,14 @@
           "buildTarget": "deploy-dev-monolith:build:production"
         }
       }
+    },
+    "dev": {
+      "executor": "@nx/js:node",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "deploy-dev-monolith:build:development",
+        "runBuildTargetDependencies": false
+      }
     }
   }
 }

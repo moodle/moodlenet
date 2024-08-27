@@ -1,12 +1,11 @@
 import { d_u, map } from '@moodle/lib/types'
 import { domain_ctrl, priAccess } from './sdk'
-import { mod_id } from './types'
 
 export type sessionAccess<_priAccess extends priAccess> = (_: PrimarySession) => Promise<_priAccess>
 export type accessCtrl<_ctrl extends domain_ctrl> = (_: PrimarySession) => Promise<_ctrl>
 
 export interface PrimarySession {
-  mod: mod_id
+  app: { name: string; pkg: string; version: string }
   authToken: string | null | undefined
   host: string
   meta: d_u<ProtocolData, 'proto'>

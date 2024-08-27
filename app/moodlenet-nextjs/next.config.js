@@ -2,6 +2,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next')
+// const { inspect } = require('node:util')
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -21,12 +22,15 @@ const plugins = [
 
 const nextConfigFn = composePlugins(...plugins)(nextConfig)
 
-// @ts-expect-error Parameter 'phase, context' implicitly has an 'any' type.ts(7006)
-module.exports = async (phase, context) => {
+/**
+ * @type {import('@nx/next/src/utils/config').NextConfigFn}
+**/
+const xport = async (phase, context) => {
   const config = await nextConfigFn(phase, context)
-
+  // console.log({ phase, context })
   const webpack = config.webpack
   config.webpack = (wpConfig, options) => {
+    // console.log({ wpConfig, options })
     // https://github.com/vercel/next.js/issues/28774#issuecomment-1208649870
     // wpConfig.plugins = wpConfig.plugins ?? []
     // wpConfig.plugins.push(
@@ -80,6 +84,8 @@ module.exports = async (phase, context) => {
   ]
   // config.serverRuntimeConfig = require('../../domain/src/index')
   // config.serverRuntimeConfig = require('@moodle/domain')
-  // console.log(JSON.stringify(config, null, 2), config)
+  // console.log(inspect(config, true, 10, true), config)
   return config
 }
+
+module.exports = xport

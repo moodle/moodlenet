@@ -1,11 +1,11 @@
-import { mod_ctrl, statusOk } from '@moodle/core/domain'
+import { mod_ctrl, replyOk } from '@moodle/core/domain'
 
 export const ctrl: mod_ctrl<'iam'> = {
   iam: {
-    'current-user': {
-      async get() {
-        return statusOk({
-          user: { kind: 'guest' } as const,
+    'current-session': {
+      async auth() {
+        return replyOk({
+          user: { type: 'guest' } as const,
           permissions: {},
         })
       },

@@ -6,4 +6,4 @@ export type factories = {
   // secondary: (cfg:string) => Promise<secAccess<moodle_domain>>
   // emitter: (cfg:string) => Promise<modEmitter<moodle_domain>>
 }
-export type trans_kind = keyof factories
+export type transport_layer = keyof factories

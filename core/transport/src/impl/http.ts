@@ -2,22 +2,13 @@ import assert from 'assert'
 import express from 'express'
 import { Agent, fetch } from 'undici'
 import { factories } from '../types'
-import { access_status, isStatusOk, statusFail, domain_ctrl } from '@moodle/core/domain'
+import { reply, isReplySuccess, replyFail, domain_ctrl } from '@moodle/core/domain'
 
-// function assert(t: any, msg: string): void {
-//   if (!t) {
-//     throw new Error(msg)
-//   }
-// }
-async function accessStatusVal<p>(
-  status_p: access_status<p> | Promise<access_status<p>>,
-): Promise<p> {
-  return Promise.resolve(status_p).then(status =>
-    isStatusOk(status)
-      ? status.body
-      : (() => {
-          throw status
-        })(),
+async function replyVal<_payload>(
+  reply_p: reply<_payload> | Promise<reply<_payload>>,
+): Promise<_payload> {
+  return Promise.resolve(reply_p).then(reply =>
+    isReplySuccess(reply) ? reply.body : Promise.reject(reply),
   )
 }
 const factories: factories = {
@@ -41,8 +32,8 @@ const factories: factories = {
           dispatcher,
           headers: { 'Content-Type': 'application/json' },
         })
-        const raw = fetch_response.then(r => r.json()) as Promise<access_status<any>>
-        const val = accessStatusVal(raw)
+        const raw = fetch_response.then(r => r.json()) as Promise<reply<any>>
+        const val = replyVal(raw)
 
         return { raw, val }
       }
@@ -67,14 +58,16 @@ const factories: factories = {
         const handler = controller[mod_name]?.[ch_name]?.[msg_name]
 
         if (!handler) {
-          console.log({ accessCtrl, accessArgs, controller })
-          throw new Error('NOT IMPLEMENTED')
+          const msg = `NOT IMPLEMENTED ${String(accessArgs)}`
+          //FIXME - log to a logger instead of console (would be a secondary ?) ... but maybe not here .. we're in a low level module here .. so console is fine .. but we should have a logger in the domain layer that we can use  .. and we should have a way to configure it .. and we should have a way to inject it .. and we should have a way to test it .. and we should have a way to mock it .. and we should have a way to trace it .. and we should have a way to monitor it .. and we should have a way to alert on it .. and we should have a way to throttle it .. and we should have a way to rate limit it .. and we should have a way to cache it .. and we should have a way to retry it .. and we should have a way to circuit break it .. and we should have a way to trace it .. and we should have a way to monitor it .. and we should have a way to alert on it .. and we should have a way to throttle it .. and we should have a way to rate limit it .. and we should have a way to cache it .. and we should have a way to retry it .. and we should have a way to circuit break it ..
+          console.error(msg)
+          throw new Error(msg)
         }
         return handler(msg_payload)
           .catch((err: unknown) => {
-            return statusFail('500', err)
+            return replyFail('500', err)
           })
-          .then((access_status: access_status<any>) => res.json(access_status))
+          .then((reply: reply<any>) => res.json(reply))
       })
       return new Promise<void>((resolve /* , reject */) => {
         app.listen(port, resolve)

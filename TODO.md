@@ -1,2 +1,3 @@
 - mod version in push message path
-- kind_pusher as object prop access 
+- layer_pusher as object prop access 
+- cleanup docker images ?
