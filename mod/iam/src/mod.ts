@@ -3,12 +3,12 @@ import { Permissions, user } from './types/auth'
 
 declare module '@moodle/core/domain' {
   export interface MoodleDomain {
-    iam: moodlenet_mod
+    iam: moodle_iam_mod
   }
 }
 
-export default moodlenet_mod
-type moodlenet_mod = mod<{
+export default moodle_iam_mod
+type moodle_iam_mod = mod<{
   name: 'iam'
   version: '0.1'
   receives: {

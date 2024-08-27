@@ -1,5 +1,5 @@
 import { moodle_domain } from '../types'
-import { AccessStatusFail, AccessStatusSuccess } from './access-status'
+import { access_status } from './access-status'
 import { ch, mod, payload } from './types'
 
 export type access_kind = 'receives' | 'emits' | 'sends'
@@ -37,15 +37,15 @@ export type msg_push_promise<_p extends payload = payload> = {
   val: Promise<_p>
   raw: Promise<access_status<_p>>
 }
-export type access_status<reply> = AccessStatusSuccess<reply> | AccessStatusFail
 export type pusher = <kind extends access_kind>(k: kind) => kind_pusher<kind>
 export type priAccess = kind_pusher<'receives'>
 export type secAccess = kind_pusher<'sends'>
 
 export type modEmitter = kind_pusher<'emits'>
 
-export type ctrl = handle<'receives'>
-export type handle<kind extends access_kind> = {
+export type domain_ctrl = domain_handles<'receives'>
+
+export type domain_handles<kind extends access_kind> = {
   [mod_name in keyof moodle_domain]: mod_kind_handle<moodle_domain[mod_name], kind>
 }
 

@@ -1,0 +1,58 @@
+{
+  "name": "deploy-dev-monolith",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "deploy/dev/monolith/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/deploy/dev/monolith",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "deploy/dev/monolith/src/main.ts",
+        "tsConfig": "deploy/dev/monolith/tsconfig.app.json",
+        "assets": ["deploy/dev/monolith/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "deploy-dev-monolith:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "deploy-dev-monolith:build:development"
+        },
+        "production": {
+          "buildTarget": "deploy-dev-monolith:build:production"
+        }
+      }
+    }
+  }
+}

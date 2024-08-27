@@ -2,15 +2,24 @@ import assert from 'assert'
 import express from 'express'
 import { Agent, fetch } from 'undici'
 import { factories } from '../types'
-import { access_status, ctrl } from '@moodle/core/domain'
-import { statusKo } from 'core/domain/src/domain/access-status'
+import { access_status, isStatusOk, statusFail, domain_ctrl } from '@moodle/core/domain'
 
 // function assert(t: any, msg: string): void {
 //   if (!t) {
 //     throw new Error(msg)
 //   }
 // }
-
+async function accessStatusVal<p>(
+  status_p: access_status<p> | Promise<access_status<p>>,
+): Promise<p> {
+  return Promise.resolve(status_p).then(status =>
+    isStatusOk(status)
+      ? status.body
+      : (() => {
+          throw status
+        })(),
+  )
+}
 const factories: factories = {
   async sessionAccess(cfg) {
     const [url] = cfg.split('|')
@@ -24,14 +33,16 @@ const factories: factories = {
     })
 
     return async priSession => {
-      return (...access) => {
-        const body = JSON.stringify([priSession, ...access])
-        const fetch_response = fetch(new URL(url), { method: 'POST', body, dispatcher })
-
-        const raw = fetch_response.then(r => r.json()) as Promise<access_status<any>>
-        const val = raw.then(_raw => {
-          return _raw.ok ? _raw.body : Promise.reject(_raw)
+      return (...accessArgs) => {
+        const body = JSON.stringify([priSession, ...accessArgs])
+        const fetch_response = fetch(new URL(url), {
+          method: 'POST',
+          body,
+          dispatcher,
+          headers: { 'Content-Type': 'application/json' },
         })
+        const raw = fetch_response.then(r => r.json()) as Promise<access_status<any>>
+        const val = accessStatusVal(raw)
 
         return { raw, val }
       }
@@ -43,21 +54,24 @@ const factories: factories = {
       // const express_mod = await import('express')
       // const express = express_mod.default
 
-      const [port_str, baseUrl = '/'] = cfg.split('|')
+      const [port_str, baseUrl = ''] = cfg.split('|')
       const port = parseInt(port_str)
       assert(port, 'port must be a number')
       const app = express()
-      app.post(baseUrl, express.json(), async (req, res) => {
-        const [priSession, mod_name, ch_name, msg_name, msg_payload] = req.body
+      app.use(express.json())
+      app.post(baseUrl, async (req, res) => {
+        const [priSession, ...accessArgs] = req.body
+        const [mod_name, ch_name, msg_name, msg_payload] = accessArgs
 
-        const controller = (await accessCtrl(priSession)) as ctrl
+        const controller = (await accessCtrl(priSession)) as domain_ctrl
         const handler = controller[mod_name]?.[ch_name]?.[msg_name]
+
         if (!handler) {
           throw new Error('NOT IMPLEMENTED')
         }
         return handler(msg_payload)
           .catch((err: unknown) => {
-            return statusKo('500', err)
+            return statusFail('500', err)
           })
           .then((access_status: access_status<any>) => res.json(access_status))
       })
@@ -68,3 +82,5 @@ const factories: factories = {
   },
 }
 export default factories
+
+

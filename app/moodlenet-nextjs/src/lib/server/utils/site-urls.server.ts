@@ -1,5 +1,5 @@
 import { sitepaths } from '../../common/utils/sitepaths'
-import { getAccess } from '../sessionContext'
+import { getAccess } from '../session-access'
 
 export async function srvSiteUrls() {
   const access = await getAccess()

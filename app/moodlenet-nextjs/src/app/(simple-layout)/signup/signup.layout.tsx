@@ -1,4 +1,4 @@
-import { getAccess } from '../../../lib/server/sessionContext'
+import { getAccess } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotItem, slotsMap } from '../../../lib/server/utils/slots'
 import { SignupCard, SignupCardProps } from './signup.client'
 import './signup.style.scss'

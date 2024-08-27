@@ -1,4 +1,4 @@
-import { getAccess } from '../../../../lib/server/sessionContext'
+import { getAccess } from '../../../../lib/server/session-access'
 import SignupPanel from './moodle-email-pwd-authentication.client'
 
 export default async function MoodleEmailPwdAuthenticationPage() {

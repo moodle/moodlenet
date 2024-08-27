@@ -1,5 +1,5 @@
 import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
-import { getAccess } from '../../lib/server/sessionContext'
+import { getAccess } from '../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
 import { isGuest } from '../../lib/server/utils/user'
 import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'

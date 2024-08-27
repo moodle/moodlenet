@@ -10,11 +10,11 @@ export interface loginFormConfigs {
   password: { max: number; min: number }
 }
 
-export function getLoginFormSchema(configs: loginFormConfigs): ZodType<loginFormValues> {
+export function getLoginFormSchema(configs: loginFormConfigs) {
   return object({
     email: string().email().min(configs.email.min).max(configs.email.max),
     password: string().min(configs.password.min).max(configs.password.max),
-  })
+  }).required()
 }
 
 export type signupFormValues = { email: string; password: string; displayName: string }
@@ -23,10 +23,10 @@ export interface signupFormConfigs {
   password: { max: number; min: number }
   displayName: { max: number; min: number }
 }
-export function getSignupFormSchema(configs: signupFormConfigs): ZodType<signupFormValues> {
+export function getSignupFormSchema(configs: signupFormConfigs) {
   return object({
     email: string().email().min(configs.email.min).max(configs.email.max),
     password: string().min(configs.password.min).max(configs.password.max),
     displayName: string().min(configs.displayName.min).max(configs.displayName.max),
-  })
+  }).required()
 }

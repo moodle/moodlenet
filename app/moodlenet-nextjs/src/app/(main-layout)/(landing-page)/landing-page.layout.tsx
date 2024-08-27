@@ -1,5 +1,5 @@
 import defaultBackground from '../../../assets/img/default-landing-background.png'
-import { getAccess } from '../../../lib/server/sessionContext'
+import { getAccess } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../../lib/server/utils/slots'
 // import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
 import { LandingHeadSearchbox /* , LandingHeadShareButton  */ } from './landing-page.client'

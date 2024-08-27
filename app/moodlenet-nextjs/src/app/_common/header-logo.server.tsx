@@ -1,5 +1,5 @@
 'use server'
-import { getAccess } from '../../lib/server/sessionContext'
+import { getAccess } from '../../lib/server/session-access'
 import { srvSiteUrls } from '../../lib/server/utils/site-urls.server'
 import HeaderLogo from '../../ui/organisms/Header/HeaderLogo/HeaderLogo'
 

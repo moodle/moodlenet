@@ -4,12 +4,12 @@ import { Layouts } from './types/website/layouts'
 
 declare module '@moodle/core/domain' {
   export interface MoodleDomain {
-    net: moodlenet_mod
+    net: moodle_net_mod
   }
 }
 
-export default moodlenet_mod
-type moodlenet_mod = mod<{
+export default moodle_net_mod
+type moodle_net_mod = mod<{
   name: 'net'
   version: '0.1'
   receives: {

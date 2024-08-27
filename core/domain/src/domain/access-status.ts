@@ -11,8 +11,14 @@ export interface AccessStatusFail<body = unknown> {
   body: body
 }
 
+export type access_status<body> = AccessStatusSuccess<body> | AccessStatusFail<unknown>
+
 export function statusOk<body>(body: body) {
   return statusSuccess('200', body)
+}
+
+export function isStatusOk<p>(status: access_status<p>): status is AccessStatusSuccess<p> {
+  return status.success === true
 }
 
 export function statusSuccess<body>(

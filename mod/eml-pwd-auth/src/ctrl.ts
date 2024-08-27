@@ -1,5 +1,4 @@
-import { mod_ctrl } from '@moodle/core/domain'
-import { statusOk } from 'core/domain/src/domain/access-status'
+import { mod_ctrl, statusOk } from '@moodle/core/domain'
 import moodle_eml_pwd_auth_mod from './mod'
 
 export const ctrl: mod_ctrl<moodle_eml_pwd_auth_mod> = {

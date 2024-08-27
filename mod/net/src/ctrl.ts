@@ -1,8 +1,7 @@
-import { mod_ctrl } from '@moodle/core/domain'
-import moodlenet_mod from './mod'
-import { statusOk } from 'core/domain/src/domain/access-status'
+import { mod_ctrl, statusOk } from '@moodle/core/domain'
+import moodle_net_mod from './mod'
 
-export const ctrl: mod_ctrl<moodlenet_mod> = {
+export const ctrl: mod_ctrl<moodle_net_mod> = {
   read: {
     async 'website-info'() {
       return statusOk({
