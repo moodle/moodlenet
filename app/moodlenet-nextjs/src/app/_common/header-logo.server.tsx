@@ -1,13 +1,15 @@
 'use server'
-import { sessionContext } from '../../lib/server/sessionContext'
+import { getAccess } from '../../lib/server/sessionContext'
 import { srvSiteUrls } from '../../lib/server/utils/site-urls.server'
 import HeaderLogo from '../../ui/organisms/Header/HeaderLogo/HeaderLogo'
 
 export async function LayoutHeaderLogo() {
+  const access = await getAccess()
+
   const {
-    website: { info },
-  } = await sessionContext()
-  const { logo, smallLogo } = await info()
+    info: { logo, smallLogo },
+  } = await access('net', 'read', 'website-info', void 0).val
+
   const {
     site: { landing: landingPath },
   } = await srvSiteUrls()

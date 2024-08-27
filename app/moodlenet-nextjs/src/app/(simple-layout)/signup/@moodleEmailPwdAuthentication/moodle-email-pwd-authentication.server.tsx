@@ -1,7 +1,7 @@
 'use server'
 
+import { signupFormValues } from '@moodle/mod/eml-pwd-auth'
 import { redirect } from 'next/navigation'
-import { signupFormValues } from './moodle-email-pwd-authentication.common'
 
 export async function signup(signupFormValues: signupFormValues) {
   console.log({ signupFormValues })

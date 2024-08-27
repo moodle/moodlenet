@@ -17,10 +17,7 @@
         "name": "next"
       }
     ],
-    "types": [
-      "jest",
-      "node"
-    ]
+    "types": ["jest", "node"]
     // "baseUrl": "./src/",
     // // "sourceRoot": "./src/"
     // "paths": {
@@ -43,9 +40,8 @@
     "**/*.jsx",
     "../../app/moodlenet-nextjs/.next/types/**/*.ts",
     "../../dist/app/moodlenet-nextjs/.next/types/**/*.ts",
-    "next-env.d.ts"
+    "next-env.d.ts",
     //".next/types/**/*.ts"
-    ,
     ".next/types/**/*.ts"
   ],
   "exclude": [

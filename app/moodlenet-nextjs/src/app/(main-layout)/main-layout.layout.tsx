@@ -1,5 +1,5 @@
 import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
-import { sessionContext } from '../../lib/server/sessionContext'
+import { getAccess } from '../../lib/server/sessionContext'
 import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
 import { isGuest } from '../../lib/server/utils/user'
 import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'
@@ -9,12 +9,16 @@ import { HeaderSearchbox, LoginHeaderButton, SignupHeaderButton } from './main-l
 import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
+  const access = await getAccess()
   const {
-    website: { layouts },
-    currentUser,
-  } = await sessionContext()
-  const { footer, header } = await layouts.roots('main')
-  const user = await currentUser()
+    layouts: {
+      roots: {
+        main: { footer, header },
+      },
+    },
+  } = await access('net', 'read', 'layouts', void 0).val
+  // const user = await currentUser()
+  const user = { kind: 'guest' } as const
 
   return (
     <div className={`main-layout`}>

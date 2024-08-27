@@ -2,6 +2,8 @@ import assert from 'assert'
 import express from 'express'
 import { Agent, fetch } from 'undici'
 import { factories } from '../types'
+import { access_status, ctrl } from '@moodle/core/domain'
+import { statusKo } from 'core/domain/src/domain/access-status'
 
 // function assert(t: any, msg: string): void {
 //   if (!t) {
@@ -22,15 +24,16 @@ const factories: factories = {
     })
 
     return async priSession => {
-      return async (...access) => {
+      return (...access) => {
         const body = JSON.stringify([priSession, ...access])
-        const response = await fetch(new URL(url), { method: 'POST', body, dispatcher })
+        const fetch_response = fetch(new URL(url), { method: 'POST', body, dispatcher })
 
-        const [ok, reply_payload] = (await response.json()) as any
-        if (!ok) {
-          throw new Error(reply_payload)
-        }
-        return reply_payload
+        const raw = fetch_response.then(r => r.json()) as Promise<access_status<any>>
+        const val = raw.then(_raw => {
+          return _raw.ok ? _raw.body : Promise.reject(_raw)
+        })
+
+        return { raw, val }
       }
     }
   },
@@ -47,18 +50,16 @@ const factories: factories = {
       app.post(baseUrl, express.json(), async (req, res) => {
         const [priSession, mod_name, ch_name, msg_name, msg_payload] = req.body
 
-        const controller = (await accessCtrl(priSession)) as any
+        const controller = (await accessCtrl(priSession)) as ctrl
         const handler = controller[mod_name]?.[ch_name]?.[msg_name]
         if (!handler) {
           throw new Error('NOT IMPLEMENTED')
         }
         return handler(msg_payload)
-          .then((reply_payload: unknown) => {
-            res.json([true, reply_payload])
-          })
           .catch((err: unknown) => {
-            res.json([false, err])
+            return statusKo('500', err)
           })
+          .then((access_status: access_status<any>) => res.json(access_status))
       })
       return new Promise<void>((resolve /* , reject */) => {
         app.listen(port, resolve)

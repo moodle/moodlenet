@@ -1,5 +1,4 @@
-import { __removeme_c } from '@moodle/lib/types'
-export * from './auth'
+// import { __removeme_c } from '@moodle/lib/types'
 export * from './domain'
 export * from './types'
 

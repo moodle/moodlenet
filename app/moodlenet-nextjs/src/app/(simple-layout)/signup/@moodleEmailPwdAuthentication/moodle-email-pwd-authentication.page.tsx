@@ -1,14 +1,14 @@
-import { sessionContext } from '../../../../lib/server/sessionContext'
+import { getAccess } from '../../../../lib/server/sessionContext'
 import SignupPanel from './moodle-email-pwd-authentication.client'
 
 export default async function MoodleEmailPwdAuthenticationPage() {
-  const { website } = await sessionContext()
-  const mod = await website.modules('moodle-email-pwd-authentication')
+  const access = await getAccess()
+  const { configs } = await access('moodle-eml-pwd-auth', 'read', 'configs', void 0).val
 
   return (
     <SignupPanel
       {...{
-        configs: mod.configs.signupForm,
+        configs: configs.signupForm,
       }}
     />
   )

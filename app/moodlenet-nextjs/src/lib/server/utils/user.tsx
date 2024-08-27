@@ -1,5 +1,5 @@
-import { user } from '../session/types/user'
+import { user } from '@moodle/mod/iam'
 
 export function isGuest(user: user) {
-  return user.t === 'guest'
+  return user.kind === 'guest'
 }

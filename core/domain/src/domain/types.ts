@@ -23,21 +23,16 @@ export type ch<msg_map extends map<msg> = map<msg>> = {
   msg: d_m<msg_map>
 }
 
-type msg<p extends payload = payload, r extends m_payload = m_payload> = {
+type msg<p extends payload = payload, r extends payload = payload> = {
   payload: p
   reply: r
 }
 
-export type receive<p extends payload = payload, r extends m_payload = void /* m_payload */> = msg<
+export type receive<p extends payload = payload, r extends payload = void /* m_payload */> = msg<
   p,
   r
 >
-export type send<p extends payload = payload, r extends m_payload = void /* m_payload */> = msg<
-  p,
-  r
->
+export type send<p extends payload = payload, r extends payload = void /* m_payload */> = msg<p, r>
 export type event<p extends payload = payload> = msg<p, void>
 
-export type empty_payload = unknown
-export type m_payload = map | void
 export type payload = map | void

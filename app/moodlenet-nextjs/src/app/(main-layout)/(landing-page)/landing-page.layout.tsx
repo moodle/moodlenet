@@ -1,19 +1,25 @@
 import defaultBackground from '../../../assets/img/default-landing-background.png'
-import { sessionContext } from '../../../lib/server/sessionContext'
+import { getAccess } from '../../../lib/server/sessionContext'
 import { layoutPropsWithChildren, slotsMap } from '../../../lib/server/utils/slots'
-import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
+// import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
+import { LandingHeadSearchbox /* , LandingHeadShareButton  */ } from './landing-page.client'
 import './landing-page.style.scss'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
-  const { website, permission } = await sessionContext()
-  const info = await website.info()
-  const layout = await website.layouts.pages('landing')
-  const { head, content } = slotsMap(props, layout.slots)
+  const access = await getAccess()
+  const {
+    layouts: {
+      pages: { landing },
+    },
+  } = await access('net', 'read', 'layouts', void 0).val
+  const { info } = await access('net', 'read', 'website-info', void 0).val
+
+  const { head, content } = slotsMap(props, landing.slots)
+
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,
     backgroundSize: 'cover',
   }
-  const canCreateDraftContent = await permission('createDraftContent')
   return (
     <div className="landing">
       <div className="landing-header" style={headerStyle}>
@@ -22,7 +28,7 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
           <div className="subtitle">{info.subtitle}</div>
         </div>
         <LandingHeadSearchbox defaultValue="" placeholder="" />
-        {canCreateDraftContent && <LandingHeadShareButton />}
+        {/* canCreateDraftContent && <LandingHeadShareButton /> */}
         {head}
       </div>
       {content}

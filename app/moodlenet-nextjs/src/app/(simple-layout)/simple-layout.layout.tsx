@@ -3,16 +3,21 @@ import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
 import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'
 import { MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 // import { } from './client.layout.simple'
-import { sessionContext } from '../../lib/server/sessionContext'
+import { getAccess } from '../../lib/server/sessionContext'
 import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
 import MinimalisticHeader from '../../ui/organisms/Header/Minimalistic/MinimalisticHeader'
 import './simple-layout.style.scss'
 
 export default async function SimpleLayoutLayout(props: layoutPropsWithChildren) {
+  const access = await getAccess()
   const {
-    website: { layouts },
-  } = await sessionContext()
-  const { footer, header } = await layouts.roots('main')
+    layouts: {
+      roots: {
+        main: { header, footer },
+      },
+    },
+  } = await access('net', 'read', 'layouts', void 0).val
+
   return (
     <div className={`simple-layout`}>
       <MinimalisticHeader slots={headerSlots()} />

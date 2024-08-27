@@ -1,13 +1,16 @@
 'use server'
-import getApiTransport /* , { __removeme_a } */ from '@moodle/core/transport'
-import { SessionContext } from './session/types/context'
+import { moodle_domain, MoodleDomain, priAccess } from '@moodle/core/domain'
+import getTransport /* , { __removeme_a } */ from '@moodle/core/transport'
+import { getAuthToken } from './auth'
+import { headers } from 'next/headers'
+import { userAgent } from 'next/server'
+import assert from 'assert'
 // __removeme_a('mnetapp')
-
 //  export const asyncCtx = new AsyncLocalStorage<SessionContext>()
 
-const _apiTransport_p = getApiTransport('sessionAccess', 'http::localhost:8100')
-export async function sessionContext(): Promise<SessionContext> {
-  const apiTransport = await _apiTransport_p
+const _sessionAccess_p = getTransport('sessionAccess', 'http::localhost:8100')
+export async function getAccess(): Promise<priAccess> {
+  const sessionAccess = await _sessionAccess_p
   // ('moodlenet', headers(), cookies().get('auth-token'))
   // const X_CONTEXT_FACTORY_LOC = 'x-context-factory-loc'
   // const ctxLoc = process.env[X_CONTEXT_FACTORY_LOC]
@@ -21,15 +24,16 @@ export async function sessionContext(): Promise<SessionContext> {
   //    })()
   //  )
 
-  // @ts-expect-error dlsdspd
-  const f = await apiTransport({
-    authToken: 'tok',
-    domain: 'domain',
-    protocol: 'proto',
-    mod: { name: 'mod name', version: '1' },
+  const _headers = headers()
+  const host = _headers.get('host')
+  assert(host, 'No host in headers')
+  return sessionAccess({
+    mod: { name: 'moodlenet-nextjs', version: '1.0' },
+    host,
+    authToken: getAuthToken(),
+    protoMeta: {
+      proto: 'http',
+      userAgent: userAgent({ headers: _headers }),
+    },
   })
-  // @ts-expect-error dlsdspd
-  f('moo', 'ch', 'msg', { p: 'load' })
-
-  return (await import('../../lib/mock/server/session-ctx/mock')).default()
 }

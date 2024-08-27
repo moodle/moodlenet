@@ -73,9 +73,10 @@ module.exports = async (phase, context) => {
   }
   config.transpilePackages = [
     ...(config.transpilePackages ?? []),
-    '@moodle/api-transport',
-    '@moodle/domain',
-    '@moodle/t-utils',
+    '@moodle/core/transport',
+    '@moodle/core/domain',
+    '@moodle/lib/types',
+    '@moodle/mod/net',
   ]
   // config.serverRuntimeConfig = require('../../domain/src/index')
   // config.serverRuntimeConfig = require('@moodle/domain')
