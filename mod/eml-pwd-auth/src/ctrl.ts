@@ -1,4 +1,4 @@
-import { mod_ctrl, replyOk } from '@moodle/core/domain'
+import { mod_ctrl, replyOk } from '@moodle/domain'
 
 export const ctrl: mod_ctrl<'moodle-eml-pwd-auth'> = {
   'moodle-eml-pwd-auth': {

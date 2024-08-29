@@ -1,4 +1,4 @@
-import { accessCtrl, sessionAccess } from '@moodle/core/domain'
+import { accessCtrl, sessionAccess } from '@moodle/domain'
 
 export type factories = {
   sessionAccess: (cfg: string) => Promise<sessionAccess<any>>

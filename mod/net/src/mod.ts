@@ -1,8 +1,8 @@
-import { ch, event, mod, receive, send } from '@moodle/core/domain'
+import { ch, event, mod, receive, send } from '@moodle/domain'
 import { WebsiteInfo } from './types/website/info'
 import { Layouts } from './types/website/layouts'
 
-declare module '@moodle/core/domain' {
+declare module '@moodle/domain' {
   export interface MoodleDomain {
     net: moodle_net_mod
   }

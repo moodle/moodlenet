@@ -1,8 +1,8 @@
+import { domain_ctrl, isReplySuccess, reply, replyFail } from '@moodle/domain'
 import assert from 'assert'
 import express from 'express'
 import { Agent, fetch } from 'undici'
 import { factories } from '../types'
-import { reply, isReplySuccess, replyFail, domain_ctrl } from '@moodle/core/domain'
 
 async function replyVal<_payload>(
   reply_p: reply<_payload> | Promise<reply<_payload>>,
@@ -76,5 +76,3 @@ const factories: factories = {
   },
 }
 export default factories
-
-

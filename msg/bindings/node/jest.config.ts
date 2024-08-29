@@ -1,11 +1,11 @@
 /* eslint-disable */
 export default {
-  displayName: 'core-domain',
-  preset: '../../jest.preset.js',
+  displayName: 'msg-bindings-node',
+  preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/core/domain',
+  coverageDirectory: '../../../coverage/msg/bindings/node',
 }

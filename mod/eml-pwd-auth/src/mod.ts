@@ -1,7 +1,7 @@
-import { ch, mod, receive } from '@moodle/core/domain'
+import { ch, mod, receive } from '@moodle/domain'
 import { Configs } from './types'
 
-declare module '@moodle/core/domain' {
+declare module '@moodle/domain' {
   export interface MoodleDomain {
     'moodle-eml-pwd-auth': moodle_eml_pwd_auth_mod
   }

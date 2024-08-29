@@ -1,7 +1,7 @@
-import { ch, mod, receive } from '@moodle/core/domain'
+import { ch, mod, receive } from '@moodle/domain'
 import { Permissions, user } from './types/auth'
 
-declare module '@moodle/core/domain' {
+declare module '@moodle/domain' {
   export interface MoodleDomain {
     iam: moodle_iam_mod
   }
