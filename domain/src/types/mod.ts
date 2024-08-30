@@ -1,6 +1,5 @@
 import { _any, deep_partial, map } from '@moodle/lib/types'
 import { Modules } from '../domain'
-import { part_reply_status_payload_map, reply } from './reply'
 
 export type mod_version = string
 export type mod<_mod extends module> = _mod
@@ -24,8 +23,8 @@ export type channels<_layer extends any_layer> = map<_layer>
 
 export type any_layer = event_layer | core_layer | worker_layer
 export type msg_payload = object
-export type core_layer = (_: msg_payload | never) => reply<part_reply_status_payload_map> | never
-export type worker_layer = (_: msg_payload | never) => reply<part_reply_status_payload_map> | never
+export type core_layer = (_: msg_payload | never) => Promise<msg_payload> | never
+export type worker_layer = (_: msg_payload | never) => Promise<msg_payload> | never
 export type event_layer = (_: msg_payload | never) => never
 
 export type msgs_of<_layer extends any_layer> = [Parameters<_layer>[0], ReturnType<_layer>]

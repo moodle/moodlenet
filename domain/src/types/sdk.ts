@@ -1,6 +1,5 @@
 import { _any } from '@moodle/lib/types'
-import { MoodleDomain } from '../domain'
-import { part_reply_status_payload_map, reply } from '../types'
+import { Modules, MoodleDomain } from '../domain'
 import { msg_payload } from './mod'
 
 export const _inspect_symbol = Symbol('moduleAccessProxy inspect')
@@ -38,41 +37,20 @@ export function dispatch(
 
 type domain_access = (_: domain_msg) => unknown
 
-export function map<_st_map extends part_reply_status_payload_map>(
-  reply: reply<_st_map>,
-  mappers: {
-    [k in keyof _st_map]: _st_map[k] extends undefined ? (_: _st_map[k]) => unknown : never
-  },
-): unknown {
-  return reply.then(rep => {
-    const mapped = Object.entries(rep).map(([status, payload]) =>
-      mappers[status as keyof _st_map](payload),
-    )[0]
-    if (!mapped) {
-      throw rep
-    }
-    return mapped
-  })
-}
 //export type listener<ev extends event_layer>=()=>unknown
 export interface AccessProxy {
-  d: MoodleDomain
+  mod: Modules
 }
 export interface DomainProxyCtrl {
   access: domain_access
 }
 export function createAcccessProxy(ctrl: DomainProxyCtrl): AccessProxy {
-  const d = domain_proxy([])
-  return { d }
+  const mod = mod_access_proxy([])
+  return { mod }
 
-  function domain_proxy(path: string[]) {
-    return new Proxy<MoodleDomain>({} as MoodleDomain, {
-      apply(_target, _thisArg, args) {
-        if (path.length != 6) {
-          return _throw(new TypeError(`${path} is not a valid message endpoint`))
-        }
-        const payload = args[0]
-
+  function mod_access_proxy(path: string[]) {
+    if (path.length == 6) {
+      return function call(payload: _any) {
         const domain_msg: domain_msg = {
           ns: path[0],
           mod: path[1],
@@ -87,31 +65,62 @@ export function createAcccessProxy(ctrl: DomainProxyCtrl): AccessProxy {
         }
 
         return ctrl.access(domain_msg)
+      }
+    }
+
+    return new Proxy(
+      {},
+      {
+        get(_target, prop /* , _receiver */) {
+          if (path.length > 5) {
+            return _throw(new TypeError(`${path} is not a valid path`))
+          }
+          if (typeof prop !== 'string') {
+            return _throw(new TypeError(`${String(prop)} not here`))
+          }
+          return mod_access_proxy([...path, prop])
+        },
+        // apply(_target, _thisArg, args) {
+        //   if (path.length != 6) {
+        //     return _throw(new TypeError(`${path} is not a valid message endpoint`))
+        //   }
+        //   const payload = args[0]
+
+        //   const domain_msg: domain_msg = {
+        //     ns: path[0],
+        //     mod: path[1],
+        //     version: path[2],
+        //     layer: path[3],
+        //     channel: path[4],
+        //     port: path[5],
+        //     payload,
+        //   }
+        //   if (payload === _inspect_symbol) {
+        //     return domain_msg
+        //   }
+
+        //   return ctrl.access(domain_msg)
+        // },
+        apply: _throw(TypeError('apply not supported')),
+        construct: _throw(TypeError('construct not supported')),
+        defineProperty: _throw(TypeError('defineProperty not supported')),
+        deleteProperty: _throw(TypeError('deleteProperty not supported')),
+        getOwnPropertyDescriptor: _throw(TypeError('getOwnPropertyDescriptor not supported')),
+        getPrototypeOf: _throw(TypeError('getPrototypeOf not supported')),
+        has: _throw(TypeError('has not supported')),
+        isExtensible: _throw(TypeError('isExtensible not supported')),
+        ownKeys: _throw(TypeError('ownKeys not supported')),
+        preventExtensions: _throw(TypeError('preventExtensions not supported')),
+        set: _throw(TypeError('set not supported')),
+        setPrototypeOf: _throw(TypeError('setPrototypeOf not supported')),
       },
-      get(_target, prop /* , _receiver */) {
-        if (path.length > 5) {
-          return _throw(new TypeError(`${path} is not a valid path`))
-        }
-        if (typeof prop !== 'string') {
-          return _throw(new TypeError(`${String(prop)} not here`))
-        }
-        return domain_proxy([...path, prop])
-      },
-      construct: _throw(TypeError('construct not supported')),
-      defineProperty: _throw(TypeError('defineProperty not supported')),
-      deleteProperty: _throw(TypeError('deleteProperty not supported')),
-      getOwnPropertyDescriptor: _throw(TypeError('getOwnPropertyDescriptor not supported')),
-      getPrototypeOf: _throw(TypeError('getPrototypeOf not supported')),
-      has: _throw(TypeError('has not supported')),
-      isExtensible: _throw(TypeError('isExtensible not supported')),
-      ownKeys: _throw(TypeError('ownKeys not supported')),
-      preventExtensions: _throw(TypeError('preventExtensions not supported')),
-      set: _throw(TypeError('set not supported')),
-      setPrototypeOf: _throw(TypeError('setPrototypeOf not supported')),
-    })
+    )
   }
 }
 
-function _throw(e: Error): never {
-  throw e
+function _throw(e: Error) {
+  return (...args: any[]): never => {
+    e.message += ` ${JSON.stringify(args)}`
+    throw e
+  }
 }

@@ -1,15 +1,21 @@
-import { getAccessProxy } from '../../../lib/server/session-access'
+import { getMod } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotItem } from '../../../lib/server/utils/slots'
 import { LoginCard, LoginCardProps } from './login.client'
 import './login.style.scss'
 
 export default async function LoginLayout(props: layoutPropsWithChildren) {
-  const { d } = getAccessProxy()
+  const {
+    moodle: {
+      net: {
+        V0_1: { pri: net },
+      },
+    },
+  } = getMod()
   const {
     layouts: {
       pages: { login },
     },
-  } = await access('net', 'read', 'layouts', void 0).val
+  } = await net.read.layouts()
   const loginCardProps: LoginCardProps = {
     loginMethods: login.methods.map(({ label, panel }) => ({
       key: `${panel}#${label}`,

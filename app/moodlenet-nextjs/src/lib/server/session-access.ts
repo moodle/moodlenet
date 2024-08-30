@@ -1,16 +1,15 @@
-import { http } from '@moodle/bindings/node'
-import { AccessProxy, createAcccessProxy, PrimarySession } from '@moodle/domain'
+import { http_bind } from '@moodle/bindings/node'
+import { createAcccessProxy, Modules, PrimarySession } from '@moodle/domain'
 import { headers } from 'next/headers'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'
-import { inspect } from 'node:util'
 import { getAuthToken } from './auth'
 
 const REQUEST_TGT_ENV_VAR = 'MOODLE_NET_NEXTJS_REQUEST_TARGET'
 const APP_NAME_ENV_VAR = 'MOODLE_NET_NEXTJS_APP_NAME'
 const requestTarget = process.env[REQUEST_TGT_ENV_VAR] ?? 'http://localhost:9000'
-export function getAccessProxy(): AccessProxy {
-  const trnspClient = http.client()
+export function getMod(): Modules {
+  const trnspClient = http_bind.client()
   const primarySession = getPrimarySession()
   const ap = createAcccessProxy({
     access(domain_msg) {
@@ -27,9 +26,9 @@ export function getAccessProxy(): AccessProxy {
     },
   })
 
-  console.log(inspect({ primarySession }, true, 10, true))
+  // console.log(inspect({ primarySession }, true, 10, true))
 
-  return ap
+  return ap.mod
 }
 
 function getPrimarySession() {

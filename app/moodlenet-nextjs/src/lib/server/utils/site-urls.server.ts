@@ -1,14 +1,20 @@
 import { sitepaths } from '../../common/utils/sitepaths'
-import { getAccessProxy } from '../session-access'
+import { getMod } from '../session-access'
 
 export async function srvSiteUrls() {
-  const { d } = getAccessProxy()
+  const {
+    moodle: {
+      net: {
+        V0_1: { pri: net },
+      },
+    },
+  } = getMod()
 
   const {
     info: {
       deployment: { basePath, domain, secure },
     },
-  } = await access('net', 'read', 'website-info', void 0).val
+  } = await net.read.websiteInfo()
 
   const baseUrl = `${secure ? 'https' : 'http'}://${domain}${basePath}`
   return {

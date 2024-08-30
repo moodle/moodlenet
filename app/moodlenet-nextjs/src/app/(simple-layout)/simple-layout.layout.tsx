@@ -3,20 +3,26 @@ import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
 import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'
 import { MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 // import { } from './client.layout.simple'
-import { getAccessProxy } from '../../lib/server/session-access'
+import { getMod } from '../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
 import MinimalisticHeader from '../../ui/organisms/Header/Minimalistic/MinimalisticHeader'
 import './simple-layout.style.scss'
 
 export default async function SimpleLayoutLayout(props: layoutPropsWithChildren) {
-  const { d } = getAccessProxy()
+  const {
+    moodle: {
+      net: {
+        V0_1: { pri: net },
+      },
+    },
+  } = getMod()
   const {
     layouts: {
       roots: {
-        main: { header, footer },
+        simple: { footer, header },
       },
     },
-  } = await access('net', 'read', 'layouts', void 0).val
+  } = await net.read.layouts()
 
   return (
     <div className={`simple-layout`}>

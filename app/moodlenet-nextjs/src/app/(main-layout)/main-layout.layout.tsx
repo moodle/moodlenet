@@ -1,6 +1,6 @@
-import { map, mod } from '@moodle/domain'
+import { mod } from '@moodle/domain'
 import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
-import { getAccessProxy } from '../../lib/server/session-access'
+import { getMod } from '../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
 import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'
 import MainHeader, { MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
@@ -10,25 +10,23 @@ import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const {
-    d: {
-      modules: {
-        moodle: {
-          net: {
-            V0_1: { pri: mnet },
-          },
-        },
+    moodle: {
+      net: {
+        V0_1: { pri: net },
+      },
+      iam: {
+        V0_1: { pri: iam },
       },
     },
-  } = getAccessProxy()
+  } = getMod()
   const {
-    _200: {
+    layouts: {
       roots: {
         main: { footer, header },
       },
     },
-  } = map(mnet.read.layouts(), { _200: r => r })
-  await access('net', 'read', 'layouts', void 0).val
-  const { user } = await access('iam', 'current-session', 'auth', void 0).val
+  } = await net.read.layouts()
+  const { user } = await iam.currentSession.auth()
 
   return (
     <div className={`main-layout`}>

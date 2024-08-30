@@ -1,15 +1,22 @@
-import { getAccessProxy } from '../../../lib/server/session-access'
+import { getMod } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotItem, slotsMap } from '../../../lib/server/utils/slots'
 import { SignupCard, SignupCardProps } from './signup.client'
 import './signup.style.scss'
 
 export default async function SignupLayout(props: layoutPropsWithChildren) {
-  const { d } = getAccessProxy()
+  const {
+    moodle: {
+      net: {
+        V0_1: { pri: net },
+      },
+    },
+  } = getMod()
   const {
     layouts: {
       pages: { signup },
     },
-  } = await access('net', 'read', 'layouts', void 0).val
+  } = await net.read.layouts()
+
   const signupCardProps: SignupCardProps = {
     signupMethods: signup.methods.map(({ label, panel }) => ({
       key: `${panel}#${label}`,

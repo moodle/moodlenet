@@ -1,10 +1,15 @@
-import { getAccessProxy } from '../../../../lib/server/session-access'
+import { getMod } from '../../../../lib/server/session-access'
 import LoginPanel from './moodle-email-pwd-authentication.client'
 
 export default async function MoodleEmailPwdAuthenticationPage() {
-  const { d } = getAccessProxy()
-  const { configs } = await access('moodle-eml-pwd-auth', 'read', 'configs', void 0).val
-
+  const {
+    moodle: {
+      eml_pwd_auth: {
+        V0_1: { pri: mod },
+      },
+    },
+  } = getMod()
+  const { configs } = await mod.read.configs()
   return (
     <LoginPanel
       {...{

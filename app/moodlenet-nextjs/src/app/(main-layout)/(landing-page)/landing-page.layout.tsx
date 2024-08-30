@@ -1,18 +1,24 @@
 import defaultBackground from '../../../assets/img/default-landing-background.png'
-import { getAccessProxy } from '../../../lib/server/session-access'
+import { getMod } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../../lib/server/utils/slots'
 // import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
 import { LandingHeadSearchbox /* , LandingHeadShareButton  */ } from './landing-page.client'
 import './landing-page.style.scss'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
-  const { d } = getAccessProxy()
+  const {
+    moodle: {
+      net: {
+        V0_1: { pri: net },
+      },
+    },
+  } = getMod()
   const {
     layouts: {
       pages: { landing },
     },
-  } = await access('net', 'read', 'layouts', void 0).val
-  const { info } = await access('net', 'read', 'website-info', void 0).val
+  } = await net.read.layouts()
+  const { info } = await net.read.websiteInfo()
 
   const { head, content } = slotsMap(props, landing.slots)
 

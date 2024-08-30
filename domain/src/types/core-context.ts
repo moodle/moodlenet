@@ -1,5 +1,7 @@
-import { MoodleDomain } from '../domain'
+import { Modules } from '../domain'
+import { PrimarySession } from './primary-session'
 
 export interface CoreContext {
-  domain: MoodleDomain
+  mod: Modules
+  primarySession: PrimarySession
 }

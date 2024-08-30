@@ -1,14 +1,20 @@
 'use server'
-import { getAccessProxy } from '../../lib/server/session-access'
+import { getMod } from '../../lib/server/session-access'
 import { srvSiteUrls } from '../../lib/server/utils/site-urls.server'
 import HeaderLogo from '../../ui/organisms/Header/HeaderLogo/HeaderLogo'
 
 export async function LayoutHeaderLogo() {
-  const { d } = getAccessProxy()
+  const {
+    moodle: {
+      net: {
+        V0_1: { pri: net },
+      },
+    },
+  } = getMod()
 
   const {
     info: { logo, smallLogo },
-  } = await access('net', 'read', 'website-info', void 0).val
+  } = await net.read.websiteInfo()
 
   const {
     site: { landing: landingPath },

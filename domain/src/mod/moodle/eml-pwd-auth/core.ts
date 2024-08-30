@@ -12,17 +12,15 @@ export function core(coreContext: CoreContext): module {
         read: {
           async configs() {
             return {
-              _200: {
-                configs: {
-                  loginForm: {
-                    email: { min: 5, max: 35 },
-                    password: { min: 8, max: 35 },
-                  },
-                  signupForm: {
-                    email: { min: 5, max: 35 },
-                    password: { min: 8, max: 35 },
-                    displayName: { min: 3, max: 35 },
-                  },
+              configs: {
+                loginForm: {
+                  email: { min: 5, max: 35 },
+                  password: { min: 8, max: 35 },
+                },
+                signupForm: {
+                  email: { min: 5, max: 35 },
+                  password: { min: 8, max: 35 },
+                  displayName: { min: 3, max: 35 },
                 },
               },
             }

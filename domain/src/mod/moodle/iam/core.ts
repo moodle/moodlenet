@@ -9,13 +9,11 @@ export function core(coreContext: CoreContext): module {
       // sec: null as _any,
       // emit: null as _any,
       pri: {
-        'current-session': {
+        currentSession: {
           async auth() {
             return {
-              _200: {
-                user: { type: 'guest' } as const,
-                permissions: {},
-              },
+              user: { type: 'guest' } as const,
+              permissions: {},
             }
           },
         },
