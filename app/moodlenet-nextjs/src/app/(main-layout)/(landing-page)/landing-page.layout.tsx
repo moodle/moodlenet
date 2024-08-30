@@ -1,12 +1,12 @@
 import defaultBackground from '../../../assets/img/default-landing-background.png'
-import { getAccess } from '../../../lib/server/session-access'
+import { getAccessProxy } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../../lib/server/utils/slots'
 // import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
 import { LandingHeadSearchbox /* , LandingHeadShareButton  */ } from './landing-page.client'
 import './landing-page.style.scss'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
-  const access = await getAccess()
+  const { d } = getAccessProxy()
   const {
     layouts: {
       pages: { landing },

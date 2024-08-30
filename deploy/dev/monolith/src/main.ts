@@ -1,16 +1,10 @@
-import * as emlPwdAuth from '@moodle/mod/eml-pwd-auth'
-import * as iam from '@moodle/mod/iam'
-import * as net from '@moodle/mod/net'
-import { getTransport } from '@moodle/msg/bindings/node'
-getTransport('ctrl', 'http::8100').then(async register => {
-  {
-    register(async (/* primarySession */) => {
-      // console.log(inspect({ primarySession }, true, 10, true))
-      return {
-        ...iam.ctrl,
-        ...net.ctrl,
-        ...emlPwdAuth.ctrl,
-      }
-    })
-  }
+import { http } from '@moodle/bindings/node'
+import { coreDomain, dispatch, MoodleDomain } from '@moodle/domain'
+http.server({
+  port: 8100,
+  baseUrl: '/',
+  access({ domain_msg, meta }) {
+    const domain = coreDomain({ domain: meta as MoodleDomain })
+    return dispatch(domain, domain_msg)
+  },
 })

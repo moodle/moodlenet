@@ -1,10 +1,10 @@
 'use server'
-import { getAccess } from '../../lib/server/session-access'
+import { getAccessProxy } from '../../lib/server/session-access'
 import { srvSiteUrls } from '../../lib/server/utils/site-urls.server'
 import HeaderLogo from '../../ui/organisms/Header/HeaderLogo/HeaderLogo'
 
 export async function LayoutHeaderLogo() {
-  const access = await getAccess()
+  const { d } = getAccessProxy()
 
   const {
     info: { logo, smallLogo },

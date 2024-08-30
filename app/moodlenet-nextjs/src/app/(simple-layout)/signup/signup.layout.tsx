@@ -1,10 +1,10 @@
-import { getAccess } from '../../../lib/server/session-access'
+import { getAccessProxy } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotItem, slotsMap } from '../../../lib/server/utils/slots'
 import { SignupCard, SignupCardProps } from './signup.client'
 import './signup.style.scss'
 
 export default async function SignupLayout(props: layoutPropsWithChildren) {
-  const access = await getAccess()
+  const { d } = getAccessProxy()
   const {
     layouts: {
       pages: { signup },

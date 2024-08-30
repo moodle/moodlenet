@@ -1,5 +1,5 @@
-type _any = any
-type _any_k = keyof _any
+export type _any = any
+export type _any_k = keyof _any
 
 export type map<t = _any, k extends _any_k = _any_k> = Record<k, t>
 export type m_map<t = _any, k extends _any_k = _any_k> =
@@ -47,3 +47,7 @@ export type d_t_u<
 // discr_map<nmap, p> extends infer m ? m[keyof m] : never
 
 export type _t<t> = { [k in string & keyof t]: t[k] }
+
+export type deep_partial<t> = {
+  [P in keyof t]?: t[P] extends object ? deep_partial<t[P]> : t[P]
+}

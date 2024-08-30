@@ -1,0 +1,9 @@
+{
+  "name": "bindings-node",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "bindings/node/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project bindings-node --web",
+  "targets": {}
+}

@@ -1,8 +1,8 @@
 import { sitepaths } from '../../common/utils/sitepaths'
-import { getAccess } from '../session-access'
+import { getAccessProxy } from '../session-access'
 
 export async function srvSiteUrls() {
-  const access = await getAccess()
+  const { d } = getAccessProxy()
 
   const {
     info: {

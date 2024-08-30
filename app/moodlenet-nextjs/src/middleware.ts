@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   const ip = request.ip ?? request.headers.get('X-Forwarded-For')
+  const url = request.url
+  url && request.headers.set('x-url', url)
+  const mode = request.mode
+  mode && request.headers.set('x-mode', mode)
+
   ip && request.headers.set('x-ip', ip)
   const geo = request.geo
   geo && request.headers.set('x-geo', JSON.stringify(geo))
