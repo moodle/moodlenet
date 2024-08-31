@@ -44,12 +44,16 @@ export interface AccessProxy {
 export interface DomainProxyCtrl {
   access: domain_access
 }
+type s = string
+function isFullLength(path: string[]): path is [s, s, s, s, s, s] {
+  return path.length == 6
+}
 export function createAcccessProxy(ctrl: DomainProxyCtrl): AccessProxy {
   const mod = mod_access_proxy([])
   return { mod }
 
   function mod_access_proxy(path: string[]) {
-    if (path.length == 6) {
+    if (isFullLength(path)) {
       return function call(payload: _any) {
         const domain_msg: domain_msg = {
           ns: path[0],

@@ -6,18 +6,23 @@ import PrimaryButton from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { signup } from './moodle-email-pwd-authentication.server'
 
 import { mod } from '@moodle/domain'
+import {
+  getSignupFormSchema,
+  signupFormConfigs,
+  signupFormValues,
+} from 'domain/src/mod/moodle/eml-pwd-auth'
 
 export function SignupIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
 
 export type SignupProps = {
-  configs: mod.moodle.eml_pwd_auth.signupFormConfigs
+  configs: signupFormConfigs
 }
 
 export default function SignupPanel({ configs }: SignupProps) {
-  const zod = mod.moodle.eml_pwd_auth.getSignupFormSchema(configs)
-  const form = useFormik<mod.moodle.eml_pwd_auth.signupFormValues>({
+  const zod = getSignupFormSchema(configs)
+  const form = useFormik<signupFormValues>({
     onSubmit: values => signup(values),
     initialValues: { email: '', password: '', displayName: '' },
     validationSchema: toFormikValidationSchema(zod),

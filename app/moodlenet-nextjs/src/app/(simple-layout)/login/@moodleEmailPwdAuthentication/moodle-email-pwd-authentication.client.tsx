@@ -7,7 +7,11 @@ import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../../ui/atoms/TertiaryButton/TertiaryButton'
 import { login } from './moodle-email-pwd-authentication.server'
-import { mod } from '@moodle/domain'
+import {
+  getLoginFormSchema,
+  loginFormConfigs,
+  loginFormValues,
+} from '@moodle/domain/mod/moodle/eml-pwd-auth'
 
 export function LoginIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
@@ -16,12 +20,12 @@ export function LoginIcon() {
 export type LoginProps = {
   recoverPasswordUrl: string
   wrongCreds: boolean
-  configs: mod.moodle.eml_pwd_auth.loginFormConfigs
+  configs: loginFormConfigs
 }
 
 export default function LoginPanel({ wrongCreds, recoverPasswordUrl, configs }: LoginProps) {
-  const zod = mod.moodle.eml_pwd_auth.getLoginFormSchema(configs)
-  const form = useFormik<mod.moodle.eml_pwd_auth.loginFormValues>({
+  const zod = getLoginFormSchema(configs)
+  const form = useFormik<loginFormValues>({
     onSubmit: values => login(values),
     initialValues: { email: '', password: '' },
     validationSchema: toFormikValidationSchema(zod),

@@ -37,15 +37,6 @@ function getPrimarySession() {
   const ip = _headers.get('x-ip') ?? undefined
   const url = _headers.get('x-url') ?? undefined
   const mode = _headers.get('x-mode') ?? undefined
-  const env_str = _headers.get('x-env') ?? ''
-  const env = (() => {
-    try {
-      JSON.parse(env_str)
-    } catch (e) {
-      console.error(`ERROR parsing x-env header ${env_str}`, e)
-      return env_str
-    }
-  })()
   const geo_header_str = _headers.get('x-geo') ?? undefined
   const geo = geo_header_str ? JSON.parse(geo_header_str) : undefined
   const ua = userAgent({ headers: _headers })
@@ -85,7 +76,6 @@ function getPrimarySession() {
         cpu: ua.cpu,
         device: ua.device,
         engine: ua.engine,
-        env,
         os: ua.os,
       },
     },

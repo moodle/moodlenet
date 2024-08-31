@@ -14,9 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    "noUncheckedIndexedAccess": true,
     "paths": {
       "@moodle/bindings/node": ["bindings/node/src/index.ts"],
       "@moodle/domain": ["domain/src/index.ts"],
+      "@moodle/domain/mod/*": ["domain/src/mod/*"],
       "@moodle/lib/types": ["lib/types/src/index.ts"]
     }
   },

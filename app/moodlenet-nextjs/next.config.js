@@ -80,7 +80,7 @@ const xport = async (phase, context) => {
     '@moodle/core/transport',
     '@moodle/core/domain',
     '@moodle/lib/types',
-    '@moodle/mod/net',
+    '@moodle/domain/mod/moodle/net',
   ]
   // config.serverRuntimeConfig = require('../../domain/src/index')
   // config.serverRuntimeConfig = require('@moodle/domain')

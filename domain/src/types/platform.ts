@@ -1,6 +1,6 @@
 import { d_u, map } from '@moodle/lib/types'
 
-export type platform = { env?: string | map<string | undefined, string> } & d_u<
+export type platform = d_u<
   {
     browser: BrowserPlatform
     nodeJs: NodeJsPlatform
@@ -37,4 +37,5 @@ export interface BrowserPlatform {
 
 export interface NodeJsPlatform {
   version: string
+  env?: map<string | undefined, string>
 }

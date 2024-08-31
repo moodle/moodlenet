@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 import { clientSlotItem } from '../../common/pages'
-import { layoutSlotItem } from '@moodle/mod/net'
+import { layoutSlotItem } from '@moodle/domain/mod/moodle/net'
 
 export type layoutProps = {
   params?: {
