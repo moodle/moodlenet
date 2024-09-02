@@ -1,17 +1,14 @@
 import { mod } from '../../../types'
-import { WebsiteInfo } from './types/website/info'
-import { Layouts } from './types/website/layouts'
+import { WebsiteInfo, WebsiteLayouts } from './types/website'
 
 export type module = mod<{
   V0_1: {
     pri: {
       read: {
-        websiteInfo(): Promise<{ info: WebsiteInfo }>
-        layouts(): Promise<{ layouts: Layouts }>
+        websiteInfo(): Promise<WebsiteInfo>
+        websiteLayouts(): Promise<WebsiteLayouts>
       }
     }
-    prm: {
-      net: string
-    }
+    // prm: {}
   }
 }>

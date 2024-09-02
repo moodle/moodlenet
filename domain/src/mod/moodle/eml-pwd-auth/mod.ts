@@ -8,8 +8,6 @@ export type module = mod<{
         configs(): Promise<{ configs: Configs }>
       }
     }
-    prm: {
-      eml: number
-    }
+    prm: { a: { b: number } }
   }
 }>

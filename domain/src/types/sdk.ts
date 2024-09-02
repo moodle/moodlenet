@@ -1,6 +1,5 @@
-import { _any } from '@moodle/lib/types'
+import { _any, deep_partial } from '@moodle/lib/types'
 import { Modules, MoodleDomain } from '../domain'
-import { msg_payload } from './mod'
 
 export const _inspect_symbol = Symbol('moduleAccessProxy inspect')
 export type domain_msg = {
@@ -11,20 +10,18 @@ export type domain_msg = {
   version: string
   channel: string
   port: string
-  payload: msg_payload
+  payload: _any
 }
 
 export function dispatch(
-  domain: MoodleDomain,
+  domain: deep_partial<MoodleDomain>,
   { ns, mod, version, layer, channel, port, payload }: domain_msg,
+  handleError: (found: unknown) => void,
 ) {
   const access = (domain as _any).modules?.[ns]?.[mod]?.[version]?.[layer]?.[channel]?.[port]
 
   if (typeof access !== 'function') {
-    const err_msg = `NOT IMPLEMENTED ${{ ns, mod, version, layer, channel, port }}`
-    //FIXME - log to a logger instead of console (would be a secondary ?) ... but maybe not here .. we're in a low level module here .. so console is fine .. but we should have a logger in the domain layer that we can use  .. and we should have a way to configure it .. and we should have a way to inject it .. and we should have a way to test it .. and we should have a way to mock it .. and we should have a way to trace it .. and we should have a way to monitor it .. and we should have a way to alert on it .. and we should have a way to throttle it .. and we should have a way to rate limit it .. and we should have a way to cache it .. and we should have a way to retry it .. and we should have a way to circuit break it .. and we should have a way to trace it .. and we should have a way to monitor it .. and we should have a way to alert on it .. and we should have a way to throttle it .. and we should have a way to rate limit it .. and we should have a way to cache it .. and we should have a way to retry it .. and we should have a way to circuit break it ..
-    console.error(err_msg)
-    throw new Error(err_msg)
+    handleError(access)
   }
   return access(payload)
 }

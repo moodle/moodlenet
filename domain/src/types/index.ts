@@ -1,5 +1,6 @@
 export * from './mod'
 export * from './primary-session'
+export * from './concrete'
 export * from './reply'
 export * from './reply-status'
 export * from './sdk'

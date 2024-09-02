@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 import { clientSlotItem } from '../../common/pages'
-import { layoutSlotItem } from '@moodle/mod/moodle/net'
+import { layoutSlotItem } from 'app/moodlenet-nextjs/src/module'
 
 export type layoutProps = {
   params?: {

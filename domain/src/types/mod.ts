@@ -1,5 +1,4 @@
-import { _any, deep_partial, map } from '@moodle/lib/types'
-import { Modules } from '../domain'
+import { _any, map } from '@moodle/lib/types'
 
 export type mod_version = string
 export type mod<_mod extends module> = _mod
@@ -8,23 +7,19 @@ export type module = {
   [version: mod_version]: layers
 }
 
-export type layer_name = keyof layers
 export type layers = {
-  pri?: map<channels<core_layer>>
-  sec?: map<channels<worker_layer>>
-  evt?: map<channels<event_layer>>
-  prm?: permissions<_any>
+  pri?: map<channels<core_endpoint>>
+  sec?: map<channels<worker_endpoint>>
+  evt?: map<channels<event_endpoint>>
+  prm?: map
 }
 
-export type feedback_loop = deep_partial<Modules>
+export type channels<_endpoint extends any_endpoint> = map<_endpoint>
 
-export type permissions<t> = t
-export type channels<_layer extends any_layer> = map<_layer>
+export type any_endpoint = event_endpoint | core_endpoint | worker_endpoint
+export type msg_payload = _any
+export type core_endpoint = (_: msg_payload | never) => Promise<msg_payload> | never
+export type worker_endpoint = (_: msg_payload | never) => Promise<msg_payload> | never
+export type event_endpoint = (_: msg_payload | never) => never
 
-export type any_layer = event_layer | core_layer | worker_layer
-export type msg_payload = object
-export type core_layer = (_: msg_payload | never) => Promise<msg_payload> | never
-export type worker_layer = (_: msg_payload | never) => Promise<msg_payload> | never
-export type event_layer = (_: msg_payload | never) => never
-
-export type msgs_of<_layer extends any_layer> = [Parameters<_layer>[0], ReturnType<_layer>]
+export type msgs_of<_layer extends any_endpoint> = [Parameters<_layer>[0], ReturnType<_layer>]

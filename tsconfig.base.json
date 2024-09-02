@@ -19,7 +19,8 @@
       "@moodle/bindings/node": ["bindings/node/src/index.ts"],
       "@moodle/domain": ["domain/src/index.ts"],
       "@moodle/lib/types": ["lib/types/src/index.ts"],
-      "@moodle/mod/*": ["domain/src/mod/*"]
+      "@moodle/mod/*": ["domain/src/mod/*"],
+      "@moodle/sec/db/arango": ["sec/db/arango/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

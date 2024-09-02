@@ -8,8 +8,16 @@ export type module = mod<{
         auth(): Promise<{ user: user; permissions: Permissions }>
       }
     }
-    prm: {
-      iam: number
+    sec: {
+      secCh: {
+        secEp(_: { se: string }): Promise<{ user: user; permissions: Permissions }>
+      }
     }
+    evt: {
+      evtCh: {
+        evEp(_: { ev: string }): never
+      }
+    }
+    prm: { a: { x: string } }
   }
 }>

@@ -49,5 +49,9 @@ export type d_t_u<
 export type _t<t> = { [k in string & keyof t]: t[k] }
 
 export type deep_partial<t> = {
-  [P in keyof t]?: t[P] extends object ? deep_partial<t[P]> : t[P]
+  [P in keyof t]?: t[P] extends (_: _any) => _any
+    ? t[P]
+    : t[P] extends object
+      ? deep_partial<t[P]>
+      : t[P]
 }

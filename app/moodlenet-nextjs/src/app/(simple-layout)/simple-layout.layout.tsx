@@ -17,12 +17,10 @@ export default async function SimpleLayoutLayout(props: layoutPropsWithChildren)
     },
   } = getMod()
   const {
-    layouts: {
-      roots: {
-        simple: { footer, header },
-      },
+    roots: {
+      simple: { footer, header },
     },
-  } = await net.read.layouts()
+  } = await net.read.websiteLayouts()
 
   return (
     <div className={`simple-layout`}>

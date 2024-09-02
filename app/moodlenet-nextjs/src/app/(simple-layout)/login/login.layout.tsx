@@ -12,10 +12,8 @@ export default async function LoginLayout(props: layoutPropsWithChildren) {
     },
   } = getMod()
   const {
-    layouts: {
-      pages: { login },
-    },
-  } = await net.read.layouts()
+    pages: { login },
+  } = await net.read.websiteLayouts()
   const loginCardProps: LoginCardProps = {
     loginMethods: login.methods.map(({ label, panel }) => ({
       key: `${panel}#${label}`,

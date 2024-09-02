@@ -11,9 +11,7 @@ export async function srvSiteUrls() {
   } = getMod()
 
   const {
-    info: {
-      deployment: { basePath, domain, secure },
-    },
+    deployment: { basePath, domain, secure },
   } = await net.read.websiteInfo()
 
   const baseUrl = `${secure ? 'https' : 'http'}://${domain}${basePath}`

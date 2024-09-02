@@ -1,6 +1,6 @@
-export type layoutSlotItem = string
+import { layoutSlotItem } from './info'
 
-export interface Layouts {
+export interface WebsiteLayouts {
   pages: PageLayouts
   roots: RootLayouts
 }
