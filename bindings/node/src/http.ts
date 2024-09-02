@@ -1,4 +1,4 @@
-import { domain_msg, PrimarySession, reply } from '@moodle/domain'
+import { domain_msg, PrimarySession, reply } from '@moodle/core'
 import { _any, map } from '@moodle/lib/types'
 import express from 'express'
 import { Agent, fetch } from 'undici'

@@ -5,14 +5,11 @@ import {
   createAcccessProxy,
   dispatch,
   domain_msg,
-  impl,
-  Modules,
   MoodleDomain,
   WorkerContext,
-} from '@moodle/domain'
-import { _any } from '@moodle/lib/types'
-import * as mod_moodle from '@moodle/mod/moodle'
-import { db_sec_arango } from '@moodle/sec/db/arango'
+} from '@moodle/core'
+import * as mod_moodle from '@moodle/mod/index'
+import { db_sec_arango } from '@moodle/sec/persistence/arangodb'
 
 http_bind.server({
   port: 9000,
@@ -59,4 +56,3 @@ FOUND: [${String(found)}]
     throw TypeError(err_msg)
   }
 }
-

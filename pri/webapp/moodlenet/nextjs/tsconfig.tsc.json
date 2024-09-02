@@ -1,0 +1,36 @@
+{
+  "extends": "../../../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "noUncheckedIndexedAccess": true,
+    "types": ["jest", "node"],
+    // "baseUrl": "./src/",
+    // "paths": {
+    //   "@/*": ["./*"]
+    // }
+    "paths": {
+      // "@/*": ["./src/*", "app/nextjs/moodlenet/src/*"]
+      // "@moodle/domain": ["../../../../domain/src/index.ts", "domain/src/index.ts"],
+      // "@moodle/t-utils": ["../../../../t-utils/src/index.ts", "t-utils/src/index.ts"]
+    }
+  },
+  // "include": ["**/*.ts", "**/*.tsx"],
+  "include": [],
+  "exclude": [
+    "zz__legacy",
+    "ui-cmps",
+    "node_modules",
+    "jest.config.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
+}
