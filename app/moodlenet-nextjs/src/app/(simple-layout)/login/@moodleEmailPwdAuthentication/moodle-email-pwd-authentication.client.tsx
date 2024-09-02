@@ -11,7 +11,7 @@ import {
   getLoginFormSchema,
   loginFormConfigs,
   loginFormValues,
-} from '@moodle/domain/mod/moodle/eml-pwd-auth'
+} from '@moodle/mod/moodle/eml-pwd-auth'
 
 export function LoginIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>

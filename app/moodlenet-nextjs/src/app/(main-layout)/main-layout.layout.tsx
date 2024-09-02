@@ -5,7 +5,7 @@ import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'
 import MainHeader, { MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 import { HeaderSearchbox, LoginHeaderButton, SignupHeaderButton } from './main-layout.client'
 
-import { isGuest } from '@moodle/domain/mod/moodle/iam'
+import { isGuest } from '@moodle/mod/moodle/iam'
 import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
