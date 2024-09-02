@@ -2,6 +2,7 @@ import { _any, deep_partial } from '@moodle/lib/types'
 import { Modules } from '../domain'
 import { layers } from './mod'
 import { PrimarySession } from './primary-session'
+import { merge } from 'lodash'
 
 export interface CoreContext {
   forward: concrete<'pri'>
@@ -32,12 +33,15 @@ export type concrete<_layer extends keyof layers> = {
       [version in keyof Modules[ns][mod_name]]: {
         [l in _layer]: Modules[ns][mod_name][version] extends infer _layers
           ? _layers extends layers
-            ? _layers[_layer ]
+            ? _layers[_layer]
             : never
           : never
       }
     }
   }
+}
+export function composeImpl(...impls: impl<_any>[]): Modules {
+  return merge({}, ...impls)
 }
 
 export type impl<_layer extends keyof layer_contexts> = deep_partial<concrete<_layer>>

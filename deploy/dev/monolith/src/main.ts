@@ -1,6 +1,6 @@
 import { http_bind } from '@moodle/bindings/node'
 import {
-  concrete,
+  composeImpl,
   CoreContext,
   createAcccessProxy,
   dispatch,
@@ -13,7 +13,6 @@ import {
 import { _any } from '@moodle/lib/types'
 import * as mod_moodle from '@moodle/mod/moodle'
 import { db_sec_arango } from '@moodle/sec/db/arango'
-import { merge } from 'lodash'
 
 http_bind.server({
   port: 9000,
@@ -35,7 +34,7 @@ http_bind.server({
 
     const moodleDomain: MoodleDomain = {
       version: '5.0',
-      modules: compose(
+      modules: composeImpl(
         // core modules
         mod_moodle.eml_pwd_auth.core()(coreCtx),
         mod_moodle.net.core()(coreCtx),
@@ -61,6 +60,3 @@ FOUND: [${String(found)}]
   }
 }
 
-function compose(...partials: impl<_any>[]): Modules {
-  return merge({}, ...partials)
-}
