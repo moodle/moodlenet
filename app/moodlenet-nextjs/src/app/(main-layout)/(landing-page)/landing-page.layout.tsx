@@ -15,8 +15,8 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
   } = getMod()
   const {
     pages: { landing },
-  } = await net.read.websiteLayouts()
-  const info = await net.read.websiteInfo()
+  } = await net.website.layouts()
+  const info = await net.website.info()
 
   const { head, content } = slotsMap(props, landing.slots)
 

@@ -8,6 +8,11 @@ export type module = mod<{
         configs(): Promise<{ configs: Configs }>
       }
     }
+    sec: {
+      read: {
+        configs(): Promise<{ configs: Configs }>
+      }
+    }
     prm: { a: { b: number } }
   }
 }>

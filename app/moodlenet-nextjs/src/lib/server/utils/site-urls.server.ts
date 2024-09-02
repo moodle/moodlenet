@@ -12,7 +12,7 @@ export async function srvSiteUrls() {
 
   const {
     deployment: { basePath, domain, secure },
-  } = await net.read.websiteInfo()
+  } = await net.website.info()
 
   const baseUrl = `${secure ? 'https' : 'http'}://${domain}${basePath}`
   return {

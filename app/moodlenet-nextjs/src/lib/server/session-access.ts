@@ -16,10 +16,7 @@ export function getMod(): Modules {
       return trnspClient(
         {
           domain_msg,
-          layer: {
-            layer: 'pri',
-            ...primarySession,
-          },
+          primarySession,
         },
         requestTarget,
       )

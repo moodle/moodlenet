@@ -20,7 +20,7 @@ export default async function SimpleLayoutLayout(props: layoutPropsWithChildren)
     roots: {
       simple: { footer, header },
     },
-  } = await net.read.websiteLayouts()
+  } = await net.website.layouts()
 
   return (
     <div className={`simple-layout`}>

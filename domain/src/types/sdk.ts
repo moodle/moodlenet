@@ -22,6 +22,7 @@ export function dispatch(
 
   if (typeof access !== 'function') {
     handleError(access)
+    return
   }
   return access(payload)
 }

@@ -1,18 +1,16 @@
 import { factory } from 'domain/src/types'
 
 export function core(): factory<'pri'> {
-  return ctx => {
+  return ({ primarySession, worker }) => {
+    const mysec = worker.moodle.iam.V0_1.sec
     return {
       moodle: {
         iam: {
           V0_1: {
             pri: {
-              currentSession: {
-                async auth() {
-                  return {
-                    user: { type: 'guest' } as const,
-                    permissions: {},
-                  }
+              userSession: {
+                async current() {
+                  return mysec.userSession.validate({ primarySession })
                 },
               },
             },

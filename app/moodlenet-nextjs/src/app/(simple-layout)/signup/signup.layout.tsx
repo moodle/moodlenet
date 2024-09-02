@@ -13,7 +13,7 @@ export default async function SignupLayout(props: layoutPropsWithChildren) {
   } = getMod()
   const {
     pages: { signup },
-  } = await net.read.websiteLayouts()
+  } = await net.website.layouts()
 
   const signupCardProps: SignupCardProps = {
     signupMethods: signup.methods.map(({ label, panel }) => ({

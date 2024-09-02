@@ -1,23 +1,22 @@
-import { mod } from '../../../types'
-import { Permissions, user } from './types/auth'
+import { mod, PrimarySession } from '../../../types'
+import { permissions, user } from './types/auth'
+
+interface UserSession {
+  user: user
+  permissions: permissions
+}
 
 export type module = mod<{
   V0_1: {
     pri: {
-      currentSession: {
-        auth(): Promise<{ user: user; permissions: Permissions }>
+      userSession: {
+        current(): Promise<UserSession>
       }
     }
     sec: {
-      secCh: {
-        secEp(_: { se: string }): Promise<{ user: user; permissions: Permissions }>
+      userSession: {
+        validate(_: { primarySession: PrimarySession }): Promise<UserSession>
       }
     }
-    evt: {
-      evtCh: {
-        evEp(_: { ev: string }): never
-      }
-    }
-    prm: { a: { x: string } }
   }
 }>

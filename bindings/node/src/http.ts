@@ -1,15 +1,10 @@
 import { domain_msg, PrimarySession, reply } from '@moodle/domain'
-import { _any, d_m, map } from '@moodle/lib/types'
+import { _any, map } from '@moodle/lib/types'
 import express from 'express'
 import { Agent, fetch } from 'undici'
 
-export interface LayerMeta {
-  pri: PrimarySession
-  // sec: SecondarySession
-}
-
-export interface TransportData<layer extends keyof LayerMeta> {
-  layer: d_m<LayerMeta, 'layer'>[layer]
+export interface TransportData {
+  primarySession: PrimarySession
   domain_msg: domain_msg
 }
 
@@ -31,8 +26,8 @@ export function client(agent_opts?: Agent.Options) {
   type req_opts = {
     headers: map<string, string>
   }
-  return async function request<layer extends keyof LayerMeta>(
-    transport_data: TransportData<layer>,
+  return async function request(
+    transport_data: TransportData,
     req_target: string | req_target,
     _opts?: Partial<req_opts>,
   ) {
@@ -56,20 +51,16 @@ export function client(agent_opts?: Agent.Options) {
   }
 }
 
-type srv_cfg<layer extends keyof LayerMeta> = {
-  access: (_: TransportData<layer>) => Promise<reply<_any>>
+type srv_cfg = {
+  request: (_: TransportData) => Promise<reply<_any>>
   port: number
   baseUrl: string
 }
-export async function server<layer extends keyof LayerMeta>({
-  access,
-  port,
-  baseUrl,
-}: srv_cfg<layer>) {
+export async function server({ request, port, baseUrl }: srv_cfg) {
   const app = express()
   app.use(express.json())
   app.post(baseUrl, async (req, res) => {
-    const reply = await access(req.body)
+    const reply = await request(req.body)
     res.json(reply)
   })
   return new Promise<void>((resolve /* , reject */) => {

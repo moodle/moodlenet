@@ -23,8 +23,8 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     roots: {
       main: { footer, header },
     },
-  } = await net.read.websiteLayouts()
-  const { user } = await iam.currentSession.auth()
+  } = await net.website.layouts()
+  const { user } = await iam.userSession.current()
 
   return (
     <div className={`main-layout`}>

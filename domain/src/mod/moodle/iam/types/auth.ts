@@ -1,4 +1,5 @@
 import { d_u } from '@moodle/lib/types'
+import { concrete } from 'domain/src/types'
 
 export type user = d_u<UsersMap, 'type'>
 
@@ -8,14 +9,8 @@ interface UsersMap {
 }
 
 export interface AuthenticatedUser {
-  // id: string in some entity wrapper ?
-  displayName: string
-  // homePage: string
-  // homePages: Record<appname, string> ?
-  avatarUrl: null | string
+  id: string
 }
 
 declare const _: unique symbol
-export interface Permissions {
-  [_]?: never
-}
+export type permissions = concrete<'prm'>
