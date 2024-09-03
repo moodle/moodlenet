@@ -1,7 +1,7 @@
 {
-  "name": "deploy-dev-monolith",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "deploy/dev/monolith/src",
+  "name": "monolith-deploy",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "deploy/monolith/src",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -11,12 +11,12 @@
       "defaultConfiguration": "production",
       "options": {
         "platform": "node",
-        "outputPath": "dist/deploy/dev/monolith",
+        "outputPath": "dist/deploy/monolith",
         "format": ["cjs"],
         "bundle": false,
-        "main": "deploy/dev/monolith/src/main.ts",
-        "tsConfig": "deploy/dev/monolith/tsconfig.app.json",
-        "assets": ["deploy/dev/monolith/src/assets"],
+        "main": "deploy/monolith/src/main.ts",
+        "tsConfig": "deploy/monolith/tsconfig.app.json",
+        "assets": ["deploy/monolith/src/assets"],
         "generatePackageJson": true,
         "esbuildOptions": {
           "sourcemap": true,
@@ -26,6 +26,9 @@
         }
       },
       "configurations": {
+        "migrate": {
+          "main": "deploy/monolith/src/migrate.ts"
+        },
         "development": {},
         "production": {
           "esbuildOptions": {
@@ -42,24 +45,19 @@
       "defaultConfiguration": "development",
       "dependsOn": ["build"],
       "options": {
-        "buildTarget": "deploy-dev-monolith:build",
+        "buildTarget": "monolith-deploy:build",
         "runBuildTargetDependencies": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "deploy-dev-monolith:build:development"
+          "buildTarget": "monolith-deploy:build:development"
         },
         "production": {
-          "buildTarget": "deploy-dev-monolith:build:production"
+          "buildTarget": "monolith-deploy:build:production"
+        },
+        "migrate": {
+          "buildTarget": "monolith-deploy:build:migrate"
         }
-      }
-    },
-    "dev": {
-      "executor": "@nx/js:node",
-      "dependsOn": ["build"],
-      "options": {
-        "buildTarget": "deploy-dev-monolith:build:development",
-        "runBuildTargetDependencies": false
       }
     }
   }

@@ -1,7 +1,6 @@
 import { factory } from '@moodle/core'
-import { ArangoDBSecEnv } from '../../types/env'
 
-export function iam(_: ArangoDBSecEnv): factory<'sec'> {
+export function iam(): factory<'sec'> {
   return ctx => {
     return {
       moodle: {
@@ -9,8 +8,9 @@ export function iam(_: ArangoDBSecEnv): factory<'sec'> {
           V0_1: {
             sec: {
               userSession: {
-                async validate({ primarySession }) {
-                  const authToken = primarySession.session.authToken
+                async validate({ primary, authToken }) {
+                  const validateForPrimary = `${primary.name}@${primary.version}`
+
                   return !authToken
                     ? {
                         user: { type: 'guest' } as const,

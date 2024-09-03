@@ -20,7 +20,8 @@
       "@moodle/core": ["core/src/index.ts"],
       "@moodle/lib/types": ["lib/types/src/index.ts"],
       "@moodle/mod/*": ["core/src/mod/moodle/*"],
-      "@moodle/sec/persistence/arangodb": ["sec/persistence/arangodb/src/index.ts"]
+      "@moodle/sec/persistence/arangodb": ["sec/persistence/arangodb/src/index.ts"],
+      "@moodle/sec/persistence/arangodb/migrate": ["sec/persistence/arangodb/src/migrate.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

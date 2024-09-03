@@ -9,16 +9,25 @@ import {
   WorkerContext,
 } from '@moodle/core'
 import * as mod_moodle from '@moodle/mod/index'
-import { db_sec_arango } from '@moodle/sec/persistence/arangodb'
+import { get_arango_persistence_factory } from '@moodle/sec/persistence/arangodb'
+import { get_dbs_struct_configs_0_1 } from './env'
 
 http_bind.server({
   port: 9000,
   baseUrl: '/',
-  request({ domain_msg, primarySession }) {
+  async request({ domain_msg, primarySession }) {
+    const dbs_struct_configs_0_1 = get_dbs_struct_configs_0_1()
+
     const monolithAccessProxy = createAcccessProxy({
       access(msg) {
-        msg.layer
-        return dispatch(moodleDomain, msg, not_implemented_here(msg))
+        if (msg.layer === 'sec' || msg.layer === 'pri') {
+          return dispatch(moodleDomain, msg, not_implemented_here(msg))
+        } else if (msg.layer === 'evt') {
+          'TODO'
+          // dispatch on every mod_moodle.*.factory<'evt'> (loop)
+        } else {
+          throw TypeError(`unknown msg layer: ${msg.layer}`)
+        }
       },
     })
 
@@ -36,8 +45,11 @@ http_bind.server({
         mod_moodle.eml_pwd_auth.core()(coreCtx),
         mod_moodle.net.core()(coreCtx),
         mod_moodle.iam.core()(coreCtx),
+
         // sec modules
-        db_sec_arango({ arangodbUrl: process.env.ARANGODB_URL })(workerCtx),
+        get_arango_persistence_factory({
+          dbs_struct_configs_0_1,
+        })(workerCtx),
       ),
     }
     // console.log(inspect(moodleDomain, true, 10, true))

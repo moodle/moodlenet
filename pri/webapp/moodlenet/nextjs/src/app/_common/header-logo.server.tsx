@@ -12,7 +12,9 @@ export async function LayoutHeaderLogo() {
     },
   } = getMod()
 
-  const { logo, smallLogo } = await net.website.info()
+  const {
+    info: { logo, smallLogo },
+  } = await net.read.configs()
 
   const {
     site: { landing: landingPath },

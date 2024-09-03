@@ -1,8 +1,10 @@
 import { factory } from '@moodle/core'
-import { ArangoDBSecEnv } from '../../types/env'
+import { SessionCtx } from '../../session-ctx'
 
-export function eml_pwd_auth(_: ArangoDBSecEnv): factory<'sec'> {
+export const moodle_eml_pwd_auth_mod_name = 'moodle-eml-pwd-auth'
+export function eml_pwd_auth(): factory<'sec'> {
   return ctx => {
+    const { db_struct_0_1: db_struct } = SessionCtx.getStore()
     return {
       moodle: {
         eml_pwd_auth: {
@@ -11,17 +13,9 @@ export function eml_pwd_auth(_: ArangoDBSecEnv): factory<'sec'> {
               read: {
                 async configs() {
                   return {
-                    configs: {
-                      loginForm: {
-                        email: { min: 5, max: 35 },
-                        password: { min: 8, max: 35 },
-                      },
-                      signupForm: {
-                        email: { min: 5, max: 35 },
-                        password: { min: 8, max: 35 },
-                        displayName: { min: 3, max: 35 },
-                      },
-                    },
+                    configs: await db_struct.data.coll.module_configs.document(
+                      moodle_eml_pwd_auth_mod_name,
+                    ),
                   }
                 },
               },

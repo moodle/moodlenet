@@ -1,4 +1,4 @@
-import { layoutSlotItem } from './info'
+export type layoutSlotItem = string
 
 export interface WebsiteLayouts {
   pages: PageLayouts

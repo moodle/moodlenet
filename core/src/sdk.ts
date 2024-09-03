@@ -1,12 +1,13 @@
 import { _any, deep_partial } from '@moodle/lib/types'
 import { Modules, MoodleDomain } from './domain'
+import { layer_contexts } from './types'
 
 export const _inspect_symbol = Symbol('moduleAccessProxy inspect')
 export type domain_msg = {
   //domain_version:string
   ns: string
   mod: string
-  layer: string
+  layer: keyof layer_contexts
   version: string
   channel: string
   port: string
@@ -57,7 +58,7 @@ export function createAcccessProxy(ctrl: DomainProxyCtrl): AccessProxy {
           ns: path[0],
           mod: path[1],
           version: path[2],
-          layer: path[3],
+          layer: path[3] as keyof layer_contexts,
           channel: path[4],
           port: path[5],
           payload,

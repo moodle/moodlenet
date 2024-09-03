@@ -20,10 +20,12 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     },
   } = getMod()
   const {
-    roots: {
-      main: { footer, header },
+    websiteLayouts: {
+      roots: {
+        main: { footer, header },
+      },
     },
-  } = await net.website.layouts()
+  } = await net.read.configs()
   const { user } = await iam.userSession.current()
 
   return (

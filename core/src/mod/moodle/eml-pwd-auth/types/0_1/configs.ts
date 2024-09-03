@@ -1,5 +1,5 @@
 import { object, string } from 'zod'
-export interface Configs {
+export interface Configs_0_1 {
   loginForm: loginFormConfigs
   signupForm: signupFormConfigs
 }

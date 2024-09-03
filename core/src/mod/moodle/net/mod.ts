@@ -1,18 +1,16 @@
 import { mod } from '../../../types'
-import { WebsiteInfo, WebsiteLayouts } from './types/website'
+import { Configs_0_1 } from './types/configs/0_1'
 
 export type module = mod<{
   V0_1: {
     pri: {
-      website: {
-        info(): Promise<WebsiteInfo>
-        layouts(): Promise<WebsiteLayouts>
+      read: {
+        configs(): Promise<Configs_0_1>
       }
     }
     sec: {
-      website: {
-        info(): Promise<WebsiteInfo>
-        layouts(): Promise<WebsiteLayouts>
+      read: {
+        configs(): Promise<Configs_0_1>
       }
     }
     // prm: {}

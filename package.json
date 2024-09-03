@@ -12,6 +12,7 @@
     "@react-email/components": "0.0.22",
     "@svgr/webpack": "^8.1.0",
     "@types/lodash": "^4.17.7",
+    "arangojs": "^9.0.0",
     "axios": "^1.6.0",
     "formik": "^2.4.6",
     "i18next": "^23.12.2",

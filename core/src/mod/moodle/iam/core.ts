@@ -10,7 +10,10 @@ export function core(): factory<'pri'> {
             pri: {
               userSession: {
                 async current() {
-                  return mysec.userSession.validate({ primarySession })
+                  return mysec.userSession.validate({
+                    primary: { name: primarySession.app.name, version: primarySession.app.version },
+                    authToken: primarySession.session.authToken,
+                  })
                 },
               },
             },

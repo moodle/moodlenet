@@ -8,12 +8,9 @@ export function core(): factory<'pri'> {
         net: {
           V0_1: {
             pri: {
-              website: {
-                async info() {
-                  return mysec.website.info()
-                },
-                async layouts() {
-                  return mysec.website.layouts()
+              read: {
+                async configs() {
+                  return mysec.read.configs()
                 },
               },
             },
