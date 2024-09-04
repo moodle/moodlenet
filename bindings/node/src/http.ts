@@ -51,8 +51,10 @@ export function client(agent_opts?: Agent.Options) {
   }
 }
 
+export type requestHandler = (_: TransportData) => Promise<reply<_any>>
+
 type srv_cfg = {
-  request: (_: TransportData) => Promise<reply<_any>>
+  request: requestHandler
   port: number
   baseUrl: string
 }

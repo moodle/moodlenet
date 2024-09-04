@@ -13,6 +13,6 @@ export type module = mod<{
         configs(): Promise<{ configs: Configs_0_1 }>
       }
     }
-    prm: { a: { b: number } }
+    evt: never
   }
 }>

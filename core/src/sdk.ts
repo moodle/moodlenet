@@ -1,6 +1,6 @@
 import { _any, deep_partial } from '@moodle/lib/types'
 import { Modules, MoodleDomain } from './domain'
-import { layer_contexts } from './types'
+import { concrete, layer_contexts } from './types'
 
 export const _inspect_symbol = Symbol('moduleAccessProxy inspect')
 export type domain_msg = {
@@ -15,11 +15,11 @@ export type domain_msg = {
 }
 
 export function dispatch(
-  domain: deep_partial<MoodleDomain>,
+  modules: deep_partial<concrete<keyof layer_contexts>>,
   { ns, mod, version, layer, channel, port, payload }: domain_msg,
   handleError: (found: unknown) => void,
 ) {
-  const access = (domain as _any).modules?.[ns]?.[mod]?.[version]?.[layer]?.[channel]?.[port]
+  const access = (modules as _any)?.[ns]?.[mod]?.[version]?.[layer]?.[channel]?.[port]
 
   if (typeof access !== 'function') {
     handleError(access)

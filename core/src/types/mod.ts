@@ -8,10 +8,10 @@ export type module = {
 }
 
 export type layers = {
-  pri?: map<channels<core_endpoint>>
-  sec?: map<channels<worker_endpoint>>
-  evt?: map<channels<event_endpoint>>
-  prm?: map
+  pri: map<channels<core_endpoint>>
+  sec: map<channels<worker_endpoint>>
+  evt: map<channels<event_endpoint>>
+  // prm?: map
 }
 
 export type channels<_endpoint extends any_endpoint> = map<_endpoint>

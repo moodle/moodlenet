@@ -16,5 +16,6 @@ export type module = mod<{
         }): Promise<v0_1.UserSession>
       }
     }
+    evt: never
   }
 }>

@@ -1,5 +1,5 @@
 import { d_u } from '@moodle/lib/types'
-import { concrete } from '../../../../../types'
+// import { concrete } from '../../../../../types'
 
 export type user = d_u<UsersMap, 'type'>
 
@@ -14,8 +14,8 @@ export interface AuthenticatedUser {
 
 export interface UserSession {
   user: user
-  permissions: permissions
+  // permissions: permissions
 }
 
-declare const _: unique symbol
-export type permissions = concrete<'prm'>
+// declare const _: unique symbol
+// export type permissions = concrete<'prm'>

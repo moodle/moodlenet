@@ -14,7 +14,7 @@ export type EvtContext = CoreContext
 
 export interface WorkerContext {
   primarySession: PrimarySession
-  emit: Modules // concrete<'evt'>
+  emit: concrete<'evt'>
 }
 
 // export type execution_context = {
@@ -42,12 +42,14 @@ export type concrete<_layer extends keyof layers> = {
     }
   }
 }
-export function composeImpl(...impls: impl<_any>[]): Modules {
+export function composeImpl(...impls: impl<_any>[]): impl<_any> {
   return merge({}, ...impls)
 }
 
 type impl<_layer extends keyof layer_contexts> = deep_partial<concrete<_layer>>
 
 export type core_factory = factory<'pri' | 'evt'>
+export type core_impl = impl<'pri' | 'evt'>
 export type sec_factory = factory<'sec'>
+export type sec_impl = impl<'sec'>
 type factory<_layer extends keyof layer_contexts> = (ctx: layer_contexts[_layer]) => impl<_layer>

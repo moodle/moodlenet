@@ -13,6 +13,6 @@ export type module = mod<{
         configs(): Promise<Configs_0_1>
       }
     }
-    // prm: {}
+    evt: never
   }
 }>
