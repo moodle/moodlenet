@@ -1,8 +1,8 @@
-import { factory } from '@moodle/core'
+import { sec_factory } from '@moodle/core'
 import { SessionCtx } from '../../session-ctx'
 
 export const moodle_net_mod_name = 'moodle-net'
-export function net(): factory<'sec'> {
+export function net(): sec_factory {
   return ctx => {
     const { db_struct_0_1: db_struct } = SessionCtx.getStore()
     return {
@@ -27,4 +27,3 @@ export function net(): factory<'sec'> {
     }
   }
 }
-

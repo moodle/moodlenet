@@ -1,6 +1,6 @@
-import { factory } from '../../../types'
+import { core_factory } from '../../../types'
 
-export function core(): factory<'pri'> {
+export function core(): core_factory {
   return ({ worker }) => {
     const mysec = worker.moodle.net.V0_1.sec
     return {

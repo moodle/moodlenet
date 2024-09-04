@@ -1,8 +1,8 @@
-import { factory } from '@moodle/core'
+import { sec_factory } from '@moodle/core'
 import { SessionCtx } from '../../session-ctx'
 
 export const moodle_eml_pwd_auth_mod_name = 'moodle-eml-pwd-auth'
-export function eml_pwd_auth(): factory<'sec'> {
+export function eml_pwd_auth(): sec_factory {
   return ctx => {
     const { db_struct_0_1: db_struct } = SessionCtx.getStore()
     return {

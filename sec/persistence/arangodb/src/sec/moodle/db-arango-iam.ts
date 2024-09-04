@@ -1,6 +1,6 @@
-import { factory } from '@moodle/core'
+import { sec_factory } from '@moodle/core'
 
-export function iam(): factory<'sec'> {
+export function iam(): sec_factory {
   return ctx => {
     return {
       moodle: {
