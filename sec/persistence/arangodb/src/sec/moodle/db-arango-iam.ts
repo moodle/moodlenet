@@ -1,6 +1,7 @@
 import { sec_factory } from '@moodle/core'
+import { db_struct_0_1 } from '../../dbStructure/0_1'
 
-export function iam(): sec_factory {
+export function iam({ db_struct_0_1 }: { db_struct_0_1: db_struct_0_1 }): sec_factory {
   return ctx => {
     return {
       moodle: {

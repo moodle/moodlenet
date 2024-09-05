@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "noUncheckedIndexedAccess": true,
+    "esModuleInterop": true,
+    // "exactOptionalPropertyTypes": true,
+    "strict": true,
     "paths": {
       "@moodle/bindings/node": ["bindings/node/src/index.ts"],
       "@moodle/core": ["core/src/index.ts"],

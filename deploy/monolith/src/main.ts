@@ -3,6 +3,7 @@ import {
   composeImpl,
   core_impl,
   CoreContext,
+  coreModId,
   createAcccessProxy,
   dispatch,
   domain_msg,
@@ -20,15 +21,17 @@ import { deep_partial } from '@moodle/lib/types'
 http_bind.server({
   port: 9000,
   baseUrl: '/',
-  request,
+  request(td) {
+    return request(td)
+  },
 })
 
-async function request({ domain_msg, primarySession }: TransportData) {
+async function request({ domain_msg, primarySession, core_mod_id }: TransportData) {
   const dbs_struct_configs_0_1 = get_dbs_struct_configs_0_1()
-
   const monolithAccessProxy = createAcccessProxy({
     access(msg) {
-      return request({ domain_msg: msg, primarySession })
+      const core_mod_id = coreModId(domain_msg)
+      return request({ domain_msg: msg, primarySession, core_mod_id })
     },
   })
 
@@ -37,7 +40,6 @@ async function request({ domain_msg, primarySession }: TransportData) {
     forward: monolithAccessProxy.mod,
     worker: monolithAccessProxy.mod,
   }
-  const workerCtx: WorkerContext = { primarySession, emit: monolithAccessProxy.mod }
 
   const core_impls: core_impl[] = [
     // core modules
@@ -47,12 +49,17 @@ async function request({ domain_msg, primarySession }: TransportData) {
   ]
   const core = composeImpl(...core_impls)
 
-  const sec_impls: sec_impl[] = [
-    // sec modules
-    get_arango_persistence_factory({
-      dbs_struct_configs_0_1,
-    })(workerCtx),
-  ]
+  const workerCtx: WorkerContext | null = core_mod_id
+    ? { primarySession, emit: monolithAccessProxy.mod, core_mod_id }
+    : null
+  const sec_impls: sec_impl[] = workerCtx
+    ? [
+        // sec modules
+        get_arango_persistence_factory({
+          dbs_struct_configs_0_1,
+        })(workerCtx),
+      ]
+    : []
   const sec = composeImpl(...sec_impls)
 
   // console.log(inspect(moodleDomain, true, 10, true))

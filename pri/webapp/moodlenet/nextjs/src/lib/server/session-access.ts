@@ -17,6 +17,7 @@ export function getMod(): Modules {
         {
           domain_msg,
           primarySession,
+          core_mod_id: null,
         },
         requestTarget,
       )

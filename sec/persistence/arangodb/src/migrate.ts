@@ -5,7 +5,7 @@ export async function migrate({
   dbs_struct_configs_0_1,
 }: {
   dbs_struct_configs_0_1: dbs_struct_configs_0_1
-}) {
+}): Promise<string> {
   const target_v = '0_1'
   const db_struct_0_1 = struct_0_1(dbs_struct_configs_0_1)
   const data_db_exists = await db_struct_0_1.data.db.exists()
@@ -24,4 +24,5 @@ export async function migrate({
   } else {
     console.log(`migrate arangodb persistence from v${from_v} to v${target_v}`)
   }
+  return target_v
 }

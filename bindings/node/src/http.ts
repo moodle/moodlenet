@@ -1,4 +1,4 @@
-import { domain_msg, PrimarySession, reply } from '@moodle/core'
+import { domain_msg, mod_id, PrimarySession, reply } from '@moodle/core'
 import { _any, map } from '@moodle/lib/types'
 import express from 'express'
 import { Agent, fetch } from 'undici'
@@ -6,6 +6,7 @@ import { Agent, fetch } from 'undici'
 export interface TransportData {
   primarySession: PrimarySession
   domain_msg: domain_msg
+  core_mod_id: mod_id | null
 }
 
 export function client(agent_opts?: Agent.Options) {
@@ -17,7 +18,7 @@ export function client(agent_opts?: Agent.Options) {
     ...agent_opts,
   })
 
-  type req_target = {
+  type req_http_target = {
     host: string
     port: number
     basePath: string
@@ -28,15 +29,15 @@ export function client(agent_opts?: Agent.Options) {
   }
   return async function request(
     transport_data: TransportData,
-    req_target: string | req_target,
+    req_http_target: string | req_http_target,
     _opts?: Partial<req_opts>,
   ) {
     const url =
-      typeof req_target === 'string'
-        ? new URL(req_target)
+      typeof req_http_target === 'string'
+        ? new URL(req_http_target)
         : new URL(
-            `${req_target.secure ? 'https' : 'http'}://${req_target.host}:${req_target.port}`,
-            req_target.basePath,
+            `${req_http_target.secure ? 'https' : 'http'}://${req_http_target.host}:${req_http_target.port}`,
+            req_http_target.basePath,
           )
 
     const body = JSON.stringify(transport_data)

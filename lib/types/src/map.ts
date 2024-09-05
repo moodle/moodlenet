@@ -18,12 +18,12 @@ export type discriminated_map<nmap extends m_map, p extends _any_k = _DEF_DISCR_
 
 export type d_u<
   nmap extends m_map,
-  p extends _any_k = _DEF_DISCR_PROP,
+  p extends _any_k,
   keys extends keyof nmap = keyof nmap,
 > = discriminated_union<nmap, p, keys>
 export type discriminated_union<
   nmap extends m_map,
-  p extends _any_k = _DEF_DISCR_PROP,
+  p extends _any_k,
   keys extends keyof nmap = keyof nmap,
 > = d_m<nmap, p>[keys]
 // >[keyof d_m<nmap, p>]

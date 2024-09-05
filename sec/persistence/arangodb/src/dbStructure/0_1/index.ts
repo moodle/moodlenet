@@ -1,5 +1,5 @@
 import { Database } from 'arangojs'
-import { Migration_Record } from '../migrate/types'
+import { Migration_Record } from '../../migrate/types'
 
 export type dbs_struct_configs_0_1 = {
   data: { url: string; dbname: string }
@@ -27,13 +27,15 @@ export default function struct_0_1(dbs_struct_configs_0_1: dbs_struct_configs_0_
       coll: {
         module_configs: data_db.collection('module_configs'),
         self: {
-          migrations: data_db.collection<Migration_0_1>('self_db_migrations'),
+          migrations: data_db.collection('self_db_migrations'),
         },
       },
     },
     iam: {
       db: iam_db,
-      coll: {},
+      coll: {
+        user: iam_db.collection('user'),
+      },
     },
   }
 }

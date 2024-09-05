@@ -1,18 +1,8 @@
 import { _any, deep_partial } from '@moodle/lib/types'
 import { Modules, MoodleDomain } from './domain'
-import { concrete, layer_contexts } from './types'
+import { concrete, domain_msg, layer_contexts } from './types'
 
 export const _inspect_symbol = Symbol('moduleAccessProxy inspect')
-export type domain_msg = {
-  //domain_version:string
-  ns: string
-  mod: string
-  layer: keyof layer_contexts
-  version: string
-  channel: string
-  port: string
-  payload: _any
-}
 
 export function dispatch(
   modules: deep_partial<concrete<keyof layer_contexts>>,

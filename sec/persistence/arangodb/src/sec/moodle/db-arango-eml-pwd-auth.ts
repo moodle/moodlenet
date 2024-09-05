@@ -1,10 +1,10 @@
 import { sec_factory } from '@moodle/core'
-import { SessionCtx } from '../../session-ctx'
+import { getModConfigs } from '../../lib/mod'
+import { db_struct_0_1 } from '../../dbStructure/0_1'
 
-export const moodle_eml_pwd_auth_mod_name = 'moodle-eml-pwd-auth'
-export function eml_pwd_auth(): sec_factory {
+export const moodle_eml_pwd_auth_0_1 = 'moodle_eml_pwd_auth_0_1'
+export function eml_pwd_auth({ db_struct_0_1 }: { db_struct_0_1: db_struct_0_1 }): sec_factory {
   return ctx => {
-    const { db_struct_0_1: db_struct } = SessionCtx.getStore()
     return {
       moodle: {
         eml_pwd_auth: {
@@ -12,11 +12,7 @@ export function eml_pwd_auth(): sec_factory {
             sec: {
               read: {
                 async configs() {
-                  return {
-                    configs: await db_struct.data.coll.module_configs.document(
-                      moodle_eml_pwd_auth_mod_name,
-                    ),
-                  }
+                  return getModConfigs({ db_struct_0_1, mod_int_id: moodle_eml_pwd_auth_0_1 })
                 },
               },
             },
