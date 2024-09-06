@@ -1,4 +1,4 @@
-import { user } from '../types/0_1'
+import { user } from '../types'
 
 export function isGuest(user: user) {
   return user.type === 'guest'

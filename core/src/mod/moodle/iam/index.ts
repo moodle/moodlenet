@@ -1,4 +1,3 @@
 export * from './core'
-export * from './lib'
+export * from './0_1'
 export * from './mod'
-export * from './types/0_1'
