@@ -12,8 +12,8 @@ export async function migrate({
   const db_struct_0_1 = struct_0_1(dbs_struct_configs_0_1)
   const self_db_exists = await db_struct_0_1.mng.db.exists()
   if (!self_db_exists) {
-    const self_db_sys = new Database(db_struct_0_1.dbs_struct_configs_0_1.mng.url)
-    await self_db_sys.createDatabase(db_struct_0_1.mng.db.name)
+    const mng_db_sys = new Database(db_struct_0_1.dbs_struct_configs_0_1.mng.url)
+    await mng_db_sys.createDatabase(db_struct_0_1.mng.db.name)
     await db_struct_0_1.mng.coll.migrations.create()
   }
   return upgrade({ db_struct_0_1 })

@@ -2,15 +2,14 @@ import { core_factory } from '@moodle/domain'
 
 export function core(): core_factory {
   return ({ worker }) => {
-    const mysec = worker.moodle.net.V0_1.sec
     return {
       moodle: {
         net: {
-          V0_1: {
+          v0_1: {
             pri: {
-              read: {
-                async configs() {
-                  return mysec.read.configs()
+              configs: {
+                async read() {
+                  return worker.moodle.net.v0_1.sec.db_read.configs()
                 },
               },
             },

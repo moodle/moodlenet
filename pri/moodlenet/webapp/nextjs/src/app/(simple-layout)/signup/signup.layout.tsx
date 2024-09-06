@@ -7,15 +7,17 @@ export default async function SignupLayout(props: layoutPropsWithChildren) {
   const {
     moodle: {
       net: {
-        V0_1: { pri: net },
+        v0_1: { pri: net },
       },
     },
   } = getMod()
   const {
-    websiteLayouts: {
-      pages: { signup },
+    configs: {
+      websiteLayouts: {
+        pages: { signup },
+      },
     },
-  } = await net.read.configs()
+  } = await net.configs.read()
 
   const signupCardProps: SignupCardProps = {
     signupMethods: signup.methods.map(({ label, panel }) => ({

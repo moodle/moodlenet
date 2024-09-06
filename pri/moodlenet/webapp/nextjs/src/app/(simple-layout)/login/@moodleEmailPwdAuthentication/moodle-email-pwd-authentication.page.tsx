@@ -5,17 +5,17 @@ export default async function MoodleEmailPwdAuthenticationPage() {
   const {
     moodle: {
       iam: {
-        V0_1: { pri: mod },
+        v0_1: { pri: mod },
       },
     },
   } = getMod()
-  const { configs } = await mod.read.configs()
+  const { configs } = await mod.configs.read()
   return (
     <LoginPanel
       {...{
         recoverPasswordUrl: '',
         wrongCreds: false,
-        configs: configs.loginForm,
+        validationConfigs: configs.validations,
       }}
     />
   )

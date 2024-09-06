@@ -5,14 +5,16 @@ export async function srvSiteUrls() {
   const {
     moodle: {
       net: {
-        V0_1: { pri: net },
+        v0_1: { pri: net },
       },
     },
   } = getMod()
 
   const {
-    deployment: { basePath, domain, secure },
-  } = await net.read.configs()
+    configs: {
+      deployment: { basePath, domain, secure },
+    },
+  } = await net.configs.read()
 
   const baseUrl = `${secure ? 'https' : 'http'}://${domain}${basePath}`
   return {

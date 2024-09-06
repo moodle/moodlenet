@@ -1,5 +1,5 @@
 import { mod } from '@moodle/domain'
-import { Configs } from './0_1/types'
+import { v0_1 } from './'
 
 declare module '@moodle/domain' {
   export interface MoodleMods {
@@ -8,15 +8,15 @@ declare module '@moodle/domain' {
 }
 
 export type moodle_net_mod = mod<{
-  V0_1: {
+  v0_1: {
     pri: {
-      read: {
-        configs(): Promise<Configs>
+      configs: {
+        read(): Promise<{ configs: v0_1.Configs }>
       }
     }
     sec: {
-      read: {
-        configs(): Promise<Configs>
+      db_read: {
+        configs(): Promise<{ configs: v0_1.Configs }>
       }
     }
     evt: never

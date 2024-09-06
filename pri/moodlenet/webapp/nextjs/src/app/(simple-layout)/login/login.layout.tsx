@@ -7,15 +7,17 @@ export default async function LoginLayout(props: layoutPropsWithChildren) {
   const {
     moodle: {
       net: {
-        V0_1: { pri: net },
+        v0_1: { pri: net },
       },
     },
   } = getMod()
   const {
-    websiteLayouts: {
-      pages: { login },
+    configs: {
+      websiteLayouts: {
+        pages: { login },
+      },
     },
-  } = await net.read.configs()
+  } = await net.configs.read()
   const loginCardProps: LoginCardProps = {
     loginMethods: login.methods.map(({ label, panel }) => ({
       key: `${panel}#${label}`,

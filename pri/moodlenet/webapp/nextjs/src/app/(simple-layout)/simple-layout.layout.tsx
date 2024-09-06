@@ -12,17 +12,19 @@ export default async function SimpleLayoutLayout(props: layoutPropsWithChildren)
   const {
     moodle: {
       net: {
-        V0_1: { pri: net },
+        v0_1: { pri: net },
       },
     },
   } = getMod()
   const {
-    websiteLayouts: {
-      roots: {
-        simple: { footer, header },
+    configs: {
+      websiteLayouts: {
+        roots: {
+          simple: { footer, header },
+        },
       },
     },
-  } = await net.read.configs()
+  } = await net.configs.read()
 
   return (
     <div className={`simple-layout`}>

@@ -11,11 +11,11 @@ export function SignupIcon() {
 }
 
 export type SignupProps = {
-  configs: ValidationConfigs
+  validationConfigs: ValidationConfigs
 }
 
-export default function SignupPanel({ configs }: SignupProps) {
-  const { signupSchema } = getSchemas(configs)
+export default function SignupPanel({ validationConfigs }: SignupProps) {
+  const { signupSchema } = getSchemas(validationConfigs)
 
   const form = useFormik<signupFormValues>({
     onSubmit: values => signup(values),

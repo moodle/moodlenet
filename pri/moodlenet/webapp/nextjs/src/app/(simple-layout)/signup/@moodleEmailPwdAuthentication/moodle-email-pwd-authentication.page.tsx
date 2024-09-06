@@ -4,17 +4,17 @@ import SignupPanel from './moodle-email-pwd-authentication.client'
 export default async function MoodleEmailPwdAuthenticationPage() {
   const {
     moodle: {
-      eml_pwd_auth: {
-        V0_1: { pri: mod },
+      iam: {
+        v0_1: { pri: mod },
       },
     },
   } = getMod()
-  const { configs } = await mod.read.configs()
+  const { configs } = await mod.configs.read()
 
   return (
     <SignupPanel
       {...{
-        configs: configs.signupForm,
+        validationConfigs: configs.validations,
       }}
     />
   )

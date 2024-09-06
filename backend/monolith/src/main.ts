@@ -28,7 +28,10 @@ async function request({ domain_msg, primarySession, core_mod_id }: TransportDat
   const monolithAccessProxy = createAcccessProxy({
     access(msg) {
       const core_mod_id = coreModId(domain_msg)
-      return request({ domain_msg: msg, primarySession, core_mod_id })
+      return request({ domain_msg: msg, primarySession, core_mod_id }).catch(e => {
+        console.error({ msg })
+        throw e
+      })
     },
   })
 

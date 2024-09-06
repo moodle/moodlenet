@@ -15,11 +15,15 @@ export function LoginIcon() {
 export type LoginProps = {
   recoverPasswordUrl: string
   wrongCreds: boolean
-  configs: ValidationConfigs
+  validationConfigs: ValidationConfigs
 }
 
-export default function LoginPanel({ wrongCreds, recoverPasswordUrl, configs }: LoginProps) {
-  const { loginSchema } = getSchemas(configs)
+export default function LoginPanel({
+  wrongCreds,
+  recoverPasswordUrl,
+  validationConfigs,
+}: LoginProps) {
+  const { loginSchema } = getSchemas(validationConfigs)
 
   const form = useFormik<loginFormValues>({
     onSubmit: values => login(values),

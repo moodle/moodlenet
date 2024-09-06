@@ -13,22 +13,29 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const {
     moodle: {
       iam: {
-        V0_1: { pri: iam },
+        v0_1: { pri: iam },
       },
       net: {
-        V0_1: { pri: net },
+        v0_1: { pri: net },
       },
     },
   } = getMod()
   const {
-    websiteLayouts: {
-      roots: {
-        main: { footer, header },
+    configs: {
+      websiteLayouts: {
+        roots: {
+          main: { footer, header },
+        },
       },
     },
-  } = await net.read.configs()
+  } = await net.configs.read()
+  ////////////////////////////////////////////
+  ////////////////////////////////////////////
+  ////////////////////////////////////////////
   const { user } = { user: { type: 'guest' } as const } // await iam.userSession.current()
-
+  ////////////////////////////////////////////
+  ////////////////////////////////////////////
+  ////////////////////////////////////////////
   return (
     <div className={`main-layout`}>
       <MainHeader slots={headerSlots()} />

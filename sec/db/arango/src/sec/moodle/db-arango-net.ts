@@ -1,14 +1,22 @@
 import { sec_factory } from '@moodle/domain'
+import type * as _ from '@moodle/mod-net'
 import { db_struct_0_1 } from '../../dbStructure/0_1'
-import { getModConfigs } from '../../lib/mod'
+import { getModConfigs } from '../../lib/modules'
 
-export const moodle_net_0_1 = 'moodle_net_0_1'
 export function net({ db_struct_0_1 }: { db_struct_0_1: db_struct_0_1 }): sec_factory {
   return ctx => {
     return {
       moodle: {
         net: {
-          V0_1: {},
+          v0_1: {
+            sec: {
+              db_read: {
+                configs() {
+                  return getModConfigs({ mod_id: ctx.core_mod_id, db_struct_0_1 })
+                },
+              },
+            },
+          },
         },
       },
     }

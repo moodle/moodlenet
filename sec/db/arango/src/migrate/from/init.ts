@@ -1,5 +1,8 @@
 import { Database } from 'arangojs'
 import { db_struct_0_1, Migration_0_1 } from '../../dbStructure/0_1'
+import { defaultIamConfigs_0_1 } from '@moodle/mod-iam/0_1_setup'
+import { defaultNetConfigs_0_1 } from '@moodle/mod-net/0_1_setup'
+import { saveModConfigs } from '../../lib/modules'
 
 export const VERSION = 'v0_1'
 export async function migrate({ db_struct_0_1 }: { db_struct_0_1: db_struct_0_1 }) {
@@ -13,10 +16,24 @@ export async function migrate({ db_struct_0_1 }: { db_struct_0_1: db_struct_0_1 
   // create collections
   // mng
   await db_struct_0_1.mng.coll.module_configs.create({ cacheEnabled: true })
+
   // iam
   await db_struct_0_1.iam.coll.user.create({})
   // data
   //  await db_struct_0_1.data.coll.xxx.create({})
+
+  await Promise.all([
+    saveModConfigs({
+      db_struct_0_1,
+      configs: defaultIamConfigs_0_1,
+      mod_id: { ns: 'moodle', mod: 'iam', version: 'v0_1' },
+    }),
+    saveModConfigs({
+      db_struct_0_1,
+      configs: defaultNetConfigs_0_1,
+      mod_id: { ns: 'moodle', mod: 'net', version: 'v0_1' },
+    }),
+  ])
 
   // bump_version
   const migrationDoc: Migration_0_1 = {

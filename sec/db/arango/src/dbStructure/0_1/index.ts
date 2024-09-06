@@ -35,7 +35,7 @@ export default function struct_0_1(dbs_struct_configs_0_1: dbs_struct_configs_0_
     mng: {
       db: mng_db,
       coll: {
-        module_configs: data_db.collection('module_configs'),
+        module_configs: mng_db.collection('module_configs'),
         migrations: mng_db.collection('migrations'),
       },
     },

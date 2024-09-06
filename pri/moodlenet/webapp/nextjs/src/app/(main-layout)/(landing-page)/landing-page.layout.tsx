@@ -9,16 +9,18 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
   const {
     moodle: {
       net: {
-        V0_1: { pri: net },
+        v0_1: { pri: net },
       },
     },
   } = getMod()
   const {
-    websiteLayouts: {
-      pages: { landing },
+    configs: {
+      websiteLayouts: {
+        pages: { landing },
+      },
+      info,
     },
-    info,
-  } = await net.read.configs()
+  } = await net.configs.read()
 
   const { head, content } = slotsMap(props, landing.slots)
 

@@ -1,4 +1,5 @@
 import { mod } from '@moodle/domain'
+import { v0_1 } from './'
 declare module '@moodle/domain' {
   export interface MoodleMods {
     iam: moodle_iam_mod
@@ -6,9 +7,17 @@ declare module '@moodle/domain' {
 }
 
 export type moodle_iam_mod = mod<{
-  V0_1: {
-    pri: never
-    sec: never
+  v0_1: {
+    pri: {
+      configs: {
+        read(): Promise<{ configs: v0_1.Configs }>
+      }
+    }
+    sec: {
+      db_read: {
+        configs(): Promise<{ configs: v0_1.Configs }>
+      }
+    }
     evt: never
   }
 }>

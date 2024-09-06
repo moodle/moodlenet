@@ -5,7 +5,15 @@ export function core(): core_factory {
     return {
       moodle: {
         iam: {
-          V0_1: {},
+          v0_1: {
+            pri: {
+              configs: {
+                read() {
+                  return ctx.worker.moodle.iam.v0_1.sec.db_read.configs()
+                },
+              },
+            },
+          },
         },
       },
     }

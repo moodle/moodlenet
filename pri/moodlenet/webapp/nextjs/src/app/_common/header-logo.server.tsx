@@ -7,14 +7,16 @@ export async function LayoutHeaderLogo() {
   const {
     moodle: {
       net: {
-        V0_1: { pri: net },
+        v0_1: { pri: net },
       },
     },
   } = getMod()
 
   const {
-    info: { logo, smallLogo },
-  } = await net.read.configs()
+    configs: {
+      info: { logo, smallLogo },
+    },
+  } = await net.configs.read()
 
   const {
     site: { landing: landingPath },
