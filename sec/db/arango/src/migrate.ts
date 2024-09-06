@@ -1,28 +1,59 @@
-import struct_0_1, { dbs_struct_configs_0_1 } from './dbStructure/0_1'
-import initialize from './migrate/from/init'
+import { Database } from 'arangojs'
+import struct_0_1, { db_struct_0_1, dbs_struct_configs_0_1 } from './dbStructure/0_1'
+import * as migrations from './migrate/from'
+
+const TARGET_V = migrations.init.VERSION
 
 export async function migrate({
   dbs_struct_configs_0_1,
 }: {
   dbs_struct_configs_0_1: dbs_struct_configs_0_1
 }): Promise<string> {
-  const target_v = '0_1'
   const db_struct_0_1 = struct_0_1(dbs_struct_configs_0_1)
-  const data_db_exists = await db_struct_0_1.data.db.exists()
-  const iam_db_exists = await db_struct_0_1.iam.db.exists()
-  if (!data_db_exists && !iam_db_exists) {
-    console.log(`initializing arangodb persistence to v${target_v}`)
-    return initialize({ db_struct_0_1 }).then(() => migrate({ dbs_struct_configs_0_1 }))
+  const self_db_exists = await db_struct_0_1.mng.db.exists()
+  if (!self_db_exists) {
+    const self_db_sys = new Database(db_struct_0_1.dbs_struct_configs_0_1.mng.url)
+    await self_db_sys.createDatabase(db_struct_0_1.mng.db.name)
+    await db_struct_0_1.mng.coll.migrations.create()
   }
-  if (!data_db_exists || !iam_db_exists) {
-    throw new Error(`arangodb seems to be corrupted: either data_db or iam_db do not exist`)
+  return upgrade({ db_struct_0_1 })
+}
+
+export async function upgrade({
+  db_struct_0_1,
+}: {
+  db_struct_0_1: db_struct_0_1
+}): Promise<string> {
+  const from_v: keyof typeof migrations | typeof TARGET_V =
+    (await db_struct_0_1.mng.coll.migrations.document('latest', { graceful: true }))?.current ??
+    'init'
+
+  if (from_v === TARGET_V) {
+    console.log(`current arangodb persistence version: [${TARGET_V}]`)
+    return TARGET_V
   }
 
-  const from_v = (await db_struct_0_1.data.coll.self.migrations.document('latest')).current
-  if (from_v === target_v) {
-    console.log(`current arangodb persistence version: v${target_v}`)
-  } else {
-    console.log(`migrate arangodb persistence from v${from_v} to v${target_v}`)
+  const migrateMod = migrations[from_v]
+  if (!migrateMod) {
+    throw new Error(`migration from [${from_v}] not found`)
   }
-  return target_v
+
+  const migrationDoc = await migrateMod.migrate({ db_struct_0_1 })
+
+  await db_struct_0_1.mng.coll.migrations.saveAll(
+    [
+      {
+        _key: `${migrationDoc.previous}::${migrationDoc.current}`,
+        ...migrationDoc,
+      },
+      {
+        _key: 'latest',
+        ...migrationDoc,
+      },
+    ],
+    { overwriteMode: 'replace' },
+  )
+
+  console.log(`migrated arangodb persistence from [${from_v}] to [${migrateMod.VERSION}]`)
+  return upgrade({ db_struct_0_1 })
 }

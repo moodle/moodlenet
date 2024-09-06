@@ -1,8 +1,9 @@
 {
-  "name": "lib-types",
+  "name": "mod-iam",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "lib/types/src",
+  "sourceRoot": "mod/iam/src",
   "projectType": "library",
   "tags": [],
+  "// targets": "to see all targets run: nx show project mod-iam --web",
   "targets": {}
 }

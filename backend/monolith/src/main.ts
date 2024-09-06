@@ -10,7 +10,8 @@ import {
   sec_impl,
   WorkerContext,
 } from '@moodle/domain'
-import * as mod_moodle from '@moodle/mod/index'
+import * as mod_net from '@moodle/mod-net'
+import * as mod_iam from '@moodle/mod-iam'
 import { get_arango_persistence_factory } from '@moodle/sec-db-arango'
 import { get_dbs_struct_configs_0_1 } from './env'
 
@@ -39,9 +40,8 @@ async function request({ domain_msg, primarySession, core_mod_id }: TransportDat
 
   const core_impls: core_impl[] = [
     // core modules
-    mod_moodle.eml_pwd_auth.core()(coreCtx),
-    mod_moodle.net.core()(coreCtx),
-    mod_moodle.iam.core()(coreCtx),
+    mod_net.core()(coreCtx),
+    mod_iam.core()(coreCtx),
   ]
   const core = composeImpl(...core_impls)
 

@@ -1,9 +1,15 @@
 import { Database } from 'arangojs'
 import { Migration_Record } from '../../migrate/types'
 
+type dbConn = {
+  url: string
+  dbname: string
+}
+
 export type dbs_struct_configs_0_1 = {
-  data: { url: string; dbname: string }
-  iam: { url: string; dbname: string }
+  mng: dbConn
+  data: dbConn
+  iam: dbConn
 }
 
 export interface Migration_0_1 extends Migration_Record<'0_1'> {
@@ -20,16 +26,22 @@ export default function struct_0_1(dbs_struct_configs_0_1: dbs_struct_configs_0_
     url: dbs_struct_configs_0_1.iam.url,
     databaseName: dbs_struct_configs_0_1.iam.dbname,
   })
+  const mng_db = new Database({
+    url: dbs_struct_configs_0_1.mng.url,
+    databaseName: dbs_struct_configs_0_1.mng.dbname,
+  })
   return {
     dbs_struct_configs_0_1,
-    data: {
-      db: data_db,
+    mng: {
+      db: mng_db,
       coll: {
         module_configs: data_db.collection('module_configs'),
-        self: {
-          migrations: data_db.collection('self_db_migrations'),
-        },
+        migrations: mng_db.collection('migrations'),
       },
+    },
+    data: {
+      db: data_db,
+      coll: {},
     },
     iam: {
       db: iam_db,

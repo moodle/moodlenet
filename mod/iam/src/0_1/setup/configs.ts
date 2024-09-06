@@ -1,6 +1,6 @@
 import { Configs } from '../'
 
-export const defaultIamConfigs: Configs = {
+export const defaultIamConfigs_0_1: Configs = {
   validations: {
     user: {
       email: { min: 5, max: 35 },

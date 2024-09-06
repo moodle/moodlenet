@@ -4,16 +4,5 @@
   "sourceRoot": "domain/src",
   "projectType": "library",
   "tags": [],
-  "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/domain",
-        "main": "domain/src/index.ts",
-        "tsConfig": "domain/tsconfig.lib.json",
-        "assets": ["domain/*.md"]
-      }
-    }
-  }
+  "targets": {}
 }
