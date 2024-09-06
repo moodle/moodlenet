@@ -8,19 +8,19 @@ import './landing-page.style.scss'
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
   const {
     moodle: {
-      net: {
-        v0_1: { pri: net },
+      netWebappNextjs: {
+        v0_1: { pri: app },
       },
     },
   } = getMod()
   const {
     configs: {
-      websiteLayouts: {
+      layouts: {
         pages: { landing },
       },
-      info,
+      net: { info },
     },
-  } = await net.configs.read()
+  } = await app.configs.read()
 
   const { head, content } = slotsMap(props, landing.slots)
 

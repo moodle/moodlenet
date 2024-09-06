@@ -6,18 +6,18 @@ import './login.style.scss'
 export default async function LoginLayout(props: layoutPropsWithChildren) {
   const {
     moodle: {
-      net: {
-        v0_1: { pri: net },
+      netWebappNextjs: {
+        v0_1: { pri: app },
       },
     },
   } = getMod()
   const {
     configs: {
-      websiteLayouts: {
+      layouts: {
         pages: { login },
       },
     },
-  } = await net.configs.read()
+  } = await app.configs.read()
   const loginCardProps: LoginCardProps = {
     loginMethods: login.methods.map(({ label, panel }) => ({
       key: `${panel}#${label}`,

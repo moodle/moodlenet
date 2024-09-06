@@ -9,7 +9,7 @@ export function core(): core_factory {
             pri: {
               configs: {
                 async read() {
-                  return worker.moodle.net.v0_1.sec.db_read.configs()
+                  return worker.moodle.net.v0_1.sec.db.getConfigs()
                 },
               },
             },

@@ -12,6 +12,7 @@ import {
 } from '@moodle/domain'
 import * as mod_net from '@moodle/mod-net'
 import * as mod_iam from '@moodle/mod-iam'
+import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
 import { get_arango_persistence_factory } from '@moodle/sec-db-arango'
 import { get_dbs_struct_configs_0_1 } from './env'
 
@@ -45,6 +46,7 @@ async function request({ domain_msg, primarySession, core_mod_id }: TransportDat
     // core modules
     mod_net.core()(coreCtx),
     mod_iam.core()(coreCtx),
+    mod_net_webapp_nextjs.core()(coreCtx),
   ]
   const core = composeImpl(...core_impls)
 

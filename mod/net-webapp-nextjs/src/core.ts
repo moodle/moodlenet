@@ -1,15 +1,15 @@
 import { core_factory } from '@moodle/domain'
 
 export function core(): core_factory {
-  return ctx => {
+  return ({ worker }) => {
     return {
       moodle: {
-        iam: {
+        netWebappNextjs: {
           v0_1: {
             pri: {
               configs: {
-                read() {
-                  return ctx.worker.moodle.iam.v0_1.sec.db.getConfigs()
+                async read() {
+                  return worker.moodle.netWebappNextjs.v0_1.sec.db.getConfigs()
                 },
               },
             },

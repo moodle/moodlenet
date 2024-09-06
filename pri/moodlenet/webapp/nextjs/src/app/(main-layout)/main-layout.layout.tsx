@@ -15,24 +15,26 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
       iam: {
         v0_1: { pri: iam },
       },
-      net: {
-        v0_1: { pri: net },
+      netWebappNextjs: {
+        v0_1: { pri: app },
       },
     },
   } = getMod()
   const {
     configs: {
-      websiteLayouts: {
+      layouts: {
         roots: {
           main: { footer, header },
         },
       },
     },
-  } = await net.configs.read()
+  } = await app.configs.read()
   ////////////////////////////////////////////
   ////////////////////////////////////////////
   ////////////////////////////////////////////
-  const { user } = { user: { type: 'guest' } as const } // await iam.userSession.current()
+  // await iam.userSession.current()
+  // await app.userSession.current() and it uses iam ?  <= better
+  const { user } = { user: { type: 'guest' } as const }
   ////////////////////////////////////////////
   ////////////////////////////////////////////
   ////////////////////////////////////////////

@@ -10,8 +10,8 @@ export function iam({ db_struct_0_1 }: { db_struct_0_1: db_struct_0_1 }): sec_fa
         iam: {
           v0_1: {
             sec: {
-              db_read: {
-                configs() {
+              db: {
+                getConfigs() {
                   return getModConfigs({ mod_id: ctx.core_mod_id, db_struct_0_1 })
                 },
               },

@@ -11,20 +11,20 @@ import './simple-layout.style.scss'
 export default async function SimpleLayoutLayout(props: layoutPropsWithChildren) {
   const {
     moodle: {
-      net: {
-        v0_1: { pri: net },
+      netWebappNextjs: {
+        v0_1: { pri: app },
       },
     },
   } = getMod()
   const {
     configs: {
-      websiteLayouts: {
+      layouts: {
         roots: {
           simple: { footer, header },
         },
       },
     },
-  } = await net.configs.read()
+  } = await app.configs.read()
 
   return (
     <div className={`simple-layout`}>

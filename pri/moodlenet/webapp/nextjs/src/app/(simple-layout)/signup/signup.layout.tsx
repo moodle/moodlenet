@@ -6,18 +6,18 @@ import './signup.style.scss'
 export default async function SignupLayout(props: layoutPropsWithChildren) {
   const {
     moodle: {
-      net: {
-        v0_1: { pri: net },
+      netWebappNextjs: {
+        v0_1: { pri: app },
       },
     },
   } = getMod()
   const {
     configs: {
-      websiteLayouts: {
+      layouts: {
         pages: { signup },
       },
     },
-  } = await net.configs.read()
+  } = await app.configs.read()
 
   const signupCardProps: SignupCardProps = {
     signupMethods: signup.methods.map(({ label, panel }) => ({

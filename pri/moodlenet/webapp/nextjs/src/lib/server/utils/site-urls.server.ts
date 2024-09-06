@@ -4,8 +4,8 @@ import { getMod } from '../session-access'
 export async function srvSiteUrls() {
   const {
     moodle: {
-      net: {
-        v0_1: { pri: net },
+      netWebappNextjs: {
+        v0_1: { pri: app },
       },
     },
   } = getMod()
@@ -14,7 +14,7 @@ export async function srvSiteUrls() {
     configs: {
       deployment: { basePath, domain, secure },
     },
-  } = await net.configs.read()
+  } = await app.configs.read()
 
   const baseUrl = `${secure ? 'https' : 'http'}://${domain}${basePath}`
   return {

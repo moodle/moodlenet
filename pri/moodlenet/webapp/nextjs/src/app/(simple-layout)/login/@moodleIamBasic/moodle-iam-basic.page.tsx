@@ -1,7 +1,7 @@
 import { getMod } from '../../../../lib/server/session-access'
-import LoginPanel from './moodle-email-pwd-authentication.client'
+import LoginPanel from './moodle-iam-basic.client'
 
-export default async function MoodleEmailPwdAuthenticationPage() {
+export default async function MoodleIamBasicPage() {
   const {
     moodle: {
       iam: {

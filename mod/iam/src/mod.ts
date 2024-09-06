@@ -14,8 +14,8 @@ export type moodle_iam_mod = mod<{
       }
     }
     sec: {
-      db_read: {
-        configs(): Promise<{ configs: v0_1.Configs }>
+      db: {
+        getConfigs(): Promise<{ configs: v0_1.Configs }>
       }
     }
     evt: never

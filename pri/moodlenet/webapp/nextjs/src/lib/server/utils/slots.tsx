@@ -1,4 +1,4 @@
-import { layoutSlotItem } from '@moodle/mod/net/types/configs/0_1/configs/website/layouts'
+import { layoutSlotItem } from '@moodle/mod-net-webapp-nextjs'
 import { PropsWithChildren, ReactElement } from 'react'
 import { clientSlotItem } from '../../common/pages'
 
