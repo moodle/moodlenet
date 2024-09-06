@@ -1,4 +1,4 @@
-import { _any, map } from '@moodle/lib/types'
+import { _any, map } from '@moodle/lib-types'
 import { layer_contexts } from './concrete'
 
 export type mod_version = string

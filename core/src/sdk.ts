@@ -1,5 +1,5 @@
-import { _any, deep_partial } from '@moodle/lib/types'
-import { Modules, MoodleDomain } from './domain'
+import { _any, deep_partial } from '@moodle/lib-types'
+import { Modules } from './domain'
 import { concrete, domain_msg, layer_contexts } from './types'
 
 export const _inspect_symbol = Symbol('moduleAccessProxy inspect')

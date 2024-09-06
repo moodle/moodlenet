@@ -1,0 +1,9 @@
+{
+  "name": "jose-jwt",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "sec/jwt/jose/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project jose-jwt --web",
+  "targets": {}
+}

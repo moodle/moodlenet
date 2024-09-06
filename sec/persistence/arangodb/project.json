@@ -1,9 +1,0 @@
-{
-  "name": "arangodb-persistence",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "sec/persistence/arangodb/src",
-  "projectType": "library",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project arangodb-persistence --web",
-  "targets": {}
-}

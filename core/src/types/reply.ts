@@ -1,4 +1,4 @@
-import { _any, map } from '@moodle/lib/types'
+import { _any, map } from '@moodle/lib-types'
 import { status_code, status_code_fail, status_code_success } from './reply-status'
 
 export type reply_success<_st_map extends part_reply_status_payload_map> = reply_payload<_st_map> &

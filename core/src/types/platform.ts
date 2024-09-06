@@ -1,4 +1,4 @@
-import { d_u, map } from '@moodle/lib/types'
+import { d_u, map } from '@moodle/lib-types'
 
 export type platform = d_u<
   {

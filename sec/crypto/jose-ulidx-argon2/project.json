@@ -1,9 +1,0 @@
-{
-  "name": "crypto-jose-ulidx-argon2",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "sec/crypto/jose-ulidx-argon2/src",
-  "projectType": "library",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project crypto-jose-ulidx-argon2 --web",
-  "targets": {}
-}

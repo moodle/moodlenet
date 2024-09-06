@@ -1,0 +1,9 @@
+{
+  "name": "sec-db-arango",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "sec/db/arango/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project sec-db-arango --web",
+  "targets": {}
+}

@@ -1,4 +1,4 @@
-import { _any } from '@moodle/lib/types'
+import { _any } from '@moodle/lib-types'
 
 export const status_list_success = [
   // ['Continue', '_100'],

@@ -1,13 +1,8 @@
-import { domain_msg, mod_id, PrimarySession, reply } from '@moodle/core'
-import { _any, map } from '@moodle/lib/types'
+import { reply } from '@moodle/core'
+import { _any, map } from '@moodle/lib-types'
 import express from 'express'
 import { Agent, fetch } from 'undici'
-
-export interface TransportData {
-  primarySession: PrimarySession
-  domain_msg: domain_msg
-  core_mod_id: mod_id | null
-}
+import { TransportData } from '.'
 
 export function client(agent_opts?: Agent.Options) {
   const dispatcher = new Agent({

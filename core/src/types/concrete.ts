@@ -1,7 +1,7 @@
-import { _any, deep_partial } from '@moodle/lib/types'
+import { _any, deep_partial } from '@moodle/lib-types'
 import { merge } from 'lodash'
 import { Modules } from '../domain'
-import { mod_id, layers } from './mod'
+import { layers, mod_id } from './mod'
 import { PrimarySession } from './primary-session'
 
 export interface CoreContext {

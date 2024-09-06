@@ -1,4 +1,4 @@
-import { d_u } from '@moodle/lib/types'
+import { d_u } from '@moodle/lib-types'
 // import { concrete } from '../../../../../types'
 
 export type user = d_u<UsersMap, 'type'>
