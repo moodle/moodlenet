@@ -22,11 +22,10 @@
       "@moodle/core": ["core/src/index.ts"],
       "@moodle/lib-id-gen": ["lib/id-gen/src/index.ts"],
       "@moodle/lib-types": ["lib/types/src/index.ts"],
+      "@moodle/lib-jwt-jose": ["lib/jwt/jose/src/index.ts"],
       "@moodle/mod/*": ["core/src/mod/moodle/*"],
       "@moodle/sec-db-arango": ["sec/db/arango/src/index.ts"],
-      "@moodle/sec-db-arango/migrate": ["sec/db/arango/src/migrate.ts"],
-      "@moodle/sec-jose-jwt": ["sec/jwt/jose/src/index.ts"],
-      "@moodle/sec-pwd-hash-argon2": ["sec/pwd-hash/argon2/src/index.ts"]
+      "@moodle/sec-db-arango/migrate": ["sec/db/arango/src/migrate.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
