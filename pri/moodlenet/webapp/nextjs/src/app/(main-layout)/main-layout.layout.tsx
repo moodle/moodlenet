@@ -1,3 +1,4 @@
+import '@moodle/mod-net'
 import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
 import { getMod } from '../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
@@ -5,17 +6,17 @@ import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'
 import MainHeader, { MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 import { HeaderSearchbox, LoginHeaderButton, SignupHeaderButton } from './main-layout.client'
 
-import { isGuest } from '@moodle/mod/iam'
+import { isGuest } from '@moodle/mod-iam'
 import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const {
     moodle: {
-      net: {
-        V0_1: { pri: net },
-      },
       iam: {
         V0_1: { pri: iam },
+      },
+      net: {
+        V0_1: { pri: net },
       },
     },
   } = getMod()
@@ -26,7 +27,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
       },
     },
   } = await net.read.configs()
-  const { user } = await iam.userSession.current()
+  const { user } = { user: { type: 'guest' } as const } // await iam.userSession.current()
 
   return (
     <div className={`main-layout`}>

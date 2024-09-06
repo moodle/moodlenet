@@ -1,5 +1,5 @@
 'use client'
-import { getLoginFormSchema, loginFormConfigs, loginFormValues } from '@moodle/mod/eml-pwd-auth'
+import { getSchemas, loginFormValues, ValidationConfigs } from '@moodle/mod-iam'
 import { useFormik } from 'formik'
 import Link from 'next/link'
 import { Trans } from 'react-i18next'
@@ -8,7 +8,6 @@ import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../../ui/atoms/TertiaryButton/TertiaryButton'
 import { login } from './moodle-email-pwd-authentication.server'
-
 export function LoginIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
@@ -16,15 +15,16 @@ export function LoginIcon() {
 export type LoginProps = {
   recoverPasswordUrl: string
   wrongCreds: boolean
-  configs: loginFormConfigs
+  configs: ValidationConfigs
 }
 
 export default function LoginPanel({ wrongCreds, recoverPasswordUrl, configs }: LoginProps) {
-  const zod = getLoginFormSchema(configs)
+  const { loginSchema } = getSchemas(configs)
+
   const form = useFormik<loginFormValues>({
     onSubmit: values => login(values),
     initialValues: { email: '', password: '' },
-    validationSchema: toFormikValidationSchema(zod),
+    validationSchema: toFormikValidationSchema(loginSchema),
   })
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating

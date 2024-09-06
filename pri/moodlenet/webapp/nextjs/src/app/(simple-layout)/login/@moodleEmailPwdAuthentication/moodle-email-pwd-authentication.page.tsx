@@ -4,7 +4,7 @@ import LoginPanel from './moodle-email-pwd-authentication.client'
 export default async function MoodleEmailPwdAuthenticationPage() {
   const {
     moodle: {
-      eml_pwd_auth: {
+      iam: {
         V0_1: { pri: mod },
       },
     },

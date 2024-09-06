@@ -1,6 +1,6 @@
 'use server'
 
-import { signupFormValues } from '@moodle/mod/eml-pwd-auth'
+import { signupFormValues } from '@moodle/mod-iam'
 import { redirect } from 'next/navigation'
 
 export async function signup(signupFormValues: signupFormValues) {
@@ -8,3 +8,4 @@ export async function signup(signupFormValues: signupFormValues) {
   // revalidatePath('/signup')
   redirect('/')
 }
+

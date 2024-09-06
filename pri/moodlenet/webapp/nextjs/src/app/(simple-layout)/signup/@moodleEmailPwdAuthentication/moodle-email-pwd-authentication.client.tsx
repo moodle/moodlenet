@@ -1,26 +1,26 @@
 'use client'
+import { getSchemas, signupFormValues, ValidationConfigs } from '@moodle/mod-iam'
 import { useFormik } from 'formik'
 import { toFormikValidationSchema } from 'zod-formik-adapter'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { signup } from './moodle-email-pwd-authentication.server'
 
-import { getSignupFormSchema, signupFormConfigs, signupFormValues } from '@moodle/mod/eml-pwd-auth'
-
 export function SignupIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
 
 export type SignupProps = {
-  configs: signupFormConfigs
+  configs: ValidationConfigs
 }
 
 export default function SignupPanel({ configs }: SignupProps) {
-  const zod = getSignupFormSchema(configs)
+  const { signupSchema } = getSchemas(configs)
+
   const form = useFormik<signupFormValues>({
     onSubmit: values => signup(values),
     initialValues: { email: '', password: '', displayName: '' },
-    validationSchema: toFormikValidationSchema(zod),
+    validationSchema: toFormikValidationSchema(signupSchema),
   })
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
