@@ -41,7 +41,8 @@
     "../../../../dist/app/moodlenet-nextjs/.next/types/**/*.ts",
     "next-env.d.ts",
     //".next/types/**/*.ts"
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../../../mod/moodle/net/src/types/configs/0_1/configs/website/layouts.ts"
   ],
   "exclude": [
     "zz__legacy",

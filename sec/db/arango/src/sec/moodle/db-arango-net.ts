@@ -1,4 +1,4 @@
-import { sec_factory } from '@moodle/core'
+import { sec_factory } from '@moodle/domain'
 import { db_struct_0_1 } from '../../dbStructure/0_1'
 import { getModConfigs } from '../../lib/mod'
 

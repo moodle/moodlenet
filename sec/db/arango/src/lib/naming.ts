@@ -1,4 +1,4 @@
-import { mod_id } from '@moodle/core'
+import { mod_id } from '@moodle/domain'
 import { lowerCase, snakeCase } from 'lodash'
 
 export function normModIdName(mod_id: mod_id): string {

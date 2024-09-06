@@ -1,0 +1,9 @@
+{
+  "name": "mod-moodle-iam",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "mod/moodle/iam/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project mod-moodle-iam --web",
+  "targets": {}
+}

@@ -9,7 +9,7 @@ import {
   domain_msg,
   sec_impl,
   WorkerContext,
-} from '@moodle/core'
+} from '@moodle/domain'
 import * as mod_moodle from '@moodle/mod/index'
 import { get_arango_persistence_factory } from '@moodle/sec-db-arango'
 import { get_dbs_struct_configs_0_1 } from './env'

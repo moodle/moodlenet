@@ -1,4 +1,4 @@
-import { composeImpl, sec_factory } from '@moodle/core'
+import { composeImpl, sec_factory } from '@moodle/domain'
 import { Config } from 'arangojs/connection'
 import struct_0_1, { dbs_struct_configs_0_1 } from './dbStructure/0_1'
 import { eml_pwd_auth, iam, net } from './sec/moodle'

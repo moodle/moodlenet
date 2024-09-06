@@ -1,5 +1,5 @@
 import { http_bind } from '@moodle/bindings-node'
-import { createAcccessProxy, Modules, PrimarySession } from '@moodle/core'
+import { createAcccessProxy, Modules, PrimarySession } from '@moodle/domain'
 import { headers } from 'next/headers'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'

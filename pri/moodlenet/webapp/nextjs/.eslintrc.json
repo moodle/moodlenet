@@ -3,7 +3,8 @@
     "plugin:@nx/react-typescript",
     "next",
     "next/core-web-vitals",
-    "../../../../.eslintrc.json"
+    "../../../../.eslintrc.json",
+    "../../../../.eslintrc.base.json"
   ],
   "ignorePatterns": ["!**/*", ".next/**/*"],
   "rules": {

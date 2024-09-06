@@ -1,4 +1,4 @@
-import { reply } from '@moodle/core'
+import { reply } from '@moodle/domain'
 import { _any, map } from '@moodle/lib-types'
 import express from 'express'
 import { Agent, fetch } from 'undici'

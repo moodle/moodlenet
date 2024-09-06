@@ -1,4 +1,4 @@
-import { domain_msg, mod_id, PrimarySession } from '@moodle/core'
+import { domain_msg, mod_id, PrimarySession } from '@moodle/domain'
 export * as http_bind from './http'
 
 // FIXME TransportData  is generic for any binding (?)

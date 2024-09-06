@@ -19,11 +19,12 @@
     "strict": true,
     "paths": {
       "@moodle/bindings-node": ["bindings/node/src/index.ts"],
-      "@moodle/core": ["core/src/index.ts"],
+      "@moodle/domain": ["domain/src/index.ts"],
       "@moodle/lib-id-gen": ["lib/id-gen/src/index.ts"],
-      "@moodle/lib-types": ["lib/types/src/index.ts"],
       "@moodle/lib-jwt-jose": ["lib/jwt/jose/src/index.ts"],
-      "@moodle/mod/*": ["core/src/mod/moodle/*"],
+      "@moodle/lib-types": ["lib/types/src/index.ts"],
+      "@moodle/mod-moodle-iam": ["mod/moodle/iam/src/index.ts"],
+      "@moodle/mod-moodle-net": ["mod/moodle/net/src/index.ts"],
       "@moodle/sec-db-arango": ["sec/db/arango/src/index.ts"],
       "@moodle/sec-db-arango/migrate": ["sec/db/arango/src/migrate.ts"]
     }
