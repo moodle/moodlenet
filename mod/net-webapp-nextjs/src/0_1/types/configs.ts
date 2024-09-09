@@ -1,5 +1,4 @@
-export * from './layouts'
-import { Layouts } from './layouts'
+import { Layouts } from './layouts-configs'
 
 export interface Configs {
   layouts: Layouts

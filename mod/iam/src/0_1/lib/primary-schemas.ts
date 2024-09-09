@@ -1,11 +1,11 @@
 import { object, string, z } from 'zod'
-import { ValidationConfigs } from '../types'
+import { PrimarySchemasConfigs } from '../types'
 
-export type loginFormValues = z.infer<ReturnType<typeof getSchemas>['loginSchema']>
+export type loginMessage = z.infer<ReturnType<typeof getPrimarySchemas>['loginSchema']>
 
-export type signupFormValues = z.infer<ReturnType<typeof getSchemas>['signupSchema']>
+export type signupMessage = z.infer<ReturnType<typeof getPrimarySchemas>['signupSchema']>
 
-export function getSchemas({ user }: ValidationConfigs) {
+export function getPrimarySchemas({ user }: PrimarySchemasConfigs) {
   const email = string().email().min(user.email.min).max(user.email.max)
   const password = string().min(user.password.min).max(user.password.max)
   const displayName = string().min(user.displayName.min).max(user.displayName.max)

@@ -1,9 +1,4 @@
-export type layoutSlotItem = string
-
-export interface Layouts {
-  pages: PageLayouts
-  roots: RootLayouts
-}
+import { layoutSlotItem } from './types'
 
 export interface RootLayouts {
   main: {
@@ -31,18 +26,5 @@ export interface RootLayouts {
         bottom: layoutSlotItem[]
       }
     }
-  }
-}
-
-export interface PageLayouts {
-  landing: {
-    slots: { head: layoutSlotItem[]; content: layoutSlotItem[] }
-  }
-  login: {
-    methods: { label: layoutSlotItem; panel: layoutSlotItem }[]
-  }
-  signup: {
-    methods: { label: layoutSlotItem; panel: layoutSlotItem }[]
-    slots: { subCard: layoutSlotItem[] }
   }
 }

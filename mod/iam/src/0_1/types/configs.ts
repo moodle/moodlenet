@@ -1,11 +1,5 @@
-export interface Configs {
-  validations: ValidationConfigs
-}
+import { PrimarySchemasConfigs } from './primary/schemas-configs'
 
-export interface ValidationConfigs {
-  user: {
-    email: { max: number; min: number }
-    password: { max: number; min: number }
-    displayName: { max: number; min: number }
-  }
+export interface Configs {
+  validations: PrimarySchemasConfigs
 }

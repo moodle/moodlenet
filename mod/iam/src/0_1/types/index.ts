@@ -1,2 +1,2 @@
-export * from './auth'
 export * from './configs'
+export * from './db/user'

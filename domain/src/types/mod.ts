@@ -24,7 +24,7 @@ export type worker_endpoint = (_: msg_payload | never) => Promise<msg_payload> |
 export type event_endpoint = (_: msg_payload | never) => void
 export type any_endpoint = event_endpoint | core_endpoint | worker_endpoint
 
-export type msgs_of<_layer extends any_endpoint> = [Parameters<_layer>[0], ReturnType<_layer>]
+// export type msgs_of<_layer extends any_endpoint> = [Parameters<_layer>[0], ReturnType<_layer>]
 
 // mod access path
 export type mod_id = {

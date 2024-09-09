@@ -1,2 +1,2 @@
-export * from './schemas'
+export * from './primary-schemas'
 export * from './user'
