@@ -1,4 +1,4 @@
-import { d_u } from '@moodle/lib-types'
+import { d_u, map, url } from '@moodle/lib-types'
 import { Document } from 'arangojs/documents'
 import { FileMeta } from './data/file-server'
 
@@ -13,14 +13,12 @@ export function withRevision<T extends object>(
   return { ...doc, _revision: { created, updated } }
 }
 
-export type Doc<T> = Document<T>
+export type Doc<T extends map> = Document<T>
 export type DocWithRevision<T> = Doc<WithRevision<T>>
 export type WithRevision<T> = T & { _revision: { created: dateTime; updated: dateTime } }
 
 export type dateTime = string // time in ISO 8601 format
 
 export type DBRef<T> = string & { [t in symbol]?: T }
-export type Email = string
 
-export type Url = string
-export type asset = d_u<{ link: Url; file: FileMeta }, '_assetType'>
+export type asset = d_u<{ link: url; file: FileMeta }, '_assetType'>

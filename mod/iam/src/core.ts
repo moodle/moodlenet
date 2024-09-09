@@ -1,4 +1,4 @@
-import { core_factory } from '@moodle/domain'
+import { core_factory, module_process } from '@moodle/domain'
 
 export function core(): core_factory {
   return ctx => {
@@ -18,4 +18,8 @@ export function core(): core_factory {
       },
     }
   }
+}
+
+export const process: module_process = ctx => {
+  // setTimeout(getinactiveUsers ....)
 }
