@@ -18,7 +18,6 @@
     "esModuleInterop": true,
     "strict": true,
     "paths": {
-      "@moodle/mod-net-webapp-nextjs/0_1_setup": ["mod/net-webapp-nextjs/src/0_1/setup/index.ts"],
       "@moodle/bindings-node": ["bindings/node/src/index.ts"],
       "@moodle/domain": ["domain/src/index.ts"],
       "@moodle/lib-id-gen": ["lib/id-gen/src/index.ts"],
@@ -28,7 +27,9 @@
       "@moodle/mod-iam/0_1_setup": ["mod/iam/src/0_1/setup/index.ts"],
       "@moodle/mod-net": ["mod/net/src/index.ts"],
       "@moodle/mod-net-webapp-nextjs": ["mod/net-webapp-nextjs/src/index.ts"],
+      "@moodle/mod-net-webapp-nextjs/0_1_setup": ["mod/net-webapp-nextjs/src/0_1/setup/index.ts"],
       "@moodle/mod-net/0_1_setup": ["mod/net/src/0_1/setup/index.ts"],
+      "@moodle/mod-org": ["mod/org/src/index.ts"],
       "@moodle/sec-db-arango": ["sec/db/arango/src/index.ts"],
       "@moodle/sec-db-arango/migrate": ["sec/db/arango/src/migrate.ts"]
     }
