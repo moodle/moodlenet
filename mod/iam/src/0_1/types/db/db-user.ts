@@ -4,7 +4,6 @@ import { User } from '../data/user'
 export type user_role = 'admin' | 'publisher'
 
 export interface DbUser extends User {
-  id: user_id
   passwordHash: user_password_hash
   activityStatus: {
     lastLogin: date_time_string

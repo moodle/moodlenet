@@ -9,13 +9,13 @@ export type m_map<t = _any, k extends _any_k = _any_k> =
   | null
   | unknown
 
-export type _DEF_DISCR_PROP = '_discriminant_property_'
-export type _ddp = _DEF_DISCR_PROP
-export type d_m<nmap extends m_map, p extends _any_k = _DEF_DISCR_PROP> = discriminated_map<nmap, p>
-export type discriminated_map<nmap extends m_map, p extends _any_k = _DEF_DISCR_PROP> = {
+// discriminate maps
+export type d_m<nmap extends m_map, p extends _any_k> = discriminated_map<nmap, p>
+export type discriminated_map<nmap extends m_map, p extends _any_k> = {
   [name in keyof nmap]: { [n in p]: name } & nmap[name]
 }
 
+// discriminated unions
 export type d_u<
   nmap extends m_map,
   p extends _any_k,
@@ -27,6 +27,18 @@ export type discriminated_union<
   keys extends keyof nmap = keyof nmap,
 > = d_m<nmap, p>[keys]
 // >[keyof d_m<nmap, p>]
+
+// union discrimination
+export type d_u__discrimination<
+  du extends { [k in d_prop]: string },
+  d_prop extends _any_k,
+  k extends du[d_prop],
+> = du extends { [n in d_prop]: k } ? du : never
+export type d_u__d<
+  du extends { [k in d_prop]: string },
+  d_prop extends _any_k,
+  k extends du[d_prop],
+> = d_u__discrimination<du, d_prop, k>
 
 export type d_t_m<nmap extends m_map> = discriminated_tuple_map<nmap>
 export type discriminated_tuple_map<nmap extends m_map> = {

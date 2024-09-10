@@ -4,12 +4,12 @@ import { Modules } from '../domain'
 import { layers, mod_id } from './mod'
 import { PrimarySession } from './primary-session'
 
-export interface ModuleProcessContext {
+export interface CoreProcessContext {
   worker: concrete<'sec'>
 }
 
-export type module_process = (ctx: ModuleProcessContext) => stop_module_process
-export type stop_module_process = void | (() => void | Promise<void>)
+export type core_process = (ctx: CoreProcessContext) => stop_core_process
+export type stop_core_process = void | (() => unknown)
 
 export interface CoreContext {
   forward: concrete<'pri'>

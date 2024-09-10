@@ -1,4 +1,16 @@
-export type __redacted__<T> = { __redacted__: T } // just for the purpose of avoid logging
+import { _any } from './map'
+
+// redacted logging
+export const __redacted__key = '__redacted__'
+export function logRedact(obj: _any) {
+  return JSON.stringify(
+    obj,
+    (key, value) => (key === __redacted__key ? '###__redacted__###' : value),
+    2,
+  )
+}
+export type __redacted__<T> = { [k in typeof __redacted__key]: T }
+//
 
 export type date_time_string = string // ISO 8601
 export type date_string = string // ISO 8601
