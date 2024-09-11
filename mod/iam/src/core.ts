@@ -69,18 +69,17 @@ export function core(): core_factory {
                     org: { orgInfo },
                   } = await mySec.db.getConfigs()
 
-                  const { encrypted: confirmEmailToken } =
-                    await mySec.crypto.encryptSignupEmailVerificationToken({
-                      expires: tokenExpireTime.signupEmailVerification,
-                      data: {
-                        v0_1: 'signupEmailVerification',
-                        signupForm: __redacted__({
-                          displayName: signupForm.displayName,
-                          email: signupForm.email,
-                          password: signupForm.password.__redacted__,
-                        }),
-                      },
-                    })
+                  const { encrypted: confirmEmailToken } = await mySec.crypto.encryptToken({
+                    expires: tokenExpireTime.signupEmailVerification,
+                    data: {
+                      v0_1: 'signupEmailVerification',
+                      signupForm: __redacted__({
+                        displayName: signupForm.displayName,
+                        email: signupForm.email,
+                        password: signupForm.password.__redacted__,
+                      }),
+                    },
+                  })
 
                   const content = signupEmailConfirmationContent({
                     activateAccountUrl: `#######${confirmEmailToken}#########`,
@@ -104,10 +103,9 @@ export function core(): core_factory {
                       roles: { newlyCreatedUserRoles },
                     },
                   } = await mySec.db.getConfigs()
-                  const [verified, tokenData] =
-                    await mySec.crypto.decryptSignupEmailVerificationToken({
-                      signupEmailVerificationToken,
-                    })
+                  const [verified, tokenData] = await mySec.crypto.decryptToken({
+                    token: signupEmailVerificationToken,
+                  })
 
                   if (!(verified && tokenData.v0_1 === 'signupEmailVerification')) {
                     return [false, { reason: 'invalidToken' }]
@@ -184,7 +182,7 @@ export function core(): core_factory {
                   } = await mySec.db.getConfigs()
 
                   const { encrypted: selfDeletionConfirmationToken } =
-                    await mySec.crypto.encryptSelfDeletionRequestConfirmationToken({
+                    await mySec.crypto.encryptToken({
                       expires: userSelfDeletion.userSelfDeletionRequest,
                       data: {
                         v0_1: 'selfDeletionConfirm',
@@ -208,10 +206,9 @@ export function core(): core_factory {
                 },
 
                 async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
-                  const [verified, tokenData] =
-                    await mySec.crypto.decryptSelfDeletionRequestConfirmationToken({
-                      selfDeletionConfirmationToken,
-                    })
+                  const [verified, tokenData] = await mySec.crypto.decryptToken({
+                    token: selfDeletionConfirmationToken,
+                  })
 
                   if (!(verified && tokenData.v0_1 === 'selfDeletionConfirm')) {
                     return [false, { reason: 'invalidToken' }]
@@ -243,7 +240,7 @@ export function core(): core_factory {
                   }
 
                   const { encrypted: resetPasswordConfirmationToken } =
-                    await mySec.crypto.encryptResetPasswordRequestToken({
+                    await mySec.crypto.encryptToken({
                       expires: userSelfDeletion.userSelfDeletionRequest,
                       data: {
                         v0_1: 'passwordReset',

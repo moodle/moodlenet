@@ -1,7 +1,7 @@
-import { concrete, Error4xx, primary_session } from '@moodle/domain'
+import { concrete, Error4xx, primary_session, status4xx } from '@moodle/domain'
 import { d_u__d } from '@moodle/lib-types'
 import assert from 'assert'
-import { user_role } from '../../types/db/db-user'
+import { user_role } from '../../types'
 import { assertHasUserRole } from '../js'
 
 // System Session
@@ -45,8 +45,12 @@ export function assertGuestSession(
 export async function async_assertUserAuthenticatedSession(
   primarySession: primary_session,
   worker: concrete<'sec'>,
+  onFail?: { code_or_desc: status4xx; details?: string },
 ) {
-  const user_session = await worker.moodle.iam.v0_1.sec.crypto.assertUserSession(primarySession)
+  const user_session = await worker.moodle.iam.v0_1.sec.crypto.assertAuthenticatedUserSession({
+    token_or_session: primarySession,
+    onFail,
+  })
   return user_session
 }
 

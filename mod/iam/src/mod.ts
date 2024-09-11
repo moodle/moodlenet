@@ -1,4 +1,4 @@
-import { mod, primary_session, session_token } from '@moodle/domain'
+import { mod, primary_session, session_token, status4xx } from '@moodle/domain'
 import {
   __redacted__,
   d_u,
@@ -88,12 +88,14 @@ export type moodle_iam_mod = mod<{
     sec: {
       crypto: {
         generateUserId(): Promise<{ id: v0_1.user_id }>
-        verifyUserSession(
-          _: session_token | primary_session,
-        ): Promise<ok_ko<{ userSession: v0_1.user_session }, void>>
-        assertUserSession(
-          _: session_token | primary_session,
-        ): Promise<d_u__d<v0_1.user_session, 'type', 'authenticated'>>
+
+        getUserSession(_: {
+          token_or_session: session_token | primary_session
+        }): Promise<{ userSession: v0_1.user_session }>
+        assertAuthenticatedUserSession(_: {
+          token_or_session: session_token | primary_session
+          onFail?: { code_or_desc: status4xx; details?: string }
+        }): Promise<d_u__d<v0_1.user_session, 'type', 'authenticated'>>
 
         // password hashing
         hashPassword(_: {
@@ -105,35 +107,11 @@ export type moodle_iam_mod = mod<{
         }): Promise<ok_ko<void, void>>
         //
 
-        // SignupEmailVerificationToken
-        encryptSignupEmailVerificationToken(_: {
-          data: d_u__d<v0_1.encryptedTokenData, 'v0_1', 'signupEmailVerification'>
+        encryptToken(_: {
+          data: v0_1.encryptedTokenData
           expires: time_duration_string
         }): Promise<{ encrypted: string }>
-        decryptSignupEmailVerificationToken(_: {
-          signupEmailVerificationToken: string
-        }): Promise<ok_ko<v0_1.encryptedTokenData, void>>
-        //
-
-        // PasswordResetToken
-        encryptResetPasswordRequestToken(_: {
-          data: d_u__d<v0_1.encryptedTokenData, 'v0_1', 'passwordReset'>
-          expires: time_duration_string
-        }): Promise<{ encrypted: string }>
-        decryptResetPasswordRequestToken(_: {
-          resetPasswordToken: string
-        }): Promise<ok_ko<v0_1.encryptedTokenData, void>>
-        //
-
-        // SelfDeletionConfirmationToken
-        encryptSelfDeletionRequestConfirmationToken(_: {
-          data: d_u__d<v0_1.encryptedTokenData, 'v0_1', 'selfDeletionConfirm'>
-          expires: time_duration_string
-        }): Promise<{ encrypted: string }>
-        decryptSelfDeletionRequestConfirmationToken(_: {
-          selfDeletionConfirmationToken: string
-        }): Promise<ok_ko<v0_1.encryptedTokenData, void>>
-        //
+        decryptToken(_: { token: string }): Promise<ok_ko<v0_1.encryptedTokenData, void>>
       }
 
       queue: {

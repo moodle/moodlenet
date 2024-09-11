@@ -1,8 +1,7 @@
 import { Error4xx } from '@moodle/domain'
 import { d_u__d } from '@moodle/lib-types'
 import assert from 'assert'
-import { user_session } from '../../types'
-import { user_role } from '../../types/db/db-user'
+import { user_role, user_session } from '../../types'
 
 export function assertHasUserRole(
   user_session: user_session,

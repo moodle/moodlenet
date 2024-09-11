@@ -1,5 +1,4 @@
-import { d_u, email_address } from '@moodle/lib-types'
-import { user_role } from '../db/db-user'
+import { d_u } from '@moodle/lib-types'
 import { UserData } from '../data/user'
 
 export type user_session = d_u<UserSessionTypes, 'type'>

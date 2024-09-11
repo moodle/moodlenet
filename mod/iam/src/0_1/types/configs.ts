@@ -1,5 +1,5 @@
 import { time_duration_string } from '@moodle/lib-types'
-import { user_role } from './db/db-user'
+import { user_role } from './data'
 import { PrimaryMsgSchemaConfigs } from './primary/schemas-configs'
 
 export interface Configs {
