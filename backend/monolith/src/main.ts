@@ -11,6 +11,7 @@ import {
   WorkerContext,
 } from '@moodle/domain'
 import * as mod_net from '@moodle/mod-net'
+import * as mod_org from '@moodle/mod-org'
 import * as mod_iam from '@moodle/mod-iam'
 import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
 import { get_arango_persistence_factory } from '@moodle/sec-db-arango'
@@ -45,6 +46,7 @@ async function request({ domain_msg, primarySession, core_mod_id }: TransportDat
   const core_impls: core_impl[] = [
     // core modules
     mod_net.core()(coreCtx),
+    mod_org.core()(coreCtx),
     mod_iam.core()(coreCtx),
     mod_net_webapp_nextjs.core()(coreCtx),
   ]

@@ -3,6 +3,7 @@ import { db_struct_0_1, Migration_0_1 } from '../../dbStructure/0_1'
 import { defaultIamConfigs_0_1 } from '@moodle/mod-iam/0_1_setup'
 import { defaultNetConfigs_0_1 } from '@moodle/mod-net/0_1_setup'
 import { defaultNetWebappNextjsConfigs_0_1 } from '@moodle/mod-net-webapp-nextjs/0_1_setup'
+import { defaultOrgConfigs_0_1 } from '@moodle/mod-org/0_1_setup'
 import { saveModConfigs } from '../../lib/modules'
 
 export const VERSION = 'v0_1'
@@ -38,6 +39,11 @@ export async function migrate({ db_struct_0_1 }: { db_struct_0_1: db_struct_0_1 
       db_struct_0_1,
       configs: defaultNetWebappNextjsConfigs_0_1,
       mod_id: { ns: 'moodle', mod: 'netWebappNextjs', version: 'v0_1' },
+    }),
+    saveModConfigs({
+      db_struct_0_1,
+      configs: defaultOrgConfigs_0_1,
+      mod_id: { ns: 'moodle', mod: 'org', version: 'v0_1' },
     }),
   ])
 

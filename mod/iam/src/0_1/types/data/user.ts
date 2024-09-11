@@ -1,5 +1,6 @@
 import { email_address } from '@moodle/lib-types'
-import { user_id, user_role } from '../db/db-user'
+export type user_id = string
+export type user_role = 'admin' | 'publisher'
 
 export interface UserData {
   id: user_id

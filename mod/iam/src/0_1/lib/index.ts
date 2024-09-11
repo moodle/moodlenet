@@ -1,2 +1,2 @@
-export * as js from './js'
-export * as server from './server'
+export * as libjs from './js'
+export * as libserver from './server'

@@ -1,6 +1,6 @@
 import { Configs } from '../types'
 
-export const defaultNetConfigs_0_1: Configs = {
+export const defaultOrgConfigs_0_1: Configs = {
   orgInfo: {
     name: '',
     logo: 'https://moodle.net/08469f8073a8f969253823d5d6ed6ffa.png',

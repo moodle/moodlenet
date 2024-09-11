@@ -1,5 +1,6 @@
 import { Database } from 'arangojs'
 import { Migration_Record } from '../../migrate/types'
+import { v0_1 as iam_v0_1 } from '@moodle/mod-iam'
 
 type dbConn = {
   url: string
@@ -46,7 +47,7 @@ export default function struct_0_1(dbs_struct_configs_0_1: dbs_struct_configs_0_
     iam: {
       db: iam_db,
       coll: {
-        user: iam_db.collection('user'),
+        user: iam_db.collection<iam_v0_1.DbUser>('user'),
       },
     },
   }

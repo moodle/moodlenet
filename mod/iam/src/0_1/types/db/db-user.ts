@@ -1,7 +1,6 @@
 import { d_u, date_time_string, time_duration_string } from '@moodle/lib-types'
 import { UserData } from '../data/user'
 
-export type user_role = 'admin' | 'publisher'
 
 export function userData(dbUser: Pick<DbUser, keyof UserData>): UserData {
   return {
@@ -26,7 +25,6 @@ export interface DbUser extends UserData {
       }
 }
 
-export type user_id = string
 export type user_deactivation_reason = d_u<
   {
     inactivityPolicies: { notLoggedInFor: time_duration_string }
