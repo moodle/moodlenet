@@ -1,21 +1,21 @@
-import type { EmailObj } from '@moodlenet/email-service/server'
+import { v0_1 as org_0_1 } from '@moodle/mod-org'
 
 export type DeleteAccountEmailProps = {
-  instanceName: string
-  actionUrl: string
+  orgInfo: org_0_1.OrgInfo
+  deleteAccountUrl: string
   receiverEmail: string
 }
 
-export function deleteAccountEmail({
-  instanceName,
-  actionUrl,
+export function selfDeletionConfirmContent({
+  orgInfo,
+  deleteAccountUrl,
   receiverEmail,
-}: DeleteAccountEmailProps): EmailObj {
+}: DeleteAccountEmailProps): org_0_1.EmailLayoutContentProps {
   const title = `Confirm account deletion 🥀`
 
   const body = (
     <div style={contentStyle}>
-      The deletion of your {instanceName} account means that:
+      The deletion of your {orgInfo.name} account means that:
       <br />
       <ul style={listStyle}>
         <li>
@@ -35,7 +35,7 @@ export function deleteAccountEmail({
     title,
     action: {
       title: 'Delete account permanently',
-      url: actionUrl,
+      url: deleteAccountUrl,
       buttonStyle: { background: '#ff0000', color: '#ffffff' },
     },
     hideIgnoreMessage: true,

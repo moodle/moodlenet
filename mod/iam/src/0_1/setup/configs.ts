@@ -20,8 +20,12 @@ export const defaultIamConfigs_0_1: Configs = {
       sendImminentDeletionNotificationBefore: '7d',
     },
   },
-  signup: {
-    emailConfirmationExpireTime: '1d',
+  roles: {
     newlyCreatedUserRoles: [],
+  },
+  tokenExpireTime: {
+    resetPasswordRequest: '2h',
+    signupEmailVerification: '2h',
+    userSelfDeletionRequest: '1h',
   },
 }

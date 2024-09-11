@@ -16,16 +16,16 @@ export type discriminated_map<nmap extends m_map, p extends _any_k> = {
 }
 
 // discriminated unions
-export type d_u<
-  nmap extends m_map,
-  p extends _any_k,
-  keys extends keyof nmap = keyof nmap,
-> = discriminated_union<nmap, p, keys>
 export type discriminated_union<
   nmap extends m_map,
   p extends _any_k,
   keys extends keyof nmap = keyof nmap,
 > = d_m<nmap, p>[keys]
+export type d_u<
+  nmap extends m_map,
+  p extends _any_k,
+  keys extends keyof nmap = keyof nmap,
+> = discriminated_union<nmap, p, keys>
 // >[keyof d_m<nmap, p>]
 
 // union discrimination

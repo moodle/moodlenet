@@ -19,9 +19,9 @@ export type channels<_endpoint extends any_endpoint> = map<_endpoint>
 
 export type msg_payload = _any
 
-export type core_endpoint = (_: msg_payload | never) => Promise<msg_payload> | never
-export type worker_endpoint = (_: msg_payload | never) => Promise<msg_payload> | never
-export type event_endpoint = (_: msg_payload | never) => void
+export type core_endpoint = (_: msg_payload | never) => Promise<msg_payload | void>
+export type worker_endpoint = (_: msg_payload | never) => Promise<msg_payload | void>
+export type event_endpoint = (_: msg_payload | never) => unknown
 export type any_endpoint = event_endpoint | core_endpoint | worker_endpoint
 
 // export type msgs_of<_layer extends any_endpoint> = [Parameters<_layer>[0], ReturnType<_layer>]

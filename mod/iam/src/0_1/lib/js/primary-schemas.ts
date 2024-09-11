@@ -1,5 +1,5 @@
 import { object, string, z } from 'zod'
-import { PrimaryMsgSchemaConfigs } from '../types'
+import { PrimaryMsgSchemaConfigs } from '../../types'
 
 export type loginForm = z.infer<ReturnType<typeof getPrimarySchemas>['loginSchema']>
 

@@ -1,17 +1,23 @@
-import { mod } from '@moodle/domain'
-import { loginForm, signupForm, v0_1 } from './'
+import { mod, primary_session, session_token } from '@moodle/domain'
 import {
   __redacted__,
-  d_u__d,
   d_u,
+  d_u__d,
   email_address,
-  successFail,
+  ok_ko,
   time_duration_string,
 } from '@moodle/lib-types'
-import { DbUser, id_or_email, user_id, user_role } from './0_1/types/db/db-user'
-import { User } from './0_1/types/data/user'
-import { user_plain_password, user_deletion_reason } from './0_1/types/db/db-user'
+import { v0_1 as v0_1_org } from '@moodle/mod-org'
 import { ReactElement } from 'react'
+import { loginForm, signupForm, v0_1 } from './'
+import { UserData } from './0_1/types/data/user'
+import {
+  DbUser,
+  user_deactivation_reason,
+  user_id,
+  user_plain_password,
+  user_role,
+} from './0_1/types/db/db-user'
 import { encryptedTokenData } from './0_1/types/encrypted'
 declare module '@moodle/domain' {
   export interface MoodleMods {
@@ -28,135 +34,167 @@ export type _redacted_signupForm = Pick<signupForm, 'email' | 'displayName'> & {
 export type moodle_iam_mod = mod<{
   v0_1: {
     pri: {
-      configs: {
-        read(): Promise<{ configs: v0_1.Configs }>
+      session: {
+        getCurrentUserSession(): Promise<{ userSession: v0_1.user_session }>
       }
 
-      // each apps manages its own session (e.g. moodlenet nextjs app has JWT session)
-      // session: {
-      //   getCurrent(): Promise<{ user: v0_1.user_session }>
-      // }
+      configs: {
+        read(): Promise<{ iam: v0_1.Configs; org: v0_1_org.Configs }>
+      }
 
       admin: {
-        editUserRoles(_: {
-          userId: user_id
-          roles: user_role[]
-        }): Promise<successFail<unknown, unknown>>
+        editUserRoles(_: { userId: user_id; roles: user_role[] }): Promise<ok_ko<void, void>>
 
         searchUsers(_: { textSearch: string }): Promise<{ users: DbUser[] }>
 
-        deleteUser(_: { userId: user_id; summary: string }): never
+        deactivateUser(_: { userId: user_id; reason: string; anonymize: boolean }): Promise<void>
       }
 
       signup: {
-        request(_: {
+        apply(_: {
           signupForm: _redacted_signupForm
-        }): Promise<successFail<unknown, d_u<{ emailExists: unknown }, 'reason'>>>
+        }): Promise<ok_ko<void, d_u<{ userWithSameEmailExists: unknown }, 'reason'>>>
 
-        confirmEmail(_: { emailConfirmationToken: string }): Promise<successFail<unknown, unknown>>
+        verifyEmail(_: {
+          signupEmailVerificationToken: string
+        }): Promise<
+          ok_ko<
+            { userId: user_id },
+            d_u<
+              { userWithThisEmailExists: unknown; invalidToken: unknown; unknown: unknown },
+              'reason'
+            >
+          >
+        >
       }
 
       myAccount: {
         login(_: {
           loginForm: _redacted_loginForm
-        }): Promise<successFail<{ session: v0_1.user_session }, unknown>>
+        }): Promise<ok_ko<{ session: v0_1.user_session }, void>>
 
-        selfDeletionRequest(): never
+        selfDeletionRequest(): Promise<void>
 
         confirmSelfDeletionRequest(_: {
           selfDeletionConfirmationToken: string
           reason: string
-        }): never
+        }): Promise<
+          ok_ko<
+            void,
+            d_u<{ invalidToken: unknown; unknownUser: unknown; unknown: unknown }, 'reason'>
+          >
+        >
 
-        resetPasswordRequest(_: { email: email_address }): never
+        resetPasswordRequest(_: { declaredOwnEmail: email_address }): Promise<void>
 
         changePassword(_: {
           currentPassword: __redacted__<user_plain_password>
           newPassword: __redacted__<user_plain_password>
-        }): Promise<successFail<unknown, unknown>>
+        }): Promise<ok_ko<void, void>>
       }
     }
     sec: {
       crypto: {
         generateUserId(): Promise<{ id: user_id }>
+        verifyUserSession(
+          _: session_token | primary_session,
+        ): Promise<ok_ko<{ userSession: v0_1.user_session }, void>>
+        assertUserSession(
+          _: session_token | primary_session,
+        ): Promise<d_u__d<v0_1.user_session, 'type', 'authenticated'>>
 
         // password hashing
-        hashPassword(_: { password: __redacted__<user_plain_password> }): Promise<{ hash: string }>
+        hashPassword(_: {
+          plainPassword: __redacted__<user_plain_password>
+        }): Promise<{ passwordHash: string }>
         verifyUserPasswordHash(_: {
-          password: __redacted__<user_plain_password>
+          plainPassword: __redacted__<user_plain_password>
           passwordHash: string
-        }): Promise<successFail<unknown, unknown>>
+        }): Promise<ok_ko<void, void>>
         //
 
         // SignupEmailVerificationToken
         encryptSignupEmailVerificationToken(_: {
-          data: d_u__d<encryptedTokenData, 'type_0_1', 'signupEmailVerification'>
+          data: d_u__d<encryptedTokenData, 'v0_1', 'signupEmailVerification'>
           expires: time_duration_string
         }): Promise<{ encrypted: string }>
         decryptSignupEmailVerificationToken(_: {
           signupEmailVerificationToken: string
-        }): Promise<successFail<encryptedTokenData, unknown>>
+        }): Promise<ok_ko<encryptedTokenData, void>>
         //
 
         // PasswordResetToken
-        encryptPasswordResetToken(_: {
-          data: d_u__d<encryptedTokenData, 'type_0_1', 'passwordReset'>
+        encryptResetPasswordRequestToken(_: {
+          data: d_u__d<encryptedTokenData, 'v0_1', 'passwordReset'>
           expires: time_duration_string
         }): Promise<{ encrypted: string }>
-        decryptPasswordResetToken(_: {
-          passwordResetToken: string
-        }): Promise<successFail<encryptedTokenData, unknown>>
+        decryptResetPasswordRequestToken(_: {
+          resetPasswordToken: string
+        }): Promise<ok_ko<encryptedTokenData, void>>
         //
 
         // SelfDeletionConfirmationToken
-        encryptSelfDeletionConfirmationToken(_: {
-          data: d_u__d<encryptedTokenData, 'type_0_1', 'selfDeletionConfirm'>
+        encryptSelfDeletionRequestConfirmationToken(_: {
+          data: d_u__d<encryptedTokenData, 'v0_1', 'selfDeletionConfirm'>
           expires: time_duration_string
         }): Promise<{ encrypted: string }>
-        decryptSelfDeletionConfirmationToken(_: {
+        decryptSelfDeletionRequestConfirmationToken(_: {
           selfDeletionConfirmationToken: string
-        }): Promise<successFail<encryptedTokenData, unknown>>
+        }): Promise<ok_ko<encryptedTokenData, void>>
         //
       }
 
       queue: {
-        sendEmail(_: { to: email_address; body: ReactElement }): never
+        sendEmail(_: { to: email_address; subject: string; body: ReactElement }): Promise<void>
       }
 
       db: {
-        changeUserPassword(_: { idOrEmail: id_or_email; newPasswordHash: string }): never
+        getConfigs(): Promise<{ iam: v0_1.Configs; org: v0_1_org.Configs }>
 
-        deleteUser(_: {
+        changeUserPassword(_: { userId: user_id; newPasswordHash: string }): Promise<void>
+
+        deactivateUser(_: {
           userId: user_id
-          reason: user_deletion_reason
-        }): Promise<successFail<unknown, unknown>>
+          anonymize: boolean
+          for: user_deactivation_reason
+        }): Promise<ok_ko<void, void>>
 
-        getUsersNotLoggedInFor(_: {
+        getActiveUsersNotLoggedInFor(_: {
           time: time_duration_string
           inactiveNotificationSent: boolean
         }): Promise<{ inactiveUsers: DbUser[] }>
 
-        getConfigs(): Promise<{ configs: v0_1.Configs }>
+        getUserById(_: { userId: user_id }): Promise<ok_ko<DbUser, void>>
+        getUserByEmail(_: { email: email_address }): Promise<ok_ko<DbUser, void>>
 
-        getUserByIdOrEmail(_: {
-          idOrEmail: id_or_email
-        }): Promise<successFail<{ user: DbUser }, unknown>>
+        saveNewUser(_: { user: DbUser }): Promise<ok_ko<void, void>>
 
-        saveNewUser(_: {
-          user: DbUser
-          password: __redacted__<user_plain_password>
-        }): Promise<successFail<unknown, unknown>>
+        changeUserRoles(_: { userId: user_id; roles: user_role[] }): Promise<ok_ko<void, void>>
+
+        findUsersByText(_: {
+          text: string
+          includeDeactivated?: boolean
+        }): Promise<{ users: DbUser[] }>
       }
     }
     evt: {
-      db: {
-        userPasswordChanged(_: { userId: user_id }): void
-
-        userDeleted(_: { user: User; reason: user_deletion_reason }): void
-
-        newUserCreated(_: { user: User }): void
+      userBase: {
+        userDeactivated(_: {
+          user: UserData
+          reason: user_deactivation_reason
+          anonymized: boolean
+        }): unknown
+        newUserCreated(_: { user: UserData }): unknown
+      }
+      userSecurity: {
+        userPasswordChanged(_: { userId: user_id }): unknown
+      }
+      userRoles: {
+        userRolesUpdated(_: { userId: user_id; roles: user_role[]; oldRoles: user_role[] }): unknown
+      }
+      userActivity: {
+        userLoggedIn(_: { userId: user_id }): unknown
       }
     }
   }
 }>
-

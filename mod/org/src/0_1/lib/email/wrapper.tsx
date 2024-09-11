@@ -7,39 +7,29 @@ import { Img } from '@react-email/img'
 import { Preview } from '@react-email/preview'
 import { Section } from '@react-email/section'
 import { Text } from '@react-email/text'
-import type React from 'react'
+import React from 'react'
+import { OrgInfo } from '../../types'
 
-export type EmailActionBtnProps = {
+export type EmailLayoutActionBtnProps = {
   title: string
   url: string
   buttonStyle?: React.CSSProperties
 }
 
-export type EmailOrganizationProps = {
-  name: string
-  logoOnClickUrl: string
-  logoSrc: string
-  location?: {
-    address: string
-    url: string
-  }
-  copyright?: string
-}
-
-export type EmailContentProps = {
-  subject: string
+export type EmailLayoutContentProps = {
   receiverEmail: string
+  subject: string
   title: React.ReactNode
   body: React.ReactNode
-  hideIgnoreMessage?: boolean
-  action?: EmailActionBtnProps
+  hideIgnoreMessage: boolean | undefined
+  action?: EmailLayoutActionBtnProps
 }
 export type EmailLayoutProps = {
-  organization: EmailOrganizationProps
-  content: EmailContentProps
+  orgInfo: OrgInfo
+  content: EmailLayoutContentProps
 }
 
-export const EmailLayout = ({ organization, content }: EmailLayoutProps) => {
+export function EmailLayout({ orgInfo, content }: EmailLayoutProps) {
   return (
     <Html lang="en" className="html">
       <Head />
@@ -47,8 +37,8 @@ export const EmailLayout = ({ organization, content }: EmailLayoutProps) => {
       <div className="body" style={bodyStyle}>
         <Container className="container" style={containerStyle}>
           <Section className="logo-header">
-            <a href={organization.logoOnClickUrl} target="_blank" rel="noreferrer" style={logo}>
-              <Img width={162} src={organization.logoSrc} />
+            <a href={orgInfo.websiteUrl} target="_blank" rel="noreferrer" style={logo}>
+              <Img width={162} src={orgInfo.logo} />
             </a>
           </Section>
           <Section className="title" style={titleSection}>
@@ -57,7 +47,7 @@ export const EmailLayout = ({ organization, content }: EmailLayoutProps) => {
           <Section className="content" style={contentSection}>
             <div style={contentText}>{content.body}</div>
           </Section>
-          {content?.action && (
+          {content.action && (
             <Section className="action" style={{ ...actionSection }}>
               <Button
                 className="action-button"
@@ -69,25 +59,23 @@ export const EmailLayout = ({ organization, content }: EmailLayoutProps) => {
               </Button>
             </Section>
           )}
-          {content?.hideIgnoreMessage ? (
+          {content.hideIgnoreMessage ? (
             <div style={separatorStyle} />
           ) : (
             <div style={ignoreMessage}>Not you? Just ignore this message</div>
           )}
         </Container>
         <Container style={containerBottom}>
-          {organization.location && (
-            <a
-              href={organization.location.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={addressButton}
-            >
-              {organization.location.address}
-            </a>
-          )}
+          <a
+            href={orgInfo.websiteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={addressButton}
+          >
+            {orgInfo.physicalAddress}
+          </a>
           <div style={copyrightStyle}>
-            {organization.copyright}
+            {orgInfo.copyright}
             <br />
             This email was intended for {content.receiverEmail}. This is a service email.
           </div>

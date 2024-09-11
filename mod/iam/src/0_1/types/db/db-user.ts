@@ -1,31 +1,41 @@
-import { d_u, date_time_string, email_address } from '@moodle/lib-types'
-import { User } from '../data/user'
+import { d_u, date_time_string, time_duration_string } from '@moodle/lib-types'
+import { UserData } from '../data/user'
 
 export type user_role = 'admin' | 'publisher'
 
-export interface DbUser extends User {
+export function userData(dbUser: Pick<DbUser, keyof UserData>): UserData {
+  return {
+    contacts: dbUser.contacts,
+    displayName: dbUser.displayName,
+    id: dbUser.id,
+    roles: dbUser.roles,
+  }
+}
+export interface DbUser extends UserData {
   passwordHash: user_password_hash
   activityStatus: {
     lastLogin: date_time_string
     inactiveNotificationSentAt: false | date_time_string
   }
-  deletedAndAnonymizedAt:
+  deactivated:
     | false
     | {
-        reason: user_deletion_reason
+        anonymized: boolean
+        reason: user_deactivation_reason
         at: date_time_string
       }
 }
+
 export type user_id = string
-export type user_deletion_reason = { summary: string } & d_u<
+export type user_deactivation_reason = d_u<
   {
-    inactivityPolicies: unknown
-    userRequested: unknown
-    adminRequested: unknown
-    other: unknown
+    inactivityPolicies: { notLoggedInFor: time_duration_string }
+    userSelfDeletionRequest: { reason: string }
+    adminRequest: { reason: string }
   },
-  'reason'
+  'v0_1'
 >
+
 export type user_plain_password = string
 export type user_password_hash = string
-export type id_or_email = user_id | email_address
+// export type id_or_email = user_id | email_address

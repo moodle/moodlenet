@@ -1,9 +1,10 @@
 import { d_u, email_address } from '@moodle/lib-types'
 import { user_role } from '../db/db-user'
+import { UserData } from '../data/user'
 
-export type user_session = d_u<SessionTypes, 'type'>
+export type user_session = d_u<UserSessionTypes, 'type'>
 
-interface SessionTypes {
+interface UserSessionTypes {
   guest: GuestSession
   authenticated: AuthenticatedSession
 }
@@ -11,10 +12,5 @@ interface SessionTypes {
 export type GuestSession = unknown
 
 export interface AuthenticatedSession {
-  id: string
-  roles: user_role[]
-  displayName: string
-  contacts: {
-    email: email_address
-  }
+  user: UserData
 }

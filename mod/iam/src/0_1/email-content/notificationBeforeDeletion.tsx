@@ -1,25 +1,25 @@
-import type { EmailObj } from '@moodlenet/email-service/server'
+import { v0_1 as org_0_1 } from '@moodle/mod-org'
 
 export type InactivityDeletionNotificationEmailProps = {
-  instanceName: string
+  orgInfo: org_0_1.OrgInfo
   loginUrl: string
   receiverEmail: string
-  displayName: string
+  userName: string
   daysBeforeDeletion: number
 }
 
-export function inactivityDeletionNotificationEmail({
-  instanceName,
+export function notificationBeforeDeletionForInactivityContent({
+  orgInfo,
   loginUrl,
   receiverEmail,
-  displayName,
+  userName,
   daysBeforeDeletion,
-}: InactivityDeletionNotificationEmailProps): EmailObj {
-  const title = `${displayName} we are missing you at ${instanceName}`
+}: InactivityDeletionNotificationEmailProps): org_0_1.EmailLayoutContentProps {
+  const title = `${userName} we are missing you at ${orgInfo.name}`
 
   const body = (
     <div style={contentStyle}>
-      Hi {displayName} we noticed you are not logging in for a while.
+      Hi {userName} we noticed you are not logging in for a while.
       <br />
       Our policies require us to delete inactive accounts.
       <br />
@@ -37,7 +37,7 @@ export function inactivityDeletionNotificationEmail({
     subject: title,
     title,
     action: {
-      title: `Log in to ${instanceName} now`,
+      title: `Log in to ${orgInfo.name} now`,
       url: loginUrl,
     },
     hideIgnoreMessage: true,

@@ -2,7 +2,9 @@ import { d_u, map } from '@moodle/lib-types'
 import { platform } from './platform'
 import { mod_id } from './mod'
 
-export interface ApplicationPrimarySession {
+export type session_token = string
+
+export interface UserPrimarySession {
   domain: {
     host: string
   }
@@ -10,10 +12,8 @@ export interface ApplicationPrimarySession {
 
   app: { name: string; pkg: string; version: string }
 
-  session: {
-    // FIXME: ? make it `modTokens: { [mod_name in keyof Modules]?: string | null  }`
-    authToken: string | null
-  }
+  // FIXME: ? make it `modTokens: { [mod_name in keyof Modules]?: string | null  }`
+  authToken: session_token | null
   platforms: {
     local: platform
     remote: platform
@@ -33,9 +33,9 @@ interface Protocols {
   other: map
 }
 
-export type PrimarySession = d_u<
+export type primary_session = d_u<
   {
-    app: ApplicationPrimarySession
+    user: UserPrimarySession
     system: SystemPrimarySession
   },
   'type'
