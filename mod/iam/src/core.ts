@@ -1,5 +1,5 @@
 import { core_factory, core_impl, core_process } from '@moodle/domain'
-import { __redacted__, _void, date_time_string } from '@moodle/lib-types'
+import { _void, date_time_string } from '@moodle/lib-types'
 import { v0_1 as org_v0_1 } from '@moodle/mod-org'
 import {
   resetPasswordContent,
@@ -69,15 +69,17 @@ export function core(): core_factory {
                     org: { orgInfo },
                   } = await mySec.db.getConfigs()
 
+                  const { passwordHash } = await mySec.crypto.hashPassword({
+                    plainPassword: signupForm.password,
+                  })
+
                   const { encrypted: confirmEmailToken } = await mySec.crypto.encryptToken({
                     expires: tokenExpireTime.signupEmailVerification,
                     data: {
-                      v0_1: 'signupEmailVerification',
-                      signupForm: __redacted__({
-                        displayName: signupForm.displayName,
-                        email: signupForm.email,
-                        password: signupForm.password.__redacted__,
-                      }),
+                      v0_1: 'signupRequestEmailVerification',
+                      displayName: signupForm.displayName,
+                      email: signupForm.email,
+                      passwordHash,
                     },
                   })
 
@@ -107,12 +109,12 @@ export function core(): core_factory {
                     token: signupEmailVerificationToken,
                   })
 
-                  if (!(verified && tokenData.v0_1 === 'signupEmailVerification')) {
+                  if (!(verified && tokenData.v0_1 === 'signupRequestEmailVerification')) {
                     return [false, { reason: 'invalidToken' }]
                   }
 
                   const [, foundSameEmailUser] = await mySec.db.getUserByEmail({
-                    email: tokenData.signupForm.__redacted__.email,
+                    email: tokenData.email,
                   })
 
                   if (foundSameEmailUser) {
@@ -120,18 +122,16 @@ export function core(): core_factory {
                   }
 
                   const { id } = await mySec.crypto.generateUserId()
-                  const { passwordHash } = await mySec.crypto.hashPassword({
-                    plainPassword: __redacted__(tokenData.signupForm.__redacted__.password),
-                  })
+
                   const [newUserDone] = await mySec.db.saveNewUser({
                     newUser: {
                       id,
                       roles: newlyCreatedUserRoles,
-                      displayName: tokenData.signupForm.__redacted__.displayName,
+                      displayName: tokenData.displayName,
                       contacts: {
-                        email: tokenData.signupForm.__redacted__.email,
+                        email: tokenData.email,
                       },
-                      passwordHash,
+                      passwordHash: tokenData.passwordHash,
                       activityStatus: {
                         lastLogin: date_time_string('now'),
                         inactiveNotificationSentAt: false,
@@ -185,7 +185,7 @@ export function core(): core_factory {
                     await mySec.crypto.encryptToken({
                       expires: userSelfDeletion.userSelfDeletionRequest,
                       data: {
-                        v0_1: 'selfDeletionConfirm',
+                        v0_1: 'selfDeletionRequestConfirm',
                         userId: session.user.id,
                       },
                     })
@@ -210,7 +210,7 @@ export function core(): core_factory {
                     token: selfDeletionConfirmationToken,
                   })
 
-                  if (!(verified && tokenData.v0_1 === 'selfDeletionConfirm')) {
+                  if (!(verified && tokenData.v0_1 === 'selfDeletionRequestConfirm')) {
                     return [false, { reason: 'invalidToken' }]
                   }
 
@@ -243,7 +243,7 @@ export function core(): core_factory {
                     await mySec.crypto.encryptToken({
                       expires: userSelfDeletion.userSelfDeletionRequest,
                       data: {
-                        v0_1: 'passwordReset',
+                        v0_1: 'passwordResetRequest',
                         email: user.contacts.email,
                       },
                     })

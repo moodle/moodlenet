@@ -44,7 +44,7 @@ export type moodle_iam_mod = mod<{
 
       signup: {
         apply(_: {
-          signupForm: v0_1.libjs._redacted_signupForm
+          signupForm: v0_1.libjs.signupForm
         }): Promise<ok_ko<void, d_u<{ userWithSameEmailExists: unknown }, 'reason'>>>
 
         verifyEmail(_: {
@@ -62,7 +62,7 @@ export type moodle_iam_mod = mod<{
 
       myAccount: {
         login(_: {
-          loginForm: v0_1.libjs._redacted_loginForm
+          loginForm: v0_1.libjs.loginForm
         }): Promise<ok_ko<{ session: v0_1.user_session }, void>>
 
         selfDeletionRequest(): Promise<void>

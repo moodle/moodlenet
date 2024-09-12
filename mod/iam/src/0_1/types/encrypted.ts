@@ -1,17 +1,19 @@
-import { __redacted__, d_u, email_address } from '@moodle/lib-types'
-import { signupForm } from '../lib/js'
+import { d_u, email_address } from '@moodle/lib-types'
 import { user_id } from './data'
+import { user_password_hash } from './db'
 
 export type encryptedTokenData = d_u<
   {
-    selfDeletionConfirm: {
+    selfDeletionRequestConfirm: {
       userId: user_id
     }
-    passwordReset: {
+    passwordResetRequest: {
       email: email_address
     }
-    signupEmailVerification: {
-      signupForm: __redacted__<signupForm>
+    signupRequestEmailVerification: {
+      email: email_address
+      passwordHash: user_password_hash
+      displayName: string
     }
   },
   'v0_1'
