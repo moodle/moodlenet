@@ -28,6 +28,19 @@ export type time_string = string // ISO 8601
 export type time_duration_string = string // human readable duration https://github.com/jkroso/parse-duration
 
 export type email_address = string // email format
+
+export interface named_email_address {
+  address: email_address
+  name: string
+}
+export type named_or_email_address = email_address | named_email_address
+export type named_or_email_addresses = named_or_email_address[]
+export type one_or_more_named_or_email_addresses = named_or_email_address[] | named_or_email_address
+
+export function namedEmailAddressString(addr: email_address | named_email_address) {
+  return typeof addr === 'string' ? addr : `${addr.name} <${addr.address}>`
+}
+
 export type url = string // URL format
 
 export type _t<t> = { [k in string & keyof t]: t[k] } // utility type to convert string literal to string type

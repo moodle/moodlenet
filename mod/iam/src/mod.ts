@@ -4,6 +4,9 @@ import {
   d_u,
   d_u__d,
   email_address,
+  named_email_address,
+  one_or_more_named_or_email_addresses,
+  named_or_email_address,
   ok_ko,
   time_duration_string,
 } from '@moodle/lib-types'
@@ -115,7 +118,12 @@ export type moodle_iam_mod = mod<{
       }
 
       email: {
-        enqueue(_: { to: email_address; subject: string; body: ReactElement }): Promise<void>
+        sendNow(_: {
+          to: one_or_more_named_or_email_addresses
+          sender: named_or_email_address
+          subject: string
+          body: ReactElement
+        }): Promise<void>
       }
 
       db: {

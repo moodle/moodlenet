@@ -1,5 +1,6 @@
 import { sec_factory, sec_impl } from '@moodle/domain'
 import * as argon2 from 'argon2'
+import { send } from '../../lib'
 import { Env } from '../../types'
 export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 // ArgonPwdHashOpts : {
@@ -16,7 +17,17 @@ export function iam({ env }: { env: Env }): sec_factory {
         iam: {
           v0_1: {
             sec: {
-              email: {},
+              email: {
+                async sendNow({ body, subject, to, sender }) {
+                  send({
+                    env,
+                    body: { contentType: 'react', element: body },
+                    sender,
+                    to,
+                    subject,
+                  })
+                },
+              },
             },
           },
         },

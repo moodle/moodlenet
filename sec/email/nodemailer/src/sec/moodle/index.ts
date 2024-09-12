@@ -1,1 +1,1 @@
-export * from './crypto-default-iam'
+export * from './nodemailer-iam'

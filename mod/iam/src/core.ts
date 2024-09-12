@@ -81,7 +81,7 @@ export function core(): core_factory {
                   })
 
                   const body = org_v0_1.EmailLayout({ orgInfo, content })
-                  mySec.email.enqueue({
+                  mySec.email.sendNow({
                     body,
                     to: signupForm.email,
                     subject: content.subject,
@@ -185,7 +185,7 @@ export function core(): core_factory {
                   })
 
                   const body = org_v0_1.EmailLayout({ orgInfo, content })
-                  mySec.email.enqueue({
+                  mySec.email.sendNow({
                     body,
                     to: session.user.contacts.email,
                     subject: content.subject,
@@ -242,7 +242,7 @@ export function core(): core_factory {
                   })
 
                   const body = org_v0_1.EmailLayout({ orgInfo, content })
-                  mySec.email.enqueue({
+                  mySec.email.sendNow({
                     body,
                     to: user.contacts.email,
                     subject: content.subject,
