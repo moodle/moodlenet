@@ -128,12 +128,13 @@ export type status4xx = status_desc_4xx | status_code_4xx
 export class Error4xx extends Error {
   public code: status_code_4xx
   public desc: status_desc_4xx
-  public Error4xx = true
-  constructor(code_or_desc: status4xx, details = '') {
+  constructor(
+    code_or_desc: status4xx,
+    public details = '',
+  ) {
     const _code = status4xx(code_or_desc)
     const _desc = status_desc_by_code_4xx[_code]
-    const _details = details ? ` : ${details}` : ''
-    super(`${_code}[${_desc}]${_details}`)
+    super(`${_code}[${_desc}](${details ?? 'no details'})`)
     this.code = _code
     this.desc = _desc
   }
