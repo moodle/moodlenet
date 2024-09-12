@@ -51,7 +51,7 @@ export default function SignupPanel({ primaryMsgSchemaConfigs }: SignupProps) {
           className="password"
           placeholder={`Password`}
           type="password"
-          name="password"
+          name="password.__redacted__"
           edit
           value={form.values.password.__redacted__}
           onChange={form.handleChange}

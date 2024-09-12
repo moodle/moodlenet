@@ -50,7 +50,7 @@ export default function LoginPanel({
           className="password"
           placeholder={`Password`}
           type="password"
-          name="password"
+          name="password.__redacted__"
           edit
           value={form.values.password.__redacted__}
           onChange={form.handleChange}

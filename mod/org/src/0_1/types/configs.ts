@@ -1,6 +1,6 @@
-import { OrgAddresses, OrgInfo } from 'lib/domain/src/moodle/org/v0_1'
+import { lib_moodle_org } from '@moodle/lib-domain'
 
 export interface Configs {
-  info: OrgInfo
-  addresses: OrgAddresses
+  info: lib_moodle_org.v0_1.OrgInfo
+  addresses: lib_moodle_org.v0_1.OrgAddresses
 }

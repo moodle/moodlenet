@@ -10,9 +10,7 @@ import {
   signupEmailConfirmationContent,
 } from './0_1'
 import { userData } from './0_1/types/db/db-user'
-import { lib_moodle_iam } from '@moodle/lib-domain'
-import { getOrgNamedEmailAddress } from 'lib/domain/src/moodle/org/v0_1'
-import { getUserNamedEmailAddress } from 'lib/domain/src/moodle/iam/v0_1'
+import { lib_moodle_org, lib_moodle_iam } from '@moodle/lib-domain'
 
 export function core(): core_factory {
   return ({ primarySession, worker }) => {
@@ -85,7 +83,7 @@ export function core(): core_factory {
                   const reactBody = org_v0_1.EmailLayout({ orgInfo, orgAddr, content })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: getOrgNamedEmailAddress({ orgAddr, orgInfo }),
+                    sender: lib_moodle_org.v0_1.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
                     to: signupForm.email,
                   })
@@ -190,9 +188,9 @@ export function core(): core_factory {
                   const reactBody = org_v0_1.EmailLayout({ orgInfo, orgAddr, content })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: getOrgNamedEmailAddress({ orgAddr, orgInfo }),
+                    sender: lib_moodle_org.v0_1.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
-                    to: getUserNamedEmailAddress(session.user),
+                    to: lib_moodle_iam.v0_1.getUserNamedEmailAddress(session.user),
                   })
                   return
                 },
@@ -248,9 +246,9 @@ export function core(): core_factory {
                   const reactBody = org_v0_1.EmailLayout({ orgInfo, orgAddr, content })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: getOrgNamedEmailAddress({ orgAddr, orgInfo }),
+                    sender: lib_moodle_org.v0_1.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
-                    to: getUserNamedEmailAddress(user),
+                    to: lib_moodle_iam.v0_1.getUserNamedEmailAddress(user),
                   })
                   return
                 },
