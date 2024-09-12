@@ -34,7 +34,8 @@
       "@moodle/mod-org/0_1_setup": ["mod/org/src/0_1/setup/index.ts"],
       "@moodle/sec-crypto-default": ["sec/crypto/default/src/index.ts"],
       "@moodle/sec-db-arango": ["sec/db/arango/src/index.ts"],
-      "@moodle/sec-db-arango/migrate": ["sec/db/arango/src/migrate.ts"]
+      "@moodle/sec-db-arango/migrate": ["sec/db/arango/src/migrate.ts"],
+      "@moodle/sec-email-nodemailer": ["sec/email/nodemailer/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
