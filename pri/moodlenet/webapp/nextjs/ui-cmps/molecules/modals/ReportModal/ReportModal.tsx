@@ -2,7 +2,7 @@
 // import { t, Trans } from '@lingui/macro'
 import type { FC, SetStateAction } from 'react'
 // import { FormikHandle } from '../../../../lib/formik'
-import InputTextField from '../../../../src/ui/atoms/InputTextField/InputTextField.jsx'
+import InputTextField from '../../../atoms/InputTextField/InputTextField.jsx'
 import Modal from '../../../atoms/Modal/Modal.jsx'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton.jsx'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton.jsx'

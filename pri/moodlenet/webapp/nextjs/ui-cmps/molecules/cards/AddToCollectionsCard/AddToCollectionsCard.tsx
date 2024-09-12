@@ -2,7 +2,7 @@
 import type { FC, PropsWithChildren, ReactNode } from 'react'
 import type { SelectorProps } from '../../../../lib/selector.js'
 import { Selector, useSelectorOption } from '../../../../lib/selector.js'
-import Card from '../../../../src/ui/atoms/Card/Card.jsx'
+import Card from '../../../atoms/Card/Card.jsx'
 
 import './AddToCollectionsCard.scss'
 
