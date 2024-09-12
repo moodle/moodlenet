@@ -1,5 +1,6 @@
 import { lib_moodle_org } from '@moodle/lib-domain'
 import { v0_1 as email_org_0_1 } from '../../org'
+import React from 'react'
 
 export type SignupEmailConfirmationProps = {
   orgInfo: lib_moodle_org.v0_1.OrgInfo
