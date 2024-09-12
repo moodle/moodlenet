@@ -15,7 +15,9 @@ import * as mod_org from '@moodle/mod-org'
 import * as mod_iam from '@moodle/mod-iam'
 import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
 import { get_arango_persistence_factory } from '@moodle/sec-db-arango'
-import { get_dbs_struct_configs_0_1 } from './env'
+import { get_arango_db_sec_env, get_crypto_default_env, get_nodemailer_sec_cfg } from './env'
+import { get_default_crypto_workers_factory } from '@moodle/sec-crypto-default'
+import { get_nodemailer_workers_factory } from '@moodle/sec-email-nodemailer'
 
 http_bind.server({
   port: 9000,
@@ -26,7 +28,6 @@ http_bind.server({
 })
 
 async function request({ domain_msg, primarySession, core_mod_id }: TransportData) {
-  const dbs_struct_configs_0_1 = get_dbs_struct_configs_0_1()
   const monolithAccessProxy = createAcccessProxy({
     access(msg) {
       const core_mod_id = coreModId(domain_msg)
@@ -55,12 +56,16 @@ async function request({ domain_msg, primarySession, core_mod_id }: TransportDat
   const workerCtx: WorkerContext | null = core_mod_id
     ? { primarySession, emit: monolithAccessProxy.mod, core_mod_id }
     : null
+
+  const arangoDbSecEnv = get_arango_db_sec_env()
+  const cryptoDefaultEnv = get_crypto_default_env()
+  const nodemailerSecEnv = get_nodemailer_sec_cfg()
   const sec_impls: sec_impl[] = workerCtx
     ? [
         // sec modules
-        get_arango_persistence_factory({
-          dbs_struct_configs_0_1,
-        })(workerCtx),
+        get_arango_persistence_factory(arangoDbSecEnv)(workerCtx),
+        get_default_crypto_workers_factory(cryptoDefaultEnv)(workerCtx),
+        get_nodemailer_workers_factory(nodemailerSecEnv)(workerCtx),
       ]
     : []
   const sec = composeImpl(...sec_impls)

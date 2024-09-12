@@ -4,7 +4,7 @@ import type SESTransport from 'nodemailer/lib/ses-transport'
 import type SMTPTransport from 'nodemailer/lib/smtp-transport'
 import type StreamTransport from 'nodemailer/lib/stream-transport'
 
-export interface Env {
+export interface NodemailerSecEnv {
   nodemailerTransport: NodemailerTransport
   __development_env__send_all_emails_to?: string
   logWarn(_: object): unknown

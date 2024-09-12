@@ -1,5 +1,5 @@
 import { sec_factory } from '@moodle/domain'
-import { db_struct_0_1 } from '../../dbStructure/0_1'
+import { db_struct_0_1 } from '../../dbStructure/v0_1'
 import { getModConfigs } from '../../lib/modules'
 
 export function net({ db_struct_0_1 }: { db_struct_0_1: db_struct_0_1 }): sec_factory {

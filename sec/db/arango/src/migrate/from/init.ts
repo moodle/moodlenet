@@ -1,5 +1,5 @@
 import { Database } from 'arangojs'
-import { db_struct_0_1, Migration_0_1 } from '../../dbStructure/0_1'
+import { db_struct_0_1, Migration_0_1 } from '../../dbStructure/v0_1'
 import { defaultIamConfigs_0_1 } from '@moodle/mod-iam/0_1_setup'
 import { defaultNetConfigs_0_1 } from '@moodle/mod-net/0_1_setup'
 import { defaultNetWebappNextjsConfigs_0_1 } from '@moodle/mod-net-webapp-nextjs/0_1_setup'

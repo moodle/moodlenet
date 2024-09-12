@@ -1,7 +1,7 @@
 import { sec_factory, sec_impl } from '@moodle/domain'
 import * as argon2 from 'argon2'
 import { send } from '../../lib'
-import { Env } from '../../types'
+import { NodemailerSecEnv } from '../../types'
 export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 // ArgonPwdHashOpts : {
 //   memoryCost: 100000,
@@ -10,7 +10,7 @@ export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 //   type: argon2id,
 // }
 
-export function iam({ env }: { env: Env }): sec_factory {
+export function iam(env: NodemailerSecEnv): sec_factory {
   return ctx => {
     const iam_sec_impl: sec_impl = {
       moodle: {

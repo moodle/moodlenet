@@ -1,8 +1,8 @@
+import { v0_1 as iam_v0_1 } from '@moodle/mod-iam'
 import { Database } from 'arangojs'
 import { Migration_Record } from '../../migrate/types'
-import { v0_1 as iam_v0_1 } from '@moodle/mod-iam'
 
-type dbConn = {
+export type dbConn = {
   url: string
   dbname: string
 }

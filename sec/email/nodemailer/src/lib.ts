@@ -8,7 +8,7 @@ import {
 import { renderAsync } from '@react-email/render'
 import { createTransport } from 'nodemailer'
 import { ReactElement } from 'react'
-import { Env } from './types'
+import { NodemailerSecEnv } from './types'
 type email_body = d_u<
   {
     react: {
@@ -26,7 +26,7 @@ type email_body = d_u<
 >
 
 interface SendEmailConfig {
-  env: Env
+  env: NodemailerSecEnv
   body: email_body
   subject: string
   sender: named_or_email_address

@@ -1,7 +1,7 @@
 import { mod_id, str_ns_mod_v } from '@moodle/domain'
 import { _any } from '@moodle/lib-types'
 import assert from 'assert'
-import { db_struct_0_1 } from '../dbStructure/0_1'
+import { db_struct_0_1 } from '../dbStructure/v0_1'
 
 function getKey(mod_id: mod_id) {
   return str_ns_mod_v(mod_id, '_')

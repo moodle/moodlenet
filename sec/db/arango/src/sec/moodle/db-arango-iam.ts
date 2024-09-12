@@ -2,7 +2,7 @@ import { sec_factory, sec_impl } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
 import type { v0_1 as iam_v0_1 } from '@moodle/mod-iam'
 import { Document } from 'arangojs/documents'
-import { db_struct_0_1 } from '../../dbStructure/0_1'
+import { db_struct_0_1 } from '../../dbStructure/v0_1'
 import { getModConfigs } from '../../lib/modules'
 import { dbUserDoc2DbUser } from './db-arango-iam-lib/mapping'
 

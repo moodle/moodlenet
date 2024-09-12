@@ -1,4 +1,5 @@
 import { Error4xx, primary_session, sec_factory, sec_impl, session_token } from '@moodle/domain'
+import { lib_moodle_iam } from '@moodle/lib-domain'
 import { createAlphaNumericId } from '@moodle/lib-id-gen'
 import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import { _void } from '@moodle/lib-types'
@@ -76,14 +77,14 @@ export function iam({
     return iam_sec_impl
   }
 }
-const guest_session: iam_v0_1.user_session = {
+const guest_session: lib_moodle_iam.v0_1.user_session = {
   type: 'guest',
 }
 
 async function getUserSession(
   joseEnv: joseEnv,
   _token_or_session: session_token | primary_session,
-): Promise<iam_v0_1.user_session> {
+): Promise<lib_moodle_iam.v0_1.user_session> {
   const token =
     typeof _token_or_session === 'string'
       ? _token_or_session
@@ -93,7 +94,7 @@ async function getUserSession(
   if (!token) {
     return guest_session
   }
-  const verifyResult = await joseVerify<iam_v0_1.UserData>(joseEnv, token)
+  const verifyResult = await joseVerify<lib_moodle_iam.v0_1.UserData>(joseEnv, token)
   if (!verifyResult) {
     return guest_session
   }
