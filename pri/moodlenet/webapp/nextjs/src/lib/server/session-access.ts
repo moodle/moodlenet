@@ -1,5 +1,8 @@
 import { http_bind } from '@moodle/bindings-node'
-import { createAcccessProxy, Modules, PrimarySession } from '@moodle/domain'
+import { createAcccessProxy, Modules, primary_session } from '@moodle/domain'
+import type {} from '@moodle/mod-iam'
+import type {} from '@moodle/mod-net'
+import type {} from '@moodle/mod-net-webapp-nextjs'
 import { headers } from 'next/headers'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'
@@ -39,7 +42,9 @@ function getPrimarySession() {
   const geo = geo_header_str ? JSON.parse(geo_header_str) : undefined
   const ua = userAgent({ headers: _headers })
   assert(host, 'No host in headers')
-  const primarySession: PrimarySession = {
+  const primarySession: primary_session = {
+    type: 'user',
+    authToken: getAuthToken(),
     app: {
       name: process.env[APP_NAME_ENV_VAR] ?? 'moodlenet-nextjs',
       pkg: 'moodlenet-nextjs',
@@ -76,9 +81,6 @@ function getPrimarySession() {
         engine: ua.engine,
         os: ua.os,
       },
-    },
-    session: {
-      authToken: getAuthToken(),
     },
   }
   return primarySession

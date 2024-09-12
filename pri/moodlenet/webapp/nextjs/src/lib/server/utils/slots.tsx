@@ -1,15 +1,14 @@
 import { lib_moodle_net_webapp_nextjs } from '@moodle/lib-domain'
 import { PropsWithChildren, ReactElement } from 'react'
 import { clientSlotItem } from '../../common/pages'
+import { _any } from '@moodle/lib-types'
 type layoutSlotItem = lib_moodle_net_webapp_nextjs.v0_1.layoutSlotItem
-export type layoutProps = {
-  params?: {
-    tag: string
-    item: string
-  }
-} //& { [n: string]: ReactElement | undefined }
-export type layoutPropsWithChildren = PropsWithChildren<layoutProps>
-export function slotsMap<S extends Record<string, layoutSlotItem[]>>(props: layoutProps, slots: S) {
+// export type layoutPropsWithChildren = PropsWithChildren<map<ReactElement>>
+export type layoutPropsWithChildren = PropsWithChildren<_any>
+export function slotsMap<S extends Record<string, layoutSlotItem[]>>(
+  props: layoutPropsWithChildren,
+  slots: S,
+) {
   return Object.entries(slots).reduce(
     (_, [k, items]) => ((_[k as keyof S] = slotItems(props, items)), _),
     {} as Record<keyof S, clientSlotItem[]>,
@@ -17,7 +16,7 @@ export function slotsMap<S extends Record<string, layoutSlotItem[]>>(props: layo
 }
 
 export function slotItems<S extends layoutSlotItem[]>(
-  props: layoutProps,
+  props: layoutPropsWithChildren,
   items: S | null | undefined,
 ) {
   const res = (items ?? []).map(item => slotItem(props, item))
@@ -30,7 +29,7 @@ export function isLayoutSlotItem(value: layoutSlotItem | undefined): value is la
 }
 
 export function slotItem(
-  props: layoutProps,
+  props: layoutPropsWithChildren,
   item: layoutSlotItem,
   //_default: ReactElement = <>{`SHOULD NEVER HAPPEN: NO SLOT ITEM for [${item}]`}</>,
 ) {

@@ -1,4 +1,3 @@
-import '@moodle/mod-net'
 import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
 import { getMod } from '../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
@@ -6,8 +5,8 @@ import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'
 import MainHeader, { MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 import { HeaderSearchbox, LoginHeaderButton, SignupHeaderButton } from './main-layout.client'
 
-import './main-layout.style.scss'
 import { lib_moodle_iam } from '@moodle/lib-domain'
+import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const {
