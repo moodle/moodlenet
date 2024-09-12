@@ -114,8 +114,8 @@ export type moodle_iam_mod = mod<{
         decryptToken(_: { token: string }): Promise<ok_ko<v0_1.encryptedTokenData, void>>
       }
 
-      queue: {
-        sendEmail(_: { to: email_address; subject: string; body: ReactElement }): Promise<void>
+      email: {
+        enqueue(_: { to: email_address; subject: string; body: ReactElement }): Promise<void>
       }
 
       db: {
