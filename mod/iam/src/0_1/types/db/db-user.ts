@@ -1,8 +1,9 @@
+import { lib_moodle_iam } from '@moodle/lib-domain'
 import { d_u, date_time_string, time_duration_string } from '@moodle/lib-types'
-import { UserData } from '../data/user'
 
-
-export function userData(dbUser: Pick<DbUser, keyof UserData>): UserData {
+export function userData(
+  dbUser: Pick<DbUser, keyof lib_moodle_iam.v0_1.UserData>,
+): lib_moodle_iam.v0_1.UserData {
   return {
     contacts: dbUser.contacts,
     displayName: dbUser.displayName,
@@ -10,7 +11,7 @@ export function userData(dbUser: Pick<DbUser, keyof UserData>): UserData {
     roles: dbUser.roles,
   }
 }
-export interface DbUser extends UserData {
+export interface DbUser extends lib_moodle_iam.v0_1.UserData {
   passwordHash: user_password_hash
   activityStatus: {
     lastLogin: date_time_string

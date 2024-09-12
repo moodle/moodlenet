@@ -1,10 +1,6 @@
-import { object, string, z } from 'zod'
-import { PrimaryMsgSchemaConfigs } from '../../types'
 import { __redacted__key } from '@moodle/lib-types'
-
-export type loginForm = z.infer<ReturnType<typeof getPrimarySchemas>['loginSchema']>
-
-export type signupForm = z.infer<ReturnType<typeof getPrimarySchemas>['signupSchema']>
+import { object, string } from 'zod'
+import { PrimaryMsgSchemaConfigs } from './types'
 
 export function getPrimarySchemas({ user }: PrimaryMsgSchemaConfigs) {
   const email = string().email().min(user.email.min).max(user.email.max)

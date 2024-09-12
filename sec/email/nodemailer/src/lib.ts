@@ -1,17 +1,11 @@
 import { createTransport } from 'nodemailer'
 import type SMTPTransport from 'nodemailer/lib/smtp-transport/index.js'
 
-import type { EmailContentProps } from '@moodlenet/component-library/email-templates'
 import assert from 'assert'
-import { kvStore } from './init/kvStore.mjs'
-import { renderEmailTemplate } from './lib.js'
 import type { EmailObj, SendResp } from './types.js'
 export type { SentMessageInfo } from 'nodemailer'
 
 export async function send(emailObj: EmailObj): Promise<SendResp> {
-  const mailerCfg = (await kvStore.get('mailerCfg', '')).value
-  assert(mailerCfg, 'missing mailerCfg:: record in KeyValueStore')
-
   const __development_env__send_all_emails_to_prefixed_warn =
     env.__development_env__send_all_emails_to
       ? `## DEV EMAIL it would have been sent to <${emailObj.receiverEmail}> ## `

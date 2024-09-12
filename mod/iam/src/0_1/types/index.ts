@@ -1,6 +1,3 @@
 export * from './configs'
 export * from './encrypted'
-export * from './primary'
-export * from './session'
-export * from './data'
 export * from './db'

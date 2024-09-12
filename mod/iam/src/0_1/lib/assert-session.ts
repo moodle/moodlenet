@@ -1,8 +1,7 @@
 import { concrete, Error4xx, primary_session, status4xx } from '@moodle/domain'
+import { lib_moodle_iam } from '@moodle/lib-domain'
 import { d_u__d } from '@moodle/lib-types'
 import assert from 'assert'
-import { user_role } from '../../types'
-import { assertHasUserRole } from '../js'
 
 // System Session
 export function isSystemSession(
@@ -57,11 +56,11 @@ export async function async_assertUserAuthenticatedSession(
 /// Has User Role
 export async function async_assertUserAuthenticatedSessionHasRole(
   primarySession: primary_session,
-  role: user_role,
+  role: lib_moodle_iam.v0_1.user_role,
   worker: concrete<'sec'>,
 ) {
   const user_session = await async_assertUserAuthenticatedSession(primarySession, worker)
-  assertHasUserRole(user_session, role)
+  lib_moodle_iam.v0_1.assertHasUserRole(user_session, role)
   return user_session
 }
 

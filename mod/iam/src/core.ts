@@ -2,12 +2,15 @@ import { core_factory, core_impl, core_process } from '@moodle/domain'
 import { _void, date_time_string } from '@moodle/lib-types'
 import { v0_1 as org_v0_1 } from '@moodle/mod-org'
 import {
+  assertGuestSession,
+  async_assertUserAuthenticatedSession,
+  async_assertUserAuthenticatedSessionHasRole,
   resetPasswordContent,
   selfDeletionConfirmContent,
   signupEmailConfirmationContent,
 } from './0_1'
-import { assertSession } from './0_1/lib/server'
 import { userData } from './0_1/types/db/db-user'
+import { lib_moodle_iam } from '@moodle/lib-domain'
 
 export function core(): core_factory {
   return ({ primarySession, worker }) => {
@@ -19,35 +22,23 @@ export function core(): core_factory {
             pri: {
               configs: {
                 read() {
-                  // assertSession.assertSystemSession(primarySession)
+                  // assertSystemSession(primarySession)
                   return mySec.db.getConfigs()
                 },
               },
               admin: {
                 async editUserRoles({ userId, roles }) {
-                  await assertSession.async_assertUserAuthenticatedSessionHasRole(
-                    primarySession,
-                    'admin',
-                    worker,
-                  )
+                  await async_assertUserAuthenticatedSessionHasRole(primarySession, 'admin', worker)
                   return mySec.db.changeUserRoles({ userId, roles })
                 },
 
                 async searchUsers({ textSearch }) {
-                  await assertSession.async_assertUserAuthenticatedSessionHasRole(
-                    primarySession,
-                    'admin',
-                    worker,
-                  )
+                  await async_assertUserAuthenticatedSessionHasRole(primarySession, 'admin', worker)
                   return mySec.db.findUsersByText({ text: textSearch })
                 },
 
                 async deactivateUser({ userId, anonymize, reason }) {
-                  await assertSession.async_assertUserAuthenticatedSessionHasRole(
-                    primarySession,
-                    'admin',
-                    worker,
-                  )
+                  await async_assertUserAuthenticatedSessionHasRole(primarySession, 'admin', worker)
                   mySec.db.deactivateUser({
                     userId,
                     for: { v0_1: 'adminRequest', reason },
@@ -57,7 +48,7 @@ export function core(): core_factory {
               },
               signup: {
                 async apply({ signupForm }) {
-                  assertSession.assertGuestSession(primarySession)
+                  assertGuestSession(primarySession)
                   const [found] = await mySec.db.getUserByEmail({
                     email: signupForm.email,
                   })
@@ -99,7 +90,7 @@ export function core(): core_factory {
                 },
 
                 async verifyEmail({ signupEmailVerificationToken }) {
-                  assertSession.assertGuestSession(primarySession)
+                  assertGuestSession(primarySession)
                   const {
                     me: {
                       roles: { newlyCreatedUserRoles },
@@ -172,10 +163,7 @@ export function core(): core_factory {
                 },
 
                 async selfDeletionRequest() {
-                  const session = await assertSession.async_assertUserAuthenticatedSession(
-                    primarySession,
-                    worker,
-                  )
+                  const session = await async_assertUserAuthenticatedSession(primarySession, worker)
                   const {
                     me: { tokenExpireTime: userSelfDeletion },
                     org: { orgInfo },
@@ -228,7 +216,7 @@ export function core(): core_factory {
                 },
 
                 async resetPasswordRequest({ declaredOwnEmail }) {
-                  assertSession.assertGuestSession(primarySession)
+                  assertGuestSession(primarySession)
                   const {
                     me: { tokenExpireTime: userSelfDeletion },
                     org: { orgInfo },
@@ -263,10 +251,7 @@ export function core(): core_factory {
                 },
 
                 async changePassword({ currentPassword, newPassword }) {
-                  const session = await assertSession.async_assertUserAuthenticatedSession(
-                    primarySession,
-                    worker,
-                  )
+                  const session = await async_assertUserAuthenticatedSession(primarySession, worker)
                   const [, user] = await mySec.db.getUserById({ userId: session.user.id })
                   if (!user) {
                     return [false, _void]

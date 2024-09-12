@@ -10,7 +10,7 @@ import {
 import { v0_1 as v0_1_org } from '@moodle/mod-org'
 import { ReactElement } from 'react'
 import { v0_1 } from './'
-import { UserData } from './0_1/types/data/user'
+import { lib_moodle_iam } from '@moodle/lib-domain'
 
 declare module '@moodle/domain' {
   export interface MoodleMods {
@@ -22,7 +22,7 @@ export type moodle_iam_mod = mod<{
   v0_1: {
     pri: {
       session: {
-        getCurrentUserSession(): Promise<{ userSession: v0_1.user_session }>
+        getCurrentUserSession(): Promise<{ userSession: lib_moodle_iam.v0_1.user_session }>
       }
 
       configs: {
@@ -31,12 +31,12 @@ export type moodle_iam_mod = mod<{
 
       admin: {
         editUserRoles(_: {
-          userId: v0_1.user_id
-          roles: v0_1.user_role[]
+          userId: lib_moodle_iam.v0_1.user_id
+          roles: lib_moodle_iam.v0_1.user_role[]
         }): Promise<ok_ko<void, void>>
         searchUsers(_: { textSearch: string }): Promise<{ users: v0_1.DbUser[] }>
         deactivateUser(_: {
-          userId: v0_1.user_id
+          userId: lib_moodle_iam.v0_1.user_id
           reason: string
           anonymize: boolean
         }): Promise<void>
@@ -44,14 +44,14 @@ export type moodle_iam_mod = mod<{
 
       signup: {
         apply(_: {
-          signupForm: v0_1.libjs.signupForm
+          signupForm: lib_moodle_iam.v0_1.signupForm
         }): Promise<ok_ko<void, d_u<{ userWithSameEmailExists: unknown }, 'reason'>>>
 
         verifyEmail(_: {
           signupEmailVerificationToken: string
         }): Promise<
           ok_ko<
-            { userId: v0_1.user_id },
+            { userId: lib_moodle_iam.v0_1.user_id },
             d_u<
               { userWithThisEmailExists: unknown; invalidToken: unknown; unknown: unknown },
               'reason'
@@ -62,8 +62,8 @@ export type moodle_iam_mod = mod<{
 
       myAccount: {
         login(_: {
-          loginForm: v0_1.libjs.loginForm
-        }): Promise<ok_ko<{ session: v0_1.user_session }, void>>
+          loginForm: lib_moodle_iam.v0_1.loginForm
+        }): Promise<ok_ko<{ session: lib_moodle_iam.v0_1.user_session }, void>>
 
         selfDeletionRequest(): Promise<void>
 
@@ -87,15 +87,15 @@ export type moodle_iam_mod = mod<{
     }
     sec: {
       crypto: {
-        generateUserId(): Promise<{ id: v0_1.user_id }>
+        generateUserId(): Promise<{ id: lib_moodle_iam.v0_1.user_id }>
 
         getUserSession(_: {
           token_or_session: session_token | primary_session
-        }): Promise<{ userSession: v0_1.user_session }>
+        }): Promise<{ userSession: lib_moodle_iam.v0_1.user_session }>
         assertAuthenticatedUserSession(_: {
           token_or_session: session_token | primary_session
           onFail?: { code_or_desc: status4xx; details?: string }
-        }): Promise<d_u__d<v0_1.user_session, 'type', 'authenticated'>>
+        }): Promise<d_u__d<lib_moodle_iam.v0_1.user_session, 'type', 'authenticated'>>
 
         // password hashing
         hashPassword(_: {
@@ -122,12 +122,12 @@ export type moodle_iam_mod = mod<{
         getConfigs(): Promise<{ me: v0_1.Configs; org: v0_1_org.Configs }>
 
         changeUserPassword(_: {
-          userId: v0_1.user_id
+          userId: lib_moodle_iam.v0_1.user_id
           newPasswordHash: string
         }): Promise<ok_ko<void, void>>
 
         deactivateUser(_: {
-          userId: v0_1.user_id
+          userId: lib_moodle_iam.v0_1.user_id
           anonymize: boolean
           for: v0_1.user_deactivation_reason
         }): Promise<ok_ko<void, void>>
@@ -137,14 +137,14 @@ export type moodle_iam_mod = mod<{
           inactiveNotificationSent: boolean
         }): Promise<{ inactiveUsers: v0_1.DbUser[] }>
 
-        getUserById(_: { userId: v0_1.user_id }): Promise<ok_ko<v0_1.DbUser, void>>
+        getUserById(_: { userId: lib_moodle_iam.v0_1.user_id }): Promise<ok_ko<v0_1.DbUser, void>>
         getUserByEmail(_: { email: email_address }): Promise<ok_ko<v0_1.DbUser, void>>
 
         saveNewUser(_: { newUser: v0_1.DbUser }): Promise<ok_ko<void, void>>
 
         changeUserRoles(_: {
-          userId: v0_1.user_id
-          roles: v0_1.user_role[]
+          userId: lib_moodle_iam.v0_1.user_id
+          roles: lib_moodle_iam.v0_1.user_role[]
         }): Promise<ok_ko<void, void>>
 
         findUsersByText(_: {
@@ -156,24 +156,24 @@ export type moodle_iam_mod = mod<{
     evt: {
       userBase: {
         userDeactivated(_: {
-          user: UserData
+          user: lib_moodle_iam.v0_1.UserData
           reason: v0_1.user_deactivation_reason
           anonymized: boolean
         }): unknown
-        newUserCreated(_: { user: UserData }): unknown
+        newUserCreated(_: { user: lib_moodle_iam.v0_1.UserData }): unknown
       }
       userSecurity: {
-        userPasswordChanged(_: { userId: v0_1.user_id }): unknown
+        userPasswordChanged(_: { userId: lib_moodle_iam.v0_1.user_id }): unknown
       }
       userRoles: {
         userRolesUpdated(_: {
-          userId: v0_1.user_id
-          roles: v0_1.user_role[]
-          oldRoles: v0_1.user_role[]
+          userId: lib_moodle_iam.v0_1.user_id
+          roles: lib_moodle_iam.v0_1.user_role[]
+          oldRoles: lib_moodle_iam.v0_1.user_role[]
         }): unknown
       }
       userActivity: {
-        userLoggedIn(_: { userId: v0_1.user_id }): unknown
+        userLoggedIn(_: { userId: lib_moodle_iam.v0_1.user_id }): unknown
       }
     }
   }
