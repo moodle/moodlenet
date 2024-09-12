@@ -3,7 +3,6 @@
   "compilerOptions": {
     "rootDir": ".",
     "jsx": "preserve",
-    // "reactNamespace": "React",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -23,6 +22,7 @@
       "@moodle/bindings-node": ["bindings/node/src/index.ts"],
       "@moodle/domain": ["domain/src/index.ts"],
       "@moodle/lib-domain": ["lib/domain/src/index.ts"],
+      "@moodle/lib-email-templates": ["lib/email-templates/src/index.ts"],
       "@moodle/lib-id-gen": ["lib/id-gen/src/index.ts"],
       "@moodle/lib-jwt-jose": ["lib/jwt/jose/src/index.ts"],
       "@moodle/lib-types": ["lib/types/src/index.ts"],

@@ -1,17 +1,13 @@
 import { core_factory, core_impl, core_process } from '@moodle/domain'
 import { _void, date_time_string } from '@moodle/lib-types'
-import { v0_1 as org_v0_1 } from '@moodle/mod-org'
 import {
   assertGuestSession,
   async_assertUserAuthenticatedSession,
   async_assertUserAuthenticatedSessionHasRole,
-  resetPasswordContent,
-  selfDeletionConfirmContent,
-  signupEmailConfirmationContent,
 } from './0_1'
 import { userData } from './0_1/types/db/db-user'
 import { lib_moodle_org, lib_moodle_iam } from '@moodle/lib-domain'
-
+import { email_moodle_iam, email_moodle_org } from '@moodle/lib-email-templates'
 export function core(): core_factory {
   return ({ primarySession, worker }) => {
     const mySec = worker.moodle.iam.v0_1.sec
@@ -74,13 +70,13 @@ export function core(): core_factory {
                     },
                   })
 
-                  const content = signupEmailConfirmationContent({
+                  const content = email_moodle_iam.v0_1.signupEmailConfirmationContent({
                     activateAccountUrl: `#######${confirmEmailToken}#########`,
                     orgInfo,
                     receiverEmail: signupForm.email,
                   })
 
-                  const reactBody = org_v0_1.EmailLayout({ orgInfo, orgAddr, content })
+                  const reactBody = email_moodle_org.v0_1.EmailLayout({ orgInfo, orgAddr, content })
                   await mySec.email.sendNow({
                     reactBody,
                     sender: lib_moodle_org.v0_1.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
@@ -179,13 +175,13 @@ export function core(): core_factory {
                       },
                     })
 
-                  const content = selfDeletionConfirmContent({
+                  const content = email_moodle_iam.v0_1.selfDeletionConfirmContent({
                     deleteAccountUrl: `#######${selfDeletionConfirmationToken}#########`,
                     orgInfo,
                     receiverEmail: session.user.contacts.email,
                   })
 
-                  const reactBody = org_v0_1.EmailLayout({ orgInfo, orgAddr, content })
+                  const reactBody = email_moodle_org.v0_1.EmailLayout({ orgInfo, orgAddr, content })
                   await mySec.email.sendNow({
                     reactBody,
                     sender: lib_moodle_org.v0_1.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
@@ -238,12 +234,12 @@ export function core(): core_factory {
                       },
                     })
 
-                  const content = resetPasswordContent({
+                  const content = email_moodle_iam.v0_1.resetPasswordContent({
                     resetPasswordUrl: `#######${resetPasswordConfirmationToken}#########`,
                     receiverEmail: user.contacts.email,
                   })
 
-                  const reactBody = org_v0_1.EmailLayout({ orgInfo, orgAddr, content })
+                  const reactBody = email_moodle_org.v0_1.EmailLayout({ orgInfo, orgAddr, content })
                   await mySec.email.sendNow({
                     reactBody,
                     sender: lib_moodle_org.v0_1.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
@@ -301,6 +297,6 @@ export function core(): core_factory {
   }
 }
 
-export const process: core_process = ctx => {
-  // setTimeout(getinactiveUsers ....)
-}
+// export const process: core_process = _ctx => {
+//   // setTimeout(getinactiveUsers ....)
+// }

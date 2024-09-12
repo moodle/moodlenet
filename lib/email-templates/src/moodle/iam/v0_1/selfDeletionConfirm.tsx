@@ -1,5 +1,5 @@
 import { lib_moodle_org } from '@moodle/lib-domain'
-import { v0_1 as org_0_1 } from '@moodle/mod-org'
+import { v0_1 as email_org_0_1 } from '../../org'
 
 export type DeleteAccountEmailProps = {
   orgInfo: lib_moodle_org.v0_1.OrgInfo
@@ -11,7 +11,7 @@ export function selfDeletionConfirmContent({
   orgInfo,
   deleteAccountUrl,
   receiverEmail,
-}: DeleteAccountEmailProps): org_0_1.EmailLayoutContentProps {
+}: DeleteAccountEmailProps): email_org_0_1.EmailLayoutContentProps {
   const title = `Confirm account deletion 🥀`
 
   const body = (

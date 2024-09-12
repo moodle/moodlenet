@@ -1,4 +1,4 @@
-import { v0_1 as org_0_1 } from '@moodle/mod-org'
+import { v0_1 as email_org_0_1 } from '../../org'
 
 export type PasswordChangedEmailProps = {
   receiverEmail: string
@@ -6,7 +6,7 @@ export type PasswordChangedEmailProps = {
 
 export function passwordChangedContent({
   receiverEmail,
-}: PasswordChangedEmailProps): org_0_1.EmailLayoutContentProps {
+}: PasswordChangedEmailProps): email_org_0_1.EmailLayoutContentProps {
   const title = `Password changed 🔒💫`
   const body = `Your password has been successfully changed. If it was not you, recover your password and keep in safer.`
   return {

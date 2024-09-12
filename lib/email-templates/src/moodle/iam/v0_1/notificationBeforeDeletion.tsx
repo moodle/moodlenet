@@ -1,5 +1,5 @@
 import { lib_moodle_org } from '@moodle/lib-domain'
-import { v0_1 as org_0_1 } from '@moodle/mod-org'
+import { v0_1 as email_org_0_1 } from '../../org'
 
 export type InactivityDeletionNotificationEmailProps = {
   orgInfo: lib_moodle_org.v0_1.OrgInfo
@@ -15,7 +15,7 @@ export function notificationBeforeDeletionForInactivityContent({
   receiverEmail,
   userName,
   daysBeforeDeletion,
-}: InactivityDeletionNotificationEmailProps): org_0_1.EmailLayoutContentProps {
+}: InactivityDeletionNotificationEmailProps): email_org_0_1.EmailLayoutContentProps {
   const title = `${userName} we are missing you at ${orgInfo.name}`
 
   const body = (
