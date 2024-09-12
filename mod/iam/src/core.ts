@@ -58,7 +58,7 @@ export function core(): core_factory {
                     return [false, { reason: 'userWithSameEmailExists' }]
                   }
                   const {
-                    me: { tokenExpireTime },
+                    iam: { tokenExpireTime },
                     org: { info: orgInfo, addresses: orgAddr },
                   } = await mySec.db.getConfigs()
 
@@ -95,7 +95,7 @@ export function core(): core_factory {
                 async verifyEmail({ signupEmailVerificationToken }) {
                   assertGuestSession(primarySession)
                   const {
-                    me: {
+                    iam: {
                       roles: { newlyCreatedUserRoles },
                     },
                   } = await mySec.db.getConfigs()
@@ -168,7 +168,7 @@ export function core(): core_factory {
                 async selfDeletionRequest() {
                   const session = await async_assertUserAuthenticatedSession(primarySession, worker)
                   const {
-                    me: { tokenExpireTime: userSelfDeletion },
+                    iam: { tokenExpireTime: userSelfDeletion },
                     org: { info: orgInfo, addresses: orgAddr },
                   } = await mySec.db.getConfigs()
 
@@ -222,7 +222,7 @@ export function core(): core_factory {
                 async resetPasswordRequest({ declaredOwnEmail }) {
                   assertGuestSession(primarySession)
                   const {
-                    me: { tokenExpireTime: userSelfDeletion },
+                    iam: { tokenExpireTime: userSelfDeletion },
                     org: { info: orgInfo, addresses: orgAddr },
                   } = await mySec.db.getConfigs()
 

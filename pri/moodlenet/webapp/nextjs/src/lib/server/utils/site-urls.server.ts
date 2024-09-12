@@ -11,7 +11,7 @@ export async function srvSiteUrls() {
   } = getMod()
 
   const {
-    configs: {
+    nextjs: {
       deployment: { basePath, domain, secure },
     },
   } = await app.configs.read()

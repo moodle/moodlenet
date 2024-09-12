@@ -17,7 +17,7 @@ export default async function SimpleLayoutLayout(props: layoutPropsWithChildren)
     },
   } = getMod()
   const {
-    configs: {
+    nextjs: {
       layouts: {
         roots: {
           simple: { footer, header },

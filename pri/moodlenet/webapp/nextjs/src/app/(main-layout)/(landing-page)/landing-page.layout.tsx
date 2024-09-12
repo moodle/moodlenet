@@ -14,12 +14,12 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
     },
   } = getMod()
   const {
-    configs: {
+    nextjs: {
       layouts: {
         pages: { landing },
       },
-      net: { info },
     },
+    net: { info },
   } = await app.configs.read()
 
   const { head, content } = slotsMap(props, landing.slots)

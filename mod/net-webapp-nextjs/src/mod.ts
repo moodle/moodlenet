@@ -14,12 +14,16 @@ export type moodle_net_webapp_nextjs_mod = mod<{
   v0_1: {
     pri: {
       configs: {
-        read(): Promise<{ me: v0_1.Configs; net: net_v0_1.Configs; org: org_v0_1.Configs }>
+        read(): Promise<{ nextjs: v0_1.Configs; net: net_v0_1.Configs; org: org_v0_1.Configs }>
       }
     }
     sec: {
       db: {
-        getConfigs(): Promise<{ me: v0_1.Configs; net: net_v0_1.Configs; org: org_v0_1.Configs }>
+        getConfigs(): Promise<{
+          nextjs: v0_1.Configs
+          net: net_v0_1.Configs
+          org: org_v0_1.Configs
+        }>
       }
     }
     evt: never

@@ -15,7 +15,7 @@ export function iam({ db_struct_0_1 }: { db_struct_0_1: db_struct_0_1 }): sec_fa
             sec: {
               db: {
                 async getConfigs() {
-                  const [{ configs: me }, { configs: org }] = await Promise.all([
+                  const [{ configs: iam }, { configs: org }] = await Promise.all([
                     getModConfigs({ mod_id: ctx.core_mod_id, db_struct_0_1 }),
                     getModConfigs({
                       // FIXME: let mod defs export their own mod_id --- nope check TODO #1
@@ -23,7 +23,7 @@ export function iam({ db_struct_0_1 }: { db_struct_0_1: db_struct_0_1 }): sec_fa
                       db_struct_0_1,
                     }),
                   ])
-                  return { me, org }
+                  return { iam, org }
                 },
                 async changeUserPassword({ newPasswordHash, userId }) {
                   const {

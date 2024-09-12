@@ -29,7 +29,7 @@ export type moodle_iam_mod = mod<{
       }
 
       configs: {
-        read(): Promise<{ me: v0_1.Configs; org: v0_1_org.Configs }>
+        read(): Promise<{ iam: v0_1.Configs; org: v0_1_org.Configs }>
       }
 
       admin: {
@@ -127,7 +127,7 @@ export type moodle_iam_mod = mod<{
       }
 
       db: {
-        getConfigs(): Promise<{ me: v0_1.Configs; org: v0_1_org.Configs }>
+        getConfigs(): Promise<{ iam: v0_1.Configs; org: v0_1_org.Configs }>
 
         changeUserPassword(_: {
           userId: lib_moodle_iam.v0_1.user_id

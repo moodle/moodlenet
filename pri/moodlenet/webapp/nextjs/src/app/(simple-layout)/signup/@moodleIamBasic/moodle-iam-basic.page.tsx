@@ -5,16 +5,16 @@ export default async function MoodleIamBasicPage() {
   const {
     moodle: {
       iam: {
-        v0_1: { pri: mod },
+        v0_1: { pri },
       },
     },
   } = getMod()
-  const { configs } = await mod.configs.read()
+  const { iam } = await pri.configs.read()
 
   return (
     <SignupPanel
       {...{
-        validationConfigs: configs.validations,
+        primaryMsgSchemaConfigs: iam.primaryMsgSchemaConfigs,
       }}
     />
   )

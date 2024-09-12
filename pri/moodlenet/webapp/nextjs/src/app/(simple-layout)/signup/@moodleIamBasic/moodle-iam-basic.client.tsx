@@ -1,5 +1,5 @@
 'use client'
-import { getSchemas, signupFormValues, ValidationConfigs } from '@moodle/mod-iam'
+import { lib_moodle_iam } from '@moodle/lib-domain'
 import { useFormik } from 'formik'
 import { toFormikValidationSchema } from 'zod-formik-adapter'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
@@ -11,15 +11,15 @@ export function SignupIcon() {
 }
 
 export type SignupProps = {
-  validationConfigs: ValidationConfigs
+  primaryMsgSchemaConfigs: lib_moodle_iam.v0_1.PrimaryMsgSchemaConfigs
 }
 
-export default function SignupPanel({ validationConfigs }: SignupProps) {
-  const { signupSchema } = getSchemas(validationConfigs)
+export default function SignupPanel({ primaryMsgSchemaConfigs }: SignupProps) {
+  const { signupSchema } = lib_moodle_iam.v0_1.getPrimarySchemas(primaryMsgSchemaConfigs)
 
-  const form = useFormik<signupFormValues>({
+  const form = useFormik<lib_moodle_iam.v0_1.signupForm>({
     onSubmit: values => signup(values),
-    initialValues: { email: '', password: '', displayName: '' },
+    initialValues: { email: '', password: { __redacted__: '' }, displayName: '' },
     validationSchema: toFormikValidationSchema(signupSchema),
   })
   const shouldShowErrors = !!form.submitCount
@@ -53,9 +53,9 @@ export default function SignupPanel({ validationConfigs }: SignupProps) {
           type="password"
           name="password"
           edit
-          value={form.values.password}
+          value={form.values.password.__redacted__}
           onChange={form.handleChange}
-          error={shouldShowErrors && form.errors.password}
+          error={shouldShowErrors && form.errors.password?.__redacted__}
         />
         <button id="signup-button" type="submit" style={{ display: 'none' }} />
       </form>

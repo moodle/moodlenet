@@ -1,5 +1,5 @@
 'use client'
-import { getSchemas, loginFormValues, ValidationConfigs } from '@moodle/mod-iam'
+import { lib_moodle_iam } from '@moodle/lib-domain'
 import { useFormik } from 'formik'
 import Link from 'next/link'
 import { Trans } from 'react-i18next'
@@ -15,19 +15,19 @@ export function LoginIcon() {
 export type LoginProps = {
   recoverPasswordUrl: string
   wrongCreds: boolean
-  validationConfigs: ValidationConfigs
+  primaryMsgSchemaConfigs: lib_moodle_iam.v0_1.PrimaryMsgSchemaConfigs
 }
 
 export default function LoginPanel({
   wrongCreds,
   recoverPasswordUrl,
-  validationConfigs,
+  primaryMsgSchemaConfigs,
 }: LoginProps) {
-  const { loginSchema } = getSchemas(validationConfigs)
+  const { loginSchema } = lib_moodle_iam.v0_1.getPrimarySchemas(primaryMsgSchemaConfigs)
 
-  const form = useFormik<loginFormValues>({
+  const form = useFormik<lib_moodle_iam.v0_1.loginForm>({
     onSubmit: values => login(values),
-    initialValues: { email: '', password: '' },
+    initialValues: { email: '', password: { __redacted__: '' } },
     validationSchema: toFormikValidationSchema(loginSchema),
   })
   const shouldShowErrors = !!form.submitCount
@@ -52,9 +52,9 @@ export default function LoginPanel({
           type="password"
           name="password"
           edit
-          value={form.values.password}
+          value={form.values.password.__redacted__}
           onChange={form.handleChange}
-          error={shouldShowErrors && form.errors.password}
+          error={shouldShowErrors && form.errors.password?.__redacted__}
         />
         {wrongCreds && (
           <div className="error">

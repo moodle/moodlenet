@@ -12,7 +12,7 @@ export default async function LoginLayout(props: layoutPropsWithChildren) {
     },
   } = getMod()
   const {
-    configs: {
+    nextjs: {
       layouts: {
         pages: { login },
       },

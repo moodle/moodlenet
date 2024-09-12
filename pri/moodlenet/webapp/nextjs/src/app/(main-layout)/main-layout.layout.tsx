@@ -6,38 +6,38 @@ import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'
 import MainHeader, { MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 import { HeaderSearchbox, LoginHeaderButton, SignupHeaderButton } from './main-layout.client'
 
-import { isGuest } from '@moodle/mod-iam'
 import './main-layout.style.scss'
+import { lib_moodle_iam } from '@moodle/lib-domain'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const {
     moodle: {
-      iam: {
-        v0_1: { pri: iam },
-      },
+      // iam: {
+      //   v0_1: { pri: priIam },
+      // },
       netWebappNextjs: {
-        v0_1: { pri: app },
+        v0_1: { pri: priApp },
       },
     },
   } = getMod()
   const {
-    configs: {
+    nextjs: {
       layouts: {
         roots: {
           main: { footer, header },
         },
       },
     },
-  } = await app.configs.read()
-  ////////////////////////////////////////////
-  ////////////////////////////////////////////
-  ////////////////////////////////////////////
+  } = await priApp.configs.read()
+  ///////////////##############################/////////////////////////////
+  ///////////////##############################/////////////////////////////
+  ///////////////##############################/////////////////////////////
   // await iam.userSession.current()
   // await app.userSession.current() and it uses iam ?  <= better
   const { user } = { user: { type: 'guest' } as const }
-  ////////////////////////////////////////////
-  ////////////////////////////////////////////
-  ////////////////////////////////////////////
+  ///////////////##############################/////////////////////////////
+  ///////////////##############################/////////////////////////////
+  ///////////////##############################/////////////////////////////
   return (
     <div className={`main-layout`}>
       <MainHeader slots={headerSlots()} />
@@ -50,7 +50,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const { center, left, right } = slotsMap(props, header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
-    const defaultRights = isGuest(user)
+    const defaultRights = lib_moodle_iam.v0_1.isGuest(user)
       ? [
           <LoginHeaderButton key="login-header-button" />,
           <SignupHeaderButton key="signup-header-button" />,
