@@ -1,12 +1,6 @@
-export interface OrgInfo {
-  name: string
-  logo: string
-  smallLogo: string
-  physicalAddress: string
-  websiteUrl: string
-  copyright: string
-}
+import { OrgAddresses, OrgInfo } from 'lib/domain/src/moodle/org/v0_1'
 
 export interface Configs {
-  orgInfo: OrgInfo
+  info: OrgInfo
+  addresses: OrgAddresses
 }

@@ -1,8 +1,5 @@
+import { lib_moodle_net } from '@moodle/lib-domain'
+
 export interface Configs {
-  info: {
-    title: string
-    subtitle: string
-    logo: string
-    smallLogo: string
-  }
+  info: lib_moodle_net.v0_1.MoodleNetInfo
 }

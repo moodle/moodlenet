@@ -1,4 +1,4 @@
-import { layoutSlotItem } from './types'
+import { layoutSlotItem } from '../types'
 
 export interface RootLayouts {
   main: {

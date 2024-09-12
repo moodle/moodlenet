@@ -1,4 +1,5 @@
 'use client'
+import { lib_moodle_org } from '@moodle/lib-domain'
 import { Button } from '@react-email/button'
 import { Container } from '@react-email/container'
 import { Head } from '@react-email/head'
@@ -8,7 +9,6 @@ import { Preview } from '@react-email/preview'
 import { Section } from '@react-email/section'
 import { Text } from '@react-email/text'
 import React from 'react'
-import { OrgInfo } from '../../types'
 
 export type EmailLayoutActionBtnProps = {
   title: string
@@ -25,11 +25,12 @@ export type EmailLayoutContentProps = {
   action?: EmailLayoutActionBtnProps
 }
 export type EmailLayoutProps = {
-  orgInfo: OrgInfo
+  orgInfo: lib_moodle_org.v0_1.OrgInfo
+  orgAddr: lib_moodle_org.v0_1.OrgAddresses
   content: EmailLayoutContentProps
 }
 
-export function EmailLayout({ orgInfo, content }: EmailLayoutProps) {
+export function EmailLayout({ orgInfo, orgAddr, content }: EmailLayoutProps) {
   return (
     <Html lang="en" className="html">
       <Head />
@@ -37,7 +38,7 @@ export function EmailLayout({ orgInfo, content }: EmailLayoutProps) {
       <div className="body" style={bodyStyle}>
         <Container className="container" style={containerStyle}>
           <Section className="logo-header">
-            <a href={orgInfo.websiteUrl} target="_blank" rel="noreferrer" style={logo}>
+            <a href={orgAddr.websiteUrl} target="_blank" rel="noreferrer" style={logo}>
               <Img width={162} src={orgInfo.logo} />
             </a>
           </Section>
@@ -67,12 +68,12 @@ export function EmailLayout({ orgInfo, content }: EmailLayoutProps) {
         </Container>
         <Container style={containerBottom}>
           <a
-            href={orgInfo.websiteUrl}
+            href={orgAddr.websiteUrl}
             target="_blank"
             rel="noopener noreferrer"
             style={addressButton}
           >
-            {orgInfo.physicalAddress}
+            {orgAddr.physicalAddress}
           </a>
           <div style={copyrightStyle}>
             {orgInfo.copyright}

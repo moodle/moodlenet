@@ -1,10 +1,6 @@
-import { Layouts } from './layouts-configs'
+import { lib_moodle_net_webapp_nextjs } from '@moodle/lib-domain'
 
 export interface Configs {
-  layouts: Layouts
-  deployment: {
-    domain: string
-    secure: boolean
-    basePath: string
-  }
+  layouts: lib_moodle_net_webapp_nextjs.v0_1.Layouts
+  deployment: lib_moodle_net_webapp_nextjs.v0_1.Deployment
 }

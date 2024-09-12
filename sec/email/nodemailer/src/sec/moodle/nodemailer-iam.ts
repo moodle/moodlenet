@@ -18,7 +18,7 @@ export function iam({ env }: { env: Env }): sec_factory {
           v0_1: {
             sec: {
               email: {
-                async sendNow({ body, subject, to, sender }) {
+                async sendNow({ reactBody: body, subject, to, sender }) {
                   send({
                     env,
                     body: { contentType: 'react', element: body },

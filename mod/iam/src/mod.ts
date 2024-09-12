@@ -122,7 +122,7 @@ export type moodle_iam_mod = mod<{
           to: one_or_more_named_or_email_addresses
           sender: named_or_email_address
           subject: string
-          body: ReactElement
+          reactBody: ReactElement
         }): Promise<void>
       }
 

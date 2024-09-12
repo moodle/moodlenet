@@ -1,7 +1,8 @@
+import { lib_moodle_org } from '@moodle/lib-domain'
 import { v0_1 as org_0_1 } from '@moodle/mod-org'
 
 export type SignupEmailConfirmationProps = {
-  orgInfo: org_0_1.OrgInfo
+  orgInfo: lib_moodle_org.v0_1.OrgInfo
   activateAccountUrl: string
   receiverEmail: string
 }

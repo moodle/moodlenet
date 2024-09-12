@@ -1,7 +1,8 @@
+import { lib_moodle_org } from '@moodle/lib-domain'
 import { v0_1 as org_0_1 } from '@moodle/mod-org'
 
 export type DeleteAccountEmailProps = {
-  orgInfo: org_0_1.OrgInfo
+  orgInfo: lib_moodle_org.v0_1.OrgInfo
   deleteAccountUrl: string
   receiverEmail: string
 }

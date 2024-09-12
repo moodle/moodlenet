@@ -11,6 +11,8 @@ import {
 } from './0_1'
 import { userData } from './0_1/types/db/db-user'
 import { lib_moodle_iam } from '@moodle/lib-domain'
+import { getOrgNamedEmailAddress } from 'lib/domain/src/moodle/org/v0_1'
+import { getUserNamedEmailAddress } from 'lib/domain/src/moodle/iam/v0_1'
 
 export function core(): core_factory {
   return ({ primarySession, worker }) => {
@@ -57,7 +59,7 @@ export function core(): core_factory {
                   }
                   const {
                     me: { tokenExpireTime },
-                    org: { orgInfo },
+                    org: { info: orgInfo, addresses: orgAddr },
                   } = await mySec.db.getConfigs()
 
                   const { passwordHash } = await mySec.crypto.hashPassword({
@@ -80,11 +82,12 @@ export function core(): core_factory {
                     receiverEmail: signupForm.email,
                   })
 
-                  const body = org_v0_1.EmailLayout({ orgInfo, content })
-                  mySec.email.sendNow({
-                    body,
-                    to: signupForm.email,
+                  const reactBody = org_v0_1.EmailLayout({ orgInfo, orgAddr, content })
+                  await mySec.email.sendNow({
+                    reactBody,
+                    sender: getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
+                    to: signupForm.email,
                   })
                   return [true, _void]
                 },
@@ -166,7 +169,7 @@ export function core(): core_factory {
                   const session = await async_assertUserAuthenticatedSession(primarySession, worker)
                   const {
                     me: { tokenExpireTime: userSelfDeletion },
-                    org: { orgInfo },
+                    org: { info: orgInfo, addresses: orgAddr },
                   } = await mySec.db.getConfigs()
 
                   const { encrypted: selfDeletionConfirmationToken } =
@@ -184,11 +187,12 @@ export function core(): core_factory {
                     receiverEmail: session.user.contacts.email,
                   })
 
-                  const body = org_v0_1.EmailLayout({ orgInfo, content })
-                  mySec.email.sendNow({
-                    body,
-                    to: session.user.contacts.email,
+                  const reactBody = org_v0_1.EmailLayout({ orgInfo, orgAddr, content })
+                  await mySec.email.sendNow({
+                    reactBody,
+                    sender: getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
+                    to: getUserNamedEmailAddress(session.user),
                   })
                   return
                 },
@@ -219,7 +223,7 @@ export function core(): core_factory {
                   assertGuestSession(primarySession)
                   const {
                     me: { tokenExpireTime: userSelfDeletion },
-                    org: { orgInfo },
+                    org: { info: orgInfo, addresses: orgAddr },
                   } = await mySec.db.getConfigs()
 
                   const [, user] = await mySec.db.getUserByEmail({ email: declaredOwnEmail })
@@ -241,11 +245,12 @@ export function core(): core_factory {
                     receiverEmail: user.contacts.email,
                   })
 
-                  const body = org_v0_1.EmailLayout({ orgInfo, content })
-                  mySec.email.sendNow({
-                    body,
-                    to: user.contacts.email,
+                  const reactBody = org_v0_1.EmailLayout({ orgInfo, orgAddr, content })
+                  await mySec.email.sendNow({
+                    reactBody,
+                    sender: getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
+                    to: getUserNamedEmailAddress(user),
                   })
                   return
                 },
