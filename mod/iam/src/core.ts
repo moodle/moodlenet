@@ -24,7 +24,7 @@ export function core(): core_factory {
                   const userSession = await getUserSession(sessionToken, worker)
                   return { userSession }
                 },
-                async generateSession({ userId }) {
+                async generateUserSession({ userId }) {
                   return generateSessionForUserId(userId, worker)
                 },
               },

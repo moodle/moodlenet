@@ -29,7 +29,7 @@ export type moodle_iam_mod = mod<{
         getUserSession(_: {
           sessionToken: session_token
         }): Promise<{ userSession: lib_moodle_iam.v1_0.user_session }>
-        generateSession(_: {
+        generateUserSession(_: {
           userId: user_id
         }): Promise<ok_ko<lib_moodle_iam.v1_0.session, d_u<{ userNotFound: unknown }, 'reason'>>>
       }
@@ -132,10 +132,12 @@ export type moodle_iam_mod = mod<{
         //
 
         encryptSession(_: {
-          data: v1_0.sessionTokenData
+          data: lib_moodle_iam.v1_0.sessionTokenData
           expiresIn: time_duration_string
         }): Promise<lib_moodle_iam.v1_0.session>
-        decryptSession(_: { token: session_token }): Promise<ok_ko<v1_0.sessionTokenData, void>>
+        decryptSession(_: {
+          token: session_token
+        }): Promise<ok_ko<lib_moodle_iam.v1_0.sessionTokenData, void>>
       }
 
       email: {

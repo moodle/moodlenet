@@ -1,3 +1,2 @@
-import LayoutRoot from './root-layout'
-
-export default LayoutRoot
+import RootLayout from './root-layout'
+export default RootLayout

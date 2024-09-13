@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
         v1_0: {
           pri: {
             signup: { verifyEmail },
-            session: { generateSession },
+            session: { generateUserSession: generateSession },
           },
         },
       },

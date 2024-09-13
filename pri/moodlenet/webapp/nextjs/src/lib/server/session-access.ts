@@ -6,7 +6,7 @@ import type {} from '@moodle/mod-net-webapp-nextjs'
 import { headers } from 'next/headers'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'
-import { getAuthTokenCookie } from './auth'
+import { getAuthTokenCookie, setAuthTokenCookie } from './auth'
 import { lib_moodle_iam } from '@moodle/lib-domain'
 
 const REQUEST_TGT_ENV_VAR = 'MOODLE_NET_NEXTJS_REQUEST_TARGET'
@@ -27,8 +27,30 @@ export function getMod(): Modules {
       )
     },
   })
-
-  // console.log(inspect({ primarySession }, true, 10, true))
+  // FIXME: The following block should refresh the session token before it expires
+  // it's not ready as before actually refreshing the token
+  // we need to check if the token is actually valid
+  // notice `lib_moodle_iam.v1_0.noValidationParseUserSessionToken`
+  // is fast but do not validate!
+  // however we can't set the cookie here :
+  // [Error]: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
+  //
+  // if (primarySession.sessionToken) {
+  //   const [valid, info] = lib_moodle_iam.v1_0.noValidationParseUserSessionToken(
+  //     primarySession.sessionToken,
+  //   )
+  //   if (valid && !info.expired && info.expires.inSecs < 5 * 60) {
+  //     !! VALIDATE IT BEFORE REFRESHING !!
+  //     ap.mod.moodle.iam.v1_0.pri.session
+  //       .generateSession({ userId: info.userData.id })
+  //       .then(([generated, session]) => {
+  //         if (!generated) {
+  //           return
+  //         }
+  //         setAuthTokenCookie(session)
+  //       })
+  //   }
+  // }
 
   return ap.mod
 }

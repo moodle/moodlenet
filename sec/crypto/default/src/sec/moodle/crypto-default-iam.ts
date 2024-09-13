@@ -1,4 +1,5 @@
 import { sec_factory, sec_impl } from '@moodle/domain'
+import { lib_moodle_iam } from '@moodle/lib-domain'
 import { createAlphaNumericId } from '@moodle/lib-id-gen'
 import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import { _void } from '@moodle/lib-types'
@@ -59,18 +60,17 @@ export function iam({
                 //               },
                 async decryptSession({ token }) {
                   // FIXME : CHECKS AUDIENCE ETC >>>
-                  const verifyResult = await joseVerify<{
-                    [p in tokenPayloadProp]: iam_v1_0.sessionTokenData
-                  }>(joseEnv, token)
+                  const verifyResult =
+                    await joseVerify<lib_moodle_iam.v1_0.session_token_payload_data>(joseEnv, token)
 
                   return verifyResult
-                    ? [true, verifyResult.payload[TOKEN_PAYLOAD_PROP]]
+                    ? [true, verifyResult.payload[lib_moodle_iam.v1_0.TOKEN_PAYLOAD_PROP]]
                     : [false, _void]
                 },
                 async encryptSession({ data, expiresIn }) {
-                  const session = await sign({
+                  const session = await sign<lib_moodle_iam.v1_0.session_token_payload_data>({
                     joseEnv,
-                    payload: { [TOKEN_PAYLOAD_PROP]: data },
+                    payload: { [lib_moodle_iam.v1_0.TOKEN_PAYLOAD_PROP]: data },
                     expiresIn /*,stdClaims:{} ,opts:{} */,
                   })
                   return session
@@ -84,5 +84,3 @@ export function iam({
     return iam_sec_impl
   }
 }
-type tokenPayloadProp = 'tokenPayload'
-const TOKEN_PAYLOAD_PROP: tokenPayloadProp = 'tokenPayload'
