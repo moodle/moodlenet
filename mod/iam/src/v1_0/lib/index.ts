@@ -1,1 +1,1 @@
-export * from './assert-session'
+export * from './session'

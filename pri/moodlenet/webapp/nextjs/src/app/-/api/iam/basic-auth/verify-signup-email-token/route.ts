@@ -1,5 +1,8 @@
 import { NextRequest } from 'next/server'
 import { getMod } from '../../../../../../lib/server/session-access'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { setAuthTokenCookie } from '../../../../../../lib/server/auth'
 
 export async function GET(req: NextRequest) {
   const signupEmailVerificationToken = await req.nextUrl.searchParams.get('token')
@@ -14,17 +17,25 @@ export async function GET(req: NextRequest) {
         v1_0: {
           pri: {
             signup: { verifyEmail },
+            session: { generateSessionToken },
           },
         },
       },
     },
   } = getMod()
   const [ok, response] = await verifyEmail({ signupEmailVerificationToken })
-  console.log({ ok, response })
   if (!ok) {
-    return new Response(`error verifying email: reason: ${response.reason}`, {
+    return new Response(`error verifying email. reason: ${response.reason}`, {
       status: 400,
     })
   }
-  return Response.json(response)
+  const [done, respSessionToken] = await generateSessionToken({ userId: response.userId })
+  if (!done) {
+    return new Response(`error generating session token. reason: ${respSessionToken.reason}`, {
+      status: 400,
+    })
+  }
+  setAuthTokenCookie(respSessionToken.sessionToken)
+  revalidatePath('/', 'layout')
+  redirect('/')
 }

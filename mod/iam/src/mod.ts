@@ -30,7 +30,11 @@ export type moodle_iam_mod = mod<{
         getUserSession(_: {
           sessionToken: session_token
         }): Promise<{ userSession: lib_moodle_iam.v1_0.user_session }>
-        // generateSessionToken(_:{ userId:user_id }): Promise<ok_ko<{ sessionToken:session_token }, void>>
+        generateSessionToken(_: {
+          userId: user_id
+        }): Promise<
+          ok_ko<{ sessionToken: session_token }, d_u<{ userNotFound: unknown }, 'reason'>>
+        >
       }
 
       configs: {

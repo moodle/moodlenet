@@ -1,8 +1,9 @@
 import { concrete, Error4xx, primary_session, session_token } from '@moodle/domain'
 import { lib_moodle_iam } from '@moodle/lib-domain'
-import { d_u__d } from '@moodle/lib-types'
+import { d_u, d_u__d, ok_ko } from '@moodle/lib-types'
 import assert from 'assert'
-import { user_session } from 'lib/domain/src/moodle/iam/v1_0'
+import { user_id, user_session } from 'lib/domain/src/moodle/iam/v1_0'
+import { userData } from '../types'
 
 // System Session
 export function isSystemSession(
@@ -76,4 +77,36 @@ export function assertGuestSession(
   assertError: Error4xx = new Error4xx('Unauthorized'),
 ): asserts session is d_u__d<primary_session, 'type', 'user'> {
   assert(isGuestSession(session) && !session.sessionToken, assertError)
+}
+
+// GENERATE SESSION TOKEN
+
+export async function generateSessionTokenForUserId(
+  userId: user_id,
+  worker: concrete<'sec'>,
+): Promise<ok_ko<{ sessionToken: session_token }, d_u<{ userNotFound: unknown }, 'reason'>>> {
+  const mySec = worker.moodle.iam.v1_0.sec
+  const [, dbUser] = await mySec.db.getUserById({ userId })
+  if (!dbUser) {
+    return [false, { reason: 'userNotFound' }]
+  }
+  const sessionToken = await generateSessionTokenForUserData(userData(dbUser), worker)
+  return [true, { sessionToken }]
+}
+export async function generateSessionTokenForUserData(
+  user: lib_moodle_iam.v1_0.UserData,
+  worker: concrete<'sec'>,
+): Promise<session_token> {
+  const mySec = worker.moodle.iam.v1_0.sec
+  const {
+    iam: { tokenExpireTime },
+  } = await mySec.db.getConfigs()
+  const { encrypted: sessionToken } = await mySec.crypto.encryptToken({
+    data: {
+      v1_0: 'userSession',
+      user,
+    },
+    expires: tokenExpireTime.userSession,
+  })
+  return sessionToken
 }

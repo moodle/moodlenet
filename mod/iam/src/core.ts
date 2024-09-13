@@ -1,14 +1,16 @@
-import { core_factory, core_impl, core_process } from '@moodle/domain'
+import { core_factory, core_impl } from '@moodle/domain'
+import { lib_moodle_iam, lib_moodle_org } from '@moodle/lib-domain'
+import { email_moodle_iam, email_moodle_org } from '@moodle/lib-email-templates'
 import { _void, date_time_string } from '@moodle/lib-types'
 import {
   assert_validateUserAuthenticatedSession,
   assert_validateUserAuthenticatedSessionHasRole,
   assertGuestSession,
+  generateSessionTokenForUserData,
+  generateSessionTokenForUserId,
   getUserSession,
 } from './v1_0'
 import { userData } from './v1_0/types/db/db-user'
-import { lib_moodle_org, lib_moodle_iam } from '@moodle/lib-domain'
-import { email_moodle_iam, email_moodle_org } from '@moodle/lib-email-templates'
 export function core(): core_factory {
   return ({ primarySession, worker }) => {
     const mySec = worker.moodle.iam.v1_0.sec
@@ -21,6 +23,9 @@ export function core(): core_factory {
                 async getUserSession({ sessionToken }) {
                   const userSession = await getUserSession(sessionToken, worker)
                   return { userSession }
+                },
+                async generateSessionToken({ userId }) {
+                  return generateSessionTokenForUserId(userId, worker)
                 },
               },
 
@@ -176,13 +181,7 @@ export function core(): core_factory {
                     iam: { tokenExpireTime },
                   } = await mySec.db.getConfigs()
                   const user = userData(dbUser)
-                  const { encrypted: sessionToken } = await mySec.crypto.encryptToken({
-                    data: {
-                      v1_0: 'userSession',
-                      user,
-                    },
-                    expires: tokenExpireTime.userSession,
-                  })
+                  const sessionToken = await generateSessionTokenForUserData(user, worker)
                   return [
                     true,
                     {
