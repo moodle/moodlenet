@@ -1,12 +1,12 @@
-import { CryptoDefaultEnv } from '@moodle/sec-crypto-default'
-import { ArangoDbSecEnv } from '@moodle/sec-db-arango'
-import { NodemailerSecEnv } from '@moodle/sec-email-nodemailer'
-import * as argon2 from 'argon2'
+import type { CryptoDefaultEnv } from '@moodle/sec-crypto-default'
+import type { v1_0 as arango_v1_0 } from '@moodle/sec-db-arango'
+import type { NodemailerSecEnv } from '@moodle/sec-email-nodemailer'
 import { readFileSync } from 'fs'
+// import * as argon2 from 'argon2'
 
-export function get_arango_db_sec_env(): ArangoDbSecEnv {
+export function get_arango_db_sec_env(): arango_v1_0.ArangoDbSecEnv {
   return {
-    dbs_struct_configs_v1_0: {
+    dbs_struct_configs: {
       mng: {
         url: process.env.ARANGODB_MNG_URL ?? 'http://127.0.0.1:8529',
         dbname: process.env.ARANGODB_MNG_NAME ?? 'mng',
@@ -29,7 +29,7 @@ export function get_crypto_default_env(): CryptoDefaultEnv {
       memoryCost: 100000,
       timeCost: 8,
       parallelism: 4,
-      type: argon2.argon2id,
+      type: 2, // argon2.argon2id,
     },
     joseEnv: {
       alg: 'RS256',

@@ -2,11 +2,9 @@ import { sec_factory, sec_impl } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
 import type { v1_0 as iam_v1_0 } from '@moodle/mod-iam'
 import { Document } from 'arangojs/documents'
-import { db_struct_v1_0 } from '../../dbStructure/v1_0'
-import { getModConfigs } from '../../lib/modules'
-import { dbUserDoc2DbUser } from './db-arango-iam-lib/mapping'
+import { v1_0 } from '../..'
 
-export function iam({ db_struct_v1_0 }: { db_struct_v1_0: db_struct_v1_0 }): sec_factory {
+export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec_factory {
   return ctx => {
     const iam_sec_impl: sec_impl = {
       moodle: {
@@ -16,8 +14,8 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: db_struct_v1_0 }): sec
               db: {
                 async getConfigs() {
                   const [{ configs: iam }, { configs: org }] = await Promise.all([
-                    getModConfigs({ mod_id: ctx.core_mod_id, db_struct_v1_0 }),
-                    getModConfigs({
+                    v1_0.getModConfigs({ mod_id: ctx.core_mod_id, db_struct_v1_0 }),
+                    v1_0.getModConfigs({
                       // FIXME: let mod defs export their own mod_id --- nope check TODO #1
                       mod_id: { ns: 'moodle', mod: 'org', version: 'v1_0' },
                       db_struct_v1_0,
@@ -71,7 +69,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: db_struct_v1_0 }): sec
                     { email },
                   )
                   const foundUser = await cursor.next()
-                  return foundUser ? [true, dbUserDoc2DbUser(foundUser)] : [false, _void]
+                  return foundUser ? [true, v1_0.dbUserDoc2DbUser(foundUser)] : [false, _void]
                 },
                 async getUserById({ userId }) {
                   const {
@@ -81,7 +79,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: db_struct_v1_0 }): sec
                   } = db_struct_v1_0
 
                   const foundUser = await user.document({ _key: userId }, { graceful: true })
-                  return foundUser ? [true, dbUserDoc2DbUser(foundUser)] : [false, _void]
+                  return foundUser ? [true, v1_0.dbUserDoc2DbUser(foundUser)] : [false, _void]
                 },
                 async saveNewUser({ newUser }) {
                   const {

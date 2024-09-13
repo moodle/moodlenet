@@ -1,6 +1,6 @@
 import { Configs } from '../'
 
-export const defaultIamConfigs_v1_0: Configs = {
+export const iam_default_configs: Configs = {
   primaryMsgSchemaConfigs: {
     myAccount: {
       selfDeletionRequestReason: {

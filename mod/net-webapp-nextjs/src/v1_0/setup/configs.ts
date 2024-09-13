@@ -1,6 +1,6 @@
 import { Configs } from '../types'
 
-export const defaultNetWebappNextjsConfigs_v1_0: Configs = {
+export const net_webapp_nextjs_default_configs: Configs = {
   deployment: {
     domain: 'localhost:3000',
     basePath: '/',

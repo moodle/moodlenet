@@ -1,9 +1,9 @@
 import { sec_factory } from '@moodle/domain'
 import type * as _ from '@moodle/mod-net'
-import { db_struct_v1_0 } from '../../dbStructure/v1_0'
-import { getModConfigs } from '../../lib/modules'
+import { v1_0 } from '../..'
+import { getModConfigs } from '../../v1_0/lib/modules'
 
-export function net({ db_struct_v1_0 }: { db_struct_v1_0: db_struct_v1_0 }): sec_factory {
+export function net({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec_factory {
   return ctx => {
     return {
       moodle: {
