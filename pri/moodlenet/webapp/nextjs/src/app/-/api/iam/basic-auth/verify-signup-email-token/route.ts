@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
         v1_0: {
           pri: {
             signup: { verifyEmail },
-            session: { generateSessionToken },
+            session: { generateSession },
           },
         },
       },
@@ -29,13 +29,13 @@ export async function GET(req: NextRequest) {
       status: 400,
     })
   }
-  const [done, respSessionToken] = await generateSessionToken({ userId: response.userId })
+  const [done, session] = await generateSession({ userId: response.userId })
   if (!done) {
-    return new Response(`error generating session token. reason: ${respSessionToken.reason}`, {
+    return new Response(`error generating session token. reason: ${session.reason}`, {
       status: 400,
     })
   }
-  setAuthTokenCookie(respSessionToken.sessionToken)
+  setAuthTokenCookie(session)
   revalidatePath('/', 'layout')
   redirect('/')
 }

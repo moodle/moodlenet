@@ -2,7 +2,7 @@ import { lib_moodle_iam } from '@moodle/lib-domain'
 import { d_u, email_address, url } from '@moodle/lib-types'
 import { user_password_hash } from './db'
 
-export type encryptedTokenData = d_u<
+export type sessionTokenData = d_u<
   {
     selfDeletionRequestConfirm: {
       userId: lib_moodle_iam.v1_0.user_id

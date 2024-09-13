@@ -23,7 +23,7 @@ export async function login(loginForm: lib_moodle_iam.v1_0.loginForm): Promise<l
   if (!loginSuccess) {
     return { loginFailed: true }
   }
-  setAuthTokenCookie(loginResponse.sessionToken)
+  setAuthTokenCookie(loginResponse.session)
   revalidatePath('/', 'layout')
   redirect('/')
 }

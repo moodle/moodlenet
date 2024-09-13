@@ -19,7 +19,7 @@ export function assertSystemSession(
 //
 
 export async function getUserSession(sessionToken: session_token, worker: concrete<'sec'>) {
-  const [valid, sessionResp] = await worker.moodle.iam.v1_0.sec.crypto.decryptToken({
+  const [valid, sessionResp] = await worker.moodle.iam.v1_0.sec.crypto.decryptSession({
     token: sessionToken,
   })
   const user_session =
@@ -81,32 +81,33 @@ export function assertGuestSession(
 
 // GENERATE SESSION TOKEN
 
-export async function generateSessionTokenForUserId(
+export async function generateSessionForUserId(
   userId: user_id,
   worker: concrete<'sec'>,
-): Promise<ok_ko<{ sessionToken: session_token }, d_u<{ userNotFound: unknown }, 'reason'>>> {
+): Promise<ok_ko<lib_moodle_iam.v1_0.session, d_u<{ userNotFound: unknown }, 'reason'>>> {
   const mySec = worker.moodle.iam.v1_0.sec
   const [, dbUser] = await mySec.db.getUserById({ userId })
   if (!dbUser) {
     return [false, { reason: 'userNotFound' }]
   }
-  const sessionToken = await generateSessionTokenForUserData(userData(dbUser), worker)
-  return [true, { sessionToken }]
+  const session = await generateSessionForUserData(userData(dbUser), worker)
+  return [true, session]
 }
-export async function generateSessionTokenForUserData(
+
+export async function generateSessionForUserData(
   user: lib_moodle_iam.v1_0.UserData,
   worker: concrete<'sec'>,
-): Promise<session_token> {
+): Promise<lib_moodle_iam.v1_0.session> {
   const mySec = worker.moodle.iam.v1_0.sec
   const {
     iam: { tokenExpireTime },
   } = await mySec.db.getConfigs()
-  const { encrypted: sessionToken } = await mySec.crypto.encryptToken({
+  const session = await mySec.crypto.encryptSession({
     data: {
       v1_0: 'userSession',
       user,
     },
-    expires: tokenExpireTime.userSession,
+    expiresIn: tokenExpireTime.userSession,
   })
-  return sessionToken
+  return session
 }

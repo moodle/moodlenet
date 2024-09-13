@@ -1,4 +1,5 @@
-import { d_u, email_address } from '@moodle/lib-types'
+import { session_token } from '@moodle/domain'
+import { d_u, date_time_string, email_address } from '@moodle/lib-types'
 import { z } from 'zod'
 import type { getPrimarySchemas } from './primary-schemas'
 export type user_id = string
@@ -29,6 +30,10 @@ export interface PrimaryMsgSchemaConfigs {
 }
 
 export type user_session = d_u<UserSessionTypes, 'type'>
+export type session = {
+  token: session_token
+  expires: date_time_string
+}
 
 interface UserSessionTypes {
   guest: GuestSession

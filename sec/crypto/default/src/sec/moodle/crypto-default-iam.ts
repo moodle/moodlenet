@@ -57,23 +57,23 @@ export function iam({
                 //                 }
                 //                 return [true, validationResp]
                 //               },
-                async decryptToken({ token }) {
+                async decryptSession({ token }) {
                   // FIXME : CHECKS AUDIENCE ETC >>>
                   const verifyResult = await joseVerify<{
-                    [p in tokenPayloadProp]: iam_v1_0.encryptedTokenData
+                    [p in tokenPayloadProp]: iam_v1_0.sessionTokenData
                   }>(joseEnv, token)
 
                   return verifyResult
                     ? [true, verifyResult.payload[TOKEN_PAYLOAD_PROP]]
                     : [false, _void]
                 },
-                async encryptToken({ data, expires }) {
-                  const token = await sign({
+                async encryptSession({ data, expiresIn }) {
+                  const session = await sign({
                     joseEnv,
                     payload: { [TOKEN_PAYLOAD_PROP]: data },
-                    expirationTime: expires /*,stdClaims:{} ,opts:{} */,
+                    expiresIn /*,stdClaims:{} ,opts:{} */,
                   })
-                  return { encrypted: token }
+                  return session
                 },
               },
             },

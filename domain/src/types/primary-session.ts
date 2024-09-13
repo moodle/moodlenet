@@ -1,6 +1,6 @@
 import { d_u, map } from '@moodle/lib-types'
-import { platform } from './platform'
 import { mod_id } from './mod'
+import { platform } from './platform'
 
 export type session_token = string
 
@@ -12,7 +12,7 @@ export interface UserPrimarySession {
 
   app: { name: string; pkg: string; version: string }
 
-  // FIXME: ? make it `modTokens: { [mod_name in keyof Modules]?: string | null  }`
+  // FIXME: ? make it `modTokens: { [app_name:string]?: string | null  }`
   sessionToken: session_token | null
   platforms: {
     local: platform

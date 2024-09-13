@@ -1,6 +1,7 @@
+import { time_duration_string } from '@moodle/lib-types'
 import * as jose from 'jose'
+import parseDuration from 'parse-duration'
 import { joseEnv } from './types'
-import { _any, time_duration_string } from '@moodle/lib-types'
 
 export async function getJoseKeys(env: joseEnv) {
   if (env.type !== 'PKCS8') {
@@ -65,27 +66,27 @@ export async function joseVerify<payload>(joseEnv: joseEnv, token: string) {
 // }
 
 export async function sign<payload>({
-  expirationTime,
+  expiresIn,
   payload,
   joseEnv,
   stdClaims = {},
   opts,
 }: {
-  expirationTime: number | time_duration_string
+  expiresIn: number | time_duration_string
   joseEnv: joseEnv
   payload: payload
   stdClaims?: JwtStdClaims
   opts?: jose.SignOptions
 }) {
-  const {/* jwk, */keyLikes} =await  getJoseKeys(joseEnv)
-  const _payload: JwtStdClaims & payload = { ...payload as any}
+  const { /* jwk, */ keyLikes } = await getJoseKeys(joseEnv)
+  const _payload: JwtStdClaims & payload = { ...(payload as any) }
   if (stdClaims.scope !== undefined) {
     _payload.scope = [stdClaims.scope].flat().join(' ')
   }
 
   const signingJwt = new jose.SignJWT(_payload)
     .setProtectedHeader({ alg: joseEnv.alg })
-    .setExpirationTime(expirationTime)
+    .setExpirationTime(expiresIn)
 
   if (stdClaims.issuer !== undefined) {
     signingJwt.setIssuer(stdClaims.issuer)
@@ -105,9 +106,10 @@ export async function sign<payload>({
   if (stdClaims.notBefore !== undefined) {
     signingJwt.setNotBefore(stdClaims.notBefore)
   }
-  const jwt = await signingJwt.sign(keyLikes.private, opts)
-
-  return jwt
+  const token = await signingJwt.sign(keyLikes.private, opts)
+  const expiresInMs = parseDuration(`${expiresIn}`, 'ms') ?? 0
+  const expires = new Date(new Date().getTime() + expiresInMs).toISOString()
+  return { token, expires }
 }
 
 type JwtStdClaims = {

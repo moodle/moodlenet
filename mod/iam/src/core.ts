@@ -6,8 +6,8 @@ import {
   assert_validateUserAuthenticatedSession,
   assert_validateUserAuthenticatedSessionHasRole,
   assertGuestSession,
-  generateSessionTokenForUserData,
-  generateSessionTokenForUserId,
+  generateSessionForUserData,
+  generateSessionForUserId,
   getUserSession,
 } from './v1_0'
 import { userData } from './v1_0/types/db/db-user'
@@ -24,8 +24,8 @@ export function core(): core_factory {
                   const userSession = await getUserSession(sessionToken, worker)
                   return { userSession }
                 },
-                async generateSessionToken({ userId }) {
-                  return generateSessionTokenForUserId(userId, worker)
+                async generateSession({ userId }) {
+                  return generateSessionForUserId(userId, worker)
                 },
               },
 
@@ -85,8 +85,8 @@ export function core(): core_factory {
                     plainPassword: signupForm.password,
                   })
 
-                  const { encrypted: confirmEmailToken } = await mySec.crypto.encryptToken({
-                    expires: tokenExpireTime.signupEmailVerification,
+                  const confirmEmailSession = await mySec.crypto.encryptSession({
+                    expiresIn: tokenExpireTime.signupEmailVerification,
                     data: {
                       v1_0: 'signupRequestEmailVerification',
                       redirectUrl,
@@ -97,7 +97,7 @@ export function core(): core_factory {
                   })
 
                   const content = email_moodle_iam.v1_0.signupEmailConfirmationContent({
-                    activateAccountUrl: `${redirectUrl}?token=${confirmEmailToken}`,
+                    activateAccountUrl: `${redirectUrl}?token=${confirmEmailSession.token}`,
                     orgInfo,
                     receiverEmail: signupForm.email,
                   })
@@ -123,7 +123,7 @@ export function core(): core_factory {
                       roles: { newlyCreatedUserRoles },
                     },
                   } = await mySec.db.getConfigs()
-                  const [verified, tokenData] = await mySec.crypto.decryptToken({
+                  const [verified, tokenData] = await mySec.crypto.decryptSession({
                     token: signupEmailVerificationToken,
                   })
 
@@ -177,15 +177,13 @@ export function core(): core_factory {
                   if (!verified) {
                     return [false, _void]
                   }
-                  const {
-                    iam: { tokenExpireTime },
-                  } = await mySec.db.getConfigs()
+
                   const user = userData(dbUser)
-                  const sessionToken = await generateSessionTokenForUserData(user, worker)
+                  const session = await generateSessionForUserData(user, worker)
                   return [
                     true,
                     {
-                      sessionToken,
+                      session,
                       authenticatedSession: {
                         type: 'authenticated',
                         user,
@@ -204,18 +202,17 @@ export function core(): core_factory {
                     org: { info: orgInfo, addresses: orgAddr },
                   } = await mySec.db.getConfigs()
 
-                  const { encrypted: selfDeletionConfirmationToken } =
-                    await mySec.crypto.encryptToken({
-                      expires: userSelfDeletion.userSelfDeletionRequest,
-                      data: {
-                        v1_0: 'selfDeletionRequestConfirm',
-                        redirectUrl,
-                        userId: session.user.id,
-                      },
-                    })
+                  const selfDeletionConfirmationSession = await mySec.crypto.encryptSession({
+                    expiresIn: userSelfDeletion.userSelfDeletionRequest,
+                    data: {
+                      v1_0: 'selfDeletionRequestConfirm',
+                      redirectUrl,
+                      userId: session.user.id,
+                    },
+                  })
 
                   const content = email_moodle_iam.v1_0.selfDeletionConfirmContent({
-                    deleteAccountUrl: `${redirectUrl}?token=${selfDeletionConfirmationToken}`,
+                    deleteAccountUrl: `${redirectUrl}?token=${selfDeletionConfirmationSession.token}`,
                     orgInfo,
                     receiverEmail: session.user.contacts.email,
                   })
@@ -235,7 +232,7 @@ export function core(): core_factory {
                 },
 
                 async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
-                  const [verified, tokenData] = await mySec.crypto.decryptToken({
+                  const [verified, tokenData] = await mySec.crypto.decryptSession({
                     token: selfDeletionConfirmationToken,
                   })
 
@@ -268,18 +265,17 @@ export function core(): core_factory {
                     return
                   }
 
-                  const { encrypted: resetPasswordConfirmationToken } =
-                    await mySec.crypto.encryptToken({
-                      expires: userSelfDeletion.userSelfDeletionRequest,
-                      data: {
-                        v1_0: 'passwordResetRequest',
-                        redirectUrl,
-                        email: user.contacts.email,
-                      },
-                    })
+                  const resetPasswordConfirmationSession = await mySec.crypto.encryptSession({
+                    expiresIn: userSelfDeletion.userSelfDeletionRequest,
+                    data: {
+                      v1_0: 'passwordResetRequest',
+                      redirectUrl,
+                      email: user.contacts.email,
+                    },
+                  })
 
                   const content = email_moodle_iam.v1_0.resetPasswordContent({
-                    resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationToken}`,
+                    resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
                     receiverEmail: user.contacts.email,
                   })
 

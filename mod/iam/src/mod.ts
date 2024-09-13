@@ -1,21 +1,20 @@
-import { mod, primary_session, session_token, status4xx } from '@moodle/domain'
+import { mod, session_token } from '@moodle/domain'
+import { lib_moodle_iam } from '@moodle/lib-domain'
 import {
   __redacted__,
   d_u,
   d_u__d,
   email_address,
-  one_or_more_named_or_email_addresses,
   named_or_email_address,
   ok_ko,
+  one_or_more_named_or_email_addresses,
   time_duration_string,
   url,
-  date_time_string,
 } from '@moodle/lib-types'
 import { v1_0 as v1_0_org } from '@moodle/mod-org'
+import { user_id } from 'lib/domain/src/moodle/iam/v1_0'
 import { ReactElement } from 'react'
 import { v1_0 } from './'
-import { lib_moodle_iam } from '@moodle/lib-domain'
-import { user_id } from 'lib/domain/src/moodle/iam/v1_0'
 
 declare module '@moodle/domain' {
   export interface MoodleMods {
@@ -30,11 +29,9 @@ export type moodle_iam_mod = mod<{
         getUserSession(_: {
           sessionToken: session_token
         }): Promise<{ userSession: lib_moodle_iam.v1_0.user_session }>
-        generateSessionToken(_: {
+        generateSession(_: {
           userId: user_id
-        }): Promise<
-          ok_ko<{ sessionToken: session_token }, d_u<{ userNotFound: unknown }, 'reason'>>
-        >
+        }): Promise<ok_ko<lib_moodle_iam.v1_0.session, d_u<{ userNotFound: unknown }, 'reason'>>>
       }
 
       configs: {
@@ -77,7 +74,7 @@ export type moodle_iam_mod = mod<{
         login(_: { loginForm: lib_moodle_iam.v1_0.loginForm }): Promise<
           ok_ko<
             {
-              sessionToken: session_token
+              session: lib_moodle_iam.v1_0.session
               authenticatedSession: d_u__d<
                 lib_moodle_iam.v1_0.user_session,
                 'type',
@@ -134,11 +131,11 @@ export type moodle_iam_mod = mod<{
         }): Promise<ok_ko<void, void>>
         //
 
-        encryptToken(_: {
-          data: v1_0.encryptedTokenData
-          expires: time_duration_string
-        }): Promise<{ encrypted: string }>
-        decryptToken(_: { token: string }): Promise<ok_ko<v1_0.encryptedTokenData, void>>
+        encryptSession(_: {
+          data: v1_0.sessionTokenData
+          expiresIn: time_duration_string
+        }): Promise<lib_moodle_iam.v1_0.session>
+        decryptSession(_: { token: session_token }): Promise<ok_ko<v1_0.sessionTokenData, void>>
       }
 
       email: {
