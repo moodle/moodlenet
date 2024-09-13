@@ -67,7 +67,7 @@ export function iam({ db_struct_0_1 }: { db_struct_0_1: db_struct_0_1 }): sec_fa
                     },
                   } = db_struct_0_1
                   const cursor = await db.query<Document<iam_v0_1.DbUser>>(
-                    `FOR user IN ${user.name} FILTER user.email == @email LIMIT 1 RETURN user`,
+                    `FOR user IN ${user.name} FILTER user.contacts.email == @email LIMIT 1 RETURN user`,
                     { email },
                   )
                   const foundUser = await cursor.next()

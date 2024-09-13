@@ -2,8 +2,28 @@
 
 import { lib_moodle_iam } from '@moodle/lib-domain'
 import { redirect } from 'next/navigation'
+import { getMod } from '../../../../lib/server/session-access'
+import { setAuthTokenCookie } from '../../../../lib/server/auth'
+import { revalidatePath } from 'next/cache'
 
-export async function login(loginForm: lib_moodle_iam.v0_1.loginForm) {
-  console.log({ loginForm })
+export type loginResponse = void | { loginFailed: true }
+export async function login(loginForm: lib_moodle_iam.v0_1.loginForm): Promise<loginResponse> {
+  const {
+    moodle: {
+      iam: {
+        v0_1: {
+          pri: {
+            myAccount: { login },
+          },
+        },
+      },
+    },
+  } = getMod()
+  const [loginSuccess, loginResponse] = await login({ loginForm })
+  if (!loginSuccess) {
+    return { loginFailed: true }
+  }
+  setAuthTokenCookie(loginResponse.sessionToken)
+  revalidatePath('/', 'layout')
   redirect('/')
 }

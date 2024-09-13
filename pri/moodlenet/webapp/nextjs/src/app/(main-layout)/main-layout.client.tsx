@@ -8,7 +8,9 @@ import Searchbox from '../../ui/atoms/Searchbox/Searchbox'
 import TertiaryButton from '../../ui/atoms/TertiaryButton/TertiaryButton'
 
 export function LoginHeaderButton() {
-  const { access } = sitepaths()
+  const {
+    pages: { access },
+  } = sitepaths()
   return (
     <Link href={access.login} className="login-button access-button">
       <PrimaryButton>
@@ -22,7 +24,9 @@ export function LoginHeaderButton() {
 }
 
 export function SignupHeaderButton() {
-  const { access } = sitepaths()
+  const {
+    pages: { access },
+  } = sitepaths()
   return (
     <Link href={access.signup} className="signup-button access-button">
       <TertiaryButton>

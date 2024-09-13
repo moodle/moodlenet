@@ -21,11 +21,11 @@ export interface SignupCardProps {
 
 export function SignupCard({ signupMethods, slots }: SignupCardProps) {
   const [currMethod, setCurrMethod] = useState(signupMethods[0])
-  const hrefs = sitepaths()
+  const { pages } = sitepaths()
   return (
     <>
       <Card className="login-card" hover={true}>
-        <Link href={hrefs.access.login}>
+        <Link href={pages.access.login}>
           <Trans>Log in</Trans>
           <CallMadeIcon />
         </Link>

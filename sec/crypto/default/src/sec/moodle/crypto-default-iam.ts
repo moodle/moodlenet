@@ -1,11 +1,9 @@
-import { Error4xx, primary_session, sec_factory, sec_impl, session_token } from '@moodle/domain'
-import { lib_moodle_iam } from '@moodle/lib-domain'
+import { sec_factory, sec_impl } from '@moodle/domain'
 import { createAlphaNumericId } from '@moodle/lib-id-gen'
 import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import { _void } from '@moodle/lib-types'
 import { v0_1 as iam_v0_1 } from '@moodle/mod-iam'
 import * as argon2 from 'argon2'
-import assert from 'assert'
 export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 // ArgonPwdHashOpts : {
 //   memoryCost: 100000,
@@ -43,27 +41,36 @@ export function iam({
                   const verified = await argon2.verify(passwordHash, plainPassword, argonOpts)
                   return [verified, _void]
                 },
-                async assertAuthenticatedUserSession({ token_or_session, onFail }) {
-                  const userSession = await getUserSession(joseEnv, token_or_session)
-                  assert(
-                    userSession.type === 'authenticated',
-                    new Error4xx(onFail?.code_or_desc ?? 'Unauthorized', onFail?.details),
-                  )
-                  return userSession
-                },
-                async getUserSession({ token_or_session }) {
-                  const userSession = await getUserSession(joseEnv, token_or_session)
-                  return { userSession }
-                },
-                async decryptToken({ token }) {
-                  const verifyResult = await joseVerify<iam_v0_1.encryptedTokenData>(joseEnv, token)
 
-                  return verifyResult ? [true, verifyResult.payload] : [false, _void]
+                //               async validateSessionToken({ sessionToken }) {
+                //                 const verifyResult = await joseVerify<lib_moodle_iam.v0_1.UserData>(joseEnv, sessionToken)
+                // if (!verifyResult) {
+                //   return [false, { reason: 'invalid' }]
+                // }
+                // return [true, { type: 'authenticated', user: verifyResult.payload.tokenPayload }]
+                //                 const [valid, validationResp] = await validateAuthenticatedUserSession({
+                //                   joseEnv,
+                //                   sessionToken,
+                //                 })
+                //                 if (!valid) {
+                //                   return [false, { reason: 'invalid' }]
+                //                 }
+                //                 return [true, validationResp]
+                //               },
+                async decryptToken({ token }) {
+                  // FIXME : CHECKS AUDIENCE ETC >>>
+                  const verifyResult = await joseVerify<{
+                    [p in tokenPayloadProp]: iam_v0_1.encryptedTokenData
+                  }>(joseEnv, token)
+
+                  return verifyResult
+                    ? [true, verifyResult.payload[TOKEN_PAYLOAD_PROP]]
+                    : [false, _void]
                 },
                 async encryptToken({ data, expires }) {
                   const token = await sign({
                     joseEnv,
-                    payload: data,
+                    payload: { [TOKEN_PAYLOAD_PROP]: data },
                     expirationTime: expires /*,stdClaims:{} ,opts:{} */,
                   })
                   return { encrypted: token }
@@ -77,29 +84,5 @@ export function iam({
     return iam_sec_impl
   }
 }
-const guest_session: lib_moodle_iam.v0_1.user_session = {
-  type: 'guest',
-}
-
-async function getUserSession(
-  joseEnv: joseEnv,
-  _token_or_session: session_token | primary_session,
-): Promise<lib_moodle_iam.v0_1.user_session> {
-  const token =
-    typeof _token_or_session === 'string'
-      ? _token_or_session
-      : _token_or_session.type === 'user'
-        ? _token_or_session.authToken
-        : null
-  if (!token) {
-    return guest_session
-  }
-  const verifyResult = await joseVerify<lib_moodle_iam.v0_1.UserData>(joseEnv, token)
-  if (!verifyResult) {
-    return guest_session
-  }
-  return {
-    type: 'authenticated',
-    user: verifyResult.payload,
-  }
-}
+type tokenPayloadProp = 'tokenPayload'
+const TOKEN_PAYLOAD_PROP: tokenPayloadProp = 'tokenPayload'

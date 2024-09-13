@@ -20,7 +20,7 @@ export interface LoginCardProps {
 
 export function LoginCard({ loginMethods }: LoginCardProps) {
   const [currMethod, setCurrMethod] = useState(loginMethods[0])
-  const hrefs = sitepaths()
+  const { pages } = sitepaths()
   return (
     <>
       <Card className="login-card">
@@ -60,7 +60,7 @@ export function LoginCard({ loginMethods }: LoginCardProps) {
         </div>
       </Card>
       <Card hover={true}>
-        <Link href={hrefs.access.signup}>
+        <Link href={pages.access.signup}>
           <Trans>Sign up</Trans>
           <CallMadeIcon />
         </Link>

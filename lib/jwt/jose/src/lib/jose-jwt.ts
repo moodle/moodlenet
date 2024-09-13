@@ -23,50 +23,46 @@ export async function getJoseKeys(env: joseEnv) {
   return { jwk, keyLikes }
 }
 
-interface jose_verify_result<payload> {
-  payload: payload
-  /** JWT Claims Set. */
-  claims: jose.JWTPayload
-  /** JWS Protected Header. */
-  protectedHeader: jose.JWTHeaderParameters
-}
 // FIXME: needs checks on audience, issuer, etc. .. and somehow on payload type
 export async function joseVerify<payload>(joseEnv: joseEnv, token: string) {
   const { /* jwk, */ keyLikes } = await getJoseKeys(joseEnv)
   const jwtVerifyResult = await jose.jwtVerify<payload>(token, keyLikes.public).catch(() => null)
-  if (!jwtVerifyResult) {
-    return null
-  }
-
-  return get_jose_verify_result(jwtVerifyResult)
+  return jwtVerifyResult
 }
 
-function get_jose_verify_result<payload>(
-  jwtVerifyResult: jose.JWTVerifyResult<payload>,
-): jose_verify_result<payload> {
-  const claimSet = ['iss', 'sub', 'aud', 'jti', 'nbf', 'exp', 'iat']
+// interface jose_verify_result<payload> {
+//   payload: payload
+//   /** JWT Claims Set. */
+//   claims: jose.JWTPayload
+//   /** JWS Protected Header. */
+//   protectedHeader: jose.JWTHeaderParameters
+// }
+// function get_jose_verify_result<payload>(
+//   jwtVerifyResult: jose.JWTVerifyResult<payload>,
+// ): jose_verify_result<payload> {
+//   const claimSet = ['iss', 'sub', 'aud', 'jti', 'nbf', 'exp', 'iat']
 
-  const { claims, payload } = Object.keys(jwtVerifyResult.payload).reduce(
-    (acc, key) => {
-      const value = jwtVerifyResult.payload[key]
-      if (claimSet.includes(key)) {
-        acc.claims[key] = value
-      } else {
-        ;(acc.payload as _any)[key] = value
-      }
-      return acc
-    },
-    {
-      payload: {} as payload,
-      claims: {} as jose.JWTPayload,
-    },
-  )
-  return {
-    claims,
-    payload,
-    protectedHeader: jwtVerifyResult.protectedHeader,
-  }
-}
+//   const { claims, payload } = Object.keys(jwtVerifyResult.payload).reduce(
+//     (acc, key) => {
+//       const value = jwtVerifyResult.payload[key]
+//       if (claimSet.includes(key)) {
+//         acc.claims[key] = value
+//       } else {
+//         ;(acc.payload as _any)[key] = value
+//       }
+//       return acc
+//     },
+//     {
+//       payload: {} as payload,
+//       claims: {} as jose.JWTPayload,
+//     },
+//   )
+//   return {
+//     claims,
+//     payload,
+//     protectedHeader: jwtVerifyResult.protectedHeader,
+//   }
+// }
 
 export async function sign<payload>({
   expirationTime,

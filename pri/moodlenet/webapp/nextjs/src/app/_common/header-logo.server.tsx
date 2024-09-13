@@ -19,7 +19,9 @@ export async function LayoutHeaderLogo() {
   } = await net.configs.read()
 
   const {
-    site: { landing: landingPath },
+    site: {
+      pages: { landing: landingPath },
+    },
   } = await srvSiteUrls()
   return <HeaderLogo {...{ logo, smallLogo, landingPath }} />
 }

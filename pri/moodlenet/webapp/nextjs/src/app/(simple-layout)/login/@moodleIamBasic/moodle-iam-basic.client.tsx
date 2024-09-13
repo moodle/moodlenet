@@ -7,26 +7,22 @@ import { toFormikValidationSchema } from 'zod-formik-adapter'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../../ui/atoms/TertiaryButton/TertiaryButton'
-import { login } from './moodle-iam-basic.server'
+import { login, loginResponse } from './moodle-iam-basic.server'
+import { useState } from 'react'
 export function LoginIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
 
 export type LoginProps = {
   recoverPasswordUrl: string
-  wrongCreds: boolean
   primaryMsgSchemaConfigs: lib_moodle_iam.v0_1.PrimaryMsgSchemaConfigs
 }
 
-export default function LoginPanel({
-  wrongCreds,
-  recoverPasswordUrl,
-  primaryMsgSchemaConfigs,
-}: LoginProps) {
+export default function LoginPanel({ recoverPasswordUrl, primaryMsgSchemaConfigs }: LoginProps) {
   const { loginSchema } = lib_moodle_iam.v0_1.getPrimarySchemas(primaryMsgSchemaConfigs)
-
+  const [loginResponse, setLoginResponse] = useState<loginResponse>()
   const form = useFormik<lib_moodle_iam.v0_1.loginForm>({
-    onSubmit: values => login(values),
+    onSubmit: values => login(values).then(setLoginResponse),
     initialValues: { email: '', password: { __redacted__: '' } },
     validationSchema: toFormikValidationSchema(loginSchema),
   })
@@ -56,9 +52,9 @@ export default function LoginPanel({
           onChange={form.handleChange}
           error={shouldShowErrors && form.errors.password?.__redacted__}
         />
-        {wrongCreds && (
+        {loginResponse?.loginFailed && (
           <div className="error">
-            <Trans>Incorrect username or password</Trans>
+            <Trans>Incorrect email or password</Trans>
           </div>
         )}
         <button type="submit" style={{ display: 'none' }} />

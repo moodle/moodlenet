@@ -4,16 +4,18 @@ import {
   d_u,
   d_u__d,
   email_address,
-  named_email_address,
   one_or_more_named_or_email_addresses,
   named_or_email_address,
   ok_ko,
   time_duration_string,
+  url,
+  date_time_string,
 } from '@moodle/lib-types'
 import { v0_1 as v0_1_org } from '@moodle/mod-org'
 import { ReactElement } from 'react'
 import { v0_1 } from './'
 import { lib_moodle_iam } from '@moodle/lib-domain'
+import { user_id } from 'lib/domain/src/moodle/iam/v0_1'
 
 declare module '@moodle/domain' {
   export interface MoodleMods {
@@ -25,7 +27,10 @@ export type moodle_iam_mod = mod<{
   v0_1: {
     pri: {
       session: {
-        getCurrentUserSession(): Promise<{ userSession: lib_moodle_iam.v0_1.user_session }>
+        getUserSession(_: {
+          sessionToken: session_token
+        }): Promise<{ userSession: lib_moodle_iam.v0_1.user_session }>
+        // generateSessionToken(_:{ userId:user_id }): Promise<ok_ko<{ sessionToken:session_token }, void>>
       }
 
       configs: {
@@ -46,8 +51,9 @@ export type moodle_iam_mod = mod<{
       }
 
       signup: {
-        apply(_: {
+        request(_: {
           signupForm: lib_moodle_iam.v0_1.signupForm
+          redirectUrl: url
         }): Promise<ok_ko<void, d_u<{ userWithSameEmailExists: unknown }, 'reason'>>>
 
         verifyEmail(_: {
@@ -56,7 +62,7 @@ export type moodle_iam_mod = mod<{
           ok_ko<
             { userId: lib_moodle_iam.v0_1.user_id },
             d_u<
-              { userWithThisEmailExists: unknown; invalidToken: unknown; unknown: unknown },
+              { /* userWithThisEmailExists: unknown; */ invalidToken: unknown; unknown: unknown },
               'reason'
             >
           >
@@ -64,11 +70,21 @@ export type moodle_iam_mod = mod<{
       }
 
       myAccount: {
-        login(_: {
-          loginForm: lib_moodle_iam.v0_1.loginForm
-        }): Promise<ok_ko<{ session: lib_moodle_iam.v0_1.user_session }, void>>
+        login(_: { loginForm: lib_moodle_iam.v0_1.loginForm }): Promise<
+          ok_ko<
+            {
+              sessionToken: session_token
+              authenticatedSession: d_u__d<
+                lib_moodle_iam.v0_1.user_session,
+                'type',
+                'authenticated'
+              >
+            },
+            void
+          >
+        >
 
-        selfDeletionRequest(): Promise<void>
+        selfDeletionRequest(_: { redirectUrl: url }): Promise<void>
 
         confirmSelfDeletionRequest(_: {
           selfDeletionConfirmationToken: string
@@ -80,7 +96,10 @@ export type moodle_iam_mod = mod<{
           >
         >
 
-        resetPasswordRequest(_: { declaredOwnEmail: email_address }): Promise<void>
+        resetPasswordRequest(_: {
+          redirectUrl: url
+          declaredOwnEmail: email_address
+        }): Promise<void>
 
         changePassword(_: {
           currentPassword: __redacted__<v0_1.user_plain_password>
@@ -92,13 +111,14 @@ export type moodle_iam_mod = mod<{
       crypto: {
         generateUserId(): Promise<{ id: lib_moodle_iam.v0_1.user_id }>
 
-        getUserSession(_: {
-          token_or_session: session_token | primary_session
-        }): Promise<{ userSession: lib_moodle_iam.v0_1.user_session }>
-        assertAuthenticatedUserSession(_: {
-          token_or_session: session_token | primary_session
-          onFail?: { code_or_desc: status4xx; details?: string }
-        }): Promise<d_u__d<lib_moodle_iam.v0_1.user_session, 'type', 'authenticated'>>
+        // validateSessionToken(_: {
+        //   sessionToken: session_token
+        // }): Promise<
+        //   ok_ko<
+        //     d_u__d<lib_moodle_iam.v0_1.user_session, 'type', 'authenticated'>,
+        //     d_u<{ invalid: unknown }, 'reason'>
+        //   >
+        // >
 
         // password hashing
         hashPassword(_: {

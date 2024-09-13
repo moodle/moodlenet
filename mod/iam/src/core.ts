@@ -1,9 +1,10 @@
 import { core_factory, core_impl, core_process } from '@moodle/domain'
 import { _void, date_time_string } from '@moodle/lib-types'
 import {
+  assert_validateUserAuthenticatedSession,
+  assert_validateUserAuthenticatedSessionHasRole,
   assertGuestSession,
-  async_assertUserAuthenticatedSession,
-  async_assertUserAuthenticatedSessionHasRole,
+  getUserSession,
 } from './0_1'
 import { userData } from './0_1/types/db/db-user'
 import { lib_moodle_org, lib_moodle_iam } from '@moodle/lib-domain'
@@ -16,6 +17,15 @@ export function core(): core_factory {
         iam: {
           v0_1: {
             pri: {
+              session: {
+                async getUserSession({ sessionToken }) {
+                  const userSession =await getUserSession(
+                    sessionToken,worker
+                  )
+                  return { userSession }
+                },
+              },
+
               configs: {
                 read() {
                   // assertSystemSession(primarySession)
@@ -24,17 +34,29 @@ export function core(): core_factory {
               },
               admin: {
                 async editUserRoles({ userId, roles }) {
-                  await async_assertUserAuthenticatedSessionHasRole(primarySession, 'admin', worker)
+                  await assert_validateUserAuthenticatedSessionHasRole(
+                    primarySession,
+                    'admin',
+                    worker,
+                  )
                   return mySec.db.changeUserRoles({ userId, roles })
                 },
 
                 async searchUsers({ textSearch }) {
-                  await async_assertUserAuthenticatedSessionHasRole(primarySession, 'admin', worker)
+                  await assert_validateUserAuthenticatedSessionHasRole(
+                    primarySession,
+                    'admin',
+                    worker,
+                  )
                   return mySec.db.findUsersByText({ text: textSearch })
                 },
 
                 async deactivateUser({ userId, anonymize, reason }) {
-                  await async_assertUserAuthenticatedSessionHasRole(primarySession, 'admin', worker)
+                  await assert_validateUserAuthenticatedSessionHasRole(
+                    primarySession,
+                    'admin',
+                    worker,
+                  )
                   mySec.db.deactivateUser({
                     userId,
                     for: { v0_1: 'adminRequest', reason },
@@ -43,7 +65,7 @@ export function core(): core_factory {
                 },
               },
               signup: {
-                async apply({ signupForm }) {
+                async request({ signupForm, redirectUrl }) {
                   assertGuestSession(primarySession)
                   const [found] = await mySec.db.getUserByEmail({
                     email: signupForm.email,
@@ -64,6 +86,7 @@ export function core(): core_factory {
                     expires: tokenExpireTime.signupEmailVerification,
                     data: {
                       v0_1: 'signupRequestEmailVerification',
+                      redirectUrl,
                       displayName: signupForm.displayName,
                       email: signupForm.email,
                       passwordHash,
@@ -71,7 +94,7 @@ export function core(): core_factory {
                   })
 
                   const content = email_moodle_iam.v0_1.signupEmailConfirmationContent({
-                    activateAccountUrl: `#######${confirmEmailToken}#########`,
+                    activateAccountUrl: `${redirectUrl}?token=${confirmEmailToken}`,
                     orgInfo,
                     receiverEmail: signupForm.email,
                   })
@@ -147,20 +170,34 @@ export function core(): core_factory {
                   if (!verified) {
                     return [false, _void]
                   }
-
+                  const {
+                    iam: { tokenExpireTime },
+                  } = await mySec.db.getConfigs()
+                  const user = userData(dbUser)
+                  const { encrypted: sessionToken } = await mySec.crypto.encryptToken({
+                    data: {
+                      v0_1: 'userSession',
+                      user,
+                    },
+                    expires: tokenExpireTime.userSession,
+                  })
                   return [
                     true,
                     {
-                      session: {
+                      sessionToken,
+                      authenticatedSession: {
                         type: 'authenticated',
-                        user: userData(dbUser),
+                        user,
                       },
                     },
                   ]
                 },
 
-                async selfDeletionRequest() {
-                  const session = await async_assertUserAuthenticatedSession(primarySession, worker)
+                async selfDeletionRequest({ redirectUrl }) {
+                  const session = await assert_validateUserAuthenticatedSession(
+                    primarySession,
+                    worker,
+                  )
                   const {
                     iam: { tokenExpireTime: userSelfDeletion },
                     org: { info: orgInfo, addresses: orgAddr },
@@ -171,12 +208,13 @@ export function core(): core_factory {
                       expires: userSelfDeletion.userSelfDeletionRequest,
                       data: {
                         v0_1: 'selfDeletionRequestConfirm',
+                        redirectUrl,
                         userId: session.user.id,
                       },
                     })
 
                   const content = email_moodle_iam.v0_1.selfDeletionConfirmContent({
-                    deleteAccountUrl: `#######${selfDeletionConfirmationToken}#########`,
+                    deleteAccountUrl: `${redirectUrl}?token=${selfDeletionConfirmationToken}`,
                     orgInfo,
                     receiverEmail: session.user.contacts.email,
                   })
@@ -213,7 +251,7 @@ export function core(): core_factory {
                   return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
                 },
 
-                async resetPasswordRequest({ declaredOwnEmail }) {
+                async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
                   assertGuestSession(primarySession)
                   const {
                     iam: { tokenExpireTime: userSelfDeletion },
@@ -230,12 +268,13 @@ export function core(): core_factory {
                       expires: userSelfDeletion.userSelfDeletionRequest,
                       data: {
                         v0_1: 'passwordResetRequest',
+                        redirectUrl,
                         email: user.contacts.email,
                       },
                     })
 
                   const content = email_moodle_iam.v0_1.resetPasswordContent({
-                    resetPasswordUrl: `#######${resetPasswordConfirmationToken}#########`,
+                    resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationToken}`,
                     receiverEmail: user.contacts.email,
                   })
 
@@ -250,7 +289,10 @@ export function core(): core_factory {
                 },
 
                 async changePassword({ currentPassword, newPassword }) {
-                  const session = await async_assertUserAuthenticatedSession(primarySession, worker)
+                  const session = await assert_validateUserAuthenticatedSession(
+                    primarySession,
+                    worker,
+                  )
                   const [, user] = await mySec.db.getUserById({ userId: session.user.id })
                   if (!user) {
                     return [false, _void]

@@ -1,11 +1,11 @@
 import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
-import { getMod } from '../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
 import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'
 import MainHeader, { MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 import { HeaderSearchbox, LoginHeaderButton, SignupHeaderButton } from './main-layout.client'
 
 import { lib_moodle_iam } from '@moodle/lib-domain'
+import { getMod } from '../../lib/server/session-access'
 import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
@@ -49,7 +49,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const { center, left, right } = slotsMap(props, header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
-    const defaultRights = lib_moodle_iam.v0_1.isGuest(user)
+    const defaultRights = lib_moodle_iam.v0_1.isGuestSession(user)
       ? [
           <LoginHeaderButton key="login-header-button" />,
           <SignupHeaderButton key="signup-header-button" />,

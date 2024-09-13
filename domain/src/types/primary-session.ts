@@ -13,7 +13,7 @@ export interface UserPrimarySession {
   app: { name: string; pkg: string; version: string }
 
   // FIXME: ? make it `modTokens: { [mod_name in keyof Modules]?: string | null  }`
-  authToken: session_token | null
+  sessionToken: session_token | null
   platforms: {
     local: platform
     remote: platform

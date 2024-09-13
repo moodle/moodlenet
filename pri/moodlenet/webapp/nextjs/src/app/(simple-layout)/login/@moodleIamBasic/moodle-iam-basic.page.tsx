@@ -3,6 +3,7 @@ import LoginPanel from './moodle-iam-basic.client'
 
 export default async function MoodleIamBasicPage() {
   const {
+    /// move to layout ?
     moodle: {
       iam: {
         v0_1: { pri },
@@ -14,7 +15,6 @@ export default async function MoodleIamBasicPage() {
     <LoginPanel
       {...{
         recoverPasswordUrl: '##############',
-        wrongCreds: false,
         primaryMsgSchemaConfigs: iam.primaryMsgSchemaConfigs,
       }}
     />

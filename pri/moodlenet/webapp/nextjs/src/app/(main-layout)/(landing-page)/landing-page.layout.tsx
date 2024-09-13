@@ -1,5 +1,5 @@
 import defaultBackground from '../../../assets/img/default-landing-background.png'
-import { getMod } from '../../../lib/server/session-access'
+import { getMod, getUserSession } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../../lib/server/utils/slots'
 // import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
 import { LandingHeadSearchbox /* , LandingHeadShareButton  */ } from './landing-page.client'
@@ -23,6 +23,7 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
   } = await app.configs.read()
 
   const { head, content } = slotsMap(props, landing.slots)
+  const userSession = await getUserSession()
 
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,
@@ -39,6 +40,7 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
         {/* canCreateDraftContent && <LandingHeadShareButton /> */}
         {head}
       </div>
+      <pre>{JSON.stringify(userSession, null, 2)}</pre>
       {content}
     </div>
   )

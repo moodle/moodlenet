@@ -4,7 +4,9 @@ import { useFormik } from 'formik'
 import { toFormikValidationSchema } from 'zod-formik-adapter'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
-import { signup } from './moodle-iam-basic.server'
+import { signup, signupResponse } from './moodle-iam-basic.server'
+import { useState } from 'react'
+import { Trans } from 'react-i18next'
 
 export function SignupIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
@@ -17,14 +19,14 @@ export type SignupProps = {
 export default function SignupPanel({ primaryMsgSchemaConfigs }: SignupProps) {
   const { signupSchema } = lib_moodle_iam.v0_1.getPrimarySchemas(primaryMsgSchemaConfigs)
 
+  const [signupErr, setSignupErr] = useState<signupResponse>()
   const form = useFormik<lib_moodle_iam.v0_1.signupForm>({
-    onSubmit: values => signup(values),
+    onSubmit: values => signup(values).then(setSignupErr),
     initialValues: { email: '', password: { __redacted__: '' }, displayName: '' },
     validationSchema: toFormikValidationSchema(signupSchema),
   })
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
-  const errMsg = ''
   return (
     <>
       <form action={form.submitForm}>
@@ -68,8 +70,12 @@ export default function SignupPanel({ primaryMsgSchemaConfigs }: SignupProps) {
           Sign up
         </PrimaryButton>
       </div>
-      <div className="general-error" hidden={!errMsg}>
-        {errMsg}
+      <div className="general-error" hidden={!signupErr}>
+        {signupErr?.reason === 'userWithSameEmailExists' ? (
+          <Trans>User with this email already exists</Trans>
+        ) : (
+          <Trans>Signup failed for unknown reasons</Trans>
+        )}
       </div>
     </>
   )

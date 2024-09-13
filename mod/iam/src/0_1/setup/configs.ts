@@ -24,6 +24,7 @@ export const defaultIamConfigs_0_1: Configs = {
     newlyCreatedUserRoles: [],
   },
   tokenExpireTime: {
+    userSession: '2d',
     resetPasswordRequest: '2h',
     signupEmailVerification: '2h',
     userSelfDeletionRequest: '1h',

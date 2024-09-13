@@ -6,7 +6,8 @@ import type {} from '@moodle/mod-net-webapp-nextjs'
 import { headers } from 'next/headers'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'
-import { getAuthToken } from './auth'
+import { getAuthTokenCookie } from './auth'
+import { lib_moodle_iam } from '@moodle/lib-domain'
 
 const REQUEST_TGT_ENV_VAR = 'MOODLE_NET_NEXTJS_REQUEST_TARGET'
 const APP_NAME_ENV_VAR = 'MOODLE_NET_NEXTJS_APP_NAME'
@@ -31,6 +32,21 @@ export function getMod(): Modules {
 
   return ap.mod
 }
+const guest_session: lib_moodle_iam.v0_1.user_session = {
+  type: 'guest',
+}
+
+export async function getUserSession() {
+  const primarySession = getPrimarySession()
+  const userSession = primarySession.sessionToken
+    ? await getMod()
+        .moodle.iam.v0_1.pri.session.getUserSession({
+          sessionToken: primarySession.sessionToken,
+        })
+        .then(({ userSession }) => userSession)
+    : guest_session
+  return userSession
+}
 
 function getPrimarySession() {
   const _headers = headers()
@@ -44,7 +60,7 @@ function getPrimarySession() {
   assert(host, 'No host in headers')
   const primarySession: primary_session = {
     type: 'user',
-    authToken: getAuthToken(),
+    sessionToken: getAuthTokenCookie(),
     app: {
       name: process.env[APP_NAME_ENV_VAR] ?? 'moodlenet-nextjs',
       pkg: 'moodlenet-nextjs',

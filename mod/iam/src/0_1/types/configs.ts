@@ -13,6 +13,7 @@ export interface Configs {
     }
   }
   tokenExpireTime: {
+    userSession: time_duration_string
     signupEmailVerification: time_duration_string
     userSelfDeletionRequest: time_duration_string
     resetPasswordRequest: time_duration_string

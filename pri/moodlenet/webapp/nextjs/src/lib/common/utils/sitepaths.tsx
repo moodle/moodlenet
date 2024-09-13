@@ -1,61 +1,44 @@
 export type sitepaths = ReturnType<typeof sitepaths>
 export function sitepaths(baseUrl = '/') {
   type id = string
+  const _ = (path: string) => `${baseUrl}${path}`
+
+  const DEF_SLUG = '-'
+  const __ =
+    (path: string, sub = '') =>
+    (id: id, slug = DEF_SLUG) =>
+      `${_(path)}/${id}/${slug}${sub}`
+
+  type admin_sub = '/users' | ''
+  const admin = (sub: admin_sub = '') => _(`admin${sub}`)
+
+  type profile_sub = '/settings' | '/bookmarks' | '/followers' | '/following' | ''
+  const profile = (sub: profile_sub = '') => __(`profile`, sub)
+  const resource = __(`resource`)
+  const collection = __(`collection`)
+  const subject = __(`subject`)
 
   return {
-    landing: baseUrl,
-    access: {
-      login: _('login'),
-      signup: _('signup'),
+    apis: {
+      iam: {
+        basicAuth: {
+          verifySignupEmailToken: _('-/api/iam/basic-auth/verify-signup-email-token'),
+        },
+      },
     },
-    homepages: {
-      profile,
-      resource,
-      collection,
-      subject,
+    pages: {
+      landing: baseUrl,
+      access: {
+        login: _('login'),
+        signup: _('signup'),
+      },
+      homepages: {
+        profile,
+        resource,
+        collection,
+        subject,
+      },
+      admin,
     },
-    user: {
-      bookmarks: profileBookmarks,
-      followers: profileFollowers,
-      following: profileFollowing,
-      settings: profileSettings,
-    },
-    admin: {
-      main: admin,
-      users: adminUsers,
-    },
-  }
-  function adminUsers() {
-    return `${admin()}/users`
-  }
-  function admin() {
-    return _(`admin`)
-  }
-  function profileSettings(id: id, slug = '') {
-    return `${profile(id, slug)}/settings`
-  }
-  function profileBookmarks(id: id, slug = '') {
-    return `${profile(id, slug)}/bookmarks`
-  }
-  function profileFollowers(id: id, slug = '') {
-    return `${profile(id, slug)}/followers`
-  }
-  function profileFollowing(id: id, slug = '') {
-    return `${profile(id, slug)}/following`
-  }
-  function profile(id: id, slug = '') {
-    return _(`profile/${id}/${slug}`)
-  }
-  function resource(id: id, slug = '') {
-    return _(`resource/${id}/${slug}`)
-  }
-  function collection(id: id, slug = '') {
-    return _(`collection/${id}/${slug}`)
-  }
-  function subject(id: id, slug = '') {
-    return _(`subject/${id}/${slug}`)
-  }
-  function _(path: string) {
-    return `${baseUrl}${path}`
   }
 }
