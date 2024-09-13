@@ -4,10 +4,7 @@ import { platform } from './platform'
 
 export type session_token = string
 
-export interface UserPrimarySession {
-  domain: {
-    host: string
-  }
+export interface UserPrimarySession extends PriSessionBase {
   connection: d_u<Protocols, 'proto'>
 
   app: { name: string; pkg: string; version: string }
@@ -33,6 +30,17 @@ interface Protocols {
   other: map
 }
 
+
+export interface SystemPrimarySession extends PriSessionBase {
+  mod_id: mod_id
+}
+
+export interface PriSessionBase {
+  domain: {
+    host: string
+  }
+}
+
 export type primary_session = d_u<
   {
     user: UserPrimarySession
@@ -40,9 +48,3 @@ export type primary_session = d_u<
   },
   'type'
 >
-
-export interface SystemPrimarySession {
-  session: {
-    mod_id: mod_id
-  }
-}

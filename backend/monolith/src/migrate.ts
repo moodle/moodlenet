@@ -1,5 +1,15 @@
 import { migrate } from '@moodle/sec-db-arango/migrate'
-import { get_arango_db_sec_env } from './env'
+import { getEnv } from './getEnv'
 
-const arangoDbSecEnv = get_arango_db_sec_env()
-migrate(arangoDbSecEnv).then(console.log)
+getEnv({
+  type: 'system',
+  mod_id: {
+    ns: 'moodle',
+    mod: 'monolith',
+    version: '1.0.0',
+  },
+  domain: { host: process.env.MOODLE_MONOLITH_MIGRATE_DOMAIN_HOST ?? 'http://127.0.0.1' },
+})
+  .then(env => migrate(env.arango_db))
+  .then(console.log)
+  .catch(console.error)
