@@ -1,8 +1,8 @@
-import { v0_1 as net_v0_1 } from '@moodle/mod-net'
-import { v0_1 as org_v0_1 } from '@moodle/mod-org'
+import { v1_0 as net_v1_0 } from '@moodle/mod-net'
+import { v1_0 as org_v1_0 } from '@moodle/mod-org'
 
 import { mod } from '@moodle/domain'
-import { v0_1 } from './'
+import { v1_0 } from './'
 
 declare module '@moodle/domain' {
   export interface MoodleMods {
@@ -11,18 +11,18 @@ declare module '@moodle/domain' {
 }
 
 export type moodle_net_webapp_nextjs_mod = mod<{
-  v0_1: {
+  v1_0: {
     pri: {
       configs: {
-        read(): Promise<{ nextjs: v0_1.Configs; net: net_v0_1.Configs; org: org_v0_1.Configs }>
+        read(): Promise<{ nextjs: v1_0.Configs; net: net_v1_0.Configs; org: org_v1_0.Configs }>
       }
     }
     sec: {
       db: {
         getConfigs(): Promise<{
-          nextjs: v0_1.Configs
-          net: net_v0_1.Configs
-          org: org_v0_1.Configs
+          nextjs: v1_0.Configs
+          net: net_v1_0.Configs
+          org: org_v1_0.Configs
         }>
       }
     }

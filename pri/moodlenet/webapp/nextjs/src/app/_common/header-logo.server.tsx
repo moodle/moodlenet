@@ -7,7 +7,7 @@ export async function LayoutHeaderLogo() {
   const {
     moodle: {
       net: {
-        v0_1: { pri: net },
+        v1_0: { pri: net },
       },
     },
   } = getMod()

@@ -12,10 +12,10 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const {
     moodle: {
       // iam: {
-      //   v0_1: { pri: priIam },
+      //   v1_0: { pri: priIam },
       // },
       netWebappNextjs: {
-        v0_1: { pri: priApp },
+        v1_0: { pri: priApp },
       },
     },
   } = getMod()
@@ -49,7 +49,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const { center, left, right } = slotsMap(props, header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
-    const defaultRights = lib_moodle_iam.v0_1.isGuestSession(user)
+    const defaultRights = lib_moodle_iam.v1_0.isGuestSession(user)
       ? [
           <LoginHeaderButton key="login-header-button" />,
           <SignupHeaderButton key="signup-header-button" />,

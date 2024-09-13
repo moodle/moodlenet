@@ -2,7 +2,7 @@ import { sec_factory, sec_impl } from '@moodle/domain'
 import { createAlphaNumericId } from '@moodle/lib-id-gen'
 import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import { _void } from '@moodle/lib-types'
-import { v0_1 as iam_v0_1 } from '@moodle/mod-iam'
+import { v1_0 as iam_v1_0 } from '@moodle/mod-iam'
 import * as argon2 from 'argon2'
 export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 // ArgonPwdHashOpts : {
@@ -23,7 +23,7 @@ export function iam({
     const iam_sec_impl: sec_impl = {
       moodle: {
         iam: {
-          v0_1: {
+          v1_0: {
             sec: {
               crypto: {
                 async generateUserId() {
@@ -43,7 +43,7 @@ export function iam({
                 },
 
                 //               async validateSessionToken({ sessionToken }) {
-                //                 const verifyResult = await joseVerify<lib_moodle_iam.v0_1.UserData>(joseEnv, sessionToken)
+                //                 const verifyResult = await joseVerify<lib_moodle_iam.v1_0.UserData>(joseEnv, sessionToken)
                 // if (!verifyResult) {
                 //   return [false, { reason: 'invalid' }]
                 // }
@@ -60,7 +60,7 @@ export function iam({
                 async decryptToken({ token }) {
                   // FIXME : CHECKS AUDIENCE ETC >>>
                   const verifyResult = await joseVerify<{
-                    [p in tokenPayloadProp]: iam_v0_1.encryptedTokenData
+                    [p in tokenPayloadProp]: iam_v1_0.encryptedTokenData
                   }>(joseEnv, token)
 
                   return verifyResult

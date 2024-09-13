@@ -15,13 +15,13 @@ export function LoginIcon() {
 
 export type LoginProps = {
   recoverPasswordUrl: string
-  primaryMsgSchemaConfigs: lib_moodle_iam.v0_1.PrimaryMsgSchemaConfigs
+  primaryMsgSchemaConfigs: lib_moodle_iam.v1_0.PrimaryMsgSchemaConfigs
 }
 
 export default function LoginPanel({ recoverPasswordUrl, primaryMsgSchemaConfigs }: LoginProps) {
-  const { loginSchema } = lib_moodle_iam.v0_1.getPrimarySchemas(primaryMsgSchemaConfigs)
+  const { loginSchema } = lib_moodle_iam.v1_0.getPrimarySchemas(primaryMsgSchemaConfigs)
   const [loginResponse, setLoginResponse] = useState<loginResponse>()
-  const form = useFormik<lib_moodle_iam.v0_1.loginForm>({
+  const form = useFormik<lib_moodle_iam.v1_0.loginForm>({
     onSubmit: values => login(values).then(setLoginResponse),
     initialValues: { email: '', password: { __redacted__: '' } },
     validationSchema: toFormikValidationSchema(loginSchema),

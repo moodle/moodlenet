@@ -32,7 +32,7 @@ export function getMod(): Modules {
 
   return ap.mod
 }
-const guest_session: lib_moodle_iam.v0_1.user_session = {
+const guest_session: lib_moodle_iam.v1_0.user_session = {
   type: 'guest',
 }
 
@@ -40,7 +40,7 @@ export async function getUserSession() {
   const primarySession = getPrimarySession()
   const userSession = primarySession.sessionToken
     ? await getMod()
-        .moodle.iam.v0_1.pri.session.getUserSession({
+        .moodle.iam.v1_0.pri.session.getUserSession({
           sessionToken: primarySession.sessionToken,
         })
         .then(({ userSession }) => userSession)

@@ -13,14 +13,14 @@ export function SignupIcon() {
 }
 
 export type SignupProps = {
-  primaryMsgSchemaConfigs: lib_moodle_iam.v0_1.PrimaryMsgSchemaConfigs
+  primaryMsgSchemaConfigs: lib_moodle_iam.v1_0.PrimaryMsgSchemaConfigs
 }
 
 export default function SignupPanel({ primaryMsgSchemaConfigs }: SignupProps) {
-  const { signupSchema } = lib_moodle_iam.v0_1.getPrimarySchemas(primaryMsgSchemaConfigs)
+  const { signupSchema } = lib_moodle_iam.v1_0.getPrimarySchemas(primaryMsgSchemaConfigs)
 
   const [signupErr, setSignupErr] = useState<signupResponse>()
-  const form = useFormik<lib_moodle_iam.v0_1.signupForm>({
+  const form = useFormik<lib_moodle_iam.v1_0.signupForm>({
     onSubmit: values => signup(values).then(setSignupErr),
     initialValues: { email: '', password: { __redacted__: '' }, displayName: '' },
     validationSchema: toFormikValidationSchema(signupSchema),

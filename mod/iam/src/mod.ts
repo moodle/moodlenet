@@ -11,11 +11,11 @@ import {
   url,
   date_time_string,
 } from '@moodle/lib-types'
-import { v0_1 as v0_1_org } from '@moodle/mod-org'
+import { v1_0 as v1_0_org } from '@moodle/mod-org'
 import { ReactElement } from 'react'
-import { v0_1 } from './'
+import { v1_0 } from './'
 import { lib_moodle_iam } from '@moodle/lib-domain'
-import { user_id } from 'lib/domain/src/moodle/iam/v0_1'
+import { user_id } from 'lib/domain/src/moodle/iam/v1_0'
 
 declare module '@moodle/domain' {
   export interface MoodleMods {
@@ -24,27 +24,27 @@ declare module '@moodle/domain' {
 }
 
 export type moodle_iam_mod = mod<{
-  v0_1: {
+  v1_0: {
     pri: {
       session: {
         getUserSession(_: {
           sessionToken: session_token
-        }): Promise<{ userSession: lib_moodle_iam.v0_1.user_session }>
+        }): Promise<{ userSession: lib_moodle_iam.v1_0.user_session }>
         // generateSessionToken(_:{ userId:user_id }): Promise<ok_ko<{ sessionToken:session_token }, void>>
       }
 
       configs: {
-        read(): Promise<{ iam: v0_1.Configs; org: v0_1_org.Configs }>
+        read(): Promise<{ iam: v1_0.Configs; org: v1_0_org.Configs }>
       }
 
       admin: {
         editUserRoles(_: {
-          userId: lib_moodle_iam.v0_1.user_id
-          roles: lib_moodle_iam.v0_1.user_role[]
+          userId: lib_moodle_iam.v1_0.user_id
+          roles: lib_moodle_iam.v1_0.user_role[]
         }): Promise<ok_ko<void, void>>
-        searchUsers(_: { textSearch: string }): Promise<{ users: v0_1.DbUser[] }>
+        searchUsers(_: { textSearch: string }): Promise<{ users: v1_0.DbUser[] }>
         deactivateUser(_: {
-          userId: lib_moodle_iam.v0_1.user_id
+          userId: lib_moodle_iam.v1_0.user_id
           reason: string
           anonymize: boolean
         }): Promise<void>
@@ -52,7 +52,7 @@ export type moodle_iam_mod = mod<{
 
       signup: {
         request(_: {
-          signupForm: lib_moodle_iam.v0_1.signupForm
+          signupForm: lib_moodle_iam.v1_0.signupForm
           redirectUrl: url
         }): Promise<ok_ko<void, d_u<{ userWithSameEmailExists: unknown }, 'reason'>>>
 
@@ -60,7 +60,7 @@ export type moodle_iam_mod = mod<{
           signupEmailVerificationToken: string
         }): Promise<
           ok_ko<
-            { userId: lib_moodle_iam.v0_1.user_id },
+            { userId: lib_moodle_iam.v1_0.user_id },
             d_u<
               { /* userWithThisEmailExists: unknown; */ invalidToken: unknown; unknown: unknown },
               'reason'
@@ -70,12 +70,12 @@ export type moodle_iam_mod = mod<{
       }
 
       myAccount: {
-        login(_: { loginForm: lib_moodle_iam.v0_1.loginForm }): Promise<
+        login(_: { loginForm: lib_moodle_iam.v1_0.loginForm }): Promise<
           ok_ko<
             {
               sessionToken: session_token
               authenticatedSession: d_u__d<
-                lib_moodle_iam.v0_1.user_session,
+                lib_moodle_iam.v1_0.user_session,
                 'type',
                 'authenticated'
               >
@@ -102,39 +102,39 @@ export type moodle_iam_mod = mod<{
         }): Promise<void>
 
         changePassword(_: {
-          currentPassword: __redacted__<v0_1.user_plain_password>
-          newPassword: __redacted__<v0_1.user_plain_password>
+          currentPassword: __redacted__<v1_0.user_plain_password>
+          newPassword: __redacted__<v1_0.user_plain_password>
         }): Promise<ok_ko<void, void>>
       }
     }
     sec: {
       crypto: {
-        generateUserId(): Promise<{ id: lib_moodle_iam.v0_1.user_id }>
+        generateUserId(): Promise<{ id: lib_moodle_iam.v1_0.user_id }>
 
         // validateSessionToken(_: {
         //   sessionToken: session_token
         // }): Promise<
         //   ok_ko<
-        //     d_u__d<lib_moodle_iam.v0_1.user_session, 'type', 'authenticated'>,
+        //     d_u__d<lib_moodle_iam.v1_0.user_session, 'type', 'authenticated'>,
         //     d_u<{ invalid: unknown }, 'reason'>
         //   >
         // >
 
         // password hashing
         hashPassword(_: {
-          plainPassword: __redacted__<v0_1.user_plain_password>
+          plainPassword: __redacted__<v1_0.user_plain_password>
         }): Promise<{ passwordHash: string }>
         verifyUserPasswordHash(_: {
-          plainPassword: __redacted__<v0_1.user_plain_password>
+          plainPassword: __redacted__<v1_0.user_plain_password>
           passwordHash: string
         }): Promise<ok_ko<void, void>>
         //
 
         encryptToken(_: {
-          data: v0_1.encryptedTokenData
+          data: v1_0.encryptedTokenData
           expires: time_duration_string
         }): Promise<{ encrypted: string }>
-        decryptToken(_: { token: string }): Promise<ok_ko<v0_1.encryptedTokenData, void>>
+        decryptToken(_: { token: string }): Promise<ok_ko<v1_0.encryptedTokenData, void>>
       }
 
       email: {
@@ -147,61 +147,61 @@ export type moodle_iam_mod = mod<{
       }
 
       db: {
-        getConfigs(): Promise<{ iam: v0_1.Configs; org: v0_1_org.Configs }>
+        getConfigs(): Promise<{ iam: v1_0.Configs; org: v1_0_org.Configs }>
 
         changeUserPassword(_: {
-          userId: lib_moodle_iam.v0_1.user_id
+          userId: lib_moodle_iam.v1_0.user_id
           newPasswordHash: string
         }): Promise<ok_ko<void, void>>
 
         deactivateUser(_: {
-          userId: lib_moodle_iam.v0_1.user_id
+          userId: lib_moodle_iam.v1_0.user_id
           anonymize: boolean
-          for: v0_1.user_deactivation_reason
+          for: v1_0.user_deactivation_reason
         }): Promise<ok_ko<void, void>>
 
         getActiveUsersNotLoggedInFor(_: {
           time: time_duration_string
           inactiveNotificationSent: boolean
-        }): Promise<{ inactiveUsers: v0_1.DbUser[] }>
+        }): Promise<{ inactiveUsers: v1_0.DbUser[] }>
 
-        getUserById(_: { userId: lib_moodle_iam.v0_1.user_id }): Promise<ok_ko<v0_1.DbUser, void>>
-        getUserByEmail(_: { email: email_address }): Promise<ok_ko<v0_1.DbUser, void>>
+        getUserById(_: { userId: lib_moodle_iam.v1_0.user_id }): Promise<ok_ko<v1_0.DbUser, void>>
+        getUserByEmail(_: { email: email_address }): Promise<ok_ko<v1_0.DbUser, void>>
 
-        saveNewUser(_: { newUser: v0_1.DbUser }): Promise<ok_ko<void, void>>
+        saveNewUser(_: { newUser: v1_0.DbUser }): Promise<ok_ko<void, void>>
 
         changeUserRoles(_: {
-          userId: lib_moodle_iam.v0_1.user_id
-          roles: lib_moodle_iam.v0_1.user_role[]
+          userId: lib_moodle_iam.v1_0.user_id
+          roles: lib_moodle_iam.v1_0.user_role[]
         }): Promise<ok_ko<void, void>>
 
         findUsersByText(_: {
           text: string
           includeDeactivated?: boolean
-        }): Promise<{ users: v0_1.DbUser[] }>
+        }): Promise<{ users: v1_0.DbUser[] }>
       }
     }
     evt: {
       userBase: {
         userDeactivated(_: {
-          user: lib_moodle_iam.v0_1.UserData
-          reason: v0_1.user_deactivation_reason
+          user: lib_moodle_iam.v1_0.UserData
+          reason: v1_0.user_deactivation_reason
           anonymized: boolean
         }): unknown
-        newUserCreated(_: { user: lib_moodle_iam.v0_1.UserData }): unknown
+        newUserCreated(_: { user: lib_moodle_iam.v1_0.UserData }): unknown
       }
       userSecurity: {
-        userPasswordChanged(_: { userId: lib_moodle_iam.v0_1.user_id }): unknown
+        userPasswordChanged(_: { userId: lib_moodle_iam.v1_0.user_id }): unknown
       }
       userRoles: {
         userRolesUpdated(_: {
-          userId: lib_moodle_iam.v0_1.user_id
-          roles: lib_moodle_iam.v0_1.user_role[]
-          oldRoles: lib_moodle_iam.v0_1.user_role[]
+          userId: lib_moodle_iam.v1_0.user_id
+          roles: lib_moodle_iam.v1_0.user_role[]
+          oldRoles: lib_moodle_iam.v1_0.user_role[]
         }): unknown
       }
       userActivity: {
-        userLoggedIn(_: { userId: lib_moodle_iam.v0_1.user_id }): unknown
+        userLoggedIn(_: { userId: lib_moodle_iam.v1_0.user_id }): unknown
       }
     }
   }

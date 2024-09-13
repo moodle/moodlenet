@@ -1,5 +1,5 @@
 import { mod } from '@moodle/domain'
-import { v0_1 } from './'
+import { v1_0 } from './'
 import { _t } from '@moodle/lib-types'
 
 declare module '@moodle/domain' {
@@ -9,18 +9,18 @@ declare module '@moodle/domain' {
 }
 
 interface MoodleNetMod {
-  v0_1: {
+  v1_0: {
     pri: {
       configs: {
         read(): Promise<{
-          configs: v0_1.Configs
+          configs: v1_0.Configs
         }>
       }
     }
     sec: {
       db: {
         getConfigs(): Promise<{
-          configs: v0_1.Configs
+          configs: v1_0.Configs
         }>
       }
     }

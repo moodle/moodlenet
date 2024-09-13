@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   const {
     moodle: {
       iam: {
-        v0_1: {
+        v1_0: {
           pri: {
             signup: { verifyEmail },
           },
@@ -26,5 +26,5 @@ export async function GET(req: NextRequest) {
       status: 400,
     })
   }
-  return response
+  return Response.json(response)
 }

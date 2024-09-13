@@ -15,7 +15,7 @@ export function iam(env: NodemailerSecEnv): sec_factory {
     const iam_sec_impl: sec_impl = {
       moodle: {
         iam: {
-          v0_1: {
+          v1_0: {
             sec: {
               email: {
                 async sendNow({ reactBody: body, subject, to, sender }) {

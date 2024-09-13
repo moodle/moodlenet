@@ -1,28 +1,28 @@
 import { Database } from 'arangojs'
-import struct_0_1, { db_struct_0_1 } from './dbStructure/v0_1'
+import struct_v1_0, { db_struct_v1_0 } from './dbStructure/v1_0'
 import * as migrations from './migrate/from'
 import { ArangoDbSecEnv } from './types'
 
 const TARGET_V = migrations.init.VERSION
 
-export async function migrate({ dbs_struct_configs_0_1 }: ArangoDbSecEnv): Promise<string> {
-  const db_struct_0_1 = struct_0_1(dbs_struct_configs_0_1)
-  const self_db_exists = await db_struct_0_1.mng.db.exists()
+export async function migrate({ dbs_struct_configs_v1_0 }: ArangoDbSecEnv): Promise<string> {
+  const db_struct_v1_0 = struct_v1_0(dbs_struct_configs_v1_0)
+  const self_db_exists = await db_struct_v1_0.mng.db.exists()
   if (!self_db_exists) {
-    const mng_db_sys = new Database(db_struct_0_1.dbs_struct_configs_0_1.mng.url)
-    await mng_db_sys.createDatabase(db_struct_0_1.mng.db.name)
-    await db_struct_0_1.mng.coll.migrations.create()
+    const mng_db_sys = new Database(db_struct_v1_0.dbs_struct_configs_v1_0.mng.url)
+    await mng_db_sys.createDatabase(db_struct_v1_0.mng.db.name)
+    await db_struct_v1_0.mng.coll.migrations.create()
   }
-  return upgrade({ db_struct_0_1 })
+  return upgrade({ db_struct_v1_0 })
 }
 
 export async function upgrade({
-  db_struct_0_1,
+  db_struct_v1_0,
 }: {
-  db_struct_0_1: db_struct_0_1
+  db_struct_v1_0: db_struct_v1_0
 }): Promise<string> {
   const from_v: keyof typeof migrations | typeof TARGET_V =
-    (await db_struct_0_1.mng.coll.migrations.document('latest', { graceful: true }))?.current ??
+    (await db_struct_v1_0.mng.coll.migrations.document('latest', { graceful: true }))?.current ??
     'init'
 
   if (from_v === TARGET_V) {
@@ -35,9 +35,9 @@ export async function upgrade({
     throw new Error(`migration from [${from_v}] not found`)
   }
 
-  const migrationDoc = await migrateMod.migrate({ db_struct_0_1 })
+  const migrationDoc = await migrateMod.migrate({ db_struct_v1_0 })
 
-  await db_struct_0_1.mng.coll.migrations.saveAll(
+  await db_struct_v1_0.mng.coll.migrations.saveAll(
     [
       {
         _key: `${migrationDoc.previous}::${migrationDoc.current}`,
@@ -52,5 +52,5 @@ export async function upgrade({
   )
 
   console.log(`migrated arangodb persistence from [${from_v}] to [${migrateMod.VERSION}]`)
-  return upgrade({ db_struct_0_1 })
+  return upgrade({ db_struct_v1_0 })
 }

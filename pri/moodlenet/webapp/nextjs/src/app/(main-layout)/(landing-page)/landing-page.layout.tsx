@@ -9,7 +9,7 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
   const {
     moodle: {
       netWebappNextjs: {
-        v0_1: { pri: app },
+        v1_0: { pri: app },
       },
     },
   } = getMod()

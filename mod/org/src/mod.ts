@@ -1,6 +1,6 @@
 import { mod } from '@moodle/domain'
 import { _t } from '@moodle/lib-types'
-import { v0_1 } from './'
+import { v1_0 } from './'
 
 declare module '@moodle/domain' {
   export interface MoodleMods {
@@ -9,18 +9,18 @@ declare module '@moodle/domain' {
 }
 
 interface MoodleOrgMod {
-  v0_1: {
+  v1_0: {
     pri: {
       configs: {
         read(): Promise<{
-          configs: v0_1.Configs
+          configs: v1_0.Configs
         }>
       }
     }
     sec: {
       db: {
         getConfigs(): Promise<{
-          configs: v0_1.Configs
+          configs: v1_0.Configs
         }>
       }
     }

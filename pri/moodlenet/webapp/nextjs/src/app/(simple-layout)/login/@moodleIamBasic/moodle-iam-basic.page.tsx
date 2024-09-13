@@ -6,7 +6,7 @@ export default async function MoodleIamBasicPage() {
     /// move to layout ?
     moodle: {
       iam: {
-        v0_1: { pri },
+        v1_0: { pri },
       },
     },
   } = getMod()

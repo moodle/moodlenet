@@ -2,11 +2,11 @@ import { core_factory } from '@moodle/domain'
 
 export function core(): core_factory {
   return ({ worker }) => {
-    const mySec = worker.moodle.netWebappNextjs.v0_1.sec
+    const mySec = worker.moodle.netWebappNextjs.v1_0.sec
     return {
       moodle: {
         netWebappNextjs: {
-          v0_1: {
+          v1_0: {
             pri: {
               configs: {
                 async read() {

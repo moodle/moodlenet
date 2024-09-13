@@ -5,7 +5,7 @@ export default async function MoodleIamBasicPage() {
   const {
     moodle: {
       iam: {
-        v0_1: { pri },
+        v1_0: { pri },
       },
     },
   } = getMod()

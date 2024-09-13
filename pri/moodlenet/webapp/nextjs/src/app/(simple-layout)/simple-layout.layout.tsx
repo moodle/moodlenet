@@ -12,7 +12,7 @@ export default async function SimpleLayoutLayout(props: layoutPropsWithChildren)
   const {
     moodle: {
       netWebappNextjs: {
-        v0_1: { pri: app },
+        v1_0: { pri: app },
       },
     },
   } = getMod()

@@ -6,7 +6,7 @@ import { readFileSync } from 'fs'
 
 export function get_arango_db_sec_env(): ArangoDbSecEnv {
   return {
-    dbs_struct_configs_0_1: {
+    dbs_struct_configs_v1_0: {
       mng: {
         url: process.env.ARANGODB_MNG_URL ?? 'http://127.0.0.1:8529',
         dbname: process.env.ARANGODB_MNG_NAME ?? 'mng',

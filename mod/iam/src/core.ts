@@ -5,23 +5,21 @@ import {
   assert_validateUserAuthenticatedSessionHasRole,
   assertGuestSession,
   getUserSession,
-} from './0_1'
-import { userData } from './0_1/types/db/db-user'
+} from './v1_0'
+import { userData } from './v1_0/types/db/db-user'
 import { lib_moodle_org, lib_moodle_iam } from '@moodle/lib-domain'
 import { email_moodle_iam, email_moodle_org } from '@moodle/lib-email-templates'
 export function core(): core_factory {
   return ({ primarySession, worker }) => {
-    const mySec = worker.moodle.iam.v0_1.sec
+    const mySec = worker.moodle.iam.v1_0.sec
     const core_impl: core_impl = {
       moodle: {
         iam: {
-          v0_1: {
+          v1_0: {
             pri: {
               session: {
                 async getUserSession({ sessionToken }) {
-                  const userSession =await getUserSession(
-                    sessionToken,worker
-                  )
+                  const userSession = await getUserSession(sessionToken, worker)
                   return { userSession }
                 },
               },
@@ -59,7 +57,7 @@ export function core(): core_factory {
                   )
                   mySec.db.deactivateUser({
                     userId,
-                    for: { v0_1: 'adminRequest', reason },
+                    for: { v1_0: 'adminRequest', reason },
                     anonymize,
                   })
                 },
@@ -85,7 +83,7 @@ export function core(): core_factory {
                   const { encrypted: confirmEmailToken } = await mySec.crypto.encryptToken({
                     expires: tokenExpireTime.signupEmailVerification,
                     data: {
-                      v0_1: 'signupRequestEmailVerification',
+                      v1_0: 'signupRequestEmailVerification',
                       redirectUrl,
                       displayName: signupForm.displayName,
                       email: signupForm.email,
@@ -93,16 +91,20 @@ export function core(): core_factory {
                     },
                   })
 
-                  const content = email_moodle_iam.v0_1.signupEmailConfirmationContent({
+                  const content = email_moodle_iam.v1_0.signupEmailConfirmationContent({
                     activateAccountUrl: `${redirectUrl}?token=${confirmEmailToken}`,
                     orgInfo,
                     receiverEmail: signupForm.email,
                   })
 
-                  const reactBody = email_moodle_org.v0_1.EmailLayout({ orgInfo, orgAddr, content })
+                  const reactBody = email_moodle_org.v1_0.EmailLayout({
+                    orgInfo,
+                    orgAddr,
+                    content,
+                  })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: lib_moodle_org.v0_1.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
+                    sender: lib_moodle_org.v1_0.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
                     to: signupForm.email,
                   })
@@ -120,7 +122,7 @@ export function core(): core_factory {
                     token: signupEmailVerificationToken,
                   })
 
-                  if (!(verified && tokenData.v0_1 === 'signupRequestEmailVerification')) {
+                  if (!(verified && tokenData.v1_0 === 'signupRequestEmailVerification')) {
                     return [false, { reason: 'invalidToken' }]
                   }
 
@@ -176,7 +178,7 @@ export function core(): core_factory {
                   const user = userData(dbUser)
                   const { encrypted: sessionToken } = await mySec.crypto.encryptToken({
                     data: {
-                      v0_1: 'userSession',
+                      v1_0: 'userSession',
                       user,
                     },
                     expires: tokenExpireTime.userSession,
@@ -207,24 +209,28 @@ export function core(): core_factory {
                     await mySec.crypto.encryptToken({
                       expires: userSelfDeletion.userSelfDeletionRequest,
                       data: {
-                        v0_1: 'selfDeletionRequestConfirm',
+                        v1_0: 'selfDeletionRequestConfirm',
                         redirectUrl,
                         userId: session.user.id,
                       },
                     })
 
-                  const content = email_moodle_iam.v0_1.selfDeletionConfirmContent({
+                  const content = email_moodle_iam.v1_0.selfDeletionConfirmContent({
                     deleteAccountUrl: `${redirectUrl}?token=${selfDeletionConfirmationToken}`,
                     orgInfo,
                     receiverEmail: session.user.contacts.email,
                   })
 
-                  const reactBody = email_moodle_org.v0_1.EmailLayout({ orgInfo, orgAddr, content })
+                  const reactBody = email_moodle_org.v1_0.EmailLayout({
+                    orgInfo,
+                    orgAddr,
+                    content,
+                  })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: lib_moodle_org.v0_1.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
+                    sender: lib_moodle_org.v1_0.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
-                    to: lib_moodle_iam.v0_1.getUserNamedEmailAddress(session.user),
+                    to: lib_moodle_iam.v1_0.getUserNamedEmailAddress(session.user),
                   })
                   return
                 },
@@ -234,7 +240,7 @@ export function core(): core_factory {
                     token: selfDeletionConfirmationToken,
                   })
 
-                  if (!(verified && tokenData.v0_1 === 'selfDeletionRequestConfirm')) {
+                  if (!(verified && tokenData.v1_0 === 'selfDeletionRequestConfirm')) {
                     return [false, { reason: 'invalidToken' }]
                   }
 
@@ -245,7 +251,7 @@ export function core(): core_factory {
 
                   const [deactivated] = await mySec.db.deactivateUser({
                     anonymize: true,
-                    for: { v0_1: 'userSelfDeletionRequest', reason },
+                    for: { v1_0: 'userSelfDeletionRequest', reason },
                     userId: tokenData.userId,
                   })
                   return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
@@ -267,23 +273,27 @@ export function core(): core_factory {
                     await mySec.crypto.encryptToken({
                       expires: userSelfDeletion.userSelfDeletionRequest,
                       data: {
-                        v0_1: 'passwordResetRequest',
+                        v1_0: 'passwordResetRequest',
                         redirectUrl,
                         email: user.contacts.email,
                       },
                     })
 
-                  const content = email_moodle_iam.v0_1.resetPasswordContent({
+                  const content = email_moodle_iam.v1_0.resetPasswordContent({
                     resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationToken}`,
                     receiverEmail: user.contacts.email,
                   })
 
-                  const reactBody = email_moodle_org.v0_1.EmailLayout({ orgInfo, orgAddr, content })
+                  const reactBody = email_moodle_org.v1_0.EmailLayout({
+                    orgInfo,
+                    orgAddr,
+                    content,
+                  })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: lib_moodle_org.v0_1.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
+                    sender: lib_moodle_org.v1_0.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
-                    to: lib_moodle_iam.v0_1.getUserNamedEmailAddress(user),
+                    to: lib_moodle_iam.v1_0.getUserNamedEmailAddress(user),
                   })
                   return
                 },
