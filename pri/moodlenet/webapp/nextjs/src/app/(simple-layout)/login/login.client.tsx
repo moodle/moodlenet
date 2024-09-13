@@ -35,26 +35,30 @@ export function LoginCard({ loginMethods }: LoginCardProps) {
           ) : (
             <>
               {currMethod?.panel}
-              <div>
-                <Trans>Log in with</Trans>
-              </div>
-              {loginMethods.map(meth => {
-                const { label, key } = meth
-                const isCurrent = meth === currMethod
-                const css: CSSProperties = {
-                  float: 'left',
-                  cursor: isCurrent ? undefined : 'pointer',
-                  fontWeight: isCurrent ? 'bold' : undefined,
-                  // display: isCurrent ? 'none' : 'block',
-                }
-                const onClick = isCurrent ? undefined : () => setCurrMethod(meth)
-
-                return (
-                  <div key={key} style={css} onClick={onClick}>
-                    {label}
+              {loginMethods.length > 1 && (
+                <>
+                  <div>
+                    <Trans>Log in with</Trans>
                   </div>
-                )
-              })}
+                  {loginMethods.map(meth => {
+                    const { label, key } = meth
+                    const isCurrent = meth === currMethod
+                    const css: CSSProperties = {
+                      float: 'left',
+                      cursor: isCurrent ? undefined : 'pointer',
+                      fontWeight: isCurrent ? 'bold' : undefined,
+                      // display: isCurrent ? 'none' : 'block',
+                    }
+                    const onClick = isCurrent ? undefined : () => setCurrMethod(meth)
+
+                    return (
+                      <div key={key} style={css} onClick={onClick}>
+                        {label}
+                      </div>
+                    )
+                  })}
+                </>
+              )}
             </>
           )}
         </div>

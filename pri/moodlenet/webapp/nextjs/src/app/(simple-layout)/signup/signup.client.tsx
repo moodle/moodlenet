@@ -42,26 +42,30 @@ export function SignupCard({ signupMethods, slots }: SignupCardProps) {
           ) : (
             <>
               {currMethod?.panel}
-              <div>
-                <Trans>Sign up with</Trans>
-              </div>
-              {signupMethods.map(meth => {
-                const { label, key } = meth
-                const isCurrent = meth === currMethod
-                const css: CSSProperties = {
-                  float: 'left',
-                  cursor: isCurrent ? undefined : 'pointer',
-                  fontWeight: isCurrent ? 'bold' : undefined,
-                  // display: isCurrent ? 'none' : 'block',
-                }
-                const onClick = isCurrent ? undefined : () => setCurrMethod(meth)
-
-                return (
-                  <div key={key} style={css} onClick={onClick}>
-                    {label}
+              {signupMethods.length > 1 && (
+                <>
+                  <div>
+                    <Trans>Sign up with</Trans>
                   </div>
-                )
-              })}
+                  {signupMethods.map(meth => {
+                    const { label, key } = meth
+                    const isCurrent = meth === currMethod
+                    const css: CSSProperties = {
+                      float: 'left',
+                      cursor: isCurrent ? undefined : 'pointer',
+                      fontWeight: isCurrent ? 'bold' : undefined,
+                      // display: isCurrent ? 'none' : 'block',
+                    }
+                    const onClick = isCurrent ? undefined : () => setCurrMethod(meth)
+
+                    return (
+                      <div key={key} style={css} onClick={onClick}>
+                        {label}
+                      </div>
+                    )
+                  })}
+                </>
+              )}
               {slots.subCard}
             </>
           )}
