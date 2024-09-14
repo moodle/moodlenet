@@ -2,7 +2,11 @@ import { existsSync, readFileSync, writeFileSync } from 'fs'
 import * as jose from 'jose'
 import { EnvProvider, EnvType } from './types'
 // import * as argon2 from 'argon2'
-const envProvider: EnvProvider = async () => {
+
+const envP = generateEnv()
+const envProvider: EnvProvider = () => envP
+module.exports = envProvider
+async function generateEnv() {
   const cryptoParams = {
     alg: 'RS256',
     type: 'PKCS8',
@@ -34,6 +38,9 @@ const envProvider: EnvProvider = async () => {
     writeFileSync(defaultCryptoFileNames.private, keysToWrite.privateKey, 'utf-8')
   }
 
+  const publicKeyStr = readFileSync(defaultCryptoFileNames.public, 'utf8')
+  const privateKeyStr = readFileSync(defaultCryptoFileNames.private, 'utf8')
+
   const arangoDbUrl = 'http://127.0.0.1:8529'
   const env: EnvType = {
     arango_db: {
@@ -62,8 +69,8 @@ const envProvider: EnvProvider = async () => {
       joseEnv: {
         alg: 'RS256',
         type: 'PKCS8',
-        publicKeyStr: readFileSync(defaultCryptoFileNames.public, 'utf8'),
-        privateKeyStr: readFileSync(defaultCryptoFileNames.private, 'utf8'),
+        publicKeyStr,
+        privateKeyStr,
       },
     },
     nodemailer: {
@@ -77,4 +84,3 @@ const envProvider: EnvProvider = async () => {
   }
   return env
 }
-module.exports = envProvider
