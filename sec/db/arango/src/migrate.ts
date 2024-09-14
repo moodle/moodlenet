@@ -1,13 +1,12 @@
 import { Database } from 'arangojs'
 import { v1_0 } from '.'
 import * as migrations from './migrate/from'
-import { ArangoDbSecEnv } from './v1_0/db-structure/types'
 
 const TARGET_V = migrations.init.VERSION
 
 export async function migrate({
   dbs_struct_configs: dbs_struct_configs_v1_0,
-}: ArangoDbSecEnv): Promise<string> {
+}: v1_0.ArangoDbSecEnv): Promise<string> {
   const db_struct = v1_0.getDbStruct(dbs_struct_configs_v1_0)
   const self_db_exists = await db_struct.mng.db.exists()
   if (!self_db_exists) {

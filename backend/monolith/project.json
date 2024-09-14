@@ -26,9 +26,6 @@
         }
       },
       "configurations": {
-        "migrate": {
-          "main": "backend/monolith/src/migrate.ts"
-        },
         "development": {},
         "production": {
           "esbuildOptions": {
@@ -54,9 +51,6 @@
         },
         "production": {
           "buildTarget": "backend-monolith:build:production"
-        },
-        "migrate": {
-          "buildTarget": "backend-monolith:build:migrate"
         }
       }
     }

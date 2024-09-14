@@ -47,3 +47,4 @@ out
 
 # general
 .ignore
+.env*

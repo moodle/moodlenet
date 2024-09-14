@@ -23,6 +23,8 @@
     "arangojs": "^9.0.0",
     "argon2": "^0.41.1",
     "axios": "^1.6.0",
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.6",
     "formik": "^2.4.6",
     "humanize-duration": "^3.32.1",
     "i18next": "^23.12.2",

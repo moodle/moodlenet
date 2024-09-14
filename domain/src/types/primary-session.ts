@@ -36,9 +36,7 @@ export interface SystemPrimarySession extends PriSessionBase {
 }
 
 export interface PriSessionBase {
-  domain: {
-    host: string
-  }
+  domain: string
 }
 
 export type primary_session = d_u<

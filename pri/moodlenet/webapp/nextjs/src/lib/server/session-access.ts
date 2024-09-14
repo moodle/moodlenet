@@ -98,11 +98,7 @@ function getPrimarySession() {
       mode,
       url,
     },
-    domain: {
-      host,
-      // FIXME: set basePath,
-      // FIXME: set path,
-    },
+    domain: host,
     platforms: {
       local: {
         type: 'nodeJs',
