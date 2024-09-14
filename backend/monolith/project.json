@@ -54,9 +54,6 @@
         },
         "production": {
           "buildTarget": "backend-monolith:build:production"
-        },
-        "migrate": {
-          "buildTarget": "backend-monolith:build:migrate"
         }
       }
     }
