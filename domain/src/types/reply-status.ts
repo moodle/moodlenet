@@ -125,17 +125,3 @@ export type status_code_4xx = (typeof status_list_4xx)[number][1]
 
 export type status_code = status_code_2xx | status_code_4xx
 export type status4xx = status_desc_4xx | status_code_4xx
-export class Error4xx extends Error {
-  public code: status_code_4xx
-  public desc: status_desc_4xx
-  constructor(
-    code_or_desc: status4xx,
-    public details = '',
-  ) {
-    const _code = status4xx(code_or_desc)
-    const _desc = status_desc_by_code_4xx[_code]
-    super(`${_code}[${_desc}](${details ?? 'no details'})`)
-    this.code = _code
-    this.desc = _desc
-  }
-}

@@ -39,7 +39,7 @@ const guest_session: lib_moodle_iam.v1_0.user_session = {
 export async function assert_validateUserAuthenticatedSession(
   primarySession: primary_session,
   worker: concrete<'sec'>,
-  assertError: Error4xx = new Error4xx('Unauthorized'),
+  assertError: Error4xx = new Error4xx('Forbidden'),
 ) {
   assert(primarySession.type === 'user', assertError)
   const { sessionToken } = primarySession
@@ -55,7 +55,7 @@ export async function assert_validateUserAuthenticatedSessionHasRole(
   primarySession: primary_session,
   role: lib_moodle_iam.v1_0.user_role,
   worker: concrete<'sec'>,
-  assertError: Error4xx = new Error4xx('Unauthorized'),
+  assertError: Error4xx = new Error4xx('Forbidden'),
 ) {
   const user_session = await assert_validateUserAuthenticatedSession(
     primarySession,
