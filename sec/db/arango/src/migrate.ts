@@ -4,14 +4,12 @@ import * as migrations from './migrate/from'
 
 const TARGET_V = migrations.init.VERSION
 
-export async function migrate({
-  dbs_struct_configs: dbs_struct_configs_v1_0,
-}: v1_0.ArangoDbSecEnv): Promise<string> {
-  const db_struct = v1_0.getDbStruct(dbs_struct_configs_v1_0)
+export async function migrate({ database_connections }: v1_0.ArangoDbSecEnv): Promise<string> {
+  const db_struct = v1_0.getDbStruct(database_connections)
   const self_db_exists = await db_struct.mng.db.exists()
+
   if (!self_db_exists) {
-    const mng_db_sys = new Database(db_struct.dbs_struct_configs.mng.url)
-    await mng_db_sys.createDatabase(db_struct.mng.db.name)
+    await db_struct.sys_db.createDatabase(db_struct.mng.db.name)
     await db_struct.mng.coll.migrations.create()
   }
   return upgrade({ db_struct })

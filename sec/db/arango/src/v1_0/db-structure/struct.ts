@@ -1,22 +1,16 @@
 import { v1_0 as iam_v1_0 } from '@moodle/mod-iam'
 import { Database } from 'arangojs'
-import { dbs_struct_configs } from './types'
+import { database_connections } from './types'
 
-export function getDbStruct(dbs_struct_configs: dbs_struct_configs) {
-  const data_db = new Database({
-    url: dbs_struct_configs.data.url,
-    databaseName: dbs_struct_configs.data.dbname,
-  })
-  const iam_db = new Database({
-    url: dbs_struct_configs.iam.url,
-    databaseName: dbs_struct_configs.iam.dbname,
-  })
-  const mng_db = new Database({
-    url: dbs_struct_configs.mng.url,
-    databaseName: dbs_struct_configs.mng.dbname,
-  })
+export function getDbStruct(database_connections: database_connections) {
+  const data_db = new Database(database_connections.data)
+  const iam_db = new Database(database_connections.iam)
+  const mng_db = new Database(database_connections.mng)
+  const sys_db = new Database({ ...database_connections.mng, databaseName: '_system' })
+
   return {
-    dbs_struct_configs,
+    connections: database_connections,
+    sys_db,
     mng: {
       db: mng_db,
       coll: {

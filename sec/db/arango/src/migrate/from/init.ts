@@ -10,10 +10,10 @@ export const VERSION = 'v1_0'
 export async function migrate({ db_struct }: { db_struct: v1_0.db_struct }) {
   // create databases
 
-  const data_db_sys = new Database(db_struct.dbs_struct_configs.data.url)
-  await data_db_sys.createDatabase(db_struct.data.db.name)
-  const iam_db_sys = new Database(db_struct.dbs_struct_configs.iam.url)
-  await iam_db_sys.createDatabase(db_struct.iam.db.name)
+  // const data_db_sys = new Database(db_struct.connections.data)
+  await db_struct.sys_db.createDatabase(db_struct.data.db.name)
+  // const iam_db_sys = new Database(db_struct.connections.iam)
+  await db_struct.sys_db.createDatabase(db_struct.iam.db.name)
 
   // create collections
   // mng

@@ -6,12 +6,12 @@ import type {} from '@moodle/mod-net-webapp-nextjs'
 import { headers } from 'next/headers'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'
-import { getAuthTokenCookie, setAuthTokenCookie } from './auth'
+import { getAuthTokenCookie } from './auth'
 import { lib_moodle_iam } from '@moodle/lib-domain'
 
-const REQUEST_TGT_ENV_VAR = 'MOODLE_NET_NEXTJS_REQUEST_TARGET'
-const APP_NAME_ENV_VAR = 'MOODLE_NET_NEXTJS_APP_NAME'
-const requestTarget = process.env[REQUEST_TGT_ENV_VAR] ?? 'http://localhost:9000'
+const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
+const MOODLE_NET_NEXTJS_APP_NAME = process.env.MOODLE_NET_NEXTJS_APP_NAME
+const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:9000'
 export function getMod(): Modules {
   const trnspClient = http_bind.client()
   const primarySession = getPrimarySession()
@@ -20,7 +20,7 @@ export function getMod(): Modules {
       return trnspClient(
         {
           domain_msg,
-          primarySession,
+          primary_session: primarySession,
           core_mod_id: null,
         },
         requestTarget,
@@ -84,7 +84,7 @@ function getPrimarySession() {
     type: 'user',
     sessionToken: getAuthTokenCookie(),
     app: {
-      name: process.env[APP_NAME_ENV_VAR] ?? 'moodlenet-nextjs',
+      name: MOODLE_NET_NEXTJS_APP_NAME ?? 'moodlenet-nextjs',
       pkg: 'moodlenet-nextjs',
       version: '0.1',
     },
