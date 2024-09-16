@@ -72,14 +72,15 @@ export async function getUserSession() {
 
 function getPrimarySession() {
   const _headers = headers()
-  const host = _headers.get('host')
-  const ip = _headers.get('x-ip') ?? undefined
-  const url = _headers.get('x-url') ?? undefined
-  const mode = _headers.get('x-mode') ?? undefined
-  const geo_header_str = _headers.get('x-geo') ?? undefined
-  const geo = geo_header_str ? JSON.parse(geo_header_str) : undefined
+  const xHost = _headers.get('x-host')
+  // const xPort = _headers.get('x-port')
+  const xProto = _headers.get('x-proto') ?? 'http'
+  const xClientIp = _headers.get('x-client-ip') ?? undefined
+  const xUrl = _headers.get('x-url') ?? undefined
+  const xMode = _headers.get('x-mode') ?? undefined
+  const xGeo = JSON.parse(_headers.get('x-geo') ?? '{}')
   const ua = userAgent({ headers: _headers })
-  assert(host, 'No host in headers')
+  assert(xHost, 'x-host not found in headers')
   const primarySession: primary_session = {
     type: 'user',
     sessionToken: getAuthTokenCookie(),
@@ -90,15 +91,16 @@ function getPrimarySession() {
     },
     connection: {
       proto: 'http',
+      secure: xProto === 'https',
+      mode: xMode,
+      url: xUrl,
+      clientIp: xClientIp,
       ua: {
         name: ua.ua,
         isBot: ua.isBot,
       },
-      ip,
-      mode,
-      url,
     },
-    domain: host,
+    domain: xHost,
     platforms: {
       local: {
         type: 'nodeJs',
@@ -109,7 +111,7 @@ function getPrimarySession() {
         type: 'browser',
         version: ua.browser.version,
         name: ua.browser.name,
-        geo,
+        geo: xGeo,
         cpu: ua.cpu,
         device: ua.device,
         engine: ua.engine,

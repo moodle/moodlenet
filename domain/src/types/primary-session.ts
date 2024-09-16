@@ -5,7 +5,7 @@ import { platform } from './platform'
 export type session_token = string
 
 export interface UserPrimarySession extends PriSessionBase {
-  connection: d_u<Protocols, 'proto'>
+  connection: d_u<Connections, 'proto'>
 
   app: { name: string; pkg: string; version: string }
 
@@ -17,11 +17,12 @@ export interface UserPrimarySession extends PriSessionBase {
   }
 }
 
-interface Protocols {
+interface Connections {
   http: {
+    secure: boolean
     mode?: string
     url?: string
-    ip?: string
+    clientIp?: string
     ua: {
       name: string
       isBot?: boolean
