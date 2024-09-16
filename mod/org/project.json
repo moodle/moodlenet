@@ -1,0 +1,9 @@
+{
+  "name": "mod-org",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "mod/org/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project mod-org --web",
+  "targets": {}
+}

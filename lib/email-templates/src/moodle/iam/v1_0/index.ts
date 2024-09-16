@@ -1,0 +1,5 @@
+export * from './notificationBeforeDeletion'
+export * from './passwordChanged'
+export * from './passwordReset'
+export * from './selfDeletionConfirm'
+export * from './signupEmailConfirmation'

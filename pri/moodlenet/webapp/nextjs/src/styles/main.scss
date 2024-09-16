@@ -1,0 +1,261 @@
+@import '../styles/application.scss';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans';
+}
+
+html,
+body,
+.main-page-wrapper {
+  overflow: auto;
+}
+
+body {
+  color: #212121;
+  fill: #212121;
+  background: white;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  min-width: 350px;
+
+  > #root {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar {
+  display: none;
+}
+
+.main-page-wrapper {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: None;
+
+  &.current-intent-mouse,
+  &.current-intent-touch,
+  &.current-input-mouse,
+  &.current-input-mouse {
+    input:focus,
+    select:focus,
+    textarea:focus,
+    button:focus {
+      outline: none;
+    }
+  }
+
+  > .policies-snackbar {
+    padding: 10px 14px 10px 25px;
+    gap: 24px;
+    > .content {
+      display: inline;
+      line-height: 22px;
+      > a {
+        color: var(--info-color);
+        margin: 0 5px;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    > .close-button {
+      color: var(--primary-color);
+      &:hover {
+        color: var(--base-light-green-color);
+      }
+    }
+  }
+}
+
+a,
+a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.scroll {
+  overflow: scroll;
+  white-space: nowrap;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  /* Hide scrollbar for Chrome, Safari and Opera */
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+abbr {
+  text-decoration: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.font-disabled {
+  color: #e8e8e8;
+  pointer-events: none;
+}
+
+:focus-visible {
+  border: none;
+  outline: none;
+  transition: 0.1s;
+  box-shadow: 0 0 3pt 2pt #1a6affb0;
+}
+
+.enter-error:not(.disabled) {
+  > .input-container,
+  > .textarea-container {
+    animation: shadow-fade-in 0.5s ease-out;
+    box-shadow: 0 0 0 2px var(--error-color);
+
+    @keyframes shadow-fade-in {
+      // from {
+      //   box-shadow: 0 0 6px #dedede;
+      // }
+      to {
+        box-shadow: 0 0 0 2px var(--error-color);
+      }
+    }
+  }
+
+  > .error-msg {
+    animation: enter-move 0.5s ease-out;
+    font-size: 12px;
+    color: var(--error-color);
+    // height: 14px;
+    height: fit-content;
+
+    @keyframes enter-move {
+      from {
+        height: 0;
+        opacity: 0;
+      }
+      to {
+        font-size: 12px;
+        color: var(--error-color);
+        height: 14px;
+        opacity: 1;
+      }
+    }
+  }
+
+  &.underline {
+    > .input-container,
+    > .textarea-container {
+      animation: border-fade-in-underline 0.5s ease-out;
+      box-shadow: none;
+      border-radius: 0;
+      border-bottom: 2px solid var(--error-color);
+      height: auto;
+      padding: 0 0 2px 0;
+
+      @keyframes border-fade-in-underline {
+        from {
+          border-bottom: 2px solid rgba(255, 0, 0, 0);
+        }
+      }
+    }
+  }
+}
+
+.leave-error:not(.disabled) {
+  > .input-container,
+  > .textarea-container {
+    box-shadow: 0 0 6px #dedede;
+    animation: shadow-fade-out 0.5s ease-out;
+
+    @keyframes shadow-fade-out {
+      from {
+        box-shadow: inherit;
+      }
+      to {
+        box-shadow: inherit;
+      }
+    }
+  }
+
+  > .error-msg {
+    // height: 0;
+    opacity: 0;
+    // animation: leave 0.5s ease-out;
+
+    // @keyframes leave {
+    //   from {
+    //     height: 14px;
+    //     opacity: 1;
+    //     font-size: 12px;
+    //     color: var(--error-color);
+    //   }
+    //   to {
+    //     height: 0;
+    //     opacity: 0;
+    //     font-size: 12px;
+    //     margin-top: -5px;
+    //   }
+    // }
+  }
+
+  &.underline {
+    > .input-container,
+    > .textarea-container {
+      animation: border-fade-out-underline 0.5s ease-out;
+      box-shadow: none;
+      border-radius: 0;
+
+      @keyframes border-fade-out-underline {
+        from {
+          border-bottom: 2px solid var(--error-color);
+        }
+        to {
+          border-bottom: 2px solid rgba(255, 0, 0, 0);
+        }
+      }
+    }
+  }
+}
+
+.env-flag {
+  display: none;
+  position: absolute;
+  z-index: 100;
+  right: 0;
+  border-right: 30px solid;
+  border-bottom: 30px solid transparent;
+}
+.env-flag::before {
+  font-weight: bold;
+  color: white;
+  position: absolute;
+  font-size: 15px;
+  top: -3px;
+  right: -25px;
+}
+
+.animate-enter {
+  animation: enter 0.5s ease-in;
+
+  @keyframes leave {
+    from {
+      height: 0;
+      width: 100%;
+    }
+    to {
+      height: inherit;
+      width: 100%;
+    }
+  }
+}

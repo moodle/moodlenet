@@ -1,0 +1,9 @@
+{
+  "name": "lib-id-gen",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/id-gen/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project lib-id-gen --web",
+  "targets": {}
+}

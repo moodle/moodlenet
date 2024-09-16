@@ -1,3 +1,0 @@
-type Mutation {
-  sendEmailToProfile(text: String!, toProfileId: ID!): Boolean!
-}

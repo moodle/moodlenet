@@ -1,0 +1,9 @@
+{
+  "name": "lib-email-templates",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/email-templates/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project lib-email-templates --web",
+  "targets": {}
+}

@@ -1,0 +1,9 @@
+{
+  "name": "mod-net",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "mod/net/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project mod-net --web",
+  "targets": {}
+}

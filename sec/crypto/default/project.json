@@ -1,0 +1,9 @@
+{
+  "name": "sec-crypto-default",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "sec/crypto/default/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project sec-crypto-default --web",
+  "targets": {}
+}

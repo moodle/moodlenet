@@ -1,0 +1,129 @@
+// @import '../../../styles/application.scss';
+
+a {
+  text-decoration: none;
+}
+
+.primary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 45px;
+  font-weight: bold;
+  font-size: 13.5px;
+  letter-spacing: 0.4px;
+  height: 32px;
+  padding: 6px 18px;
+  width: fit-content;
+  color: white;
+  border: none;
+  background-color: var(--primary-color);
+  white-space: nowrap;
+
+  &.green {
+    background-color: #00bd7e;
+  }
+
+  &.red {
+    background-color: red;
+  }
+
+  &.grey {
+    background-color: #8a8a8a;
+  }
+
+  &.light-grey {
+    background-color: #bdbdbd;
+  }
+
+  &.blue {
+    background-color: #1a6aff;
+  }
+
+  &.card {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 0 6px #dedede;
+    color: #212121;
+  }
+
+  &:hover:not(.disabled):not(:active) {
+    background-color: var(--primary-color-hover);
+    box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
+    cursor: pointer;
+
+    &.green {
+      background-color: #04ce8a;
+    }
+
+    &.red {
+      background-color: rgb(231, 2, 2);
+    }
+
+    &.grey {
+      background-color: #7c8091;
+    }
+
+    &.light-grey {
+      background-color: #9c9c9c;
+    }
+
+    &.blue {
+      background-color: #2d6de2;
+    }
+
+    &.card {
+      background-color: white;
+      box-shadow: 0 0 0 2px #2c5cf8eb;
+    }
+  }
+
+  &:active:not(.disabled) {
+    background-color: var(--primary-color-active);
+
+    &.green {
+      background-color: #01c483;
+    }
+
+    &.red {
+      background-color: rgb(196, 1, 1);
+    }
+
+    &.grey {
+      background-color: #707483;
+    }
+
+    &.light-grey {
+      background-color: #8d8d8d;
+    }
+
+    &.blue {
+      background-color: #2658b4;
+    }
+
+    &.card {
+      background-color: rgb(240, 240, 240);
+      box-shadow: 0 0 0 2px #2c5cf8;
+    }
+  }
+
+  &:focus-visible:not(.disabled) {
+    border: none;
+    outline: none;
+    transition: 0.1s;
+    box-shadow: 0 0 3pt 2pt #1a6affb0;
+  }
+
+  &.disabled {
+    user-select: none;
+    pointer-events: none;
+    background-color: #e8e8e8;
+    cursor: default;
+  }
+
+  a {
+    color: white;
+    text-decoration: none;
+  }
+}
