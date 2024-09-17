@@ -32,18 +32,7 @@
     //   "@/*": ["./*"]
     // }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.jsx",
-    "../../../../app/moodlenet-nextjs/.next/types/**/*.ts",
-    "../../../../dist/app/moodlenet-nextjs/.next/types/**/*.ts",
-    "next-env.d.ts",
-    //".next/types/**/*.ts"
-    ".next/types/**/*.ts",
-    "../../../../mod/moodle/net/src/types/configs/v1_0/configs/website/layouts.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts", ".next/types/**/*.ts"],
   "exclude": [
     "zz__legacy",
     "ui-cmps",
