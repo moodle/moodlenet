@@ -2,5 +2,5 @@
 export * as AccessButtonsStories from '../components/molecules/AccessButtons/AccessButtons.stories.props'
 export * as AvatarMenuStories from '../components/molecules/AvatarMenu/AvatarMenu.stories.props'
 export * as MinimalisticAccessButtonsStories from '../components/molecules/MinimalisticAccessButtons/MinimalisticAccessButtons.stories.props'
-export * as AdvancedStories from '../components/pages/UserSettings/Advanced/Advanced.stories.props'
+export * as AdvancedStories from '../../../../../../../src/app/(main-layout)/settings/Advanced/Advanced.stories.props'
 // @endindex
