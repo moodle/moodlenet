@@ -6,7 +6,7 @@ import { Modal } from '../../../../ui/atoms/Modal/Modal'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../../../ui/atoms/SecondaryButton/SecondaryButton'
 import { Snackbar } from '../../../../ui/atoms/Snackbar/Snackbar'
-import './Advanced.scss'
+import './advanced.style.scss'
 
 export type AdvancedProps = {
   deleteAccount(): void
