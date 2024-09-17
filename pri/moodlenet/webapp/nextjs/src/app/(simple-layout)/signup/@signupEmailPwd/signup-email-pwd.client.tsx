@@ -4,7 +4,7 @@ import { useFormik } from 'formik'
 import { toFormikValidationSchema } from 'zod-formik-adapter'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
-import { signup, signupResponse } from './moodle-iam-basic.server'
+import { signup, signupResponse } from './signup-email-pwd.server'
 import { useState } from 'react'
 import { Trans } from 'react-i18next'
 

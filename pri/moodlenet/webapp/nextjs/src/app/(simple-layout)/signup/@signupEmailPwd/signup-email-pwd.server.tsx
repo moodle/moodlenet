@@ -19,7 +19,6 @@ export async function signup(signupForm: lib_moodle_iam.v1_0.signupForm) {
   const siteUrls = await srvSiteUrls()
   const redirectUrl = siteUrls.full.apis.iam.basicAuth.verifySignupEmailToken
   const [signupDone, signupResponse] = await signup.request({ signupForm, redirectUrl })
-  console.log({ signupDone, signupResponse })
   if (!signupDone) {
     return signupResponse
   }

@@ -1,8 +1,9 @@
 import { getMod } from '../../../../lib/server/session-access'
-import SignupPanel from './moodle-iam-basic.client'
+import LoginPanel from './login-email-pwd.client'
 
-export default async function MoodleIamBasicPage() {
+export default async function LoginEmailPwdPage() {
   const {
+    /// move to layout ?
     moodle: {
       iam: {
         v1_0: { pri },
@@ -10,10 +11,10 @@ export default async function MoodleIamBasicPage() {
     },
   } = getMod()
   const { iam } = await pri.configs.read()
-
   return (
-    <SignupPanel
+    <LoginPanel
       {...{
+        recoverPasswordUrl: '##############',
         primaryMsgSchemaConfigs: iam.primaryMsgSchemaConfigs,
       }}
     />

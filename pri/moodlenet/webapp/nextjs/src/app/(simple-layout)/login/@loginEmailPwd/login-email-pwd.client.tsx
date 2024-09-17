@@ -7,7 +7,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../../ui/atoms/TertiaryButton/TertiaryButton'
-import { login, loginResponse } from './moodle-iam-basic.server'
+import { login, loginResponse } from './login-email-pwd.server'
 import { useState } from 'react'
 export function LoginIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>

@@ -22,16 +22,16 @@ export const net_webapp_nextjs_default_configs: Configs = {
       login: {
         methods: [
           {
-            label: 'Email and password',
-            panel: 'moodle-iam-basic',
+            label: ['html', 'Email and password'],
+            panel: ['slot', 'login-email-pwd'],
           },
         ],
       },
       signup: {
         methods: [
           {
-            label: 'Email and password',
-            panel: 'moodle-iam-basic',
+            label: ['html', 'Email and password'],
+            panel: ['slot', 'signup-email-pwd'],
           },
         ],
         slots: {

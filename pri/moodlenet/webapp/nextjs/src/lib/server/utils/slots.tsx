@@ -18,8 +18,10 @@ export function slotsMap<S extends Record<string, layoutSlotItem[]>>(
 export function slotItems<S extends layoutSlotItem[]>(
   props: layoutPropsWithChildren,
   items: S | null | undefined,
-) {
-  const res = (items ?? []).map(item => slotItem(props, item))
+): JSX.Element[] {
+  const res = (items ?? [])
+    .map(item => slotItem(props, item))
+    .filter<JSX.Element>((_): _ is JSX.Element => !!_)
 
   return res
 }
@@ -30,15 +32,27 @@ export function isLayoutSlotItem(value: layoutSlotItem | undefined): value is la
 
 export function slotItem(
   props: layoutPropsWithChildren,
-  item: layoutSlotItem,
+  [type, item]: layoutSlotItem,
   //_default: ReactElement = <>{`SHOULD NEVER HAPPEN: NO SLOT ITEM for [${item}]`}</>,
 ) {
-  const camelCaseItem = item.replace(/-([a-z])/g, g => (g[1] ? g[1].toUpperCase() : ''))
-  return (props as any)[camelCaseItem] ? (
-    ((props as any)[camelCaseItem] as ReactElement)
-  ) : (
-    <div key={item} dangerouslySetInnerHTML={{ __html: item }} />
-  )
+  switch (type) {
+    case 'slot':
+      return (() => {
+        const camelCaseSlotName = item.replace(/-([a-z])/g, g => (g[1] ? g[1].toUpperCase() : ''))
+        const slot = props[camelCaseSlotName]
+        if (!slot) {
+          console.error(`Missing slot: ${item}`)
+          return null
+        }
+        return slot as ReactElement
+      })()
+    case 'react':
+      return item
+    case 'html':
+      return <div dangerouslySetInnerHTML={{ __html: item }} />
+    default:
+      return null
+  }
 }
 
 // export function isParallelRouteItem(item: layoutSlotItem): item is parallelRouteItem {
