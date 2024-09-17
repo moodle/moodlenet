@@ -9,7 +9,7 @@ import {
 import type {
   AvatarMenuItem,
   AvatarMenuProps,
-} from '../../ui/components/molecules/AvatarMenu/AvatarMenu.js'
+} from '../../../../../../../src/ui/organisms/Header/MainHeader/AvatarMenu.js'
 import { AuthCtx } from '../context/AuthContext.js'
 
 export type AvatarMenuPluginItem = Omit<AvatarMenuItem, 'key'>

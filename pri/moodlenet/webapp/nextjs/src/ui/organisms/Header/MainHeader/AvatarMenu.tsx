@@ -10,7 +10,7 @@ import type {
   LogoutAvatarMenuComponentProps,
   ProfileLinkAvatarMenuComponentProps,
   UserSettingsLinkAvatarMenuComponentProps,
-} from './webUserAvatarMenuComponents.js'
+} from './webUserAvatarMenuComponents.jsx'
 import {
   AdminSettingsLinkAvatarMenuComponent,
   BookmarksLinkAvatarMenuComponent,
@@ -18,7 +18,7 @@ import {
   LogoutAvatarMenuComponent,
   ProfileLinkAvatarMenuComponent,
   UserSettingsLinkAvatarMenuComponent,
-} from './webUserAvatarMenuComponents.js'
+} from './webUserAvatarMenuComponents.jsx'
 
 export type AvatarMenuItem = {
   Component: ComponentType

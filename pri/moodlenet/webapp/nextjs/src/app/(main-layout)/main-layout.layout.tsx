@@ -5,8 +5,9 @@ import MainHeader, { MainHeaderProps } from '../../ui/organisms/Header/MainHeade
 import { HeaderSearchbox, LoginHeaderButton, SignupHeaderButton } from './main-layout.client'
 
 import { lib_moodle_iam } from '@moodle/lib-domain'
-import { getMod } from '../../lib/server/session-access'
+import { getMod, getUserSession } from '../../lib/server/session-access'
 import './main-layout.style.scss'
+import { user_session } from 'lib/domain/src/moodle/iam/v1_0'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const {
@@ -33,7 +34,8 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   ///////////////##############################/////////////////////////////
   // await iam.userSession.current()
   // await app.userSession.current() and it uses iam ?  <= better
-  const { user } = { user: { type: 'guest' } as const }
+  const user_session = await getUserSession()
+
   ///////////////##############################/////////////////////////////
   ///////////////##############################/////////////////////////////
   ///////////////##############################/////////////////////////////
@@ -45,11 +47,11 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     </div>
   )
 
-  function headerSlots(): MainHeaderProps['slots'] {
+  function headerSlots(user_session: user_session): MainHeaderProps['slots'] {
     const { center, left, right } = slotsMap(props, header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
-    const defaultRights = lib_moodle_iam.v1_0.isGuestSession(user)
+    const defaultRights = lib_moodle_iam.v1_0.isGuestSession(user_session)
       ? [
           <LoginHeaderButton key="login-header-button" />,
           <SignupHeaderButton key="signup-header-button" />,
