@@ -3,6 +3,8 @@ import { _void } from '@moodle/lib-types'
 import type { v1_0 as iam_v1_0 } from '@moodle/mod-iam'
 import { Document } from 'arangojs/documents'
 import { v1_0 } from '../..'
+import { iamUserDoc2dbUser } from './db-arango-iam-lib/mappings'
+import { generateId } from '@moodle/lib-id-gen'
 
 export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec_factory {
   return ctx => {
@@ -69,7 +71,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     { email },
                   )
                   const foundUser = await cursor.next()
-                  return foundUser ? [true, v1_0.dbUserDoc2DbUser(foundUser)] : [false, _void]
+                  return foundUser ? [true, iamUserDoc2dbUser(foundUser)] : [false, _void]
                 },
                 async getUserById({ userId }) {
                   const {
@@ -79,19 +81,26 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                   } = db_struct_v1_0
 
                   const foundUser = await user.document({ _key: userId }, { graceful: true })
-                  return foundUser ? [true, v1_0.dbUserDoc2DbUser(foundUser)] : [false, _void]
+                  return foundUser ? [true, iamUserDoc2dbUser(foundUser)] : [false, _void]
                 },
-                async saveNewUser({ newUser }) {
+                async saveNewUser({ idType, newUser }) {
+                  const _key = await generateId(idType)
                   const {
                     iam: {
                       coll: { user },
                     },
                   } = db_struct_v1_0
-                  const savedMeta = await user
-                    .save({ _key: newUser.id, ...newUser }, { overwriteMode: 'conflict' })
+                  const savedUser = await user
+                    .save(
+                      {
+                        _key,
+                        ...newUser,
+                      },
+                      { overwriteMode: 'conflict' },
+                    )
                     .catch(() => null)
 
-                  return [!!savedMeta, _void]
+                  return savedUser ? [true, _key] : [false, _void]
                 },
                 deactivateUser(_) {
                   throw new Error('Not implemented')

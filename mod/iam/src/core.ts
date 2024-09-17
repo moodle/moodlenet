@@ -139,11 +139,12 @@ export function core(): core_factory {
                     return [true, { userId: foundSameEmailUser.id }]
                   }
 
-                  const { id } = await mySec.crypto.generateUserId()
-
-                  const [newUserDone] = await mySec.db.saveNewUser({
+                  const [newUserCreated, userId] = await mySec.db.saveNewUser({
+                    idType: {
+                      type: 'alphanumeric',
+                      length: 8,
+                    },
                     newUser: {
-                      id,
                       roles: newlyCreatedUserRoles,
                       displayName: tokenData.displayName,
                       contacts: {
@@ -157,7 +158,7 @@ export function core(): core_factory {
                       deactivated: false,
                     },
                   })
-                  return newUserDone ? [true, { userId: id }] : [false, { reason: 'unknown' }]
+                  return newUserCreated ? [true, { userId }] : [false, { reason: 'unknown' }]
                 },
               },
 

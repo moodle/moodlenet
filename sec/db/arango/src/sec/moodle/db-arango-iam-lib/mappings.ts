@@ -1,7 +1,8 @@
 import type { v1_0 as iam_v1_0 } from '@moodle/mod-iam'
 import { Document } from 'arangojs/documents'
+import { IamUserDocument } from './types'
 
-export function dbUserDoc2DbUser(doc: Document<iam_v1_0.DbUser>): iam_v1_0.DbUser {
+export function iamUserDoc2dbUser(doc: Document<IamUserDocument>): iam_v1_0.DbUser {
   return {
     activityStatus: doc.activityStatus,
     contacts: doc.contacts,

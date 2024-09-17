@@ -1,12 +1,20 @@
-import { v1_0 as iam_v1_0 } from '@moodle/mod-iam'
 import { Database } from 'arangojs'
+import { IamUserDocument } from '../../sec/moodle/db-arango-iam-lib/types'
 import { database_connections } from './types'
 
 export function getDbStruct(database_connections: database_connections) {
-  const data_db = new Database(database_connections.data)
-  const iam_db = new Database(database_connections.iam)
-  const mng_db = new Database(database_connections.mng)
-  const sys_db = new Database({ ...database_connections.mng, databaseName: '_system' })
+  const baseConnectionConfig = {
+    keepalive: true,
+    retryOnConflict: 5,
+  }
+  const data_db = new Database({ ...baseConnectionConfig, ...database_connections.data })
+  const iam_db = new Database({ ...baseConnectionConfig, ...database_connections.iam })
+  const mng_db = new Database({ ...baseConnectionConfig, ...database_connections.mng })
+  const sys_db = new Database({
+    ...baseConnectionConfig,
+    ...database_connections.mng,
+    databaseName: '_system',
+  })
 
   return {
     connections: database_connections,
@@ -25,7 +33,7 @@ export function getDbStruct(database_connections: database_connections) {
     iam: {
       db: iam_db,
       coll: {
-        user: iam_db.collection<iam_v1_0.DbUser>('user'),
+        user: iam_db.collection<IamUserDocument>('user'),
       },
     },
   }

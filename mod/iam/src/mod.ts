@@ -15,6 +15,7 @@ import { v1_0 as v1_0_org } from '@moodle/mod-org'
 import { user_id } from 'lib/domain/src/moodle/iam/v1_0'
 import { ReactElement } from 'react'
 import { v1_0 } from './'
+import { id_type } from '@moodle/lib-id-gen'
 
 declare module '@moodle/domain' {
   export interface MoodleMods {
@@ -110,8 +111,6 @@ export type moodle_iam_mod = mod<{
     }
     sec: {
       crypto: {
-        generateUserId(): Promise<{ id: lib_moodle_iam.v1_0.user_id }>
-
         // validateSessionToken(_: {
         //   sessionToken: session_token
         // }): Promise<
@@ -171,7 +170,10 @@ export type moodle_iam_mod = mod<{
         getUserById(_: { userId: lib_moodle_iam.v1_0.user_id }): Promise<ok_ko<v1_0.DbUser, void>>
         getUserByEmail(_: { email: email_address }): Promise<ok_ko<v1_0.DbUser, void>>
 
-        saveNewUser(_: { newUser: v1_0.DbUser }): Promise<ok_ko<void, void>>
+        saveNewUser(_: {
+          idType: id_type
+          newUser: Omit<v1_0.DbUser, 'id'>
+        }): Promise<ok_ko<user_id, void>>
 
         changeUserRoles(_: {
           userId: lib_moodle_iam.v1_0.user_id

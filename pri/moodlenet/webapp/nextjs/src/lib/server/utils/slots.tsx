@@ -42,7 +42,7 @@ export function slotItem(
         const slot = props[camelCaseSlotName]
         if (!slot) {
           console.error(`Missing slot: ${item}`)
-          return null
+          return <>{`MISSING SLOT ITEM [${item}]`}</>
         }
         return slot as ReactElement
       })()
@@ -51,7 +51,7 @@ export function slotItem(
     case 'html':
       return <div dangerouslySetInnerHTML={{ __html: item }} />
     default:
-      return null
+      throw new Error(`Unknown slot type: ${type}`)
   }
 }
 

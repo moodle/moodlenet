@@ -41,18 +41,23 @@ export function client(agent_opts?: Agent.Options) {
       body,
       dispatcher,
       headers: { ..._opts?.headers, 'Content-Type': 'application/json' },
-    }).then(async response => {
-      const is2xx = response.status >= 200 && response.status < 300
-      const jsonBody: _any = await response.json()
-      if (is2xx) {
-        return jsonBody
-      }
-      const is4xx = response.status >= 400 && response.status < 500
-      if (is4xx) {
-        throw new Error4xx(response.status as status_code_4xx, jsonBody?.details ?? undefined)
-      }
-      throw new Error(`Server error: ${response.status}\n ${JSON.stringify(jsonBody, null, 2)}`)
     })
+      .then(async response => {
+        const is2xx = response.status >= 200 && response.status < 300
+        const jsonBody: _any = await response.json()
+        if (is2xx) {
+          return jsonBody
+        }
+        const is4xx = response.status >= 400 && response.status < 500
+        if (is4xx) {
+          throw new Error4xx(response.status as status_code_4xx, jsonBody?.details ?? undefined)
+        }
+        throw new Error(`Server error: ${response.status}\n ${JSON.stringify(jsonBody, null, 2)}`)
+      })
+      .catch(e => {
+        console.error(e)
+        throw e
+      })
 
     return reply
   }
@@ -69,17 +74,22 @@ export async function server({ request, port, baseUrl }: srv_cfg) {
   const app = express()
   app.use(express.json())
   app.post(baseUrl, async (req, res) => {
-    const reply = await request(req.body).catch(e => {
-      if (e instanceof Error4xx) {
-        res.status(e.code)
-        return { details: e.details }
-      } else {
-        res.status(500)
-        return e instanceof Error
-          ? { name: e.name, message: e.message, stack: e.stack }
-          : { error: String(e) }
-      }
-    })
+    const reply = await request(req.body)
+      .catch(e => {
+        console.error(e)
+        throw e
+      })
+      .catch(e => {
+        if (e instanceof Error4xx) {
+          res.status(e.code)
+          return { details: e.details }
+        } else {
+          res.status(500)
+          return e instanceof Error
+            ? { name: e.name, message: e.message, stack: e.stack }
+            : { error: String(e) }
+        }
+      })
     res.json(reply)
   })
   return new Promise<void>((resolve /* , reject */) => {
