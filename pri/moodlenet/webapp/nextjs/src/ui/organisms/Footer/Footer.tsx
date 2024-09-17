@@ -6,7 +6,7 @@ export interface FooterProps {
   slots: Record<'center' | 'left' | 'right' | 'bottom', ReactNode>
 }
 
-export default function Footer({ slots: { bottom, center, left, right } }: FooterProps) {
+export function Footer({ slots: { bottom, center, left, right } }: FooterProps) {
   return (
     <div className="footer">
       <div className="top">

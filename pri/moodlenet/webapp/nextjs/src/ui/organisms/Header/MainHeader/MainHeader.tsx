@@ -6,7 +6,7 @@ export interface MainHeaderProps {
   slots: Record<'center' | 'left' | 'right', ReactNode>
 }
 
-export default function MainHeader({ slots: { center, left, right } }: MainHeaderProps) {
+export function MainHeader({ slots: { center, left, right } }: MainHeaderProps) {
   return (
     <div className="header">
       <div className="content">

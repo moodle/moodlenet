@@ -9,8 +9,8 @@ export function sitepaths(baseUrl = '/') {
     (id: id, slug = DEF_SLUG) =>
       `${_(path)}/${id}/${slug}${sub}`
 
-  type admin_sub = '/users' | ''
-  const admin = (sub: admin_sub = '') => _(`admin${sub}`)
+  type admin_sub = '/users' | '/general' | '/appearance'
+  const admin = (sub: admin_sub = '/general') => _(`admin${sub}`)
 
   type profile_sub = '/settings' | '/bookmarks' | '/followers' | '/following' | ''
   const profile = (sub: profile_sub = '') => __(`profile`, sub)

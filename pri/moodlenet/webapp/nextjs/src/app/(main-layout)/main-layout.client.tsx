@@ -1,4 +1,6 @@
 'use client'
+import { _falsy, filterOutFalsies } from '@moodle/lib-types'
+import { FloatingMenu, FloatingMenuContentItem } from '../../ui/atoms/FloatingMenu/FloatingMenu'
 import Person from '@mui/icons-material/Person'
 import { t } from 'i18next'
 import Link from 'next/link'
@@ -6,6 +8,11 @@ import { sitepaths } from '../../lib/common/utils/sitepaths'
 import PrimaryButton from '../../ui/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../ui/atoms/Searchbox/Searchbox'
 import TertiaryButton from '../../ui/atoms/TertiaryButton/TertiaryButton'
+import { Trans } from 'react-i18next'
+import { Bookmarks, DisplaySettings, ExitToApp, Settings } from '@mui/icons-material'
+import ArrowsIcon from '../../assets/icons/arrows.svg'
+import defaultAvatar from '../../assets/img/default-avatar.svg'
+import { Href } from '../../lib/common/types'
 
 export function LoginHeaderButton() {
   const {
@@ -14,9 +21,9 @@ export function LoginHeaderButton() {
   return (
     <Link href={access.login} className="login-button access-button">
       <PrimaryButton>
-        {/* <Trans> */}
-        <span>Login</span>
-        {/* </Trans> */}
+        <Trans>
+          <span>Login</span>
+        </Trans>
         <Person />
       </PrimaryButton>
     </Link>
@@ -30,9 +37,7 @@ export function SignupHeaderButton() {
   return (
     <Link href={access.signup} className="signup-button access-button">
       <TertiaryButton>
-        {/* <Trans> */}
-        Sign up
-        {/* </Trans> */}
+        <Trans>Sign up</Trans>
       </TertiaryButton>
     </Link>
   )
@@ -47,6 +52,124 @@ export function HeaderSearchbox() {
         boxSize: 'small',
         triggerBtn: true,
       }}
+    />
+  )
+}
+
+export type ProfileLinkProps = {
+  profileHref: Href
+  avatarUrl: string | _falsy
+}
+export function ProfileLink({ profileHref, avatarUrl = defaultAvatar }: ProfileLinkProps) {
+  return (
+    <Link href={profileHref} className="avatar">
+      <div
+        style={{
+          backgroundImage: 'url("' + avatarUrl + '")',
+          backgroundSize: 'cover',
+          borderRadius: '50%',
+          height: '28px',
+          width: '28px',
+        }}
+      />
+      Profile
+    </Link>
+  )
+}
+
+export type LogoutProps = { logout(): void }
+export function Logout({ logout }: LogoutProps) {
+  return (
+    <span onClick={() => logout()}>
+      <ExitToApp /> Logout
+    </span>
+  )
+}
+
+export type UserSettingsLinkProps = { settingsHref: Href }
+export function UserSettingsLink({ settingsHref }: UserSettingsLinkProps) {
+  return (
+    <Link href={settingsHref}>
+      <Settings />
+      Settings
+    </Link>
+  )
+}
+
+export type AdminSettingsLinkProps = { adminHref: Href }
+export function AdminSettingsLink({ adminHref }: AdminSettingsLinkProps) {
+  return (
+    <Link href={adminHref}>
+      <DisplaySettings />
+      Admin
+    </Link>
+  )
+}
+
+export type BookmarksLinkProps = { bookmarksHref: Href }
+export function BookmarksLink({ bookmarksHref }: BookmarksLinkProps) {
+  return (
+    <Link href={bookmarksHref}>
+      <Bookmarks />
+      Bookmarks
+    </Link>
+  )
+}
+
+export type FollowingLinkProps = { followingHref: Href }
+export function FollowingLink({ followingHref }: FollowingLinkProps) {
+  return (
+    <Link href={followingHref}>
+      <ArrowsIcon />
+      Following
+    </Link>
+  )
+}
+
+export type AvatarMenuProps = {
+  adminSettingsLinkProps: _falsy | AdminSettingsLinkProps
+  profileLinkProps: ProfileLinkProps
+  logoutProps: LogoutProps
+  userSettingsLinkProps: UserSettingsLinkProps
+  bookmarksLinkProps: BookmarksLinkProps
+  followingLinkProps: FollowingLinkProps
+}
+
+export function AvatarMenu({
+  profileLinkProps,
+  logoutProps,
+  userSettingsLinkProps,
+  adminSettingsLinkProps,
+  bookmarksLinkProps,
+  followingLinkProps,
+}: AvatarMenuProps) {
+  const menuItems = [
+    <ProfileLink key="profile" {...profileLinkProps} />,
+    <BookmarksLink key="bookmarks" {...bookmarksLinkProps} />,
+    <FollowingLink key="following" {...followingLinkProps} />,
+    <UserSettingsLink key="user-settings" {...userSettingsLinkProps} />,
+    adminSettingsLinkProps && (
+      <AdminSettingsLink key="admin-settings" {...adminSettingsLinkProps} />
+    ),
+    <Logout key="logout" {...logoutProps} />,
+  ]
+
+  // FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
+  const avatarStyle = {
+    backgroundImage: `url(${profileLinkProps.avatarUrl ?? defaultAvatar})`,
+    backgroundSize: 'cover',
+  }
+  const menuItemsElement = filterOutFalsies(menuItems).map<FloatingMenuContentItem>(Element => ({
+    Element,
+    wrapperClassName: `avatar-menu-item`,
+  }))
+  return (
+    <FloatingMenu
+      className="avatar-menu"
+      key="avatar-menu"
+      abbr="User menu"
+      menuContent={menuItemsElement}
+      hoverElement={<div style={avatarStyle} className="avatar" />}
     />
   )
 }

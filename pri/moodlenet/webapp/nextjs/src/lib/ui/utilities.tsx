@@ -6,7 +6,7 @@ import type { AssetInfo } from '../../common/types'
 import { getDomainUrl } from '../../common/utilities'
 import { getVimeoEmbed, getVimeoThumbnail } from '../../ui/molecules/embeds/Vimeo/Vimeo'
 import { getYouTubeEmbed, getYouTubeThumbnail } from '../../ui/molecules/embeds/Youtube/Youtube'
-import { AddonItem } from '../types.jsx'
+import { AddonItem } from '../types'
 
 export const elementFullyInViewPort = (
   el: Element,
