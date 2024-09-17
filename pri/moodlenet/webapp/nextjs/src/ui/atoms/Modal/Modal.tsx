@@ -1,10 +1,10 @@
 'use client'
-// import { CloseRounded as CloseRoundedIcon } from '@mui/icons-material'
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import type React from 'react'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import Card from '../../atoms/Card/Card'
+import { Card } from '../../atoms/Card/Card'
 import './Modal.scss'
 
 export type ModalProps = {
@@ -21,17 +21,17 @@ export type ModalProps = {
 
 const stopPropagation = (event: React.MouseEvent) => event.stopPropagation()
 
-export const Modal: React.FC<ModalProps> = ({
+export function Modal({
+  className = '',
+  closeButton = true,
   title,
   actions,
   style,
-  className,
-  closeButton,
   children,
   contentRef,
   onClose,
   onPressEnter,
-}) => {
+}: ModalProps) {
   const handleonClose = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation()
@@ -82,9 +82,3 @@ export const Modal: React.FC<ModalProps> = ({
     document.querySelector('.layout-container#layout-container') ?? document.body,
   )
 }
-Modal.defaultProps = {
-  className: '',
-  closeButton: true,
-}
-
-export default Modal

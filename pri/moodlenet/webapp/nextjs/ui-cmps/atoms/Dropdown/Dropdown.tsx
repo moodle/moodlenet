@@ -7,7 +7,7 @@ import type { SelectorProps } from '../../../lib/selector'
 import { Selector, useSelectorOption } from '../../../lib/selector'
 
 // import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material'
-import RoundButton from '../RoundButton/RoundButton'
+import { RoundButton } from '../RoundButton/RoundButton'
 import './Dropdown.scss'
 import { setListPosition } from './utils'
 

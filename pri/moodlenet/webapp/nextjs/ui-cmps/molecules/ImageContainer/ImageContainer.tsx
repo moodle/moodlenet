@@ -4,7 +4,7 @@ import { forwardRef, useRef, useState } from 'react'
 import type { Credits } from '../../../../../common'
 import { useForwardedRef } from '../../../lib/useForwardedRef'
 import Modal from '../../atoms/Modal/Modal'
-import RoundButton from '../../atoms/RoundButton/RoundButton'
+import { RoundButton } from '../../atoms/RoundButton/RoundButton'
 import './ImageContainer.scss'
 
 export type ImageContainerProps = {

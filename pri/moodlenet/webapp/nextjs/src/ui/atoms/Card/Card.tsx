@@ -17,7 +17,7 @@ export type CardProps = {
   onMouseDown?(arg0: unknown): unknown
 }
 
-const Card = forwardRef<HTMLDivElement | null | undefined, CardProps>((props, ref) => {
+export const Card = forwardRef<HTMLDivElement | null | undefined, CardProps>((props, ref) => {
   const {
     onClick,
     onMouseDown,
@@ -51,4 +51,3 @@ const Card = forwardRef<HTMLDivElement | null | undefined, CardProps>((props, re
 
 Card.displayName = 'Card'
 
-export default Card

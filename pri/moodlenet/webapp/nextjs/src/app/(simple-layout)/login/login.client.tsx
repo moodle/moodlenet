@@ -6,7 +6,7 @@ import { useState, type CSSProperties } from 'react'
 import { Trans } from 'react-i18next'
 import { clientSlotItem } from '../../../lib/common/pages'
 import { sitepaths } from '../../../lib/common/utils/sitepaths'
-import Card from '../../../ui/atoms/Card/Card'
+import { Card } from '../../../ui/atoms/Card/Card'
 
 export interface LoginMethod {
   label: clientSlotItem

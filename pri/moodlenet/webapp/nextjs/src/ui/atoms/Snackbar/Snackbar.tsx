@@ -1,15 +1,15 @@
 'use client'
-// import {
-//   CheckCircleOutlineOutlined as CheckCircleOutlineOutlinedIcon,
-//   CloseRounded as CloseRoundedIcon,
-//   ErrorOutline as ErrorOutlineIcon,
-//   InfoOutlined as InfoOutlinedIcon,
-//   ReportProblemOutlined as ReportProblemOutlinedIcon,
-// } from '@mui/icons-material'
+
+import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined'
+
 import type React from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import Card from '../../atoms/Card/Card'
+import { Card } from '../../atoms/Card/Card'
 import './Snackbar.scss'
 
 import { createPortal } from 'react-dom'
@@ -32,21 +32,21 @@ export type SnackbarProps = {
 
 const stopPropagation = (event: React.MouseEvent) => event.stopPropagation()
 
-export const Snackbar: React.FC<SnackbarProps> = ({
-  showCloseButton,
+export function Snackbar({
+  className = '',
+  showIcon = true,
+  position = 'bottom',
+  type = 'info',
+  showCloseButton = false,
+  autoHideDuration = 4000,
   actions,
   icon,
-  showIcon,
   style,
   closeButtonText,
-  className,
-  type,
-  autoHideDuration,
   waitDuration,
-  position,
   children,
   onClose,
-}) => {
+}: SnackbarProps) {
   const [state, setState] = useState<'opening' | 'opened' | 'closing' | 'closed' | 'hidden'>(
     'opening',
   )
@@ -142,14 +142,3 @@ export const Snackbar: React.FC<SnackbarProps> = ({
         document.querySelector('.layout-container#layout-container') ?? document.body,
       )
 }
-
-Snackbar.defaultProps = {
-  className: '',
-  showIcon: true,
-  position: 'bottom',
-  type: 'info',
-  showCloseButton: false,
-  autoHideDuration: 4000,
-}
-
-export default Snackbar

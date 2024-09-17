@@ -1,5 +1,5 @@
 'use client'
-import PrimaryButton from '../../../ui/atoms/PrimaryButton/PrimaryButton'
+import { PrimaryButton } from '../../../ui/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../../ui/atoms/Searchbox/Searchbox'
 
 export function LandingHeadShareButton() {

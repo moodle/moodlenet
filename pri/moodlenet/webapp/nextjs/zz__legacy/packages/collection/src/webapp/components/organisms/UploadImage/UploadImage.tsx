@@ -11,9 +11,9 @@ import { ReactComponent as UploadImageIcon } from '../../../assets/icons/upload-
 
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import Modal from '../../../atoms/Modal/Modal'
-// import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-// import RoundButton from '../../../atoms/RoundButton/RoundButton'
-// import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
+// import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton'
+// import { RoundButton } from '../../../atoms/RoundButton/RoundButton'
+// import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton'
 // import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 // import { useNewCollectionPageCtx } from '../NewCollection'
 // import { NewCollectionFormValues } from '../types'

@@ -2,7 +2,7 @@
 import type React from 'react'
 import type { KeyboardEvent, ReactElement } from 'react'
 import { useRef, useState } from 'react'
-import Card from '../../atoms/Card/Card'
+import { Card } from '../../atoms/Card/Card'
 import './FloatingMenu.scss'
 
 export type FloatingMenuContentItem = {

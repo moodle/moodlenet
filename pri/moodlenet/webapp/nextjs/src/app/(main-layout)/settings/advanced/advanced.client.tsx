@@ -1,53 +1,37 @@
-/* eslint-disable prettier/prettier */
-import type { AddonItem } from '@moodlenet/component-library'
-import { Card, Modal, PrimaryButton, SecondaryButton, Snackbar } from '@moodlenet/component-library'
-import { useState, type FC } from 'react'
+'use client'
+import { useState } from 'react'
+import { Trans } from 'react-i18next'
+import { Card } from '../../../../ui/atoms/Card/Card'
+import { Modal } from '../../../../ui/atoms/Modal/Modal'
+import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
+import { SecondaryButton } from '../../../../ui/atoms/SecondaryButton/SecondaryButton'
+import { Snackbar } from '../../../../ui/atoms/Snackbar/Snackbar'
 import './Advanced.scss'
 
 export type AdvancedProps = {
-  mainColumnItems: (AddonItem | null)[]
-  deleteAccount: () => void
+  deleteAccount(): void
   deleteAccountSuccess: boolean
   instanceName: string
 }
 
-export const AdvancedMenu = () => <abbr title="Advanced">Advanced</abbr>
+export function AdvancedMenu() {
+  return (
+    <abbr title="Advanced">
+      <Trans>Advanced</Trans>
+    </abbr>
+  )
+}
 
-export const Advanced: FC<AdvancedProps> = ({
-  mainColumnItems,
-  deleteAccount,
-  deleteAccountSuccess,
-  instanceName,
-}) => {
+export function Advanced({ deleteAccount, deleteAccountSuccess, instanceName }: AdvancedProps) {
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false)
 
-  const leaveSection = (
-    <Card className="column">
-      <div className="parameter">
-        <div className="name">Leave {instanceName}</div>
-        <div className="actions">
-          <SecondaryButton onClick={() => setShowDeleteAccountModal(true)}>
-            Delete account
-          </SecondaryButton>
-        </div>
-      </div>
-    </Card>
-  )
-
-  const updatedMainColumnItems = [leaveSection, ...(mainColumnItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
-  )
-
-  const snackbars =
-    // <SnackbarStack
-    // snackbarList={
-    [
-      deleteAccountSuccess ? (
-        <Snackbar type="success">Check your email to confirm the deletion</Snackbar>
-      ) : null,
-    ]
-  // }
-  // ></SnackbarStack>
+  const snackbars = [
+    deleteAccountSuccess ? (
+      <Snackbar type="success">
+        <Trans>Check your email to confirm the deletion</Trans>
+      </Snackbar>
+    ) : null,
+  ]
 
   const modals = (
     <>
@@ -62,14 +46,14 @@ export const Advanced: FC<AdvancedProps> = ({
               }}
               color="red"
             >
-              Delete account
+              <Trans>Delete account</Trans>
             </PrimaryButton>
           }
           onClose={() => setShowDeleteAccountModal(false)}
           style={{ maxWidth: '400px' }}
           className="delete-message"
         >
-          An email will be send to confirm the deletion of your account.
+          <Trans>An email will be send to confirm the deletion of your account.</Trans>
         </Modal>
       )}
     </>
@@ -80,30 +64,18 @@ export const Advanced: FC<AdvancedProps> = ({
       {modals}
       {snackbars}
       <Card className="column">
-        <div className="title">
-          Advanced
-          {/* <PrimaryButton onClick={form.submitForm} disabled={!canSubmit} className="save-btn">
-            Save
-          </PrimaryButton> */}
-        </div>
+        <div className="title">Advanced</div>
       </Card>
-      {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      {/* <Card className="column">
+      <Card className="column">
         <div className="parameter">
-          <div className="name"> Platform name</div>
+          <div className="name">Leave {instanceName}</div>
           <div className="actions">
-            <InputTextField
-              className="instance-name"
-              placeholder="Enter name of your LMS platform"
-              defaultValue={form.values.instanceName}
-              onChange={form.handleChange}
-              name="instanceName"
-              key="instance-name"
-              error={shouldShowErrors && form.errors.instanceName}
-            />
+            <SecondaryButton onClick={() => setShowDeleteAccountModal(true)}>
+              Delete account
+            </SecondaryButton>
           </div>
         </div>
-      </Card> */}
+      </Card>
     </div>
   )
 }

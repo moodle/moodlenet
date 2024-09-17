@@ -4,7 +4,7 @@ import { Card, MultipeSelectDropdown, PrimaryButton, Switch } from '@moodlenet/c
 import type { EdMetaOptionsProps } from '@moodlenet/ed-resource/common'
 import { useFormik } from 'formik'
 import { /* useState, */ type FC } from 'react'
-import type { UserInterests } from '../../../../../../common/types.mjs'
+import type { UserInterests } from '../../../../../../zz__legacy/packages/web-user/src/common/types.mjs'
 import './General.scss'
 
 export type InterestsOptions = Pick<
@@ -41,7 +41,7 @@ export const General: FC<GeneralProps> = ({
     setTimeout(() => {
       setShowUserIdCopiedAlert(true)
     }, 100)
-  } 
+  }
 
   const detailsSection = (
     <Card className="column details-section">

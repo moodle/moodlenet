@@ -1,5 +1,5 @@
 'use client'
-import type { FC, KeyboardEvent, ReactNode } from 'react'
+import type { KeyboardEvent, ReactNode } from 'react'
 import { isEnterKeyEv } from '../../../lib/ui/utils/keyboard'
 import './SecondaryButton.scss'
 
@@ -16,9 +16,9 @@ export type SecondaryButtonProps = {
   onClick?: (e: React.MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => void
 } & Omit<React.HTMLAttributes<HTMLElement>, 'onClick'>
 
-export const SecondaryButton: FC<SecondaryButtonProps> = ({
+export function SecondaryButton({
   children,
-  color,
+  color = 'black',
   className,
   abbr,
   hiddenText,
@@ -28,7 +28,7 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
   innerRef,
   onClick,
   ...abbrProps
-}) => {
+}: SecondaryButtonProps) {
   return (
     <abbr
       ref={innerRef}
@@ -54,9 +54,3 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
     </abbr>
   )
 }
-
-SecondaryButton.defaultProps = {
-  color: 'black',
-}
-
-export default SecondaryButton
