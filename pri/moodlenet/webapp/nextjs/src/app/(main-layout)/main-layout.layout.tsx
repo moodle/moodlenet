@@ -3,10 +3,16 @@ import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
 import { Footer, FooterProps } from '../../ui/organisms/Footer/Footer'
 import { MainHeader, MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 import {
+  AdminSettingsLink,
   AvatarMenu,
+  BookmarksLink,
+  FollowingLink,
   HeaderSearchbox,
   LoginHeaderButton,
+  Logout,
+  ProfileLink,
   SignupHeaderButton,
+  UserSettingsLink,
 } from './main-layout.client'
 
 import { lib_moodle_iam } from '@moodle/lib-domain'
@@ -15,6 +21,7 @@ import './main-layout.style.scss'
 import { user_session } from 'lib/domain/src/moodle/iam/v1_0'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { logout } from '../actions/session'
+import { filterOutFalsies } from '@moodle/lib-types'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const {
@@ -49,31 +56,36 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const isAuthenticated = lib_moodle_iam.v1_0.isAuthenticated(user_session)
     const isAdmin = lib_moodle_iam.v1_0.hasUserRole(user_session, 'admin')
     const { pages } = sitepaths()
+    const avatarUrl = null //user_session.user.avatarUrl
+
     const defaultRights = isAuthenticated
-      ? [
-          <AvatarMenu
-            key="avatar-menu"
-            {...{
-              adminSettingsLinkProps: isAdmin && { adminHref: pages.admin() },
-              bookmarksLinkProps: {
-                bookmarksHref: `pages.homepages.profile('bookmarks') `,
-              },
-              followingLinkProps: {
-                followingHref: `pages.homepages.profile('following') `,
-              },
-              logoutProps: {
-                logout,
-              },
-              profileLinkProps: {
-                avatarUrl: null,
-                profileHref: `pages.homepages.profile('settings') `,
-              },
-              userSettingsLinkProps: {
-                settingsHref: `pages.homepages.profile() `,
-              },
-            }}
-          />,
-        ]
+      ? (() => {
+          const {
+            user: { displayName, id },
+          } = user_session
+          const baseProfilePages = pages.homepages.profile(id, displayName)
+          return [
+            <AvatarMenu
+              key="avatar-menu"
+              avatarUrl={avatarUrl}
+              menuItems={filterOutFalsies([
+                <ProfileLink
+                  key="profile"
+                  avatarUrl={avatarUrl}
+                  profileHref={baseProfilePages('')}
+                />,
+                <BookmarksLink key="bookmarks" bookmarksHref={baseProfilePages('/bookmarks')} />,
+                <FollowingLink key="following" followingHref={baseProfilePages('/followers')} />,
+                <UserSettingsLink
+                  key="user-settings"
+                  settingsHref={baseProfilePages('/settings')}
+                />,
+                isAdmin && <AdminSettingsLink key="admin-settings" adminHref={pages.admin()} />,
+                <Logout key="logout" logout={logout} />,
+              ])}
+            />,
+          ]
+        })()
       : [
           <LoginHeaderButton key="login-header-button" />,
           <SignupHeaderButton key="signup-header-button" />,

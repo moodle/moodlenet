@@ -5,15 +5,16 @@ export function sitepaths(baseUrl = '/') {
 
   const DEF_SLUG = '-'
   const __ =
-    (path: string, sub = '') =>
+    <sub extends string>(path: string) =>
     (id: id, slug = DEF_SLUG) =>
+    (sub: sub) =>
       `${_(path)}/${id}/${slug}${sub}`
 
   type admin_sub = '/users' | '/general' | '/appearance'
   const admin = (sub: admin_sub = '/general') => _(`admin${sub}`)
 
   type profile_sub = '/settings' | '/bookmarks' | '/followers' | '/following' | ''
-  const profile = (sub: profile_sub = '') => __(`profile`, sub)
+  const profile = __<profile_sub>(`profile`)
   const resource = __(`resource`)
   const collection = __(`collection`)
   const subject = __(`subject`)

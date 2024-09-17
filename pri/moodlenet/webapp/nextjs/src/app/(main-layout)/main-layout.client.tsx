@@ -1,5 +1,5 @@
 'use client'
-import { _falsy, filterOutFalsies } from '@moodle/lib-types'
+import { _falsy } from '@moodle/lib-types'
 import { FloatingMenu, FloatingMenuContentItem } from '../../ui/atoms/FloatingMenu/FloatingMenu'
 import Person from '@mui/icons-material/Person'
 import { t } from 'i18next'
@@ -11,8 +11,11 @@ import TertiaryButton from '../../ui/atoms/TertiaryButton/TertiaryButton'
 import { Trans } from 'react-i18next'
 import { Bookmarks, DisplaySettings, ExitToApp, Settings } from '@mui/icons-material'
 import ArrowsIcon from '../../assets/icons/arrows.svg'
-import defaultAvatar from '../../assets/img/default-avatar.svg'
+  // FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
+  import defaultAvatar from '../../assets/img/default-avatar.svg'
+  // FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
 import { Href } from '../../lib/common/types'
+import { clientSlotItem } from '../../lib/common/pages'
 
 export function LoginHeaderButton() {
   const {
@@ -60,12 +63,12 @@ export type ProfileLinkProps = {
   profileHref: Href
   avatarUrl: string | _falsy
 }
-export function ProfileLink({ profileHref, avatarUrl = defaultAvatar }: ProfileLinkProps) {
+export function ProfileLink({ profileHref, avatarUrl }: ProfileLinkProps) {
   return (
     <Link href={profileHref} className="avatar">
       <div
         style={{
-          backgroundImage: 'url("' + avatarUrl + '")',
+          backgroundImage: 'url("' + avatarUrl ?? defaultAvatar + '")',
           backgroundSize: 'cover',
           borderRadius: '50%',
           height: '28px',
@@ -127,39 +130,16 @@ export function FollowingLink({ followingHref }: FollowingLinkProps) {
 }
 
 export type AvatarMenuProps = {
-  adminSettingsLinkProps: _falsy | AdminSettingsLinkProps
-  profileLinkProps: ProfileLinkProps
-  logoutProps: LogoutProps
-  userSettingsLinkProps: UserSettingsLinkProps
-  bookmarksLinkProps: BookmarksLinkProps
-  followingLinkProps: FollowingLinkProps
+  avatarUrl: string | _falsy
+  menuItems: clientSlotItem[]
 }
 
-export function AvatarMenu({
-  profileLinkProps,
-  logoutProps,
-  userSettingsLinkProps,
-  adminSettingsLinkProps,
-  bookmarksLinkProps,
-  followingLinkProps,
-}: AvatarMenuProps) {
-  const menuItems = [
-    <ProfileLink key="profile" {...profileLinkProps} />,
-    <BookmarksLink key="bookmarks" {...bookmarksLinkProps} />,
-    <FollowingLink key="following" {...followingLinkProps} />,
-    <UserSettingsLink key="user-settings" {...userSettingsLinkProps} />,
-    adminSettingsLinkProps && (
-      <AdminSettingsLink key="admin-settings" {...adminSettingsLinkProps} />
-    ),
-    <Logout key="logout" {...logoutProps} />,
-  ]
-
-  // FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
+export function AvatarMenu({ menuItems, avatarUrl }: AvatarMenuProps) {
   const avatarStyle = {
-    backgroundImage: `url(${profileLinkProps.avatarUrl ?? defaultAvatar})`,
+    backgroundImage: `url(${avatarUrl ?? defaultAvatar})`,
     backgroundSize: 'cover',
   }
-  const menuItemsElement = filterOutFalsies(menuItems).map<FloatingMenuContentItem>(Element => ({
+  const menuItemsElement = menuItems.map<FloatingMenuContentItem>(Element => ({
     Element,
     wrapperClassName: `avatar-menu-item`,
   }))
