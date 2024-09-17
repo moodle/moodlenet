@@ -2,7 +2,7 @@ import type { AddonItem } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { useMemo } from 'react'
 import { createPlugin } from '../../../../../web-lib/create-plugin.mjs'
-import type { MainFooterProps } from './MainFooter.js'
+import type { MainFooterProps } from './MainFooter'
 export type FooterComponentRegItem = Omit<AddonItem, 'key'>
 
 export const FooterPlugins = createPlugin<{

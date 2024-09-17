@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { shell } from '../shell.mjs'
-import type { SimpleEmailUserSettingsProps } from './UserSettings.js'
+import type { SimpleEmailUserSettingsProps } from './UserSettings'
 
 export function useSimpleEmailUserSettingsProps() {
   const [passwordChangedSuccess, setPasswordChangedSuccess] = useState(false)

@@ -1,2 +1,2 @@
-export * from '../../common/pkg-entities-tools.js'
-export * from './sys-entity-context.js'
+export * from '../../common/pkg-entities-tools'
+export * from './sys-entity-context'

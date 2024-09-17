@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 import { useParams } from 'react-router-dom'
-import { OpenIdInteractionPageContainer } from './OpenIdInteractionPageContainer.js'
+import { OpenIdInteractionPageContainer } from './OpenIdInteractionPageContainer'
 
 export const OpenIdInteractionPageRoute: FC = () => {
   const { interactionId } = useParams()

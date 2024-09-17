@@ -1,13 +1,13 @@
 import type { NumberSchema, SchemaOf, StringSchema } from 'yup'
 import { ValidationError, array, mixed, number, object, string } from 'yup'
-import { humanFileSize } from '../common/utils/validations.js'
+import { humanFileSize } from '../common/utils/validations'
 import type {
   ProvidedCreationContent,
   ProvidedImage,
   ResourceMeta,
   ResourceMetaValidationErrors,
   ValidationConfigs,
-} from './exports.js'
+} from './exports'
 
 export type ValidationSchemas = ReturnType<typeof getValidationSchemas>
 export function getValidationSchemas(validationConfigs: ValidationConfigs) {

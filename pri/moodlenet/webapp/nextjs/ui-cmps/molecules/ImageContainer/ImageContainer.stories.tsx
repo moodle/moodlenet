@@ -5,8 +5,8 @@ import { default as backupImage } from '../../../assets/img/contentBackup/gradie
 
 import { action } from '@storybook/addon-actions'
 import { useImageUrl } from '../../../lib/useImageUrl'
-import type { ImageContainerProps } from './ImageContainer.jsx'
-import ImageContainer from './ImageContainer.jsx'
+import type { ImageContainerProps } from './ImageContainer'
+import ImageContainer from './ImageContainer'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta: ComponentMeta<typeof ImageContainer> = {

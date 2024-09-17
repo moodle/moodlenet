@@ -1,13 +1,13 @@
-export * from '../app-routes.js'
-export * from '../context/AdminSettingsContext.js'
-export * from '../context/OrganizationCtx.js'
+export * from '../app-routes'
+export * from '../context/AdminSettingsContext'
+export * from '../context/OrganizationCtx'
 export { getMyShell } from '../getMyShell.mjs'
 export {
   registerMainAppPluginHook,
   type MainAppPluginHook,
   type MainAppPluginHookResult,
   type MainAppPluginWrapper,
-} from '../MainApp.js'
+} from '../MainApp'
 export { getCurrentInitPkg } from '../plugin-initializer.mjs'
 export * from '../types/plugins.mjs'
 export { useMainLayoutProps } from '../ui/components/layout/MainLayout/MainLayoutHooks.mjs'
@@ -24,8 +24,8 @@ export {
 export {
   AdminSettingsPagePlugins,
   type AdminSettingsSectionItem,
-} from '../ui/components/pages/AdminSettings/Hook/AdminSettingsHook.js'
-export { FallbackContainer } from '../ui/components/pages/Extra/Fallback/FallbackContainer.js'
+} from '../ui/components/pages/AdminSettings/Hook/AdminSettingsHook'
+export { FallbackContainer } from '../ui/components/pages/Extra/Fallback/FallbackContainer'
 export {
   LandingHookPlugin,
   type LandingPlugin,

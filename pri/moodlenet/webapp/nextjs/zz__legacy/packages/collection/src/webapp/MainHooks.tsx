@@ -9,7 +9,7 @@ import type {
   CollectionMainProps,
   CollectionRpc,
 } from '../common/types.mjs'
-import { MainContext } from './MainContext.js'
+import { MainContext } from './MainContext'
 
 // type PendingImage = {
 //   pendingPromise: Promise<string | null>

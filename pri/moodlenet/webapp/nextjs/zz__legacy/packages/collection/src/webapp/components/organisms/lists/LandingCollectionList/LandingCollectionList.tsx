@@ -3,8 +3,8 @@ import { ListCard } from '@moodlenet/component-library'
 import type { ProxyProps } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useMemo } from 'react'
-import type { CollectionCardProps } from '../../CollectionCard/CollectionCard.js'
-import { CollectionCard } from '../../CollectionCard/CollectionCard.js'
+import type { CollectionCardProps } from '../../CollectionCard/CollectionCard'
+import { CollectionCard } from '../../CollectionCard/CollectionCard'
 import './LandingCollectionList.scss'
 
 export type LandingCollectionListProps = {

@@ -3,9 +3,9 @@ import { action } from '@storybook/addon-actions'
 import type { FC } from 'react'
 import type { SchemaOf } from 'yup'
 import { object, string } from 'yup'
-import type { UserSettingsItem } from '../UserSettings.js'
-import type { AdvancedProps } from './Advanced.js'
-import { Advanced, AdvancedMenu } from './Advanced.js'
+import type { UserSettingsItem } from '../UserSettings'
+import type { AdvancedProps } from './Advanced'
+import { Advanced, AdvancedMenu } from './Advanced'
 
 export const validationSchema: SchemaOf<OrganizationData> = object({
   instanceName: string().max(160).min(3).required(/* t */ `Please provide an instance name`),

@@ -2,7 +2,7 @@ import { proxyWith } from '@moodlenet/react-app/ui'
 import { silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useEffect, useMemo, useState } from 'react'
 import type { BrowserProfileListDataProps } from '../../../ui/exports/ui.mjs'
-import { useProfileCardProps } from '../../organisms/ProfileCardHooks.js'
+import { useProfileCardProps } from '../../organisms/ProfileCardHooks'
 import { shell } from '../../shell.mjs'
 
 export function useProfileFollowersBrowserProfileListDataProps({

@@ -20,7 +20,7 @@ import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.s
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
-import type { ExtensionType } from '../Extensions/Extensions.js'
+import type { ExtensionType } from '../Extensions/Extensions'
 import './ExtensionInfo.scss'
 
 export type ExtensionInfoProps = {

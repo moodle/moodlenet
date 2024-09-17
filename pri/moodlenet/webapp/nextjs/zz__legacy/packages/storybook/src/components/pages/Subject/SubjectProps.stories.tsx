@@ -8,11 +8,11 @@ import { FollowButton } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import type { Meta as ComponentMeta } from '@storybook/react'
 import type { PartialDeep } from 'type-fest'
-import { getResourceCardsStoryProps } from '../../../components/organisms/ResourceCard/ResourceCardProps.stories.props.js'
+import { getResourceCardsStoryProps } from '../../../components/organisms/ResourceCard/ResourceCardProps.stories.props'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
-} from '../../layout/MainLayout/MainLayout.stories.js'
+} from '../../layout/MainLayout/MainLayout.stories'
 
 const meta: ComponentMeta<typeof Subject> = {
   title: 'Pages/Subject',

@@ -4,7 +4,7 @@ import { MinimalisticAccessButtonsStories } from '@moodlenet/web-user/stories'
 import type { UserAgreementProps } from '@moodlenet/web-user/ui'
 import { UserAgreement } from '@moodlenet/web-user/ui'
 import type { Meta as ComponentMeta } from '@storybook/react'
-import { FooterStoryProps } from '../../../organisms/Footer/Footer.stories.js'
+import { FooterStoryProps } from '../../../organisms/Footer/Footer.stories'
 
 const meta: ComponentMeta<typeof UserAgreement> = {
   title: 'Pages/Policies/UserAgreement',

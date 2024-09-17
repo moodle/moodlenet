@@ -3,7 +3,7 @@ import { useCollectionCardProps } from '@moodlenet/collection/webapp'
 import { proxyWith } from '@moodlenet/react-app/ui'
 import { silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useEffect, useMemo, useState } from 'react'
-import { useMyProfileContext } from '../../context/MyProfileContext.js'
+import { useMyProfileContext } from '../../context/MyProfileContext'
 import { shell } from '../../shell.mjs'
 
 export function useFollowingBrowserCollectionListDataProps({ profileKey }: { profileKey: string }) {

@@ -1,9 +1,9 @@
 'use client'
 import type { ReactElement, ReactNode } from 'react'
 import React, { createContext, useCallback, useContext, useState } from 'react'
-import type { SnackbarProps } from './Snackbar.jsx'
-import Snackbar from './Snackbar.jsx'
-import SnackbarStack from './SnackbarStack.jsx'
+import type { SnackbarProps } from './Snackbar'
+import Snackbar from './Snackbar'
+import SnackbarStack from './SnackbarStack'
 
 interface SnackbarContextType {
   addSnackbar: (snackbar: SnackbarProps | ReactElement) => void

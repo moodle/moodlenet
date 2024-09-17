@@ -5,9 +5,9 @@ import { adminPagePath, searchPagePath } from '../common/webapp-paths.mjs'
 import { Fallback } from './exports/ui.mjs'
 import { useMainLayoutProps } from './exports/webapp.mjs'
 import { getCurrentInitPkg } from './plugin-initializer.mjs'
-import { AdminSettingsPageRoute } from './ui/components/pages/AdminSettings/Hook/AdminSettingsPageRoute.js'
-import { LandingContainer } from './ui/components/pages/Landing/LandingContainer.js'
-import { SearchPageRoute } from './ui/components/pages/Search/SearchPageRoute.js'
+import { AdminSettingsPageRoute } from './ui/components/pages/AdminSettings/Hook/AdminSettingsPageRoute'
+import { LandingContainer } from './ui/components/pages/Landing/LandingContainer'
+import { SearchPageRoute } from './ui/components/pages/Search/SearchPageRoute'
 
 export type PkgRoutes = { routes: ReactElement }
 

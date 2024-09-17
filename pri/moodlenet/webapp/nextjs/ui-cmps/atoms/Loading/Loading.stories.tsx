@@ -1,7 +1,7 @@
 'use client'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import type { LoadingProps } from './Loading.jsx'
-import { Loading } from './Loading.jsx'
+import type { LoadingProps } from './Loading'
+import { Loading } from './Loading'
 
 const meta: ComponentMeta<typeof Loading> = {
   title: 'Atoms/Loading',

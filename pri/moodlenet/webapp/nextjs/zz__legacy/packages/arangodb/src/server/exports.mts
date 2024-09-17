@@ -1,11 +1,11 @@
 export * from 'arangojs'
 export { aql } from 'arangojs'
-export * from 'arangojs/analyzer.js'
-export * from 'arangojs/aql.js'
-export * from 'arangojs/collection.js'
-export * from 'arangojs/connection.js'
-export * from 'arangojs/cursor.js'
-export * from 'arangojs/database.js'
+export * from 'arangojs/analyzer'
+export * from 'arangojs/aql'
+export * from 'arangojs/collection'
+export * from 'arangojs/connection'
+export * from 'arangojs/cursor'
+export * from 'arangojs/database'
 export {
   _documentHandle,
   type Document,
@@ -18,13 +18,13 @@ export {
   type ObjectWithId,
   type ObjectWithKey,
   type Patch,
-} from 'arangojs/documents.js'
-export * from 'arangojs/error.js'
-export * from 'arangojs/foxx-manifest.js'
-export * from 'arangojs/graph.js'
-export * from 'arangojs/index.js'
-export * from 'arangojs/indexes.js'
-export * from 'arangojs/route.js'
-export * from 'arangojs/transaction.js'
-export * from 'arangojs/view.js'
+} from 'arangojs/documents'
+export * from 'arangojs/error'
+export * from 'arangojs/foxx-manifest'
+export * from 'arangojs/graph'
+export * from 'arangojs/index'
+export * from 'arangojs/indexes'
+export * from 'arangojs/route'
+export * from 'arangojs/transaction'
+export * from 'arangojs/view'
 export * from './lib.mjs'

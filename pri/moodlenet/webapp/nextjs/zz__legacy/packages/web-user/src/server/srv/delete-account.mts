@@ -8,7 +8,7 @@ import {
   setPkgCurrentUser,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
-import { waitFor } from 'xstate/lib/waitFor.js'
+import { waitFor } from 'xstate/lib/waitFor'
 import { Profile } from '../exports.mjs'
 import { WebUserCollection } from '../init/arangodb.mjs'
 import { shell } from '../shell.mjs'

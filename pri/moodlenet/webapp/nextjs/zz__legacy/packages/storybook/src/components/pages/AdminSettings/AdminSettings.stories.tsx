@@ -4,9 +4,9 @@ import { AppearanceStories, GeneralStories } from '@moodlenet/react-app/stories'
 import type { AdminSettingsProps } from '@moodlenet/react-app/ui'
 import { AdminSettings } from '@moodlenet/react-app/ui'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
-import { useModerationAdminSettingsElements } from './Moderation.stories.props.js'
-import { useUserAdminSettingsElements } from './Users.stories.props.js'
+import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories'
+import { useModerationAdminSettingsElements } from './Moderation.stories.props'
+import { useUserAdminSettingsElements } from './Users.stories.props'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof AdminSettings> = {

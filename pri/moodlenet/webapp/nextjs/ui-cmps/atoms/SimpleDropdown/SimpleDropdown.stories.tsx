@@ -1,7 +1,7 @@
 'use client'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import type { SimpleDropdownProps } from './SimpleDropdown.jsx'
-import { SimpleDropdown } from './SimpleDropdown.jsx'
+import type { SimpleDropdownProps } from './SimpleDropdown'
+import { SimpleDropdown } from './SimpleDropdown'
 
 const meta: ComponentMeta<typeof SimpleDropdown> = {
   title: 'Atoms/SimpleDropdown',

@@ -2,8 +2,8 @@ import type { AddonItem } from '@moodlenet/component-library'
 import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
-import type { MainSubjectCardSlots } from '../../molecules/MainSubjectCard/MainSubjectCard.js'
-import MainSubjectCard from '../../molecules/MainSubjectCard/MainSubjectCard.js'
+import type { MainSubjectCardSlots } from '../../molecules/MainSubjectCard/MainSubjectCard'
+import MainSubjectCard from '../../molecules/MainSubjectCard/MainSubjectCard'
 import './Subject.scss'
 
 export type SubjectOverallProps = {

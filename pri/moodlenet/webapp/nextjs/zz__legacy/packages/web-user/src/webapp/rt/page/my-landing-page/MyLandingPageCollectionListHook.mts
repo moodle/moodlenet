@@ -4,7 +4,7 @@ import { href, searchPagePath } from '@moodlenet/react-app/common'
 import { proxyWith } from '@moodlenet/react-app/ui'
 import { silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { useMyProfileContext } from '../../context/MyProfileContext.js'
+import { useMyProfileContext } from '../../context/MyProfileContext'
 
 export function useMyLandingPageCollectionListDataProps() {
   const collectionCtx = useContext(CollectionContext)

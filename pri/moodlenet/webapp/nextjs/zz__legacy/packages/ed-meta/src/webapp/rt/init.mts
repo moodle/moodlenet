@@ -8,9 +8,9 @@ import { useMemo } from 'react'
 import {
   SearchSubjectSectionAddon,
   SearchSubjectWrapperAddon,
-} from '../components/organisms/BrowserSubjectList/SubjectSearchPageAddonHooks.js'
-import MainWrapper from './MainWrapper.js'
-import { pkgRoutes } from './routes.js'
+} from '../components/organisms/BrowserSubjectList/SubjectSearchPageAddonHooks'
+import MainWrapper from './MainWrapper'
+import { pkgRoutes } from './routes'
 import './shell.mjs'
 
 registerAppRoutes(pkgRoutes)

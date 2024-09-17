@@ -21,9 +21,9 @@ import {
   getProfileFollowingRoutePath,
 } from '../../../../common/webapp-routes.mjs'
 import type { ProfileProps } from '../../../ui/exports/ui.mjs'
-import { AuthCtx } from '../../context/AuthContext.js'
-import { useProfileContext } from '../../context/ProfileContext.js'
-import { useMyFeaturedEntity } from '../../context/useMyFeaturedEntity.js'
+import { AuthCtx } from '../../context/AuthContext'
+import { useProfileContext } from '../../context/ProfileContext'
+import { useMyFeaturedEntity } from '../../context/useMyFeaturedEntity'
 import { shell } from '../../shell.mjs'
 
 export type ProfilePagePluginMap = {

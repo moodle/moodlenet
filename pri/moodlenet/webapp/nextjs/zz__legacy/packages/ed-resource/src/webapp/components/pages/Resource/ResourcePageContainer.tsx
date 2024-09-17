@@ -1,8 +1,8 @@
 import { FallbackContainer } from '@moodlenet/react-app/webapp'
 import type { FC } from 'react'
-import { ProvideCurrentResourceContext } from '../../../CurrentResourceContext.js'
-import ResourcePage from './Resource.js'
-import { useResourcePageProps } from './ResourcePageHooks.js'
+import { ProvideCurrentResourceContext } from '../../../CurrentResourceContext'
+import ResourcePage from './Resource'
+import { useResourcePageProps } from './ResourcePageHooks'
 
 export const ResourcePageContainer: FC<{ resourceKey: string }> = ({ resourceKey }) => {
   const resourceProps = useResourcePageProps({ resourceKey })

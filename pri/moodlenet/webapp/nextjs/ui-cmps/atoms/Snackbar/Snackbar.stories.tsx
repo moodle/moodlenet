@@ -1,7 +1,7 @@
 'use client'
 import { action } from '@storybook/addon-actions'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import { Snackbar } from './Snackbar.jsx'
+import { Snackbar } from './Snackbar'
 
 const meta: ComponentMeta<typeof Snackbar> = {
   title: 'Atoms/Snackbar',

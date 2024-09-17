@@ -2,8 +2,8 @@ import type { OptionItemProp } from '@moodlenet/component-library'
 import type { SelectOptionsMulti } from '@moodlenet/react-app/ui'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import type { CollectionsResorce } from '../../../../common/types.mjs'
-import { MainContext } from '../../../MainContext.js'
-import type { AddToCollectionButtonProps } from './AddToCollectionButtons.js'
+import { MainContext } from '../../../MainContext'
+import type { AddToCollectionButtonProps } from './AddToCollectionButtons'
 
 const mapToSelectOption = (value: string, label: string) => ({ value, label })
 

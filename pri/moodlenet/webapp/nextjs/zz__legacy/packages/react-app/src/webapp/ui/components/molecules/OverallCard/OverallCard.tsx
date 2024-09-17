@@ -3,7 +3,7 @@ import { Card } from '@moodlenet/component-library'
 // import { Card } from '@moodlenet/react-app'
 import type { ComponentType, FC } from 'react'
 import type { Href } from '../../../../../common/lib.mjs'
-import { Link } from '../../elements/link.js'
+import { Link } from '../../elements/link'
 // import { Href, Link } from '../../../../elements/link'
 import './OverallCard.scss'
 

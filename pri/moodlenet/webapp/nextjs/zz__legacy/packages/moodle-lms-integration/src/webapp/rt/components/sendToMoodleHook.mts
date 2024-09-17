@@ -1,7 +1,7 @@
 import { AuthCtx } from '@moodlenet/web-user/webapp'
 import { useCallback, useContext } from 'react'
-import type { SendToMoodleProps } from '../../ui/components/SendToMoodle.js'
-import { MyLmsContext } from '../myLmsContext.js'
+import type { SendToMoodleProps } from '../../ui/components/SendToMoodle'
+import { MyLmsContext } from '../myLmsContext'
 import { useSendToLMS } from '../send-to-moodle/useSendToLms.mjs'
 
 export function useSendToMoodle(): SendToMoodleProps {

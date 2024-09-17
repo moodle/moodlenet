@@ -1,13 +1,13 @@
 import type { MainLayoutProps } from '@moodlenet/react-app/ui'
 import { MainLayout } from '@moodlenet/react-app/ui'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import { FooterStoryProps } from '../../organisms/Footer/Footer.stories.js'
+import { FooterStoryProps } from '../../organisms/Footer/Footer.stories'
 
 import {
   HeaderLoggedInStoryProps,
   HeaderLoggedOutOrganizationStoryProps,
   HeaderLoggedOutStoryProps,
-} from '../../organisms/MainHeader/MainHeader.stories.js'
+} from '../../organisms/MainHeader/MainHeader.stories'
 
 const meta: ComponentMeta<typeof MainLayout> = {
   title: 'Organisms/MainLayout',

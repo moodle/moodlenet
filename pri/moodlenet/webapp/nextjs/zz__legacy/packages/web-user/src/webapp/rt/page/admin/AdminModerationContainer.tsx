@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 import { Moderation } from '../../../ui/exports/ui.mjs'
-import { useAdminModerationProps } from './AdminModerationHooks.js'
+import { useAdminModerationProps } from './AdminModerationHooks'
 
 export const AdminModerationContainer: FC = () => {
   const ModerationProps = useAdminModerationProps()

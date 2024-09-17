@@ -12,16 +12,16 @@ import {
   SIGNUP_PAGE_ROUTE_BASE_PATH,
   USER_AGREEMENTS_PAGE_PATH,
 } from '../../common/webapp-routes.mjs'
-import { DeleteAccountSuccessContainer } from './page/access/DeleteAccountSuccesContainer.js'
-import LoginPanelContainer from './page/access/LoginPageContainer.js'
-import { RootLoginContainer } from './page/access/RootLoginContainer.js'
-import { SignUpContainer } from './page/access/SignupContainer.js'
-import { UserAgreementContainer } from './page/access/policies/UserAgreementContainer.js'
-import { BookmarksPageContainer } from './page/bookmarks/BookmarksPageContainer.js'
-import { ProfileFollowersPageRoute } from './page/profile-followers/ProfileFollowersPageRoute.js'
-import { ProfileFollowingPageRoute } from './page/profile-following/ProfileFollowingPageRoute.js'
-import { ProfilePageRoute } from './page/profile/ProfilePageRoute.js'
-import { UserSettingsRoute } from './page/settings/UserSettingsRoute.js'
+import { DeleteAccountSuccessContainer } from './page/access/DeleteAccountSuccesContainer'
+import LoginPanelContainer from './page/access/LoginPageContainer'
+import { RootLoginContainer } from './page/access/RootLoginContainer'
+import { SignUpContainer } from './page/access/SignupContainer'
+import { UserAgreementContainer } from './page/access/policies/UserAgreementContainer'
+import { BookmarksPageContainer } from './page/bookmarks/BookmarksPageContainer'
+import { ProfileFollowersPageRoute } from './page/profile-followers/ProfileFollowersPageRoute'
+import { ProfileFollowingPageRoute } from './page/profile-following/ProfileFollowingPageRoute'
+import { ProfilePageRoute } from './page/profile/ProfilePageRoute'
+import { UserSettingsRoute } from './page/settings/UserSettingsRoute'
 
 export const pkgRoutes: PkgRoutes = {
   routes: (

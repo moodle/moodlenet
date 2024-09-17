@@ -10,9 +10,9 @@ import '../shell.mjs'
 import {
   SearchCollectionSectionAddon,
   SearchCollectionWrapperAddon,
-} from '../components/organisms/lists/BrowserCollectionList/CollectionSearchPageAddonHooks.js'
-import MainWrapper from '../MainWrapper.js'
-import { pkgRoutes } from '../routes.js'
+} from '../components/organisms/lists/BrowserCollectionList/CollectionSearchPageAddonHooks'
+import MainWrapper from '../MainWrapper'
+import { pkgRoutes } from '../routes'
 
 registerAppRoutes(pkgRoutes)
 registerMainAppPluginHook(function useMainAppContext() {

@@ -5,7 +5,7 @@ import { Maintenance } from '@moodlenet/react-app/ui'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
-} from '../../../layout/MainLayout/MainLayout.stories.js'
+} from '../../../layout/MainLayout/MainLayout.stories'
 
 const meta: ComponentMeta<typeof Maintenance> = {
   title: 'Pages/Extra/Maintenance',

@@ -1,4 +1,4 @@
-import type { Config } from 'arangojs/connection.js'
+import type { Config } from 'arangojs/connection'
 import assert from 'assert'
 import { shell } from '../shell.mjs'
 

@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react'
-import type { MainLayoutProps } from '../../../../../../../../../app-nextjs-moodlenet/src/layouts/MainLayout.js'
-import { AdminSettingsCtx } from '../../../../context/AdminSettingsContext.js'
+import type { MainLayoutProps } from '../../../../../../../../../app-nextjs-moodlenet/src/layouts/MainLayout'
+import { AdminSettingsCtx } from '../../../../context/AdminSettingsContext'
 import { useFooterProps } from '../../organisms/Footer/MainFooter/MainFooterHooks.mjs'
 import { useHeaderProps } from '../../organisms/Header/MainHeader/MainHeaderHooks.mjs'
 

@@ -5,7 +5,7 @@ import { Fallback } from '@moodlenet/react-app/ui'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
-} from '../../../layout/MainLayout/MainLayout.stories.js'
+} from '../../../layout/MainLayout/MainLayout.stories'
 
 const meta: ComponentMeta<typeof Fallback> = {
   title: 'Pages/Extra/Fallback',

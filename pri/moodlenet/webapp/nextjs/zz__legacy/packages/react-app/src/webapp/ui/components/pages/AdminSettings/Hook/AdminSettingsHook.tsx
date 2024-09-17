@@ -4,9 +4,9 @@ import { createPlugin } from '../../../../../web-lib/create-plugin.mjs'
 // import { Link } from '../../../../elements/link'
 // import { RegistryEntry } from '../../../../main-lib/registry'
 import { useMainLayoutProps } from '../../../layout/MainLayout/MainLayoutHooks.mjs'
-import type { AdminSettingsItem, AdminSettingsProps } from '../AdminSettings.js'
-import { AppearanceContainer } from '../Appearance/AppearanceContainer.js'
-import { GeneralContainer } from '../General/GeneralContainer.js'
+import type { AdminSettingsItem, AdminSettingsProps } from '../AdminSettings'
+import { AppearanceContainer } from '../Appearance/AppearanceContainer'
+import { GeneralContainer } from '../General/GeneralContainer'
 
 export type AdminSettingsSectionItem = Omit<AdminSettingsItem, 'key'>
 const localAdminSettingsItems: AdminSettingsItem[] = [

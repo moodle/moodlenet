@@ -1,5 +1,5 @@
-import type { Credits } from '../../graphql/scalars.graphql.js'
-import type { Timestamp } from './common.js'
+import type { Credits } from '../../graphql/scalars.graphql'
+import type { Timestamp } from './common'
 
 export type GraphNodeMap = {
   Collection: Collection

@@ -1,6 +1,6 @@
 import type { AssetInfo } from '@moodlenet/component-library/common'
 import { matchState, nameMatcher } from '@moodlenet/core-domain/resource'
-import { waitFor } from 'xstate/lib/waitFor.js'
+import { waitFor } from 'xstate/lib/waitFor'
 import { stdEdResourceMachine } from './exports.mjs'
 import { publicFilesHttp } from './init/fs.mjs'
 import type { Image } from './types.mjs'

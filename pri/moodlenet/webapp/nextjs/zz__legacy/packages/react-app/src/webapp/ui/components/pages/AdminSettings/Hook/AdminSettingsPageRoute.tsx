@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { AdminSettingsContainer } from './AdminSettingsContainer.js'
+import { AdminSettingsContainer } from './AdminSettingsContainer'
 
 // FIXMA: needs a settable context
 const canShowAdminSettingsPage = true

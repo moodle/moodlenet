@@ -1,11 +1,11 @@
 'use client'
 // import { ArrowDropDown } from '@mui/icons-material'
 import { Fragment } from 'react'
-import type { TextOptionProps } from '../Dropdown/Dropdown.jsx'
-import type { FloatingMenuContentItem } from '../FloatingMenu/FloatingMenu.jsx'
-import FloatingMenu from '../FloatingMenu/FloatingMenu.jsx'
-import PrimaryButton from '../PrimaryButton/PrimaryButton.jsx'
-import SecondaryButton from '../SecondaryButton/SecondaryButton.jsx'
+import type { TextOptionProps } from '../Dropdown/Dropdown'
+import type { FloatingMenuContentItem } from '../FloatingMenu/FloatingMenu'
+import FloatingMenu from '../FloatingMenu/FloatingMenu'
+import PrimaryButton from '../PrimaryButton/PrimaryButton'
+import SecondaryButton from '../SecondaryButton/SecondaryButton'
 import './SimpleDropdown.scss'
 
 export type SimpleDropdownProps = {

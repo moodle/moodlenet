@@ -6,8 +6,8 @@ import { createPlugin } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import type { ResourceCardDataProps } from '../../../../common/types.mjs'
 import { getResourceHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
-import { useResourceBaseProps } from '../../../ResourceHooks.js'
-import type { ResourceCardPropsData } from './ResourceCard.js'
+import { useResourceBaseProps } from '../../../ResourceHooks'
+import type { ResourceCardPropsData } from './ResourceCard'
 
 export const ResourceCardPlugins = createPlugin<
   {

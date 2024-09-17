@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
-// import { useInstallExtensionProps } from '../InstallExtension/InstallExtensionHook.js'
-import { useManageExtensionsProps } from '../ManageExtensions/ManageExtensionsHooks.js'
+// import { useInstallExtensionProps } from '../InstallExtension/InstallExtensionHook'
+import { useManageExtensionsProps } from '../ManageExtensions/ManageExtensionsHooks'
 
-import type { ExtensionsProps } from './Extensions.js'
+import type { ExtensionsProps } from './Extensions'
 
 export const useExtensionsProps = (): ExtensionsProps => {
   // const installExtensionProps = useInstallExtensionProps()

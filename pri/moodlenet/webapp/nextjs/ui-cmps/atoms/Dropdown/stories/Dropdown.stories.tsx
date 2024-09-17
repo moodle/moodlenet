@@ -1,8 +1,8 @@
 'use client'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import { Dropdown, IconPill, IconTextOption, SimplePill, TextOption } from '../Dropdown.jsx'
-import { LevelDropdown, LicenseDropdown } from './DropdownProps.stories.props.jsx'
-import { useStoriesDDCtrl } from './DropdownUtil.stories.js'
+import { Dropdown, IconPill, IconTextOption, SimplePill, TextOption } from '../Dropdown'
+import { LevelDropdown, LicenseDropdown } from './DropdownProps.stories.props'
+import { useStoriesDDCtrl } from './DropdownUtil.stories'
 
 const meta: ComponentMeta<typeof Dropdown> = {
   title: 'Atoms/Dropdown',

@@ -7,7 +7,7 @@ import type { ProfileAccess, ProfileActions, ProfileState } from '../../../../..
 import { getUserLevelDetails } from '../../../../gamification/user-levels.mjs'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
 import defaultBackground from '../../../assets/img/default-background.svg'
-import { FollowButton } from '../../atoms/FollowButton/FollowButton.js'
+import { FollowButton } from '../../atoms/FollowButton/FollowButton'
 import './ProfileCard.scss'
 
 export type ProfileCardProps = {

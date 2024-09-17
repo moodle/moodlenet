@@ -3,9 +3,9 @@ import { useFormik } from 'formik'
 import type { FC } from 'react'
 import { defaultAppearanceData } from '../../../../../../common/exports.mjs'
 import type { AppearanceData } from '../../../../../../common/types.mjs'
-import type { AdminSettingsItem } from '../AdminSettings.js'
-import type { AppearanceProps } from './Appearance.js'
-import { Appearance, AppearanceMenu } from './Appearance.js'
+import type { AdminSettingsItem } from '../AdminSettings'
+import type { AppearanceProps } from './Appearance'
+import { Appearance, AppearanceMenu } from './Appearance'
 
 export const useAppearanceStoryProps = (overrides?: {
   editFormValues?: Partial<AppearanceData>

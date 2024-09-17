@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { WebappInteractionDetails } from '../../common/expose-def.mjs'
 import { shell } from '../shell.mjs'
 import { post_to_url } from './helper.mjs'
-import type { OpenIdInteractionPageProps } from './OpenIdInteractionPage.js'
+import type { OpenIdInteractionPageProps } from './OpenIdInteractionPage'
 export function useOpenIdInteractionPage({
   interactionId,
 }: {

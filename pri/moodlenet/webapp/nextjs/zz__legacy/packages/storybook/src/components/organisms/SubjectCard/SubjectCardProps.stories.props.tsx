@@ -3,7 +3,7 @@ import type { SubjectCardProps } from '@moodlenet/ed-meta/ui'
 import { subjectsCardFactory } from '@moodlenet/ed-meta/ui'
 import { transformPropsToObjectWithKey } from '@moodlenet/react-app/ui'
 import type { PartialDeep } from 'type-fest'
-import { getSubjectCardStoryProps } from './SubjectCard.stories.js'
+import { getSubjectCardStoryProps } from './SubjectCard.stories'
 
 export const getSubjectCardsStoryProps = (
   amount = 8,

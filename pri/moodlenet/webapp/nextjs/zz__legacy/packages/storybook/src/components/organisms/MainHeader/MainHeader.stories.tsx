@@ -4,7 +4,7 @@ import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storyboo
 import { HeaderTitleStories } from '@moodlenet/react-app/stories'
 import type { MainHeaderProps } from '@moodlenet/react-app/ui'
 import { MainHeader } from '@moodlenet/react-app/ui'
-import { getMainHeaderStoryProps } from './MainHeaderProps.stories.props.js'
+import { getMainHeaderStoryProps } from './MainHeaderProps.stories.props'
 
 const meta: ComponentMeta<typeof MainHeader> = {
   title: 'Organisms/MainHeader',

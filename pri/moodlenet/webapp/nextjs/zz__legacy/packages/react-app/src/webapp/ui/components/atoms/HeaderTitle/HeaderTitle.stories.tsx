@@ -3,8 +3,8 @@ import { href } from '../../../../../common/lib.mjs'
 // import { href } from '../../../../elements/link'
 import smallLogo from '../../../assets/logos/moodlenet-logo-small.svg'
 import logo from '../../../assets/logos/moodlenet-logo.svg'
-import type { HeaderTitleProps } from './HeaderTitle.js'
-import { HeaderTitle } from './HeaderTitle.js'
+import type { HeaderTitleProps } from './HeaderTitle'
+import { HeaderTitle } from './HeaderTitle'
 
 const meta: ComponentMeta<typeof HeaderTitle> = {
   title: 'Atoms/HeaderTitle',

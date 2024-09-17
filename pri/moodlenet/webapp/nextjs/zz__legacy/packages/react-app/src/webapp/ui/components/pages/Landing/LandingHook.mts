@@ -1,10 +1,10 @@
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { useContext } from 'react'
-import { OrganizationCtx } from '../../../../context/OrganizationCtx.js'
+import { OrganizationCtx } from '../../../../context/OrganizationCtx'
 import { createPlugin } from '../../../../web-lib/create-plugin.mjs'
 import { useMainLayoutProps } from '../../layout/MainLayout/MainLayoutHooks.mjs'
-import type { LandingProps } from './Landing.js'
+import type { LandingProps } from './Landing'
 
 export type LandingPlugin = {
   mainColumnItems?: AddOnMap<AddonItemNoKey>

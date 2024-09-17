@@ -1,7 +1,7 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import { action } from '@storybook/addon-actions'
 import { useState } from 'react'
-import { AddToCollectionButton } from './AddToCollectionButtons.js'
+import { AddToCollectionButton } from './AddToCollectionButtons'
 import { CollectionTextOptionProps } from './storiesData.mjs'
 
 export const useAddToCollectionButtonStory = (): AddonItem => {

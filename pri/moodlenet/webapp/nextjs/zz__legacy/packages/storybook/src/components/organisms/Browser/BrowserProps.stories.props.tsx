@@ -8,10 +8,10 @@ import { BrowserProfileFilters, BrowserProfileList } from '@moodlenet/web-user/u
 import { action } from '@storybook/addon-actions'
 import { useMemo, useState } from 'react'
 import type { PartialDeep } from 'type-fest'
-import { getCollectionCardsStoryProps } from '../CollectionCard/CollectionCardProps.stories.props.js'
-import { getProfileCardsStoryProps } from '../ProfileCard/ProfileCardProps.stories.props.js'
-import { getResourceCardsStoryProps } from '../ResourceCard/ResourceCardProps.stories.props.js'
-import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stories.props.js'
+import { getCollectionCardsStoryProps } from '../CollectionCard/CollectionCardProps.stories.props'
+import { getProfileCardsStoryProps } from '../ProfileCard/ProfileCardProps.stories.props'
+import { getResourceCardsStoryProps } from '../ResourceCard/ResourceCardProps.stories.props'
+import { getSubjectCardsStoryProps } from '../SubjectCard/SubjectCardProps.stories.props'
 
 export const useBrowserResourceList = (): MainColumItem => {
   const [currentResourceSortBy, setCurrentResourceSortBy] = useState<SortType>('Relevant')

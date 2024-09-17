@@ -4,7 +4,7 @@ import type React from 'react'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import Card from '../../atoms/Card/Card.jsx'
+import Card from '../../atoms/Card/Card'
 import './Modal.scss'
 
 export type ModalProps = {

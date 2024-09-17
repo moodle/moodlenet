@@ -3,8 +3,8 @@ import { AdvancedStories } from '@moodlenet/web-user/stories'
 import type { UserSettingsProps } from '@moodlenet/web-user/ui'
 import { UserSettings } from '@moodlenet/web-user/ui'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
-import { useUserSettingsGeneralElements } from './Sections/General.stories.props.js'
+import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories'
+import { useUserSettingsGeneralElements } from './Sections/General.stories.props'
 // import { href } from '../../../elements/link'
 
 const meta: ComponentMeta<typeof UserSettings> = {

@@ -35,11 +35,11 @@ import type { ProxyProps } from '@moodlenet/react-app/ui'
 import type { BookmarkButtonProps, SmallFollowButtonProps } from '@moodlenet/web-user/ui'
 import { BookmarkButton, FollowButton, SmallFollowButton } from '@moodlenet/web-user/ui'
 import { useFormik } from 'formik'
-import { getResourceCardsStoryProps } from '../../../components/organisms/ResourceCard/ResourceCardProps.stories.props.js'
+import { getResourceCardsStoryProps } from '../../../components/organisms/ResourceCard/ResourceCardProps.stories.props'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
-} from '../../layout/MainLayout/MainLayout.stories.js'
+} from '../../layout/MainLayout/MainLayout.stories'
 
 const maxUploadSize = 1024 * 1024 * 50
 

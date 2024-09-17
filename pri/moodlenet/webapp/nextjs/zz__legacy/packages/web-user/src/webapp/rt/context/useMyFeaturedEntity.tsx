@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import type { KnownEntityFeature, KnownEntityType } from '../../../common/types.mjs'
-import { useMyProfileContext } from './MyProfileContext.js'
+import { useMyProfileContext } from './MyProfileContext'
 
 export type MyFeaturedEntityHandle = {
   toggle(): Promise<void>

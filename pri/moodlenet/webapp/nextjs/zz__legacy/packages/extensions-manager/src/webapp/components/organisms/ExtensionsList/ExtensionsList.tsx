@@ -7,10 +7,10 @@ import {
 } from '@moodlenet/component-library'
 import type { FC } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
-// import { DevModeBtn } from '../Extensions.js'
+// import { DevModeBtn } from '../Extensions'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import { ReactComponent as ApprovedIcon } from '../../../assets/icons/approved.svg'
-import type { ExtensionType } from '../../pages/Extensions/Extensions.js'
+import type { ExtensionType } from '../../pages/Extensions/Extensions'
 
 import './ExtensionsList.scss'
 

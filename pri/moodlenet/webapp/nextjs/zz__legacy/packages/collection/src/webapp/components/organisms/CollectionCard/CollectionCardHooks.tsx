@@ -6,8 +6,8 @@ import { createPlugin } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import type { CollectionCardData } from '../../../../common/types.mjs'
 import { getCollectionHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
-import { useMainHook } from '../../../MainHooks.js'
-import type { CollectionCardProps } from './CollectionCard.js'
+import { useMainHook } from '../../../MainHooks'
+import type { CollectionCardProps } from './CollectionCard'
 
 export const CollectionCardPlugins = createPlugin<
   {

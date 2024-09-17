@@ -3,8 +3,8 @@ import type { CSSProperties } from 'react'
 import { forwardRef, useRef, useState } from 'react'
 import type { Credits } from '../../../../../common'
 import { useForwardedRef } from '../../../lib/useForwardedRef'
-import Modal from '../../atoms/Modal/Modal.jsx'
-import RoundButton from '../../atoms/RoundButton/RoundButton.jsx'
+import Modal from '../../atoms/Modal/Modal'
+import RoundButton from '../../atoms/RoundButton/RoundButton'
 import './ImageContainer.scss'
 
 export type ImageContainerProps = {

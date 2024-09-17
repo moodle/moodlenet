@@ -42,11 +42,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
-} from '../../layout/MainLayout/MainLayout.stories.js'
+} from '../../layout/MainLayout/MainLayout.stories'
 
 import type { LearningOutcome } from '@moodlenet/ed-meta/common'
 import { SendToMoodle } from '@moodlenet/moodle-lms-integration/webapp/ui'
-import { learningOutcomeOptions, learningOutcomesSelection } from './ResourceData.stories.props.js'
+import { learningOutcomeOptions, learningOutcomesSelection } from './ResourceData.stories.props'
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',

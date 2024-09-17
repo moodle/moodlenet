@@ -1,8 +1,8 @@
 import type { OrganizationData } from '@moodlenet/organization/common'
 import { useFormik } from 'formik'
 import { useContext, useMemo } from 'react'
-import { OrganizationCtx } from '../../../../../context/OrganizationCtx.js'
-import type { GeneralProps } from './General.js'
+import { OrganizationCtx } from '../../../../../context/OrganizationCtx'
+import type { GeneralProps } from './General'
 
 export const useGeneralProps = (): GeneralProps => {
   const { organization, saveOrganization } = useContext(OrganizationCtx)

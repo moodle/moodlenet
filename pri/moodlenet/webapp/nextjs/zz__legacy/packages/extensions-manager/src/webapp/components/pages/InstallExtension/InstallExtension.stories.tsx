@@ -4,15 +4,12 @@ import { useFormik } from 'formik'
 import type { FC } from 'react'
 import type { SchemaOf } from 'yup'
 import { object, string } from 'yup'
-import type {
-  InstallExtensionProps,
-  InstallLocalPathExtensionFormValues,
-} from './InstallExtension.js'
-import InstallExtension, { InstallExtensionMenu } from './InstallExtension.js'
+import type { InstallExtensionProps, InstallLocalPathExtensionFormValues } from './InstallExtension'
+import InstallExtension, { InstallExtensionMenu } from './InstallExtension'
 
 import packageIcon3 from '../../../assets/icons/package-icon-3.png'
 import packageIcon5 from '../../../assets/icons/package-icon-5.png'
-import type { ExtensionType } from '../Extensions/Extensions.js'
+import type { ExtensionType } from '../Extensions/Extensions'
 // import packageIcon4 from '../../../assets/icons/package-icon-4.png'
 // import packageIcon2 from '../../../assets/icons/package-icon-2.png'
 // import packageIcon1 from '../../../assets/icons/package-icon.png'

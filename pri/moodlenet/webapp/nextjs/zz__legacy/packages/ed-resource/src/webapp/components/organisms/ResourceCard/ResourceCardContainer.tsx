@@ -1,6 +1,6 @@
 import type { FC } from 'react'
-import ResourceCard from './ResourceCard.js'
-import { useResourceCardProps } from './ResourceCardHook.js'
+import ResourceCard from './ResourceCard'
+import { useResourceCardProps } from './ResourceCardHook'
 
 export const ResourceCardContainer: FC<{ collectionKey: string }> = ({ collectionKey }) => {
   const opt = useResourceCardProps(collectionKey)

@@ -4,7 +4,7 @@
 // import {
 //   LevelUpEmail,
 //   type LevelUpEmailProps,
-// } from '../../../../../web-user/src/common/emails/Gamification/LevelUpEmail/LevelUpEmail.js'
+// } from '../../../../../web-user/src/common/emails/Gamification/LevelUpEmail/LevelUpEmail'
 
 // export default {
 //   title: 'Pages/Emails/Gamification/LevelUpEmail',

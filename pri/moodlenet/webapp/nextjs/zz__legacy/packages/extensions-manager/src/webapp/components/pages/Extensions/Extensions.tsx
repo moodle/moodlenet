@@ -1,7 +1,7 @@
 import type { AddonItem } from '@moodlenet/component-library'
 import type { FC } from 'react'
-import type { ManageExtensionsPropsControlled } from '../ManageExtensions/ManageExtensions.js'
-import ManageExtensions from '../ManageExtensions/ManageExtensions.js'
+import type { ManageExtensionsPropsControlled } from '../ManageExtensions/ManageExtensions'
+import ManageExtensions from '../ManageExtensions/ManageExtensions'
 import './Extensions.scss'
 
 export type ExtensionType = {

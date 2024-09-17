@@ -3,13 +3,13 @@
 // import { ExpandLess, ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import type { FC, ReactNode } from 'react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import type { SelectorProps } from '../../../lib/selector.js'
-import { Selector, useSelectorOption } from '../../../lib/selector.js'
+import type { SelectorProps } from '../../../lib/selector'
+import { Selector, useSelectorOption } from '../../../lib/selector'
 
 // import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material'
-import RoundButton from '../RoundButton/RoundButton.jsx'
+import RoundButton from '../RoundButton/RoundButton'
 import './Dropdown.scss'
-import { setListPosition } from './utils.jsx'
+import { setListPosition } from './utils'
 
 export type DropdownProps = SelectorProps & {
   pills: ReactNode

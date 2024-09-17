@@ -14,9 +14,9 @@ import { FilterNone } from '@mui/icons-material'
 import {
   SearchResourceSectionAddon,
   SearchResourceWrapperAddon,
-} from '../components/organisms/lists/BrowserResourceList/ResourceSearchPageAddonHooks.js'
-import MainWrapper from '../MainWrapper.js'
-import { pkgRoutes } from '../routes.js'
+} from '../components/organisms/lists/BrowserResourceList/ResourceSearchPageAddonHooks'
+import MainWrapper from '../MainWrapper'
+import { pkgRoutes } from '../routes'
 import { shell } from '../shell.mjs'
 import type { ResourceCardProps } from './ui.mjs'
 import { SimpleResourceList } from './ui.mjs'

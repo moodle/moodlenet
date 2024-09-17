@@ -2,8 +2,8 @@ import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { useMemo } from 'react'
 import { createPlugin } from '../../../../../web-lib/create-plugin.mjs'
-import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks.js'
-import type { MinimalisticHeaderProps } from './MinimalisticHeader.js'
+import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks'
+import type { MinimalisticHeaderProps } from './MinimalisticHeader'
 
 export type MimimalisticHeaderPlugin = {
   centerItems?: AddOnMap<AddonItemNoKey>

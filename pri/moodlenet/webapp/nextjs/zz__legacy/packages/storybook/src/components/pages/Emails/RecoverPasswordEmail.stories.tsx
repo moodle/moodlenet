@@ -1,8 +1,8 @@
 // RecoverPasswordEmail.stories.js
 import { render } from '@react-email/render'
-import type { RecoverPasswordEmailProps } from '../../../../../simple-email-auth/src/common/emails/RecoverPasswordEmail/RecoverPasswordEmail.js'
+import type { RecoverPasswordEmailProps } from '../../../../../simple-email-auth/src/common/emails/RecoverPasswordEmail/RecoverPasswordEmail'
 // import { EmailLayout } from '@moodlenet/component-library/email-templates'
-import { RecoverPasswordEmail } from '../../../../../simple-email-auth/src/common/emails/RecoverPasswordEmail/RecoverPasswordEmail.js'
+import { RecoverPasswordEmail } from '../../../../../simple-email-auth/src/common/emails/RecoverPasswordEmail/RecoverPasswordEmail'
 
 export default {
   title: 'Pages/Emails/Access/RecoverPassword',

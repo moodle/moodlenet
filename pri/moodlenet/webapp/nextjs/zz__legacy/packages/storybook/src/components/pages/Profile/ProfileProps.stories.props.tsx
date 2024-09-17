@@ -20,9 +20,9 @@ import type { MainProfileCardSlots, ProfileProps } from '@moodlenet/web-user/ui'
 import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
 import type { PartialDeep } from 'type-fest'
-import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories.js'
-import { getCollectionCardsStoryProps } from '../../organisms/CollectionCard/CollectionCardProps.stories.props.js'
-import { getResourceCardsStoryProps } from '../../organisms/ResourceCard/ResourceCardProps.stories.props.js'
+import { MainLayoutLoggedInStoryProps } from '../../layout/MainLayout/MainLayout.stories'
+import { getCollectionCardsStoryProps } from '../../organisms/CollectionCard/CollectionCardProps.stories.props'
+import { getResourceCardsStoryProps } from '../../organisms/ResourceCard/ResourceCardProps.stories.props'
 
 const maxUploadSize = 1024 * 1024 * 10
 const pointsArray = [7, 50, 125, 321, 876, 3421, 12567, 43768, 67456, 345678]

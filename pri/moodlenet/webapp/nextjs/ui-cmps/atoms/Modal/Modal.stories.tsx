@@ -1,7 +1,7 @@
 'use client'
 import { action } from '@storybook/addon-actions'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import { Modal } from './Modal.jsx'
+import { Modal } from './Modal'
 
 const meta: ComponentMeta<typeof Modal> = {
   title: 'Atoms/Modal',

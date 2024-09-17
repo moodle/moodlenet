@@ -12,10 +12,10 @@ import type { SortTypeRpc, SubjectSearchResultRpc } from '../../../../common/typ
 import { isSortTypeRpc } from '../../../../common/types.mjs'
 import { shell } from '../../../rt/shell.mjs'
 
-import { useSubjectCardProps } from '../SubjectCard/SubjectCardHooks.js'
-import type { BrowserSubjectListDataProps } from './BrowserSubjectList.js'
-import BrowserSubjectList from './BrowserSubjectList.js'
-import { BrowserSubjectFilters } from './BrowserSubjectListFilters.js'
+import { useSubjectCardProps } from '../SubjectCard/SubjectCardHooks'
+import type { BrowserSubjectListDataProps } from './BrowserSubjectList'
+import BrowserSubjectList from './BrowserSubjectList'
+import { BrowserSubjectFilters } from './BrowserSubjectListFilters'
 
 type SubjectListItem = { _key: string }
 type SearchSubjectContextT = {

@@ -3,7 +3,7 @@ import { render } from '@react-email/render'
 import {
   NewPublisherEmail,
   type NewPublisherEmailProps,
-} from '../../../../../web-user/src/common/emails/NewPublisherEmail/NewPublisherEmail.js'
+} from '../../../../../web-user/src/common/emails/NewPublisherEmail/NewPublisherEmail'
 
 export default {
   title: 'Pages/Emails/Publisher/NewPublisher',

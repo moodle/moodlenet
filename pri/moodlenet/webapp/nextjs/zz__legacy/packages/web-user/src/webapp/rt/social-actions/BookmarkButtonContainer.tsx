@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 import type { KnownEntityType } from '../../../common/types.mjs'
-import { BookmarkButton } from '../../ui/components/atoms/BookmarkButton/BookmarkButton.js'
-import { useBookmarkButtonProps } from './BookmarkButtonHook.js'
+import { BookmarkButton } from '../../ui/components/atoms/BookmarkButton/BookmarkButton'
+import { useBookmarkButtonProps } from './BookmarkButtonHook'
 
 export const BookmarkButtonContainer: FC<{
   _key: string

@@ -6,14 +6,14 @@ import { Landing } from '@moodlenet/react-app/ui'
 import { LandingProfileList, Leaderboard, PublishContent } from '@moodlenet/web-user/ui'
 import { linkTo } from '@storybook/addon-links'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import { getCollectionCardsStoryProps } from '../../../components/organisms/CollectionCard/CollectionCardProps.stories.props.js'
-import { getProfileCardsStoryProps } from '../../../components/organisms/ProfileCard/ProfileCardProps.stories.props.js'
-import { getResourceCardsStoryProps } from '../../../components/organisms/ResourceCard/ResourceCardProps.stories.props.js'
+import { getCollectionCardsStoryProps } from '../../../components/organisms/CollectionCard/CollectionCardProps.stories.props'
+import { getProfileCardsStoryProps } from '../../../components/organisms/ProfileCard/ProfileCardProps.stories.props'
+import { getResourceCardsStoryProps } from '../../../components/organisms/ResourceCard/ResourceCardProps.stories.props'
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
-} from '../../layout/MainLayout/MainLayout.stories.js'
-import { getMainHeaderStoryProps } from '../../organisms/MainHeader/MainHeaderProps.stories.props.js'
+} from '../../layout/MainLayout/MainLayout.stories'
+import { getMainHeaderStoryProps } from '../../organisms/MainHeader/MainHeaderProps.stories.props'
 // import { href } from '../../../elements/link'
 
 const leaderboardContributors = [

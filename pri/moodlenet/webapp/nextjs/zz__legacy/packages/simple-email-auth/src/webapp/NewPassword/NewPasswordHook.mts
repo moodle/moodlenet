@@ -3,7 +3,7 @@ import { loginPageRoutePath } from '@moodlenet/web-user/common'
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { shell } from '../../../../../../../zz__legacy/packages/simple-email-auth/src/webapp/shell.mjs'
-import type { NewPasswordProps } from './NewPassword.jsx'
+import type { NewPasswordProps } from './NewPassword'
 
 export function useNewPasswordProps({ token }: { token: string }) {
   const nav = useNavigate()

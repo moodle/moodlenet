@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { Search } from './Search.js'
+import { Search } from './Search'
 import { useSearchProps } from './SearchPageHook.mjs'
 
 export const SearchPageContainer: FC = () => {

@@ -4,7 +4,7 @@ import { EdMetaContext } from '@moodlenet/ed-meta/webapp'
 import { createPlugin } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 import type { GeneralProps } from '../../../../ui/exports/ui.mjs'
-import { MyProfileContext } from '../../../context/MyProfileContext.js'
+import { MyProfileContext } from '../../../context/MyProfileContext'
 
 export const GeneralSettingsPlugin = createPlugin<{
   mainColumn: AddOnMap<AddonItemNoKey>

@@ -2,7 +2,7 @@ import type { BrowserCollectionListDataProps } from '@moodlenet/collection/ui'
 import { useCollectionCardProps } from '@moodlenet/collection/webapp'
 import { proxyWith } from '@moodlenet/react-app/ui'
 import { useMemo } from 'react'
-import { useMyProfileContext } from '../../context/MyProfileContext.js'
+import { useMyProfileContext } from '../../context/MyProfileContext'
 
 export function useMyBookmarkedBrowserCollectionListDataProps() {
   const bookmarkedCollections = useMyProfileContext()?.myFeaturedEntities.all.bookmark.collection

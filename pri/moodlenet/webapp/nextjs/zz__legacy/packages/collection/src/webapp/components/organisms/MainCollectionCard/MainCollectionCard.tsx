@@ -21,7 +21,7 @@ import type {
   CollectionFormProps,
   CollectionStateProps,
 } from '../../../../common/types.mjs'
-import { UploadImage } from '../UploadImage/UploadImage.js'
+import { UploadImage } from '../UploadImage/UploadImage'
 import './MainCollectionCard.scss'
 
 export type MainCollectionCardSlots = {

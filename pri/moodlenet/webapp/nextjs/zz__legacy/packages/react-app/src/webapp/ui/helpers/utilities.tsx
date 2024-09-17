@@ -1,4 +1,4 @@
-import { ContentBackupImages } from '../assets/data/images.js'
+import { ContentBackupImages } from '../assets/data/images'
 
 export const elementFullyInViewPort = (
   el: Element,

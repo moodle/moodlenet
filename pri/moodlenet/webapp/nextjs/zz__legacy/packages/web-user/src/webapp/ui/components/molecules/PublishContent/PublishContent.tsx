@@ -8,7 +8,7 @@ import {
   CreateResourcePublishContentItem,
   LoginPublishContentItem,
   SignUpPublishContentItem,
-} from './PublishContentItems.js'
+} from './PublishContentItems'
 
 export type PublishContentItem = {
   Component: ComponentType

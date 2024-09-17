@@ -1,8 +1,8 @@
 // import { registerAppRoutes } from '@moodlenet/react-app/webapp'
 // import { GeneralSettingsPlugin } from '@moodlenet/web-user/webapp'
-// import { routes } from '../routes.js'
+// import { routes } from '../routes'
 // import '../shell.mjs'
-// import { SimpleEmailUserSettingsContainer } from '../ui/SimpleEmailUserSettingsContainer.js'
+// import { SimpleEmailUserSettingsContainer } from '../ui/SimpleEmailUserSettingsContainer'
 
 // registerAppRoutes({ routes })
 

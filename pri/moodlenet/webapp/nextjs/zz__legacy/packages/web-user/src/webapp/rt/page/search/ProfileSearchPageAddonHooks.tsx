@@ -12,7 +12,7 @@ import type { ProfileSearchResultRpc, SortTypeRpc } from '../../../../common/typ
 import { isSortTypeRpc } from '../../../../common/types.mjs'
 import type { BrowserProfileListDataProps } from '../../../ui/exports/ui.mjs'
 import { BrowserProfileFilters, BrowserProfileList } from '../../../ui/exports/ui.mjs'
-import { useProfileCardProps } from '../../organisms/ProfileCardHooks.js'
+import { useProfileCardProps } from '../../organisms/ProfileCardHooks'
 import { shell } from '../../shell.mjs'
 
 type ProfileListItem = { _key: string }

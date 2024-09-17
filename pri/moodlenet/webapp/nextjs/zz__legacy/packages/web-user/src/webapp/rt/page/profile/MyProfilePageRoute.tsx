@@ -1,8 +1,8 @@
 import type { FC } from 'react'
 import { useContext } from 'react'
 import { Navigate } from 'react-router-dom'
-import { AuthCtx } from '../../context/AuthContext.js'
-import { ProfileContainer } from './ProfileContainer.js'
+import { AuthCtx } from '../../context/AuthContext'
+import { ProfileContainer } from './ProfileContainer'
 
 export const MyProfilePageRoute: FC = () => {
   const { clientSessionData } = useContext(AuthCtx)

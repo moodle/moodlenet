@@ -1,7 +1,7 @@
 // MessageReceivedEmail.stories.js
 import { EmailLayout } from '@moodlenet/component-library/email-templates'
 import { render } from '@react-email/render'
-import { messageReceivedEmail } from '../../../../../web-user/src/common/emails/Social/MessageReceivedEmail/MessageReceivedEmail.js'
+import { messageReceivedEmail } from '../../../../../web-user/src/common/emails/Social/MessageReceivedEmail/MessageReceivedEmail'
 import { defaultEmailOrganization } from './defaults.mjs'
 
 export default {

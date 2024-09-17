@@ -2,8 +2,8 @@ import { type AddonItem, type AddonItemNoKey } from '@moodlenet/component-librar
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
-import type { SubjectOverallProps, SubjectProps } from './Subject.js'
-import { useSubjectData } from './SubjectDataHooks.js'
+import type { SubjectOverallProps, SubjectProps } from './Subject'
+import { useSubjectData } from './SubjectDataHooks'
 
 export type SubjectPageGeneralActionsAddonItem = Pick<AddonItem, 'Item'>
 

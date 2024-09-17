@@ -28,12 +28,12 @@ import type { ValidationSchemas } from '../../../../common/validationSchema.mjs'
 import {
   ResourceContributorCard,
   type ResourceContributorCardProps,
-} from '../../molecules/ResourceContributorCard/ResourceContributorCard.js'
+} from '../../molecules/ResourceContributorCard/ResourceContributorCard'
 import type {
   MainResourceCardSlots,
   ValidForms,
-} from '../../organisms/MainResourceCard/MainResourceCard.js'
-import { MainResourceCard } from '../../organisms/MainResourceCard/MainResourceCard.js'
+} from '../../organisms/MainResourceCard/MainResourceCard'
+import { MainResourceCard } from '../../organisms/MainResourceCard/MainResourceCard'
 import './Resource.scss'
 
 export type ResourceProps = {

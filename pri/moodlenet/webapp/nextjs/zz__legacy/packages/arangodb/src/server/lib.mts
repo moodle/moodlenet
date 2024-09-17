@@ -1,6 +1,6 @@
 import type { PkgIdentifier } from '@moodlenet/core'
 import type { Database } from 'arangojs'
-import type { DocumentCollection } from 'arangojs/collection.js'
+import type { DocumentCollection } from 'arangojs/collection'
 import { sysDB } from './init/sys-db.mjs'
 import { shell } from './shell.mjs'
 

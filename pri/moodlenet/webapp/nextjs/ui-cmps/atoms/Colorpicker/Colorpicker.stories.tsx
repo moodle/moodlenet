@@ -1,7 +1,7 @@
 'use client'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import type { ColorpickerProps } from './Colorpicker.jsx'
-import Colorpicker from './Colorpicker.jsx'
+import type { ColorpickerProps } from './Colorpicker'
+import Colorpicker from './Colorpicker'
 
 const meta: ComponentMeta<typeof Colorpicker> = {
   title: 'Atoms/Colorpicker',

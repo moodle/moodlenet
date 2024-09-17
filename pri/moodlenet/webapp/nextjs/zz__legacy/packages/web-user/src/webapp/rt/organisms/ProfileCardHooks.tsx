@@ -5,7 +5,7 @@ import type { OverallCardItem } from '@moodlenet/react-app/ui'
 import { createPlugin } from '@moodlenet/react-app/webapp'
 import type { ProfileCardData } from '../../../common/profile/type.mjs'
 import type { ProfileCardProps } from '../../ui/exports/ui.mjs'
-import { useProfileProps } from '../page/profile/ProfileHooks.js'
+import { useProfileProps } from '../page/profile/ProfileHooks'
 
 export const ProfileCardPlugins = createPlugin<
   {

@@ -2,7 +2,7 @@ import type { ProxiedResourceProps } from '@moodlenet/ed-resource/webapp'
 import { CurrentResourceContext } from '@moodlenet/ed-resource/webapp'
 import { useCallback, useContext, useMemo } from 'react'
 import type { SiteTarget } from '../../../common/types.mjs'
-import { MyLmsContext } from '../myLmsContext.js'
+import { MyLmsContext } from '../myLmsContext'
 
 export type LmsResourceInfo = {
   canonicalUrl: string

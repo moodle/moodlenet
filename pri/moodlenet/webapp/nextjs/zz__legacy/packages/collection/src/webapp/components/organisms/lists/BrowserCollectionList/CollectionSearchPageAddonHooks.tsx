@@ -12,10 +12,10 @@ import type { CollectionSearchResultRpc, SortTypeRpc } from '../../../../../comm
 import { isSortTypeRpc } from '../../../../../common/types.mjs'
 import { shell } from '../../../../shell.mjs'
 
-import { useCollectionCardProps } from '../../CollectionCard/CollectionCardHooks.js'
-import { BrowserCollectionFilters } from './BrowserCollectionFilters.js'
-import type { BrowserCollectionListDataProps } from './BrowserCollectionList.js'
-import BrowserCollectionList from './BrowserCollectionList.js'
+import { useCollectionCardProps } from '../../CollectionCard/CollectionCardHooks'
+import { BrowserCollectionFilters } from './BrowserCollectionFilters'
+import type { BrowserCollectionListDataProps } from './BrowserCollectionList'
+import BrowserCollectionList from './BrowserCollectionList'
 
 type CollectionListItem = { _key: string }
 type SearchCollectionContextT = {

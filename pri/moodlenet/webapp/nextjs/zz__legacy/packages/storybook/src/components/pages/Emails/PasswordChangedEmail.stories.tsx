@@ -1,6 +1,6 @@
 import { render } from '@react-email/render'
 // import { EmailLayout } from '@moodlenet/component-library/email-templates'
-import PasswordChangedEmail from '../../../../../simple-email-auth/src/common/emails/PasswordChangedEmail/PasswordChangedEmail.js'
+import PasswordChangedEmail from '../../../../../simple-email-auth/src/common/emails/PasswordChangedEmail/PasswordChangedEmail'
 
 export default {
   title: 'Pages/Emails/Access/PasswordChangedEmail',

@@ -1,8 +1,8 @@
 import type { Document } from '@moodlenet/arangodb/server'
 import { ensureDocumentCollection, getMyDB } from '@moodlenet/arangodb/server'
 import type { Shell } from '@moodlenet/core'
-import type { KVSTypeMap, KVStore, ValueObj } from './types.js'
-export * from './types.js'
+import type { KVSTypeMap, KVStore, ValueObj } from './types'
+export * from './types'
 export const KV_COLLECTION_NAME = 'Moodlenet_simple_key_value_store'
 
 export default async function kvStoreFactory<TMap extends KVSTypeMap>(

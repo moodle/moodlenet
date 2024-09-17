@@ -4,8 +4,8 @@ import type { WebappConfigsRpc } from '../common/expose-def.mjs'
 import type { MainContextResource } from '../common/types.mjs'
 import type { ValidationSchemas } from '../common/validationSchema.mjs'
 import { getValidationSchemas } from '../common/validationSchema.mjs'
-import { MainContext } from './MainContext.js'
-import { ProvideResourceContext } from './ResourceContext.js'
+import { MainContext } from './MainContext'
+import { ProvideResourceContext } from './ResourceContext'
 import { shell } from './shell.mjs'
 
 const MainWrapper: MainAppPluginWrapper = ({ children }) => {

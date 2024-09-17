@@ -1,7 +1,7 @@
 // NewUserRequestEmail.stories.js
 import { EmailLayout } from '@moodlenet/component-library/email-templates'
 import { render } from '@react-email/render'
-import { newUserRequestEmail } from '../../../../../simple-email-auth/src/common/emails/NewUserRequestEmail/NewUserRequestEmail.js'
+import { newUserRequestEmail } from '../../../../../simple-email-auth/src/common/emails/NewUserRequestEmail/NewUserRequestEmail'
 import { defaultEmailOrganization } from './defaults.mjs'
 
 export default {

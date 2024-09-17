@@ -4,11 +4,11 @@ import { EdMetaContext } from '@moodlenet/ed-meta/webapp'
 import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import moment from 'moment'
 import { useContext, useMemo } from 'react'
-import { MainContext } from '../../../MainContext.js'
-import type { ResourceCommonProps } from '../../../ResourceHooks.js'
-import { useResourceBaseProps } from '../../../ResourceHooks.js'
-import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard.js'
-import type { ResourceProps } from './Resource.js'
+import { MainContext } from '../../../MainContext'
+import type { ResourceCommonProps } from '../../../ResourceHooks'
+import { useResourceBaseProps } from '../../../ResourceHooks'
+import type { MainResourceCardSlots } from '../../organisms/MainResourceCard/MainResourceCard'
+import type { ResourceProps } from './Resource'
 
 export type ResourcePageGeneralActionsAddonItem = Pick<AddonItem, 'Item'>
 

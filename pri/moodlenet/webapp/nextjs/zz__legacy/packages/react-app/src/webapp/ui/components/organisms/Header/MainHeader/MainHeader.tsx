@@ -2,9 +2,9 @@ import type { AddonItem } from '@moodlenet/component-library'
 import { Header } from '@moodlenet/component-library'
 import type { Dispatch, FC, ReactElement, SetStateAction } from 'react'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import type { HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle.js'
-import { HeaderTitle } from '../../../atoms/HeaderTitle/HeaderTitle.js'
-import { MainSearchBox } from '../../../atoms/MainSearchBox/MainSearchBox.js'
+import type { HeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitle'
+import { HeaderTitle } from '../../../atoms/HeaderTitle/HeaderTitle'
+import { MainSearchBox } from '../../../atoms/MainSearchBox/MainSearchBox'
 import './MainHeader.scss'
 
 export type MainHeaderContextT = {

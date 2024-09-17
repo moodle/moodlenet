@@ -1,14 +1,14 @@
 import { AddToCollectionButtonByResourceContextContainer as addResourceToCollectionButton } from '@moodlenet/collection/webapp'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
-import type { AddonsByUserRule } from '../lib/AddonsByUserRule.js'
-import { LoginButtonContainer, SignupButtonContainer } from '../page/access/AccessContainers.js'
+import type { AddonsByUserRule } from '../lib/AddonsByUserRule'
+import { LoginButtonContainer, SignupButtonContainer } from '../page/access/AccessContainers'
 import {
   AdminModerationContainer,
   AdminModerationMenu,
-} from '../page/admin/AdminModerationContainer.js'
-import { AdminUsersContainer, AdminUsersMenu } from '../page/admin/AdminUsersContainer.js'
-import { AddMenuContainer } from './AddMenuContainer.js'
-import { AvatarMenuContainer } from './AvatarMenuContainer.js'
+} from '../page/admin/AdminModerationContainer'
+import { AdminUsersContainer, AdminUsersMenu } from '../page/admin/AdminUsersContainer'
+import { AddMenuContainer } from './AddMenuContainer'
+import { AvatarMenuContainer } from './AvatarMenuContainer'
 
 export const menuHeaderButtonsItems = {
   loginButton: { Item: LoginButtonContainer },

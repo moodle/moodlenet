@@ -5,11 +5,11 @@ import {
   type MainAppPluginHookResult,
 } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
-import { SendToMoodleContainer } from './components/SendToMoodleContainer.js'
+import { SendToMoodleContainer } from './components/SendToMoodleContainer'
 import './shell.mjs'
 
-import { MainWrapper } from './MainWrapper.js'
-import { pkgRoutes } from './routes.js'
+import { MainWrapper } from './MainWrapper'
+import { pkgRoutes } from './routes'
 
 registerAppRoutes(pkgRoutes)
 registerMainAppPluginHook(() => useMemo<MainAppPluginHookResult>(() => ({ MainWrapper }), []))

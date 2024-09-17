@@ -1,8 +1,8 @@
 import lib from 'moodlenet-react-app-lib'
 import type { FC } from 'react'
 import React from 'react'
-import FormConfig from './FormConfig.js'
-import type { ConfigApiKey, ErrorMsg } from './types.js'
+import FormConfig from './FormConfig'
+import type { ConfigApiKey, ErrorMsg } from './types'
 
 const { MainLayout } = lib.ui.components.layout
 

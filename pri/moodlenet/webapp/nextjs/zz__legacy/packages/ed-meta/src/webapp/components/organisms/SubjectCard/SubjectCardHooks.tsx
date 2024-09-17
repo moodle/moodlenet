@@ -6,8 +6,8 @@ import { createPlugin } from '@moodlenet/react-app/webapp'
 import { useMemo } from 'react'
 import type {} from '../../../../common/types.mjs'
 import { getSubjectHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
-import { useSubjectData } from '../../pages/Subject/SubjectDataHooks.js'
-import type { SubjectCardOverallProps, SubjectCardProps } from './SubjectCard.js'
+import { useSubjectData } from '../../pages/Subject/SubjectDataHooks'
+import type { SubjectCardOverallProps, SubjectCardProps } from './SubjectCard'
 
 export const SubjectCardPlugins = createPlugin<
   {

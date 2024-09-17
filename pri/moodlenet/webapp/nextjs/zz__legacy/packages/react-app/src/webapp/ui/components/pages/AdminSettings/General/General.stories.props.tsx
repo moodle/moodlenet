@@ -4,9 +4,9 @@ import { useFormik } from 'formik'
 import type { FC } from 'react'
 import type { SchemaOf } from 'yup'
 import { object, string } from 'yup'
-import type { AdminSettingsItem } from '../AdminSettings.js'
-import type { GeneralProps } from './General.js'
-import { General, GeneralMenu } from './General.js'
+import type { AdminSettingsItem } from '../AdminSettings'
+import type { GeneralProps } from './General'
+import { General, GeneralMenu } from './General'
 
 export const validationSchema: SchemaOf<OrganizationData> = object({
   instanceName: string().max(160).min(3).required(/* t */ `Please provide an instance name`),

@@ -28,11 +28,11 @@ import defaultAvatar from '../../../assets/img/default-avatar.svg'
 //   ApprovalBadge,
 //   ApprovalButton,
 //   ApprovalInfo,
-// } from '../../atoms/ApproveButton/ApproveButton.js'
+// } from '../../atoms/ApproveButton/ApproveButton'
 import type { ValidationSchemas } from '../../../../../common/validationSchema.mjs'
-import { ApprovalButton } from '../../atoms/ApproveButton/ApproveButton.js'
-import { FollowButton } from '../../atoms/FollowButton/FollowButton.js'
-import ReportProfile from '../../molecules/ReportProfile/ReportProfile.js'
+import { ApprovalButton } from '../../atoms/ApproveButton/ApproveButton'
+import { FollowButton } from '../../atoms/FollowButton/FollowButton'
+import ReportProfile from '../../molecules/ReportProfile/ReportProfile'
 import './MainProfileCard.scss'
 
 export type MainProfileCardSlots = {

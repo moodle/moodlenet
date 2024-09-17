@@ -6,8 +6,8 @@ import { ReactComponent as AddIcon } from '../../../assets/icons/add-round.svg'
 import type {
   CreateCollectionAddMenuItemProps,
   CreateResourceAddMenuItemProps,
-} from './AddMenuItems.js'
-import { CreateCollectionAddMenuItem, CreateResourceAddMenuItem } from './AddMenuItems.js'
+} from './AddMenuItems'
+import { CreateCollectionAddMenuItem, CreateResourceAddMenuItem } from './AddMenuItems'
 
 export type AddMenuItem = {
   Component: ComponentType
