@@ -4,6 +4,7 @@ import {
   __redacted__,
   d_u,
   d_u__d,
+  date_time_string,
   email_address,
   named_or_email_address,
   ok_ko,
@@ -155,7 +156,8 @@ export type moodle_iam_mod = mod<{
         deactivateUser(_: {
           userId: lib_moodle_iam.v1_0.user_id
           anonymize: boolean
-          for: v1_0.user_deactivation_reason
+          reason: v1_0.user_deactivation_reason
+          at?: date_time_string
         }): Promise<ok_ko<void, void>>
 
         getActiveUsersNotLoggedInFor(_: {

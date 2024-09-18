@@ -62,7 +62,7 @@ export function core(): core_factory {
                   )
                   mySec.db.deactivateUser({
                     userId,
-                    for: { v1_0: 'adminRequest', reason },
+                    reason: { v1_0: 'adminRequest', reason },
                     anonymize,
                   })
                 },
@@ -248,7 +248,7 @@ export function core(): core_factory {
 
                   const [deactivated] = await mySec.db.deactivateUser({
                     anonymize: true,
-                    for: { v1_0: 'userSelfDeletionRequest', reason },
+                    reason: { v1_0: 'userSelfDeletionRequest', reason },
                     userId: tokenData.userId,
                   })
                   return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
