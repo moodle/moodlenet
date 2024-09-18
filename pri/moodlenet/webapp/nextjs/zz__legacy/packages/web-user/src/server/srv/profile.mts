@@ -34,8 +34,8 @@ import {
   toaql,
 } from '@moodlenet/system-entities/server'
 import assert from 'assert'
-import { newPublisherEmail } from '../../common/emails/NewPublisherEmail/NewPublisherEmail.js'
-import { messageReceivedEmail } from '../../common/emails/Social/MessageReceivedEmail/MessageReceivedEmail.js'
+import { newPublisherEmail } from '../../common/emails/NewPublisherEmail/NewPublisherEmail'
+import { messageReceivedEmail } from '../../common/emails/Social/MessageReceivedEmail/MessageReceivedEmail'
 import { reportOptionTypeMap } from '../../common/exports.mjs'
 import type { EditProfileDataRpc } from '../../common/expose-def.mjs'
 import type {

@@ -39,7 +39,7 @@ import type {
   ResourceStateProps,
 } from '../../../../common/types.mjs'
 import { getResourceTypeInfo } from '../../../../common/types.mjs'
-import { UploadResource } from '../UploadResource/UploadResource.js'
+import { UploadResource } from '../UploadResource/UploadResource'
 import './MainResourceCard.scss'
 
 export type MainResourceCardSlots = {

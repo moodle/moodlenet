@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { NewPassword } from './NewPassword.jsx'
+import { NewPassword } from './NewPassword'
 import { useNewPasswordProps } from './NewPasswordHook.mjs'
 
 export const NewPasswordContainer: FC = () => {

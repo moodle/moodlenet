@@ -11,9 +11,9 @@ import {
   verifyCurrentTokenCtx,
 } from '@moodlenet/web-user/server'
 import assert from 'assert'
-import { newUserRequestEmail } from '../common/emails/NewUserRequestEmail/NewUserRequestEmail.js'
-import { passwordChangedEmail } from '../common/emails/PasswordChangedEmail/PasswordChangedEmail.js'
-import { recoverPasswordEmail } from '../common/emails/RecoverPasswordEmail/RecoverPasswordEmail.js'
+import { newUserRequestEmail } from '../common/emails/NewUserRequestEmail/NewUserRequestEmail'
+import { passwordChangedEmail } from '../common/emails/PasswordChangedEmail/PasswordChangedEmail'
+import { recoverPasswordEmail } from '../common/emails/RecoverPasswordEmail/RecoverPasswordEmail'
 import { SET_NEW_PASSWORD_PATH } from '../common/webapp-routes.mjs'
 import { EmailPwdUserCollection } from './init/arangodb.mjs'
 import { env } from './init/env.mjs'

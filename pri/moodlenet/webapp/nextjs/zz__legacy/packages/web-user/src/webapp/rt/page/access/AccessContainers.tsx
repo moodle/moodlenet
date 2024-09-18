@@ -7,7 +7,7 @@ import {
 import {
   LoginHeaderButton,
   SignupHeaderButton,
-} from '../../../ui/components/molecules/AccessButtons/AccessButtons.js'
+} from '../../../ui/components/molecules/AccessButtons/AccessButtons'
 
 export const LoginButtonContainer: FC = () => {
   return <LoginHeaderButton loginHref={href(useLoginPageRoutePathRedirectToCurrent())} />

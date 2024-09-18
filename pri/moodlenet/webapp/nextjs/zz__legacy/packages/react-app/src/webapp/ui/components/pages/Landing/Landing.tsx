@@ -1,11 +1,11 @@
 import { SnackbarStack, sortAddonItems, type AddonItem } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useContext } from 'react'
-import type { MainLayoutProps } from '../../../../../../../../../app-nextjs-moodlenet/src/layouts/MainLayout.js'
-import MainLayout from '../../../../../../../../../app-nextjs-moodlenet/src/layouts/MainLayout.js'
+import type { MainLayoutProps } from '../../../../../../../../../app-nextjs-moodlenet/src/layouts/MainLayout'
+import MainLayout from '../../../../../../../../../app-nextjs-moodlenet/src/layouts/MainLayout'
 import { MainHeaderContext } from '../../../../exports/ui.mjs'
 import defaultBackground from '../../../assets/img/default-landing-background.png'
-import { MainSearchBox } from '../../atoms/MainSearchBox/MainSearchBox.js'
+import { MainSearchBox } from '../../atoms/MainSearchBox/MainSearchBox'
 import './Landing.scss'
 
 export type LandingProps = {

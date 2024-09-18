@@ -4,8 +4,8 @@ import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storyboo
 import {
   MainLayoutLoggedInStoryProps,
   MainLayoutLoggedOutStoryProps,
-} from '../../../components/layout/MainLayout/MainLayout.stories.js'
-import { useBrowserStoryProps } from '../../../components/organisms/Browser/BrowserProps.stories.props.js'
+} from '../../../components/layout/MainLayout/MainLayout.stories'
+import { useBrowserStoryProps } from '../../../components/organisms/Browser/BrowserProps.stories.props'
 
 const meta: ComponentMeta<typeof Search> = {
   title: 'Pages/Search',

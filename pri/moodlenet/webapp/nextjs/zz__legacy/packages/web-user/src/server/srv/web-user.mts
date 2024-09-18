@@ -8,7 +8,7 @@ import { getOrgData } from '@moodlenet/organization/server'
 import { webSlug } from '@moodlenet/react-app/common'
 import { create, matchRootPassword } from '@moodlenet/system-entities/server'
 import type { CookieOptions } from 'express'
-import { deleteAccountEmail } from '../../common/emails/Access/DeleteAccountEmail/DeleteAccountEmail.js'
+import { deleteAccountEmail } from '../../common/emails/Access/DeleteAccountEmail/DeleteAccountEmail'
 import {
   WEB_USER_SESSION_TOKEN_AUTHENTICATED_BY_COOKIE_NAME,
   WEB_USER_SESSION_TOKEN_COOKIE_NAME,

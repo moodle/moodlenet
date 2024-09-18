@@ -1,7 +1,7 @@
 import type { EntityIdentifiers } from '@moodlenet/system-entities/common'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useMemo } from 'react'
-import type { ProxiedResourceProps } from './components/pages/Resource/ResourcePageHooks.js'
+import type { ProxiedResourceProps } from './components/pages/Resource/ResourcePageHooks'
 import { EdResourceEntitiesTools } from './entities.mjs'
 
 export type CurrentResourceContextT = {

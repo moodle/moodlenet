@@ -22,10 +22,10 @@ import type { ResourceSearchResultRpc, SortTypeRpc } from '../../../../../common
 import { isSortTypeRpc } from '../../../../../common/types.mjs'
 import { shell } from '../../../../shell.mjs'
 
-import { useResourceCardProps } from '../../ResourceCard/ResourceCardHook.js'
-import { BrowserResourceFilters } from './BrowserResourceFilters.js'
-import type { BrowserResourceListDataProps } from './BrowserResourceList.js'
-import BrowserResourceList from './BrowserResourceList.js'
+import { useResourceCardProps } from '../../ResourceCard/ResourceCardHook'
+import { BrowserResourceFilters } from './BrowserResourceFilters'
+import type { BrowserResourceListDataProps } from './BrowserResourceList'
+import BrowserResourceList from './BrowserResourceList'
 
 type ResourceListItem = { _key: string }
 type SearchResourceContextT = {

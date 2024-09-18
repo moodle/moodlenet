@@ -2,9 +2,9 @@
 import { Card } from '@moodlenet/component-library'
 import type { FC } from 'react'
 import { useState } from 'react'
-import ExtensionsList from '../../organisms/ExtensionsList/ExtensionsList.js'
-import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
-import type { ExtensionType } from '../Extensions/Extensions.js'
+import ExtensionsList from '../../organisms/ExtensionsList/ExtensionsList'
+import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
+import type { ExtensionType } from '../Extensions/Extensions'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 import './ManageExtensions.scss'
 

@@ -1,7 +1,7 @@
 import type { ProfileGetRpc } from '@moodlenet/web-user/common'
 import { useContext, useEffect, useMemo } from 'react'
 import type { JiraRequestApprovalButtonProps } from '../../ui/exports/ui.mjs'
-import { MyModerationsContext } from '../myModerationsContext.js'
+import { MyModerationsContext } from '../myModerationsContext'
 
 export type JiraApproveButtonHookArg = {
   profileGetRpc: ProfileGetRpc | null | undefined

@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 import { useLocation } from 'react-router-dom'
 import { matchResourceHomePageRoutePath } from '../../../../common/webapp-routes.mjs'
-import { ResourcePageContainer } from './ResourcePageContainer.js'
+import { ResourcePageContainer } from './ResourcePageContainer'
 
 export const ResourcePageRoute: FC = () => {
   const { pathname } = useLocation()

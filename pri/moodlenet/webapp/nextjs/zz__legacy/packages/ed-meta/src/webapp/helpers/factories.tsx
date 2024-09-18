@@ -1,6 +1,6 @@
 import { href } from '@moodlenet/react-app/common'
 import type { PartialDeep } from 'type-fest'
-import type { SubjectCardProps } from '../components/organisms/SubjectCard/SubjectCard.js'
+import type { SubjectCardProps } from '../components/organisms/SubjectCard/SubjectCard'
 
 export const subjectsCardFactory: PartialDeep<SubjectCardProps>[] = [
   {

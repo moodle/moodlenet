@@ -1,6 +1,6 @@
 import { EmailLayout } from '@moodlenet/component-library/email-templates'
 import { render } from '@react-email/render'
-import { deleteAccountEmail } from '../../../../../web-user/src/common/emails/Access/DeleteAccountEmail/DeleteAccountEmail.js'
+import { deleteAccountEmail } from '../../../../../web-user/src/common/emails/Access/DeleteAccountEmail/DeleteAccountEmail'
 import { defaultEmailOrganization } from './defaults.mjs'
 
 export default {

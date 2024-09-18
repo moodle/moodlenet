@@ -2,7 +2,9 @@
   "name": "@moodle/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "dev": "nx run-many --target=serve --target=dev"
+  },
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",

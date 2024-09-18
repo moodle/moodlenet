@@ -1,7 +1,7 @@
 // FirstContributionEmail.stories.js
 import { render } from '@react-email/render'
-import type { FirstContributionEmailProps } from '../../../../../web-user/src/common/emails/FirstContributionEmail/FirstContributionEmail.js'
-import FirstContributionEmail from '../../../../../web-user/src/common/emails/FirstContributionEmail/FirstContributionEmail.js'
+import type { FirstContributionEmailProps } from '../../../../../web-user/src/common/emails/FirstContributionEmail/FirstContributionEmail'
+import FirstContributionEmail from '../../../../../web-user/src/common/emails/FirstContributionEmail/FirstContributionEmail'
 
 export default {
   title: 'Pages/Emails/Publisher/FirstContribution',

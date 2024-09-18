@@ -3,7 +3,7 @@ import type { ResourceCardProps } from '@moodlenet/ed-resource/ui'
 import { resourcesCardFactory } from '@moodlenet/ed-resource/ui'
 import { transformPropsToObjectWithKey } from '@moodlenet/react-app/ui'
 import type { PartialDeep } from 'type-fest'
-import { getResourceCardStoryProps } from './ResourceCard.stories.js'
+import { getResourceCardStoryProps } from './ResourceCard.stories'
 
 export const getResourceCardsStoryProps = (
   amount = 8,

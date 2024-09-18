@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 import type { KnownEntityType } from '../../../common/types.mjs'
 import { LikeButton } from '../../ui/exports/ui.mjs'
-import { useLikeButtonProps } from './LikeButtonHook.js'
+import { useLikeButtonProps } from './LikeButtonHook'
 
 export const LikeButtonContainer: FC<{
   _key: string

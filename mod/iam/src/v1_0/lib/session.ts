@@ -2,7 +2,6 @@ import { concrete, Error4xx, primary_session, session_token } from '@moodle/doma
 import { lib_moodle_iam } from '@moodle/lib-domain'
 import { d_u, d_u__d, ok_ko } from '@moodle/lib-types'
 import assert from 'assert'
-import { user_id, user_session } from 'lib/domain/src/moodle/iam/v1_0'
 import { userData } from '../types'
 
 // System Session
@@ -27,7 +26,7 @@ export async function getUserSession(sessionToken: session_token, worker: concre
       ? ({
           type: 'authenticated',
           user: sessionResp.user,
-        } satisfies user_session)
+        } satisfies lib_moodle_iam.v1_0.user_session)
       : guest_session
   return user_session
 }
@@ -82,7 +81,7 @@ export function assertGuestSession(
 // GENERATE SESSION TOKEN
 
 export async function generateSessionForUserId(
-  userId: user_id,
+  userId: lib_moodle_iam.v1_0.user_id,
   worker: concrete<'sec'>,
 ): Promise<ok_ko<lib_moodle_iam.v1_0.session, d_u<{ userNotFound: unknown }, 'reason'>>> {
   const mySec = worker.moodle.iam.v1_0.sec

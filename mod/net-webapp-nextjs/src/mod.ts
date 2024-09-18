@@ -13,6 +13,9 @@ declare module '@moodle/domain' {
 export type moodle_net_webapp_nextjs_mod = mod<{
   v1_0: {
     pri: {
+      session: {
+        logout(): Promise<void>
+      }
       configs: {
         read(): Promise<{ nextjs: v1_0.Configs; net: net_v1_0.Configs; org: org_v1_0.Configs }>
       }

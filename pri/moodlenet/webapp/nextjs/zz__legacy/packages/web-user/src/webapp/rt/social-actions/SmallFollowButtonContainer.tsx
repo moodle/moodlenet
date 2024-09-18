@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 import type { KnownEntityType } from '../../../common/types.mjs'
 import { SmallFollowButton } from '../../ui/exports/ui.mjs'
-import { useSmallFollowButtonProps } from './SmallFollowButtonHook.js'
+import { useSmallFollowButtonProps } from './SmallFollowButtonHook'
 
 export const SmallFollowButtonContainer: FC<{
   _key: string

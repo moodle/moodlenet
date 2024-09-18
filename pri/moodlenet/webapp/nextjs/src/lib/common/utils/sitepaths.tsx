@@ -4,25 +4,37 @@ export function sitepaths(baseUrl = '/') {
   const _ = (path: string) => `${baseUrl}${path}`
 
   const DEF_SLUG = '-'
-  const __ =
-    (path: string, sub = '') =>
+  const _id_slug_sub =
+    <sub extends string>(path: string) =>
     (id: id, slug = DEF_SLUG) =>
+    (sub: sub) =>
       `${_(path)}/${id}/${slug}${sub}`
 
-  type admin_sub = '/users' | ''
-  const admin = (sub: admin_sub = '') => _(`admin${sub}`)
+  const _sub =
+    <sub extends string>(path: string) =>
+    (sub: sub) =>
+      `${_(path)}${sub}`
 
-  type profile_sub = '/settings' | '/bookmarks' | '/followers' | '/following' | ''
-  const profile = (sub: profile_sub = '') => __(`profile`, sub)
-  const resource = __(`resource`)
-  const collection = __(`collection`)
-  const subject = __(`subject`)
+  type admin_sub = '/users' | '/general' | '/appearance'
+  const admin = _sub<admin_sub>(`admin`)
+
+  type user_settings_sub = '/advanced' | '/general'
+  const user_settings = _sub<user_settings_sub>(`settings`)
+
+  type profile_sub = '/bookmarks' | '/followers' | '/following' | ''
+  const profile = _id_slug_sub<profile_sub>(`profile`)
+  const resource = _id_slug_sub(`resource`)
+  const collection = _id_slug_sub(`collection`)
+  const subject = _id_slug_sub(`subject`)
 
   return {
     apis: {
       iam: {
         basicAuth: {
           verifySignupEmailToken: _('-/api/iam/basic-auth/verify-signup-email-token'),
+        },
+        deleteMyAccountRequest: {
+          confirm: _('-/api/iam/delete-my-account-request/confirm'),
         },
       },
     },
@@ -31,6 +43,9 @@ export function sitepaths(baseUrl = '/') {
       access: {
         login: _('login'),
         signup: _('signup'),
+      },
+      user: {
+        settings: user_settings,
       },
       homepages: {
         profile,

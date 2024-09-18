@@ -1,31 +1,28 @@
 'use client'
-import PrimaryButton from '../../../ui/atoms/PrimaryButton/PrimaryButton'
+import { Trans, useTranslation } from 'react-i18next'
+import { PrimaryButton } from '../../../ui/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../../ui/atoms/Searchbox/Searchbox'
 
 export function LandingHeadShareButton() {
   return (
     <PrimaryButton className="share-content" color="blue" onClick={undefined}>
-      Publish content
+      <Trans>Publish content</Trans>
     </PrimaryButton>
   )
 }
 
-export function LandingHeadSearchbox({
-  defaultValue,
-  placeholder,
-}: {
-  defaultValue: string
-  placeholder: string
-}) {
+export function LandingHeadSearchbox() {
+  const { t } = useTranslation()
+
   return (
     <Searchbox
       {...{
         boxSize: 'big',
         icon: true,
-        defaultValue,
-        placeholder,
-        search: console.log,
-        triggerBtn: { label: 'Search' },
+        defaultValue: '',
+        placeholder: t('Search for ope education content'),
+        search: console.error,
+        triggerBtn: { label: t('Search') },
       }}
     />
   )

@@ -6,7 +6,15 @@ import type { AssetInfo } from '../../common/types'
 import { getDomainUrl } from '../../common/utilities'
 import { getVimeoEmbed, getVimeoThumbnail } from '../../ui/molecules/embeds/Vimeo/Vimeo'
 import { getYouTubeEmbed, getYouTubeThumbnail } from '../../ui/molecules/embeds/Youtube/Youtube'
-import { AddonItem } from '../types.jsx'
+import { AddonItem } from '../types'
+
+export function useInBrowser() {
+  const [inBrowser, setInBrowser] = useState(false)
+  useEffect(() => {
+    setInBrowser(true)
+  }, [])
+  return inBrowser
+}
 
 export const elementFullyInViewPort = (
   el: Element,

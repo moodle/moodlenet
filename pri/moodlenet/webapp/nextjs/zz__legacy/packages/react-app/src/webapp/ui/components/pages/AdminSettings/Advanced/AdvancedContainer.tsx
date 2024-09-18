@@ -1,6 +1,6 @@
 import type { FC } from 'react'
-import { Advanced } from './Advanced.js'
-import { useAdvancedProps } from './AdvancedHooks.js'
+import { Advanced } from './Advanced'
+import { useAdvancedProps } from './AdvancedHooks'
 
 export const AdvancedContainer: FC = () => {
   const AdvancedProps = useAdvancedProps()

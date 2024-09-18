@@ -1,5 +1,5 @@
 import { createTransport } from 'nodemailer'
-import type SMTPTransport from 'nodemailer/lib/smtp-transport/index.js'
+import type SMTPTransport from 'nodemailer/lib/smtp-transport/index'
 import { env } from './init/env.mjs'
 import { shell } from './shell.mjs'
 

@@ -1,4 +1,5 @@
 import type { ComponentType, PropsWithChildren } from 'react'
+import { Href } from './common/types'
 
 export type Organization = {
   logo: string
@@ -14,10 +15,10 @@ export type AddonItem<P = PropsWithChildren<unknown>> = {
 }
 export type AddonItemNoKey = Omit<AddonItem, 'key'>
 
-export type Href = {
-  ext: boolean
-  url: string
-}
+// export type Href = {
+//   ext: boolean
+//   url: string
+// }
 
 export type FollowTag = {
   type: 'subject' | 'collection' | 'type'

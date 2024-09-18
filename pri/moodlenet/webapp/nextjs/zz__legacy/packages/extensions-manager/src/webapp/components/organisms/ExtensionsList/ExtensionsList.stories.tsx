@@ -6,8 +6,8 @@
 // // import packageIcon3 from '../../../assets/icons/package-icon-3.png'
 // import packageIcon2 from '../../../assets/icons/package-icon-2.png'
 // import packageIcon1 from '../../../assets/icons/package-icon.png'
-// import { ExtensionType } from '../../pages/Extensions/Extensions.js'
-// import { InstallExtensionFormValues, InstallExtensionProps } from '../../pages/InstallExtension/InstallExtension.js'
+// import { ExtensionType } from '../../pages/Extensions/Extensions'
+// import { InstallExtensionFormValues, InstallExtensionProps } from '../../pages/InstallExtension/InstallExtension'
 // // import packageIcon4 from '../../../assets/icons/package-icon-4.png'
 // // import packageIcon1 from '../../../assets/icons/package-icon.png'
 

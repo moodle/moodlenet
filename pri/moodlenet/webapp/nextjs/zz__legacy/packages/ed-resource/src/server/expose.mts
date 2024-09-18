@@ -11,7 +11,7 @@ import {
   getCurrentEntityUserIdentifier,
   isCurrentUserCreatorOfCurrentEntity,
 } from '@moodlenet/system-entities/server'
-import { waitFor } from 'xstate/lib/waitFor.js'
+import { waitFor } from 'xstate/lib/waitFor'
 import { shell } from './shell.mjs'
 // import { ResourceDataResponce, ResourceFormValues } from '../common.mjs'
 import type {

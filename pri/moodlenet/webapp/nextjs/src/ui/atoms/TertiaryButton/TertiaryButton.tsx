@@ -1,5 +1,5 @@
 'use client'
-import type { FC, KeyboardEvent, ReactNode } from 'react'
+import type { KeyboardEvent, ReactNode } from 'react'
 import { isEnterKeyEv } from '../../../lib/ui/utils/keyboard'
 import './TertiaryButton.scss'
 
@@ -13,7 +13,7 @@ export type TertiaryButtonProps = {
   onClick?: (e: React.MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => void
 } & Omit<React.HTMLAttributes<HTMLElement>, 'onClick'>
 
-export const TertiaryButton: FC<TertiaryButtonProps> = ({
+export function TertiaryButton({
   className,
   abbr,
   hiddenText,
@@ -22,7 +22,7 @@ export const TertiaryButton: FC<TertiaryButtonProps> = ({
   color,
   onClick,
   ...abbrProps
-}) => {
+}: TertiaryButtonProps) {
   return (
     <abbr
       className={`tertiary-button ${className ?? undefined} ${disabled ? 'disabled' : ''}  ${
@@ -47,4 +47,3 @@ export const TertiaryButton: FC<TertiaryButtonProps> = ({
   )
 }
 
-export default TertiaryButton

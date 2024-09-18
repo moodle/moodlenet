@@ -8,9 +8,9 @@ import { useMemo } from 'react'
 import '../shell.mjs'
 
 import type { AddOnMap } from '@moodlenet/core/lib'
-import { ExtensionsMenu } from '../components/pages/Extensions/Extensions.js'
-import { ExtensionsContainer } from '../components/pages/Extensions/ExtensionsContainer.js'
-import MainWrapper from '../MainWrapper.js'
+import { ExtensionsMenu } from '../components/pages/Extensions/Extensions'
+import { ExtensionsContainer } from '../components/pages/Extensions/ExtensionsContainer'
+import MainWrapper from '../MainWrapper'
 
 registerMainAppPluginHook(function useMainAppContext() {
   const mainAppPlugin = useMemo<MainAppPluginHookResult>(

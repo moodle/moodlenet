@@ -1,9 +1,7 @@
 import { sec_factory, sec_impl } from '@moodle/domain'
 import { lib_moodle_iam } from '@moodle/lib-domain'
-import { createAlphaNumericId } from '@moodle/lib-id-gen'
 import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import { _void } from '@moodle/lib-types'
-import { v1_0 as iam_v1_0 } from '@moodle/mod-iam'
 import * as argon2 from 'argon2'
 export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 // ArgonPwdHashOpts : {
@@ -27,10 +25,6 @@ export function iam({
           v1_0: {
             sec: {
               crypto: {
-                async generateUserId() {
-                  const id = await createAlphaNumericId()
-                  return { id }
-                },
                 async hashPassword({ plainPassword: { __redacted__: plainPassword } }) {
                   const passwordHash = await argon2.hash(plainPassword, argonOpts)
                   return { passwordHash }

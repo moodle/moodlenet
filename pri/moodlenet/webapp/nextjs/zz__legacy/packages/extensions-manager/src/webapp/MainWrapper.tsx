@@ -2,7 +2,7 @@ import type { MainAppPluginWrapper } from '@moodlenet/react-app/webapp'
 
 import { useState } from 'react'
 import type { DeployedPkgInfo, SearchPackagesResObject } from '../common/data.mjs'
-import { MainContext } from './MainContext.js'
+import { MainContext } from './MainContext'
 
 const MainWrapper: MainAppPluginWrapper = ({ children }) => {
   const [devMode, setDevMode] = useState(false)

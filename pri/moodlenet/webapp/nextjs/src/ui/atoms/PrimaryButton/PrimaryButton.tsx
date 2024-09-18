@@ -16,7 +16,7 @@ export type PrimaryButtonProps = {
   onClick?: (e: React.MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => void
 } & Omit<React.HTMLAttributes<HTMLElement>, 'onClick'>
 
-export default function PrimaryButton({
+export function PrimaryButton({
   children,
   className,
   abbr,

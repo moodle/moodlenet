@@ -4,7 +4,7 @@ import { silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useEffect, useMemo, useState } from 'react'
 import type { LandingProfileListProps } from '../../../ui/exports/ui.mjs'
 import { useMyProfileContext } from '../../exports.mjs'
-import { useProfileCardProps } from '../../organisms/ProfileCardHooks.js'
+import { useProfileCardProps } from '../../organisms/ProfileCardHooks'
 import { shell } from '../../shell.mjs'
 
 export function useMyLandingPageProfileListDataProps() {

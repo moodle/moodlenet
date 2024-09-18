@@ -3,7 +3,7 @@ import { render } from '@react-email/render'
 import {
   SecondContributionEmail,
   type SecondContributionEmailProps,
-} from '../../../../../web-user/src/common/emails/Publisher/SecondContributionEmail/SecondContributionEmail.js'
+} from '../../../../../web-user/src/common/emails/Publisher/SecondContributionEmail/SecondContributionEmail'
 
 export default {
   title: 'Pages/Emails/Publisher/SecondContribution',

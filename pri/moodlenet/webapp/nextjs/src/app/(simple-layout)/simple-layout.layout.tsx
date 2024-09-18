@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
-import Footer, { FooterProps } from '../../ui/organisms/Footer/Footer'
+import { Footer, FooterProps } from '../../ui/organisms/Footer/Footer'
 import { MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 // import { } from './client.layout.simple'
 import { getMod } from '../../lib/server/session-access'

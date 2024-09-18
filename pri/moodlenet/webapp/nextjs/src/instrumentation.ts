@@ -1,3 +1,3 @@
 export async function register(...args: unknown[]) {
-  console.log('registering', args)
+  console.log('registering instrumentation', args)
 }

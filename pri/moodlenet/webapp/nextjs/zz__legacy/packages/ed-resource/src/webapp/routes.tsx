@@ -7,7 +7,7 @@ import {
 import {
   CreateResourcePageRoute,
   ResourcePageRoute,
-} from './components/pages/Resource/ResourcePageRoute.js'
+} from './components/pages/Resource/ResourcePageRoute'
 
 export const pkgRoutes: PkgRoutes = {
   routes: (

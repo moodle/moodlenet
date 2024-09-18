@@ -13,8 +13,8 @@ import type {
   UserInterests,
 } from '../../../common/types.mjs'
 import { shell } from '../shell.mjs'
-import type { AuthCtxT } from './AuthContext.js'
-import { AuthCtx } from './AuthContext.js'
+import type { AuthCtxT } from './AuthContext'
+import { AuthCtx } from './AuthContext'
 
 export type MyProfileContextT = {
   myFeaturedEntities: AllMyFeaturedEntitiesHandle

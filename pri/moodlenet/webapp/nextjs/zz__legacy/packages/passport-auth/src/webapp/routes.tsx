@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { Route } from 'react-router-dom'
-import LoginFail from './LoginFail.js'
-import LoginSuccess from './LoginSuccess.js'
+import LoginFail from './LoginFail'
+import LoginSuccess from './LoginSuccess'
 
 const AuthRoutes = (
   <>

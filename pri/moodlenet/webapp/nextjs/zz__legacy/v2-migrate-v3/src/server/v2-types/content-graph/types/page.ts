@@ -1,5 +1,5 @@
-import type { GraphEdge } from './edge.js'
-import type { GraphNode } from './node.js'
+import type { GraphEdge } from './edge'
+import type { GraphNode } from './node'
 
 export type Cursor = any
 export type PaginationInput = {

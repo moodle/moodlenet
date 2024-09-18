@@ -1,1 +1,1 @@
-export * from './EmailLayout.jsx'
+export * from './EmailLayout'

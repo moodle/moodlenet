@@ -16,20 +16,22 @@ export async function GET(req: NextRequest) {
       iam: {
         v1_0: {
           pri: {
-            signup: { verifyEmail },
-            session: { generateUserSession: generateSession },
+            signup: { createNewUserByEmailVerificationToken },
+            session: { generateUserSession },
           },
         },
       },
     },
   } = getMod()
-  const [ok, response] = await verifyEmail({ signupEmailVerificationToken })
+  const [ok, response] = await createNewUserByEmailVerificationToken({
+    signupEmailVerificationToken,
+  })
   if (!ok) {
     return new Response(`error verifying email. reason: ${response.reason}`, {
       status: 400,
     })
   }
-  const [done, session] = await generateSession({ userId: response.userId })
+  const [done, session] = await generateUserSession({ userId: response.userId })
   if (!done) {
     return new Response(`error generating session token. reason: ${session.reason}`, {
       status: 400,

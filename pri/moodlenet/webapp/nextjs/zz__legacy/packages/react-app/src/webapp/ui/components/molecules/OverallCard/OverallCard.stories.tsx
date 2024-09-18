@@ -5,8 +5,8 @@ import { FilterNone } from '@mui/icons-material'
 import { href } from '../../../../../common/lib.mjs'
 import { ReactComponent as LeafIcon } from '../../../assets/icons/leaf.svg'
 import { ReactComponent as PersonIcon } from '../../../assets/icons/profile.svg'
-import type { OverallCardProps } from './OverallCard.js'
-import { OverallCard } from './OverallCard.js'
+import type { OverallCardProps } from './OverallCard'
+import { OverallCard } from './OverallCard'
 
 const meta: ComponentMeta<typeof OverallCard> = {
   title: 'Molecules/OverallCard',

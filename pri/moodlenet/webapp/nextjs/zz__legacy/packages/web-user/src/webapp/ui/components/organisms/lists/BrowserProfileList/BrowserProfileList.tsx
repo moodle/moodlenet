@@ -2,8 +2,8 @@ import { ListCard, TertiaryButton } from '@moodlenet/component-library'
 import type { BrowserMainColumnItemBase, ProxyProps } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useMemo } from 'react'
-import type { ProfileCardProps } from '../../ProfileCard/ProfileCard.js'
-import { ProfileCard } from '../../ProfileCard/ProfileCard.js'
+import type { ProfileCardProps } from '../../ProfileCard/ProfileCard'
+import { ProfileCard } from '../../ProfileCard/ProfileCard'
 import './BrowserProfileList.scss'
 
 export type BrowserProfileListDataProps = {

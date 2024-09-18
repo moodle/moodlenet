@@ -1,7 +1,7 @@
 'use client'
 import type { ReactNode } from 'react'
-import { by, cc, nc, nd, sa, zero } from '../DropdownFieldsMockData.jsx'
-export * from '../DropdownFieldsMockData.jsx'
+import { by, cc, nc, nd, sa, zero } from '../DropdownFieldsMockData'
+export * from '../DropdownFieldsMockData'
 
 export const LevelDropdown = {
   label: `Level`,

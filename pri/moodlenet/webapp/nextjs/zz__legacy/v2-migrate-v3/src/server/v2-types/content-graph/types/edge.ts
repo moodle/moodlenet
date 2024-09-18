@@ -1,5 +1,5 @@
-import type { Timestamp } from './common.js'
-import type { GraphNodeIdentifierAuth } from './node.js'
+import type { Timestamp } from './common'
+import type { GraphNodeIdentifierAuth } from './node'
 
 export type GraphEdgeMap = {
   Created: Created

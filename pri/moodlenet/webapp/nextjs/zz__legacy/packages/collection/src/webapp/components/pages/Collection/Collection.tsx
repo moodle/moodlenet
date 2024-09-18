@@ -26,13 +26,13 @@ import type {
   CollectionStateProps,
 } from '../../../../common/types.mjs'
 import type { ValidationSchemas } from '../../../../common/validationSchema.mjs'
-import type { CollectionContributorCardProps } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
-import { CollectionContributorCard } from '../../molecules/CollectionContributorCard/CollectionContributorCard.js'
+import type { CollectionContributorCardProps } from '../../molecules/CollectionContributorCard/CollectionContributorCard'
+import { CollectionContributorCard } from '../../molecules/CollectionContributorCard/CollectionContributorCard'
 import type {
   MainCollectionCardSlots,
   ValidForms,
-} from '../../organisms/MainCollectionCard/MainCollectionCard.js'
-import { MainCollectionCard } from '../../organisms/MainCollectionCard/MainCollectionCard.js'
+} from '../../organisms/MainCollectionCard/MainCollectionCard'
+import { MainCollectionCard } from '../../organisms/MainCollectionCard/MainCollectionCard'
 import './Collection.scss'
 
 export type CollectionProps = {

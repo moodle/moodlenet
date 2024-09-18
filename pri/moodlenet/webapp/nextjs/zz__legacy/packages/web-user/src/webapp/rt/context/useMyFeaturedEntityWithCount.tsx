@@ -2,9 +2,9 @@ import { silentCatchAbort } from '@moodlenet/react-app/webapp'
 import { useEffect, useMemo, useState } from 'react'
 import type { KnownEntityFeature, KnownEntityType } from '../../../common/types.mjs'
 import { shell } from '../shell.mjs'
-import { useMyProfileContext } from './MyProfileContext.js'
-import type { MyFeaturedEntityHandle } from './useMyFeaturedEntity.js'
-import { useMyFeaturedEntity } from './useMyFeaturedEntity.js'
+import { useMyProfileContext } from './MyProfileContext'
+import type { MyFeaturedEntityHandle } from './useMyFeaturedEntity'
+import { useMyFeaturedEntity } from './useMyFeaturedEntity'
 
 export type MyFeaturedEntityWithCountHandle = MyFeaturedEntityHandle & {
   count: number

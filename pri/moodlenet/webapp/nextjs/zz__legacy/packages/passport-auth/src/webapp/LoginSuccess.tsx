@@ -2,7 +2,7 @@ import { MainLayout } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useContext } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { PassportContext } from './MainModule.js'
+import { PassportContext } from './MainModule'
 
 export const LoginSuccess: FC = () => {
   const { shell } = useContext(PassportContext)

@@ -1,7 +1,7 @@
 import type { FC } from 'react'
-import { Fallback } from '../../Extra/Fallback/Fallback.js'
-import { AdminSettings } from '../AdminSettings.js'
-import { useAdminSettingsProps } from './AdminSettingsHook.js'
+import { Fallback } from '../../Extra/Fallback/Fallback'
+import { AdminSettings } from '../AdminSettings'
+import { useAdminSettingsProps } from './AdminSettingsHook'
 
 export const AdminSettingsContainer: FC = () => {
   const { adminSettingsProps, denyAccess } = useAdminSettingsProps()

@@ -4,7 +4,7 @@ import SearchIconSVG from '../../../assets/icons/search.svg'
 // import Image from 'next/image'
 import { DetailedHTMLProps, InputHTMLAttributes, PropsWithChildren, ReactNode, useRef } from 'react'
 import { isEnterKeyEv } from '../../../lib/ui/utils/keyboard'
-import PrimaryButton, { PrimaryButtonProps } from '../../atoms/PrimaryButton/PrimaryButton'
+import { PrimaryButton, PrimaryButtonProps } from '../../atoms/PrimaryButton/PrimaryButton'
 import './Searchbox.scss'
 export type triggerProps = PropsWithChildren<{ label?: ReactNode } & PrimaryButtonProps>
 export type searchboxProps = {

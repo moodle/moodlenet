@@ -2,7 +2,7 @@ import type { FC, PropsWithChildren } from 'react'
 import { createContext, useCallback, useContext, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getCollectionHomePageRoutePath } from '../common/webapp-routes.mjs'
-import { MainContext } from './MainContext.js'
+import { MainContext } from './MainContext'
 import { shell } from './shell.mjs'
 
 export type CollectionContextT = {

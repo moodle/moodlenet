@@ -1,10 +1,10 @@
 import type { AdminSettingsItem } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
-// import { useInstallExtensionStoryProps } from '../InstallExtension/InstallExtension.stories.js'
-import { useManageExtensionsStoryProps } from '../ManageExtensions/ManageExtensions.stories.js'
+// import { useInstallExtensionStoryProps } from '../InstallExtension/InstallExtension.stories'
+import { useManageExtensionsStoryProps } from '../ManageExtensions/ManageExtensions.stories'
 
-import type { ExtensionsProps } from './Extensions.js'
-import Extensions, { ExtensionsMenu } from './Extensions.js'
+import type { ExtensionsProps } from './Extensions'
+import Extensions, { ExtensionsMenu } from './Extensions'
 
 export const useExtensionsStoryProps = (overrides?: {
   // editFormValues?: Partial<InstallExtensionData>

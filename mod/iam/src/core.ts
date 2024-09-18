@@ -62,7 +62,7 @@ export function core(): core_factory {
                   )
                   mySec.db.deactivateUser({
                     userId,
-                    for: { v1_0: 'adminRequest', reason },
+                    reason: { v1_0: 'adminRequest', reason },
                     anonymize,
                   })
                 },
@@ -116,7 +116,7 @@ export function core(): core_factory {
                   return [true, _void]
                 },
 
-                async verifyEmail({ signupEmailVerificationToken }) {
+                async createNewUserByEmailVerificationToken({ signupEmailVerificationToken }) {
                   assertGuestSession(primarySession)
                   const {
                     iam: {
@@ -139,11 +139,12 @@ export function core(): core_factory {
                     return [true, { userId: foundSameEmailUser.id }]
                   }
 
-                  const { id } = await mySec.crypto.generateUserId()
-
-                  const [newUserDone] = await mySec.db.saveNewUser({
+                  const [newUserCreated, userId] = await mySec.db.saveNewUser({
+                    idType: {
+                      type: 'alphanumeric',
+                      length: 8,
+                    },
                     newUser: {
-                      id,
                       roles: newlyCreatedUserRoles,
                       displayName: tokenData.displayName,
                       contacts: {
@@ -157,7 +158,7 @@ export function core(): core_factory {
                       deactivated: false,
                     },
                   })
-                  return newUserDone ? [true, { userId: id }] : [false, { reason: 'unknown' }]
+                  return newUserCreated ? [true, { userId }] : [false, { reason: 'unknown' }]
                 },
               },
 
@@ -247,7 +248,7 @@ export function core(): core_factory {
 
                   const [deactivated] = await mySec.db.deactivateUser({
                     anonymize: true,
-                    for: { v1_0: 'userSelfDeletionRequest', reason },
+                    reason: { v1_0: 'userSelfDeletionRequest', reason },
                     userId: tokenData.userId,
                   })
                   return deactivated ? [true, _void] : [false, { reason: 'unknown' }]

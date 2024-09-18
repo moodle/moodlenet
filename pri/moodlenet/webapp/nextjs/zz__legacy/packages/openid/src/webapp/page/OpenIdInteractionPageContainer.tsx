@@ -1,6 +1,6 @@
 import type { FC } from 'react'
-import { OpenIdInteractionPage } from './OpenIdInteractionPage.js'
-import { useOpenIdInteractionPage } from './OpenIdInteractionPageHook.js'
+import { OpenIdInteractionPage } from './OpenIdInteractionPage'
+import { useOpenIdInteractionPage } from './OpenIdInteractionPageHook'
 
 export const OpenIdInteractionPageContainer: FC<{ interactionId: string }> = ({
   interactionId,

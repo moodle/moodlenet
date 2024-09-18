@@ -2,8 +2,8 @@ import { ListCard } from '@moodlenet/component-library'
 import type { ProxyProps } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useMemo } from 'react'
-import type { ResourceCardPropsData } from '../../ResourceCard/ResourceCard.js'
-import ResourceCard from '../../ResourceCard/ResourceCard.js'
+import type { ResourceCardPropsData } from '../../ResourceCard/ResourceCard'
+import ResourceCard from '../../ResourceCard/ResourceCard'
 import './SimpleResourceList.scss'
 
 export type SimpleResourceListProps = {

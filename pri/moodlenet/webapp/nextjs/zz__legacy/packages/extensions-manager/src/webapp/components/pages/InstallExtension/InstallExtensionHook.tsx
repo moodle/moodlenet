@@ -4,7 +4,7 @@ import { useContext, useMemo } from 'react'
 import type {
   InstallExtensionPropsControlled,
   InstallLocalPathExtensionFormValues,
-} from './InstallExtension.js'
+} from './InstallExtension'
 
 export const useInstallExtensionProps = (): InstallExtensionPropsControlled => {
   const installLocalPathExtensionForm = useFormik<InstallLocalPathExtensionFormValues>({

@@ -9,9 +9,9 @@ import { KeyboardArrowLeftRounded, KeyboardArrowUpRounded } from '@mui/icons-mat
 import type { useFormik } from 'formik'
 import type { FC } from 'react'
 import { useState } from 'react'
-import ExtensionsList from '../../organisms/ExtensionsList/ExtensionsList.js'
-import ExtensionInfo from '../ExtensionInfo/ExtensionInfo.js'
-import type { ExtensionType } from '../Extensions/Extensions.js'
+import ExtensionsList from '../../organisms/ExtensionsList/ExtensionsList'
+import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
+import type { ExtensionType } from '../Extensions/Extensions'
 import './InstallExtension.scss'
 
 export type InstallLocalPathExtensionFormValues = {

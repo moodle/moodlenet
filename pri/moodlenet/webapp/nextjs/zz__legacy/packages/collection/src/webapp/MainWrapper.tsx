@@ -4,8 +4,8 @@ import type { WebappConfigsRpc } from '../common/expose-def.mjs'
 import type { CollectionFormProps, MainContextCollection, RpcCaller } from '../common/types.mjs'
 import type { ValidationSchemas } from '../common/validationSchema.mjs'
 import { getValidationSchemas } from '../common/validationSchema.mjs'
-import { CollectionContextProvider } from './CollectionContext.js'
-import { MainContext } from './MainContext.js'
+import { CollectionContextProvider } from './CollectionContext'
+import { MainContext } from './MainContext'
 import { shell } from './shell.mjs'
 
 const MainWrapper: MainAppPluginWrapper = ({ children }) => {

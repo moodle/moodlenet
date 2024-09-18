@@ -1,7 +1,7 @@
 import { FallbackContainer } from '@moodlenet/react-app/webapp'
 import type { FC } from 'react'
-import Collection from './Collection.js'
-import { useCollectionPageProps } from './CollectionPageHooks.js'
+import Collection from './Collection'
+import { useCollectionPageProps } from './CollectionPageHooks'
 
 export const CollectionContainer: FC<{ collectionKey: string }> = ({ collectionKey }) => {
   const collectionProps = useCollectionPageProps({ collectionKey })

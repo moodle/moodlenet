@@ -4,7 +4,7 @@ import { ResourceContext } from '@moodlenet/ed-resource/webapp'
 import { createPlugin } from '@moodlenet/react-app/webapp'
 import { useContext, useMemo } from 'react'
 import type { AddMenuItem, AddMenuProps } from '../../ui/exports/ui.mjs'
-import { AuthCtx } from '../context/AuthContext.js'
+import { AuthCtx } from '../context/AuthContext'
 
 export type AddMenuPluginItem = Omit<AddMenuItem, 'key'>
 

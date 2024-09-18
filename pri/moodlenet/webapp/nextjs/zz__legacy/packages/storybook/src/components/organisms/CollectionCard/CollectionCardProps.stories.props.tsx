@@ -3,7 +3,7 @@ import { collectionsCardFactory } from '@moodlenet/collection/ui'
 import { getRandomSortedArrayElements } from '@moodlenet/component-library'
 import { transformPropsToObjectWithKey } from '@moodlenet/react-app/ui'
 import type { PartialDeep } from 'type-fest'
-import { getCollectionCardStoryProps } from './CollectionCard.stories.js'
+import { getCollectionCardStoryProps } from './CollectionCard.stories'
 
 export const getCollectionCardsStoryProps = (
   amount = 8,

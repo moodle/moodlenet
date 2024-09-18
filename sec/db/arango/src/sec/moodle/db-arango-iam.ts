@@ -3,6 +3,9 @@ import { _void } from '@moodle/lib-types'
 import type { v1_0 as iam_v1_0 } from '@moodle/mod-iam'
 import { Document } from 'arangojs/documents'
 import { v1_0 } from '../..'
+import { iamUserDoc2dbUser } from './db-arango-iam-lib/mappings'
+import { generateId } from '@moodle/lib-id-gen'
+import { createHash } from 'node:crypto'
 
 export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec_factory {
   return ctx => {
@@ -69,7 +72,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     { email },
                   )
                   const foundUser = await cursor.next()
-                  return foundUser ? [true, v1_0.dbUserDoc2DbUser(foundUser)] : [false, _void]
+                  return foundUser ? [true, iamUserDoc2dbUser(foundUser)] : [false, _void]
                 },
                 async getUserById({ userId }) {
                   const {
@@ -79,22 +82,58 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                   } = db_struct_v1_0
 
                   const foundUser = await user.document({ _key: userId }, { graceful: true })
-                  return foundUser ? [true, v1_0.dbUserDoc2DbUser(foundUser)] : [false, _void]
+                  return foundUser ? [true, iamUserDoc2dbUser(foundUser)] : [false, _void]
                 },
-                async saveNewUser({ newUser }) {
+                async saveNewUser({ idType, newUser }) {
+                  const _key = await generateId(idType)
                   const {
                     iam: {
                       coll: { user },
                     },
                   } = db_struct_v1_0
-                  const savedMeta = await user
-                    .save({ _key: newUser.id, ...newUser }, { overwriteMode: 'conflict' })
+                  const savedUser = await user
+                    .save(
+                      {
+                        _key,
+                        ...newUser,
+                      },
+                      { overwriteMode: 'conflict' },
+                    )
                     .catch(() => null)
 
-                  return [!!savedMeta, _void]
+                  return savedUser ? [true, _key] : [false, _void]
                 },
-                deactivateUser(_) {
-                  throw new Error('Not implemented')
+                async deactivateUser({ anonymize, reason, userId, at = new Date().toISOString() }) {
+                  const {
+                    iam: {
+                      coll: { user },
+                    },
+                  } = db_struct_v1_0
+                  const deactivatingUser = await user.document({ _key: userId }, { graceful: true })
+                  if (!deactivatingUser) return [false, _void]
+
+                  const anonymization = anonymize
+                    ? {
+                        displayName: '',
+                        roles: [],
+                        contacts: {
+                          email: createHash('md5')
+                            .update(`${deactivatingUser.contacts.email}|${at}`)
+                            .digest('base64'),
+                        },
+                        passwordHash: '',
+                      }
+                    : null
+
+                  await user.update(
+                    { _key: userId },
+                    {
+                      deactivated: { anonymized: anonymize, at, reason },
+                      ...anonymization,
+                    },
+                    { silent: true },
+                  )
+                  return [true, _void]
                 },
                 findUsersByText(_) {
                   throw new Error('Not implemented')

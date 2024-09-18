@@ -1,4 +1,4 @@
-import { SendToMoodle } from '../../ui/components/SendToMoodle.js'
+import { SendToMoodle } from '../../ui/components/SendToMoodle'
 import { useSendToMoodle } from './sendToMoodleHook.mjs'
 
 export function SendToMoodleContainer() {

@@ -5,10 +5,10 @@ import { createPlugin, useMainLayoutProps } from '@moodlenet/react-app/webapp'
 import type { AddonItemNoKey } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { useContext, useMemo } from 'react'
-import { MainContext } from '../../../MainContext.js'
-import { useMainHook } from '../../../MainHooks.js'
-import type { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard.jsx'
-import type { CollectionProps } from './Collection.js'
+import { MainContext } from '../../../MainContext'
+import { useMainHook } from '../../../MainHooks'
+import type { MainCollectionCardSlots } from '../../organisms/MainCollectionCard/MainCollectionCard'
+import type { CollectionProps } from './Collection'
 
 export const CollectionPagePlugins = createPlugin<
   {

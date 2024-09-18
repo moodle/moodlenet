@@ -1,7 +1,7 @@
 import { FallbackContainer } from '@moodlenet/react-app/webapp'
 import type { FC } from 'react'
 import { Profile } from '../../../ui/exports/ui.mjs'
-import { useProfileProps } from './ProfileHooks.js'
+import { useProfileProps } from './ProfileHooks'
 
 export const ProfileContainer: FC<{ profileKey: string }> = ({ profileKey }) => {
   const profileProps = useProfileProps({ profileKey, ownContributionListLimit: 300 })

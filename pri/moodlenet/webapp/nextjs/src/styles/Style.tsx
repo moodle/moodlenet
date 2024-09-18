@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react'
 import { createContext } from 'react'
 import { baseStyle, BaseStyleType } from '../common/config'
-// import type { BaseStyleType } from '../../../../common/config.jsx';
-// import { baseStyle } from '../../../../common/config.jsx';
+// import type { BaseStyleType } from '../../../../common/config'
+// import { baseStyle } from '../../../../common/config'
 
 export type StyleContextType = {
   style: BaseStyleType & CSSProperties

@@ -3,9 +3,9 @@ import { registerMainAppPluginHook } from '@moodlenet/react-app/webapp'
 import type { ProfilePagePluginMap } from '@moodlenet/web-user/webapp'
 import { ProfilePagePlugins } from '@moodlenet/web-user/webapp'
 import { useMemo } from 'react'
-import { MainWrapper } from './MainWrapper.js'
-import { JiraApprovalInfoContainer } from './user-approval/JiraApprovalInfoContainer.js'
-import { JiraApproveButtonContainer } from './user-approval/JiraApproveButtonContainer.js'
+import { MainWrapper } from './MainWrapper'
+import { JiraApprovalInfoContainer } from './user-approval/JiraApprovalInfoContainer'
+import { JiraApproveButtonContainer } from './user-approval/JiraApproveButtonContainer'
 
 registerMainAppPluginHook(() => useMemo<MainAppPluginHookResult>(() => ({ MainWrapper }), []))
 

@@ -5,13 +5,13 @@ import { ResourceCardPlugins, ResourcePagePlugins } from '@moodlenet/ed-resource
 import { PermIdentity } from '@mui/icons-material'
 import { useEffect, useMemo, useState } from 'react'
 import { BookmarkButtonContainer, LikeButtonContainer } from '../exports.mjs'
-import { useSwichAddonsByAuth } from '../lib/AddonsByUserRule.js'
-import { resourcePageAddonsByAuth } from '../menus/menuAddons.js'
+import { useSwichAddonsByAuth } from '../lib/AddonsByUserRule'
+import { resourcePageAddonsByAuth } from '../menus/menuAddons'
 import { shell } from '../shell.mjs'
-import { FollowButtonContainer } from '../social-actions/FollowButtonContainer.js'
-import { SmallFollowButtonContainer } from '../social-actions/SmallFollowButtonContainer.js'
-import type { SocialActions, SocialActionsConfig } from '../social-actions/SocialActions.js'
-import { getUseComposeSocialActions } from '../social-actions/SocialActions.js'
+import { FollowButtonContainer } from '../social-actions/FollowButtonContainer'
+import { SmallFollowButtonContainer } from '../social-actions/SmallFollowButtonContainer'
+import type { SocialActions, SocialActionsConfig } from '../social-actions/SocialActions'
+import { getUseComposeSocialActions } from '../social-actions/SocialActions'
 
 const socialActions: SocialActions = {
   follow: SmallFollowButtonContainer,

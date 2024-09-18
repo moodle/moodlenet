@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { href } from '../../../../../common/lib.mjs'
 import smallLogo from '../../../assets/logos/moodlenet-logo-small.png'
 import logo from '../../../assets/logos/moodlenet-logo.png'
-import type { HeaderTitleProps } from './HeaderTitle.js'
+import type { HeaderTitleProps } from './HeaderTitle'
 
 export const useHeaderTitleProps = (): HeaderTitleProps => {
   // const { organizationData } = useContext(OrganizationCtx)

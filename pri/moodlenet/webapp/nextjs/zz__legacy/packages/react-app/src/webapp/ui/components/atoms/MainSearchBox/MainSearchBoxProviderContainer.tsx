@@ -3,8 +3,8 @@ import { useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { searchPagePath } from '../../../../../common/webapp-paths.mjs'
 import { useUrlQueryString } from '../../../../web-lib/use-query-params.mjs'
-import type { MainSearchBoxCtxValueDeps } from './MainSearchBox.js'
-import { ProvideMainSearchBoxCtx } from './MainSearchBox.js'
+import type { MainSearchBoxCtxValueDeps } from './MainSearchBox'
+import { ProvideMainSearchBoxCtx } from './MainSearchBox'
 
 export const MainSearchBoxCtxProviderContainer: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const nav = useNavigate()

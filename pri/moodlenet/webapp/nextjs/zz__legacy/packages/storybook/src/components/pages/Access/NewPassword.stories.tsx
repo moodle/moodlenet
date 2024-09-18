@@ -8,7 +8,7 @@ import { action } from '@storybook/addon-actions'
 import type { Meta as ComponentMeta } from '@storybook/react'
 import { useEffect } from 'react'
 import type { PartialDeep } from 'type-fest'
-import { FooterStoryProps } from '../../../components/organisms/Footer/Footer.stories.js'
+import { FooterStoryProps } from '../../../components/organisms/Footer/Footer.stories'
 
 const meta: ComponentMeta<typeof NewPassword> = {
   title: 'Pages/Access/NewPassword',

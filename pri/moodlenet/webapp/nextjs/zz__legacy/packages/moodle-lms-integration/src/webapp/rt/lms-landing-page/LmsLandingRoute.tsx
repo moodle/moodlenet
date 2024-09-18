@@ -2,7 +2,7 @@ import { useNeedsWebUserLogin } from '@moodlenet/web-user/webapp'
 import { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { ImportTarget, SiteTarget } from '../../../common/types.mjs'
-import { MyLmsContext } from '../myLmsContext.js'
+import { MyLmsContext } from '../myLmsContext'
 
 export function LmsLandingRouteComponent() {
   const myLmsCtx = useContext(MyLmsContext)

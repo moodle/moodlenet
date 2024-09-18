@@ -1,8 +1,8 @@
 'use client'
 import type { FC } from 'react'
 import { useState } from 'react'
-import type { DropdownProps, TextOptionProps } from '../Dropdown.jsx'
-import { CheckmarkOption, Dropdown, SimplePill } from '../Dropdown.jsx'
+import type { DropdownProps, TextOptionProps } from '../Dropdown'
+import { CheckmarkOption, Dropdown, SimplePill } from '../Dropdown'
 
 export type MultipeSelectDropdownProps = Omit<
   DropdownProps,

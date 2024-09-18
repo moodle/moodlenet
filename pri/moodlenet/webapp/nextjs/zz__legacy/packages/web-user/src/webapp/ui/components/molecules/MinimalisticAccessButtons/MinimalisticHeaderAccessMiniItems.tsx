@@ -1,6 +1,6 @@
 import { PrimaryButton, type AddonItem } from '@moodlenet/component-library'
 import type { Href } from '@moodlenet/react-app/common'
-import { LoginButtonMini, SignupButtonMini } from './MinimalisticAccessButtons.js'
+import { LoginButtonMini, SignupButtonMini } from './MinimalisticAccessButtons'
 
 export function getMiniAccessButtonsHeaderItems({
   loginHref,

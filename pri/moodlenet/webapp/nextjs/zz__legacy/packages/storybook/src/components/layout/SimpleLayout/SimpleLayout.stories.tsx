@@ -2,7 +2,7 @@ import { MinimalisticHeaderStories } from '@moodlenet/react-app/stories'
 import type { SimpleLayoutProps } from '@moodlenet/react-app/ui'
 import { SimpleLayout } from '@moodlenet/react-app/ui'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import { FooterStoryProps } from '../../../components/organisms/Footer/Footer.stories.js'
+import { FooterStoryProps } from '../../../components/organisms/Footer/Footer.stories'
 
 const meta: ComponentMeta<typeof SimpleLayout> = {
   title: 'Organisms/SimpleLayout',

@@ -10,9 +10,9 @@ import type {
 import { EdAssetType, IscedField, IscedGrade, Language, License } from '../../sys-entities.mjs'
 import EdMetaIscedFields from './raw/EdMetaIscedFields.mjs'
 import EdMetaIscedGrades from './raw/EdMetaIscedGrades.mjs'
-import ISO_639_3_Data from './raw/ISO_639_3_tab-DATA.js'
-import License_Data from './raw/licenses-DATA.js'
-import EdAssetType_Data from './raw/types-DATA.js'
+import ISO_639_3_Data from './raw/ISO_639_3_tab-DATA'
+import License_Data from './raw/licenses-DATA'
+import EdAssetType_Data from './raw/types-DATA'
 
 await Promise.all([
   initIscedFields(),

@@ -1,12 +1,12 @@
 // import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '@moodlenet/react-app/stories'
 import { Bookmarks } from '@moodlenet/web-user/ui'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import { MainLayoutLoggedInStoryProps } from '../../../components/layout/MainLayout/MainLayout.stories.js'
+import { MainLayoutLoggedInStoryProps } from '../../../components/layout/MainLayout/MainLayout.stories'
 import {
   useBrowserCollectionList,
   useBrowserResourceList,
   useBrowserStoryProps,
-} from '../../../components/organisms/Browser/BrowserProps.stories.props.js'
+} from '../../../components/organisms/Browser/BrowserProps.stories.props'
 
 const meta: ComponentMeta<typeof Bookmarks> = {
   title: 'Pages/Bookmarks',

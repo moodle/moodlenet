@@ -1,8 +1,8 @@
 import { useContext, useMemo } from 'react'
-import { AdminSettingsCtx } from '../../../../context/AdminSettingsContext.js'
+import { AdminSettingsCtx } from '../../../../context/AdminSettingsContext'
 import { useFooterProps } from '../../organisms/Footer/MainFooter/MainFooterHooks.mjs'
 import { useMinimalisticHeaderProps } from '../../organisms/Header/Minimalistic/MinimalisticHeaderHooks.mjs'
-import type { SimpleLayoutProps } from './SimpleLayout.js'
+import type { SimpleLayoutProps } from './SimpleLayout'
 
 export const useSimpleLayoutProps = (): SimpleLayoutProps => {
   const {

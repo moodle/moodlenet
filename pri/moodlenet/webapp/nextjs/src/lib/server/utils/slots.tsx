@@ -1,7 +1,7 @@
 import { lib_moodle_net_webapp_nextjs } from '@moodle/lib-domain'
 import { PropsWithChildren, ReactElement } from 'react'
 import { clientSlotItem } from '../../common/pages'
-import { _any } from '@moodle/lib-types'
+import { _any, filterOutFalsies } from '@moodle/lib-types'
 type layoutSlotItem = lib_moodle_net_webapp_nextjs.v1_0.layoutSlotItem
 // export type layoutPropsWithChildren = PropsWithChildren<map<ReactElement>>
 export type layoutPropsWithChildren = PropsWithChildren<_any>
@@ -18,10 +18,10 @@ export function slotsMap<S extends Record<string, layoutSlotItem[]>>(
 export function slotItems<S extends layoutSlotItem[]>(
   props: layoutPropsWithChildren,
   items: S | null | undefined,
-) {
+): JSX.Element[] {
   const res = (items ?? []).map(item => slotItem(props, item))
 
-  return res
+  return filterOutFalsies(res)
 }
 
 export function isLayoutSlotItem(value: layoutSlotItem | undefined): value is layoutSlotItem {
@@ -30,15 +30,27 @@ export function isLayoutSlotItem(value: layoutSlotItem | undefined): value is la
 
 export function slotItem(
   props: layoutPropsWithChildren,
-  item: layoutSlotItem,
+  [type, item]: layoutSlotItem,
   //_default: ReactElement = <>{`SHOULD NEVER HAPPEN: NO SLOT ITEM for [${item}]`}</>,
 ) {
-  const camelCaseItem = item.replace(/-([a-z])/g, g => (g[1] ? g[1].toUpperCase() : ''))
-  return (props as any)[camelCaseItem] ? (
-    ((props as any)[camelCaseItem] as ReactElement)
-  ) : (
-    <div key={item} dangerouslySetInnerHTML={{ __html: item }} />
-  )
+  switch (type) {
+    case 'slot':
+      return (() => {
+        const camelCaseSlotName = item.replace(/-([a-z])/g, g => (g[1] ? g[1].toUpperCase() : ''))
+        const slot = props[camelCaseSlotName]
+        if (!slot) {
+          console.error(`Missing slot: ${item}`)
+          return <>{`MISSING SLOT ITEM [${item}]`}</>
+        }
+        return slot as ReactElement
+      })()
+    case 'react':
+      return item
+    case 'html':
+      return <div dangerouslySetInnerHTML={{ __html: item }} />
+    default:
+      throw new Error(`Unknown slot type: ${type}`)
+  }
 }
 
 // export function isParallelRouteItem(item: layoutSlotItem): item is parallelRouteItem {

@@ -35,24 +35,31 @@ export function client(agent_opts?: Agent.Options) {
             req_http_target.basePath,
           )
 
-    const body = JSON.stringify(transport_data)
+    const body = _serial(transport_data)
     const reply = await fetch(url, {
       method: 'POST',
       body,
       dispatcher,
-      headers: { ..._opts?.headers, 'Content-Type': 'application/json' },
-    }).then(async response => {
-      const is2xx = response.status >= 200 && response.status < 300
-      const jsonBody: _any = await response.json()
-      if (is2xx) {
-        return jsonBody
-      }
-      const is4xx = response.status >= 400 && response.status < 500
-      if (is4xx) {
-        throw new Error4xx(response.status as status_code_4xx, jsonBody?.details ?? undefined)
-      }
-      throw new Error(`Server error: ${response.status}\n ${JSON.stringify(jsonBody, null, 2)}`)
+      headers: { ..._opts?.headers, 'Content-Type': PROTOCOL_CONTENT_TYPE },
     })
+      .then(async response => {
+        const is2xx = response.status >= 200 && response.status < 300
+        const jsonBodyStrUtf8 = await response.text()
+        if (is2xx) {
+          const jsonBody = _parse(jsonBodyStrUtf8)
+          return jsonBody
+        }
+        const is4xx = response.status >= 400 && response.status < 500
+        if (is4xx) {
+          const jsonBody = _parse(jsonBodyStrUtf8)
+          throw new Error4xx(response.status as status_code_4xx, jsonBody?.details ?? undefined)
+        }
+        throw new Error(`Server error: ${response.status}\n ${jsonBodyStrUtf8}`)
+      })
+      .catch(e => {
+        console.error(e)
+        throw e
+      })
 
     return reply
   }
@@ -67,22 +74,45 @@ type srv_cfg = {
 }
 export async function server({ request, port, baseUrl }: srv_cfg) {
   const app = express()
-  app.use(express.json())
+  app.use(express.text({ defaultCharset: 'utf-8' }))
   app.post(baseUrl, async (req, res) => {
-    const reply = await request(req.body).catch(e => {
-      if (e instanceof Error4xx) {
-        res.status(e.code)
-        return { details: e.details }
-      } else {
-        res.status(500)
-        return e instanceof Error
-          ? { name: e.name, message: e.message, stack: e.stack }
-          : { error: String(e) }
-      }
-    })
-    res.json(reply)
+    res.setHeader('Content-Type', PROTOCOL_CONTENT_TYPE)
+    const transportData = _parse(req.body)
+    const reply = await request(transportData)
+      .catch(e => {
+        console.error(e)
+        throw e
+      })
+      .catch(e => {
+        if (e instanceof Error4xx) {
+          res.status(e.code)
+          return { details: e.details }
+        } else {
+          res.status(500)
+          return e instanceof Error
+            ? { name: e.name, message: e.message, stack: e.stack }
+            : { error: String(e) }
+        }
+      })
+    const replyStr = _serial(reply)
+    res.send(replyStr)
   })
   return new Promise<void>((resolve /* , reject */) => {
     app.listen(port, resolve)
   })
+}
+
+const PROTOCOL_CONTENT_TYPE = 'text/plain; charset=utf-8'
+const _VOID_VALUE_ = '\u0000'
+function _parse(_: string) {
+  return _ === _VOID_VALUE_ ? void 0 : JSON.parse(_, reviver)
+}
+function _serial(_: _any) {
+  return _ === void 0 ? _VOID_VALUE_ : JSON.stringify(_, replacer)
+}
+function replacer(_key: string, val: _any) {
+  return val === void 0 ? _VOID_VALUE_ : val
+}
+function reviver(_key: string, val: _any) {
+  return val === _VOID_VALUE_ ? void 0 : val
 }

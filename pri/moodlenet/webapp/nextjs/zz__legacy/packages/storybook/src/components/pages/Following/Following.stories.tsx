@@ -2,13 +2,13 @@
 import type { FollowingProps } from '@moodlenet/web-user/ui'
 import { Following } from '@moodlenet/web-user/ui'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import { MainLayoutLoggedInStoryProps } from '../../../components/layout/MainLayout/MainLayout.stories.js'
+import { MainLayoutLoggedInStoryProps } from '../../../components/layout/MainLayout/MainLayout.stories'
 import {
   useBrowserCollectionList,
   useBrowserProfileList,
   useBrowserStoryProps,
   useBrowserSubjectList,
-} from '../../../components/organisms/Browser/BrowserProps.stories.props.js'
+} from '../../../components/organisms/Browser/BrowserProps.stories.props'
 
 const meta: ComponentMeta<typeof Following> = {
   title: 'Pages/Following',

@@ -4,11 +4,11 @@ import type { PartialDeep } from 'type-fest'
 import {
   HeaderTitleOrganizationStoryProps,
   HeaderTitleStoryProps,
-} from '../../../atoms/HeaderTitle/HeaderTitle.stories.js'
+} from '../../../atoms/HeaderTitle/HeaderTitle.stories'
 
 // import { href } from '../../../../elements/link'
-import type { MinimalisticHeaderProps } from './MinimalisticHeader.js'
-import { MinimalisticHeader } from './MinimalisticHeader.js'
+import type { MinimalisticHeaderProps } from './MinimalisticHeader'
+import { MinimalisticHeader } from './MinimalisticHeader'
 
 const meta: ComponentMeta<typeof MinimalisticHeader> = {
   title: 'Organisms/MinimalisticHeader',

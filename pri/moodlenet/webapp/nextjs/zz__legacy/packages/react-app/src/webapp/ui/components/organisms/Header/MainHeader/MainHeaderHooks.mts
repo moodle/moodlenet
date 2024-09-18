@@ -2,8 +2,8 @@ import type { AddonItem } from '@moodlenet/component-library'
 import type { AddOnMap } from '@moodlenet/core/lib'
 import { useMemo } from 'react'
 import { createPlugin } from '../../../../../web-lib/create-plugin.mjs'
-import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks.js'
-import type { MainHeaderProps } from './MainHeader.js'
+import { useHeaderTitleProps } from '../../../atoms/HeaderTitle/HeaderTitleHooks'
+import type { MainHeaderProps } from './MainHeader'
 export type HeaderAddonRegItem = Omit<AddonItem, 'key'>
 
 export const HeaderPlugins = createPlugin<{

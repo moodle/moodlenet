@@ -2,8 +2,8 @@ import { Link } from '@moodlenet/react-app/ui'
 import { ReactAppContext, usePkgContext } from '@moodlenet/react-app/webapp'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Route } from 'react-router-dom'
-import { MyContext } from './Context.js'
-import HelloWorldPage from './HelloWorldPage.jsx'
+import { MyContext } from './Context'
+import HelloWorldPage from './HelloWorldPage'
 
 const myRoutes = { routes: <Route index component={HelloWorldPage} /> }
 

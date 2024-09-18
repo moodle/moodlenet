@@ -4,7 +4,7 @@ import { MinimalisticAccessButtonsStories } from '@moodlenet/web-user/stories'
 import type { DeleteAccountSuccessProps } from '@moodlenet/web-user/ui'
 import { DeleteAccountSuccess } from '@moodlenet/web-user/ui'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
-import { FooterStoryProps } from '../../organisms/Footer/Footer.stories.js'
+import { FooterStoryProps } from '../../organisms/Footer/Footer.stories'
 
 const meta: ComponentMeta<typeof DeleteAccountSuccess> = {
   title: 'Pages/Access/DeleteAccountSuccess',

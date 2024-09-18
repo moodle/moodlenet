@@ -1,3 +1,3 @@
-export { SubjectCardPlugins } from '../components/organisms/SubjectCard/SubjectCardHooks.js'
-export { SubjectPagePlugins } from '../components/pages/Subject/SubjectPageHooks.js'
-export { EdMetaContext } from './EdMetaContext.js'
+export { SubjectCardPlugins } from '../components/organisms/SubjectCard/SubjectCardHooks'
+export { SubjectPagePlugins } from '../components/pages/Subject/SubjectPageHooks'
+export { EdMetaContext } from './EdMetaContext'

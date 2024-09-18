@@ -20,10 +20,10 @@ import './init/social-actions.js'
 import { href } from '@moodlenet/react-app/common'
 import { loginPageRoutePath, SIGNUP_PAGE_ROUTE_BASE_PATH } from '../../common/webapp-routes.mjs'
 import { getMiniAccessButtonsHeaderItems } from '../ui/exports/ui.mjs'
-import { useSwichAddonsByAuth } from './lib/AddonsByUserRule.js'
-import MainWrapper from './MainWrapper.js'
-import { menuAddonsDefaultSetting, menuHeaderButtonsAuthAddons } from './menus/menuAddons.js'
-import { pkgRoutes } from './routes.js'
+import { useSwichAddonsByAuth } from './lib/AddonsByUserRule'
+import MainWrapper from './MainWrapper'
+import { menuAddonsDefaultSetting, menuHeaderButtonsAuthAddons } from './menus/menuAddons'
+import { pkgRoutes } from './routes'
 
 registerAppRoutes(pkgRoutes)
 

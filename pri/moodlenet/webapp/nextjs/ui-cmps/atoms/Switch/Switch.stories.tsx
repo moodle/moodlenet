@@ -1,7 +1,7 @@
 'use client'
 import type { Meta as ComponentMeta, StoryFn as ComponentStory } from '@storybook/react'
 import { useReducer } from 'react'
-import { Switch } from './Switch.jsx'
+import { Switch } from './Switch'
 
 const meta: ComponentMeta<typeof Switch> = {
   title: 'Atoms/Switch',

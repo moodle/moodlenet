@@ -1,4 +1,4 @@
-import type { ProxyProps, withProxy } from './proxy-props.js'
+import type { ProxyProps, withProxy } from './proxy-props'
 
 type MyProps = { a: 1; b: 2; c: 3 }
 declare const CtrledComp: ReturnType<typeof withProxy<MyProps>>

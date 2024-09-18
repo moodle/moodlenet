@@ -4,8 +4,8 @@
 //   VisibilityOff as VisibilityOffIcon,
 // } from '@mui/icons-material'
 import type { FC } from 'react'
-import type { DropdownProps } from '../Dropdown/Dropdown.jsx'
-import { Dropdown, IconPill, IconTextOption } from '../Dropdown/Dropdown.jsx'
+import type { DropdownProps } from '../Dropdown/Dropdown'
+import { Dropdown, IconPill, IconTextOption } from '../Dropdown/Dropdown'
 
 export type Visibility = 'Public' | 'Private'
 export const Private: Visibility = `Private`

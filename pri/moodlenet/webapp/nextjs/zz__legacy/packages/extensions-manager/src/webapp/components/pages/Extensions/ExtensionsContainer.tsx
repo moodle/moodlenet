@@ -1,6 +1,6 @@
 import type { FC } from 'react'
-import Extensions from './Extensions.js'
-import { useExtensionsProps } from './ExtensionsHooks.js'
+import Extensions from './Extensions'
+import { useExtensionsProps } from './ExtensionsHooks'
 
 export const ExtensionsContainer: FC = () => {
   const extensionsProps = useExtensionsProps()

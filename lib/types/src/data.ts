@@ -1,5 +1,6 @@
 import { _any } from './map'
 
+export type _falsy = false | undefined | null
 export const _never = void 0 as never
 export const _void = void 0 as void
 
@@ -44,3 +45,7 @@ export function namedEmailAddressString(addr: email_address | named_email_addres
 export type url = string // URL format
 
 export type _t<t> = { [k in string & keyof t]: t[k] } // utility type to convert string literal to string type
+
+export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
+  return arr.filter((x): x is t => !!x)
+}

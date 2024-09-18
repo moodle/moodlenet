@@ -2,8 +2,8 @@ import { ListCard, TertiaryButton } from '@moodlenet/component-library'
 import type { BrowserMainColumnItemBase, ProxyProps } from '@moodlenet/react-app/ui'
 import type { FC } from 'react'
 import { useMemo } from 'react'
-import type { SubjectCardProps } from '../SubjectCard/SubjectCard.js'
-import { SubjectCard } from '../SubjectCard/SubjectCard.js'
+import type { SubjectCardProps } from '../SubjectCard/SubjectCard'
+import { SubjectCard } from '../SubjectCard/SubjectCard'
 import './BrowserSubjectList.scss'
 
 export type BrowserSubjectListDataProps = {

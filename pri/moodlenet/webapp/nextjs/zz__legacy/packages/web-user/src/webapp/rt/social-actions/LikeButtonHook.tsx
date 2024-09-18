@@ -2,8 +2,8 @@
 import { useContext } from 'react'
 import type { KnownEntityType } from '../../../common/types.mjs'
 import type { LikeButtonProps } from '../../ui/exports/ui.mjs'
-import { AuthCtx } from '../context/AuthContext.js'
-import { useMyFeaturedEntityWithCount } from '../context/useMyFeaturedEntityWithCount.js'
+import { AuthCtx } from '../context/AuthContext'
+import { useMyFeaturedEntityWithCount } from '../context/useMyFeaturedEntityWithCount'
 
 export const useLikeButtonProps = ({
   _key,
