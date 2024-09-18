@@ -1,7 +1,7 @@
 'use client'
 import { lib_moodle_iam } from '@moodle/lib-domain'
 import { useFormik } from 'formik'
-import { useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { toFormikValidationSchema } from 'zod-formik-adapter'
 import { Card } from '../../../../ui/atoms/Card/Card'
@@ -24,42 +24,38 @@ export interface GeneralSettingsProps {
 }
 export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettingsProps) {
   const { t } = useTranslation()
-  type password_change_status = 'success' | 'error' | 'none'
-  const [passwordChangedStatus, setPasswordChangedStatus] = useState<password_change_status>('none')
   const { changePasswordSchema } = lib_moodle_iam.v1_0.getPrimarySchemas(primaryMsgSchemaConfigs)
+  const [snackbarList, setSnackbarList] = useState<ReactElement[]>([])
+
   const form = useFormik<lib_moodle_iam.v1_0.changePasswordForm>({
     initialValues: { newPassword: { __redacted__: '' }, currentPassword: { __redacted__: '' } },
     validationSchema: toFormikValidationSchema(changePasswordSchema),
     onSubmit: (formValues, { resetForm }) => {
+      setSnackbarList([])
       return changePassword(formValues).then(([done, result]) => {
-        setPasswordChangedStatus(done ? 'success' : 'error')
+        setSnackbarList(
+          done
+            ? [
+                <Snackbar key={`password-change-success`} type="success">
+                  <Trans>Password changed</Trans>
+                </Snackbar>,
+              ]
+            : [
+                <Snackbar key={`password-change-error`} type="error">
+                  <Trans>
+                    Password not changed, ensure you correctly entered your current password
+                  </Trans>
+                </Snackbar>,
+              ],
+        )
+
         resetForm()
       })
     },
   })
   const shouldShowErrors = !!form.submitCount
 
-  const snackbars = (
-    <SnackbarStack
-      snackbarList={
-        passwordChangedStatus === 'success'
-          ? [
-              <Snackbar key={`password-change-success-${form.submitCount}`} type="success">
-                <Trans>Password changed</Trans>
-              </Snackbar>,
-            ]
-          : passwordChangedStatus === 'error'
-            ? [
-                <Snackbar key={`password-change-error-${form.submitCount}`} type="error">
-                  <Trans>
-                    Password not changed, ensure you correctly entered your current password
-                  </Trans>
-                </Snackbar>,
-              ]
-            : null
-      }
-    ></SnackbarStack>
-  )
+  const snackbars = <SnackbarStack snackbarList={snackbarList}></SnackbarStack>
 
   const canSubmit =
     form.dirty &&
