@@ -18,7 +18,6 @@ import {
 import { lib_moodle_iam } from '@moodle/lib-domain'
 import { getMod, getUserSession } from '../../lib/server/session-access'
 import './main-layout.style.scss'
-import { user_session } from 'lib/domain/src/moodle/iam/v1_0'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { logout } from '../actions/session'
 import { filterOutFalsies } from '@moodle/lib-types'
@@ -40,16 +39,16 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
       },
     },
   } = await priApp.configs.read()
-  const user_session = await getUserSession()
   return (
     <div className={`main-layout`}>
-      <MainHeader slots={headerSlots(user_session)} />
+      <MainHeader slots={await headerSlots()} />
       <div className="content">{props.children}</div>
       <Footer slots={footerSlots()} />
     </div>
   )
 
-  function headerSlots(user_session: user_session): MainHeaderProps['slots'] {
+  async function headerSlots(): Promise<MainHeaderProps['slots']> {
+    const user_session = await getUserSession()
     const { center, left, right } = slotsMap(props, header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]

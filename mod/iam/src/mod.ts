@@ -12,7 +12,6 @@ import {
   url,
 } from '@moodle/lib-types'
 import { v1_0 as v1_0_org } from '@moodle/mod-org'
-import { user_id } from 'lib/domain/src/moodle/iam/v1_0'
 import { ReactElement } from 'react'
 import { v1_0 } from './'
 import { id_type } from '@moodle/lib-id-gen'
@@ -31,7 +30,7 @@ export type moodle_iam_mod = mod<{
           sessionToken: session_token
         }): Promise<{ userSession: lib_moodle_iam.v1_0.user_session }>
         generateUserSession(_: {
-          userId: user_id
+          userId: lib_moodle_iam.v1_0.user_id
         }): Promise<ok_ko<lib_moodle_iam.v1_0.session, d_u<{ userNotFound: unknown }, 'reason'>>>
       }
 
@@ -170,7 +169,7 @@ export type moodle_iam_mod = mod<{
         saveNewUser(_: {
           idType: id_type
           newUser: Omit<v1_0.DbUser, 'id'>
-        }): Promise<ok_ko<user_id, void>>
+        }): Promise<ok_ko<lib_moodle_iam.v1_0.user_id, void>>
 
         changeUserRoles(_: {
           userId: lib_moodle_iam.v1_0.user_id
