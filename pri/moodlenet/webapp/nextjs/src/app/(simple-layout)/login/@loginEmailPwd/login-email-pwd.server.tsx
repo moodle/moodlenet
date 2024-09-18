@@ -6,7 +6,7 @@ import { getMod } from '../../../../lib/server/session-access'
 import { setAuthTokenCookie } from '../../../../lib/server/auth'
 import { revalidatePath } from 'next/cache'
 
-export type loginResponse = void | { loginFailed: true }
+export type loginResponse = { loginFailed: true }
 export async function login(loginForm: lib_moodle_iam.v1_0.loginForm): Promise<loginResponse> {
   const {
     moodle: {

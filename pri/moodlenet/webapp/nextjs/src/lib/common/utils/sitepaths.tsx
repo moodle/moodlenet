@@ -33,6 +33,9 @@ export function sitepaths(baseUrl = '/') {
         basicAuth: {
           verifySignupEmailToken: _('-/api/iam/basic-auth/verify-signup-email-token'),
         },
+        deleteMyAccountRequest: {
+          confirm: _('-/api/iam/delete-my-account-request/confirm'),
+        },
       },
     },
     pages: {

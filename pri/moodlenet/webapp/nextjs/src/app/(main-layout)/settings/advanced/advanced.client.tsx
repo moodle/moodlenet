@@ -7,12 +7,8 @@ import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../../../ui/atoms/SecondaryButton/SecondaryButton'
 import { Snackbar } from '../../../../ui/atoms/Snackbar/Snackbar'
 import './advanced.style.scss'
-
-export type AdvancedProps = {
-  deleteAccount(): void
-  deleteAccountSuccess: boolean
-  instanceName: string
-}
+import { _any } from '@moodle/lib-types'
+import { requestAccountSelfDeletion } from './advanced.server'
 
 export function AdvancedMenu() {
   return (
@@ -22,15 +18,19 @@ export function AdvancedMenu() {
   )
 }
 
-export function Advanced({ deleteAccount, deleteAccountSuccess, instanceName }: AdvancedProps) {
+interface AdvancedSettingsProps {
+  instanceName: string
+}
+
+export function AdvancedSettings({ instanceName }: AdvancedSettingsProps) {
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false)
 
-  const snackbars = [
-    deleteAccountSuccess ? (
-      <Snackbar type="success">
-        <Trans>Check your email to confirm the deletion</Trans>
-      </Snackbar>
-    ) : null,
+  const snackbars: _any[] = [
+    // deleteAccountSuccess ? (
+    //   <Snackbar type="success">
+    //     <Trans>Check your email to confirm the deletion</Trans>
+    //   </Snackbar>
+    // ) : null,
   ]
 
   const modals = (
@@ -41,7 +41,7 @@ export function Advanced({ deleteAccount, deleteAccountSuccess, instanceName }: 
           actions={
             <PrimaryButton
               onClick={() => {
-                deleteAccount()
+                requestAccountSelfDeletion()
                 setShowDeleteAccountModal(false)
               }}
               color="red"

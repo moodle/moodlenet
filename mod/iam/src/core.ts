@@ -116,7 +116,7 @@ export function core(): core_factory {
                   return [true, _void]
                 },
 
-                async verifyEmail({ signupEmailVerificationToken }) {
+                async createNewUserByEmailVerificationToken({ signupEmailVerificationToken }) {
                   assertGuestSession(primarySession)
                   const {
                     iam: {

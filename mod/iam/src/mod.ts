@@ -57,7 +57,7 @@ export type moodle_iam_mod = mod<{
           redirectUrl: url
         }): Promise<ok_ko<void, d_u<{ userWithSameEmailExists: unknown }, 'reason'>>>
 
-        verifyEmail(_: {
+        createNewUserByEmailVerificationToken(_: {
           signupEmailVerificationToken: string
         }): Promise<
           ok_ko<
