@@ -21,7 +21,7 @@ export function LandingHeadSearchbox() {
         icon: true,
         defaultValue: '',
         placeholder: t('Search for ope education content'),
-        search: console.log,
+        search: alert,
         triggerBtn: { label: t('Search') },
       }}
     />

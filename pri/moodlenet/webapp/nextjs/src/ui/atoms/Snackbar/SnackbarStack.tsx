@@ -22,7 +22,6 @@ export const SnackbarStack: FC<SnackbarStackProps> = ({
     return snackbarList?.filter(Boolean) ?? []
   }, [snackbarList])
   const inBrowser = useInBrowser()
-  // console.log({ validSnackbars, inBrowser })
   return (
     inBrowser &&
     createPortal(

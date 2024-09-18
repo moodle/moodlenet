@@ -134,7 +134,6 @@ export function Snackbar({
 
   const snackbarStack = !inBrowser ? null : document.querySelector('.snackbar-stack')
 
-  console.log({ state, inBrowser })
 
   if (state === 'closed') return null
 
