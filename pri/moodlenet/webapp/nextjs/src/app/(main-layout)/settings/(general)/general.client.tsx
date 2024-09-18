@@ -30,7 +30,11 @@ export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettin
   const form = useFormik<lib_moodle_iam.v1_0.changePasswordForm>({
     initialValues: { newPassword: { __redacted__: '' }, currentPassword: { __redacted__: '' } },
     validationSchema: toFormikValidationSchema(changePasswordSchema),
-    onSubmit: (formValues, { resetForm }) => {
+    onSubmit: async (formValues, { resetForm, setErrors, setFormikState }) => {
+      if (formValues.newPassword.__redacted__ === formValues.currentPassword.__redacted__) {
+        setErrors({ newPassword: { __redacted__: t('New password should be different') } })
+        return
+      }
       setSnackbarList([])
       return changePassword(formValues).then(([done, result]) => {
         setSnackbarList(
@@ -48,7 +52,6 @@ export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettin
                 </Snackbar>,
               ],
         )
-
         resetForm()
       })
     },
@@ -57,13 +60,7 @@ export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettin
 
   const snackbars = <SnackbarStack snackbarList={snackbarList}></SnackbarStack>
 
-  const canSubmit =
-    form.dirty &&
-    form.isValid &&
-    !form.isSubmitting &&
-    !form.isValidating &&
-    form.values.currentPassword.__redacted__ !== form.values.newPassword.__redacted__
-
+  const canSubmit = form.dirty && !form.isSubmitting && !form.isValidating
   return (
     <div className="general" key="general">
       {snackbars}
@@ -91,6 +88,7 @@ export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettin
               autoComplete="new-password"
             />
           </div>
+          <br />
           <div className="actions">
             <InputTextField
               className="password"
@@ -106,7 +104,7 @@ export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettin
             />
           </div>
         </div>
-        <PrimaryButton onClick={() => form.submitForm()} disabled={!canSubmit} className="save-btn">
+        <PrimaryButton onClick={form.submitForm} disabled={!canSubmit} className="save-btn">
           <Trans>Save</Trans>
         </PrimaryButton>
       </Card>
