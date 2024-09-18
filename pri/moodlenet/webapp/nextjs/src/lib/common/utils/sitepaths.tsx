@@ -4,21 +4,28 @@ export function sitepaths(baseUrl = '/') {
   const _ = (path: string) => `${baseUrl}${path}`
 
   const DEF_SLUG = '-'
-  const __ =
+  const _id_slug_sub =
     <sub extends string>(path: string) =>
     (id: id, slug = DEF_SLUG) =>
     (sub: sub) =>
       `${_(path)}/${id}/${slug}${sub}`
 
-  type admin_sub = '/users' | '/general' | '/appearance'
-  const admin = (sub: admin_sub = '/general') => _(`admin${sub}`)
+  const _sub =
+    <sub extends string>(path: string) =>
+    (sub: sub) =>
+      `${_(path)}${sub}`
 
+  type admin_sub = '/users' | '/general' | '/appearance'
+  const admin = _sub<admin_sub>(`admin`)
+
+  type user_settings_sub = '/advanced' | '/general'
+  const user_settings = _sub<user_settings_sub>(`settings`)
 
   type profile_sub = '/bookmarks' | '/followers' | '/following' | ''
-  const profile = __<profile_sub>(`profile`)
-  const resource = __(`resource`)
-  const collection = __(`collection`)
-  const subject = __(`subject`)
+  const profile = _id_slug_sub<profile_sub>(`profile`)
+  const resource = _id_slug_sub(`resource`)
+  const collection = _id_slug_sub(`collection`)
+  const subject = _id_slug_sub(`subject`)
 
   return {
     apis: {
@@ -35,7 +42,7 @@ export function sitepaths(baseUrl = '/') {
         signup: _('signup'),
       },
       user: {
-        settings: _(`settings`),
+        settings: user_settings,
       },
       homepages: {
         profile,

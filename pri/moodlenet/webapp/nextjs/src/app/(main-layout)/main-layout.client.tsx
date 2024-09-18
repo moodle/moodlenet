@@ -51,7 +51,7 @@ export function HeaderSearchbox() {
     <Searchbox
       {...{
         placeholder: t('Search for open educational content'),
-        search: alert,
+        search: console.error,
         boxSize: 'small',
         triggerBtn: true,
       }}

@@ -12,13 +12,6 @@ import SnackbarStack from '../../../../ui/atoms/Snackbar/SnackbarStack'
 import { changePassword } from './general.server'
 import './general.style.scss'
 
-export function GeneralMenu() {
-  return (
-    <abbr title="General">
-      <Trans>General</Trans>
-    </abbr>
-  )
-}
 export interface GeneralSettingsProps {
   primaryMsgSchemaConfigs: lib_moodle_iam.v1_0.PrimaryMsgSchemaConfigs
 }
@@ -36,7 +29,7 @@ export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettin
         return
       }
       setSnackbarList([])
-      return changePassword(formValues).then(([done, result]) => {
+      return changePassword(formValues).then(([done]) => {
         setSnackbarList(
           done
             ? [
@@ -47,7 +40,8 @@ export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettin
             : [
                 <Snackbar key={`password-change-error`} type="error">
                   <Trans>
-                    Password not changed, ensure you correctly entered your current password
+                    Failed to change your password, ensure you entered your current password
+                    correctly
                   </Trans>
                 </Snackbar>,
               ],
@@ -78,12 +72,10 @@ export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettin
             <InputTextField
               className="password"
               placeholder={t('Enter your current password')}
-              defaultValue=""
               value={form.values.currentPassword.__redacted__}
               onChange={form.handleChange}
               type="password"
               name="currentPassword.__redacted__"
-              key="currentPassword"
               error={shouldShowErrors && form.errors.currentPassword?.__redacted__}
               autoComplete="new-password"
             />
@@ -93,12 +85,10 @@ export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettin
             <InputTextField
               className="password"
               placeholder={t('Enter your new password')}
-              defaultValue=""
               value={form.values.newPassword.__redacted__}
               onChange={form.handleChange}
               type="password"
               name="newPassword.__redacted__"
-              key="newPassword"
               error={shouldShowErrors && form.errors.newPassword?.__redacted__}
               autoComplete="new-password"
             />
