@@ -11,8 +11,8 @@ import type { CSSProperties, ReactNode } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Card } from '../../atoms/Card/Card'
 import './Snackbar.scss'
-
 import { createPortal } from 'react-dom'
+import { useInBrowser } from '../../../lib/ui/utilities'
 
 export type SnackbarProps = {
   actions?: ReactNode
@@ -130,15 +130,21 @@ export function Snackbar({
       )}
     </Card>
   )
+  const inBrowser = useInBrowser()
 
-  const snackbarStack = document.querySelector('.snackbar-stack')
+  const snackbarStack = !inBrowser ? null : document.querySelector('.snackbar-stack')
+
+  console.log({ state, inBrowser })
 
   if (state === 'closed') return null
 
-  return snackbarStack
-    ? snackbar
-    : createPortal(
-        <div className="snackbar-portal">{snackbar}</div>,
-        document.querySelector('.layout-container#layout-container') ?? document.body,
-      )
+  return !inBrowser
+    ? null
+    : snackbarStack
+      ? snackbar
+      : createPortal(
+          <div className="snackbar-portal">{snackbar}</div>,
+          document.querySelector('.layout-container#layout-container') ?? document.body,
+        )
 }
+

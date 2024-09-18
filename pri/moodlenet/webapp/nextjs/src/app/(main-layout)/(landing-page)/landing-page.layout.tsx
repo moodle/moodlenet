@@ -36,7 +36,7 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
           <div className="title">{info.title}</div>
           <div className="subtitle">{info.subtitle}</div>
         </div>
-        <LandingHeadSearchbox defaultValue="" placeholder="" />
+              <LandingHeadSearchbox />
         {/* canCreateDraftContent && <LandingHeadShareButton /> */}
         {head}
       </div>

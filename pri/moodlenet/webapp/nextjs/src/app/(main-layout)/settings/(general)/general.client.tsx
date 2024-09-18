@@ -1,228 +1,119 @@
-/* eslint-disable prettier/prettier */
-import type { AddonItem } from '@moodlenet/component-library'
-import { Card, MultipeSelectDropdown, PrimaryButton, Switch } from '@moodlenet/component-library'
-import type { EdMetaOptionsProps } from '@moodlenet/ed-resource/common'
+'use client'
+import { lib_moodle_iam } from '@moodle/lib-domain'
 import { useFormik } from 'formik'
-import { /* useState, */ type FC } from 'react'
-import type { UserInterests } from '../../../../../zz__legacy/packages/web-user/src/common/types.mjs'
-import './General.scss'
+import { useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
+import { toFormikValidationSchema } from 'zod-formik-adapter'
+import { Card } from '../../../../ui/atoms/Card/Card'
+import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
+import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
+import { Snackbar } from '../../../../ui/atoms/Snackbar/Snackbar'
+import SnackbarStack from '../../../../ui/atoms/Snackbar/SnackbarStack'
+import { changePassword } from './general.server'
+import './general.style.scss'
 
-export type InterestsOptions = Pick<
-  EdMetaOptionsProps,
-  'languageOptions' | 'levelOptions' | 'licenseOptions' | 'subjectOptions'
->
-export type GeneralProps = {
-  mainColumnItems: (AddonItem | null)[]
-  interestsOptions: InterestsOptions
-  interests: UserInterests
-  editInterests: (values: UserInterests) => void
-  useInterestsAsDefaultFilters: boolean
-  toggleUseInterestsAsDefaultFilters: () => void
-  // userId: string
+export function GeneralMenu() {
+  return (
+    <abbr title="General">
+      <Trans>General</Trans>
+    </abbr>
+  )
 }
-
-export const GeneralMenu = () => <abbr title="General">General</abbr>
-
-export const General: FC<GeneralProps> = ({
-  mainColumnItems,
-  interestsOptions,
-  interests,
-  useInterestsAsDefaultFilters,
-  editInterests,
-  toggleUseInterestsAsDefaultFilters,
-  //userId
-}) => {
-  const { languageOptions, levelOptions, subjectOptions, licenseOptions } = interestsOptions
-  /* const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] = useState<boolean>(false)
-
-  const copyId = () => {
-    navigator.clipboard.writeText(userId)
-    setShowUserIdCopiedAlert(false)
-    setTimeout(() => {
-      setShowUserIdCopiedAlert(true)
-    }, 100)
-  }
-
-  const detailsSection = (
-    <Card className="column details-section">
-      <div className="parameter">
-        <div className="name user-id">
-          User ID
-          <span>To connect with Moodle LMS</span>
-        </div>
-        <div className="actions">
-          {userId}{' '}
-          <abbr className={`user-id`} title={`Click to copy your ID to the clipboard`}>
-            <SecondaryButton className="copy-id" onClick={copyId}>
-              Copy
-            </SecondaryButton>
-          </abbr>
-        </div>
-      </div>
-    </Card>
-  )*/
-
-  const form = useFormik<UserInterests & { useInterestsAsDefaultFilters: boolean }>({
-    initialValues: { ...interests, useInterestsAsDefaultFilters },
-    enableReinitialize: true,
-    onSubmit: values => {
-      editInterests(values)
-      values.useInterestsAsDefaultFilters !== useInterestsAsDefaultFilters &&
-        toggleUseInterestsAsDefaultFilters()
+export interface GeneralSettingsProps {
+  primaryMsgSchemaConfigs: lib_moodle_iam.v1_0.PrimaryMsgSchemaConfigs
+}
+export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettingsProps) {
+  const { t } = useTranslation()
+  type password_change_status = 'success' | 'error' | 'none'
+  const [passwordChangedStatus, setPasswordChangedStatus] = useState<password_change_status>('none')
+  const { changePasswordSchema } = lib_moodle_iam.v1_0.getPrimarySchemas(primaryMsgSchemaConfigs)
+  const form = useFormik<lib_moodle_iam.v1_0.changePasswordForm>({
+    initialValues: { newPassword: { __redacted__: '' }, currentPassword: { __redacted__: '' } },
+    validationSchema: toFormikValidationSchema(changePasswordSchema),
+    onSubmit: (formValues, { resetForm }) => {
+      return changePassword(formValues).then(([done, result]) => {
+        setPasswordChangedStatus(done ? 'success' : 'error')
+        resetForm()
+      })
     },
   })
+  const shouldShowErrors = !!form.submitCount
 
-  const subjectsField = (
-    <MultipeSelectDropdown
-      name="subjects"
-      onChange={form.handleChange}
-      label="Subjects"
-      placeholder="Content category"
-      canEdit={true}
-      key="subject-field"
-      value={form.values.subjects}
-      options={subjectOptions}
-      errors={form.errors.subjects}
-      shouldShowErrors={true}
-    />
-  )
-  const levelsField = (
-    <MultipeSelectDropdown
-      name="levels"
-      onChange={form.handleChange}
-      label="Levels"
-      placeholder="Content level"
-      canEdit={true}
-      key="level-field"
-      value={form.values.levels}
-      options={levelOptions}
-      errors={form.errors.levels}
-      shouldShowErrors={true}
-    />
+  const snackbars = (
+    <SnackbarStack
+      snackbarList={
+        passwordChangedStatus === 'success'
+          ? [
+              <Snackbar key={`password-change-success-${form.submitCount}`} type="success">
+                <Trans>Password changed</Trans>
+              </Snackbar>,
+            ]
+          : passwordChangedStatus === 'error'
+            ? [
+                <Snackbar key={`password-change-error-${form.submitCount}`} type="error">
+                  <Trans>
+                    Password not changed, ensure you correctly entered your current password
+                  </Trans>
+                </Snackbar>,
+              ]
+            : null
+      }
+    ></SnackbarStack>
   )
 
-  const languagesField = (
-    <MultipeSelectDropdown
-      name="languages"
-      onChange={form.handleChange}
-      label="Languages"
-      placeholder="Content language"
-      canEdit={true}
-      key="language-field"
-      value={form.values.languages}
-      options={languageOptions}
-      errors={form.errors.languages}
-      shouldShowErrors={true}
-    />
-  )
+  const canSubmit =
+    form.dirty &&
+    form.isValid &&
+    !form.isSubmitting &&
+    !form.isValidating &&
+    form.values.currentPassword.__redacted__ !== form.values.newPassword.__redacted__
 
-  const licensesField = (
-    <MultipeSelectDropdown
-      name="licenses"
-      onChange={form.handleChange}
-      label="Licences"
-      placeholder="Content license"
-      canEdit={true}
-      key="license-field"
-      value={form.values.licenses}
-      options={licenseOptions}
-      errors={form.errors.licenses}
-      shouldShowErrors={true}
-    />
-  )
-
-  const setAsDefaultFilters = (
-    <div className="set-as-default-filters">
-      <div className="title">Use interests as default filters when searching</div>
-      <Switch
-        enabled={form.values.useInterestsAsDefaultFilters}
-        toggleSwitch={() =>
-          form.setFieldValue(
-            'useInterestsAsDefaultFilters',
-            !form.values.useInterestsAsDefaultFilters,
-          )
-        }
-      />
-    </div>
-  )
-
-  const interestsFields = [
-    subjectsField,
-    levelsField,
-    languagesField,
-    licensesField,
-    setAsDefaultFilters,
-  ]
-
-  const interestsSection = (
-    <Card className="column interests-section">
-      <div className="parameter">
-        <div className="name">Interests</div>
-        {interestsFields}
-      </div>
-      <PrimaryButton
-        disabled={!form.dirty}
-        onClick={() => {
-          form.submitForm()
-        }}
-      >
-        Save
-      </PrimaryButton>
-    </Card>
-  )
-
-  const snackbars = [
-    // <SnackbarStack
-    //   snackbarList={[
-    //     <Snackbar
-    //       key="csds"
-    //       type="success"
-    //       position="bottom"
-    //       autoHideDuration={3000}
-    //       showCloseButton={false}
-    //     >
-    //       User ID copied to the clipboard
-    //     </Snackbar>,
-    //     <Snackbar key={'sd'} autoHideDuration={3000} type="success">
-    //       Heyy
-    //     </Snackbar>,
-    //   ]}
-    // ></SnackbarStack>,
-    <></>,
-  ]
-
-  // const snackbarsStack =
-  // <SnackbarStack
-  // snackbarList=        [
-  // showUserIdCopiedAlert ? (
-  //   <Snackbar
-  //     type="success"
-  //     position="bottom"
-  //     autoHideDuration={6000}
-  //     showCloseButton={false}
-  //   >
-  //     User ID copied to the clipboard
-  //   </Snackbar>
-  // ) : null,
-
-  // }
-  // ></SnackbarStack>
-
-  const updatedMainColumnItems = [
-    //detailsSection,
-    interestsSection,
-    ...(mainColumnItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
-
-  const modals = [<></>]
   return (
     <div className="general" key="general">
-      {modals}
       {snackbars}
       <Card className="column">
-        <div className="title">General</div>
+        <div className="title">
+          <Trans>General</Trans>
+        </div>
       </Card>
-      {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+      <Card className="column change-password-section">
+        <div className="parameter">
+          <div className="name">
+            <Trans>Change password</Trans>
+          </div>
+          <div className="actions">
+            <InputTextField
+              className="password"
+              placeholder={t('Enter your current password')}
+              defaultValue=""
+              value={form.values.currentPassword.__redacted__}
+              onChange={form.handleChange}
+              type="password"
+              name="currentPassword.__redacted__"
+              key="currentPassword"
+              error={shouldShowErrors && form.errors.currentPassword?.__redacted__}
+              autoComplete="new-password"
+            />
+          </div>
+          <div className="actions">
+            <InputTextField
+              className="password"
+              placeholder={t('Enter your new password')}
+              defaultValue=""
+              value={form.values.newPassword.__redacted__}
+              onChange={form.handleChange}
+              type="password"
+              name="newPassword.__redacted__"
+              key="newPassword"
+              error={shouldShowErrors && form.errors.newPassword?.__redacted__}
+              autoComplete="new-password"
+            />
+          </div>
+        </div>
+        <PrimaryButton onClick={() => form.submitForm()} disabled={!canSubmit} className="save-btn">
+          <Trans>Save</Trans>
+        </PrimaryButton>
+      </Card>
     </div>
   )
 }

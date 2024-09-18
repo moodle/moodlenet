@@ -9,6 +9,10 @@ export type loginForm = z.infer<ReturnType<typeof getPrimarySchemas>['loginSchem
 
 export type signupForm = z.infer<ReturnType<typeof getPrimarySchemas>['signupSchema']>
 
+export type changePasswordForm = z.infer<
+  ReturnType<typeof getPrimarySchemas>['changePasswordSchema']
+>
+
 export interface UserData {
   id: user_id
   roles: user_role[]

@@ -6,7 +6,7 @@ import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { signup, signupResponse } from './signup-email-pwd.server'
 import { useState } from 'react'
-import { Trans } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 
 export function SignupIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
@@ -27,12 +27,14 @@ export default function SignupPanel({ primaryMsgSchemaConfigs }: SignupProps) {
   })
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
+  const { t } = useTranslation()
+
   return (
     <>
       <form action={form.submitForm}>
         <InputTextField
           className="display-name"
-          placeholder={`Display name`}
+          placeholder={t(`Display name`)}
           name="displayName"
           edit
           value={form.values.displayName}
@@ -41,7 +43,7 @@ export default function SignupPanel({ primaryMsgSchemaConfigs }: SignupProps) {
         />
         <InputTextField
           className="email"
-          placeholder={`Email`}
+          placeholder={t(`Email`)}
           type="email"
           name="email"
           edit
@@ -51,7 +53,7 @@ export default function SignupPanel({ primaryMsgSchemaConfigs }: SignupProps) {
         />
         <InputTextField
           className="password"
-          placeholder={`Password`}
+          placeholder={t(`Password`)}
           type="password"
           name="password.__redacted__"
           edit

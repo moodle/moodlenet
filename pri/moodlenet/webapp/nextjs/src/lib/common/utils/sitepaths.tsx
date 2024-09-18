@@ -13,7 +13,8 @@ export function sitepaths(baseUrl = '/') {
   type admin_sub = '/users' | '/general' | '/appearance'
   const admin = (sub: admin_sub = '/general') => _(`admin${sub}`)
 
-  type profile_sub = '/settings' | '/bookmarks' | '/followers' | '/following' | ''
+
+  type profile_sub = '/bookmarks' | '/followers' | '/following' | ''
   const profile = __<profile_sub>(`profile`)
   const resource = __(`resource`)
   const collection = __(`collection`)
@@ -32,6 +33,9 @@ export function sitepaths(baseUrl = '/') {
       access: {
         login: _('login'),
         signup: _('signup'),
+      },
+      user: {
+        settings: _(`settings`),
       },
       homepages: {
         profile,

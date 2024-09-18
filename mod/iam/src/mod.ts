@@ -103,10 +103,7 @@ export type moodle_iam_mod = mod<{
           declaredOwnEmail: email_address
         }): Promise<void>
 
-        changePassword(_: {
-          currentPassword: __redacted__<v1_0.user_plain_password>
-          newPassword: __redacted__<v1_0.user_plain_password>
-        }): Promise<ok_ko<void, void>>
+        changePassword(_: lib_moodle_iam.v1_0.changePasswordForm): Promise<ok_ko<void, void>>
       }
     }
     sec: {

@@ -8,6 +8,14 @@ import { getVimeoEmbed, getVimeoThumbnail } from '../../ui/molecules/embeds/Vime
 import { getYouTubeEmbed, getYouTubeThumbnail } from '../../ui/molecules/embeds/Youtube/Youtube'
 import { AddonItem } from '../types'
 
+export function useInBrowser() {
+  const [inBrowser, setInBrowser] = useState(false)
+  useEffect(() => {
+    setInBrowser(true)
+  }, [])
+  return inBrowser
+}
+
 export const elementFullyInViewPort = (
   el: Element,
   options?: {

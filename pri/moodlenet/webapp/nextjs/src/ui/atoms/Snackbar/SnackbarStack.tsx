@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import { createPortal } from 'react-dom'
 
 import './SnackbarStack.scss'
+import { useInBrowser } from '../../../lib/ui/utilities'
 
 export type SnackbarStackProps = {
   snackbarList: (React.ReactElement | null)[] | null
@@ -20,10 +21,14 @@ export const SnackbarStack: FC<SnackbarStackProps> = ({
   const validSnackbars = useMemo(() => {
     return snackbarList?.filter(Boolean) ?? []
   }, [snackbarList])
-
-  return createPortal(
-    <div className={`snackbar-stack ${className} position-${position}`}>{validSnackbars}</div>,
-    document.querySelector('.layout-container#layout-container') ?? document.body,
+  const inBrowser = useInBrowser()
+  // console.log({ validSnackbars, inBrowser })
+  return (
+    inBrowser &&
+    createPortal(
+      <div className={`snackbar-stack ${className} position-${position}`}>{validSnackbars}</div>,
+      document.querySelector('.layout-container#layout-container') ?? document.body,
+    )
   )
 }
 

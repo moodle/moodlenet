@@ -76,10 +76,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
                 />,
                 <BookmarksLink key="bookmarks" bookmarksHref={baseProfilePages('/bookmarks')} />,
                 <FollowingLink key="following" followingHref={baseProfilePages('/followers')} />,
-                <UserSettingsLink
-                  key="user-settings"
-                  settingsHref={baseProfilePages('/settings')}
-                />,
+                <UserSettingsLink key="user-settings" settingsHref={pages.user.settings} />,
                 isAdmin && <AdminSettingsLink key="admin-settings" adminHref={pages.admin()} />,
                 <Logout key="logout" logout={logout} />,
               ])}
