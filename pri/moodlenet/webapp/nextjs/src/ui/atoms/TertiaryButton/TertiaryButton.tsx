@@ -1,6 +1,6 @@
 'use client'
 import type { KeyboardEvent, ReactNode } from 'react'
-import { isEnterKeyEv } from '../../../lib/ui/utils/keyboard'
+import { isEnterKeyEv } from '../../lib/keyboard'
 import './TertiaryButton.scss'
 
 export type TertiaryButtonProps = {

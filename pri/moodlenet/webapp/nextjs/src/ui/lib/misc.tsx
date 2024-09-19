@@ -4,18 +4,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { ContentBackupImages } from '../../assets/data/images'
 import type { AssetInfo } from '../../common/types'
 import { getDomainUrl } from '../../common/utilities'
-import { getVimeoEmbed, getVimeoThumbnail } from '../../ui/molecules/embeds/Vimeo/Vimeo'
-import { getYouTubeEmbed, getYouTubeThumbnail } from '../../ui/molecules/embeds/Youtube/Youtube'
-import { AddonItem } from '../types'
-
-export function useInBrowser() {
-  const [inBrowser, setInBrowser] = useState(false)
-  useEffect(() => {
-    setInBrowser(true)
-  }, [])
-  return inBrowser
-}
-
+import { getVimeoEmbed, getVimeoThumbnail } from '../molecules/embeds/Vimeo/Vimeo'
+import { getYouTubeEmbed, getYouTubeThumbnail } from '../molecules/embeds/Youtube/Youtube'
 export const elementFullyInViewPort = (
   el: Element,
   options?: {
@@ -173,33 +163,33 @@ export const getThumbnailFromUrl = (url: string): ThumbnailType => {
   }
 }
 
-export const sortAddonItems = (
-  items: (AddonItem | JSX.Element | null | boolean)[],
-): (AddonItem | JSX.Element)[] => {
-  return items
-    .sort((a, b) => {
-      const aPosition =
-        a && typeof a !== 'boolean' && 'position' in a && a.position !== undefined
-          ? a.position
-          : undefined
-      const bPosition =
-        b && typeof b !== 'boolean' && 'position' in b && b.position !== undefined
-          ? b.position
-          : undefined
+// export const sortAddonItems = (
+//   items: (AddonItem | JSX.Element | null | boolean)[],
+// ): (AddonItem | JSX.Element)[] => {
+//   return items
+//     .sort((a, b) => {
+//       const aPosition =
+//         a && typeof a !== 'boolean' && 'position' in a && a.position !== undefined
+//           ? a.position
+//           : undefined
+//       const bPosition =
+//         b && typeof b !== 'boolean' && 'position' in b && b.position !== undefined
+//           ? b.position
+//           : undefined
 
-      // Check if both objects have the 'position' property
-      if (typeof aPosition === 'number' && typeof bPosition === 'number') {
-        // Compare by 'position' if both have it
-        return aPosition - bPosition
-      }
+//       // Check if both objects have the 'position' property
+//       if (typeof aPosition === 'number' && typeof bPosition === 'number') {
+//         // Compare by 'position' if both have it
+//         return aPosition - bPosition
+//       }
 
-      // If one of them doesn't have 'position', place it after the one with 'position'
-      if (aPosition === undefined) {
-        return 1 // Move 'a' to a higher index (after 'b')
-      } else {
-        return -1 // Move 'b' to a higher index (after 'a')
-      }
-    })
+//       // If one of them doesn't have 'position', place it after the one with 'position'
+//       if (aPosition === undefined) {
+//         return 1 // Move 'a' to a higher index (after 'b')
+//       } else {
+//         return -1 // Move 'b' to a higher index (after 'a')
+//       }
+//     })
 
-    .filter((item): item is AddonItem | JSX.Element => !!item)
-}
+//     .filter((item): item is AddonItem | JSX.Element => !!item)
+// }

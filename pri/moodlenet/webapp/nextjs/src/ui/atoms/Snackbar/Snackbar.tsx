@@ -12,7 +12,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Card } from '../../atoms/Card/Card'
 import './Snackbar.scss'
 import { createPortal } from 'react-dom'
-import { useInBrowser } from '../../../lib/ui/utilities'
+import { useInBrowser } from '../../lib/nextjs-utils'
 
 export type SnackbarProps = {
   actions?: ReactNode

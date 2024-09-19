@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import { createPortal } from 'react-dom'
 
 import './SnackbarStack.scss'
-import { useInBrowser } from '../../../lib/ui/utilities'
+import { useInBrowser } from '../../lib/nextjs-utils'
 
 export type SnackbarStackProps = {
   snackbarList: (React.ReactElement | null)[] | null

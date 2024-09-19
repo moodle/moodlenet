@@ -1,7 +1,7 @@
 'use client'
 import type { FC } from 'react'
 import { useEffect, useState } from 'react'
-import type { EmbedType, ThumbnailType } from '../../../../lib/ui/utilities'
+import type { EmbedType, ThumbnailType } from '../../../lib/misc'
 import './Vimeo.scss'
 
 export const getVimeoId = (url: string): string | null => {
