@@ -1,6 +1,6 @@
 'use client'
 // import { ReactComponent as SearchIcon } from '../../assets/icons/search.svg'
-import SearchIconSVG from '../../../assets/icons/search.svg'
+import SearchIconSVG from '../../lib/assets/icons/search.svg'
 // import Image from 'next/image'
 import { DetailedHTMLProps, InputHTMLAttributes, PropsWithChildren, ReactNode, useRef } from 'react'
 import { isEnterKeyEv } from '../../lib/keyboard'

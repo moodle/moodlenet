@@ -1,6 +1,7 @@
 import { CSSProperties } from 'react'
-import { setOpacity } from './utilities'
-
+import * as _ from './misc'
+import { setOpacity } from './misc'
+console.log({ _: _.setOpacity, __: _.changeHue }, typeof setOpacity)
 export const baseMoodleColor = '#f88012'
 
 export const baseLightGreenColor = '#00bd7e'

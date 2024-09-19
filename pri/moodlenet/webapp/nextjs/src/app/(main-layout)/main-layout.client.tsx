@@ -10,12 +10,11 @@ import Searchbox from '../../ui/atoms/Searchbox/Searchbox'
 import { TertiaryButton } from '../../ui/atoms/TertiaryButton/TertiaryButton'
 import { Trans } from 'react-i18next'
 import { Bookmarks, DisplaySettings, ExitToApp, Settings } from '@mui/icons-material'
-import ArrowsIcon from '../../assets/icons/arrows.svg'
-  // FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
-  import defaultAvatar from '../../assets/img/default-avatar.svg'
-  // FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
-import { Href } from '../../lib/common/types'
-import { clientSlotItem } from '../../lib/common/pages'
+import ArrowsIcon from '../../ui/lib/assets/icons/arrows.svg'
+// FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
+import defaultAvatar from '../../ui/lib/assets//img/default-avatar.svg'
+// FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
+import { Href, clientSlotItem } from '../../lib/common/types'
 
 export function LoginHeaderButton() {
   const {

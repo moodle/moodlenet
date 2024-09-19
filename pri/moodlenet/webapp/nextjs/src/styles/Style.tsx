@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import { createContext } from 'react'
-import { baseStyle, BaseStyleType } from '../common/config'
+import { baseStyle, BaseStyleType } from '../ui/lib/color-style'
 // import type { BaseStyleType } from '../../../../common/config'
 // import { baseStyle } from '../../../../common/config'
 

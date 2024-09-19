@@ -2,7 +2,7 @@
 import type React from 'react'
 import type { ReactNode } from 'react'
 import { forwardRef, useEffect, useRef, useState } from 'react'
-import { useForwardedRef } from '../../lib/useForwardedRef'
+import { useForwardedRef } from '../../lib/hooks'
 import './InputTextField.scss'
 
 export type InputTextFieldProps = {

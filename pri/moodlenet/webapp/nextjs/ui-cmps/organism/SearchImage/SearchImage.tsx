@@ -4,7 +4,7 @@
 import type React from 'react'
 import type { ReactElement } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import type { AssetInfo } from '../../../../../../common/types.mjs'
+import type { CreditedImage } from '../../../../../../common/types.mjs'
 import InputTextField from '../../atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../atoms/SecondaryButton/SecondaryButton'
@@ -13,7 +13,7 @@ import Loading from '../../atoms/Loading/Loading'
 import Modal from '../../atoms/Modal/Modal'
 // import { useUnsplash } from '../../../../helpers/unsplash'
 // import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
-// import { AssetInfo } from '../../../types'
+// import { CreditedImage } from '../../../types'
 // import InputTextField from '../../atoms/InputTextField/InputTextField'
 // import Loading from '../../atoms/Loading/Loading'
 // import Modal from '../../atoms/Modal/Modal'
@@ -22,7 +22,7 @@ import Modal from '../../atoms/Modal/Modal'
 import './styles.scss'
 
 export type SearchImageProps = {
-  setImage: (photo: AssetInfo | undefined) => void
+  setImage: (photo: CreditedImage | undefined) => void
   onClose: () => void
 }
 
@@ -33,7 +33,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({ onClose /* , setImage 
   const [searchQuery, setSearchQuery] = useState('')
   const [tmpSearchQuery, setTmpSearchQuery] = useState('')
   const [unsplashImages, setUnsplashImages] = useState<
-    (AssetInfo & { location: string; height: number; width: number })[] | null
+    (CreditedImage & { location: string; height: number; width: number })[] | null
   >()
   const [column1, setColumn1] = useState<ReactElement[] | undefined>()
   const [column2, setColumn2] = useState<ReactElement[] | undefined>()
@@ -73,7 +73,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({ onClose /* , setImage 
   }, [])
 
   // const getImagesColumn = useCallback(
-  //   (photos: (AssetInfo & { location: string })[] | undefined) => {
+  //   (photos: (CreditedImage & { location: string })[] | undefined) => {
   //     return photos?.map((photo, i) => {
   //       return (
   //         <div className="image-container" key={i}>
@@ -102,7 +102,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({ onClose /* , setImage 
   // )
 
   // const updateImages = (
-  //   photos: (AssetInfo & { location: string; height: number; width: number })[],
+  //   photos: (CreditedImage & { location: string; height: number; width: number })[],
   //   newQuery: boolean,
   // ) => {
   //   let totalHeight = 0

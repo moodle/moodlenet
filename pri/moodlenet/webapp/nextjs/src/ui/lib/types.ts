@@ -5,12 +5,12 @@ export type Credits = {
 
 export type Location = string
 
-export type AssetInfo = {
+export type CreditedImage = {
   location: Location
   credits: Credits | null
 }
 
-export type AssetInfoForm = {
+export type CreditedImageForm = {
   location: Location | File
   credits: Credits | null
 }

@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx run-many --target=serve --target=dev"
+    "dev": "nx run-many --target=serve --target=dev",
+    "cleanup-dev": "trash .nx tmp dist pri/moodlenet/webapp/nextjs/.next/"
   },
   "private": true,
   "dependencies": {

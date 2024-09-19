@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react'
-import { defaultStyle } from '../common/config'
+import { defaultStyle } from '../ui/lib/color-style'
 import { GlobalProviders } from './root-layout.client'
 import './root-layout.scss'
 
