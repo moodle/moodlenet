@@ -1,8 +1,7 @@
-import { Database } from 'arangojs'
 import { v1_0 } from '.'
 import * as migrations from './migrate/from'
 
-const TARGET_V = migrations.init.VERSION
+const TARGET_V = migrations.v0_1.VERSION
 
 export async function migrate({ database_connections }: v1_0.ArangoDbSecEnv): Promise<string> {
   const db_struct = v1_0.getDbStruct(database_connections)

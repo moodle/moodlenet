@@ -10,7 +10,7 @@ import {
   generateSessionForUserId,
   getUserSession,
 } from './v1_0'
-import { userData } from './v1_0/types/db/db-user'
+import { dbUser2UserData } from './v1_0/types/db/db-user'
 export function core(): core_factory {
   return ({ primarySession, worker }) => {
     const mySec = worker.moodle.iam.v1_0.sec
@@ -139,12 +139,14 @@ export function core(): core_factory {
                     return [true, { userId: foundSameEmailUser.id }]
                   }
 
+                  const now = date_time_string('now')
                   const [newUserCreated, userId] = await mySec.db.saveNewUser({
                     idType: {
                       type: 'alphanumeric',
                       length: 8,
                     },
                     newUser: {
+                      createdAt: now,
                       roles: newlyCreatedUserRoles,
                       displayName: tokenData.displayName,
                       contacts: {
@@ -152,7 +154,7 @@ export function core(): core_factory {
                       },
                       passwordHash: tokenData.passwordHash,
                       activityStatus: {
-                        lastLogin: date_time_string('now'),
+                        lastLogin: now,
                         inactiveNotificationSentAt: false,
                       },
                       deactivated: false,
@@ -179,7 +181,7 @@ export function core(): core_factory {
                     return [false, _void]
                   }
 
-                  const user = userData(dbUser)
+                  const user = dbUser2UserData(dbUser)
                   const session = await generateSessionForUserData(user, worker)
                   return [
                     true,

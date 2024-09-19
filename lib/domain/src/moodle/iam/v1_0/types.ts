@@ -15,6 +15,7 @@ export type changePasswordForm = z.infer<
 
 export interface UserData {
   id: user_id
+  createdAt: date_time_string
   roles: user_role[]
   displayName: string
   contacts: {

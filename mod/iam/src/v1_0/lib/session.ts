@@ -2,7 +2,7 @@ import { concrete, Error4xx, primary_session, session_token } from '@moodle/doma
 import { lib_moodle_iam } from '@moodle/lib-domain'
 import { d_u, d_u__d, ok_ko } from '@moodle/lib-types'
 import assert from 'assert'
-import { userData } from '../types'
+import { dbUser2UserData } from '../types'
 
 // System Session
 export function isSystemSession(
@@ -89,7 +89,7 @@ export async function generateSessionForUserId(
   if (!dbUser) {
     return [false, { reason: 'userNotFound' }]
   }
-  const session = await generateSessionForUserData(userData(dbUser), worker)
+  const session = await generateSessionForUserData(dbUser2UserData(dbUser), worker)
   return [true, session]
 }
 

@@ -1,13 +1,14 @@
 import { lib_moodle_iam } from '@moodle/lib-domain'
 import { d_u, date_time_string, time_duration_string } from '@moodle/lib-types'
 
-export function userData(
+export function dbUser2UserData(
   dbUser: Pick<DbUser, keyof lib_moodle_iam.v1_0.UserData>,
 ): lib_moodle_iam.v1_0.UserData {
   return {
+    id: dbUser.id,
+    createdAt: dbUser.createdAt,
     contacts: dbUser.contacts,
     displayName: dbUser.displayName,
-    id: dbUser.id,
     roles: dbUser.roles,
   }
 }
