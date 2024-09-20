@@ -4,6 +4,7 @@ import assert from 'assert'
 import { v1_0 } from '.'
 import * as migrations from './migrate/from'
 import { ArangoDbSecEnv } from './v1_0'
+import { dbUser2iamUserDoc } from './sec/moodle/db-arango-iam-lib/mappings'
 
 const TARGET_V = migrations.v0_1.VERSION
 
@@ -31,15 +32,15 @@ export async function migrate(
         dbMigrateConfig.init?.moodleInitialAdminEmail,
         'default_admin_email is required for first db initialization',
       )
-      console.log('initializing default admin user')
       const default_admin_db_user = await createNewDbUserData({
         displayName: 'Admin',
         email: dbMigrateConfig.init.moodleInitialAdminEmail,
         passwordHash: '##UNSET##',
         roles: ['admin'],
       })
+      console.log('initializing default admin user')
 
-      await db_struct.iam.coll.user.save(default_admin_db_user)
+      await db_struct.iam.coll.user.save(dbUser2iamUserDoc(default_admin_db_user))
     }
     return final_version
   })

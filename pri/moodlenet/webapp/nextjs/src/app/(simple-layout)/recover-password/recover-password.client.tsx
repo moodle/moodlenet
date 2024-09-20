@@ -1,3 +1,4 @@
+'use client'
 import { Card, InputTextField, PrimaryButton } from '@moodlenet/component-library'
 import type { MainFooterProps, MinimalisticHeaderProps } from '@moodlenet/react-app/ui'
 import { SimpleLayout } from '@moodlenet/react-app/ui'

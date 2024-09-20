@@ -14,7 +14,6 @@ export default async function LoginEmailPwdPage() {
   return (
     <LoginPanel
       {...{
-        recoverPasswordUrl: '##############',
         primaryMsgSchemaConfigs: iam.primaryMsgSchemaConfigs,
       }}
     />

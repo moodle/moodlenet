@@ -43,6 +43,7 @@ export function sitepaths(baseUrl = '/') {
       access: {
         login: _('login'),
         signup: _('signup'),
+        recoverPassword: _('recover-password'),
       },
       user: {
         settings: user_settings,
