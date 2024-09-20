@@ -1,4 +1,4 @@
-import { mod_id, str_ns_mod_v } from '@moodle/domain'
+import { mod_id, str_ns_mod_v } from '@moodle/lib-ddd'
 import { _any } from '@moodle/lib-types'
 import assert from 'assert'
 import { db_struct } from '../db-structure'

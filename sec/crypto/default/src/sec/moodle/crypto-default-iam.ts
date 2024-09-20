@@ -1,4 +1,4 @@
-import { sec_factory, sec_impl } from '@moodle/domain'
+import { sec_factory, sec_impl } from '@moodle/lib-ddd'
 import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import { _void } from '@moodle/lib-types'
 import { session_token_payload_data, TOKEN_PAYLOAD_PROP } from '@moodle/mod-iam/v1_0/types'

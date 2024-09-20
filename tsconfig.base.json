@@ -20,7 +20,7 @@
     "strict": true,
     "paths": {
       "@moodle/bindings-node": ["bindings/node/src/index.ts"],
-      "@moodle/domain": ["domain/src/index.ts"],
+      "@moodle/lib-ddd": ["lib/ddd/src/index.ts"],
       "@moodle/lib-email-templates": ["lib/email-templates/src/index.ts"],
       "@moodle/lib-email-templates/iam/v1_0": ["lib/email-templates/src/moodle/iam/v1_0/index.ts"],
       "@moodle/lib-email-templates/org/v1_0": ["lib/email-templates/src/moodle/org/v1_0/index.ts"],

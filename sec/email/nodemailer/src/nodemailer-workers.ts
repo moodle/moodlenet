@@ -1,5 +1,4 @@
-import { composeImpl, sec_factory } from '@moodle/domain'
-import { Config } from 'arangojs/connection'
+import { composeImpl, sec_factory } from '@moodle/lib-ddd'
 import { iam } from './sec/moodle'
 import { NodemailerSecEnv } from './types'
 

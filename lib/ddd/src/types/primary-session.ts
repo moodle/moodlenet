@@ -31,7 +31,6 @@ interface Connections {
   other: map
 }
 
-
 export interface SystemPrimarySession extends PriSessionBase {
   mod_id: mod_id
 }

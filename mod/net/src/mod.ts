@@ -1,9 +1,8 @@
-import { mod } from '@moodle/domain'
-import * as v1_0 from './v1_0/types'
+import { mod } from '@moodle/lib-ddd'
 import { _t } from '@moodle/lib-types'
+import * as v1_0 from './v1_0/types'
 
-
-declare module '@moodle/domain' {
+declare module '@moodle/lib-ddd' {
   export interface MoodleMods {
     net: moodle_net_mod
   }

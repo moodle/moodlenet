@@ -1,4 +1,4 @@
-import type { mod, session_token } from '@moodle/domain'
+import type { mod, session_token } from '@moodle/lib-ddd'
 import type { id_type } from '@moodle/lib-id-gen'
 import type {
   __redacted__,
@@ -17,7 +17,7 @@ import type { ReactElement } from 'react'
 
 import * as v1_0 from './v1_0/types'
 
-declare module '@moodle/domain' {
+declare module '@moodle/lib-ddd' {
   export interface MoodleMods {
     iam: moodle_iam_mod
   }

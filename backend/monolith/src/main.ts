@@ -9,19 +9,19 @@ import {
   domain_msg,
   sec_impl,
   WorkerContext,
-} from '@moodle/domain'
-import * as mod_net from '@moodle/mod-net'
-import * as mod_org from '@moodle/mod-org'
+} from '@moodle/lib-ddd'
 import * as mod_iam from '@moodle/mod-iam'
+import * as mod_net from '@moodle/mod-net'
 import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
+import * as mod_org from '@moodle/mod-org'
 import { get_arango_persistence_factory } from '@moodle/sec-db-arango'
 
 import { get_default_crypto_workers_factory } from '@moodle/sec-crypto-default'
 import { get_nodemailer_workers_factory } from '@moodle/sec-email-nodemailer'
-import { EnvProvider, EnvProviderResult } from './types'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { migrate } from './migrate'
+import { EnvProvider, EnvProviderResult } from './types'
 dotenvExpand(dotenv.config({ path: process.env.MOODLE_DOTENV_PATH }))
 
 http_bind.server({
@@ -97,13 +97,13 @@ async function request(transportData: TransportData) {
     throw TypeError(`unknown msg layer: ${domain_msg.layer}`)
   }
 }
-  function not_implemented_here(domain_msg: domain_msg): (found: unknown) => void {
-    return found => {
-      const { channel, layer, mod, ns, port, version } = domain_msg
-      const err_msg = `
+function not_implemented_here(domain_msg: domain_msg): (found: unknown) => void {
+  return found => {
+    const { channel, layer, mod, ns, port, version } = domain_msg
+    const err_msg = `
 NOT IMPLEMENTED: ${ns}.${mod}.${version}.${layer}.${channel}.${port}
 FOUND: [${String(found)}]
 `
-      throw TypeError(err_msg)
-    }
+    throw TypeError(err_msg)
   }
+}

@@ -1,4 +1,4 @@
-import { session_token } from '@moodle/domain'
+import { session_token } from '@moodle/lib-ddd'
 import { _void, ok_ko } from '@moodle/lib-types'
 import { jwtDecode, JwtPayload } from 'jwt-decode'
 import { session_token_payload_data, TOKEN_PAYLOAD_PROP } from '../types'

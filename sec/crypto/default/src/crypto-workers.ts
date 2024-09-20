@@ -1,4 +1,4 @@
-import { composeImpl, sec_factory } from '@moodle/domain'
+import { composeImpl, sec_factory } from '@moodle/lib-ddd'
 import { joseEnv } from '@moodle/lib-jwt-jose'
 import { ArgonPwdHashOpts, iam } from './sec/moodle'
 

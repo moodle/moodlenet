@@ -1,4 +1,4 @@
-import { core_factory } from '@moodle/domain'
+import { core_factory } from '@moodle/lib-ddd'
 
 export * as v1_0 from './v1_0/types'
 

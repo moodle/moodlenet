@@ -1,4 +1,4 @@
-import { composeImpl, sec_factory } from '@moodle/domain'
+import { composeImpl, sec_factory } from '@moodle/lib-ddd'
 import { v1_0 } from './'
 import { iam, net, netWebappNextjs } from './sec/moodle'
 import { org } from './sec/moodle/db-arango-org'

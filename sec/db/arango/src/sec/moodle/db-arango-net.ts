@@ -1,5 +1,4 @@
-import { sec_factory } from '@moodle/domain'
-import type * as _ from '@moodle/mod-net'
+import { sec_factory } from '@moodle/lib-ddd'
 import { v1_0 } from '../..'
 import { getModConfigs } from '../../v1_0/lib/modules'
 

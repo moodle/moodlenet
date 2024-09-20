@@ -1,11 +1,11 @@
-import { sec_factory, sec_impl } from '@moodle/domain'
+import { sec_factory, sec_impl } from '@moodle/lib-ddd'
+import { generateId } from '@moodle/lib-id-gen'
 import { _void } from '@moodle/lib-types'
+import { DbUser } from '@moodle/mod-iam/v1_0/types'
 import { Document } from 'arangojs/documents'
+import { createHash } from 'node:crypto'
 import { v1_0 } from '../..'
 import { iamUserDoc2dbUser } from './db-arango-iam-lib/mappings'
-import { generateId } from '@moodle/lib-id-gen'
-import { createHash } from 'node:crypto'
-import { DbUser } from '@moodle/mod-iam/v1_0/types'
 
 export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec_factory {
   return ctx => {

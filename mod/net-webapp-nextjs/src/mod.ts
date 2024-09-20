@@ -1,10 +1,10 @@
 import type * as net_v1_0 from '@moodle/mod-net/v1_0/lib'
 import type * as org_v1_0 from '@moodle/mod-org/v1_0/lib'
 
-import { mod } from '@moodle/domain'
+import { mod } from '@moodle/lib-ddd'
 import * as v1_0 from './v1_0/types'
 
-declare module '@moodle/domain' {
+declare module '@moodle/lib-ddd' {
   export interface MoodleMods {
     netWebappNextjs: moodle_net_webapp_nextjs_mod
   }

@@ -1,4 +1,4 @@
-import { core_factory } from '@moodle/domain'
+import { core_factory } from '@moodle/lib-ddd'
 
 export function core(): core_factory {
   return ({ worker }) => {

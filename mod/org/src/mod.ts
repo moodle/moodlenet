@@ -1,10 +1,10 @@
-import type { mod } from '@moodle/domain'
+import type { mod } from '@moodle/lib-ddd'
 import type { _t } from '@moodle/lib-types'
 import * as v1_0 from './v1_0/types'
 
 export * as v1_0 from './v1_0/types'
 
-declare module '@moodle/domain' {
+declare module '@moodle/lib-ddd' {
   export interface MoodleMods {
     org: moodle_org_mod
   }

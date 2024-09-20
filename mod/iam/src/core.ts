@@ -1,9 +1,13 @@
-import type { core_factory, core_impl } from '@moodle/domain'
+import type { core_factory, core_impl } from '@moodle/lib-ddd'
+import {
+  resetPasswordContent,
+  selfDeletionConfirmContent,
+  signupEmailConfirmationContent,
+} from '@moodle/lib-email-templates/iam/v1_0'
+import { EmailLayout } from '@moodle/lib-email-templates/org/v1_0'
 import { _void, date_time_string } from '@moodle/lib-types'
 import * as lib_moodle_org from '@moodle/mod-org/v1_0/lib'
 import * as v1_0_lib from './v1_0/lib'
-import { resetPasswordContent, selfDeletionConfirmContent, signupEmailConfirmationContent } from '@moodle/lib-email-templates/iam/v1_0'
-import { EmailLayout } from '@moodle/lib-email-templates/org/v1_0'
 
 export function core(): core_factory {
   return ({ primarySession, worker }) => {

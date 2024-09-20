@@ -1,4 +1,4 @@
-import type { session_token } from '@moodle/domain'
+import type { session_token } from '@moodle/lib-ddd'
 import type { d_u, date_time_string } from '@moodle/lib-types'
 import type { UserData } from './user'
 export type user_id = string

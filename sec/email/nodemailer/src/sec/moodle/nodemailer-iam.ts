@@ -1,4 +1,4 @@
-import { sec_factory, sec_impl } from '@moodle/domain'
+import { sec_factory, sec_impl } from '@moodle/lib-ddd'
 import * as argon2 from 'argon2'
 import { send } from '../../lib'
 import { NodemailerSecEnv } from '../../types'

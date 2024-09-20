@@ -1,4 +1,4 @@
-import { concrete, Error4xx, primary_session, session_token } from '@moodle/domain'
+import { concrete, Error4xx, primary_session, session_token } from '@moodle/lib-ddd'
 import { d_u, d_u__d, ok_ko } from '@moodle/lib-types'
 import assert from 'assert'
 import { session_obj, user_id, user_role, user_session, UserData } from '../types'

@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "nx run-many --target=serve --target=dev",
-    "cleanup-dev": "trash .nx tmp dist pri/moodlenet/webapp/nextjs/.next/"
+    "cleanup-dev": "rimraf .nx tmp dist pri/moodlenet/webapp/nextjs/.next/",
+    "nx-reset": "nx reset"
   },
   "private": true,
   "dependencies": {
@@ -94,6 +95,7 @@
     "nx": "19.6.2",
     "prettier": "^3.3.3",
     "prettier-plugin-organize-imports": "^4.0.0",
+    "rimraf": "^6.0.1",
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
     "typescript": "~5.5.2"

@@ -1,4 +1,4 @@
-import { Error4xx, reply, status_code_4xx } from '@moodle/domain'
+import { Error4xx, reply, status_code_4xx } from '@moodle/lib-ddd'
 import { _any, map } from '@moodle/lib-types'
 import express from 'express'
 import { Agent, fetch } from 'undici'
