@@ -30,7 +30,7 @@ export default function LoginPanel({ primaryMsgSchemaConfigs }: LoginProps) {
   })
   const shouldShowErrors = !!form.submitCount
   const canSubmit = !form.isSubmitting && !form.isValidating
-  const recoverPasswordHref = sitepaths().pages.access.recoverPassword
+  const recoverPasswordHref = sitepaths().pages.access.recoverPasswordRequest('')
 return (
   <>
     <form action={form.submitForm}>
