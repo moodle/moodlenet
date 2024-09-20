@@ -19,7 +19,7 @@ export function assertSystemSession(
 //
 
 export async function getUserSession(sessionToken: session_token, worker: concrete<'sec'>) {
-  const [valid, sessionResp] = await worker.moodle.iam.v1_0.sec.crypto.decryptSession({
+  const [valid, sessionResp] = await worker.moodle.iam.v1_0.sec.crypto.decryptTokenData({
     token: sessionToken,
   })
   const user_session =
@@ -102,7 +102,7 @@ export async function generateSessionForUserData(
   const {
     iam: { tokenExpireTime },
   } = await mySec.db.getConfigs()
-  const session = await mySec.crypto.encryptSession({
+  const session = await mySec.crypto.encryptTokenData({
     data: {
       v1_0: 'userSession',
       user,

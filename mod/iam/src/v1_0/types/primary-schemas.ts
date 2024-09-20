@@ -17,3 +17,4 @@ export type signupForm = z.infer<ReturnType<typeof getPrimarySchemas>['signupSch
 export type changePasswordForm = z.infer<
   ReturnType<typeof getPrimarySchemas>['changePasswordSchema']
 >
+export type resetPasswordForm = z.infer<ReturnType<typeof getPrimarySchemas>['resetPasswordSchema']>

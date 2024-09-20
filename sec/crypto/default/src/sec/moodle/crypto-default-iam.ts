@@ -52,7 +52,7 @@ export function iam({
                 //                 }
                 //                 return [true, validationResp]
                 //               },
-                async decryptSession({ token }) {
+                async decryptTokenData({ token }) {
                   // FIXME : CHECKS AUDIENCE ETC >>>
                   const verifyResult = await joseVerify<session_token_payload_data>(joseEnv, token)
 
@@ -60,7 +60,7 @@ export function iam({
                     ? [true, verifyResult.payload[TOKEN_PAYLOAD_PROP]]
                     : [false, _void]
                 },
-                async encryptSession({ data, expiresIn }) {
+                async encryptTokenData({ data, expiresIn }) {
                   const session = await sign<session_token_payload_data>({
                     joseEnv,
                     payload: { [TOKEN_PAYLOAD_PROP]: data },

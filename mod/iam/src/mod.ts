@@ -98,6 +98,16 @@ export type moodle_iam_mod = mod<{
           declaredOwnEmail: email_address
         }): Promise<void>
 
+        resetPassword(_: {
+          resetPasswordForm: v1_0.resetPasswordForm
+          resetPasswordToken: string
+        }): Promise<
+          ok_ko<
+            void,
+            d_u<{ invalidToken: unknown; userNotFound: unknown; unknown: unknown }, 'reason'>
+          >
+        >
+
         changePassword(_: v1_0.changePasswordForm): Promise<ok_ko<void, void>>
       }
     }
@@ -122,11 +132,11 @@ export type moodle_iam_mod = mod<{
         }): Promise<ok_ko<void, void>>
         //
 
-        encryptSession(_: {
-          data: v1_0.sessionTokenData
+        encryptTokenData(_: {
+          data: v1_0.iamTokenData
           expiresIn: time_duration_string
         }): Promise<v1_0.session_obj>
-        decryptSession(_: { token: session_token }): Promise<ok_ko<v1_0.sessionTokenData, void>>
+        decryptTokenData(_: { token: session_token }): Promise<ok_ko<v1_0.iamTokenData, void>>
       }
 
       email: {

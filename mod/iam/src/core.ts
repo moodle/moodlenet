@@ -83,7 +83,7 @@ export function core(): core_factory {
                     plainPassword: signupForm.password,
                   })
 
-                  const confirmEmailSession = await mySec.crypto.encryptSession({
+                  const confirmEmailSession = await mySec.crypto.encryptTokenData({
                     expiresIn: tokenExpireTime.signupEmailVerification,
                     data: {
                       v1_0: 'signupRequestEmailVerification',
@@ -121,7 +121,7 @@ export function core(): core_factory {
                       roles: { newlyCreatedUserRoles },
                     },
                   } = await mySec.db.getConfigs()
-                  const [verified, tokenData] = await mySec.crypto.decryptSession({
+                  const [verified, tokenData] = await mySec.crypto.decryptTokenData({
                     token: signupEmailVerificationToken,
                   })
 
@@ -193,7 +193,7 @@ export function core(): core_factory {
                     org: { info: orgInfo, addresses: orgAddr },
                   } = await mySec.db.getConfigs()
 
-                  const selfDeletionConfirmationSession = await mySec.crypto.encryptSession({
+                  const selfDeletionConfirmationSession = await mySec.crypto.encryptTokenData({
                     expiresIn: userSelfDeletion.userSelfDeletionRequest,
                     data: {
                       v1_0: 'selfDeletionRequestConfirm',
@@ -223,7 +223,7 @@ export function core(): core_factory {
                 },
 
                 async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
-                  const [verified, tokenData] = await mySec.crypto.decryptSession({
+                  const [verified, tokenData] = await mySec.crypto.decryptTokenData({
                     token: selfDeletionConfirmationToken,
                   })
 
@@ -243,7 +243,27 @@ export function core(): core_factory {
                   })
                   return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
                 },
+                async resetPassword({ resetPasswordForm: { newPassword }, resetPasswordToken }) {
+                  const [verified, tokenData] = await mySec.crypto.decryptTokenData({
+                    token: resetPasswordToken,
+                  })
 
+                  if (!(verified && tokenData.v1_0 === 'resetPasswordRequest')) {
+                    return [false, { reason: 'invalidToken' }]
+                  }
+                  const [found, dbUser] = await mySec.db.getUserByEmail({ email: tokenData.email })
+                  if (!found) {
+                    return [false, { reason: 'userNotFound' }]
+                  }
+                  const { passwordHash } = await mySec.crypto.hashPassword({
+                    plainPassword: newPassword,
+                  })
+                  const [pwdChanged] = await mySec.db.changeUserPassword({
+                    newPasswordHash: passwordHash,
+                    userId: dbUser.id,
+                  })
+                  return pwdChanged ? [true, _void] : [false, { reason: 'unknown' }]
+                },
                 async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
                   v1_0_lib.assertGuestSession(primarySession)
                   const {
@@ -256,10 +276,10 @@ export function core(): core_factory {
                     return
                   }
 
-                  const resetPasswordConfirmationSession = await mySec.crypto.encryptSession({
-                    expiresIn: userSelfDeletion.userSelfDeletionRequest,
+                  const resetPasswordConfirmationSession = await mySec.crypto.encryptTokenData({
+                    expiresIn: userSelfDeletion.resetPasswordRequest,
                     data: {
-                      v1_0: 'passwordResetRequest',
+                      v1_0: 'resetPasswordRequest',
                       redirectUrl,
                       email: user.contacts.email,
                     },

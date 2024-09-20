@@ -14,26 +14,31 @@ export function getPrimarySchemas({ user }: PrimaryMsgSchemaConfigs) {
     email,
     password: redacted_password,
     displayName,
-  }).required()
+  }) //.required()
 
   const changePasswordSchema = object({
     currentPassword: redacted_password,
     newPassword: redacted_password,
-  }).required()
+  }) //.required()
+
+  const resetPasswordSchema = object({
+    newPassword: redacted_password,
+  }) //.required()
 
   const loginSchema = object({
     email,
     password: redacted_password,
-  }).required()
+  }) //.required()
 
   return {
     raw: {
       user: {
         email,
-        password,
+        redacted_password,
         displayName,
       },
     },
+    resetPasswordSchema,
     signupSchema,
     loginSchema,
     changePasswordSchema,

@@ -6,16 +6,16 @@ export type tokenPayloadProp = 'tokenPayload'
 export const TOKEN_PAYLOAD_PROP: tokenPayloadProp = 'tokenPayload'
 
 export type session_token_payload_data = {
-  [k in tokenPayloadProp]: sessionTokenData
+  [k in tokenPayloadProp]: iamTokenData
 }
 
-export type sessionTokenData = d_u<
+export type iamTokenData = d_u<
   {
     selfDeletionRequestConfirm: {
       userId: user_id
       redirectUrl: url
     }
-    passwordResetRequest: {
+    resetPasswordRequest: {
       email: email_address
       redirectUrl: url
     }

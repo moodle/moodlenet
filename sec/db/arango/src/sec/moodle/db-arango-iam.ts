@@ -37,7 +37,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                       {
                         passwordHash: newPasswordHash,
                       },
-                      { silent: true },
+
                     )
                     .catch(() => null)
                   return [!!updated, _void]

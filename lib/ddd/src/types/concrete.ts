@@ -66,3 +66,4 @@ type factory<_layer extends keyof layer_contexts> = (ctx: layer_contexts[_layer]
 
 export declare const domain: deep_required<impl<keyof layer_contexts>>
 export type payload_of<_ extends any_endpoint> = Parameters<_>[0]
+export type reply_of<_ extends any_endpoint> = Awaited<ReturnType<_>>
