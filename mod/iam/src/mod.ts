@@ -1,5 +1,4 @@
 import type { mod, session_token } from '@moodle/lib-ddd'
-import type { id_type } from '@moodle/lib-id-gen'
 import type {
   __redacted__,
   d_u,
@@ -162,10 +161,7 @@ export type moodle_iam_mod = mod<{
         getUserById(_: { userId: v1_0.user_id }): Promise<ok_ko<v1_0.DbUser, void>>
         getUserByEmail(_: { email: email_address }): Promise<ok_ko<v1_0.DbUser, void>>
 
-        saveNewUser(_: {
-          idType: id_type
-          newUser: Omit<v1_0.DbUser, 'id'>
-        }): Promise<ok_ko<v1_0.user_id, void>>
+        saveNewUser(_: { newUser: v1_0.DbUser }): Promise<ok_ko<v1_0.user_id, void>>
 
         changeUserRoles(_: {
           userId: v1_0.user_id

@@ -50,7 +50,6 @@ export async function migrate({ db_struct }: { db_struct: v1_0.db_struct }) {
       mod_id: { ns: 'moodle', mod: 'org', version: 'v1_0' },
     }),
   ])
-
   // bump_version
   const migrationDoc: v1_0.Migration = {
     v: 'v1_0',

@@ -1,7 +1,7 @@
-import { _any, deep_partial } from '@moodle/lib-types'
+import { _any, deep_partial, deep_required } from '@moodle/lib-types'
 import { merge } from 'lodash'
 import { Modules } from '../domain'
-import { layers, mod_id } from './mod'
+import { any_endpoint, layers, mod_id } from './mod'
 import { primary_session } from './primary-session'
 
 export interface CoreProcessContext {
@@ -63,3 +63,6 @@ export type core_impl = impl<'pri' | 'evt'>
 export type sec_factory = factory<'sec'>
 export type sec_impl = impl<'sec'>
 type factory<_layer extends keyof layer_contexts> = (ctx: layer_contexts[_layer]) => impl<_layer>
+
+export declare const domain: deep_required<impl<keyof layer_contexts>>
+export type payload_of<_ extends any_endpoint> = Parameters<_>[0]

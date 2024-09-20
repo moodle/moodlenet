@@ -21,7 +21,7 @@ import { get_nodemailer_workers_factory } from '@moodle/sec-email-nodemailer'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { migrate } from './migrate'
-import { EnvProvider, EnvProviderResult } from './types'
+import { EnvProvider } from './types'
 dotenvExpand(dotenv.config({ path: process.env.MOODLE_DOTENV_PATH }))
 
 http_bind.server({
@@ -35,12 +35,10 @@ http_bind.server({
 async function request(transportData: TransportData) {
   const { domain_msg, primary_session, core_mod_id } = transportData
 
-  const _env: EnvProvider | EnvProviderResult = (
+  const _env_provider: EnvProvider = (
     await import(process.env.MOODLE_ENV_PROVIDER_MODULE ?? './default-env-provider.js')
   ).default.default
-  const { env, migration_status } = await (typeof _env === 'function'
-    ? _env({ primary_session, migrate })
-    : _env)
+  const { env, migration_status } = await _env_provider({ primary_session, migrate })
 
   // this could be inspected later to respond immediately with a "under maintainance" status
   await migration_status

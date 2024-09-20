@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nx run-many --target=serve --target=dev",
+    "dev-initialize": "MOODLE_INITIAL_ADMIN_EMAIL=alessandro@moodle.com nx run-many --target=serve --target=dev",
     "cleanup-dev": "rimraf .nx tmp dist pri/moodlenet/webapp/nextjs/.next/",
     "nx-reset": "nx reset"
   },

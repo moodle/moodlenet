@@ -21,6 +21,7 @@ const generateEnv: EnvProvider = async ({ migrate }) => {
         })
         throw new Error('all env vars must be properly set')
       }
+      const MOODLE_INITIAL_ADMIN_EMAIL = process.env.MOODLE_INITIAL_ADMIN_EMAIL
 
       const privateKeyStr = readFileSync(join(MOODLE_CRYPTO_KEY_FILES_DIR, 'private.key'), 'utf8')
       const publicKeyStr = readFileSync(join(MOODLE_CRYPTO_KEY_FILES_DIR, 'public.key'), 'utf8')
@@ -68,7 +69,16 @@ const generateEnv: EnvProvider = async ({ migrate }) => {
         },
       }
 
-      const migration_status = migrate({ env })
+      const migration_status = migrate({
+        env,
+        configs: {
+          db: {
+            init: MOODLE_INITIAL_ADMIN_EMAIL
+              ? { moodleInitialAdminEmail: MOODLE_INITIAL_ADMIN_EMAIL }
+              : undefined,
+          },
+        },
+      })
 
       resolveEnv({ env, migration_status })
     })

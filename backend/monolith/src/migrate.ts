@@ -1,8 +1,8 @@
 import { migrate as migrateArangoDb } from '@moodle/sec-db-arango/migrate'
-import { Env } from './types'
+import { migrate_fn } from './types'
 
-export async function migrate({ env }: { env: Env }) {
-  const version = await migrateArangoDb(env.arango_db)
+export const migrate: migrate_fn = async ({ env, configs }) => {
+  const version = await migrateArangoDb(env.arango_db, configs.db)
   console.log(`arangodb persistence version: ${version}`)
   return version
 }

@@ -139,24 +139,14 @@ export function core(): core_factory {
 
                   const now = date_time_string('now')
                   const [newUserCreated, userId] = await mySec.db.saveNewUser({
-                    idType: {
-                      type: 'alphanumeric',
-                      length: 8,
-                    },
-                    newUser: {
+                    newUser: await v1_0_lib.createNewDbUserData({
                       createdAt: now,
                       roles: newlyCreatedUserRoles,
                       displayName: tokenData.displayName,
-                      contacts: {
-                        email: tokenData.email,
-                      },
+                      email: tokenData.email,
                       passwordHash: tokenData.passwordHash,
-                      activityStatus: {
-                        lastLogin: now,
-                        inactiveNotificationSentAt: false,
-                      },
-                      deactivated: false,
-                    },
+                      lastLogin: now,
+                    }),
                   })
                   return newUserCreated ? [true, { userId }] : [false, { reason: 'unknown' }]
                 },
