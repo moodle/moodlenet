@@ -1,5 +1,5 @@
 import React from 'react'
-import { v1_0 as email_org_v1_0 } from '../../org'
+import * as email_org_v1_0 from '../../org/v1_0'
 
 export type ResetPasswordContentEmailProps = {
   receiverEmail: string

@@ -1,11 +1,11 @@
 import { sec_factory, sec_impl } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
-import type { v1_0 as iam_v1_0 } from '@moodle/mod-iam'
 import { Document } from 'arangojs/documents'
 import { v1_0 } from '../..'
 import { iamUserDoc2dbUser } from './db-arango-iam-lib/mappings'
 import { generateId } from '@moodle/lib-id-gen'
 import { createHash } from 'node:crypto'
+import { DbUser } from '@moodle/mod-iam/v1_0/types'
 
 export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec_factory {
   return ctx => {
@@ -67,7 +67,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                       coll: { user },
                     },
                   } = db_struct_v1_0
-                  const cursor = await db.query<Document<iam_v1_0.DbUser>>(
+                  const cursor = await db.query<Document<DbUser>>(
                     `FOR user IN ${user.name} FILTER user.contacts.email == @email LIMIT 1 RETURN user`,
                     { email },
                   )

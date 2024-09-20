@@ -1,5 +1,5 @@
 'use client'
-import { lib_moodle_iam } from '@moodle/lib-domain'
+import type * as iam_v1_0 from '@moodle/mod-iam/v1_0/types'
 import { useFormik } from 'formik'
 import { ReactElement, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -11,16 +11,17 @@ import { Snackbar } from '../../../../ui/atoms/Snackbar/Snackbar'
 import SnackbarStack from '../../../../ui/atoms/Snackbar/SnackbarStack'
 import { changePassword } from './general.server'
 import './general.style.scss'
+import { getPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
 
 export interface GeneralSettingsProps {
-  primaryMsgSchemaConfigs: lib_moodle_iam.v1_0.PrimaryMsgSchemaConfigs
+  primaryMsgSchemaConfigs: iam_v1_0.PrimaryMsgSchemaConfigs
 }
 export function GeneralSettingsClient({ primaryMsgSchemaConfigs }: GeneralSettingsProps) {
   const { t } = useTranslation()
-  const { changePasswordSchema } = lib_moodle_iam.v1_0.getPrimarySchemas(primaryMsgSchemaConfigs)
+  const { changePasswordSchema } = getPrimarySchemas(primaryMsgSchemaConfigs)
   const [snackbarList, setSnackbarList] = useState<ReactElement[]>([])
 
-  const form = useFormik<lib_moodle_iam.v1_0.changePasswordForm>({
+  const form = useFormik<iam_v1_0.changePasswordForm>({
     initialValues: { newPassword: { __redacted__: '' }, currentPassword: { __redacted__: '' } },
     validationSchema: toFormikValidationSchema(changePasswordSchema),
     onSubmit: async (formValues, { resetForm, setErrors, setFormikState }) => {

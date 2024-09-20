@@ -1,6 +1,7 @@
 import { mod } from '@moodle/domain'
-import { v1_0 } from './'
+import * as v1_0 from './v1_0/types'
 import { _t } from '@moodle/lib-types'
+
 
 declare module '@moodle/domain' {
   export interface MoodleMods {

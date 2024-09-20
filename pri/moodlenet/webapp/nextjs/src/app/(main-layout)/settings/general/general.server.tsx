@@ -1,9 +1,9 @@
 'use server'
 
-import { lib_moodle_iam } from '@moodle/lib-domain'
 import { getMod } from '../../../../lib/server/session-access'
+import { changePasswordForm } from '@moodle/mod-iam/v1_0/types'
 
-export async function changePassword(changePasswordForm: lib_moodle_iam.v1_0.changePasswordForm) {
+export async function changePassword(changePasswordForm: changePasswordForm) {
   const {
     moodle: {
       iam: {

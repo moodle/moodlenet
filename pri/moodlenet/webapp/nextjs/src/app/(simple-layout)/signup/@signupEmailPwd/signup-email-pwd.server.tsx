@@ -1,12 +1,12 @@
 'use server'
 
-import { lib_moodle_iam } from '@moodle/lib-domain'
 import { redirect } from 'next/navigation'
 import { getMod } from '../../../../lib/server/session-access'
 import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
+import { signupForm } from '@moodle/mod-iam/v1_0/types'
 
 export type signupResponse = void | Awaited<ReturnType<typeof signup>>
-export async function signup(signupForm: lib_moodle_iam.v1_0.signupForm) {
+export async function signup(signupForm: signupForm) {
   const {
     moodle: {
       iam: {

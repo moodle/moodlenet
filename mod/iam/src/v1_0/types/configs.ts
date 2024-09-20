@@ -1,10 +1,11 @@
-import { lib_moodle_iam } from '@moodle/lib-domain'
-import { time_duration_string } from '@moodle/lib-types'
+import type { time_duration_string } from '@moodle/lib-types'
+import { PrimaryMsgSchemaConfigs } from './primary-schemas'
+import type { user_role } from './user-session'
 
 export interface Configs {
-  primaryMsgSchemaConfigs: lib_moodle_iam.v1_0.PrimaryMsgSchemaConfigs
+  primaryMsgSchemaConfigs: PrimaryMsgSchemaConfigs
   roles: {
-    newlyCreatedUserRoles: lib_moodle_iam.v1_0.user_role[]
+    newlyCreatedUserRoles: user_role[]
   }
   inactiveUsersPolicies: {
     deleteInactive: {

@@ -1,5 +1,5 @@
 'use client'
-import { lib_moodle_org } from '@moodle/lib-domain'
+import type * as org_v1_0 from '@moodle/mod-org/v1_0/lib'
 import { Button } from '@react-email/button'
 import { Container } from '@react-email/container'
 import { Head } from '@react-email/head'
@@ -25,8 +25,8 @@ export type EmailLayoutContentProps = {
   action?: EmailLayoutActionBtnProps
 }
 export type EmailLayoutProps = {
-  orgInfo: lib_moodle_org.v1_0.OrgInfo
-  orgAddr: lib_moodle_org.v1_0.OrgAddresses
+  orgInfo: org_v1_0.OrgInfo
+  orgAddr: org_v1_0.OrgAddresses
   content: EmailLayoutContentProps
 }
 

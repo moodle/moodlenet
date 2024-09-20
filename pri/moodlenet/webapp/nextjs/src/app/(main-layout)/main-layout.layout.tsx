@@ -15,12 +15,12 @@ import {
   UserSettingsLink,
 } from './main-layout.client'
 
-import { lib_moodle_iam } from '@moodle/lib-domain'
 import { getMod, getUserSession } from '../../lib/server/session-access'
 import './main-layout.style.scss'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { logout } from '../actions/session'
 import { filterOutFalsies } from '@moodle/lib-types'
+import { hasUserSessionRole, isAuthenticatedUserSession } from '@moodle/mod-iam/v1_0/lib'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const {
@@ -52,8 +52,8 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const { center, left, right } = slotsMap(props, header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
-    const isAuthenticated = lib_moodle_iam.v1_0.isAuthenticated(user_session)
-    const isAdmin = lib_moodle_iam.v1_0.hasUserRole(user_session, 'admin')
+    const isAuthenticated = isAuthenticatedUserSession(user_session)
+    const isAdmin = hasUserSessionRole(user_session, 'admin')
     const { pages } = sitepaths()
     const avatarUrl = null //user_session.user.avatarUrl
 

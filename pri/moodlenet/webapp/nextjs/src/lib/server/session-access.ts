@@ -1,13 +1,14 @@
 import { http_bind } from '@moodle/bindings-node'
 import { createAcccessProxy, Modules, primary_session } from '@moodle/domain'
-import type {} from '@moodle/mod-iam'
+import type {} from '@moodle/mod-org'
 import type {} from '@moodle/mod-net'
+import type {} from '@moodle/mod-iam'
 import type {} from '@moodle/mod-net-webapp-nextjs'
 import { headers } from 'next/headers'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'
 import { getAuthTokenCookie } from './auth'
-import { lib_moodle_iam } from '@moodle/lib-domain'
+import { user_session } from '@moodle/mod-iam/v1_0/types'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
 const MOODLE_NET_NEXTJS_APP_NAME = process.env.MOODLE_NET_NEXTJS_APP_NAME
@@ -30,18 +31,18 @@ export function getMod(): Modules {
   // FIXME: The following block should refresh the session token before it expires
   // it's not ready as before actually refreshing the token
   // we need to check if the token is actually valid
-  // notice `lib_moodle_iam.v1_0.noValidationParseUserSessionToken`
+  // notice `iam_v1_0.noValidationParseUserSessionToken`
   // is fast but do not validate!
   // however we can't set the cookie here :
   // [Error]: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
   //
   // if (primarySession.sessionToken) {
-  //   const [valid, info] = lib_moodle_iam.v1_0.noValidationParseUserSessionToken(
+  //   const [valid, info] = iam_v1_0.noValidationParseUserSessionToken(
   //     primarySession.sessionToken,
   //   )
   //   if (valid && !info.expired && info.expires.inSecs < 5 * 60) {
   //     !! VALIDATE IT BEFORE REFRESHING !!
-  //     ap.mod.moodle.iam.v1_0.pri.session
+  //     ap.mod.moodle.iam_v1_0_lib.pri.session
   //       .generateSession({ userId: info.userData.id })
   //       .then(([generated, session]) => {
   //         if (!generated) {
@@ -54,7 +55,7 @@ export function getMod(): Modules {
 
   return ap.mod
 }
-const guest_session: lib_moodle_iam.v1_0.user_session = {
+const guest_session: user_session = {
   type: 'guest',
 }
 

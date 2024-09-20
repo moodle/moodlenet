@@ -1,28 +1,29 @@
 'use client'
-import { lib_moodle_iam } from '@moodle/lib-domain'
+import { getPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
+import { loginForm, PrimaryMsgSchemaConfigs } from '@moodle/mod-iam/v1_0/types'
 import { useFormik } from 'formik'
 import Link from 'next/link'
+import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { toFormikValidationSchema } from 'zod-formik-adapter'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { TertiaryButton } from '../../../../ui/atoms/TertiaryButton/TertiaryButton'
 import { login, loginResponse } from './login-email-pwd.server'
-import { useState } from 'react'
 export function LoginIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
 
 export type LoginProps = {
   recoverPasswordUrl: string
-  primaryMsgSchemaConfigs: lib_moodle_iam.v1_0.PrimaryMsgSchemaConfigs
+  primaryMsgSchemaConfigs: PrimaryMsgSchemaConfigs
 }
 
 export default function LoginPanel({ recoverPasswordUrl, primaryMsgSchemaConfigs }: LoginProps) {
   const { t } = useTranslation()
-  const { loginSchema } = lib_moodle_iam.v1_0.getPrimarySchemas(primaryMsgSchemaConfigs)
+  const { loginSchema } = getPrimarySchemas(primaryMsgSchemaConfigs)
   const [loginResponse, setLoginResponse] = useState<loginResponse>()
-  const form = useFormik<lib_moodle_iam.v1_0.loginForm>({
+  const form = useFormik<loginForm>({
     onSubmit: values => login(values).then(setLoginResponse),
     initialValues: { email: '', password: { __redacted__: '' } },
     validationSchema: toFormikValidationSchema(loginSchema),

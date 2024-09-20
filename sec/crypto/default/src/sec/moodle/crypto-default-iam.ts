@@ -1,7 +1,7 @@
 import { sec_factory, sec_impl } from '@moodle/domain'
-import { lib_moodle_iam } from '@moodle/lib-domain'
 import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import { _void } from '@moodle/lib-types'
+import { session_token_payload_data, TOKEN_PAYLOAD_PROP } from '@moodle/mod-iam/v1_0/types'
 import * as argon2 from 'argon2'
 export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 // ArgonPwdHashOpts : {
@@ -38,7 +38,7 @@ export function iam({
                 },
 
                 //               async validateSessionToken({ sessionToken }) {
-                //                 const verifyResult = await joseVerify<lib_moodle_iam.v1_0.UserData>(joseEnv, sessionToken)
+                //                 const verifyResult = await joseVerify<UserData>(joseEnv, sessionToken)
                 // if (!verifyResult) {
                 //   return [false, { reason: 'invalid' }]
                 // }
@@ -54,17 +54,16 @@ export function iam({
                 //               },
                 async decryptSession({ token }) {
                   // FIXME : CHECKS AUDIENCE ETC >>>
-                  const verifyResult =
-                    await joseVerify<lib_moodle_iam.v1_0.session_token_payload_data>(joseEnv, token)
+                  const verifyResult = await joseVerify<session_token_payload_data>(joseEnv, token)
 
                   return verifyResult
-                    ? [true, verifyResult.payload[lib_moodle_iam.v1_0.TOKEN_PAYLOAD_PROP]]
+                    ? [true, verifyResult.payload[TOKEN_PAYLOAD_PROP]]
                     : [false, _void]
                 },
                 async encryptSession({ data, expiresIn }) {
-                  const session = await sign<lib_moodle_iam.v1_0.session_token_payload_data>({
+                  const session = await sign<session_token_payload_data>({
                     joseEnv,
-                    payload: { [lib_moodle_iam.v1_0.TOKEN_PAYLOAD_PROP]: data },
+                    payload: { [TOKEN_PAYLOAD_PROP]: data },
                     expiresIn /*,stdClaims:{} ,opts:{} */,
                   })
                   return session

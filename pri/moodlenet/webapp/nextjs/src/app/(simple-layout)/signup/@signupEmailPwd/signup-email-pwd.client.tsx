@@ -1,26 +1,27 @@
 'use client'
-import { lib_moodle_iam } from '@moodle/lib-domain'
+import { getPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
+import { PrimaryMsgSchemaConfigs, signupForm } from '@moodle/mod-iam/v1_0/types'
 import { useFormik } from 'formik'
+import { useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { toFormikValidationSchema } from 'zod-formik-adapter'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { signup, signupResponse } from './signup-email-pwd.server'
-import { useState } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
 
 export function SignupIcon() {
   return <PrimaryButton color="blue">Using email</PrimaryButton>
 }
 
 export type SignupProps = {
-  primaryMsgSchemaConfigs: lib_moodle_iam.v1_0.PrimaryMsgSchemaConfigs
+  primaryMsgSchemaConfigs: PrimaryMsgSchemaConfigs
 }
 
 export default function SignupPanel({ primaryMsgSchemaConfigs }: SignupProps) {
-  const { signupSchema } = lib_moodle_iam.v1_0.getPrimarySchemas(primaryMsgSchemaConfigs)
+  const { signupSchema } = getPrimarySchemas(primaryMsgSchemaConfigs)
 
   const [signupErr, setSignupErr] = useState<signupResponse>()
-  const form = useFormik<lib_moodle_iam.v1_0.signupForm>({
+  const form = useFormik<signupForm>({
     onSubmit: values => signup(values).then(setSignupErr),
     initialValues: { email: '', password: { __redacted__: '' }, displayName: '' },
     validationSchema: toFormikValidationSchema(signupSchema),

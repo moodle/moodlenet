@@ -1,8 +1,8 @@
-import { v1_0 as net_v1_0 } from '@moodle/mod-net'
-import { v1_0 as org_v1_0 } from '@moodle/mod-org'
+import type * as net_v1_0 from '@moodle/mod-net/v1_0/lib'
+import type * as org_v1_0 from '@moodle/mod-org/v1_0/lib'
 
 import { mod } from '@moodle/domain'
-import { v1_0 } from './'
+import * as v1_0 from './v1_0/types'
 
 declare module '@moodle/domain' {
   export interface MoodleMods {

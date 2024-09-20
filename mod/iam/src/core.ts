@@ -1,16 +1,10 @@
-import { core_factory, core_impl } from '@moodle/domain'
-import { lib_moodle_iam, lib_moodle_org } from '@moodle/lib-domain'
-import { email_moodle_iam, email_moodle_org } from '@moodle/lib-email-templates'
+import type { core_factory, core_impl } from '@moodle/domain'
 import { _void, date_time_string } from '@moodle/lib-types'
-import {
-  assert_validateUserAuthenticatedSession,
-  assert_validateUserAuthenticatedSessionHasRole,
-  assertGuestSession,
-  generateSessionForUserData,
-  generateSessionForUserId,
-  getUserSession,
-} from './v1_0'
-import { dbUser2UserData } from './v1_0/types/db/db-user'
+import * as lib_moodle_org from '@moodle/mod-org/v1_0/lib'
+import * as v1_0_lib from './v1_0/lib'
+import { resetPasswordContent, selfDeletionConfirmContent, signupEmailConfirmationContent } from '@moodle/lib-email-templates/iam/v1_0'
+import { EmailLayout } from '@moodle/lib-email-templates/org/v1_0'
+
 export function core(): core_factory {
   return ({ primarySession, worker }) => {
     const mySec = worker.moodle.iam.v1_0.sec
@@ -21,11 +15,11 @@ export function core(): core_factory {
             pri: {
               session: {
                 async getUserSession({ sessionToken }) {
-                  const userSession = await getUserSession(sessionToken, worker)
+                  const userSession = await v1_0_lib.getUserSession(sessionToken, worker)
                   return { userSession }
                 },
                 async generateUserSession({ userId }) {
-                  return generateSessionForUserId(userId, worker)
+                  return v1_0_lib.generateSessionForUserId(userId, worker)
                 },
               },
 
@@ -37,7 +31,7 @@ export function core(): core_factory {
               },
               admin: {
                 async editUserRoles({ userId, roles }) {
-                  await assert_validateUserAuthenticatedSessionHasRole(
+                  await v1_0_lib.assert_validateUserAuthenticatedSessionHasRole(
                     primarySession,
                     'admin',
                     worker,
@@ -46,7 +40,7 @@ export function core(): core_factory {
                 },
 
                 async searchUsers({ textSearch }) {
-                  await assert_validateUserAuthenticatedSessionHasRole(
+                  await v1_0_lib.assert_validateUserAuthenticatedSessionHasRole(
                     primarySession,
                     'admin',
                     worker,
@@ -55,7 +49,7 @@ export function core(): core_factory {
                 },
 
                 async deactivateUser({ userId, anonymize, reason }) {
-                  await assert_validateUserAuthenticatedSessionHasRole(
+                  await v1_0_lib.assert_validateUserAuthenticatedSessionHasRole(
                     primarySession,
                     'admin',
                     worker,
@@ -69,7 +63,7 @@ export function core(): core_factory {
               },
               signup: {
                 async request({ signupForm, redirectUrl }) {
-                  assertGuestSession(primarySession)
+                  v1_0_lib.assertGuestSession(primarySession)
                   const [found] = await mySec.db.getUserByEmail({
                     email: signupForm.email,
                   })
@@ -96,20 +90,20 @@ export function core(): core_factory {
                     },
                   })
 
-                  const content = email_moodle_iam.v1_0.signupEmailConfirmationContent({
+                  const content = signupEmailConfirmationContent({
                     activateAccountUrl: `${redirectUrl}?token=${confirmEmailSession.token}`,
                     orgInfo,
                     receiverEmail: signupForm.email,
                   })
 
-                  const reactBody = email_moodle_org.v1_0.EmailLayout({
+                  const reactBody = EmailLayout({
                     orgInfo,
                     orgAddr,
                     content,
                   })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: lib_moodle_org.v1_0.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
+                    sender: lib_moodle_org.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
                     to: signupForm.email,
                   })
@@ -117,7 +111,7 @@ export function core(): core_factory {
                 },
 
                 async createNewUserByEmailVerificationToken({ signupEmailVerificationToken }) {
-                  assertGuestSession(primarySession)
+                  v1_0_lib.assertGuestSession(primarySession)
                   const {
                     iam: {
                       roles: { newlyCreatedUserRoles },
@@ -181,8 +175,8 @@ export function core(): core_factory {
                     return [false, _void]
                   }
 
-                  const user = dbUser2UserData(dbUser)
-                  const session = await generateSessionForUserData(user, worker)
+                  const user = v1_0_lib.dbUser2UserData(dbUser)
+                  const session = await v1_0_lib.generateSessionForUserData(user, worker)
                   return [
                     true,
                     {
@@ -196,7 +190,7 @@ export function core(): core_factory {
                 },
 
                 async selfDeletionRequest({ redirectUrl }) {
-                  const session = await assert_validateUserAuthenticatedSession(
+                  const session = await v1_0_lib.assert_validateUserAuthenticatedSession(
                     primarySession,
                     worker,
                   )
@@ -214,22 +208,22 @@ export function core(): core_factory {
                     },
                   })
 
-                  const content = email_moodle_iam.v1_0.selfDeletionConfirmContent({
+                  const content = selfDeletionConfirmContent({
                     deleteAccountUrl: `${redirectUrl}?token=${selfDeletionConfirmationSession.token}`,
                     orgInfo,
                     receiverEmail: session.user.contacts.email,
                   })
 
-                  const reactBody = email_moodle_org.v1_0.EmailLayout({
+                  const reactBody = EmailLayout({
                     orgInfo,
                     orgAddr,
                     content,
                   })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: lib_moodle_org.v1_0.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
+                    sender: lib_moodle_org.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
-                    to: lib_moodle_iam.v1_0.getUserNamedEmailAddress(session.user),
+                    to: v1_0_lib.getUserNamedEmailAddress(session.user),
                   })
                   return
                 },
@@ -257,7 +251,7 @@ export function core(): core_factory {
                 },
 
                 async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
-                  assertGuestSession(primarySession)
+                  v1_0_lib.assertGuestSession(primarySession)
                   const {
                     iam: { tokenExpireTime: userSelfDeletion },
                     org: { info: orgInfo, addresses: orgAddr },
@@ -277,27 +271,27 @@ export function core(): core_factory {
                     },
                   })
 
-                  const content = email_moodle_iam.v1_0.resetPasswordContent({
+                  const content = resetPasswordContent({
                     resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
                     receiverEmail: user.contacts.email,
                   })
 
-                  const reactBody = email_moodle_org.v1_0.EmailLayout({
+                  const reactBody = EmailLayout({
                     orgInfo,
                     orgAddr,
                     content,
                   })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: lib_moodle_org.v1_0.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
+                    sender: lib_moodle_org.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
-                    to: lib_moodle_iam.v1_0.getUserNamedEmailAddress(user),
+                    to: v1_0_lib.getUserNamedEmailAddress(user),
                   })
                   return
                 },
 
                 async changePassword({ currentPassword, newPassword }) {
-                  const session = await assert_validateUserAuthenticatedSession(
+                  const session = await v1_0_lib.assert_validateUserAuthenticatedSession(
                     primarySession,
                     worker,
                   )

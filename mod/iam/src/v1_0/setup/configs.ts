@@ -1,4 +1,4 @@
-import { Configs } from '../'
+import { Configs } from '../types'
 
 export const iam_default_configs: Configs = {
   primaryMsgSchemaConfigs: {

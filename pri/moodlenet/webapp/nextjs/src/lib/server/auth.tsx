@@ -1,4 +1,4 @@
-import { lib_moodle_iam } from '@moodle/lib-domain'
+import { session_obj } from '@moodle/mod-iam/v1_0/types'
 import { cookies } from 'next/headers'
 
 const AUTH_COOKIE = 'moodlenet-auth'
@@ -7,7 +7,7 @@ export function getAuthTokenCookie() {
 
   return cookie?.value ?? null
 }
-export function setAuthTokenCookie(session: null | lib_moodle_iam.v1_0.session) {
+export function setAuthTokenCookie(session: null | session_obj) {
   const reqCookie = session
     ? cookies().set(AUTH_COOKIE, session.token, {
         path: '/',
