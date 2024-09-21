@@ -1,4 +1,4 @@
-import { getMod } from '../../../../lib/server/session-access'
+import { priAccess } from '../../../../lib/server/session-access'
 import LoginPanel from './login-email-pwd.client'
 
 export default async function LoginEmailPwdPage() {
@@ -9,7 +9,7 @@ export default async function LoginEmailPwdPage() {
         v1_0: { pri },
       },
     },
-  } = getMod()
+  } = priAccess()
   const { iam } = await pri.configs.read()
   return (
     <LoginPanel

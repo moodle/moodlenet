@@ -2,7 +2,7 @@
 import type * as iam_v1_0 from '@moodle/mod-iam/v1_0/types'
 import { useFormik } from 'formik'
 import { ReactElement, useState } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'next-i18next'
 import { toFormikValidationSchema } from 'zod-formik-adapter'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'

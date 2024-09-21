@@ -2,7 +2,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 import { setAuthTokenCookie } from '../../../../../../lib/server/auth'
-import { getMod } from '../../../../../../lib/server/session-access'
+import { priAccess } from '../../../../../../lib/server/session-access'
 
 export async function GET(req: NextRequest) {
   const selfDeletionConfirmationToken = await req.nextUrl.searchParams.get('token')
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
         },
       },
     },
-  } = getMod()
+  } = priAccess()
   const [ok, response] = await confirmSelfDeletionRequest({
     selfDeletionConfirmationToken,
     reason: '',

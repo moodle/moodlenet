@@ -8,7 +8,7 @@ import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { PrimaryButton } from '../../ui/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../ui/atoms/Searchbox/Searchbox'
 import { TertiaryButton } from '../../ui/atoms/TertiaryButton/TertiaryButton'
-import { Trans } from 'react-i18next'
+import { Trans } from 'next-i18next'
 import { Bookmarks, DisplaySettings, ExitToApp, Settings } from '@mui/icons-material'
 import ArrowsIcon from '../../ui/lib/assets/icons/arrows.svg'
 // FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage

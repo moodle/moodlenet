@@ -1,5 +1,5 @@
 import { sitepaths } from '../../common/utils/sitepaths'
-import { getMod } from '../session-access'
+import { priAccess } from '../session-access'
 
 export async function srvSiteUrls() {
   const {
@@ -8,7 +8,7 @@ export async function srvSiteUrls() {
         v1_0: { pri: app },
       },
     },
-  } = getMod()
+  } = priAccess()
 
   const {
     nextjs: {

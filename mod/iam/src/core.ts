@@ -60,7 +60,7 @@ export function core(): core_factory {
                   )
                   mySec.db.deactivateUser({
                     userId,
-                    reason: { v1_0: 'adminRequest', reason },
+                    reason: { type: 'adminRequest', reason ,v:'1_0'},
                     anonymize,
                   })
                 },
@@ -86,7 +86,8 @@ export function core(): core_factory {
                   const confirmEmailSession = await mySec.crypto.encryptTokenData({
                     expiresIn: tokenExpireTime.signupEmailVerification,
                     data: {
-                      v1_0: 'signupRequestEmailVerification',
+                      v: '1_0',
+                      type: 'signupRequestEmailVerification',
                       redirectUrl,
                       displayName: signupForm.displayName,
                       email: signupForm.email,
@@ -125,7 +126,7 @@ export function core(): core_factory {
                     token: signupEmailVerificationToken,
                   })
 
-                  if (!(verified && tokenData.v1_0 === 'signupRequestEmailVerification')) {
+                  if (!(verified && tokenData.type === 'signupRequestEmailVerification')) {
                     return [false, { reason: 'invalidToken' }]
                   }
 
@@ -196,7 +197,8 @@ export function core(): core_factory {
                   const selfDeletionConfirmationSession = await mySec.crypto.encryptTokenData({
                     expiresIn: userSelfDeletion.userSelfDeletionRequest,
                     data: {
-                      v1_0: 'selfDeletionRequestConfirm',
+                      v: '1_0',
+                      type: 'selfDeletionRequestConfirm',
                       redirectUrl,
                       userId: session.user.id,
                     },
@@ -227,7 +229,7 @@ export function core(): core_factory {
                     token: selfDeletionConfirmationToken,
                   })
 
-                  if (!(verified && tokenData.v1_0 === 'selfDeletionRequestConfirm')) {
+                  if (!(verified && tokenData.type === 'selfDeletionRequestConfirm')) {
                     return [false, { reason: 'invalidToken' }]
                   }
 
@@ -238,17 +240,21 @@ export function core(): core_factory {
 
                   const [deactivated] = await mySec.db.deactivateUser({
                     anonymize: true,
-                    reason: { v1_0: 'userSelfDeletionRequest', reason },
+                    reason: {
+                      v: '1_0',
+                      type: 'userSelfDeletionRequest',
+                      reason,
+                    },
                     userId: tokenData.userId,
                   })
                   return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
                 },
-                async resetPassword({ resetPasswordForm: { newPassword }, resetPasswordToken }) {
+                async resetPassword({ resetPasswordForm: { newPassword, token } }) {
                   const [verified, tokenData] = await mySec.crypto.decryptTokenData({
-                    token: resetPasswordToken,
+                    token,
                   })
 
-                  if (!(verified && tokenData.v1_0 === 'resetPasswordRequest')) {
+                  if (!(verified && tokenData.type === 'resetPasswordRequest')) {
                     return [false, { reason: 'invalidToken' }]
                   }
                   const [found, dbUser] = await mySec.db.getUserByEmail({ email: tokenData.email })
@@ -279,7 +285,8 @@ export function core(): core_factory {
                   const resetPasswordConfirmationSession = await mySec.crypto.encryptTokenData({
                     expiresIn: userSelfDeletion.resetPasswordRequest,
                     data: {
-                      v1_0: 'resetPasswordRequest',
+                      v: '1_0',
+                      type: 'resetPasswordRequest',
                       redirectUrl,
                       email: user.contacts.email,
                     },

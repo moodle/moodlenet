@@ -1,5 +1,6 @@
 import type { d_u, date_time_string, time_duration_string } from '@moodle/lib-types'
 import type { UserData } from './user'
+import { v1_0 } from './configs'
 
 export interface DbUser extends UserData {
   passwordHash: user_password_hash
@@ -16,14 +17,15 @@ export interface DbUser extends UserData {
       }
 }
 
-export type user_deactivation_reason = d_u<
-  {
-    inactivityPolicies: { notLoggedInFor: time_duration_string }
-    userSelfDeletionRequest: { reason: string }
-    adminRequest: { reason: string }
-  },
-  'v1_0'
->
+export type user_deactivation_reason = v1_0 &
+  d_u<
+    {
+      inactivityPolicies: { notLoggedInFor: time_duration_string }
+      userSelfDeletionRequest: { reason: string }
+      adminRequest: { reason: string }
+    },
+    'type'
+  >
 
 export type user_plain_password = string
 export type user_password_hash = string

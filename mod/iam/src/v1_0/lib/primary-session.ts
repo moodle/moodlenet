@@ -23,7 +23,7 @@ export async function getUserSession(sessionToken: session_token, worker: concre
     token: sessionToken,
   })
   const user_session =
-    valid && sessionResp.v1_0 === 'userSession'
+    valid && sessionResp.type === 'userSession'
       ? ({
           type: 'authenticated',
           user: sessionResp.user,
@@ -104,7 +104,8 @@ export async function generateSessionForUserData(
   } = await mySec.db.getConfigs()
   const session = await mySec.crypto.encryptTokenData({
     data: {
-      v1_0: 'userSession',
+      v: '1_0',
+      type: 'userSession',
       user,
     },
     expiresIn: tokenExpireTime.userSession,

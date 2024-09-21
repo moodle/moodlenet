@@ -1,4 +1,4 @@
-import { getMod } from '../../../lib/server/session-access'
+import { priAccess } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotItem } from '../../../lib/server/utils/slots'
 import { LoginCard, LoginCardProps } from './login.client'
 import './login.style.scss'
@@ -10,7 +10,7 @@ export default async function LoginLayout(props: layoutPropsWithChildren) {
         v1_0: { pri: app },
       },
     },
-  } = getMod()
+  } = priAccess()
   const {
     nextjs: {
       layouts: {

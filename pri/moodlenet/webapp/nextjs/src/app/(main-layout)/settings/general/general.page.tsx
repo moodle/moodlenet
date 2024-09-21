@@ -1,4 +1,4 @@
-import { getMod } from '../../../../lib/server/session-access'
+import { priAccess } from '../../../../lib/server/session-access'
 import { GeneralSettingsClient } from './general.client'
 
 export default async function GeneralPage() {
@@ -8,7 +8,7 @@ export default async function GeneralPage() {
         v1_0: { pri },
       },
     },
-  } = getMod()
+  } = priAccess()
   const { iam } = await pri.configs.read()
 
   return (

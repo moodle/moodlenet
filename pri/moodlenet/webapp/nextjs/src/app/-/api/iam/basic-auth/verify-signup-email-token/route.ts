@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { getMod } from '../../../../../../lib/server/session-access'
+import { priAccess } from '../../../../../../lib/server/session-access'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { setAuthTokenCookie } from '../../../../../../lib/server/auth'
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
         },
       },
     },
-  } = getMod()
+  } = priAccess()
   const [ok, response] = await createNewUserByEmailVerificationToken({
     signupEmailVerificationToken,
   })

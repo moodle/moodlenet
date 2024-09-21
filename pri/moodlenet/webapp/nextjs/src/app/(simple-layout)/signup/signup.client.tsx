@@ -3,7 +3,7 @@
 import CallMadeIcon from '@mui/icons-material/CallMade'
 import Link from 'next/link'
 import { useState, type CSSProperties } from 'react'
-import { Trans } from 'react-i18next'
+import { Trans } from 'next-i18next'
 import { clientSlotItem } from '../../../lib/common/types'
 import { sitepaths } from '../../../lib/common/utils/sitepaths'
 import { Card } from '../../../ui/atoms/Card/Card'

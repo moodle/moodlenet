@@ -1,4 +1,4 @@
-import { getMod } from '../../../../lib/server/session-access'
+import { priAccess } from '../../../../lib/server/session-access'
 import { ResetPasswordClient } from './reset.client'
 
 export default async function ResetPage({
@@ -8,12 +8,9 @@ export default async function ResetPage({
 }) {
   const resetPasswordToken = searchParams?.token
   if (!resetPasswordToken || Array.isArray(resetPasswordToken)) {
-    return new Response(`missing required token`, {
-      status: 400,
-    })
+    return 'invalid token'
   }
-  const iam_v1_0_pri = getMod().moodle.iam.v1_0.pri
-  const { iam } = await iam_v1_0_pri.configs.read()
+  const { iam } = await priAccess().moodle.iam.v1_0.pri.configs.read()
 
   return (
     <ResetPasswordClient

@@ -1,5 +1,5 @@
 'use server'
-import { getMod } from '../../lib/server/session-access'
+import { priAccess } from '../../lib/server/session-access'
 import { srvSiteUrls } from '../../lib/server/utils/site-urls.server'
 import HeaderLogo from '../../ui/organisms/Header/HeaderLogo/HeaderLogo'
 
@@ -10,7 +10,7 @@ export async function LayoutHeaderLogo() {
         v1_0: { pri: net },
       },
     },
-  } = getMod()
+  } = priAccess()
 
   const {
     configs: {

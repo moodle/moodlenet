@@ -9,11 +9,14 @@ import { headers } from 'next/headers'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'
 import { getAuthTokenCookie } from './auth'
+import i18next from 'i18next'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
-const MOODLE_NET_NEXTJS_APP_NAME = process.env.MOODLE_NET_NEXTJS_APP_NAME
+const MOODLE_NET_NEXTJS_APP_NAME = process.env.MOODLE_NET_NEXTJS_APP_NAME ?? 'moodlenet-nextjs'
+
 const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:9000'
-export function getMod(): Modules {
+
+export function priAccess(): Modules {
   const trnspClient = http_bind.client()
   const primarySession = getPrimarySession()
   const ap = createAcccessProxy({
@@ -62,7 +65,7 @@ const guest_session: user_session = {
 export async function getUserSession() {
   const primarySession = getPrimarySession()
   const userSession = primarySession.sessionToken
-    ? await getMod()
+    ? await priAccess()
         .moodle.iam.v1_0.pri.session.getUserSession({
           sessionToken: primarySession.sessionToken,
         })
@@ -72,6 +75,12 @@ export async function getUserSession() {
 }
 
 function getPrimarySession() {
+  i18next.init({
+    // ns: ['common', 'moduleA'],
+    // defaultNS: 'moduleA',
+    returnEmptyString: false,
+  })
+
   const _headers = headers()
   const xHost = _headers.get('x-host')
   // const xPort = _headers.get('x-port')
@@ -86,7 +95,7 @@ function getPrimarySession() {
     type: 'user',
     sessionToken: getAuthTokenCookie(),
     app: {
-      name: MOODLE_NET_NEXTJS_APP_NAME ?? 'moodlenet-nextjs',
+      name: MOODLE_NET_NEXTJS_APP_NAME,
       pkg: 'moodlenet-nextjs',
       version: '0.1',
     },

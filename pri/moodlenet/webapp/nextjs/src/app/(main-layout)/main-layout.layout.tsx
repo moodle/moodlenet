@@ -15,7 +15,7 @@ import {
   UserSettingsLink,
 } from './main-layout.client'
 
-import { getMod, getUserSession } from '../../lib/server/session-access'
+import { priAccess, getUserSession } from '../../lib/server/session-access'
 import './main-layout.style.scss'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { logout } from '../actions/session'
@@ -29,7 +29,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
         v1_0: { pri: priApp },
       },
     },
-  } = getMod()
+  } = priAccess()
   const {
     nextjs: {
       layouts: {

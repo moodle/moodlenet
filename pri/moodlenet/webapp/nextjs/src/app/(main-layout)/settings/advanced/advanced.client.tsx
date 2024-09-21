@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { Trans } from 'react-i18next'
+import { Trans } from 'next-i18next'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import { Modal } from '../../../../ui/atoms/Modal/Modal'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'

@@ -1,29 +1,10 @@
 'use server'
 
-import { getMod } from '../../../../lib/server/session-access'
+import { priAccess } from '../../../../lib/server/session-access'
 import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
 
 export async function requestAccountSelfDeletion() {
-  const {
-    moodle: {
-      iam: {
-        v1_0: {
-          pri: {
-            myAccount: { selfDeletionRequest },
-          },
-        },
-      },
-    },
-  } = getMod()
-  const {
-    full: {
-      apis: {
-        iam: {
-          deleteMyAccountRequest: { confirm },
-        },
-      },
-    },
-  } = await srvSiteUrls()
-  selfDeletionRequest({ redirectUrl: confirm })
+  const redirectUrl = (await srvSiteUrls()).full.apis.iam.deleteMyAccountRequest.confirm
+  priAccess().moodle.iam.v1_0.pri.myAccount.selfDeletionRequest({ redirectUrl })
   return true
 }

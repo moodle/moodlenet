@@ -1,21 +1,31 @@
 'use server'
 
-import { resetPasswordForm } from '@moodle/mod-iam/v1_0/types'
-import { getMod } from '../../../../lib/server/session-access'
-import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
-import { domain, reply_of } from '@moodle/lib-ddd'
+import { priAccess } from '../../../../lib/server/session-access'
+import { actionClient } from '../../../../lib/server/safe-action'
+import { getPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
+import { returnValidationErrors } from 'next-safe-action'
+import { t } from 'i18next'
 
-export async function resetMyPassword({
-  resetPasswordToken,
-  resetPasswordForm,
-}: {
-  resetPasswordForm: resetPasswordForm
-  resetPasswordToken: string
-}): Promise<reply_of<typeof domain.moodle.iam.v1_0.pri.myAccount.resetPassword>> {
-  const redirectUrl = await (await srvSiteUrls()).full.pages.landing
-  const reply = await getMod().moodle.iam.v1_0.pri.myAccount.resetPassword({
-    resetPasswordToken,
-    resetPasswordForm,
-  })
-  return reply
+export async function getResetMyPasswordSchema() {
+  const {
+    iam: { primaryMsgSchemaConfigs },
+  } = await priAccess().moodle.iam.v1_0.pri.configs.read()
+  const { resetPasswordSchema } = getPrimarySchemas(primaryMsgSchemaConfigs)
+  return resetPasswordSchema
 }
+export const resetMyPasswordAction = actionClient
+  .schema(getResetMyPasswordSchema)
+  .action(async ({ parsedInput: resetPasswordForm }) => {
+    const [ok, resp] = await priAccess().moodle.iam.v1_0.pri.myAccount.resetPassword({
+      resetPasswordForm,
+    })
+    if (!ok) {
+      returnValidationErrors(getResetMyPasswordSchema, {
+        _errors: [
+          resp.reason === 'invalidToken' || resp.reason === 'userNotFound'
+            ? t('The password reset link is invalid. Please request a new one.')
+            : t('An error occurred while resetting your password. Please try again.'),
+        ],
+      })
+    }
+  })

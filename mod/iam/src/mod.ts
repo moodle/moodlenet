@@ -100,7 +100,6 @@ export type moodle_iam_mod = mod<{
 
         resetPassword(_: {
           resetPasswordForm: v1_0.resetPasswordForm
-          resetPasswordToken: string
         }): Promise<
           ok_ko<
             void,

@@ -1,29 +1,31 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { getMod } from '../../../../lib/server/session-access'
+import { priAccess } from '../../../../lib/server/session-access'
 import { setAuthTokenCookie } from '../../../../lib/server/auth'
 import { revalidatePath } from 'next/cache'
-import { loginForm } from '@moodle/mod-iam/v1_0/types'
+import { getPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
+import { actionClient } from '../../../../lib/server/safe-action'
+import { returnValidationErrors } from 'next-safe-action'
+import { t } from 'i18next'
 
-export type loginResponse = { loginFailed: true }
-export async function login(loginForm: loginForm): Promise<loginResponse> {
+export async function getLoginSchema() {
   const {
-    moodle: {
-      iam: {
-        v1_0: {
-          pri: {
-            myAccount: { login },
-          },
-        },
-      },
-    },
-  } = getMod()
-  const [loginSuccess, loginResponse] = await login({ loginForm })
-  if (!loginSuccess) {
-    return { loginFailed: true }
-  }
-  setAuthTokenCookie(loginResponse.session)
-  revalidatePath('/', 'layout')
-  redirect('/')
+    iam: { primaryMsgSchemaConfigs },
+  } = await priAccess().moodle.iam.v1_0.pri.configs.read()
+  const { loginSchema } = getPrimarySchemas(primaryMsgSchemaConfigs)
+  return loginSchema
 }
+export const loginAction = actionClient
+  .schema(getLoginSchema)
+  .action(async ({ parsedInput: loginForm }) => {
+    const [loginSuccess, loginResponse] = await priAccess().moodle.iam.v1_0.pri.myAccount.login({
+      loginForm,
+    })
+    if (!loginSuccess) {
+      returnValidationErrors(getLoginSchema, { _errors: [t('Incorrect email or password')] })
+    }
+    setAuthTokenCookie(loginResponse.session)
+    revalidatePath('/', 'layout')
+    redirect('/')
+  })
