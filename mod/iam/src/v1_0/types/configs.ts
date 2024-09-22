@@ -1,6 +1,6 @@
 import type { time_duration_string } from '@moodle/lib-types'
 import { PrimaryMsgSchemaConfigs } from './primary-schemas'
-import type { user_role } from './user-session'
+import type { user_role } from './user'
 
 export type v1_0 = { v: '1_0' }
 export interface Configs {

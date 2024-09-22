@@ -1,4 +1,3 @@
-export * from './dbUser'
 export * from './encrypted'
 export * from './primary-schemas'
 export * from './primary-session'

@@ -1,5 +1,4 @@
 export * from './configs'
-export * from './db-user'
 export * from './encrypted'
 export * from './primary-schemas'
 export * from './user'

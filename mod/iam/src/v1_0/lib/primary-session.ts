@@ -1,9 +1,8 @@
 import { concrete, Error4xx, primary_session, session_token } from '@moodle/lib-ddd'
 import { d_u, d_u__d, ok_ko } from '@moodle/lib-types'
 import assert from 'assert'
-import { session_obj, user_id, user_role, user_session, UserData } from '../types'
-import { dbUser2UserData } from './dbUser'
-import { hasUserSessionRole } from './user-session'
+import { session_obj, sessionUserData, user_id, user_role, user_session } from '../types'
+import { hasUserSessionRole, userRecord2SessionUserData } from './user-session'
 
 // System Session
 export function isSystemSession(
@@ -86,16 +85,16 @@ export async function generateSessionForUserId(
   worker: concrete<'sec'>,
 ): Promise<ok_ko<session_obj, d_u<{ userNotFound: unknown }, 'reason'>>> {
   const mySec = worker.moodle.iam.v1_0.sec
-  const [, dbUser] = await mySec.db.getUserById({ userId })
-  if (!dbUser) {
+  const [, userRecord] = await mySec.db.getUserById({ userId })
+  if (!userRecord) {
     return [false, { reason: 'userNotFound' }]
   }
-  const session = await generateSessionForUserData(dbUser2UserData(dbUser), worker)
+  const session = await generateSessionForUserData(userRecord2SessionUserData(userRecord), worker)
   return [true, session]
 }
 
 export async function generateSessionForUserData(
-  user: UserData,
+  user: sessionUserData,
   worker: concrete<'sec'>,
 ): Promise<session_obj> {
   const mySec = worker.moodle.iam.v1_0.sec

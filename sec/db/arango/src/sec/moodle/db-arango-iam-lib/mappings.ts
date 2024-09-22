@@ -1,9 +1,10 @@
-import { DbUser } from '@moodle/mod-iam/v1_0/types'
+import { _unchecked_brand } from '@moodle/lib-types'
+import { userRecord } from '@moodle/mod-iam/v1_0/types'
 import { Document } from 'arangojs/documents'
-import { IamUserDocument } from './types'
+import { userDocument } from './types'
 
-export function iamUserDoc2dbUser(doc: Document<IamUserDocument>): DbUser {
-  return {
+export function iamUserDoc2userRecord(doc: Document<userDocument>): userRecord {
+  return _unchecked_brand<userRecord>({
     id: doc._key,
     createdAt: doc.createdAt,
     roles: doc.roles,
@@ -12,18 +13,20 @@ export function iamUserDoc2dbUser(doc: Document<IamUserDocument>): DbUser {
     deactivated: doc.deactivated,
     displayName: doc.displayName,
     passwordHash: doc.passwordHash,
-  }
+  })
 }
 
-export function dbUser2iamUserDoc(dbUser: DbUser): Omit<Document<IamUserDocument>, '_id' | '_rev'> {
+export function userRecord2iamUserDoc(
+  userRecord: userRecord,
+): Omit<Document<userDocument>, '_id' | '_rev'> {
   return {
-    _key: dbUser.id,
-    createdAt: dbUser.createdAt,
-    roles: dbUser.roles,
-    activityStatus: dbUser.activityStatus,
-    contacts: dbUser.contacts,
-    deactivated: dbUser.deactivated,
-    displayName: dbUser.displayName,
-    passwordHash: dbUser.passwordHash,
+    _key: userRecord.id,
+    createdAt: userRecord.createdAt,
+    roles: userRecord.roles,
+    activityStatus: userRecord.activityStatus,
+    contacts: userRecord.contacts,
+    deactivated: userRecord.deactivated,
+    displayName: userRecord.displayName,
+    passwordHash: userRecord.passwordHash,
   }
 }

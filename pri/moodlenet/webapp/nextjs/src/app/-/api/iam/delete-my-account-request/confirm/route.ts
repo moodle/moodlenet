@@ -3,11 +3,14 @@ import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 import { setAuthTokenCookie } from '../../../../../../lib/server/auth'
 import { priAccess } from '../../../../../../lib/server/session-access'
+import { encrypted_token_schema } from '@moodle/lib-types'
 
 export async function GET(req: NextRequest) {
-  const selfDeletionConfirmationToken = await req.nextUrl.searchParams.get('token')
-  if (!selfDeletionConfirmationToken) {
-    return new Response(`missing required token`, {
+  const { success, data: selfDeletionConfirmationToken } = encrypted_token_schema.safeParse(
+    req.nextUrl.searchParams.get('token'),
+  )
+  if (!success) {
+    return new Response(`invalid token`, {
       status: 400,
     })
   }

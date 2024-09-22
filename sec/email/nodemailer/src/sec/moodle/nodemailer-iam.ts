@@ -18,11 +18,10 @@ export function iam(env: NodemailerSecEnv): sec_factory {
           v1_0: {
             sec: {
               email: {
-                async sendNow({ reactBody: body, subject, to, sender }) {
+                async sendNow({ reactBody: body, subject, to }) {
                   send({
                     env,
                     body: { contentType: 'react', element: body },
-                    sender,
                     to,
                     subject,
                   })

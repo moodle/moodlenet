@@ -5,9 +5,9 @@ import type {
   d_u__d,
   date_time_string,
   email_address,
+  encrypted_token,
   named_or_email_address,
   ok_ko,
-  one_or_more_named_or_email_addresses,
   time_duration_string,
   url,
 } from '@moodle/lib-types'
@@ -43,7 +43,7 @@ export type moodle_iam_mod = mod<{
           userId: v1_0.user_id
           roles: v1_0.user_role[]
         }): Promise<ok_ko<void, void>>
-        searchUsers(_: { textSearch: string }): Promise<{ users: v1_0.DbUser[] }>
+        searchUsers(_: { textSearch: string }): Promise<{ users: v1_0.userRecord[] }>
         deactivateUser(_: {
           userId: v1_0.user_id
           reason: string
@@ -58,7 +58,7 @@ export type moodle_iam_mod = mod<{
         }): Promise<ok_ko<void, d_u<{ userWithSameEmailExists: unknown }, 'reason'>>>
 
         createNewUserByEmailVerificationToken(_: {
-          signupEmailVerificationToken: string
+          signupEmailVerificationToken: encrypted_token
         }): Promise<
           ok_ko<
             { userId: v1_0.user_id },
@@ -84,7 +84,7 @@ export type moodle_iam_mod = mod<{
         selfDeletionRequest(_: { redirectUrl: url }): Promise<void>
 
         confirmSelfDeletionRequest(_: {
-          selfDeletionConfirmationToken: string
+          selfDeletionConfirmationToken: encrypted_token
           reason: string
         }): Promise<
           ok_ko<
@@ -140,8 +140,7 @@ export type moodle_iam_mod = mod<{
 
       email: {
         sendNow(_: {
-          to: one_or_more_named_or_email_addresses
-          sender: named_or_email_address
+          to: named_or_email_address
           subject: string
           reactBody: ReactElement
         }): Promise<void>
@@ -165,12 +164,12 @@ export type moodle_iam_mod = mod<{
         getActiveUsersNotLoggedInFor(_: {
           time: time_duration_string
           inactiveNotificationSent: boolean
-        }): Promise<{ inactiveUsers: v1_0.DbUser[] }>
+        }): Promise<{ inactiveUsers: v1_0.userRecord[] }>
 
-        getUserById(_: { userId: v1_0.user_id }): Promise<ok_ko<v1_0.DbUser, void>>
-        getUserByEmail(_: { email: email_address }): Promise<ok_ko<v1_0.DbUser, void>>
+        getUserById(_: { userId: v1_0.user_id }): Promise<ok_ko<v1_0.userRecord, void>>
+        getUserByEmail(_: { email: email_address }): Promise<ok_ko<v1_0.userRecord, void>>
 
-        saveNewUser(_: { newUser: v1_0.DbUser }): Promise<ok_ko<v1_0.user_id, void>>
+        saveNewUser(_: { newUser: v1_0.userRecord }): Promise<ok_ko<v1_0.user_id, void>>
 
         changeUserRoles(_: {
           userId: v1_0.user_id
@@ -180,17 +179,17 @@ export type moodle_iam_mod = mod<{
         findUsersByText(_: {
           text: string
           includeDeactivated?: boolean
-        }): Promise<{ users: v1_0.DbUser[] }>
+        }): Promise<{ users: v1_0.userRecord[] }>
       }
     }
     evt: {
       userBase: {
         userDeactivated(_: {
-          user: v1_0.UserData
+          user: v1_0.userRecord
           reason: v1_0.user_deactivation_reason
           anonymized: boolean
         }): unknown
-        newUserCreated(_: { user: v1_0.UserData }): unknown
+        newUserCreated(_: { user: v1_0.userRecord }): unknown
       }
       userSecurity: {
         userPasswordChanged(_: { userId: v1_0.user_id }): unknown

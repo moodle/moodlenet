@@ -2,6 +2,7 @@ import { Config as ArangoConnectionConfig } from 'arangojs/connection'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { Env, EnvProvider, EnvProviderResult } from './types'
+import { email_address_schema } from '@moodle/lib-types'
 // import * as argon2 from 'argon2'
 
 let envProviderResult: Promise<EnvProviderResult>
@@ -11,6 +12,9 @@ const generateEnv: EnvProvider = async ({ migrate }) => {
       const MOODLE_CRYPTO_KEY_FILES_DIR = process.env.MOODLE_CRYPTO_KEY_FILES_DIR
       const MOODLE_ARANGO_DB_URL = process.env.MOODLE_ARANGO_DB_URL
       const MOODLE_NODEMAILER_TRANSPORT_URL = process.env.MOODLE_NODEMAILER_TRANSPORT_URL
+      const MOODLE_NODEMAILER_SENDER_EMAIL_ADDRESS = email_address_schema.parse(
+        process.env.MOODLE_NODEMAILER_SENDER_EMAIL_ADDRESS,
+      )
       if (
         !(MOODLE_CRYPTO_KEY_FILES_DIR && MOODLE_ARANGO_DB_URL && MOODLE_NODEMAILER_TRANSPORT_URL)
       ) {
@@ -21,7 +25,9 @@ const generateEnv: EnvProvider = async ({ migrate }) => {
         })
         throw new Error('all env vars must be properly set')
       }
-      const MOODLE_INITIAL_ADMIN_EMAIL = process.env.MOODLE_INITIAL_ADMIN_EMAIL
+      const MOODLE_INITIAL_ADMIN_EMAIL = email_address_schema.parse(
+        process.env.MOODLE_INITIAL_ADMIN_EMAIL,
+      )
 
       const privateKeyStr = readFileSync(join(MOODLE_CRYPTO_KEY_FILES_DIR, 'private.key'), 'utf8')
       const publicKeyStr = readFileSync(join(MOODLE_CRYPTO_KEY_FILES_DIR, 'public.key'), 'utf8')
@@ -65,6 +71,7 @@ const generateEnv: EnvProvider = async ({ migrate }) => {
         },
         nodemailer: {
           nodemailerTransport: MOODLE_NODEMAILER_TRANSPORT_URL,
+          sender: MOODLE_NODEMAILER_SENDER_EMAIL_ADDRESS,
           logWarn: console.warn,
         },
       }

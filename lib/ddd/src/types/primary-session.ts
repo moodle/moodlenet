@@ -1,8 +1,8 @@
-import { d_u, map } from '@moodle/lib-types'
+import { d_u, encrypted_token, map } from '@moodle/lib-types'
 import { mod_id } from './mod'
 import { platform } from './platform'
 
-export type session_token = string
+export type session_token = encrypted_token
 
 export interface UserPrimarySession extends PriSessionBase {
   connection: d_u<Connections, 'proto'>

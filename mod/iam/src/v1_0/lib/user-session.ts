@@ -1,5 +1,6 @@
 import { d_u__d } from '@moodle/lib-types'
-import { user_role, user_session } from '../types/user-session'
+import { sessionUserData, user_session } from '../types/user-session'
+import { user_role, userRecord } from '../types'
 
 export function hasUserSessionRole(
   user_session: user_session,
@@ -26,3 +27,13 @@ export function isGuestUserSession(
   return user_session.type === 'guest'
 }
 //
+export function userRecord2SessionUserData(
+  userRecord: Pick<userRecord, keyof sessionUserData>,
+): sessionUserData {
+  return {
+    id: userRecord.id,
+    displayName: userRecord.displayName,
+    roles: userRecord.roles,
+    contacts: userRecord.contacts,
+  }
+}

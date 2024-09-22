@@ -6,14 +6,13 @@ import {
   ENCRYPTED_TOKEN_PAYLOAD_PROP,
 } from '@moodle/lib-types'
 import { jwtDecode, JwtPayload } from 'jwt-decode'
-import { UserData } from '../types/user'
-import { iamTokenData } from '../types'
+import { iamTokenData, sessionUserData } from '../types'
 
 export function noValidationParseUserSessionToken(sessionToken: session_token): ok_ko<
   {
     expired: boolean
     expires: { inSecs: number; date: Date }
-    userData: UserData
+    userData: sessionUserData
   },
   void
 > {

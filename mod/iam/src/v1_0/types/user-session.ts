@@ -1,8 +1,6 @@
 import type { session_token } from '@moodle/lib-ddd'
 import type { d_u, date_time_string } from '@moodle/lib-types'
-import type { UserData } from './user'
-export type user_id = string
-export type user_role = 'admin' | 'publisher'
+import { userRecord } from './user'
 
 export type user_session = d_u<UserSessionTypes, 'type'>
 export type session_obj = {
@@ -17,6 +15,9 @@ interface UserSessionTypes {
 
 export type GuestSession = unknown
 
+export type sessionUserData = Pick<userRecord, 'id' | 'roles' | 'displayName' | 'contacts'>
+
 export interface AuthenticatedSession {
-  user: UserData
+  user: sessionUserData
 }
+

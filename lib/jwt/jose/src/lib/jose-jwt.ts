@@ -1,4 +1,4 @@
-import { time_duration_string } from '@moodle/lib-types'
+import { date_time_string, encrypted_token_schema, time_duration_string } from '@moodle/lib-types'
 import * as jose from 'jose'
 import parseDuration from 'parse-duration'
 import { joseEnv } from './types'
@@ -106,9 +106,9 @@ export async function sign<payload>({
   if (stdClaims.notBefore !== undefined) {
     signingJwt.setNotBefore(stdClaims.notBefore)
   }
-  const token = await signingJwt.sign(keyLikes.private, opts)
+  const token = encrypted_token_schema.parse(await signingJwt.sign(keyLikes.private, opts))
   const expiresInMs = parseDuration(`${expiresIn}`, 'ms') ?? 0
-  const expires = new Date(new Date().getTime() + expiresInMs).toISOString()
+  const expires = date_time_string(new Date(new Date().getTime() + expiresInMs))
   return { token, expires }
 }
 

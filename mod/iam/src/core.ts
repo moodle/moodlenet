@@ -10,7 +10,7 @@ import * as lib_moodle_org from '@moodle/mod-org/v1_0/lib'
 import * as v1_0_lib from './v1_0/lib'
 
 export function core(): core_factory {
-  return ({ primarySession, worker }) => {
+  return ({ primarySession, worker, forward }) => {
     const mySec = worker.moodle.iam.v1_0.sec
     const core_impl: core_impl = {
       moodle: {
@@ -60,16 +60,18 @@ export function core(): core_factory {
                   )
                   mySec.db.deactivateUser({
                     userId,
-                    reason: { type: 'adminRequest', reason ,v:'1_0'},
+                    reason: { type: 'adminRequest', reason, v: '1_0' },
                     anonymize,
                   })
                 },
               },
               signup: {
                 async request({ signupForm, redirectUrl }) {
+                  const schemas = await v1_0_lib.fetchPrimarySchemas(forward)
+                  const { displayName, email, password } = schemas.signupSchema.parse(signupForm)
                   v1_0_lib.assertGuestSession(primarySession)
                   const [found] = await mySec.db.getUserByEmail({
-                    email: signupForm.email,
+                    email,
                   })
                   if (found) {
                     return [false, { reason: 'userWithSameEmailExists' }]
@@ -80,7 +82,7 @@ export function core(): core_factory {
                   } = await mySec.db.getConfigs()
 
                   const { passwordHash } = await mySec.crypto.hashPassword({
-                    plainPassword: signupForm.password,
+                    plainPassword: password,
                   })
 
                   const confirmEmailSession = await mySec.crypto.encryptTokenData({
@@ -89,8 +91,8 @@ export function core(): core_factory {
                       v: '1_0',
                       type: 'signupRequestEmailVerification',
                       redirectUrl,
-                      displayName: signupForm.displayName,
-                      email: signupForm.email,
+                      displayName,
+                      email,
                       passwordHash,
                     },
                   })
@@ -108,7 +110,6 @@ export function core(): core_factory {
                   })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: lib_moodle_org.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
                     to: signupForm.email,
                   })
@@ -140,7 +141,7 @@ export function core(): core_factory {
 
                   const now = date_time_string('now')
                   const [newUserCreated, userId] = await mySec.db.saveNewUser({
-                    newUser: await v1_0_lib.createNewDbUserData({
+                    newUser: await v1_0_lib.createNewUserRecordData({
                       createdAt: now,
                       roles: newlyCreatedUserRoles,
                       displayName: tokenData.displayName,
@@ -155,22 +156,22 @@ export function core(): core_factory {
 
               myAccount: {
                 async login({ loginForm }) {
-                  const [found, dbUser] = await mySec.db.getUserByEmail({
+                  const [found, userRecord] = await mySec.db.getUserByEmail({
                     email: loginForm.email,
                   })
-                  if (!(found && !dbUser.deactivated)) {
+                  if (!(found && !userRecord.deactivated)) {
                     return [false, _void]
                   }
                   const [verified] = await mySec.crypto.verifyUserPasswordHash({
                     plainPassword: loginForm.password,
-                    passwordHash: dbUser.passwordHash,
+                    passwordHash: userRecord.passwordHash,
                   })
 
                   if (!verified) {
                     return [false, _void]
                   }
 
-                  const user = v1_0_lib.dbUser2UserData(dbUser)
+                  const user = v1_0_lib.userRecord2SessionUserData(userRecord)
                   const session = await v1_0_lib.generateSessionForUserData(user, worker)
                   return [
                     true,
@@ -217,7 +218,6 @@ export function core(): core_factory {
                   })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: lib_moodle_org.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
                     to: v1_0_lib.getUserNamedEmailAddress(session.user),
                   })
@@ -257,7 +257,9 @@ export function core(): core_factory {
                   if (!(verified && tokenData.type === 'resetPasswordRequest')) {
                     return [false, { reason: 'invalidToken' }]
                   }
-                  const [found, dbUser] = await mySec.db.getUserByEmail({ email: tokenData.email })
+                  const [found, userRecord] = await mySec.db.getUserByEmail({
+                    email: tokenData.email,
+                  })
                   if (!found) {
                     return [false, { reason: 'userNotFound' }]
                   }
@@ -266,7 +268,7 @@ export function core(): core_factory {
                   })
                   const [pwdChanged] = await mySec.db.changeUserPassword({
                     newPasswordHash: passwordHash,
-                    userId: dbUser.id,
+                    userId: userRecord.id,
                   })
                   return pwdChanged ? [true, _void] : [false, { reason: 'unknown' }]
                 },
@@ -304,7 +306,6 @@ export function core(): core_factory {
                   })
                   await mySec.email.sendNow({
                     reactBody,
-                    sender: lib_moodle_org.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
                     subject: content.subject,
                     to: v1_0_lib.getUserNamedEmailAddress(user),
                   })

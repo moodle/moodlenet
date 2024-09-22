@@ -10,13 +10,14 @@ import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import Link from 'next/link'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { encrypted_token } from '@moodle/lib-types'
 
 export function ResetPasswordClient({
   resetPasswordToken,
   primaryMsgSchemaConfigs,
 }: {
   primaryMsgSchemaConfigs: PrimaryMsgSchemaConfigs
-  resetPasswordToken: string
+  resetPasswordToken: encrypted_token
 }) {
   const { t } = useTranslation()
   const { resetPasswordSchema } = getPrimarySchemas(primaryMsgSchemaConfigs)

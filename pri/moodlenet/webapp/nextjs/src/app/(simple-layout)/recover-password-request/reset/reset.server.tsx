@@ -2,15 +2,12 @@
 
 import { priAccess } from '../../../../lib/server/session-access'
 import { actionClient } from '../../../../lib/server/safe-action'
-import { getPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
+import { fetchPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
 import { returnValidationErrors } from 'next-safe-action'
 import { t } from 'i18next'
 
 export async function getResetMyPasswordSchema() {
-  const {
-    iam: { primaryMsgSchemaConfigs },
-  } = await priAccess().moodle.iam.v1_0.pri.configs.read()
-  const { resetPasswordSchema } = getPrimarySchemas(primaryMsgSchemaConfigs)
+  const { resetPasswordSchema } = await fetchPrimarySchemas(priAccess())
   return resetPasswordSchema
 }
 export const resetMyPasswordAction = actionClient

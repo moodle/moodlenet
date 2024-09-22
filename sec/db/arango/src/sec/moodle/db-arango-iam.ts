@@ -1,10 +1,11 @@
 import { sec_factory, sec_impl } from '@moodle/lib-ddd'
 import { _void } from '@moodle/lib-types'
-import { DbUser } from '@moodle/mod-iam/v1_0/types'
+import { user_record_brand } from '@moodle/mod-iam/v1_0/types'
 import { Document } from 'arangojs/documents'
 import { createHash } from 'node:crypto'
 import { v1_0 } from '../..'
-import { dbUser2iamUserDoc, iamUserDoc2dbUser } from './db-arango-iam-lib/mappings'
+import { userRecord2iamUserDoc, iamUserDoc2userRecord } from './db-arango-iam-lib/mappings'
+import { userDocument } from './db-arango-iam-lib/types'
 
 export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec_factory {
   return ctx => {
@@ -37,7 +38,6 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                       {
                         passwordHash: newPasswordHash,
                       },
-
                     )
                     .catch(() => null)
                   return [!!updated, _void]
@@ -66,12 +66,12 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                       coll: { user },
                     },
                   } = db_struct_v1_0
-                  const cursor = await db.query<Document<DbUser>>(
+                  const cursor = await db.query<Document<userDocument>>(
                     `FOR user IN ${user.name} FILTER user.contacts.email == @email LIMIT 1 RETURN user`,
                     { email },
                   )
                   const foundUser = await cursor.next()
-                  return foundUser ? [true, iamUserDoc2dbUser(foundUser)] : [false, _void]
+                  return foundUser ? [true, iamUserDoc2userRecord(foundUser)] : [false, _void]
                 },
                 async getUserById({ userId }) {
                   const {
@@ -81,7 +81,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                   } = db_struct_v1_0
 
                   const foundUser = await user.document({ _key: userId }, { graceful: true })
-                  return foundUser ? [true, iamUserDoc2dbUser(foundUser)] : [false, _void]
+                  return foundUser ? [true, iamUserDoc2userRecord(foundUser)] : [false, _void]
                 },
                 async saveNewUser({ newUser }) {
                   const {
@@ -89,7 +89,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                       coll: { user },
                     },
                   } = db_struct_v1_0
-                  const iamUserDoc = dbUser2iamUserDoc(newUser)
+                  const iamUserDoc = userRecord2iamUserDoc(newUser)
                   const savedUser = await user
                     .save(iamUserDoc, { overwriteMode: 'conflict' })
                     .catch(() => null)
