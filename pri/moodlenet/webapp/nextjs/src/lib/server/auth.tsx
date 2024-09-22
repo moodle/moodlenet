@@ -1,11 +1,12 @@
+import { encrypted_token_schema } from '@moodle/lib-types'
 import { session_obj } from '@moodle/mod-iam/v1_0/types'
 import { cookies } from 'next/headers'
 
 const AUTH_COOKIE = 'moodlenet-auth'
 export function getAuthTokenCookie() {
-  const cookie = cookies().get(AUTH_COOKIE)
+  const {success,data: token} = encrypted_token_schema.safeParse( cookies().get(AUTH_COOKIE)?.value)
 
-  return cookie?.value ?? null
+  return success ? token : null
 }
 export function setAuthTokenCookie(session: null | session_obj) {
   const reqCookie = session
