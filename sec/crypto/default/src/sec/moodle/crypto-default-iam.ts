@@ -68,12 +68,14 @@ export function iam({
                     : [false, _void]
                 },
                 async encryptTokenData({ data, expiresIn }) {
-                  const session = await sign<encrypted_token_payload_data<iamTokenData>>({
+                  const { expireDate, token /* , notBeforeDate */ } = await sign<
+                    encrypted_token_payload_data<iamTokenData>
+                  >({
                     joseEnv,
                     payload: { [ENCRYPTED_TOKEN_PAYLOAD_PROP]: data },
                     expiresIn /*,stdClaims:{} ,opts:{} */,
                   })
-                  return session
+                  return { expires: expireDate, token }
                 },
               },
             },

@@ -34,6 +34,7 @@
     "humanize-duration": "^3.32.1",
     "i18next": "^23.15.1",
     "interweave": "^13.1.0",
+    "iso8601-duration": "^2.1.2",
     "jose": "^5.8.0",
     "json-schema-to-zod": "^2.4.1",
     "jwt-decode": "^4.0.0",
