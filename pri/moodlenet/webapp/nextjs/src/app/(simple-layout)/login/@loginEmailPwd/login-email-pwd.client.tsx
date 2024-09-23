@@ -25,7 +25,7 @@ export default function LoginPanel({ primaryMsgSchemaConfigs }: LoginProps) {
   const loginErrorMsg = formState.errors.root?.message
   return (
     <>
-      <form>
+      <form onSubmit={handleSubmitWithAction}>
         <InputTextField
           className="email"
           placeholder={t(`Email`)}
@@ -43,14 +43,13 @@ export default function LoginPanel({ primaryMsgSchemaConfigs }: LoginProps) {
           {...register('password.__redacted__')}
         />
         {loginErrorMsg && <div className="error">{loginErrorMsg}</div>}
-        <button type="submit" style={{ display: 'none' }} />
+        <PrimaryButton disabled={formState.isSubmitting} type="submit">
+          Log in
+        </PrimaryButton>
       </form>
       <div className="bottom">
         <div className="content">
           <div className="left">
-            <PrimaryButton disabled={!formState.isValid} onClick={handleSubmitWithAction}>
-              Log in
-            </PrimaryButton>
             <Link href={recoverPasswordHref}>
               <TertiaryButton>
                 <Trans>or recover password</Trans>

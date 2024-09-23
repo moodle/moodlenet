@@ -8,7 +8,7 @@ import type {
 import { v1_0 } from './configs'
 
 export type user_role = 'admin' | 'publisher'
-interface UserRecord {
+export interface UserRecord {
   id: user_id
   createdAt: date_time_string
   roles: user_role[]
@@ -42,8 +42,7 @@ export type user_deactivation_reason = v1_0 &
 
 export const user_record_brand = Symbol('user_record')
 export type user_id = string
-export type userRecord = /* branded< */UserRecord/* , typeof user_record_brand> */
+export type userRecord = branded<UserRecord, typeof user_record_brand>
 
 export type user_plain_password = string
 export type user_password_hash = string
-// export type id_or_email = user_id | email_address

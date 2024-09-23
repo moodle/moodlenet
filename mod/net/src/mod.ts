@@ -1,5 +1,5 @@
 import { mod } from '@moodle/lib-ddd'
-import { _t } from '@moodle/lib-types'
+import { pretty } from '@moodle/lib-types'
 import * as v1_0 from './v1_0/types'
 
 declare module '@moodle/lib-ddd' {
@@ -27,4 +27,4 @@ interface MoodleNetMod {
     evt: never
   }
 }
-export type moodle_net_mod = mod<_t<MoodleNetMod>>
+export type moodle_net_mod = mod<pretty<MoodleNetMod>>

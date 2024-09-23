@@ -1,5 +1,5 @@
 import type { mod } from '@moodle/lib-ddd'
-import type { _t } from '@moodle/lib-types'
+import type { pretty } from '@moodle/lib-types'
 import * as v1_0 from './v1_0/types'
 
 export * as v1_0 from './v1_0/types'
@@ -29,4 +29,4 @@ interface MoodleOrgMod {
     evt: never
   }
 }
-export type moodle_org_mod = mod<_t<MoodleOrgMod>>
+export type moodle_org_mod = mod<pretty<MoodleOrgMod>>

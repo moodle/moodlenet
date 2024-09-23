@@ -10,8 +10,8 @@ export type TertiaryButtonProps = {
   disabled?: boolean
   children: ReactNode
   color?: 'black'
-  onClick?: (e: React.MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => void
-} & Omit<React.HTMLAttributes<HTMLElement>, 'onClick'>
+  onClick?: (e: React.MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>) => void
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'>
 
 export function TertiaryButton({
   className,
@@ -21,29 +21,29 @@ export function TertiaryButton({
   children,
   color,
   onClick,
-  ...abbrProps
+  ...buttonProps
 }: TertiaryButtonProps) {
   return (
-    <abbr
+    <button
       className={`tertiary-button ${className ?? undefined} ${disabled ? 'disabled' : ''}  ${
         abbr ? 'abbr' : ''
       } ${color ? color : ''}`}
       title={abbr}
       tabIndex={!disabled ? 0 : undefined}
-      {...abbrProps}
+      {...buttonProps}
       onClick={disabled ? undefined : onClick}
       onKeyDown={
         disabled
           ? undefined
           : e => {
               isEnterKeyEv(e) && onClick?.(e)
-              abbrProps.onKeyDown?.(e)
+              buttonProps.onKeyDown?.(e)
             }
       }
     >
       {children}
       {hiddenText && <span className="visually-hidden">{hiddenText}</span>}
-    </abbr>
+    </button>
   )
 }
 

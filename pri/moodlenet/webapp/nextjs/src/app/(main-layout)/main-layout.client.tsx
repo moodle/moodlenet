@@ -38,7 +38,7 @@ export function SignupHeaderButton() {
   } = sitepaths()
   return (
     <Link href={access.signup} className="signup-button access-button">
-      <TertiaryButton>
+      <TertiaryButton /* style={{ backgroundColor: 'transparent', border: 'none' }} */>
         <Trans>Sign up</Trans>
       </TertiaryButton>
     </Link>

@@ -12,9 +12,9 @@ export type PrimaryButtonProps = {
   onHoverColor?: '' | 'green' | 'orange' | 'red' | 'green'
   noHover?: boolean
   children?: ReactNode
-  innerRef?: React.LegacyRef<HTMLElement>
-  onClick?: (e: React.MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => void
-} & Omit<React.HTMLAttributes<HTMLElement>, 'onClick'>
+  innerRef?: React.LegacyRef<HTMLButtonElement>
+  onClick?: (e: React.MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>) => void
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'>
 
 export function PrimaryButton({
   children,
@@ -27,10 +27,10 @@ export function PrimaryButton({
   disabled,
   onClick,
   innerRef,
-  ...abbrProps
+  ...buttonProps
 }: PrimaryButtonProps) {
   return (
-    <abbr
+    <button
       ref={innerRef}
       className={`primary-button button ${className ?? ''} ${onHoverColor ?? ''} ${
         disabled ? 'disabled' : ''
@@ -38,19 +38,19 @@ export function PrimaryButton({
       tabIndex={!disabled ? 0 : undefined}
       style={{ pointerEvents: noHover ? 'none' : 'unset' }}
       title={abbr}
-      {...abbrProps}
+      {...buttonProps}
       onClick={disabled ? undefined : onClick}
       onKeyDown={
         disabled
           ? undefined
           : e => {
               isEnterKeyEv(e) && onClick?.(e)
-              abbrProps.onKeyDown?.(e)
+              buttonProps.onKeyDown?.(e)
             }
       }
     >
       {children}
       {hiddenText && <span className="visually-hidden">{hiddenText}</span>}
-    </abbr>
+    </button>
   )
 }

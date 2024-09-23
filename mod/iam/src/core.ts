@@ -6,7 +6,6 @@ import {
 } from '@moodle/lib-email-templates/iam/v1_0'
 import { EmailLayout } from '@moodle/lib-email-templates/org/v1_0'
 import { _void, date_time_string } from '@moodle/lib-types'
-import * as lib_moodle_org from '@moodle/mod-org/v1_0/lib'
 import * as v1_0_lib from './v1_0/lib'
 
 export function core(): core_factory {
@@ -140,17 +139,20 @@ export function core(): core_factory {
                   }
 
                   const now = date_time_string('now')
-                  const [newUserCreated, userId] = await mySec.db.saveNewUser({
-                    newUser: await v1_0_lib.createNewUserRecordData({
-                      createdAt: now,
-                      roles: newlyCreatedUserRoles,
-                      displayName: tokenData.displayName,
-                      email: tokenData.email,
-                      passwordHash: tokenData.passwordHash,
-                      lastLogin: now,
-                    }),
+                  const newUser = await v1_0_lib.createNewUserRecordData({
+                    createdAt: now,
+                    roles: newlyCreatedUserRoles,
+                    displayName: tokenData.displayName,
+                    email: tokenData.email,
+                    passwordHash: tokenData.passwordHash,
+                    lastLogin: now,
                   })
-                  return newUserCreated ? [true, { userId }] : [false, { reason: 'unknown' }]
+                  const [newUserCreated] = await mySec.db.saveNewUser({
+                    newUser,
+                  })
+                  return newUserCreated
+                    ? [true, { userId: newUser.id }]
+                    : [false, { reason: 'unknown' }]
                 },
               },
 
@@ -319,14 +321,14 @@ export function core(): core_factory {
                   )
                   const [, user] = await mySec.db.getUserById({ userId: session.user.id })
                   if (!user) {
-                    return [false, _void]
+                    return [false, { reason: 'unknown' }]
                   }
                   const [currentPasswordVerified] = await mySec.crypto.verifyUserPasswordHash({
                     plainPassword: currentPassword,
                     passwordHash: user.passwordHash,
                   })
                   if (!currentPasswordVerified) {
-                    return [false, _void]
+                    return [false, { reason: 'wrongCurrentPassword' }]
                   }
                   const { passwordHash } = await mySec.crypto.hashPassword({
                     plainPassword: newPassword,

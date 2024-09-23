@@ -1,10 +1,9 @@
 import { sec_factory, sec_impl } from '@moodle/lib-ddd'
 import { _void } from '@moodle/lib-types'
-import { user_record_brand } from '@moodle/mod-iam/v1_0/types'
 import { Document } from 'arangojs/documents'
 import { createHash } from 'node:crypto'
 import { v1_0 } from '../..'
-import { userRecord2iamUserDoc, iamUserDoc2userRecord } from './db-arango-iam-lib/mappings'
+import { userRecord2userDocument, userDocument2userRecord } from './db-arango-iam-lib/mappings'
 import { userDocument } from './db-arango-iam-lib/types'
 
 export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec_factory {
@@ -71,7 +70,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     { email },
                   )
                   const foundUser = await cursor.next()
-                  return foundUser ? [true, iamUserDoc2userRecord(foundUser)] : [false, _void]
+                  return foundUser ? [true, userDocument2userRecord(foundUser)] : [false, _void]
                 },
                 async getUserById({ userId }) {
                   const {
@@ -81,7 +80,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                   } = db_struct_v1_0
 
                   const foundUser = await user.document({ _key: userId }, { graceful: true })
-                  return foundUser ? [true, iamUserDoc2userRecord(foundUser)] : [false, _void]
+                  return foundUser ? [true, userDocument2userRecord(foundUser)] : [false, _void]
                 },
                 async saveNewUser({ newUser }) {
                   const {
@@ -89,12 +88,12 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                       coll: { user },
                     },
                   } = db_struct_v1_0
-                  const iamUserDoc = userRecord2iamUserDoc(newUser)
+                  const userDocument = userRecord2userDocument(newUser)
                   const savedUser = await user
-                    .save(iamUserDoc, { overwriteMode: 'conflict' })
+                    .save(userDocument, { overwriteMode: 'conflict' })
                     .catch(() => null)
 
-                  return savedUser ? [true, iamUserDoc._key] : [false, _void]
+                  return savedUser ? [true, _void] : [false, _void]
                 },
                 async deactivateUser({ anonymize, reason, userId, at = new Date().toISOString() }) {
                   const {

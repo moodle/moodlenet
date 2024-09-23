@@ -45,12 +45,10 @@ export default function SignupPanel({ primaryMsgSchemaConfigs }: SignupProps) {
           error={formState.errors.password?.__redacted__?.message}
           {...register('password.__redacted__')}
         />
-      </form>
-      <div className="bottom">
-        <PrimaryButton disabled={!formState.isValid} onClick={handleSubmitWithAction}>
+        <PrimaryButton disabled={formState.isSubmitting}>
           <Trans>Sign up</Trans>
         </PrimaryButton>
-      </div>
+      </form>
       <div className="general-error" hidden={!additionalError}>
         {additionalError}
       </div>

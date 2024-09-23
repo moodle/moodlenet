@@ -1,24 +1,25 @@
 import { BRAND, string } from 'zod'
 import { _any } from './map'
 
+
 export type _falsy = false | undefined | null
 export const _never = void 0 as never
 export const _void = void 0 as void
 export type primitive = primitive_value | null | undefined
 export type primitive_value = string | number | boolean | bigint
 
-export function _unchecked_brand<b extends branded<any, any>>(b: unbranded<b>): b {
+export function _unchecked_brand<b extends branded<_any, _any>>(b: unbranded<b>): b {
   return b as b
 }
-export type unbranded<b extends branded<any, any>> = { [_ in Exclude<keyof b, symbol>]: b[_] }
-export type branded<type, b extends symbol> = BRAND<b> & type extends infer _type
+export type unbranded<b extends branded<_any, _any>> = { [_ in Exclude<keyof b, symbol>]: b[_] }
+// export const _BRAND = BRAND
+export type branded<type, b extends symbol /*  | string */> = BRAND<b> & type extends infer _type
   ? type extends primitive_value
-      ? _type
-    : _t<_type>
-  : // : { [_ in keyof _type]: _type[_] }
-    never
+    ? _type
+    : { [_ in keyof _type]: _type[_] }
+  : never
 
-export type _t<t> = { [k in string & keyof t]: t[k] } // utility type to convert make more readable maps
+export type pretty<t> = { [k in  keyof t]: t[k] } // utility type to convert make more readable maps
 
 // redacted logging
 export const __redacted__key = '__redacted__'

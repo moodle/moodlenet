@@ -1,7 +1,6 @@
 'use client'
 // import { t, Trans } from '@lingui/macro'
 import type { FC, SetStateAction } from 'react'
-// import { FormikHandle } from '../../../../lib/formik'
 import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import Modal from '../../../atoms/Modal/Modal'
 import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton'

@@ -107,7 +107,9 @@ export type moodle_iam_mod = mod<{
           >
         >
 
-        changePassword(_: v1_0.changePasswordForm): Promise<ok_ko<void, void>>
+        changePassword(
+          _: v1_0.changePasswordForm,
+        ): Promise<ok_ko<void, d_u<{ wrongCurrentPassword: unknown; unknown: unknown }, 'reason'>>>
       }
     }
     sec: {
@@ -169,7 +171,7 @@ export type moodle_iam_mod = mod<{
         getUserById(_: { userId: v1_0.user_id }): Promise<ok_ko<v1_0.userRecord, void>>
         getUserByEmail(_: { email: email_address }): Promise<ok_ko<v1_0.userRecord, void>>
 
-        saveNewUser(_: { newUser: v1_0.userRecord }): Promise<ok_ko<v1_0.user_id, void>>
+        saveNewUser(_: { newUser: v1_0.userRecord }): Promise<ok_ko<void, void>>
 
         changeUserRoles(_: {
           userId: v1_0.user_id

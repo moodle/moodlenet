@@ -3,7 +3,7 @@ import { userRecord } from '@moodle/mod-iam/v1_0/types'
 import { Document } from 'arangojs/documents'
 import { userDocument } from './types'
 
-export function iamUserDoc2userRecord(doc: Document<userDocument>): userRecord {
+export function userDocument2userRecord(doc: Document<userDocument>): userRecord {
   return _unchecked_brand<userRecord>({
     id: doc._key,
     createdAt: doc.createdAt,
@@ -16,10 +16,10 @@ export function iamUserDoc2userRecord(doc: Document<userDocument>): userRecord {
   })
 }
 
-export function userRecord2iamUserDoc(
+export function userRecord2userDocument(
   userRecord: userRecord,
 ): Omit<Document<userDocument>, '_id' | '_rev'> {
-  return {
+  return _unchecked_brand<userDocument>({
     _key: userRecord.id,
     createdAt: userRecord.createdAt,
     roles: userRecord.roles,
@@ -28,5 +28,5 @@ export function userRecord2iamUserDoc(
     deactivated: userRecord.deactivated,
     displayName: userRecord.displayName,
     passwordHash: userRecord.passwordHash,
-  }
+  })
 }

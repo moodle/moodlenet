@@ -24,7 +24,6 @@ export function ResetPasswordClient({
 
   const {
     form: { formState, register },
-    action,
     handleSubmitWithAction,
   } = useHookFormAction(resetMyPasswordAction, zodResolver(resetPasswordSchema), {
     formProps: {
@@ -43,12 +42,12 @@ export function ResetPasswordClient({
     <div className="new-password-page">
       <div className="main-content">
         <Card>
-          {action.status === 'idle' ? (
+          {!formState.isSubmitSuccessful ? (
             <div className="content">
               <div className="title">
                 <Trans>Update password</Trans>
               </div>
-              <form>
+              <form onSubmit={handleSubmitWithAction}>
                 <InputTextField
                   className="password"
                   placeholder={t(`New password`)}
@@ -57,14 +56,11 @@ export function ResetPasswordClient({
                   error={formState.errors.newPassword?.__redacted__?.message}
                   {...register('newPassword.__redacted__')}
                 />
+                <br />
+                <PrimaryButton type="submit" disabled={formState.isSubmitting}>
+                  <Trans>Change password</Trans>
+                </PrimaryButton>
               </form>
-              <div className="bottom">
-                <div className="left">
-                  <PrimaryButton disabled={!formState.isValid} onClick={handleSubmitWithAction}>
-                    <Trans>Change password</Trans>
-                  </PrimaryButton>
-                </div>
-              </div>
             </div>
           ) : (
             <div className="content">
