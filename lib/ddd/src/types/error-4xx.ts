@@ -1,3 +1,4 @@
+import { _any, _unchecked_brand, branded } from '@moodle/lib-types'
 import {
   status4xx,
   status_code_4xx,
@@ -5,35 +6,30 @@ import {
   status_desc_by_code_4xx,
 } from './reply-status'
 
-export function assertValidMsg<val_type>(
-  unk_val: unknown,
-  validator: (unk_val: unknown) => unk_val is val_type,
-  errorDetailsMessage = '',
-): asserts unk_val is val_type {
-  assertNot4xx('Bad Request', validator(unk_val), errorDetailsMessage)
+declare const error_4xx_brand: unique symbol
+export type error4xx = branded<
+  {
+    code: status_code_4xx
+    desc: status_desc_4xx
+    details?: _any
+  },
+  typeof error_4xx_brand
+>
+
+export function errorMsgValidation(details?: _any) {
+  return error4xx(400, details)
 }
 
-export function assertNot4xx(
-  status4xx: status4xx,
-  not4xxCheck: boolean,
-  detailMessage4xx = '',
-): asserts not4xxCheck {
-  if (!not4xxCheck) {
-    throw new Error4xx(status4xx, detailMessage4xx)
-  }
+export function errorUnauthorized(details?: _any) {
+  return error4xx(401, details)
 }
 
-export class Error4xx extends Error {
-  public code: status_code_4xx
-  public desc: status_desc_4xx
-  constructor(
-    code_or_desc: status4xx,
-    public details = '',
-  ) {
-    const _code = status4xx(code_or_desc)
-    const _desc = status_desc_by_code_4xx[_code]
-    super(`${_code}[${_desc}](${details ?? 'no details'})`)
-    this.code = _code
-    this.desc = _desc
-  }
+export function errorForbidden(details?: _any) {
+  return error4xx(403, details)
+}
+
+export function error4xx(code_or_desc: status4xx, details?: _any): error4xx {
+  const code = status4xx(code_or_desc)
+  const desc = status_desc_by_code_4xx[code]
+  return _unchecked_brand<error4xx>({ code, desc, details })
 }

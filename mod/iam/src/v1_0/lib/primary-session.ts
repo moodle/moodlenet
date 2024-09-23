@@ -1,6 +1,5 @@
-import { concrete, Error4xx, primary_session, session_token } from '@moodle/lib-ddd'
+import { concrete, primary_session, session_token } from '@moodle/lib-ddd'
 import { d_u, d_u__d, ok_ko } from '@moodle/lib-types'
-import assert from 'assert'
 import { session_obj, sessionUserData, user_id, user_role, user_session } from '../types'
 import { hasUserSessionRole, userRecord2SessionUserData } from './user-session'
 
@@ -10,43 +9,42 @@ export function isSystemSession(
 ): session is d_u__d<primary_session, 'type', 'system'> {
   return session.type === 'system'
 }
-export function assertSystemSession(
-  session: primary_session,
-): asserts session is d_u__d<primary_session, 'type', 'system'> {
-  assert(isSystemSession(session), new Error4xx(`Forbidden`, `System session required`))
-}
 //
 
-export async function getUserSession(sessionToken: session_token, worker: concrete<'sec'>) {
+export async function validateAnyUserSession(sessionToken: session_token, worker: concrete<'sec'>) {
   const [valid, sessionResp] = await worker.moodle.iam.v1_0.sec.crypto.decryptTokenData({
     token: sessionToken,
   })
-  const user_session =
+  const any_user_session =
     valid && sessionResp.type === 'userSession'
       ? ({
           type: 'authenticated',
           user: sessionResp.user,
         } satisfies user_session)
       : guest_session
-  return user_session
+  return any_user_session
 }
 const guest_session: user_session = {
   type: 'guest',
 }
 
 // Authenticated Session
-export async function assert_validateUserAuthenticatedSession(
+export async function validateUserAuthenticatedSession(
   primarySession: primary_session,
   worker: concrete<'sec'>,
-  assertError: Error4xx = new Error4xx('Forbidden'),
 ) {
-  assert(primarySession.type === 'user', assertError)
+  if (primarySession.type !== 'user') {
+    return null
+  }
   const { sessionToken } = primarySession
-  assert(sessionToken, assertError)
-  const user_session = await getUserSession(sessionToken, worker)
-  assert(user_session.type === 'authenticated', assertError)
-
-  return user_session
+  if (!sessionToken) {
+    return null
+  }
+  const any_user_session = await validateAnyUserSession(sessionToken, worker)
+  if (any_user_session.type !== 'authenticated') {
+    return null
+  }
+  return any_user_session
 }
 
 /// Has User Role
@@ -54,28 +52,26 @@ export async function assert_validateUserAuthenticatedSessionHasRole(
   primarySession: primary_session,
   role: user_role,
   worker: concrete<'sec'>,
-  assertError: Error4xx = new Error4xx('Forbidden'),
 ) {
-  const user_session = await assert_validateUserAuthenticatedSession(
-    primarySession,
-    worker,
-    assertError,
-  )
-  hasUserSessionRole(user_session, role)
-  return user_session
+  const authenticated_user_session = await validateUserAuthenticatedSession(primarySession, worker)
+  if (!(authenticated_user_session && hasUserSessionRole(authenticated_user_session, role))) {
+    return null
+  }
+
+  return authenticated_user_session
 }
 
 // GUEST
-export function isGuestSession(
+export function isAnyUserSession(
   session: primary_session,
 ): session is d_u__d<primary_session, 'type', 'user'> {
   return session.type === 'user'
 }
-export function assertGuestSession(
+
+export function isGuestSession(
   session: primary_session,
-  assertError: Error4xx = new Error4xx('Unauthorized'),
-): asserts session is d_u__d<primary_session, 'type', 'user'> {
-  assert(isGuestSession(session) && !session.sessionToken, assertError)
+): session is d_u__d<primary_session, 'type', 'user'> {
+  return isAnyUserSession(session) && !session.sessionToken
 }
 
 // GENERATE SESSION TOKEN

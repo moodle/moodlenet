@@ -1,4 +1,4 @@
-import type { mod, session_token } from '@moodle/lib-ddd'
+import type { error4xx, mod, session_token } from '@moodle/lib-ddd'
 import type {
   __redacted__,
   d_u,
@@ -109,7 +109,12 @@ export type moodle_iam_mod = mod<{
 
         changePassword(
           _: v1_0.changePasswordForm,
-        ): Promise<ok_ko<void, d_u<{ wrongCurrentPassword: unknown; unknown: unknown }, 'reason'>>>
+        ): Promise<
+          ok_ko<
+            void,
+            d_u<{ wrongCurrentPassword: unknown; unknown: unknown; error4xx: error4xx }, 'reason'>
+          >
+        >
       }
     }
     sec: {

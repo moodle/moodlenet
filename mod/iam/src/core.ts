@@ -1,4 +1,4 @@
-import type { core_factory, core_impl } from '@moodle/lib-ddd'
+import { error4xx, type core_factory, type core_impl } from '@moodle/lib-ddd'
 import {
   resetPasswordContent,
   selfDeletionConfirmContent,
@@ -18,7 +18,7 @@ export function core(): core_factory {
             pri: {
               session: {
                 async getUserSession({ sessionToken }) {
-                  const userSession = await v1_0_lib.getUserSession(sessionToken, worker)
+                  const userSession = await v1_0_lib.validateAnyUserSession(sessionToken, worker)
                   return { userSession }
                 },
                 async generateUserSession({ userId }) {
@@ -68,7 +68,6 @@ export function core(): core_factory {
                 async request({ signupForm, redirectUrl }) {
                   const schemas = await v1_0_lib.fetchPrimarySchemas(forward)
                   const { displayName, email, password } = schemas.signupSchema.parse(signupForm)
-                  v1_0_lib.assertGuestSession(primarySession)
                   const [found] = await mySec.db.getUserByEmail({
                     email,
                   })
@@ -116,7 +115,6 @@ export function core(): core_factory {
                 },
 
                 async createNewUserByEmailVerificationToken({ signupEmailVerificationToken }) {
-                  v1_0_lib.assertGuestSession(primarySession)
                   const {
                     iam: {
                       roles: { newlyCreatedUserRoles },
@@ -188,10 +186,13 @@ export function core(): core_factory {
                 },
 
                 async selfDeletionRequest({ redirectUrl }) {
-                  const session = await v1_0_lib.assert_validateUserAuthenticatedSession(
+                  const authenticated_session = await v1_0_lib.validateUserAuthenticatedSession(
                     primarySession,
                     worker,
                   )
+                  if (!authenticated_session) {
+                    return
+                  }
                   const {
                     iam: { tokenExpireTime: userSelfDeletion },
                     org: { info: orgInfo, addresses: orgAddr },
@@ -203,14 +204,14 @@ export function core(): core_factory {
                       v: '1_0',
                       type: 'selfDeletionRequestConfirm',
                       redirectUrl,
-                      userId: session.user.id,
+                      userId: authenticated_session.user.id,
                     },
                   })
 
                   const content = selfDeletionConfirmContent({
                     deleteAccountUrl: `${redirectUrl}?token=${selfDeletionConfirmationSession.token}`,
                     orgInfo,
-                    receiverEmail: session.user.contacts.email,
+                    receiverEmail: authenticated_session.user.contacts.email,
                   })
 
                   const reactBody = EmailLayout({
@@ -221,7 +222,7 @@ export function core(): core_factory {
                   await mySec.email.sendNow({
                     reactBody,
                     subject: content.subject,
-                    to: v1_0_lib.getUserNamedEmailAddress(session.user),
+                    to: v1_0_lib.getUserNamedEmailAddress(authenticated_session.user),
                   })
                   return
                 },
@@ -275,7 +276,6 @@ export function core(): core_factory {
                   return pwdChanged ? [true, _void] : [false, { reason: 'unknown' }]
                 },
                 async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
-                  v1_0_lib.assertGuestSession(primarySession)
                   const {
                     iam: { tokenExpireTime: userSelfDeletion },
                     org: { info: orgInfo, addresses: orgAddr },
@@ -315,11 +315,16 @@ export function core(): core_factory {
                 },
 
                 async changePassword({ currentPassword, newPassword }) {
-                  const session = await v1_0_lib.assert_validateUserAuthenticatedSession(
+                  const authenticated_session = await v1_0_lib.validateUserAuthenticatedSession(
                     primarySession,
                     worker,
                   )
-                  const [, user] = await mySec.db.getUserById({ userId: session.user.id })
+                  if (!authenticated_session) {
+                    return [false, { reason: 'error4xx', ...error4xx('Forbidden') }]
+                  }
+                  const [, user] = await mySec.db.getUserById({
+                    userId: authenticated_session.user.id,
+                  })
                   if (!user) {
                     return [false, { reason: 'unknown' }]
                   }
@@ -335,7 +340,7 @@ export function core(): core_factory {
                   })
                   await mySec.db.changeUserPassword({
                     newPasswordHash: passwordHash,
-                    userId: session.user.id,
+                    userId: authenticated_session.user.id,
                   })
                   return [true, _void]
                 },
