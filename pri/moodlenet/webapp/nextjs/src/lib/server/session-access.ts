@@ -10,6 +10,7 @@ import { userAgent } from 'next/server'
 import assert from 'node:assert'
 import { getAuthTokenCookie } from './auth'
 import i18next from 'i18next'
+import { hasUserSessionRole } from '@moodle/mod-iam/v1_0/lib'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
 const MOODLE_NET_NEXTJS_APP_NAME = process.env.MOODLE_NET_NEXTJS_APP_NAME ?? 'moodlenet-nextjs'
@@ -62,17 +63,34 @@ const guest_session: user_session = {
   type: 'guest',
 }
 
+export async function getAuthenticatedUserSession() {
+  const userSession = await getUserSession()
+  return userSession.type === 'authenticated' ? userSession : null
+}
+export async function getAdminUserSession() {
+  const authenticatedUserSession = await getAuthenticatedUserSession()
+  return authenticatedUserSession && hasUserSessionRole(authenticatedUserSession, 'admin')
+    ? authenticatedUserSession
+    : null
+}
+export async function getPublisherUserSession() {
+  const authenticatedUserSession = await getAuthenticatedUserSession()
+  return authenticatedUserSession && hasUserSessionRole(authenticatedUserSession, 'publisher')
+    ? authenticatedUserSession
+    : null
+}
 export async function getUserSession() {
-  const primarySession = getPrimarySession()
-  const userSession = primarySession.sessionToken
+  const sessionToken = getAuthTokenCookie()
+  const userSession = sessionToken
     ? await priAccess()
         .moodle.iam.v1_0.pri.session.getUserSession({
-          sessionToken: primarySession.sessionToken,
+          sessionToken,
         })
         .then(({ userSession }) => userSession)
     : guest_session
   return userSession
 }
+
 
 function getPrimarySession() {
   i18next.init({

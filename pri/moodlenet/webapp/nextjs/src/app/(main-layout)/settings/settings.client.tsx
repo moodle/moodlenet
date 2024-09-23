@@ -1,13 +1,13 @@
 'use client'
 
-import { PropsWithChildren } from 'react'
+import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
-import { sitepaths } from '../../../lib/common/utils/sitepaths'
-import { Trans, useTranslation } from 'next-i18next'
-import { Card } from '../../../ui/atoms/Card/Card'
 import { usePathname } from 'next/navigation'
+import { PropsWithChildren } from 'react'
+import { sitepaths } from '../../../lib/common/utils/sitepaths'
+import { Card } from '../../../ui/atoms/Card/Card'
 
-export default function SettingsMenu() {
+export function SettingsMenu() {
   const settingsPath = sitepaths().pages.user.settings
   const { t } = useTranslation()
 
@@ -19,6 +19,13 @@ export default function SettingsMenu() {
   )
 }
 
+// export function NoAccess() {
+//   return (
+//     <div>
+//       <Trans>Please login</Trans>
+//     </div>
+//   )
+// }
 export function MenuItem({
   children,
   pathname,

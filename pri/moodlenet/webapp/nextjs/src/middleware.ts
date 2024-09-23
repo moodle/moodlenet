@@ -12,15 +12,25 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone()
   const urlHost = request.headers.get('X-Forwarded-Host') || url.host
   const urlPort = request.headers.get('X-Forwarded-Port') || url.port
+  const urlPath = url.pathname
   const urlProto = (request.headers.get('X-Forwarded-Proto') || url.protocol).toLowerCase()
   url.host = urlHost
   url.protocol = urlProto
   url.port = urlPort
-
+  console.log({ url })
   const xUrl = url.toString()
   const xClientIp = request.headers.get('X-Forwarded-For') || request.ip || 'unknown'
   const xMode = request.mode
   const xGeo = JSON.stringify(request.geo || {})
+  const xSearch = url.search.replace(/^\?/, '')
+
+  // NOTE:
+  // NOTE:
+  // NOTE:
+  // NOTE:  consider this https://www.npmjs.com/package/next-extra ! (or maybe others)
+  // NOTE:
+  // NOTE:
+  // NOTE:
 
   return NextResponse.next({
     headers: {
@@ -31,6 +41,8 @@ export async function middleware(request: NextRequest) {
       'x-host': urlHost,
       'x-proto': urlProto,
       'x-port': urlPort,
+      'x-path': urlPath,
+      'x-search': xSearch,
     },
   })
   // const response =

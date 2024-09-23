@@ -34,7 +34,7 @@ export function ResetPasswordClient({
     },
   })
 
-  const loginHref = sitepaths().pages.access.login
+  const loginHref = sitepaths().pages.access.login()
 
   const actionError = formState.errors.root?.message
 

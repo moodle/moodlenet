@@ -48,7 +48,7 @@ export async function validateUserAuthenticatedSession(
 }
 
 /// Has User Role
-export async function assert_validateUserAuthenticatedSessionHasRole(
+export async function validateUserAuthenticatedSessionHasRole(
   primarySession: primary_session,
   role: user_role,
   worker: concrete<'sec'>,

@@ -25,7 +25,7 @@ export function SignupCard({ signupMethods, slots }: SignupCardProps) {
   return (
     <>
       <Card className="login-card" hover={true}>
-        <Link href={pages.access.login}>
+        <Link href={pages.access.login()}>
           <Trans>Log in</Trans>
           <CallMadeIcon />
         </Link>

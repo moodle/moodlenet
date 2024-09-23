@@ -1,3 +1,6 @@
+import { map } from '@moodle/lib-types'
+import QueryString from 'qs'
+
 export type sitepaths = ReturnType<typeof sitepaths>
 export function sitepaths(baseUrl = '/') {
   type id = string
@@ -15,6 +18,10 @@ export function sitepaths(baseUrl = '/') {
     (sub: sub) =>
       `${_(path)}${sub}`
 
+  const _with_query = (path: string) => (query?: map<string | string[]>) => {
+    const qstring = QueryString.stringify(query)
+    return `${_(path)}?${qstring}`
+  }
   type admin_sub = '/users' | '/general' | '/appearance'
   const admin = _sub<admin_sub>(`admin`)
 
@@ -41,7 +48,7 @@ export function sitepaths(baseUrl = '/') {
     pages: {
       landing: baseUrl,
       access: {
-        login: _('login'),
+        login: _with_query('login'),
         signup: _('signup'),
         recoverPasswordRequest: _sub<'' | '/reset'>('recover-password-request'),
       },

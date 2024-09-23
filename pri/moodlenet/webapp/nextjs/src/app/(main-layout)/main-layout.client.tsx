@@ -21,7 +21,7 @@ export function LoginHeaderButton() {
     pages: { access },
   } = sitepaths()
   return (
-    <Link href={access.login} className="login-button access-button">
+    <Link href={access.login()} className="login-button access-button">
       <PrimaryButton>
         <Trans>
           <span>Login</span>

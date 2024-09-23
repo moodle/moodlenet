@@ -42,13 +42,15 @@ export type moodle_iam_mod = mod<{
         editUserRoles(_: {
           userId: v1_0.user_id
           roles: v1_0.user_role[]
-        }): Promise<ok_ko<void, void>>
-        searchUsers(_: { textSearch: string }): Promise<{ users: v1_0.userRecord[] }>
+        }): Promise<ok_ko<void, d_u<{ error4xx: error4xx }, 'reason'>>>
+        searchUsers(_: {
+          textSearch: string
+        }): Promise<ok_ko<{ users: v1_0.userRecord[] }, d_u<{ error4xx: error4xx }, 'reason'>>>
         deactivateUser(_: {
           userId: v1_0.user_id
           reason: string
           anonymize: boolean
-        }): Promise<void>
+        }): Promise<ok_ko<void, d_u<{ error4xx: error4xx }, 'reason'>>>
       }
 
       signup: {

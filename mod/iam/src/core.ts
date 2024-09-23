@@ -34,34 +34,52 @@ export function core(): core_factory {
               },
               admin: {
                 async editUserRoles({ userId, roles }) {
-                  await v1_0_lib.assert_validateUserAuthenticatedSessionHasRole(
+                  const admin_user_session = await v1_0_lib.validateUserAuthenticatedSessionHasRole(
                     primarySession,
                     'admin',
                     worker,
                   )
-                  return mySec.db.changeUserRoles({ userId, roles })
+                  if (!admin_user_session) {
+                    return [false, { reason: 'error4xx', ...error4xx('Forbidden') }]
+                  }
+
+                  const [done] = await mySec.db.changeUserRoles({ userId, roles })
+                  if (!done) {
+                    return [false, { reason: 'error4xx', ...error4xx('Not Found') }]
+                  }
+                  return [true, _void]
                 },
 
                 async searchUsers({ textSearch }) {
-                  await v1_0_lib.assert_validateUserAuthenticatedSessionHasRole(
+                  const admin_user_session = await v1_0_lib.validateUserAuthenticatedSessionHasRole(
                     primarySession,
                     'admin',
                     worker,
                   )
-                  return mySec.db.findUsersByText({ text: textSearch })
+                  if (!admin_user_session) {
+                    return [false, { reason: 'error4xx', ...error4xx('Forbidden') }]
+                  }
+                  return [true, await mySec.db.findUsersByText({ text: textSearch })]
                 },
 
                 async deactivateUser({ userId, anonymize, reason }) {
-                  await v1_0_lib.assert_validateUserAuthenticatedSessionHasRole(
+                  const admin_user_session = await v1_0_lib.validateUserAuthenticatedSessionHasRole(
                     primarySession,
                     'admin',
                     worker,
                   )
-                  mySec.db.deactivateUser({
+                  if (!admin_user_session) {
+                    return [false, { reason: 'error4xx', ...error4xx('Forbidden') }]
+                  }
+                  const [done] = await mySec.db.deactivateUser({
                     userId,
                     reason: { type: 'adminRequest', reason, v: '1_0' },
                     anonymize,
                   })
+                  if (!done) {
+                    return [false, { reason: 'error4xx', ...error4xx('Not Found') }]
+                  }
+                  return [true, _void]
                 },
               },
               signup: {
