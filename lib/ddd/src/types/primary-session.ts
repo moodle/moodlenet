@@ -9,7 +9,7 @@ export interface UserPrimarySession extends PriSessionBase {
 
   app: { name: string; pkg: string; version: string }
 
-  // FIXME: ? make it `modTokens: { [app_name:string]?: string | null  }`
+  // NOTE: ? make it `modTokens: { [app_name:string]?: string | null  }`
   sessionToken: session_token | null
   platforms: {
     local: platform

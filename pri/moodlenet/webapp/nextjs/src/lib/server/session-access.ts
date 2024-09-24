@@ -1,16 +1,15 @@
 import { http_bind } from '@moodle/bindings-node'
 import { createAcccessProxy, Modules, primary_session } from '@moodle/lib-ddd'
 import type {} from '@moodle/mod-iam'
-import { user_session } from '@moodle/mod-iam/v1_0/types'
+import { hasUserSessionRole } from '@moodle/mod-iam/v1_0/lib'
 import type {} from '@moodle/mod-net'
 import type {} from '@moodle/mod-net-webapp-nextjs'
 import type {} from '@moodle/mod-org'
+import i18next from 'i18next'
 import { headers } from 'next/headers'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'
 import { getAuthTokenCookie } from './auth'
-import i18next from 'i18next'
-import { hasUserSessionRole } from '@moodle/mod-iam/v1_0/lib'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
 const MOODLE_NET_NEXTJS_APP_NAME = process.env.MOODLE_NET_NEXTJS_APP_NAME ?? 'moodlenet-nextjs'

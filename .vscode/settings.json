@@ -10,5 +10,39 @@
   "todo-tree.filtering.excludeGlobs": [
     "pri/moodlenet/webapp/nextjs/zz__legacy/**/*",
     "**/node_modules/*/**"
-  ]
+  ],
+  "todo-tree.highlights.useColourScheme": true,
+  "todo-tree.highlights.defaultHighlight": {
+    "icon": "alert",
+    "type": "text",
+    "foreground": "red",
+    "background": "white",
+    "opacity": 50,
+    "iconColour": "blue"
+  },
+  "todo-tree.highlights.customHighlight": {
+    "TODO": {
+      "icon": "uncheckbox",
+      "foreground": "#000000",
+      "iconColour": "#33ff00",
+      "background": "#33ff00",
+      "opacity": 80
+    },
+    "FIXME": {
+      "foreground": "#000000",
+      "iconColour": "#ff00ff",
+      "background": "#ff00ff",
+      "opacity": 90
+    },
+    "NOTE": {
+      "foreground": "#000000",
+      "iconColour": "#41c9ff",
+      "background": "#41c9ff",
+      "opacity": 80
+    }
+  },
+  "todo-tree.general.tags": ["TODO", "FIXME", "FIXIT", "FIX", "BUG", "NOTE"],
+  "todo-tree.general.tagGroups": {
+    "FIXME": ["FIXME", "FIXIT", "FIX"]
+  }
 }
