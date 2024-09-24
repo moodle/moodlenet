@@ -1,11 +1,7 @@
 import { sec_factory, sec_impl } from '@moodle/lib-ddd'
 import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
-import {
-  _never,
-  encrypted_token_payload_data,
-  ENCRYPTED_TOKEN_PAYLOAD_PROP,
-} from '@moodle/lib-types'
-import { iamSignedTokenData } from '@moodle/mod-iam/v1_0/types'
+import { _never, signed_token_payload_data, SIGNED_TOKEN_PAYLOAD_PROP } from '@moodle/lib-types'
+import { iamSignTokenData } from '@moodle/mod-iam/v1_0/types'
 import * as argon2 from 'argon2'
 export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 // ArgonPwdHashOpts : {
@@ -22,7 +18,7 @@ export function iam({
   joseEnv: joseEnv
   argonOpts: ArgonPwdHashOpts
 }): sec_factory {
-  return ctx => {
+  return (/* ctx */) => {
     const iam_sec_impl: sec_impl = {
       moodle: {
         iam: {
@@ -41,37 +37,22 @@ export function iam({
                   return [verified, _never]
                 },
 
-                //               async validateSessionToken({ sessionToken }) {
-                //                 const verifyResult = await joseVerify<UserData>(joseEnv, sessionToken)
-                // if (!verifyResult) {
-                //   return [false, { reason: 'invalid' }]
-                // }
-                // return [true, { type: 'authenticated', user: verifyResult.payload.tokenPayload }]
-                //                 const [valid, validationResp] = await validateAuthenticatedUserSession({
-                //                   joseEnv,
-                //                   sessionToken,
-                //                 })
-                //                 if (!valid) {
-                //                   return [false, { reason: 'invalid' }]
-                //                 }
-                //                 return [true, validationResp]
-                //               },
-                async decryptTokenData({ token }) {
+                async validateSignedToken({ token }) {
                   // FIXME : CHECKS AUDIENCE ETC >>>
                   const verifyResult = await joseVerify<
-                    encrypted_token_payload_data<iamSignedTokenData>
+                    signed_token_payload_data<iamSignTokenData>
                   >(joseEnv, token)
 
                   return verifyResult
-                    ? [true, verifyResult.payload[ENCRYPTED_TOKEN_PAYLOAD_PROP]]
+                    ? [true, verifyResult.payload[SIGNED_TOKEN_PAYLOAD_PROP]]
                     : [false, _never]
                 },
-                async encryptTokenData({ data, expiresIn }) {
+                async signDataToken({ data, expiresIn }) {
                   const { expireDate, token /* , notBeforeDate */ } = await sign<
-                    encrypted_token_payload_data<iamSignedTokenData>
+                    signed_token_payload_data<iamSignTokenData>
                   >({
                     joseEnv,
-                    payload: { [ENCRYPTED_TOKEN_PAYLOAD_PROP]: data },
+                    payload: { [SIGNED_TOKEN_PAYLOAD_PROP]: data },
                     expiresIn /*,stdClaims:{} ,opts:{} */,
                   })
                   return { expires: expireDate, token }

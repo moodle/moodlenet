@@ -96,7 +96,7 @@ export function core(): core_factory {
                   )
 
                   const confirmEmailSession =
-                    await ctx.worker.moodle.iam.v1_0.sec.crypto.encryptTokenData({
+                    await ctx.worker.moodle.iam.v1_0.sec.crypto.signDataToken({
                       expiresIn: tokenExpireTime.signupEmailVerification,
                       data: {
                         v: '1_0',
@@ -134,7 +134,7 @@ export function core(): core_factory {
                     },
                   } = await ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
                   const [verified, tokenData] =
-                    await ctx.worker.moodle.iam.v1_0.sec.crypto.decryptTokenData({
+                    await ctx.worker.moodle.iam.v1_0.sec.crypto.validateSignedToken({
                       token: signupEmailVerificationToken,
                     })
 
@@ -212,7 +212,7 @@ export function core(): core_factory {
                   }
 
                   const resetPasswordConfirmationSession =
-                    await ctx.worker.moodle.iam.v1_0.sec.crypto.encryptTokenData({
+                    await ctx.worker.moodle.iam.v1_0.sec.crypto.signDataToken({
                       expiresIn: userSelfDeletion.resetPasswordRequest,
                       data: {
                         v: '1_0',
@@ -255,7 +255,7 @@ export function core(): core_factory {
                   } = await ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
 
                   const selfDeletionConfirmationSession =
-                    await ctx.worker.moodle.iam.v1_0.sec.crypto.encryptTokenData({
+                    await ctx.worker.moodle.iam.v1_0.sec.crypto.signDataToken({
                       expiresIn: userSelfDeletion.userSelfDeletionRequest,
                       data: {
                         v: '1_0',
@@ -286,7 +286,7 @@ export function core(): core_factory {
 
                 async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
                   const [verified, tokenData] =
-                    await ctx.worker.moodle.iam.v1_0.sec.crypto.decryptTokenData({
+                    await ctx.worker.moodle.iam.v1_0.sec.crypto.validateSignedToken({
                       token: selfDeletionConfirmationToken,
                     })
 
@@ -314,7 +314,7 @@ export function core(): core_factory {
                 },
                 async resetPassword({ resetPasswordForm: { newPassword, token } }) {
                   const [verified, tokenData] =
-                    await ctx.worker.moodle.iam.v1_0.sec.crypto.decryptTokenData({
+                    await ctx.worker.moodle.iam.v1_0.sec.crypto.validateSignedToken({
                       token,
                     })
 

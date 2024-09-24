@@ -1,21 +1,21 @@
-import type { d_u, email_address, url } from '@moodle/lib-types'
+import type { d_u, email_address, url_string } from '@moodle/lib-types'
 import { v1_0 } from './configs'
 import { user_id } from './user'
 import { sessionUserData } from './user-session'
 
-export type iamSignedTokenData = v1_0 &
+export type iamSignTokenData = v1_0 &
   d_u<
     {
       selfDeletionRequestConfirm: {
         userId: user_id
-        redirectUrl: url
+        redirectUrl: url_string
       }
       resetPasswordRequest: {
         email: email_address
-        redirectUrl: url
+        redirectUrl: url_string
       }
       signupRequestEmailVerification: {
-        redirectUrl: url
+        redirectUrl: url_string
         email: email_address
         passwordHash: string
         displayName: string

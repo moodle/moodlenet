@@ -3,10 +3,10 @@ import { priAccess } from '../../../../../../lib/server/session-access'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { setAuthTokenCookie } from '../../../../../../lib/server/auth'
-import { encrypted_token_schema } from '@moodle/lib-types'
+import { signed_token_schema } from '@moodle/lib-types'
 
 export async function GET(req: NextRequest) {
-  const signupEmailVerificationToken = encrypted_token_schema.parse(
+  const signupEmailVerificationToken = signed_token_schema.parse(
     await req.nextUrl.searchParams.get('token'),
   )
   if (!signupEmailVerificationToken) {

@@ -1,5 +1,5 @@
-export type encryptedTokenPayloadProp = 'tokenPayload'
-export const ENCRYPTED_TOKEN_PAYLOAD_PROP: encryptedTokenPayloadProp = 'tokenPayload'
-export type encrypted_token_payload_data<t> = {
-  [k in encryptedTokenPayloadProp]: t
+export type signedTokenPayloadProp = 'tokenPayload'
+export const SIGNED_TOKEN_PAYLOAD_PROP: signedTokenPayloadProp = 'tokenPayload'
+export type signed_token_payload_data<t> = {
+  [k in signedTokenPayloadProp]: t
 }

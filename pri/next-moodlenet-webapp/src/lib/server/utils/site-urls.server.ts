@@ -1,3 +1,4 @@
+import { url_string } from '@moodle/lib-types'
 import { sitepaths } from '../../common/utils/sitepaths'
 import { priAccess } from '../session-access'
 
@@ -18,7 +19,7 @@ export async function srvSiteUrls() {
 
   const baseUrl = `${secure ? 'https' : 'http'}://${domain}${basePath}`
   return {
-    full: sitepaths(baseUrl),
+    full: sitepaths<url_string>(baseUrl),
     site: sitepaths(basePath),
   }
 }

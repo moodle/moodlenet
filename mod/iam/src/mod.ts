@@ -4,11 +4,12 @@ import type {
   d_u__d,
   date_time_string,
   email_address,
-  encrypted_token,
+  signed_token,
   named_or_email_address,
   ok_ko,
   time_duration_string,
-  url,
+  url_string,
+  signed_expire_token,
 } from '@moodle/lib-types'
 import type * as v1_0_org from '@moodle/mod-org/v1_0/lib'
 import type { ReactElement } from 'react'
@@ -28,7 +29,7 @@ export type moodle_iam_mod = mod<{
         getCurrentUserSession(): Promise<{ userSession: v1_0.user_session }>
         generateUserSession(_: {
           userId: v1_0.user_id
-        }): Promise<ok_ko<v1_0.session_obj, { userNotFound: unknown }>>
+        }): Promise<ok_ko<signed_expire_token, { userNotFound: unknown }>>
       }
 
       configs: {
@@ -51,11 +52,11 @@ export type moodle_iam_mod = mod<{
       access: {
         request(_: {
           signupForm: v1_0.signupForm
-          redirectUrl: url
+          redirectUrl: url_string
         }): Promise<ok_ko<never, { userWithSameEmailExists: unknown }>>
 
         createNewUserByEmailVerificationToken(_: {
-          signupEmailVerificationToken: encrypted_token
+          signupEmailVerificationToken: signed_token
         }): Promise<
           ok_ko<
             { userId: v1_0.user_id },
@@ -64,23 +65,23 @@ export type moodle_iam_mod = mod<{
         >
         login(_: { loginForm: v1_0.loginForm }): Promise<
           ok_ko<{
-            session: v1_0.session_obj
+            session: signed_expire_token
             authenticatedSession: d_u__d<v1_0.user_session, 'type', 'authenticated'>
           }>
         >
         logout(_: { sessionToken: session_token }): Promise<void>
 
         resetPasswordRequest(_: {
-          redirectUrl: url
+          redirectUrl: url_string
           declaredOwnEmail: email_address
         }): Promise<void>
       }
 
       myAccount: {
-        selfDeletionRequest(_: { redirectUrl: url }): Promise<void>
+        selfDeletionRequest(_: { redirectUrl: url_string }): Promise<void>
 
         confirmSelfDeletionRequest(_: {
-          selfDeletionConfirmationToken: encrypted_token
+          selfDeletionConfirmationToken: signed_token
           reason: string
         }): Promise<ok_ko<never, { invalidToken: unknown; unknownUser: unknown; unknown: unknown }>>
 
@@ -97,16 +98,6 @@ export type moodle_iam_mod = mod<{
     }
     sec: {
       crypto: {
-        // validateSessionToken(_: {
-        //   sessionToken: session_token
-        // }): Promise<
-        //   ok_ko<
-        //     d_u__d<v1_0.user_session, 'type', 'authenticated'>,
-        //     { invalid: unknown }
-        //   >
-        // >
-
-        // password hashing
         hashPassword(_: {
           plainPassword: __redacted__<v1_0.user_plain_password>
         }): Promise<{ passwordHash: string }>
@@ -114,13 +105,13 @@ export type moodle_iam_mod = mod<{
           plainPassword: __redacted__<v1_0.user_plain_password>
           passwordHash: string
         }): Promise<ok_ko<never>>
-        //
 
-        encryptTokenData(_: {
-          data: v1_0.iamSignedTokenData
+        signDataToken(_: {
+          data: v1_0.iamSignTokenData
           expiresIn: time_duration_string
-        }): Promise<v1_0.session_obj>
-        decryptTokenData(_: { token: session_token }): Promise<ok_ko<v1_0.iamSignedTokenData>>
+        }): Promise<signed_expire_token>
+        validateSignedToken(_: { token: session_token }): Promise<ok_ko<v1_0.iamSignTokenData>>
+        //TODO: implement decodeNoValidateSignedToken(_: { token: session_token }): Promise<ok_ko<v1_0.iamSignTokenData>>
       }
 
       email: {

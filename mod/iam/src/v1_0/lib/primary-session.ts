@@ -1,7 +1,7 @@
 import { CoreContext, ErrorXxx, primary_session } from '@moodle/lib-ddd'
-import { d_u__d, ok_ko } from '@moodle/lib-types'
+import { d_u__d, ok_ko, signed_expire_token } from '@moodle/lib-types'
 import assert from 'assert'
-import { session_obj, sessionUserData, user_id, user_role, user_session } from '../types'
+import { sessionUserData, user_id, user_role, user_session } from '../types'
 import { hasUserSessionRole, userRecord2SessionUserData } from './user-session'
 
 // System Session
@@ -17,7 +17,7 @@ export async function validateAnyUserSession(ctx: Pick<CoreContext, 'primarySess
   if (!token) {
     return guest_session
   }
-  const [valid, sessionResp] = await ctx.worker.moodle.iam.v1_0.sec.crypto.decryptTokenData({
+  const [valid, sessionResp] = await ctx.worker.moodle.iam.v1_0.sec.crypto.validateSignedToken({
     token,
   })
   const any_user_session =
@@ -117,7 +117,7 @@ export function isGuestSession(
 export async function generateSessionForUserId(
   ctx: Pick<CoreContext, 'worker'>,
   userId: user_id,
-): Promise<ok_ko<session_obj, { userNotFound: unknown }>> {
+): Promise<ok_ko<signed_expire_token, { userNotFound: unknown }>> {
   const mySec = ctx.worker.moodle.iam.v1_0.sec
   const [, userRecord] = await mySec.db.getUserById({ userId })
   if (!userRecord) {
@@ -130,11 +130,11 @@ export async function generateSessionForUserId(
 export async function generateSessionForUserData(
   ctx: Pick<CoreContext, 'worker'>,
   user: sessionUserData,
-): Promise<session_obj> {
+): Promise<signed_expire_token> {
   const {
     iam: { tokenExpireTime },
   } = await ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
-  const session = await ctx.worker.moodle.iam.v1_0.sec.crypto.encryptTokenData({
+  const session = await ctx.worker.moodle.iam.v1_0.sec.crypto.signDataToken({
     data: {
       v: '1_0',
       type: 'userSession',

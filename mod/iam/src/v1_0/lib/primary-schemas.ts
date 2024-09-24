@@ -1,5 +1,5 @@
 import { concrete } from '@moodle/lib-ddd'
-import { __redacted__key, email_address_schema, encrypted_token_schema } from '@moodle/lib-types'
+import { __redacted__key, email_address_schema, signed_token_schema } from '@moodle/lib-types'
 import { intersection, object, string } from 'zod'
 import { PrimaryMsgSchemaConfigs } from '../types'
 
@@ -34,12 +34,12 @@ export function getPrimarySchemas({ user, myAccount }: PrimaryMsgSchemaConfigs) 
     reason: string()
       .min(myAccount.selfDeletionRequestReason.min)
       .max(myAccount.selfDeletionRequestReason.max),
-    token: encrypted_token_schema,
+    token: signed_token_schema,
   })
 
   const resetPasswordSchema = object({
     newPassword: redacted_password,
-    token: encrypted_token_schema,
+    token: signed_token_schema,
   })
 
   const loginSchema = object({
@@ -50,7 +50,7 @@ export function getPrimarySchemas({ user, myAccount }: PrimaryMsgSchemaConfigs) 
   return {
     raw: {
       user: {
-        encrypted_token_schema,
+        signed_token_schema,
         email,
         redacted_password,
         displayName,

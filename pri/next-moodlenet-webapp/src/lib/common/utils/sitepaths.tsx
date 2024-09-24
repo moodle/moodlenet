@@ -1,26 +1,26 @@
-import { map } from '@moodle/lib-types'
+import { map, url_path_string } from '@moodle/lib-types'
 import QueryString from 'qs'
 
 export type sitepaths = ReturnType<typeof sitepaths>
-export function sitepaths(baseUrl = '/') {
+export function sitepaths<as extends string = url_path_string>(baseUrl = '/') {
   type id = string
-  const _ = (path: string) => `${baseUrl}${path}`
+  const _ = (path: string) => `${baseUrl}${path}` as as
 
   const DEF_SLUG = '-'
   const _id_slug_sub =
     <sub extends string>(path: string) =>
     (id: id, slug = DEF_SLUG) =>
     (sub: sub) =>
-      `${_(path)}/${id}/${slug}${sub}`
+      `${_(path)}/${id}/${slug}${sub}` as as
 
   const _sub =
     <sub extends string>(path: string) =>
     (sub: sub) =>
-      `${_(path)}${sub}`
+      `${_(path)}${sub}` as as
 
   const _with_query = (path: string) => (query?: map<string | string[]>) => {
     const qstring = QueryString.stringify(query)
-    return `${_(path)}?${qstring}`
+    return `${_(path)}?${qstring}` as as
   }
   type admin_sub = '/users' | '/general' | '/appearance'
   const admin = _sub<admin_sub>(`admin`)

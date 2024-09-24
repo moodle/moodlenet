@@ -49,7 +49,7 @@ export const YouTubeEmbed: FC<{ id: string }> = ({ id }) => {
       src={`https://www.youtube.com/embed/${id}`}
       style={{ aspectRatio: `${data?.width ?? 16}/${data?.height ?? 9}` }}
       title="YouTube video player"
-      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share;"
+      allow="accelerometer; clipboard-write; signed-media; gyroscope; picture-in-picture; web-share;"
       allowFullScreen
     />
   )

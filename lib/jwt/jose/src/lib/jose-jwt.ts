@@ -1,7 +1,7 @@
 import {
   _any,
   date_time_string,
-  encrypted_token_schema,
+  signed_token_schema,
   time_duration_string,
 } from '@moodle/lib-types'
 import * as iso8601duration from 'iso8601-duration'
@@ -118,7 +118,7 @@ export async function sign<payload>({
   if (notBeforeTimeSecs) {
     signingJwt.setNotBefore(notBeforeTimeSecs)
   }
-  const token = encrypted_token_schema.parse(await signingJwt.sign(keyLikes.private, opts))
+  const token = signed_token_schema.parse(await signingJwt.sign(keyLikes.private, opts))
   return { token, expireDate: expireDateStr, notBeforeDate: notBeforeDateStr }
 }
 function expirations(
