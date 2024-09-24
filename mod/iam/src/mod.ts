@@ -1,4 +1,4 @@
-import type { error4xx, mod, session_token } from '@moodle/lib-ddd'
+import type { errorXxx, mod, session_token } from '@moodle/lib-ddd'
 import type {
   __redacted__,
   d_u,
@@ -42,15 +42,15 @@ export type moodle_iam_mod = mod<{
         editUserRoles(_: {
           userId: v1_0.user_id
           roles: v1_0.user_role[]
-        }): Promise<ok_ko<void, d_u<{ error4xx: error4xx }, 'reason'>>>
+        }): Promise<ok_ko<void, d_u<{ errorXxx: errorXxx }, 'reason'>>>
         searchUsers(_: {
           textSearch: string
-        }): Promise<ok_ko<{ users: v1_0.userRecord[] }, d_u<{ error4xx: error4xx }, 'reason'>>>
+        }): Promise<ok_ko<{ users: v1_0.userRecord[] }, d_u<{ errorXxx: errorXxx }, 'reason'>>>
         deactivateUser(_: {
           userId: v1_0.user_id
           reason: string
           anonymize: boolean
-        }): Promise<ok_ko<void, d_u<{ error4xx: error4xx }, 'reason'>>>
+        }): Promise<ok_ko<void, d_u<{ errorXxx: errorXxx }, 'reason'>>>
       }
 
       signup: {
@@ -114,7 +114,7 @@ export type moodle_iam_mod = mod<{
         ): Promise<
           ok_ko<
             void,
-            d_u<{ wrongCurrentPassword: unknown; unknown: unknown; error4xx: error4xx }, 'reason'>
+            d_u<{ wrongCurrentPassword: unknown; unknown: unknown; errorXxx: errorXxx }, 'reason'>
           >
         >
       }

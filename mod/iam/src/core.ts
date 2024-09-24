@@ -1,4 +1,4 @@
-import { error4xx, type core_factory, type core_impl } from '@moodle/lib-ddd'
+import { errorXxx, type core_factory, type core_impl } from '@moodle/lib-ddd'
 import {
   resetPasswordContent,
   selfDeletionConfirmContent,
@@ -40,12 +40,12 @@ export function core(): core_factory {
                     worker,
                   )
                   if (!admin_user_session) {
-                    return [false, { reason: 'error4xx', ...error4xx('Forbidden') }]
+                    return [false, { reason: 'errorXxx', ...errorXxx('Forbidden') }]
                   }
 
                   const [done] = await mySec.db.changeUserRoles({ userId, roles })
                   if (!done) {
-                    return [false, { reason: 'error4xx', ...error4xx('Not Found') }]
+                    return [false, { reason: 'errorXxx', ...errorXxx('Not Found') }]
                   }
                   return [true, _void]
                 },
@@ -57,7 +57,7 @@ export function core(): core_factory {
                     worker,
                   )
                   if (!admin_user_session) {
-                    return [false, { reason: 'error4xx', ...error4xx('Forbidden') }]
+                    return [false, { reason: 'errorXxx', ...errorXxx('Forbidden') }]
                   }
                   return [true, await mySec.db.findUsersByText({ text: textSearch })]
                 },
@@ -69,7 +69,7 @@ export function core(): core_factory {
                     worker,
                   )
                   if (!admin_user_session) {
-                    return [false, { reason: 'error4xx', ...error4xx('Forbidden') }]
+                    return [false, { reason: 'errorXxx', ...errorXxx('Forbidden') }]
                   }
                   const [done] = await mySec.db.deactivateUser({
                     userId,
@@ -77,7 +77,7 @@ export function core(): core_factory {
                     anonymize,
                   })
                   if (!done) {
-                    return [false, { reason: 'error4xx', ...error4xx('Not Found') }]
+                    return [false, { reason: 'errorXxx', ...errorXxx('Not Found') }]
                   }
                   return [true, _void]
                 },
@@ -338,7 +338,7 @@ export function core(): core_factory {
                     worker,
                   )
                   if (!authenticated_session) {
-                    return [false, { reason: 'error4xx', ...error4xx('Forbidden') }]
+                    return [false, { reason: 'errorXxx', ...errorXxx('Forbidden') }]
                   }
                   const [, user] = await mySec.db.getUserById({
                     userId: authenticated_session.user.id,

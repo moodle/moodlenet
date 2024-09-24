@@ -1,4 +1,4 @@
-import { http_bind, TransportData } from '@moodle/bindings-node'
+import { http_bind } from '@moodle/bindings-node'
 import {
   composeImpl,
   core_impl,
@@ -8,6 +8,7 @@ import {
   dispatch,
   domain_msg,
   sec_impl,
+  TransportData,
   WorkerContext,
 } from '@moodle/lib-ddd'
 import * as mod_iam from '@moodle/mod-iam'
@@ -57,6 +58,7 @@ async function request(transportData: TransportData) {
     primarySession: primary_session,
     forward: monolithAccessProxy.mod,
     worker: monolithAccessProxy.mod,
+    transportData,
   }
 
   const core_impls: core_impl[] = [
@@ -69,7 +71,7 @@ async function request(transportData: TransportData) {
   const core = composeImpl(...core_impls)
 
   const workerCtx: WorkerContext | null = core_mod_id
-    ? { primarySession: primary_session, emit: monolithAccessProxy.mod, core_mod_id }
+    ? { primarySession: primary_session, emit: monolithAccessProxy.mod, core_mod_id, transportData }
     : null
 
   const sec_impls: sec_impl[] = workerCtx

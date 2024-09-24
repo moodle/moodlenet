@@ -1,8 +1,14 @@
 import { _any, deep_partial, deep_required } from '@moodle/lib-types'
 import { merge } from 'lodash'
 import { Modules } from '../domain'
-import { any_endpoint, layers, mod_id } from './mod'
+import { any_endpoint, domain_msg, layers, mod_id } from './mod'
 import { primary_session } from './primary-session'
+
+export interface TransportData {
+  primary_session: primary_session
+  domain_msg: domain_msg
+  core_mod_id: mod_id | null
+}
 
 export interface CoreProcessContext {
   worker: concrete<'sec'>
@@ -16,6 +22,7 @@ export interface CoreContext {
   forward: concrete<'pri'>
   worker: concrete<'sec'>
   primarySession: primary_session
+  transportData: TransportData
 }
 
 export type EvtContext = CoreContext
@@ -24,6 +31,7 @@ export interface WorkerContext {
   primarySession: primary_session
   core_mod_id: mod_id
   emit: concrete<'evt'>
+  transportData: TransportData
 }
 
 // export type execution_context = {
