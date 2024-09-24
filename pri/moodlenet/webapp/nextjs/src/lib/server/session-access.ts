@@ -80,7 +80,7 @@ export async function getPublisherUserSession() {
     : null
 }
 export async function getUserSession() {
-  const sessionToken = getAuthTokenCookie()
+  const { sessionToken } = getAuthTokenCookie()
   const userSession = sessionToken
     ? await priAccess()
         .moodle.iam.v1_0.pri.session.getUserSession({
@@ -111,7 +111,7 @@ function getPrimarySession() {
   assert(xHost, 'x-host not found in headers')
   const primarySession: primary_session = {
     type: 'user',
-    sessionToken: getAuthTokenCookie(),
+    sessionToken: getAuthTokenCookie().sessionToken,
     app: {
       name: MOODLE_NET_NEXTJS_APP_NAME,
       pkg: 'moodlenet-nextjs',

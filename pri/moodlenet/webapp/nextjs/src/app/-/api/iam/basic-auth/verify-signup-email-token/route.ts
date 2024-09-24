@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       iam: {
         v1_0: {
           pri: {
-            signup: { createNewUserByEmailVerificationToken },
+            access: { createNewUserByEmailVerificationToken },
             session: { generateUserSession },
           },
         },

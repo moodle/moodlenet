@@ -21,7 +21,7 @@ export const signupAction = actionClient
   .action(async ({ parsedInput: signupForm }) => {
     const redirectUrl = (await srvSiteUrls()).full.apis.iam.basicAuth.verifySignupEmailToken
 
-    const [done, resp] = await priAccess().moodle.iam.v1_0.pri.signup.request({
+    const [done, resp] = await priAccess().moodle.iam.v1_0.pri.access.request({
       signupForm,
       redirectUrl,
     })

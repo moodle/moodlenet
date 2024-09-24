@@ -24,7 +24,7 @@ export const loginAction = actionClient
     console.log({ xSearchHeader, parsedQs })
     const redirectUrl = parsedQs.redirect ?? (await srvSiteUrls()).site.pages.landing
 
-    const [loginSuccess, loginResponse] = await priAccess().moodle.iam.v1_0.pri.myAccount.login({
+    const [loginSuccess, loginResponse] = await priAccess().moodle.iam.v1_0.pri.access.login({
       loginForm,
     })
     if (!loginSuccess) {

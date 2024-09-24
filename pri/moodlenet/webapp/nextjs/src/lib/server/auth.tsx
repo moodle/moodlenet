@@ -6,7 +6,7 @@ const AUTH_COOKIE = 'moodlenet-auth'
 export function getAuthTokenCookie() {
   const {success,data: token} = encrypted_token_schema.safeParse( cookies().get(AUTH_COOKIE)?.value)
 
-  return success ? token : null
+  return { sessionToken: success ? token : null }
 }
 export function setAuthTokenCookie(session: null | session_obj) {
   const reqCookie = session

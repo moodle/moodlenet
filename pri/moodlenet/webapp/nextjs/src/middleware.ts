@@ -24,13 +24,8 @@ export async function middleware(request: NextRequest) {
   const xGeo = JSON.stringify(request.geo || {})
   const xSearch = url.search.replace(/^\?/, '')
 
-  // NOTE:
-  // NOTE:
-  // NOTE:
-  // NOTE:  consider this https://www.npmjs.com/package/next-extra ! (or maybe others)
-  // NOTE:
-  // NOTE:
-  // NOTE:
+  //! NOTE:  consider this https://www.npmjs.com/package/next-extra ! (or maybe others)
+  // or simply implement some utility functins for accessing these  custom data in server-components|actions
 
   return NextResponse.next({
     headers: {

@@ -53,7 +53,7 @@ export type moodle_iam_mod = mod<{
         }): Promise<ok_ko<void, d_u<{ errorXxx: errorXxx }, 'reason'>>>
       }
 
-      signup: {
+      access: {
         request(_: {
           signupForm: v1_0.signupForm
           redirectUrl: url
@@ -70,9 +70,6 @@ export type moodle_iam_mod = mod<{
             >
           >
         >
-      }
-
-      myAccount: {
         login(_: { loginForm: v1_0.loginForm }): Promise<
           ok_ko<
             {
@@ -82,7 +79,15 @@ export type moodle_iam_mod = mod<{
             void
           >
         >
+        logout(_: { sessionToken: session_token }): Promise<void>
 
+        resetPasswordRequest(_: {
+          redirectUrl: url
+          declaredOwnEmail: email_address
+        }): Promise<void>
+      }
+
+      myAccount: {
         selfDeletionRequest(_: { redirectUrl: url }): Promise<void>
 
         confirmSelfDeletionRequest(_: {
@@ -94,11 +99,6 @@ export type moodle_iam_mod = mod<{
             d_u<{ invalidToken: unknown; unknownUser: unknown; unknown: unknown }, 'reason'>
           >
         >
-
-        resetPasswordRequest(_: {
-          redirectUrl: url
-          declaredOwnEmail: email_address
-        }): Promise<void>
 
         resetPassword(_: {
           resetPasswordForm: v1_0.resetPasswordForm

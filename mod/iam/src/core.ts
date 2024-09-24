@@ -82,7 +82,7 @@ export function core(): core_factory {
                   return [true, _void]
                 },
               },
-              signup: {
+              access: {
                 async request({ signupForm, redirectUrl }) {
                   const schemas = await v1_0_lib.fetchPrimarySchemas(forward)
                   const { displayName, email, password } = schemas.signupSchema.parse(signupForm)
@@ -170,9 +170,6 @@ export function core(): core_factory {
                     ? [true, { userId: newUser.id }]
                     : [false, { reason: 'unknown' }]
                 },
-              },
-
-              myAccount: {
                 async login({ loginForm }) {
                   const [found, userRecord] = await mySec.db.getUserByEmail({
                     email: loginForm.email,
@@ -202,7 +199,51 @@ export function core(): core_factory {
                     },
                   ]
                 },
+                async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
+                  const {
+                    iam: { tokenExpireTime: userSelfDeletion },
+                    org: { info: orgInfo, addresses: orgAddr },
+                  } = await mySec.db.getConfigs()
 
+                  const [, user] = await mySec.db.getUserByEmail({ email: declaredOwnEmail })
+                  if (!user) {
+                    return
+                  }
+
+                  const resetPasswordConfirmationSession = await mySec.crypto.encryptTokenData({
+                    expiresIn: userSelfDeletion.resetPasswordRequest,
+                    data: {
+                      v: '1_0',
+                      type: 'resetPasswordRequest',
+                      redirectUrl,
+                      email: user.contacts.email,
+                    },
+                  })
+
+                  const content = resetPasswordContent({
+                    resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
+                    receiverEmail: user.contacts.email,
+                  })
+
+                  const reactBody = EmailLayout({
+                    orgInfo,
+                    orgAddr,
+                    content,
+                  })
+                  await mySec.email.sendNow({
+                    reactBody,
+                    subject: content.subject,
+                    to: v1_0_lib.getUserNamedEmailAddress(user),
+                  })
+                  return
+                },
+                async logout(/* {sessionToken} */) {
+                  //! FIXME implement session_token invalidation
+                  return
+                },
+              },
+
+              myAccount: {
                 async selfDeletionRequest({ redirectUrl }) {
                   const authenticated_session = await v1_0_lib.validateUserAuthenticatedSession(
                     primarySession,
@@ -292,44 +333,6 @@ export function core(): core_factory {
                     userId: userRecord.id,
                   })
                   return pwdChanged ? [true, _void] : [false, { reason: 'unknown' }]
-                },
-                async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
-                  const {
-                    iam: { tokenExpireTime: userSelfDeletion },
-                    org: { info: orgInfo, addresses: orgAddr },
-                  } = await mySec.db.getConfigs()
-
-                  const [, user] = await mySec.db.getUserByEmail({ email: declaredOwnEmail })
-                  if (!user) {
-                    return
-                  }
-
-                  const resetPasswordConfirmationSession = await mySec.crypto.encryptTokenData({
-                    expiresIn: userSelfDeletion.resetPasswordRequest,
-                    data: {
-                      v: '1_0',
-                      type: 'resetPasswordRequest',
-                      redirectUrl,
-                      email: user.contacts.email,
-                    },
-                  })
-
-                  const content = resetPasswordContent({
-                    resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
-                    receiverEmail: user.contacts.email,
-                  })
-
-                  const reactBody = EmailLayout({
-                    orgInfo,
-                    orgAddr,
-                    content,
-                  })
-                  await mySec.email.sendNow({
-                    reactBody,
-                    subject: content.subject,
-                    to: v1_0_lib.getUserNamedEmailAddress(user),
-                  })
-                  return
                 },
 
                 async changePassword({ currentPassword, newPassword }) {

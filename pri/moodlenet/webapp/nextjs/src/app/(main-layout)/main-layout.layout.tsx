@@ -18,7 +18,7 @@ import {
 import { priAccess, getUserSession } from '../../lib/server/session-access'
 import './main-layout.style.scss'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
-import { logout } from '../actions/session'
+import { logout } from '../actions/access'
 import { filterOutFalsies } from '@moodle/lib-types'
 import { hasUserSessionRole, isAuthenticatedUserSession } from '@moodle/mod-iam/v1_0/lib'
 
