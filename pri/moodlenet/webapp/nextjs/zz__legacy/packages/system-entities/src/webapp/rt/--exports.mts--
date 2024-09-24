@@ -1,2 +1,0 @@
-export * from '../../common/pkg-entities-tools'
-export * from './sys-entity-context'

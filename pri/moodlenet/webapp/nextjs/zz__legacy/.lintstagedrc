@@ -1,6 +1,0 @@
-{
-  "**/*.+(js|mjs|jsx|ts|mts|tsx|json)": [
-    "prettier --check --write --ignore-unknown",
-    "eslint --config .eslintrc-base"
-  ]
-}

@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nx run-many --target=serve --target=dev",
-    "cleanup-dev": "rimraf .nx tmp dist pri/next-moodlenet-webapp/.next/ pri/moodlenet/webapp/nextjs/.next/",
+    "cleanup-env": "rimraf .nx tmp dist pri/next-moodlenet-webapp/.next/ ; npm run nx-reset",
     "nx-reset": "nx reset"
   },
   "private": true,
