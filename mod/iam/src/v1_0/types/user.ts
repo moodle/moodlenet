@@ -40,7 +40,8 @@ export type user_deactivation_reason = v1_0 &
     'type'
   >
 
-export const user_record_brand = Symbol('user_record')
+// export const user_record_brand = Symbol('user_record')
+declare const user_record_brand: unique symbol
 export type user_id = string
 export type userRecord = branded<UserRecord, typeof user_record_brand>
 

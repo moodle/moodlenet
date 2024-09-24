@@ -2,11 +2,10 @@ import { sec_factory, sec_impl } from '@moodle/lib-ddd'
 import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import {
   _never,
-  _void,
   encrypted_token_payload_data,
   ENCRYPTED_TOKEN_PAYLOAD_PROP,
 } from '@moodle/lib-types'
-import { iamTokenData } from '@moodle/mod-iam/v1_0/types'
+import { iamSignedTokenData } from '@moodle/mod-iam/v1_0/types'
 import * as argon2 from 'argon2'
 export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 // ArgonPwdHashOpts : {
@@ -59,10 +58,9 @@ export function iam({
                 //               },
                 async decryptTokenData({ token }) {
                   // FIXME : CHECKS AUDIENCE ETC >>>
-                  const verifyResult = await joseVerify<encrypted_token_payload_data<iamTokenData>>(
-                    joseEnv,
-                    token,
-                  )
+                  const verifyResult = await joseVerify<
+                    encrypted_token_payload_data<iamSignedTokenData>
+                  >(joseEnv, token)
 
                   return verifyResult
                     ? [true, verifyResult.payload[ENCRYPTED_TOKEN_PAYLOAD_PROP]]
@@ -70,7 +68,7 @@ export function iam({
                 },
                 async encryptTokenData({ data, expiresIn }) {
                   const { expireDate, token /* , notBeforeDate */ } = await sign<
-                    encrypted_token_payload_data<iamTokenData>
+                    encrypted_token_payload_data<iamSignedTokenData>
                   >({
                     joseEnv,
                     payload: { [ENCRYPTED_TOKEN_PAYLOAD_PROP]: data },

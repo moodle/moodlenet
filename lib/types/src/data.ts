@@ -41,31 +41,38 @@ export function date_time_string(date: Date | 'now'): date_time_string {
   return _date.toISOString() as date_time_string
 }
 
-export const url_brand = Symbol('url_brand')
-export type url_string = branded<string, typeof url_brand> // ISO 8601
-export const url_string_schema = string().url().brand(url_brand)
+// export const url_string_brand = Symbol('url_string_brand')
+declare const url_string_brand: unique symbol
+export type url_string = branded<string, typeof url_string_brand> // ISO 8601
+export const url_string_schema = string().url().brand(url_string_brand)
 
-export const date_time_brand = Symbol('date_time_brand')
-export type date_time_string = branded<string, typeof date_time_brand> // ISO 8601
-export const date_time_string_schema = string().datetime().brand(date_time_brand)
+// export const date_time_string_brand = Symbol('date_time_string_brand')
+declare const date_time_string_brand: unique symbol
+export type date_time_string = branded<string, typeof date_time_string_brand> // ISO 8601
+export const date_time_string_schema = string().datetime().brand(date_time_string_brand)
 
-export const date_brand = Symbol('date_brand')
-export type date_string = branded<string, typeof date_brand> // ISO 8601
-export const date_string_schema = string().date().brand(date_brand)
+// export const date_string_brand = Symbol('date_string_brand')
+declare const date_string_brand: unique symbol
+export type date_string = branded<string, typeof date_string_brand> // ISO 8601
+export const date_string_schema = string().date().brand(date_string_brand)
 
-export const time_brand = Symbol('time_brand')
-export type time_string = branded<string, typeof time_brand> // ISO 8601
-export const time_string_schema = string().time().brand(time_brand)
+// export const time_string_brand = Symbol('time_string_brand')
+declare const time_string_brand: unique symbol
+export type time_string = branded<string, typeof time_string_brand> // ISO 8601
+export const time_string_schema = string().time().brand(time_string_brand)
 
-export const time_duration_brand = Symbol('time_duration_brand')
-export type time_duration_string = branded<string, typeof time_duration_brand> // ISO 8601
-export const time_duration_string_schema = string().duration().brand(time_duration_brand)
+// export const time_duration_string_brand = Symbol('time_duration_string_brand')
+declare const time_duration_string_brand: unique symbol
+export type time_duration_string = branded<string, typeof time_duration_string_brand> // ISO 8601
+export const time_duration_string_schema = string().duration().brand(time_duration_string_brand)
 
-export const encrypted_token_brand = Symbol('time_duration_brand')
+// export const encrypted_token_brand = Symbol('encrypted_token_brand')
+declare const encrypted_token_brand: unique symbol
 export type encrypted_token = branded<string, typeof encrypted_token_brand> // ISO 8601
 export const encrypted_token_schema = string().min(10).max(2048).brand(encrypted_token_brand)
 
-export const email_address_brand = Symbol('email_address_brand')
+// export const email_address_brand = Symbol('email_address_brand')
+declare const email_address_brand: unique symbol
 export type email_address = branded<string, typeof email_address_brand> // email format
 export const email_address_schema = string().toLowerCase().email().brand(email_address_brand)
 

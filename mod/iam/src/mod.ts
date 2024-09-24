@@ -117,10 +117,10 @@ export type moodle_iam_mod = mod<{
         //
 
         encryptTokenData(_: {
-          data: v1_0.iamTokenData
+          data: v1_0.iamSignedTokenData
           expiresIn: time_duration_string
         }): Promise<v1_0.session_obj>
-        decryptTokenData(_: { token: session_token }): Promise<ok_ko<v1_0.iamTokenData>>
+        decryptTokenData(_: { token: session_token }): Promise<ok_ko<v1_0.iamSignedTokenData>>
       }
 
       email: {

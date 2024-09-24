@@ -31,11 +31,10 @@ export function priAccess(): Modules {
       )
     },
   })
-  // FIXME: The following block should refresh the session token before it expires
-  // it's not ready as before actually refreshing the token
-  // we need to check if the token is actually valid
-  // notice `iam_v1_0.noValidationParseUserSessionToken`
-  // is fast but do not validate!
+  // FIXME:
+  // The following block should refresh the session token before it expires
+  // we need to fast-check-no-validation for expiration (jose.decodeJwt() ),
+  // if the token is about to expire, validate token, if valid generate new and set cookie.
   // however we can't set the cookie here :
   // [Error]: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
   //
