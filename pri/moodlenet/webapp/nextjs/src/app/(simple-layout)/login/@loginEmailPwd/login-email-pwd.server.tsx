@@ -21,7 +21,7 @@ export const loginAction = actionClient
   .action(async ({ parsedInput: loginForm }) => {
     const xSearchHeader = headers().get('x-search') ?? ''
     const parsedQs = QueryString.parse(xSearchHeader)
-    console.log({ xSearchHeader, parsedQs })
+    // console.log({ xSearchHeader, parsedQs })
     const redirectUrl = parsedQs.redirect ?? (await srvSiteUrls()).site.pages.landing
 
     const [loginSuccess, loginResponse] = await priAccess().moodle.iam.v1_0.pri.access.login({

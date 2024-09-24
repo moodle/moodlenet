@@ -56,7 +56,7 @@ interface SendEmailConfig {
    bcc,
    cc,
    priority,
- }: SendEmailConfig): Promise<ok_ko<SMTPTransport.SentMessageInfo, void>> {
+ }: SendEmailConfig): Promise<ok_ko<SMTPTransport.SentMessageInfo, { error: unknown }>> {
    const __development_env__send_all_emails_to_prefixed_warn =
      env.__development_env__send_all_emails_to
        ? `## DEV EMAIL it would have been sent to [${[to].flat().map(namedEmailAddressString).join(' | ')}] ##`
@@ -65,8 +65,7 @@ interface SendEmailConfig {
    to = env.__development_env__send_all_emails_to ?? to
 
    const content = body.contentType === 'react' ? { html: await renderAsync(body.element) } : body
-
-   const sentMessageInfo = await createTransport(env.nodemailerTransport)
+   return await createTransport(env.nodemailerTransport)
      .sendMail({
        ...content,
        subject: env.__development_env__send_all_emails_to
@@ -82,10 +81,9 @@ interface SendEmailConfig {
      })
      .then(sentMessageInfo => {
        logWarnTransportIsJsonTransport(sentMessageInfo)
-       return sentMessageInfo
+       return [true, sentMessageInfo] as const
      })
-
-   return [true, sentMessageInfo]
+     .catch(e => [false, { reason: 'error', e }] as const)
 
    function logWarnTransportIsJsonTransport(messageInfo: SMTPTransport.SentMessageInfo) {
      if (

@@ -50,9 +50,7 @@ export function client(agent_opts?: Agent.Options) {
         }
         if (isCodeXxx(response.status)) {
           const jsonBody = _parse(jsonBodyStrUtf8)
-          throw new ErrorXxx(
-            errorXxx(response.status as status_code_xxx, jsonBody?.details ?? undefined),
-          )
+          throw new ErrorXxx(response.status as status_code_xxx, jsonBody?.details)
         }
         throw new Error(`Server error: ${response.status}\n ${jsonBodyStrUtf8}`)
       })

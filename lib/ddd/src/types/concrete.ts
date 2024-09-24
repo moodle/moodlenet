@@ -70,7 +70,9 @@ export type core_factory = factory<'pri' | 'evt'>
 export type core_impl = impl<'pri' | 'evt'>
 export type sec_factory = factory<'sec'>
 export type sec_impl = impl<'sec'>
-type factory<_layer extends keyof layer_contexts> = (ctx: layer_contexts[_layer]) => impl<_layer>
+type factory<_layer extends keyof layer_contexts> = (
+  ctx: layer_contexts[_layer],
+) => impl<_layer> | Promise<impl<_layer>>
 
 export declare const domain: deep_required<impl<keyof layer_contexts>>
 export type payload_of<_ extends any_endpoint> = Parameters<_>[0]

@@ -1,7 +1,6 @@
-import { _any, any_function, deep_partial } from '@moodle/lib-types'
+import { _any, deep_partial } from '@moodle/lib-types'
 import { Modules } from '../domain'
 import { concrete, domain_msg, layer_contexts } from '../types'
-import { ErrorXxx, errorXxx } from './access'
 
 export const _inspect_symbol = Symbol('moduleAccessProxy inspect')
 
@@ -18,12 +17,6 @@ export function dispatch(
   }
   return access(payload)
 }
-
-//
-//
-//
-//
-//
 
 type domain_access = (_: domain_msg) => unknown
 
@@ -119,14 +112,14 @@ function _throw(e: Error) {
   }
 }
 
-export async function preflight<fn extends any_function>(
-  fn: fn,
-  _throws?: errorXxx | ((_: unknown) => errorXxx),
-): Promise<ReturnType<Awaited<fn>>> {
-  try {
-    const result = await fn()
-    return result
-  } catch (e) {
-    throw new ErrorXxx(typeof _throws === 'function' ? _throws(e) : (_throws ?? errorXxx(500, e)))
-  }
-}
+// export async function preflight<fn extends any_function>(
+//   fn: fn,
+//   _throws?: errorXxx | ((_: unknown) => errorXxx),
+// ): Promise<ReturnType<Awaited<fn>>> {
+//   try {
+//     const result = await fn()
+//     return result
+//   } catch (e) {
+//     throw new ErrorXxx(typeof _throws === 'function' ? _throws(e) : (_throws ?? errorXxx(500, e)))
+//   }
+// }

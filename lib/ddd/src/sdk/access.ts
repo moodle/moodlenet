@@ -35,10 +35,17 @@ export function errorXxx(code_or_desc: statusXxx, details?: _any): errorXxx {
 }
 
 export class ErrorXxx extends Error {
-  constructor(public errorXxx: errorXxx) {
+  public errorXxx: errorXxx
+  constructor(code_or_desc_or_err: errorXxx | statusXxx, details?: _any) {
+    const _errorXxx: errorXxx =
+      typeof code_or_desc_or_err === 'object'
+        ? { ...code_or_desc_or_err, details }
+        : errorXxx(code_or_desc_or_err, details)
+
     super(
-      `Access ErrorXxx ${errorXxx.code}:[${errorXxx.desc}]
-    ${JSON.stringify(errorXxx.details ?? 'no details')}`,
+      `Access ErrorXxx ${_errorXxx.code}:[${_errorXxx.desc}]
+    ${JSON.stringify(_errorXxx.details ?? 'no details')}`,
     )
+    this.errorXxx = _errorXxx
   }
 }

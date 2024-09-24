@@ -59,12 +59,9 @@ export function priAccess(): Modules {
 
   return ap.mod
 }
-const guest_session: user_session = {
-  type: 'guest',
-}
 
 export async function getAuthenticatedUserSession() {
-  const userSession = await getUserSession()
+  const { userSession } = await priAccess().moodle.iam.v1_0.pri.session.getCurrentUserSession()
   return userSession.type === 'authenticated' ? userSession : null
 }
 export async function getAdminUserSession() {
@@ -78,17 +75,6 @@ export async function getPublisherUserSession() {
   return authenticatedUserSession && hasUserSessionRole(authenticatedUserSession, 'publisher')
     ? authenticatedUserSession
     : null
-}
-export async function getUserSession() {
-  const { sessionToken } = getAuthTokenCookie()
-  const userSession = sessionToken
-    ? await priAccess()
-        .moodle.iam.v1_0.pri.session.getUserSession({
-          sessionToken,
-        })
-        .then(({ userSession }) => userSession)
-    : guest_session
-  return userSession
 }
 
 

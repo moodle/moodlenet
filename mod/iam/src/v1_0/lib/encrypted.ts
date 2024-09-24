@@ -4,18 +4,16 @@ import {
   encrypted_token_payload_data,
   ok_ko,
   ENCRYPTED_TOKEN_PAYLOAD_PROP,
+  _never,
 } from '@moodle/lib-types'
 import { jwtDecode, JwtPayload } from 'jwt-decode'
 import { iamTokenData, sessionUserData } from '../types'
 
-export function noValidationParseUserSessionToken(sessionToken: session_token): ok_ko<
-  {
-    expired: boolean
-    expires: { inSecs: number; date: Date }
-    userData: sessionUserData
-  },
-  void
-> {
+export function noValidationParseUserSessionToken(sessionToken: session_token): ok_ko<{
+  expired: boolean
+  expires: { inSecs: number; date: Date }
+  userData: sessionUserData
+}> {
   try {
     const decoded = jwtDecode<encrypted_token_payload_data<iamTokenData> & JwtPayload>(sessionToken)
     if (!decoded.exp) {
@@ -31,6 +29,6 @@ export function noValidationParseUserSessionToken(sessionToken: session_token): 
     const userData = decoded[ENCRYPTED_TOKEN_PAYLOAD_PROP].user
     return [true, { userData, expired, expires: { inSecs, date: expirationDate } }]
   } catch {
-    return [false, _void]
+    return [false, _never]
   }
 }

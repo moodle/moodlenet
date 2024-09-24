@@ -11,7 +11,7 @@ export function get_default_crypto_workers_factory({
   joseEnv,
   argonOpts,
 }: CryptoDefaultEnv): sec_factory {
-  return function factory(ctx) {
-    return composeImpl(iam({ joseEnv, argonOpts })(ctx))
+  return async function factory(ctx) {
+    return composeImpl(await iam({ joseEnv, argonOpts })(ctx))
   }
 }

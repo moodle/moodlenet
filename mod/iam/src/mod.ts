@@ -1,7 +1,6 @@
-import type { errorXxx, mod, session_token } from '@moodle/lib-ddd'
+import type { mod, session_token } from '@moodle/lib-ddd'
 import type {
   __redacted__,
-  d_u,
   d_u__d,
   date_time_string,
   email_address,
@@ -26,12 +25,10 @@ export type moodle_iam_mod = mod<{
   v1_0: {
     pri: {
       session: {
-        getUserSession(_: {
-          sessionToken: session_token
-        }): Promise<{ userSession: v1_0.user_session }>
+        getCurrentUserSession(): Promise<{ userSession: v1_0.user_session }>
         generateUserSession(_: {
           userId: v1_0.user_id
-        }): Promise<ok_ko<v1_0.session_obj, d_u<{ userNotFound: unknown }, 'reason'>>>
+        }): Promise<ok_ko<v1_0.session_obj, { userNotFound: unknown }>>
       }
 
       configs: {
@@ -42,42 +39,34 @@ export type moodle_iam_mod = mod<{
         editUserRoles(_: {
           userId: v1_0.user_id
           roles: v1_0.user_role[]
-        }): Promise<ok_ko<void, d_u<{ errorXxx: errorXxx }, 'reason'>>>
-        searchUsers(_: {
-          textSearch: string
-        }): Promise<ok_ko<{ users: v1_0.userRecord[] }, d_u<{ errorXxx: errorXxx }, 'reason'>>>
+        }): Promise<ok_ko<never, { userNotFound: unknown }>>
+        searchUsers(_: { textSearch: string }): Promise<{ users: v1_0.userRecord[] }>
         deactivateUser(_: {
           userId: v1_0.user_id
           reason: string
           anonymize: boolean
-        }): Promise<ok_ko<void, d_u<{ errorXxx: errorXxx }, 'reason'>>>
+        }): Promise<ok_ko<never, { userNotFound: unknown }>>
       }
 
       access: {
         request(_: {
           signupForm: v1_0.signupForm
           redirectUrl: url
-        }): Promise<ok_ko<void, d_u<{ userWithSameEmailExists: unknown }, 'reason'>>>
+        }): Promise<ok_ko<never, { userWithSameEmailExists: unknown }>>
 
         createNewUserByEmailVerificationToken(_: {
           signupEmailVerificationToken: encrypted_token
         }): Promise<
           ok_ko<
             { userId: v1_0.user_id },
-            d_u<
-              { /* userWithThisEmailExists: unknown; */ invalidToken: unknown; unknown: unknown },
-              'reason'
-            >
+            { /* userWithThisEmailExists: unknown; */ invalidToken: unknown; unknown: unknown }
           >
         >
         login(_: { loginForm: v1_0.loginForm }): Promise<
-          ok_ko<
-            {
-              session: v1_0.session_obj
-              authenticatedSession: d_u__d<v1_0.user_session, 'type', 'authenticated'>
-            },
-            void
-          >
+          ok_ko<{
+            session: v1_0.session_obj
+            authenticatedSession: d_u__d<v1_0.user_session, 'type', 'authenticated'>
+          }>
         >
         logout(_: { sessionToken: session_token }): Promise<void>
 
@@ -93,30 +82,17 @@ export type moodle_iam_mod = mod<{
         confirmSelfDeletionRequest(_: {
           selfDeletionConfirmationToken: encrypted_token
           reason: string
-        }): Promise<
-          ok_ko<
-            void,
-            d_u<{ invalidToken: unknown; unknownUser: unknown; unknown: unknown }, 'reason'>
-          >
-        >
+        }): Promise<ok_ko<never, { invalidToken: unknown; unknownUser: unknown; unknown: unknown }>>
 
         resetPassword(_: {
           resetPasswordForm: v1_0.resetPasswordForm
         }): Promise<
-          ok_ko<
-            void,
-            d_u<{ invalidToken: unknown; userNotFound: unknown; unknown: unknown }, 'reason'>
-          >
+          ok_ko<never, { invalidToken: unknown; userNotFound: unknown; unknown: unknown }>
         >
 
         changePassword(
           _: v1_0.changePasswordForm,
-        ): Promise<
-          ok_ko<
-            void,
-            d_u<{ wrongCurrentPassword: unknown; unknown: unknown; errorXxx: errorXxx }, 'reason'>
-          >
-        >
+        ): Promise<ok_ko<never, { wrongCurrentPassword: unknown; unknown: unknown }>>
       }
     }
     sec: {
@@ -126,7 +102,7 @@ export type moodle_iam_mod = mod<{
         // }): Promise<
         //   ok_ko<
         //     d_u__d<v1_0.user_session, 'type', 'authenticated'>,
-        //     d_u<{ invalid: unknown }, 'reason'>
+        //     { invalid: unknown }
         //   >
         // >
 
@@ -137,14 +113,14 @@ export type moodle_iam_mod = mod<{
         verifyUserPasswordHash(_: {
           plainPassword: __redacted__<v1_0.user_plain_password>
           passwordHash: string
-        }): Promise<ok_ko<void, void>>
+        }): Promise<ok_ko<never>>
         //
 
         encryptTokenData(_: {
           data: v1_0.iamTokenData
           expiresIn: time_duration_string
         }): Promise<v1_0.session_obj>
-        decryptTokenData(_: { token: session_token }): Promise<ok_ko<v1_0.iamTokenData, void>>
+        decryptTokenData(_: { token: session_token }): Promise<ok_ko<v1_0.iamTokenData>>
       }
 
       email: {
@@ -161,29 +137,30 @@ export type moodle_iam_mod = mod<{
         changeUserPassword(_: {
           userId: v1_0.user_id
           newPasswordHash: string
-        }): Promise<ok_ko<void, void>>
+        }): Promise<ok_ko<never>>
 
         deactivateUser(_: {
           userId: v1_0.user_id
           anonymize: boolean
           reason: v1_0.user_deactivation_reason
           at?: date_time_string
-        }): Promise<ok_ko<void, void>>
+        }): Promise<ok_ko<never>>
 
         getActiveUsersNotLoggedInFor(_: {
           time: time_duration_string
           inactiveNotificationSent: boolean
         }): Promise<{ inactiveUsers: v1_0.userRecord[] }>
 
-        getUserById(_: { userId: v1_0.user_id }): Promise<ok_ko<v1_0.userRecord, void>>
-        getUserByEmail(_: { email: email_address }): Promise<ok_ko<v1_0.userRecord, void>>
+        getUserById(_: { userId: v1_0.user_id }): Promise<ok_ko<v1_0.userRecord>>
+        getUserByEmail(_: { email: email_address }): Promise<ok_ko<v1_0.userRecord>>
 
-        saveNewUser(_: { newUser: v1_0.userRecord }): Promise<ok_ko<void, void>>
+        saveNewUser(_: { newUser: v1_0.userRecord }): Promise<ok_ko<never>>
 
         changeUserRoles(_: {
           userId: v1_0.user_id
           roles: v1_0.user_role[]
-        }): Promise<ok_ko<void, void>>
+          adminUserId: v1_0.user_id
+        }): Promise<ok_ko<never>>
 
         findUsersByText(_: {
           text: string

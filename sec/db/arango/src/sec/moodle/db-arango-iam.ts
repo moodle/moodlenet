@@ -1,5 +1,5 @@
 import { sec_factory, sec_impl } from '@moodle/lib-ddd'
-import { _void } from '@moodle/lib-types'
+import { _never, _void } from '@moodle/lib-types'
 import { Document } from 'arangojs/documents'
 import { createHash } from 'node:crypto'
 import { v1_0 } from '../..'
@@ -39,7 +39,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                       },
                     )
                     .catch(() => null)
-                  return [!!updated, _void]
+                  return [!!updated, _never]
                 },
                 async changeUserRoles({ userId, roles }) {
                   const {
@@ -56,7 +56,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                       { silent: true },
                     )
                     .catch(() => null)
-                  return [!!updated, _void]
+                  return [!!updated, _never]
                 },
                 async getUserByEmail({ email }) {
                   const {
@@ -70,7 +70,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     { email },
                   )
                   const foundUser = await cursor.next()
-                  return foundUser ? [true, userDocument2userRecord(foundUser)] : [false, _void]
+                  return foundUser ? [true, userDocument2userRecord(foundUser)] : [false, _never]
                 },
                 async getUserById({ userId }) {
                   const {
@@ -80,7 +80,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                   } = db_struct_v1_0
 
                   const foundUser = await user.document({ _key: userId }, { graceful: true })
-                  return foundUser ? [true, userDocument2userRecord(foundUser)] : [false, _void]
+                  return foundUser ? [true, userDocument2userRecord(foundUser)] : [false, _never]
                 },
                 async saveNewUser({ newUser }) {
                   const {
@@ -93,7 +93,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     .save(userDocument, { overwriteMode: 'conflict' })
                     .catch(() => null)
 
-                  return savedUser ? [true, _void] : [false, _void]
+                  return [!!savedUser, _never]
                 },
                 async deactivateUser({ anonymize, reason, userId, at = new Date().toISOString() }) {
                   const {
@@ -102,7 +102,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     },
                   } = db_struct_v1_0
                   const deactivatingUser = await user.document({ _key: userId }, { graceful: true })
-                  if (!deactivatingUser) return [false, _void]
+                  if (!deactivatingUser) return [false, _never]
 
                   const anonymization = anonymize
                     ? {
@@ -125,7 +125,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     },
                     { silent: true },
                   )
-                  return [true, _void]
+                  return [true, _never]
                 },
                 findUsersByText(_) {
                   throw new Error('Not implemented')

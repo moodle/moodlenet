@@ -1,6 +1,7 @@
 import { sec_factory, sec_impl } from '@moodle/lib-ddd'
 import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import {
+  _never,
   _void,
   encrypted_token_payload_data,
   ENCRYPTED_TOKEN_PAYLOAD_PROP,
@@ -38,7 +39,7 @@ export function iam({
                   plainPassword: { __redacted__: plainPassword },
                 }) {
                   const verified = await argon2.verify(passwordHash, plainPassword, argonOpts)
-                  return [verified, _void]
+                  return [verified, _never]
                 },
 
                 //               async validateSessionToken({ sessionToken }) {
@@ -65,7 +66,7 @@ export function iam({
 
                   return verifyResult
                     ? [true, verifyResult.payload[ENCRYPTED_TOKEN_PAYLOAD_PROP]]
-                    : [false, _void]
+                    : [false, _never]
                 },
                 async encryptTokenData({ data, expiresIn }) {
                   const { expireDate, token /* , notBeforeDate */ } = await sign<

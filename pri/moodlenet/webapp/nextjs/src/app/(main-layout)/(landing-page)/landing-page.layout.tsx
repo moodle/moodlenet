@@ -1,4 +1,4 @@
-import { getUserSession, priAccess } from '../../../lib/server/session-access'
+import { priAccess } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../../lib/server/utils/slots'
 import defaultBackground from '../../../ui/lib/assets/img/default-landing-background.png'
 // import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
@@ -11,7 +11,7 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
   const landing = configs.nextjs.layouts.pages.landing
   const { info } = configs.net
   const { head, content } = slotsMap(props, landing.slots)
-  const userSession = await getUserSession()
+  const { userSession } = await priAccess().moodle.iam.v1_0.pri.session.getCurrentUserSession()
 
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,

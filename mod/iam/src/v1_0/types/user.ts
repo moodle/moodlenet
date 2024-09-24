@@ -35,7 +35,7 @@ export type user_deactivation_reason = v1_0 &
     {
       inactivityPolicies: { notLoggedInFor: time_duration_string }
       userSelfDeletionRequest: { reason: string }
-      adminRequest: { reason: string }
+      adminRequest: { reason: string; adminUserId: user_id }
     },
     'type'
   >

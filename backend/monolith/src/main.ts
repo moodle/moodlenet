@@ -63,10 +63,10 @@ async function request(transportData: TransportData) {
 
   const core_impls: core_impl[] = [
     // core modules
-    mod_net.core()(coreCtx),
-    mod_org.core()(coreCtx),
-    mod_iam.core()(coreCtx),
-    mod_net_webapp_nextjs.core()(coreCtx),
+    await mod_net.core()(coreCtx),
+    await mod_org.core()(coreCtx),
+    await mod_iam.core()(coreCtx),
+    await mod_net_webapp_nextjs.core()(coreCtx),
   ]
   const core = composeImpl(...core_impls)
 
@@ -77,9 +77,9 @@ async function request(transportData: TransportData) {
   const sec_impls: sec_impl[] = workerCtx
     ? [
         // sec modules
-        get_arango_persistence_factory(env.arango_db)(workerCtx),
-        get_default_crypto_workers_factory(env.crypto)(workerCtx),
-        get_nodemailer_workers_factory(env.nodemailer)(workerCtx),
+        await get_arango_persistence_factory(env.arango_db)(workerCtx),
+        await get_default_crypto_workers_factory(env.crypto)(workerCtx),
+        await get_nodemailer_workers_factory(env.nodemailer)(workerCtx),
       ]
     : []
   const sec = composeImpl(...sec_impls)

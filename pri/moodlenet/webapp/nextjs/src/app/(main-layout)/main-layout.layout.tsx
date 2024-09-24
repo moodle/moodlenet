@@ -15,12 +15,12 @@ import {
   UserSettingsLink,
 } from './main-layout.client'
 
-import { priAccess, getUserSession } from '../../lib/server/session-access'
-import './main-layout.style.scss'
-import { sitepaths } from '../../lib/common/utils/sitepaths'
-import { logout } from '../actions/access'
 import { filterOutFalsies } from '@moodle/lib-types'
 import { hasUserSessionRole, isAuthenticatedUserSession } from '@moodle/mod-iam/v1_0/lib'
+import { sitepaths } from '../../lib/common/utils/sitepaths'
+import { priAccess } from '../../lib/server/session-access'
+import { logout } from '../actions/access'
+import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const {
@@ -48,12 +48,12 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   )
 
   async function headerSlots(): Promise<MainHeaderProps['slots']> {
-    const user_session = await getUserSession()
+    const { userSession } = await priAccess().moodle.iam.v1_0.pri.session.getCurrentUserSession()
     const { center, left, right } = slotsMap(props, header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
-    const isAuthenticated = isAuthenticatedUserSession(user_session)
-    const isAdmin = hasUserSessionRole(user_session, 'admin')
+    const isAuthenticated = isAuthenticatedUserSession(userSession)
+    const isAdmin = hasUserSessionRole(userSession, 'admin')
     const { pages } = sitepaths()
     const avatarUrl = null //user_session.user.avatarUrl
 
@@ -61,7 +61,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
       ? (() => {
           const {
             user: { displayName, id },
-          } = user_session
+          } = userSession
           const baseProfilePages = pages.homepages.profile(id, displayName)
           return [
             <AvatarMenu
