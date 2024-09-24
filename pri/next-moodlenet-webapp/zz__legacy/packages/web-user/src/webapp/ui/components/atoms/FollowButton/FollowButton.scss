@@ -1,0 +1,24 @@
+.small-follow-button {
+  padding: 1px 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  // color: white;
+  font-weight: normal;
+
+  &.disabled {
+    cursor: auto;
+  }
+
+  &:hover:not(.disabled) {
+    color: #5c5c5c;
+    > svg {
+      color: var(--primary-color-hover);
+    }
+  }
+  &.followed {
+    > svg {
+      color: var(--primary-color);
+    }
+  }
+}

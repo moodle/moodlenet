@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig-base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../key-value-store"
+    },
+    {
+      "path": "../simple-file-store"
+    }
+  ]
+}

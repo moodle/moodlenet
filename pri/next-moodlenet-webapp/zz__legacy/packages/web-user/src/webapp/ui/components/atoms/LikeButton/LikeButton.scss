@@ -1,0 +1,28 @@
+.like-button {
+  padding: 1px 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+
+  &.white {
+    color: white;
+  }
+
+  &.disabled {
+    cursor: auto;
+  }
+
+  &:hover:not(.disabled) {
+    color: #5c5c5c;
+    > svg {
+      color: #ce005d;
+    }
+  }
+
+  &.liked {
+    > svg {
+      color: #fc0071;
+    }
+  }
+}

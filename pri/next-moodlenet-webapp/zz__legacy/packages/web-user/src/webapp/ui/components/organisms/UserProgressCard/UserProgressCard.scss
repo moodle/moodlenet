@@ -1,0 +1,223 @@
+.user-progress-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 24px;
+  gap: 5px;
+
+  > .level-avatar {
+    width: 75px;
+    height: 75px;
+    > .avatar {
+      width: 100%;
+      height: 100%;
+      padding: 4px;
+    }
+  }
+
+  > .level-title {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    > .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+      > .learn-more {
+        display: flex;
+        height: fit-content;
+        cursor: pointer;
+        > svg {
+          width: 17px;
+          height: 17px;
+          color: #b4b4b4;
+          display: flex;
+        }
+      }
+    }
+    > .level {
+      font-size: 12px;
+      margin-top: -3px;
+      color: gray;
+    }
+  }
+  > .progress-info {
+    width: 100%;
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    > .progress-bar {
+      width: 100%;
+      background-color: #e0e0e0;
+      height: 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      > .progress {
+        border-radius: 10px 0 0 10px;
+        height: 100%;
+        background-color: orange;
+        transition: width 0.3s;
+        &.top-level {
+          background-color: #cc00ff;
+        }
+      }
+    }
+    > .points-range {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      > .min,
+      > .max {
+        width: 50px;
+        color: gray;
+      }
+      > .current {
+        display: flex;
+        align-items: center;
+        display: flex;
+        padding-left: 18px;
+        gap: 2px;
+        font-weight: bold;
+
+        > svg {
+          height: 12px;
+          margin-top: 1px;
+        }
+      }
+      > .max {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+  }
+}
+
+.modal-portal > .user-progress-info-modal {
+  > .modal {
+    position: relative;
+    max-height: calc(100vh - 40px); /* This provides 20px padding on top and bottom */
+    overflow-y: auto;
+
+    // &::before,
+    // &::after {
+    //   content: '';
+    //   position: absolute;
+    //   left: 0;
+    //   right: 0;
+    //   height: 30px; /* Adjust this for the height of the fade effect */
+    //   pointer-events: none; /* Make sure the gradient doesn't interfere with any interactions */
+    //   z-index: 10; /* Place the gradient above the content */
+    // }
+
+    &.top-reached::before,
+    &.bottom-reached::after {
+      display: none;
+    }
+
+    &::before {
+      top: 64px;
+      background: linear-gradient(to bottom, white 0%, transparent 100%);
+    }
+
+    &::after {
+      bottom: 41px;
+      background: linear-gradient(to top, white 0%, transparent 100%);
+    }
+    > .content {
+      display: flex;
+      gap: 100px;
+      padding: 0 20px 20px 20px;
+
+      overflow: scroll;
+
+      &::-webkit-scrollbar {
+        width: 0; /* Remove scrollbar space */
+        background: transparent; /* Optional: just make scrollbar invisible */
+      }
+
+      /* Hide scrollbar for IE, Edge and Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+
+      > .levels,
+      > .leaves {
+        display: flex;
+        flex-direction: column;
+        > .title {
+          padding-bottom: 14px;
+          font-weight: bold;
+          position: sticky;
+          background: white;
+          top: 0;
+        }
+        > .rows {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          padding-bottom: 14px;
+          > .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 300px;
+            > .level {
+              min-width: 62px;
+            }
+            > .points {
+              width: 75px;
+              display: flex;
+              align-items: center;
+              justify-content: flex-end;
+              gap: 4px;
+              > svg {
+                height: 13px;
+              }
+            }
+            > .level-avatar {
+              width: 50px;
+              height: 50px;
+              margin-left: 20px;
+              > .avatar {
+                width: 100%;
+                height: 100%;
+                padding: 4px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    @media screen and (max-width: 800px) {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      > .content {
+        flex-wrap: wrap;
+        width: min-content;
+        gap: 30px;
+
+        overflow: scroll;
+
+        &::-webkit-scrollbar {
+          width: 0; /* Remove scrollbar space */
+          background: transparent; /* Optional: just make scrollbar invisible */
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+    }
+  }
+}
+
+.level-avatar {
+  border-radius: 50%;
+  filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.22));
+  background-color: white;
+}

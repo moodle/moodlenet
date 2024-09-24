@@ -1,0 +1,36 @@
+.browser-collection-list.list-card {
+  padding: 24px 24px 66px 24px;
+  position: relative;
+
+  &.show-all:not(.load-more) {
+    padding: 24px;
+  }
+
+  > .list-card-footer {
+    width: 100%;
+    margin-left: -24px;
+    border-top: 1px solid rgb(0 0 0 / 8%);
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    > .tertiary-button {
+      width: 100%;
+      font-size: 15px;
+      height: 56px;
+      border-radius: 0;
+      padding: 0 18px;
+    }
+  }
+
+  @media screen and (max-width: 450px) {
+    padding: 0 0 60px 0;
+    > .list-card-footer {
+      margin-left: 0;
+      border-top: none;
+      > .tertiary-button {
+        border-radius: 12px;
+      }
+    }
+  }
+}

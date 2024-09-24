@@ -1,0 +1,140 @@
+@import '../../../styles/application';
+
+.input-text-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  > label {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  > .input-container,
+  > .textarea-container {
+    width: 100%;
+    background: #ffffff;
+    border: none;
+    box-shadow: 0 0 6px #dedede;
+    border-radius: 7px;
+
+    &.no-border {
+      padding: 0;
+      background: none;
+      box-shadow: none;
+    }
+  }
+
+  > .input-container {
+    height: 46px;
+  }
+
+  > .textarea-container {
+    min-height: 46px;
+  }
+
+  .input-container > input,
+  > .input-container,
+  .textarea-container > textarea,
+  > .textarea-container {
+    width: 100%;
+    background: #ffffff;
+    border: none;
+    outline: none;
+    font-weight: 500;
+    font-size: 14px;
+
+    &.no-border {
+      padding: 0;
+      background: none;
+    }
+
+    &:not(.editing) {
+      color: #4d5156;
+      cursor: text;
+      // pointer-events: none;
+      // cursor: default;
+    }
+
+    &.editing:not(:focus) {
+      color: #4d5156;
+    }
+
+    &::placeholder {
+      font-weight: 500;
+      color: #757575;
+      opacity: 1;
+    }
+    &::-ms-input-placeholder {
+      font-weight: 500;
+      font-size: 15px;
+      color: #757575;
+    }
+    &:-ms-input-placeholder {
+      font-weight: 500;
+      font-size: 15px;
+      color: #757575;
+    }
+  }
+
+  > .textarea-container,
+  > .input-container {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    box-shadow: 0 0 6px #dedede;
+
+    > textarea,
+    input {
+      width: 100%;
+      box-shadow: none;
+      height: 100%;
+      line-height: 22px;
+      resize: none;
+      &:not(.no-border):focus,
+      &:not(.no-border):not(:focus) {
+        padding: 0 12px;
+      }
+    }
+
+    > :last-child:not(input) {
+      margin-right: 10px;
+    }
+  }
+
+  &.disabled {
+    > label {
+      color: #c6c6c6;
+    }
+    > .input-container,
+    > .textarea-container {
+      border: #e9e9e97d 1px solid;
+      box-shadow: 0 0 2px #dedede;
+    }
+
+    > .input-container > input,
+    > .input-container.editing > input,
+    > .textarea-container > textarea,
+    > .textarea-container.editing > textarea {
+      background-color: #e8e8e8;
+      color: #c6c6c6;
+    }
+  }
+
+  &:not(.disabled) > .error-msg {
+    display: flex;
+    font-size: 12px;
+    color: red;
+  }
+}
+
+/* Change autocomplete styles in WebKit */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:not(:focus),
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+}

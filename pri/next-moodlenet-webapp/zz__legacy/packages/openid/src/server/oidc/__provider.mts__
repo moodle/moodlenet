@@ -1,0 +1,225 @@
+import { instanceDomain } from '@moodlenet/core'
+import { getProfile } from '@moodlenet/react-app/server'
+import Provider, { Account, Configuration } from 'oidc-provider'
+import { kvStore } from '../kvStore.mjs'
+import { StoreItem } from '../types/storeTypes.mjs'
+export const ___DEV_INTERACTIONS_ENABLED = false
+
+const GRANT_KEY = `grant`
+const SESSION_UID_KEY = `sessionUid`
+const USER_CODE_KEY = `userCode`
+
+const GRANTABLE = new Set([
+  'AccessToken',
+  'AuthorizationCode',
+  'RefreshToken',
+  'DeviceCode',
+  'BackchannelAuthenticationRequest',
+])
+export const FAKE_ACCOUNT_ID = '1111'
+
+export const providerConfig = await getProviderConfig()
+
+export const discoveryProvider = await setupDiscoveryProvider()
+export const openIdProvider = await setupOpenIdProvider()
+
+export async function setupOpenIdProvider() {
+  const openidProvider = new Provider(instanceDomain, providerConfig)
+  openidProvider.use((ctx, next) => {
+    const op = ctx.path
+    ctx.path = ctx.path.replace(/^\/\.openid/, '')
+    shell.log('info', 'openidProvider', op, ctx.path)
+    return next()
+  })
+  return openidProvider
+}
+
+export async function setupDiscoveryProvider() {
+  const wellKnownProvider = new Provider(instanceDomain, providerConfig)
+  wellKnownProvider.use((ctx, next) => {
+    ctx.path = '/.well-known/openid-configuration'
+    return next()
+  })
+  return wellKnownProvider
+}
+
+export function getProviderConfig() {
+  const config: Configuration = {
+    // ... see the available options in Configuration options section
+    clients: [
+      {
+        client_id: 'clid',
+        client_secret: 'secret',
+        redirect_uris: ['http://dev-oauth-cli.com:5000/oauth2/redirect'],
+        // + other client properties
+      },
+    ],
+    claims: {
+      openid: ['scope', 'isAdmin', 'webUserKey', 'accountId', 'exp', 'iss', 'aud'],
+    },
+    async findAccount(ctx, sub, token) {
+      shell.log('info', `\n\nOAUTH findAccount()`, { ctx, sub, token })
+      // if (!token) {
+      //   return
+      // }
+      // token
+      //const webUser = await verifyWebUserToken(token)
+      const profile = await getProfile({ _key: sub })
+      if (!profile) {
+        throw new Error(`could not find profile for accountId ${sub}`)
+      }
+      const account: Account = {
+        accountId: profile._key,
+        name: profile.displayName,
+        claims(use, scope, claims, rejected) {
+          shell.log('info', `\n\nOAUTH findAccount().claims`, { use, scope, claims, rejected })
+          return {
+            sub: profile._key, // it is essential to always return a sub claim
+            name: profile.displayName,
+          }
+        },
+      }
+      return account
+    },
+    scopes: ['openid' /* , 'full-user' */],
+    // cookies: { keys: ['sdaijsdajijiosadjiosdaoji'] },
+    cookies: {
+      names: {
+        interaction: '_mn-oid-interaction',
+        resume: '_mn-oid-resume',
+        session: '_mn-oid-session',
+        state: '_mn-oid-state',
+      },
+      long: { path: '/' },
+      short: { path: '/' },
+      // long: { path: '/.pkg/@moodlenet/openid/interaction/' },
+      // short: { path: '/.pkg/@moodlenet/openid/interaction/' },
+    },
+    interactions: {
+      url(ctx, interaction) {
+        shell.log('info', 'interactions url', interaction, ctx)
+        return `/@moodlenet/openid/interaction/${interaction.uid}`
+      },
+    },
+    adapter(model) {
+      return {
+        async destroy(id) {
+          shell.log('info', `\n\nOAUTH ${model} destroy(id) {`, { id, model })
+
+          await kvStore.unset(model, id)
+        },
+
+        async consume(id) {
+          shell.log('info', `\n\nOAUTH ${model} consume(id) {`, { id, model })
+
+          const item = (await kvStore.get(model, id)).value
+          if (!item) {
+            return
+          }
+          item.payload.consumed = shell.now().toISOString()
+        },
+
+        async find(id) {
+          shell.log('info', `\n\nOAUTH ${model} find(id) {`, { id, model })
+
+          const item = (await kvStore.get(model, id)).value
+          shell.log('info', `\n\nOAUTH ${model} find(id) {`, { found: item })
+          // const payload = item && { ...item.payload, session: { accountId: FAKE_ACCOUNT_ID } } // FIXME: set correct sessionAccoutId (maybe depends on model ? 'Interaction' ? ??)
+          const payload = item?.payload
+
+          return payload
+        },
+
+        async findByUid(uid) {
+          shell.log('info', `\n\nOAUTH ${model} findByUid(uid) {`, { uid, model })
+
+          const id = await (await kvStore.get(SESSION_UID_KEY, uid)).value
+          if ('string' !== typeof id) {
+            return
+          }
+          return this.find(id)
+        },
+
+        async findByUserCode(userCode) {
+          shell.log('info', `\n\nOAUTH ${model} findByUserCode(userCode) {`, { userCode, model })
+
+          const id = (await kvStore.get(USER_CODE_KEY, userCode)).value
+          if ('string' !== typeof id) {
+            return
+          }
+          return this.find(id)
+        },
+
+        async upsert(id, payload, expiresIn) {
+          shell.log('info', `\n\nOAUTH ${model} upsert(id, payload, expiresIn) {`, {
+            id,
+            payload,
+            expiresIn,
+            model,
+          })
+
+          if (model === 'Session' && payload.uid) {
+            await kvStore.set(SESSION_UID_KEY, payload.uid, id) // FIXME: set expiresIn
+          }
+
+          const { grantId, userCode } = payload
+          if (GRANTABLE.has(model) && grantId) {
+            const grant = (await kvStore.get(GRANT_KEY, grantId)).value ?? []
+            await kvStore.set(GRANT_KEY, grantId, [...grant, [model, id]])
+          }
+
+          if (userCode) {
+            await kvStore.set(USER_CODE_KEY, userCode, id) // FIXME: set expiresIn
+          }
+
+          const storeItem: StoreItem = {
+            expiresIn: expiresIn,
+            insertedAt: shell.now().toISOString(),
+
+            // payload,
+            payload: {
+              ...payload,
+              // accountId: FAKE_ACCOUNT_ID,
+              // session: { accountId: FAKE_ACCOUNT_ID },
+            }, // FIXME: set correct sessionAccoutId
+          }
+          await kvStore.set(model, id, storeItem) // FIXME: set expiresIn
+        },
+
+        async revokeByGrantId(grantId) {
+          shell.log('info', `\n\nOAUTH ${model} revokeByGrantId(grantId) {`, { grantId, model })
+
+          // eslint-disable-line class-methods-use-this
+          const grant = (await kvStore.get(GRANT_KEY, grantId)).value
+          if (grant) {
+            await Promise.all(grant.map(([model, id]) => kvStore.unset(model, id)))
+            kvStore.unset(GRANT_KEY, grantId)
+          }
+        },
+      }
+    },
+
+    features: {
+      revocation: { enabled: true },
+      registration: { enabled: true },
+      // clientCredentials: { enabled: true },
+      // introspection: { enabled: true },
+      devInteractions: { enabled: ___DEV_INTERACTIONS_ENABLED },
+      deviceFlow: { enabled: true },
+    },
+    issueRefreshToken() {
+      return true
+    },
+    responseTypes: [
+      'code id_token token',
+      'code id_token',
+      'code token',
+      'code',
+      'id_token token',
+      'id_token',
+      'none',
+    ],
+    pkce: { required: () => false, methods: ['S256', 'plain'] },
+  }
+  return config
+}

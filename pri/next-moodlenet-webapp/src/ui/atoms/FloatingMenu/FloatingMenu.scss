@@ -1,0 +1,76 @@
+.floating-menu {
+  // height: 100%;
+  // width: 100%;
+  position: relative;
+  cursor: pointer;
+
+  > .hover-element {
+    position: relative;
+    float: right;
+    > * {
+      display: flex;
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  > .menu {
+    visibility: hidden;
+    display: none;
+    position: absolute;
+    width: max-content;
+    display: flex;
+    right: -40px;
+    margin: 6px 32px 0 0;
+    z-index: 3;
+
+    > .content {
+      background-color: white;
+      border-radius: 9px;
+      padding: 8px 0;
+
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      > div > * {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 15px;
+        text-decoration: inherit;
+        color: inherit;
+        font-size: 14px;
+        font-weight: normal;
+        font-family: inherit;
+        display: flex;
+        // color: #212121;
+
+        &:hover {
+          background-color: #f1f3f4;
+        }
+
+        &:active {
+          background-color: #e6effc;
+        }
+
+        > *:first-child {
+          width: 28px;
+        }
+
+        > svg {
+          color: #a7a7a7;
+          fill: #a7a7a7;
+        }
+      }
+    }
+  }
+}
+
+.menu.visible
+// ,.floating-menu:hover .menu,
+// .floating-menu:active .menu
+{
+  visibility: visible;
+}

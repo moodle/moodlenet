@@ -1,0 +1,83 @@
+{
+  "name": "@moodlenet/mn-central-jira-simple-moderations",
+  "version": "0.9.1",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "AGPL-3.0",
+  "type": "module",
+  "engines": {
+    "node": "20",
+    "npm": "10",
+    "yarn": "please-use-npm"
+  },
+  "exports": {
+    "./init": "./dist/server/init.mjs",
+    "./ui": "./dist/webapp/ui/exports/ui.mjs",
+    "./stories": "./dist/webapp/ui/exports/stories.mjs"
+  },
+  "moodlenet": {
+    "creator": "MoodleNet",
+    "displayName": "Simple Moderations backed by Jira"
+  },
+  "keywords": ["moodlenetPackage"],
+  "description": "Simple Moderations backed by Jira",
+  "readme": "",
+  "files": ["dist/"],
+  "repository": "https://github.com/moodle/moodlenet",
+  "author": "https://github.com/aleclofabbro",
+  "peerDependencies": {
+    "@mui/icons-material": "5.14.9",
+    "@mui/material": "5.14.9",
+    "@moodlenet/core": "^0.9.1",
+    "@moodlenet/react-app": "^0.9.1",
+    "@moodlenet/web-user": "^0.9.1"
+  },
+  "dependencies": {
+    "@moodlenet/component-library": "^0.9.1",
+    "@moodlenet/key-value-store": "^0.9.1",
+    "formik": "2.2.9",
+    "jira-client": "8.2.2",
+    "yup": "0.32.11"
+  },
+  "devDependencies": {
+    "@moodlenet/core": "^0.9.1",
+    "@moodlenet/react-app": "^0.9.1",
+    "@moodlenet/web-user": "^0.9.1",
+    "@mui/icons-material": "5.14.9",
+    "@mui/material": "5.14.9",
+    "@types/jira-client": "7.1.6",
+    "@types/node": "17.0.35",
+    "@types/react": "18.2.22",
+    "@types/react-dom": "18.2.7",
+    "react-router-dom": "6.4.1",
+    "typescript": "5.4"
+  },
+  "scripts": {
+    "dev-assistant": "npm-watch copy-assets & npm-watch create-components-index & npm-watch create-stories-index",
+    "prepare": "npm run copy-assets",
+    "copy-assets": "copyfiles -u 1 src/**/*.{scss,png,svg,json,jpg} dist",
+    "create-stories-index": "vgis src/webapp/ui/exports/stories.mts",
+    "create-components-index": "vgis src/webapp/ui/exports/ui.mts"
+  },
+  "watch": {
+    "create-stories-index": {
+      "patterns": ["src/webapp/ui/**/*.stories.tsx"],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
+    "create-components-index": {
+      "patterns": ["src/webapp/ui/**/*"],
+      "extensions": ".ts,.tsx,.mts",
+      "delay": 300
+    },
+    "copy-assets": {
+      "patterns": ["src/**/*"],
+      "extensions": ".scss,.png,.svg,.json",
+      "ignore": "**/*.*ts*",
+      "delay": 300
+    }
+  },
+  "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"
+}

@@ -1,0 +1,33 @@
+{
+  "extends": "../../tsconfig-base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "references": [
+    {
+      "path": "../arangodb"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../crypto"
+    },
+    {
+      "path": "../http-server"
+    },
+    {
+      "path": "../react-app"
+    },
+    {
+      "path": "../system-entities"
+    },
+    {
+      "path": "../web-user"
+    },
+    {
+      "path": "../component-library"
+    }
+  ]
+}

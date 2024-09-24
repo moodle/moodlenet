@@ -1,0 +1,53 @@
+.users {
+  > .card {
+    > .users-table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 14px;
+
+      > tbody > tr > td,
+      > thead > tr > td {
+        text-align: left;
+        padding: 8px;
+        &.user-types {
+          display: flex;
+          justify-content: center;
+        }
+      }
+      > thead > tr > td {
+        font-weight: bold;
+      }
+
+      > tbody {
+        > tr {
+          > .user-types {
+            display: flex;
+            gap: 10px;
+            > * {
+              cursor: pointer;
+              &.off {
+                color: #8c8e95;
+                &:hover {
+                  color: #63656a;
+                }
+              }
+            }
+            > .admin,
+            > .publisher {
+              &.on {
+                color: var(--primary-color);
+                &:hover {
+                  color: var(--primary-color-hover);
+                }
+                &:active {
+                  color: var(--primary-color-active);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

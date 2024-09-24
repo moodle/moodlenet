@@ -1,0 +1,1 @@
+# Moodlenet's core domain

@@ -24,6 +24,9 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "e2e-ci--**/*": {
+      "dependsOn": ["^build"]
     }
   },
   "plugins": [
@@ -53,7 +56,7 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": ["deploy/dev/monolith-e2e/**/*"]
+      "exclude": ["pri/file-server-e2e/**/*", "be/default-e2e/**/*"]
     }
   ],
   "generators": {

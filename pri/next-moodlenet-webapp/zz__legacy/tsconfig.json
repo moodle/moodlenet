@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "typeRoots": ["react-scripts"],
+    "incremental": true,
+    "assumeChangesOnlyAffectDirectDependencies": true
+  },
+  "buildOptions": { "assumeChangesOnlyAffectDirectDependencies": true, "incremental": true }
+}

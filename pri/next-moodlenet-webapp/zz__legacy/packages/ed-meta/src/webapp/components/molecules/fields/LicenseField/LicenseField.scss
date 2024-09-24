@@ -1,0 +1,11 @@
+.license-dropdown {
+  &.disabled > .input-container {
+    > .dropdown-button {
+      > .dropdown-pill {
+        > div > svg > g {
+          fill: #c6c6c6;
+        }
+      }
+    }
+  }
+}

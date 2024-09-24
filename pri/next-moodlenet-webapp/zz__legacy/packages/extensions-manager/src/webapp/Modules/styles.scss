@@ -1,0 +1,54 @@
+.modules {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  > .card {
+    display: flex;
+    flex-direction: column;
+    padding: 26px 40px;
+    gap: 20px;
+    // > .title {
+    //   font-size: 23px;
+    //   font-weight: bold;
+    // }
+    // > p > .input-text-field {
+    //   max-width: 350px;
+    // }
+    > .option {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      > .name {
+        font-weight: bold;
+      }
+      > .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 22px;
+
+        > .input-text-field {
+          height: 36px;
+          width: 100%;
+        }
+      }
+    }
+  }
+  // > .modules-list {
+  //   > .list {
+  //     min-height: 30px;
+  //     display: flex;
+  //     flex-direction: column;
+  //     gap: 10px;
+  //     > .module {
+  //       display: flex;
+  //       justify-content: space-between;
+  //       // cursor: pointer;
+  //       &:hover {
+  //         // opacity: 0.6;
+  //       }
+  //     }
+  //   }
+  // }
+}

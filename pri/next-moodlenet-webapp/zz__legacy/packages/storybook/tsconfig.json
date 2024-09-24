@@ -1,0 +1,42 @@
+{
+  "extends": "../../tsconfig-base.json",
+  "compilerOptions": {
+    // "target": "ESNext",
+    // "useDefineForClassFields": true,
+    // "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    // "allowJs": false,
+    // "skipLibCheck": true,
+    // "esModuleInterop": false,
+    // "allowSyntheticDefaultImports": true,
+    // "strict": true,
+    // "forceConsistentCasingInFileNames": true,
+    // "moduleResolution": "NodeNext",
+    // "module": "ESNext",
+    // "resolveJsonModule": true,
+    // "isolatedModules": true,
+    // "noEmit": true,
+    // "jsx": "react-jsx",
+    // "baseUrl": "./src"
+    "rootDir": "./src",
+    "noEmit": true
+  },
+
+  "include": ["src", "src/lib/SBLinkComponent.tsx", "vite.config.ts"],
+  "references": [
+    { "path": "../collection" },
+    { "path": "../component-library" },
+    { "path": "../ed-meta" },
+    { "path": "../ed-resource" },
+    { "path": "../extensions-manager" },
+    { "path": "../moodle-lms-integration" },
+    { "path": "../react-app" },
+    { "path": "../simple-email-auth" },
+    { "path": "../web-user" },
+    { "path": "../mn-central-jira-simple-moderations" }
+    // { "path": "../passport-auth" },
+    // { "path": "../unsplash" },
+  ],
+  "paths": {
+    "@/*": ["src/*"]
+  }
+}

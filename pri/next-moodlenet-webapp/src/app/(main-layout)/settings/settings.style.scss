@@ -1,0 +1,304 @@
+.user-settings {
+  width: 100%;
+  display: flex;
+
+  grid-column-gap: 40px;
+
+  @media screen and (min-width: 675px) and (max-width: 1000px) {
+    margin-top: -40px;
+  }
+
+  > * {
+    display: flex;
+  }
+
+  > .menu-container {
+    width: 300px;
+    height: fit-content;
+    position: fixed;
+    z-index: 1;
+
+    > .menu {
+      padding: 30px 0;
+      height: fit-content;
+      display: flex;
+      flex-direction: column;
+      width: fit-content;
+      min-width: 250px;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      > a {
+        > .section {
+          height: 100%;
+          width: 100%;
+          display: flex;
+          cursor: pointer;
+          font-size: 18px;
+          font-weight: 500;
+          color: black;
+
+          > .border-container {
+            width: 6px;
+            height: auto;
+
+            &.selected {
+              background-color: var(--primary-background-color);
+            }
+            > .border {
+              width: 100%;
+              height: 100%;
+              border-radius: 0 4px 4px 0;
+              transition: background-color 150ms ease-in;
+              &.selected {
+                background-color: var(--primary-color);
+              }
+            }
+          }
+
+          &:hover {
+            > .border-container > .border {
+              &:not(.selected) {
+                background-color: #e8e8e8;
+              }
+            }
+          }
+
+          > .content {
+            width: 100%;
+            padding: 14px 48px 14px 42px;
+            transition: background-color 150ms ease-in;
+            &.selected {
+              background-color: var(--primary-background-color);
+            }
+            > abbr,
+            > span {
+              overflow: hidden;
+              display: block;
+              text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // @media (min-width: 1400px) {
+  //   &::before {
+  //     content: '';
+  //   }
+  // }
+
+  > .content {
+    width: calc(100% - 325px);
+    margin-left: 325px;
+    justify-content: center;
+
+    > *:not(.snackbar) {
+      width: 100%;
+      max-width: 800px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      @media (max-width: 450px) {
+        &,
+        > * {
+          gap: 0;
+        }
+      }
+
+      > .card:not(.snackbar),
+      > *:not(.snackbar) > .card:not(.snackbar) {
+        padding: 24px;
+        @media (max-width: 450px) {
+          box-shadow: none;
+          border-radius: 0;
+          margin-top: 0;
+          padding: 12px 0;
+        }
+      }
+
+      > .column,
+      > .card > .section {
+        &,
+        > form {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+
+          > .parameter {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            > .name {
+              font-weight: bold;
+            }
+          }
+        }
+
+        > .title {
+          display: flex;
+          justify-content: space-between;
+          font-size: 23px;
+          font-weight: bold;
+        }
+
+        > .subtitle {
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        > .option:not(.checkmark),
+        > * .option:not(.checkmark) {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+
+          > .name {
+            font-weight: bold;
+          }
+
+          > .input-text-field {
+            height: 36px;
+            width: 100%;
+          }
+        }
+
+        > .parameter {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          height: fit-content;
+
+          > .name {
+            font-weight: bold;
+          }
+          > .actions {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 15px;
+
+            > .input-text-field {
+              width: 100%;
+              &.text {
+                height: 36px;
+              }
+              &.textarea {
+                height: 62px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 675px) {
+    margin-top: -30px;
+
+    > .menu-container {
+      margin-left: -25px;
+    }
+    > .content {
+      margin-top: 68px;
+    }
+  }
+
+  @media (min-width: 675px) and (max-width: 1000px) {
+    > .menu-container {
+      margin-left: -100px;
+    }
+    > .content {
+      margin-top: 84px;
+    }
+  }
+
+  @media (max-width: 1000px) {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    > .menu-container {
+      justify-content: center;
+      margin-right: inherit;
+      box-shadow: 0px 6px 4px -5px #e1dedb;
+      background-color: #fff;
+      padding-top: 4px;
+      height: fit-content;
+      width: 100%;
+      > .menu {
+        display: flex;
+        flex-direction: row;
+        box-shadow: none;
+        overflow-x: scroll;
+        padding: 0 8px;
+        border-radius: 0;
+        width: 100%;
+        justify-content: center;
+
+        > .section {
+          flex-direction: column-reverse;
+          width: fit-content;
+          > .border-container {
+            width: 100%;
+            height: 6px;
+            padding: 0 24px;
+            &.selected {
+              background: none;
+            }
+            > .border {
+              width: 100%;
+              height: 100%;
+              border-radius: 4px 4px 0px 0px;
+            }
+          }
+          > .content {
+            font-size: 15px;
+            padding: 14px 18px 10px 18px;
+            width: fit-content;
+            &.selected {
+              background: none;
+            }
+          }
+        }
+      }
+    }
+
+    > .content {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    > .menu-container {
+      > .menu {
+        justify-content: flex-start;
+        > .section {
+          > .content {
+            // padding: 4px 18px 10px 18px;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: 450px) {
+    > .menu-container {
+      padding: 0;
+      justify-content: flex-start;
+      margin-left: -5px;
+      margin-top: 5px;
+      width: calc(100% + 10px);
+      > .menu {
+        > .section {
+          > .content {
+            // padding: 4px 18px 10px 18px;
+          }
+        }
+      }
+    }
+  }
+}

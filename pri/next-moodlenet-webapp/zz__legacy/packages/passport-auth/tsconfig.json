@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig-base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../http-server"
+    },
+    {
+      "path": "../react-app"
+    },
+    {
+      "path": "../component-library"
+    }
+  ]
+}

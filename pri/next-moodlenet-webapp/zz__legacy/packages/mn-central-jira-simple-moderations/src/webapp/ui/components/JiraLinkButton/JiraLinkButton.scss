@@ -1,0 +1,19 @@
+#jira-body-review {
+  text-align: center;
+}
+
+#jira-head-review {
+  text-align: center;
+}
+
+.jira-link-button-container {
+  > .jira-link-button {
+    color: var(--primary-color);
+    &:hover {
+      color: var(--primary-color-hover);
+    }
+    &:active {
+      color: var(--primary-color-active);
+    }
+  }
+}

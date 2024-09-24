@@ -1,0 +1,14 @@
+.landing-resource-list {
+  > .list-card-header {
+    .card-header {
+      .secondary-button {
+        height: 48px;
+        padding: 0 26px;
+        border-radius: 50px;
+        display: flex;
+        gap: 15px;
+        font-size: 15px;
+      }
+    }
+  }
+}
