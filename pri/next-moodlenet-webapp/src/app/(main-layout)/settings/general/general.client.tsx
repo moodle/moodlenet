@@ -14,12 +14,12 @@ import { changePasswordAction } from './general.server'
 import './general.style.scss'
 
 export interface GeneralSettingsProps {
-  primaryMsgSchemaConfigs: iam_v1_0.PrimaryMsgSchemaConfigs
+  iamSchemaConfigs: iam_v1_0.PrimaryMsgSchemaConfigs
   messages: { noEqualPasswordsError: string }
 }
-export function GeneralSettingsClient({ primaryMsgSchemaConfigs, messages }: GeneralSettingsProps) {
+export function GeneralSettingsClient({ iamSchemaConfigs, messages }: GeneralSettingsProps) {
   const { t } = useTranslation()
-  const { changePasswordSchema } = getPrimarySchemas(primaryMsgSchemaConfigs)
+  const { changePasswordSchema } = getPrimarySchemas(iamSchemaConfigs)
   const [snackbarList, setSnackbarList] = useState<ReactElement[]>([])
 
   const {
@@ -39,14 +39,14 @@ export function GeneralSettingsClient({ primaryMsgSchemaConfigs, messages }: Gen
         }
       }),
     ),
-      {
-        actionProps: {
-          onExecute() {
-            setSnackbarList([])
-            resetFormAndAction()
-          },
+    {
+      actionProps: {
+        onExecute() {
+          setSnackbarList([])
+          resetFormAndAction()
         },
       },
+    },
   )
   useEffect(() => {
     setSnackbarList(

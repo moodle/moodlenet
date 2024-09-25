@@ -2,12 +2,12 @@ import { priAccess } from '../../../../lib/server/session-access'
 import SignupPanel from './signup-email-pwd.client'
 
 export default async function SignupEmailPwdPage() {
-  const { iam } = await priAccess().moodle.iam.v1_0.pri.configs.read()
+  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.v1_0.pri.schemaConfigs.iam()
 
   return (
     <SignupPanel
       {...{
-        primaryMsgSchemaConfigs: iam.primaryMsgSchemaConfigs,
+        iamSchemaConfigs,
       }}
     />
   )

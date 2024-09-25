@@ -5,6 +5,7 @@ export interface OrgInfo {
   logo: url_string
   smallLogo: url_string
   copyright: null | string
+  addresses: OrgAddresses
 }
 
 export interface OrgAddresses {
@@ -15,5 +16,4 @@ export interface OrgAddresses {
 
 export interface Configs {
   info: OrgInfo
-  addresses: OrgAddresses
 }

@@ -15,16 +15,11 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
             sec: {
               db: {
                 async getConfigs() {
-                  const [{ configs: iam }, { configs: org }] = await Promise.all([
-                    v1_0.getModConfigs({ mod_id: ctx.core_mod_id, db_struct_v1_0 }),
-                    v1_0.getModConfigs({
-                      // FIXME: let mod defs export their own mod_id --- nope check TODO #1
-
-                      mod_id: { ns: 'moodle', mod: 'org', version: 'v1_0' },
-                      db_struct_v1_0,
-                    }),
-                  ])
-                  return { iam, org }
+                  const { configs } = await v1_0.getModConfigs({
+                    mod_id: ctx.core_mod_id,
+                    db_struct_v1_0,
+                  })
+                  return { configs }
                 },
                 async changeUserPassword({ newPasswordHash, userId }) {
                   const {

@@ -8,11 +8,11 @@ import { signupAction } from './signup-email-pwd.server'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-export type SignupProps = { primaryMsgSchemaConfigs: PrimaryMsgSchemaConfigs }
+export type SignupProps = { iamSchemaConfigs: PrimaryMsgSchemaConfigs }
 
-export default function SignupPanel({ primaryMsgSchemaConfigs }: SignupProps) {
+export default function SignupPanel({ iamSchemaConfigs }: SignupProps) {
   const { t } = useTranslation()
-  const { signupSchema } = getPrimarySchemas(primaryMsgSchemaConfigs)
+  const { signupSchema } = getPrimarySchemas(iamSchemaConfigs)
   const {
     form: { formState, register },
     handleSubmitWithAction,

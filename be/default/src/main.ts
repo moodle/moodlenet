@@ -7,6 +7,7 @@ import {
   createAcccessProxy,
   dispatch,
   domain_msg,
+  primary_session,
   sec_impl,
   TransportData,
   WorkerContext,
@@ -53,10 +54,29 @@ async function request(transportData: TransportData) {
       })
     },
   })
+  const sysCallAccessProxy = createAcccessProxy({
+    access(msg) {
+      const core_mod_id = coreModId(domain_msg)
+      const sysCallPrimarySession: primary_session = {
+        type: 'system',
+        domain: primary_session.domain,
+        mod_id: core_mod_id,
+      }
+      return request({
+        domain_msg: msg,
+        primary_session: sysCallPrimarySession,
+        core_mod_id,
+      }).catch(e => {
+        console.error({ msg })
+        throw e
+      })
+    },
+  })
 
   const coreCtx: CoreContext = {
     primarySession: primary_session,
     forward: defaultAccessProxy.mod,
+    sysCall: sysCallAccessProxy.mod,
     worker: defaultAccessProxy.mod,
     transportData,
   }

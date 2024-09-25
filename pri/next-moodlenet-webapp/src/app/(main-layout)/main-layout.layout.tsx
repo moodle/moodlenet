@@ -23,22 +23,10 @@ import { logout } from '../actions/access'
 import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
-  const {
-    moodle: {
-      netWebappNextjs: {
-        v1_0: { pri: priApp },
-      },
-    },
-  } = priAccess()
-  const {
-    nextjs: {
-      layouts: {
-        roots: {
-          main: { footer, header },
-        },
-      },
-    },
-  } = await priApp.configs.read()
+  const [{ userSession }, layouts] = await Promise.all([
+    priAccess().moodle.iam.v1_0.pri.session.getCurrentUserSession(),
+    priAccess().moodle.netWebappNextjs.v1_0.pri.webapp.layouts(),
+  ])
   return (
     <div className={`main-layout`}>
       <MainHeader slots={await headerSlots()} />
@@ -48,8 +36,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   )
 
   async function headerSlots(): Promise<MainHeaderProps['slots']> {
-    const { userSession } = await priAccess().moodle.iam.v1_0.pri.session.getCurrentUserSession()
-    const { center, left, right } = slotsMap(props, header.slots)
+    const { center, left, right } = slotsMap(props, layouts.roots.main.header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
     const isAuthenticated = isAuthenticatedUserSession(userSession)
@@ -100,7 +87,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   }
 
   function footerSlots(): FooterProps['slots'] {
-    const { center, left, right, bottom } = slotsMap(props, footer.slots)
+    const { center, left, right, bottom } = slotsMap(props, layouts.roots.main.footer.slots)
     return {
       left: [...left],
       center: [...center],

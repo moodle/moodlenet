@@ -1,5 +1,6 @@
 'use client'
-import type * as org_v1_0 from '@moodle/mod-org/v1_0/lib'
+import { CoreContext } from '@moodle/lib-ddd'
+import { url_string } from '@moodle/lib-types'
 import { Button } from '@react-email/button'
 import { Container } from '@react-email/container'
 import { Head } from '@react-email/head'
@@ -9,6 +10,16 @@ import { Preview } from '@react-email/preview'
 import { Section } from '@react-email/section'
 import { Text } from '@react-email/text'
 import React from 'react'
+
+export interface SenderInfo {
+  name: string
+  logo: url_string
+  physicalAddress: null | string
+  websiteUrl: url_string
+  copyright: null | string
+  // smallLogo: url_string
+  // emailAddress: null | email_address
+}
 
 export type EmailLayoutActionBtnProps = {
   title: string
@@ -25,68 +36,83 @@ export type EmailLayoutContentProps = {
   action?: EmailLayoutActionBtnProps
 }
 export type EmailLayoutProps = {
-  orgInfo: org_v1_0.OrgInfo
-  orgAddr: org_v1_0.OrgAddresses
+  senderInfo: SenderInfo
   content: EmailLayoutContentProps
 }
 
-export function EmailLayout({ orgInfo, orgAddr, content }: EmailLayoutProps) {
-  return (
-    <Html lang="en" className="html">
-      <Head />
-      <Preview>{content.subject}</Preview>
-      <div className="body" style={bodyStyle}>
-        <Container className="container" style={containerStyle}>
-          <Section className="logo-header">
-            <a href={orgAddr.websiteUrl} target="_blank" rel="noreferrer" style={logo}>
-              <Img width={162} src={orgInfo.logo} />
-            </a>
-          </Section>
-          <Section className="title" style={titleSection}>
-            <Text style={titleText}>{content.title}</Text>
-          </Section>
-          <Section className="content" style={contentSection}>
-            <div style={contentText}>{content.body}</div>
-          </Section>
-          {content.action && (
-            <Section className="action" style={{ ...actionSection }}>
-              <Button
-                className="action-button"
-                href={content.action.url}
-                target="_blank"
-                style={{ ...actionButton, ...content.action.buttonStyle }}
-              >
-                {content.action.title}
-              </Button>
+export function layoutEmail(emailProps: EmailLayoutProps) {
+  const { senderInfo, content } = emailProps
+  return {
+    emailProps,
+    reactBody: (
+      <Html lang="en" className="html">
+        <Head />
+        <Preview>{content.subject}</Preview>
+        <div className="body" style={bodyStyle}>
+          <Container className="container" style={containerStyle}>
+            <Section className="logo-header">
+              <a href={senderInfo.websiteUrl} target="_blank" rel="noreferrer" style={logo}>
+                <Img width={162} src={senderInfo.logo} />
+              </a>
             </Section>
-          )}
-          {content.hideIgnoreMessage ? (
-            <div style={separatorStyle} />
-          ) : (
-            <div style={ignoreMessage}>Not you? Just ignore this message</div>
-          )}
-        </Container>
-        <Container style={containerBottom}>
-          <a
-            href={orgAddr.websiteUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={addressButton}
-          >
-            {orgAddr.physicalAddress}
-          </a>
-          <div style={copyrightStyle}>
-            {orgInfo.copyright}
-            <br />
-            This email was intended for {content.receiverEmail}. This is a service email.
-          </div>
-        </Container>
-      </div>
-    </Html>
-  )
+            <Section className="title" style={titleSection}>
+              <Text style={titleText}>{content.title}</Text>
+            </Section>
+            <Section className="content" style={contentSection}>
+              <div style={contentText}>{content.body}</div>
+            </Section>
+            {content.action && (
+              <Section className="action" style={{ ...actionSection }}>
+                <Button
+                  className="action-button"
+                  href={content.action.url}
+                  target="_blank"
+                  style={{ ...actionButton, ...content.action.buttonStyle }}
+                >
+                  {content.action.title}
+                </Button>
+              </Section>
+            )}
+            {content.hideIgnoreMessage ? (
+              <div style={separatorStyle} />
+            ) : (
+              <div style={ignoreMessage}>Not you? Just ignore this message</div>
+            )}
+          </Container>
+          <Container style={containerBottom}>
+            <a
+              href={senderInfo.websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={addressButton}
+            >
+              {senderInfo.physicalAddress}
+            </a>
+            <div style={copyrightStyle}>
+              {senderInfo.copyright}
+              <br />
+              This email was intended for {content.receiverEmail}. This is a service email.
+            </div>
+          </Container>
+        </div>
+      </Html>
+    ),
+  }
 }
 
-export default EmailLayout
+export async function getSenderInfo({ worker }: Pick<CoreContext, 'worker'>): Promise<SenderInfo> {
+  const {
+    configs: { info: orgInfo },
+  } = await worker.moodle.org.v1_0.sec.db.getConfigs()
+  const senderInfo: SenderInfo = {
+    copyright: orgInfo.copyright,
+    logo: orgInfo.logo,
+    name: orgInfo.name,
+    physicalAddress: orgInfo.addresses.physicalAddress,
+    websiteUrl: orgInfo.addresses.websiteUrl,
+  }
+  return senderInfo
+}
 
 const bodyStyle: React.CSSProperties = {
   minHeight: '100%',

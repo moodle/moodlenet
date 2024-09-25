@@ -3,19 +3,8 @@ import { sitepaths } from '../../common/utils/sitepaths'
 import { priAccess } from '../session-access'
 
 export async function srvSiteUrls() {
-  const {
-    moodle: {
-      netWebappNextjs: {
-        v1_0: { pri: app },
-      },
-    },
-  } = priAccess()
-
-  const {
-    nextjs: {
-      deployment: { basePath, domain, secure },
-    },
-  } = await app.configs.read()
+  const { basePath, domain, secure } =
+    await priAccess().moodle.netWebappNextjs.v1_0.pri.webapp.deployment()
 
   const baseUrl = `${secure ? 'https' : 'http'}://${domain}${basePath}`
   return {

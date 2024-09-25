@@ -10,6 +10,13 @@ export function isSystemSession(
 ): session is d_u__d<primary_session, 'type', 'system'> {
   return session.type === 'system'
 }
+export function validateSystemSession(session: primary_session) {
+  if (!isSystemSession(session)) {
+    return null
+  }
+
+  return session
+}
 //
 
 export async function validateAnyUserSession(ctx: Pick<CoreContext, 'primarySession' | 'worker'>) {
@@ -65,6 +72,11 @@ export async function validateUserAuthenticatedSessionHasRole(
 }
 
 // Assert Authorize
+export async function assert_authorizeSystemSession(ctx: Pick<CoreContext, 'primarySession'>) {
+  const system_session = validateSystemSession(ctx.primarySession)
+  assert(system_session, new ErrorXxx('Unauthorized'))
+  return system_session
+}
 
 export async function assert_authorizeUserAuthenticatedSession(
   ctx: Pick<CoreContext, 'primarySession' | 'worker'>,
@@ -132,7 +144,7 @@ export async function generateSessionForUserData(
   user: sessionUserData,
 ): Promise<signed_expire_token> {
   const {
-    iam: { tokenExpireTime },
+    configs: { tokenExpireTime },
   } = await ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
   const session = await ctx.worker.moodle.iam.v1_0.sec.crypto.signDataToken({
     data: {

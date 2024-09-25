@@ -26,6 +26,7 @@ export function isGuestUserSession(
 ): user_session is d_u__d<user_session, 'type', 'guest'> {
   return user_session.type === 'guest'
 }
+;``
 //
 export function userRecord2SessionUserData(
   userRecord: Pick<userRecord, keyof sessionUserData>,

@@ -1,23 +1,24 @@
-import type * as org_v1_0 from '@moodle/mod-org/v1_0/lib'
+import { CoreContext } from '@moodle/lib-ddd'
 import React from 'react'
 import * as email_org_v1_0 from '../../org/v1_0'
 
 export type DeleteAccountEmailProps = {
-  orgInfo: org_v1_0.OrgInfo
+  ctx: Pick<CoreContext, 'worker'>
   deleteAccountUrl: string
   receiverEmail: string
 }
 
-export function selfDeletionConfirmContent({
-  orgInfo,
+export async function selfDeletionConfirmEmail({
+  ctx,
   deleteAccountUrl,
   receiverEmail,
-}: DeleteAccountEmailProps): email_org_v1_0.EmailLayoutContentProps {
+}: DeleteAccountEmailProps) {
+  const senderInfo = await email_org_v1_0.getSenderInfo(ctx)
   const title = `Confirm account deletion 🥀`
 
   const body = (
     <div style={contentStyle}>
-      The deletion of your {orgInfo.name} account means that:
+      The deletion of your {senderInfo.name} account means that:
       <br />
       <ul style={listStyle}>
         <li>
@@ -30,18 +31,21 @@ export function selfDeletionConfirmContent({
     </div>
   )
 
-  return {
-    body,
-    receiverEmail,
-    subject: title,
-    title,
-    action: {
-      title: 'Delete account permanently',
-      url: deleteAccountUrl,
-      buttonStyle: { background: '#ff0000', color: '#ffffff' },
+  return email_org_v1_0.layoutEmail({
+    senderInfo,
+    content: {
+      body,
+      receiverEmail,
+      subject: title,
+      title,
+      action: {
+        title: 'Delete account permanently',
+        url: deleteAccountUrl,
+        buttonStyle: { background: '#ff0000', color: '#ffffff' },
+      },
+      hideIgnoreMessage: true,
     },
-    hideIgnoreMessage: true,
-  }
+  })
 }
 
 const contentStyle: React.CSSProperties = {

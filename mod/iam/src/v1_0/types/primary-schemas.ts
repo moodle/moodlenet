@@ -1,5 +1,5 @@
 import type { z } from 'zod'
-import type { fetchPrimarySchemas, getPrimarySchemas } from '../lib/primary-schemas'
+import type { getPrimarySchemas } from '../lib/primary-schemas'
 export interface PrimaryMsgSchemaConfigs {
   user: {
     email: { max: number; min: number }

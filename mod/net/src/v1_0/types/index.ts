@@ -1,3 +1,4 @@
+export * from '../../mod'
 export interface Configs {
   info: MoodleNetInfo
 }

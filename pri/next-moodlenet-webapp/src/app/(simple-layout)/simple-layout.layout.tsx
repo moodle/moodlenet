@@ -9,23 +9,7 @@ import MinimalisticHeader from '../../ui/organisms/Header/Minimalistic/Minimalis
 import './simple-layout.style.scss'
 
 export default async function SimpleLayoutLayout(props: layoutPropsWithChildren) {
-  const {
-    moodle: {
-      netWebappNextjs: {
-        v1_0: { pri: app },
-      },
-    },
-  } = priAccess()
-  const {
-    nextjs: {
-      layouts: {
-        roots: {
-          simple: { footer, header },
-        },
-      },
-    },
-  } = await app.configs.read()
-
+  const layouts = await priAccess().moodle.netWebappNextjs.v1_0.pri.webapp.layouts()
   return (
     <div className={`simple-layout`}>
       <MinimalisticHeader slots={headerSlots()} />
@@ -35,7 +19,7 @@ export default async function SimpleLayoutLayout(props: layoutPropsWithChildren)
   )
 
   function headerSlots(): MainHeaderProps['slots'] {
-    const { center, left, right } = slotsMap(props, header.slots)
+    const { center, left, right } = slotsMap(props, layouts.roots.simple.header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters: ReactNode[] = []
     const defaultRights: ReactNode[] = []
@@ -48,7 +32,7 @@ export default async function SimpleLayoutLayout(props: layoutPropsWithChildren)
   }
 
   function footerSlots(): FooterProps['slots'] {
-    const { center, left, right, bottom } = slotsMap(props, footer.slots)
+    const { center, left, right, bottom } = slotsMap(props, layouts.roots.simple.footer.slots)
     return {
       left: [...left],
       center: [...center],

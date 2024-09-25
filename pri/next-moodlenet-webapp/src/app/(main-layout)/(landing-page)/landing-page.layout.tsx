@@ -6,11 +6,12 @@ import { LandingHeadSearchbox /* , LandingHeadShareButton  */ } from './landing-
 import './landing-page.style.scss'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
-  const pri = priAccess().moodle.netWebappNextjs.v1_0.pri
-  const configs = await pri.configs.read()
-  const landing = configs.nextjs.layouts.pages.landing
-  const { info } = configs.net
-  const { head, content } = slotsMap(props, landing.slots)
+  const [moodlenet, layouts] = await Promise.all([
+    priAccess().moodle.netWebappNextjs.v1_0.pri.moodlenet.info(),
+    priAccess().moodle.netWebappNextjs.v1_0.pri.webapp.layouts(),
+  ])
+
+  const { head, content } = slotsMap(props, layouts.pages.landing.slots)
   const { userSession } = await priAccess().moodle.iam.v1_0.pri.session.getCurrentUserSession()
 
   const headerStyle = {
@@ -21,8 +22,8 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
     <div className="landing">
       <div className="landing-header" style={headerStyle}>
         <div className="landing-title">
-          <div className="title">{info.title}</div>
-          <div className="subtitle">{info.subtitle}</div>
+          <div className="title">{moodlenet.info.title}</div>
+          <div className="subtitle">{moodlenet.info.subtitle}</div>
         </div>
         <LandingHeadSearchbox />
         {head}

@@ -11,11 +11,11 @@ import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 
-export type LoginProps = { primaryMsgSchemaConfigs: PrimaryMsgSchemaConfigs }
+export type LoginProps = { iamSchemaConfigs: PrimaryMsgSchemaConfigs }
 
-export default function LoginPanel({ primaryMsgSchemaConfigs }: LoginProps) {
+export default function LoginPanel({ iamSchemaConfigs }: LoginProps) {
   const { t } = useTranslation()
-  const { loginSchema } = getPrimarySchemas(primaryMsgSchemaConfigs)
+  const { loginSchema } = getPrimarySchemas(iamSchemaConfigs)
   const {
     form: { formState, register },
     handleSubmitWithAction,

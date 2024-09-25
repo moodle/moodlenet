@@ -5,8 +5,8 @@ import { PrimaryMsgSchemaConfigs } from '../types'
 
 export async function fetchPrimarySchemas(pri: concrete<'pri'>) {
   const {
-    iam: { primaryMsgSchemaConfigs },
-  } = await pri.moodle.iam.v1_0.pri.configs.read()
+    configs: { primaryMsgSchemaConfigs },
+  } = await pri.moodle.iam.v1_0.pri.system.configs()
   return getPrimarySchemas(primaryMsgSchemaConfigs)
 }
 

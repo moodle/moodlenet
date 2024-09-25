@@ -11,7 +11,6 @@ import type {
   url_string,
   signed_expire_token,
 } from '@moodle/lib-types'
-import type * as v1_0_org from '@moodle/mod-org/v1_0/lib'
 import type { ReactElement } from 'react'
 
 import * as v1_0 from './v1_0/types'
@@ -32,8 +31,8 @@ export type moodle_iam_mod = mod<{
         }): Promise<ok_ko<signed_expire_token, { userNotFound: unknown }>>
       }
 
-      configs: {
-        read(): Promise<{ iam: v1_0.Configs; org: v1_0_org.Configs }>
+      system: {
+        configs(): Promise<{ configs: v1_0.Configs }>
       }
 
       admin: {
@@ -123,7 +122,7 @@ export type moodle_iam_mod = mod<{
       }
 
       db: {
-        getConfigs(): Promise<{ iam: v1_0.Configs; org: v1_0_org.Configs }>
+        getConfigs(): Promise<{ configs: v1_0.Configs }>
 
         changeUserPassword(_: {
           userId: v1_0.user_id

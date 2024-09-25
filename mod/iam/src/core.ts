@@ -1,10 +1,9 @@
 import { type core_factory, type core_impl } from '@moodle/lib-ddd'
 import {
-  resetPasswordContent,
-  selfDeletionConfirmContent,
-  signupEmailConfirmationContent,
+  resetPasswordEmail,
+  selfDeletionConfirmEmail,
+  signupEmailConfirmationEmail,
 } from '@moodle/lib-email-templates/iam/v1_0'
-import { EmailLayout } from '@moodle/lib-email-templates/org/v1_0'
 import { _never, date_time_string } from '@moodle/lib-types'
 import * as v1_0_lib from './v1_0/lib'
 
@@ -15,6 +14,12 @@ export function core(): core_factory {
         iam: {
           v1_0: {
             pri: {
+              system: {
+                async configs() {
+                  await v1_0_lib.assert_authorizeSystemSession(ctx)
+                  return ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
+                },
+              },
               session: {
                 async getCurrentUserSession() {
                   const userSession = await v1_0_lib.validateAnyUserSession(ctx)
@@ -25,13 +30,6 @@ export function core(): core_factory {
                 },
               },
 
-              configs: {
-                read() {
-                  //! FIXME:  implement system session access for primaries and cores
-                  // assertSystemSession(primarySession)
-                  return ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
-                },
-              },
               //get admin():moodle_iam_mod['v1_0']['pri']['admin'] {
               admin: {
                 async editUserRoles({ userId, roles }) {
@@ -85,8 +83,7 @@ export function core(): core_factory {
                     return [false, { reason: 'userWithSameEmailExists' }]
                   }
                   const {
-                    iam: { tokenExpireTime },
-                    org: { info: orgInfo, addresses: orgAddr },
+                    configs: { tokenExpireTime },
                   } = await ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
 
                   const { passwordHash } = await ctx.worker.moodle.iam.v1_0.sec.crypto.hashPassword(
@@ -108,20 +105,15 @@ export function core(): core_factory {
                       },
                     })
 
-                  const content = signupEmailConfirmationContent({
+                  const { emailProps, reactBody } = await signupEmailConfirmationEmail({
+                    ctx,
                     activateAccountUrl: `${redirectUrl}?token=${confirmEmailSession.token}`,
-                    orgInfo,
                     receiverEmail: signupForm.email,
                   })
 
-                  const reactBody = EmailLayout({
-                    orgInfo,
-                    orgAddr,
-                    content,
-                  })
                   await ctx.worker.moodle.iam.v1_0.sec.email.sendNow({
                     reactBody,
-                    subject: content.subject,
+                    subject: emailProps.content.subject,
                     to: signupForm.email,
                   })
                   return [true, _never]
@@ -129,7 +121,7 @@ export function core(): core_factory {
 
                 async createNewUserByEmailVerificationToken({ signupEmailVerificationToken }) {
                   const {
-                    iam: {
+                    configs: {
                       roles: { newlyCreatedUserRoles },
                     },
                   } = await ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
@@ -200,8 +192,7 @@ export function core(): core_factory {
                 },
                 async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
                   const {
-                    iam: { tokenExpireTime: userSelfDeletion },
-                    org: { info: orgInfo, addresses: orgAddr },
+                    configs: { tokenExpireTime: userSelfDeletion },
                   } = await ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
 
                   const [, user] = await ctx.worker.moodle.iam.v1_0.sec.db.getUserByEmail({
@@ -222,25 +213,21 @@ export function core(): core_factory {
                       },
                     })
 
-                  const content = resetPasswordContent({
+                  const { emailProps, reactBody } = await resetPasswordEmail({
+                    ctx,
                     resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
                     receiverEmail: user.contacts.email,
                   })
-
-                  const reactBody = EmailLayout({
-                    orgInfo,
-                    orgAddr,
-                    content,
-                  })
                   await ctx.worker.moodle.iam.v1_0.sec.email.sendNow({
                     reactBody,
-                    subject: content.subject,
+                    subject: emailProps.content.subject,
                     to: v1_0_lib.getUserNamedEmailAddress(user),
                   })
                   return
                 },
                 async logout(/* {sessionToken} */) {
-                  //! FIXME implement session_token invalidation
+                  // TODO implement session_token invalidation
+                  //! -------------------------------------
                   return
                 },
               },
@@ -250,8 +237,7 @@ export function core(): core_factory {
                   const authenticated_session =
                     await v1_0_lib.assert_authorizeAuthenticatedUserSession(ctx)
                   const {
-                    iam: { tokenExpireTime: userSelfDeletion },
-                    org: { info: orgInfo, addresses: orgAddr },
+                    configs: { tokenExpireTime: userSelfDeletion },
                   } = await ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
 
                   const selfDeletionConfirmationSession =
@@ -265,20 +251,14 @@ export function core(): core_factory {
                       },
                     })
 
-                  const content = selfDeletionConfirmContent({
+                  const { emailProps, reactBody } = await selfDeletionConfirmEmail({
+                    ctx,
                     deleteAccountUrl: `${redirectUrl}?token=${selfDeletionConfirmationSession.token}`,
-                    orgInfo,
                     receiverEmail: authenticated_session.user.contacts.email,
-                  })
-
-                  const reactBody = EmailLayout({
-                    orgInfo,
-                    orgAddr,
-                    content,
                   })
                   await ctx.worker.moodle.iam.v1_0.sec.email.sendNow({
                     reactBody,
-                    subject: content.subject,
+                    subject: emailProps.content.subject,
                     to: v1_0_lib.getUserNamedEmailAddress(authenticated_session.user),
                   })
                   return

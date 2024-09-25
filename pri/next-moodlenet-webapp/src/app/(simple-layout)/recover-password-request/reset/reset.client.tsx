@@ -14,13 +14,13 @@ import { signed_token } from '@moodle/lib-types'
 
 export function ResetPasswordClient({
   resetPasswordToken,
-  primaryMsgSchemaConfigs,
+  iamSchemaConfigs,
 }: {
-  primaryMsgSchemaConfigs: PrimaryMsgSchemaConfigs
+  iamSchemaConfigs: PrimaryMsgSchemaConfigs
   resetPasswordToken: signed_token
 }) {
   const { t } = useTranslation()
-  const { resetPasswordSchema } = getPrimarySchemas(primaryMsgSchemaConfigs)
+  const { resetPasswordSchema } = getPrimarySchemas(iamSchemaConfigs)
 
   const {
     form: { formState, register },

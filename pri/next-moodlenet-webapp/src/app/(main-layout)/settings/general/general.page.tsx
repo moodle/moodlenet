@@ -3,7 +3,7 @@ import { GeneralSettingsClient } from './general.client'
 import { t } from 'i18next'
 
 export default async function GeneralPage() {
-  const { iam } = await priAccess().moodle.iam.v1_0.pri.configs.read()
+  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.v1_0.pri.schemaConfigs.iam()
 
   const noEqualPasswordsError = t('Passwords must be different')
 
@@ -11,7 +11,7 @@ export default async function GeneralPage() {
     <GeneralSettingsClient
       {...{
         messages: { noEqualPasswordsError },
-        primaryMsgSchemaConfigs: iam.primaryMsgSchemaConfigs,
+        iamSchemaConfigs,
       }}
     />
   )

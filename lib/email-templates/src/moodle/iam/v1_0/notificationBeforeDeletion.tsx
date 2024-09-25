@@ -1,23 +1,24 @@
-import type * as org_v1_0 from '@moodle/mod-org/v1_0/lib'
+import { CoreContext } from '@moodle/lib-ddd'
 import React from 'react'
 import * as email_org_v1_0 from '../../org/v1_0'
 
 export type InactivityDeletionNotificationEmailProps = {
-  orgInfo: org_v1_0.OrgInfo
+  ctx: Pick<CoreContext, 'worker'>
   loginUrl: string
   receiverEmail: string
   userName: string
   daysBeforeDeletion: number
 }
 
-export function notificationBeforeDeletionForInactivityContent({
-  orgInfo,
+export async function notificationBeforeDeletionForInactivityEmail({
+  ctx,
   loginUrl,
   receiverEmail,
   userName,
   daysBeforeDeletion,
-}: InactivityDeletionNotificationEmailProps): email_org_v1_0.EmailLayoutContentProps {
-  const title = `${userName} we are missing you at ${orgInfo.name}`
+}: InactivityDeletionNotificationEmailProps) {
+  const senderInfo = await email_org_v1_0.getSenderInfo(ctx)
+  const title = `${userName} we are missing you at ${senderInfo.name}`
 
   const body = (
     <div style={contentStyle}>
@@ -33,17 +34,20 @@ export function notificationBeforeDeletionForInactivityContent({
     </div>
   )
 
-  return {
-    body,
-    receiverEmail,
-    subject: title,
-    title,
-    action: {
-      title: `Log in to ${orgInfo.name} now`,
-      url: loginUrl,
+  return email_org_v1_0.layoutEmail({
+    senderInfo,
+    content: {
+      body,
+      receiverEmail,
+      subject: title,
+      title,
+      action: {
+        title: `Log in to ${senderInfo.name} now`,
+        url: loginUrl,
+      },
+      hideIgnoreMessage: true,
     },
-    hideIgnoreMessage: true,
-  }
+  })
 }
 
 const contentStyle: React.CSSProperties = {

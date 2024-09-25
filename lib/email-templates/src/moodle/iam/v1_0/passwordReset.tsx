@@ -1,15 +1,19 @@
 import React from 'react'
 import * as email_org_v1_0 from '../../org/v1_0'
+import { CoreContext } from '@moodle/lib-ddd'
 
 export type ResetPasswordContentEmailProps = {
   receiverEmail: string
   resetPasswordUrl: string
+  ctx: Pick<CoreContext, 'worker'>
 }
 
-export function resetPasswordContent({
+export async function resetPasswordEmail({
   resetPasswordUrl,
   receiverEmail,
-}: ResetPasswordContentEmailProps): email_org_v1_0.EmailLayoutContentProps {
+  ctx,
+}: ResetPasswordContentEmailProps) {
+  const senderInfo = await email_org_v1_0.getSenderInfo(ctx)
   const title = `Ready to change your password 🔑`
   const body = (
     <React.Fragment>
@@ -18,15 +22,18 @@ export function resetPasswordContent({
     </React.Fragment>
   )
 
-  return {
-    body,
-    receiverEmail,
-    subject: title,
-    title,
-    hideIgnoreMessage: false,
-    action: {
-      title: 'Change password',
-      url: resetPasswordUrl,
+  return email_org_v1_0.layoutEmail({
+    senderInfo,
+    content: {
+      body,
+      receiverEmail,
+      subject: title,
+      title,
+      hideIgnoreMessage: false,
+      action: {
+        title: 'Change password',
+        url: resetPasswordUrl,
+      },
     },
-  }
+  })
 }

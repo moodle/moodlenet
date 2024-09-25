@@ -5,19 +5,9 @@ import './login.style.scss'
 
 export default async function LoginLayout(props: layoutPropsWithChildren) {
   const {
-    moodle: {
-      netWebappNextjs: {
-        v1_0: { pri: app },
-      },
-    },
-  } = priAccess()
-  const {
-    nextjs: {
-      layouts: {
-        pages: { login },
-      },
-    },
-  } = await app.configs.read()
+    pages: { login },
+  } = await priAccess().moodle.netWebappNextjs.v1_0.pri.webapp.layouts()
+
   const loginCardProps: LoginCardProps = {
     loginMethods: login.methods.map(({ label, panel }) => ({
       key: `${panel}#${label}`,

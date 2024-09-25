@@ -13,8 +13,8 @@ declare module '@moodle/lib-ddd' {
 interface MoodleOrgMod {
   v1_0: {
     pri: {
-      configs: {
-        read(): Promise<{
+      system: {
+        configs(): Promise<{
           configs: v1_0.Configs
         }>
       }

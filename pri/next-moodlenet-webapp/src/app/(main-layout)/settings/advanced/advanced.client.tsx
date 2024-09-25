@@ -1,14 +1,13 @@
 'use client'
-import { useState } from 'react'
+import { _any } from '@moodle/lib-types'
 import { Trans } from 'next-i18next'
+import { useState } from 'react'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import { Modal } from '../../../../ui/atoms/Modal/Modal'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../../../ui/atoms/SecondaryButton/SecondaryButton'
-import { Snackbar } from '../../../../ui/atoms/Snackbar/Snackbar'
-import './advanced.style.scss'
-import { _any } from '@moodle/lib-types'
 import { requestAccountSelfDeletion } from './advanced.server'
+import './advanced.style.scss'
 
 export function AdvancedMenu() {
   return (
@@ -19,10 +18,10 @@ export function AdvancedMenu() {
 }
 
 interface AdvancedSettingsProps {
-  instanceName: string
+  orgName: string
 }
 
-export function AdvancedSettings({ instanceName }: AdvancedSettingsProps) {
+export function AdvancedSettings({ orgName }: AdvancedSettingsProps) {
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false)
 
   const snackbars: _any[] = [
@@ -68,7 +67,7 @@ export function AdvancedSettings({ instanceName }: AdvancedSettingsProps) {
       </Card>
       <Card className="column">
         <div className="parameter">
-          <div className="name">Leave {instanceName}</div>
+          <div className="name">Leave {orgName}</div>
           <div className="actions">
             <SecondaryButton onClick={() => setShowDeleteAccountModal(true)}>
               Delete account
