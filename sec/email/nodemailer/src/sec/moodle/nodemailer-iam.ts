@@ -16,6 +16,7 @@ export function iam(env: NodemailerSecEnv): sec_factory {
                     body: { contentType: 'react', element: body },
                     to,
                     subject,
+                    sender: env.sender,
                   })
                 },
               },
