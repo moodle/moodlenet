@@ -15,7 +15,7 @@ export default async function SettingsLayout(props: layoutPropsWithChildren) {
     redirect(loginUrl, RedirectType.replace)
   }
   return (
-    <div className={`user-settings`}>
+    <div className="user-settings">
       <div className="menu-container" role="navigation">
         <SettingsMenu />
       </div>

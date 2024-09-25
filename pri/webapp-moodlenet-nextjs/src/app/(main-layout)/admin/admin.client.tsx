@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { sitepaths } from '../../../lib/common/utils/sitepaths'
 import { Card } from '../../../ui/atoms/Card/Card'
 
-export function AdminSettingsMenu() {
+export function AdminMenu() {
   const adminPath = sitepaths().pages.admin.settings
   const { t } = useTranslation()
 

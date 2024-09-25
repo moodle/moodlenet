@@ -45,5 +45,7 @@
   "todo-tree.general.tags": ["TODO", "FIXME", "FIXIT", "FIX", "BUG", "NOTE"],
   "todo-tree.general.tagGroups": {
     "FIXME": ["FIXME", "FIXIT", "FIX"]
-  }
+  },
+  "javascript.preferences.importModuleSpecifier": "project-relative",
+  "typescript.preferences.importModuleSpecifier": "project-relative"
 }

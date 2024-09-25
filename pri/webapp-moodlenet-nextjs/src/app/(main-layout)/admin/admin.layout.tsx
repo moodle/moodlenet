@@ -4,7 +4,7 @@ import { getAdminUserSession } from '../../../lib/server/session-access'
 import { srvSiteUrls } from '../../../lib/server/utils/site-urls.server'
 import { layoutPropsWithChildren } from '../../../lib/server/utils/slots'
 import './admin.style.scss'
-import { AdminSettingsMenu } from './admin.client'
+import { AdminMenu } from './admin.client'
 
 export default async function AdminLayout(props: layoutPropsWithChildren) {
   const adminUserSession = await getAdminUserSession()
@@ -17,9 +17,9 @@ export default async function AdminLayout(props: layoutPropsWithChildren) {
   }
 
   return (
-    <div className={`admin-settings`}>
+    <div className="admin-settings">
       <div className="menu-container" role="navigation">
-        <AdminSettingsMenu />
+        <AdminMenu />
       </div>
 
       <div className="content">{props.children}</div>

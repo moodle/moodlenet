@@ -27,53 +27,55 @@
       &::-webkit-scrollbar {
         display: none;
       }
-      > .section {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        cursor: pointer;
-        font-size: 18px;
-        font-weight: 500;
-        color: black;
+      > a {
+        > .section {
+          height: 100%;
+          width: 100%;
+          display: flex;
+          cursor: pointer;
+          font-size: 18px;
+          font-weight: 500;
+          color: black;
 
-        > .border-container {
-          width: 6px;
-          height: auto;
+          > .border-container {
+            width: 6px;
+            height: auto;
 
-          &.selected {
-            background-color: var(--primary-background-color);
+            &.selected {
+              background-color: var(--primary-background-color);
+            }
+            > .border {
+              width: 100%;
+              height: 100%;
+              border-radius: 0 4px 4px 0;
+              transition: background-color 150ms ease-in;
+              &.selected {
+                background-color: var(--primary-color);
+              }
+            }
           }
-          > .border {
+
+          &:hover {
+            > .border-container > .border {
+              &:not(.selected) {
+                background-color: #e8e8e8;
+              }
+            }
+          }
+
+          > .content {
             width: 100%;
-            height: 100%;
-            border-radius: 0 4px 4px 0;
+            padding: 14px 48px 14px 42px;
             transition: background-color 150ms ease-in;
             &.selected {
-              background-color: var(--primary-color);
+              background-color: var(--primary-background-color);
             }
-          }
-        }
-
-        &:hover {
-          > .border-container > .border {
-            &:not(.selected) {
-              background-color: #e8e8e8;
+            > abbr,
+            > span {
+              overflow: hidden;
+              display: block;
+              text-overflow: ellipsis;
             }
-          }
-        }
-
-        > .content {
-          width: 100%;
-          padding: 14px 48px 14px 42px;
-          transition: background-color 150ms ease-in;
-          &.selected {
-            background-color: var(--primary-background-color);
-          }
-          > abbr,
-          > span {
-            overflow: hidden;
-            display: block;
-            text-overflow: ellipsis;
           }
         }
       }
