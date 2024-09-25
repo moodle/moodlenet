@@ -10,7 +10,7 @@ import {
   primary_session,
   sec_impl,
   TransportData,
-  WorkerContext,
+  SecondaryContext,
 } from '@moodle/lib-ddd'
 import * as mod_iam from '@moodle/mod-iam'
 import * as mod_net from '@moodle/mod-net'
@@ -18,8 +18,8 @@ import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
 import * as mod_org from '@moodle/mod-org'
 import { get_arango_persistence_factory } from '@moodle/sec-db-arango'
 
-import { get_default_crypto_workers_factory } from '@moodle/sec-crypto-default'
-import { get_nodemailer_workers_factory } from '@moodle/sec-email-nodemailer'
+import { get_default_crypto_secondarys_factory } from '@moodle/sec-crypto-default'
+import { get_nodemailer_secondarys_factory } from '@moodle/sec-email-nodemailer'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { migrate } from './migrate'
@@ -89,7 +89,7 @@ async function request(transportData: TransportData) {
   ]
   const core = composeImpl(...core_impls)
 
-  const workerCtx: WorkerContext | null = core_mod_id
+  const secondaryCtx: SecondaryContext | null = core_mod_id
     ? {
         primarySession: primary_session,
         emit: sysCallAccessProxy.mod,
@@ -98,12 +98,12 @@ async function request(transportData: TransportData) {
       }
     : null
 
-  const sec_impls: sec_impl[] = workerCtx
+  const sec_impls: sec_impl[] = secondaryCtx
     ? [
         // sec modules
-        await get_arango_persistence_factory(env.arango_db)(workerCtx),
-        await get_default_crypto_workers_factory(env.crypto)(workerCtx),
-        await get_nodemailer_workers_factory(env.nodemailer)(workerCtx),
+        await get_arango_persistence_factory(env.arango_db)(secondaryCtx),
+        await get_default_crypto_secondarys_factory(env.crypto)(secondaryCtx),
+        await get_nodemailer_secondarys_factory(env.nodemailer)(secondaryCtx),
       ]
     : []
   const sec = composeImpl(...sec_impls)

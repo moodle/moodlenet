@@ -7,7 +7,7 @@ export interface CryptoDefaultEnv {
   argonOpts: ArgonPwdHashOpts
 }
 
-export function get_default_crypto_workers_factory({
+export function get_default_crypto_secondarys_factory({
   joseEnv,
   argonOpts,
 }: CryptoDefaultEnv): sec_factory {

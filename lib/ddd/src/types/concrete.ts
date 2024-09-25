@@ -11,7 +11,7 @@ export interface TransportData {
 }
 
 export interface CoreProcessContext {
-  worker: concrete<'sec'>
+  sysCall: concrete<'pri' | 'sec' | 'evt'>
 }
 
 export type core_process = (ctx: CoreProcessContext) => stop_core_process
@@ -34,7 +34,7 @@ export type EvtContext = {
   }
 }
 
-export interface WorkerContext {
+export interface SecondaryContext {
   primarySession: primary_session
   modIdCaller: mod_id
   emit: concrete<'evt'>
@@ -51,7 +51,7 @@ export interface WorkerContext {
 export type layer_contexts = {
   pri: CoreContext
   evt: EvtContext
-  sec: WorkerContext
+  sec: SecondaryContext
 }
 
 export type concrete<_layer extends keyof layers> = {

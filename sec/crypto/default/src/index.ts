@@ -1,1 +1,1 @@
-export * from './crypto-workers'
+export * from './crypto-secondarys'

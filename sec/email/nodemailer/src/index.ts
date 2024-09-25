@@ -1,2 +1,2 @@
-export * from './nodemailer-workers'
+export * from './nodemailer-secondarys'
 export * from './types'
