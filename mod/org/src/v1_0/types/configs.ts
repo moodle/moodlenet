@@ -1,6 +1,16 @@
-import { lib_moodle_org } from '@moodle/lib-domain'
+import { url_string } from '@moodle/lib-types'
+import { OrgPrimaryMsgSchemaConfigs } from './primary-schemas'
+
+export interface OrgInfo {
+  name: string
+  logo: url_string
+  smallLogo: url_string
+  copyright: string
+  physicalAddress: string
+  websiteUrl: url_string
+}
 
 export interface Configs {
-  info: lib_moodle_org.v1_0.OrgInfo
-  addresses: lib_moodle_org.v1_0.OrgAddresses
+  info: OrgInfo
+  orgPrimaryMsgSchemaConfigs: OrgPrimaryMsgSchemaConfigs
 }

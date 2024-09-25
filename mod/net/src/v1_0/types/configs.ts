@@ -1,5 +1,11 @@
-import { lib_moodle_net } from '@moodle/lib-domain'
+import { MoodleNetPrimaryMsgSchemaConfigs } from './primary-schemas'
 
+export * from '../../mod'
 export interface Configs {
-  info: lib_moodle_net.v1_0.MoodleNetInfo
+  info: MoodleNetInfo
+  moodleNetPrimaryMsgSchemaConfigs: MoodleNetPrimaryMsgSchemaConfigs
+}
+export interface MoodleNetInfo {
+  title: string
+  subtitle: string
 }

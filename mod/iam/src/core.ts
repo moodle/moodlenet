@@ -1,188 +1,184 @@
-import { core_factory, core_impl } from '@moodle/domain'
-import { lib_moodle_iam, lib_moodle_org } from '@moodle/lib-domain'
-import { email_moodle_iam, email_moodle_org } from '@moodle/lib-email-templates'
-import { _void, date_time_string } from '@moodle/lib-types'
+import { type core_factory, type core_impl } from '@moodle/lib-ddd'
 import {
-  assert_validateUserAuthenticatedSession,
-  assert_validateUserAuthenticatedSessionHasRole,
-  assertGuestSession,
-  generateSessionForUserData,
-  generateSessionForUserId,
-  getUserSession,
-} from './v1_0'
-import { dbUser2UserData } from './v1_0/types/db/db-user'
+  resetPasswordEmail,
+  selfDeletionConfirmEmail,
+  signupEmailConfirmationEmail,
+} from '@moodle/lib-email-templates/iam/v1_0'
+import { _never, date_time_string } from '@moodle/lib-types'
+import * as v1_0_lib from './v1_0/lib'
+
 export function core(): core_factory {
-  return ({ primarySession, worker }) => {
-    const mySec = worker.moodle.iam.v1_0.sec
+  return async ctx => {
     const core_impl: core_impl = {
       moodle: {
         iam: {
           v1_0: {
             pri: {
+              system: {
+                async configs() {
+                  await v1_0_lib.assert_authorizeSystemSession(ctx)
+                  return ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
+                },
+              },
               session: {
-                async getUserSession({ sessionToken }) {
-                  const userSession = await getUserSession(sessionToken, worker)
+                async getCurrentUserSession() {
+                  const userSession = await v1_0_lib.validateAnyUserSession(ctx)
                   return { userSession }
                 },
                 async generateUserSession({ userId }) {
-                  return generateSessionForUserId(userId, worker)
+                  return v1_0_lib.generateSessionForUserId(ctx, userId)
                 },
               },
 
-              configs: {
-                read() {
-                  // assertSystemSession(primarySession)
-                  return mySec.db.getConfigs()
-                },
-              },
+              //get admin():moodle_iam_mod['v1_0']['pri']['admin'] {
               admin: {
                 async editUserRoles({ userId, roles }) {
-                  await assert_validateUserAuthenticatedSessionHasRole(
-                    primarySession,
-                    'admin',
-                    worker,
-                  )
-                  return mySec.db.changeUserRoles({ userId, roles })
+                  const admin_user_session = await v1_0_lib.assert_authorizeAdminUserSession(ctx)
+
+                  const [done] = await ctx.sysCall.moodle.iam.v1_0.sec.db.changeUserRoles({
+                    userId,
+                    roles,
+                    adminUserId: admin_user_session.user.id,
+                  })
+                  if (!done) {
+                    return [false, { reason: 'userNotFound' }]
+                  }
+                  return [true, _never]
                 },
 
                 async searchUsers({ textSearch }) {
-                  await assert_validateUserAuthenticatedSessionHasRole(
-                    primarySession,
-                    'admin',
-                    worker,
-                  )
-                  return mySec.db.findUsersByText({ text: textSearch })
+                  await v1_0_lib.assert_authorizeAdminUserSession(ctx)
+                  const { users } = await ctx.sysCall.moodle.iam.v1_0.sec.db.findUsersByText({
+                    text: textSearch,
+                  })
+                  return { users }
                 },
 
                 async deactivateUser({ userId, anonymize, reason }) {
-                  await assert_validateUserAuthenticatedSessionHasRole(
-                    primarySession,
-                    'admin',
-                    worker,
-                  )
-                  mySec.db.deactivateUser({
+                  const admin_user_session = await v1_0_lib.assert_authorizeAdminUserSession(ctx)
+                  const [done] = await ctx.sysCall.moodle.iam.v1_0.sec.db.deactivateUser({
                     userId,
-                    reason: { v1_0: 'adminRequest', reason },
+                    reason: {
+                      type: 'adminRequest',
+                      adminUserId: admin_user_session.user.id,
+                      reason,
+                      v: '1_0',
+                    },
                     anonymize,
                   })
+                  if (!done) {
+                    return [false, { reason: 'userNotFound' }]
+                  }
+                  return [true, _never]
                 },
               },
-              signup: {
+              access: {
                 async request({ signupForm, redirectUrl }) {
-                  assertGuestSession(primarySession)
-                  const [found] = await mySec.db.getUserByEmail({
-                    email: signupForm.email,
+                  const schemas = await fetchPrimarySchemas()
+                  const { displayName, email, password } = schemas.signupSchema.parse(signupForm)
+                  const [found] = await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserByEmail({
+                    email,
                   })
                   if (found) {
                     return [false, { reason: 'userWithSameEmailExists' }]
                   }
                   const {
-                    iam: { tokenExpireTime },
-                    org: { info: orgInfo, addresses: orgAddr },
-                  } = await mySec.db.getConfigs()
+                    configs: { tokenExpireTime },
+                  } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
 
-                  const { passwordHash } = await mySec.crypto.hashPassword({
-                    plainPassword: signupForm.password,
-                  })
-
-                  const confirmEmailSession = await mySec.crypto.encryptSession({
-                    expiresIn: tokenExpireTime.signupEmailVerification,
-                    data: {
-                      v1_0: 'signupRequestEmailVerification',
-                      redirectUrl,
-                      displayName: signupForm.displayName,
-                      email: signupForm.email,
-                      passwordHash,
+                  const { passwordHash } = await ctx.sysCall.moodle.iam.v1_0.sec.crypto.hashPassword(
+                    {
+                      plainPassword: password,
                     },
-                  })
+                  )
 
-                  const content = email_moodle_iam.v1_0.signupEmailConfirmationContent({
+                  const confirmEmailSession =
+                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.signDataToken({
+                      expiresIn: tokenExpireTime.signupEmailVerification,
+                      data: {
+                        v: '1_0',
+                        type: 'signupRequestEmailVerification',
+                        redirectUrl,
+                        displayName,
+                        email,
+                        passwordHash,
+                      },
+                    })
+
+                  const { emailProps, reactBody } = await signupEmailConfirmationEmail({
+                    ctx,
                     activateAccountUrl: `${redirectUrl}?token=${confirmEmailSession.token}`,
-                    orgInfo,
                     receiverEmail: signupForm.email,
                   })
 
-                  const reactBody = email_moodle_org.v1_0.EmailLayout({
-                    orgInfo,
-                    orgAddr,
-                    content,
-                  })
-                  await mySec.email.sendNow({
+                  await ctx.sysCall.moodle.iam.v1_0.sec.email.sendNow({
                     reactBody,
-                    sender: lib_moodle_org.v1_0.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
-                    subject: content.subject,
+                    subject: emailProps.content.subject,
                     to: signupForm.email,
                   })
-                  return [true, _void]
+                  return [true, _never]
                 },
 
                 async createNewUserByEmailVerificationToken({ signupEmailVerificationToken }) {
-                  assertGuestSession(primarySession)
                   const {
-                    iam: {
+                    configs: {
                       roles: { newlyCreatedUserRoles },
                     },
-                  } = await mySec.db.getConfigs()
-                  const [verified, tokenData] = await mySec.crypto.decryptSession({
-                    token: signupEmailVerificationToken,
-                  })
+                  } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
+                  const [verified, tokenData] =
+                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.validateSignedToken({
+                      token: signupEmailVerificationToken,
+                    })
 
-                  if (!(verified && tokenData.v1_0 === 'signupRequestEmailVerification')) {
+                  if (!(verified && tokenData.type === 'signupRequestEmailVerification')) {
                     return [false, { reason: 'invalidToken' }]
                   }
 
-                  const [, foundSameEmailUser] = await mySec.db.getUserByEmail({
-                    email: tokenData.email,
-                  })
+                  const [, foundSameEmailUser] =
+                    await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserByEmail({
+                      email: tokenData.email,
+                    })
 
                   if (foundSameEmailUser) {
                     return [true, { userId: foundSameEmailUser.id }]
                   }
 
                   const now = date_time_string('now')
-                  const [newUserCreated, userId] = await mySec.db.saveNewUser({
-                    idType: {
-                      type: 'alphanumeric',
-                      length: 8,
-                    },
-                    newUser: {
-                      createdAt: now,
-                      roles: newlyCreatedUserRoles,
-                      displayName: tokenData.displayName,
-                      contacts: {
-                        email: tokenData.email,
-                      },
-                      passwordHash: tokenData.passwordHash,
-                      activityStatus: {
-                        lastLogin: now,
-                        inactiveNotificationSentAt: false,
-                      },
-                      deactivated: false,
-                    },
+                  const newUser = await v1_0_lib.createNewUserRecordData({
+                    createdAt: now,
+                    roles: newlyCreatedUserRoles,
+                    displayName: tokenData.displayName,
+                    email: tokenData.email,
+                    passwordHash: tokenData.passwordHash,
+                    lastLogin: now,
                   })
-                  return newUserCreated ? [true, { userId }] : [false, { reason: 'unknown' }]
+                  const [newUserCreated] = await ctx.sysCall.moodle.iam.v1_0.sec.db.saveNewUser({
+                    newUser,
+                  })
+                  return newUserCreated
+                    ? [true, { userId: newUser.id }]
+                    : [false, { reason: 'unknown' }]
                 },
-              },
-
-              myAccount: {
                 async login({ loginForm }) {
-                  const [found, dbUser] = await mySec.db.getUserByEmail({
-                    email: loginForm.email,
-                  })
-                  if (!(found && !dbUser.deactivated)) {
-                    return [false, _void]
+                  const [found, userRecord] =
+                    await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserByEmail({
+                      email: loginForm.email,
+                    })
+                  if (!(found && !userRecord.deactivated)) {
+                    return [false, _never]
                   }
-                  const [verified] = await mySec.crypto.verifyUserPasswordHash({
-                    plainPassword: loginForm.password,
-                    passwordHash: dbUser.passwordHash,
-                  })
+                  const [verified] =
+                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.verifyUserPasswordHash({
+                      plainPassword: loginForm.password,
+                      passwordHash: userRecord.passwordHash,
+                    })
 
                   if (!verified) {
-                    return [false, _void]
+                    return [false, _never]
                   }
 
-                  const user = dbUser2UserData(dbUser)
-                  const session = await generateSessionForUserData(user, worker)
+                  const user = v1_0_lib.userRecord2SessionUserData(userRecord)
+                  const session = await v1_0_lib.generateSessionForUserData(ctx, user)
                   return [
                     true,
                     {
@@ -194,132 +190,164 @@ export function core(): core_factory {
                     },
                   ]
                 },
-
-                async selfDeletionRequest({ redirectUrl }) {
-                  const session = await assert_validateUserAuthenticatedSession(
-                    primarySession,
-                    worker,
-                  )
+                async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
                   const {
-                    iam: { tokenExpireTime: userSelfDeletion },
-                    org: { info: orgInfo, addresses: orgAddr },
-                  } = await mySec.db.getConfigs()
+                    configs: { tokenExpireTime: userSelfDeletion },
+                  } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
 
-                  const selfDeletionConfirmationSession = await mySec.crypto.encryptSession({
-                    expiresIn: userSelfDeletion.userSelfDeletionRequest,
-                    data: {
-                      v1_0: 'selfDeletionRequestConfirm',
-                      redirectUrl,
-                      userId: session.user.id,
-                    },
+                  const [, user] = await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserByEmail({
+                    email: declaredOwnEmail,
                   })
+                  if (!user) {
+                    return
+                  }
 
-                  const content = email_moodle_iam.v1_0.selfDeletionConfirmContent({
-                    deleteAccountUrl: `${redirectUrl}?token=${selfDeletionConfirmationSession.token}`,
-                    orgInfo,
-                    receiverEmail: session.user.contacts.email,
-                  })
+                  const resetPasswordConfirmationSession =
+                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.signDataToken({
+                      expiresIn: userSelfDeletion.resetPasswordRequest,
+                      data: {
+                        v: '1_0',
+                        type: 'resetPasswordRequest',
+                        redirectUrl,
+                        email: user.contacts.email,
+                      },
+                    })
 
-                  const reactBody = email_moodle_org.v1_0.EmailLayout({
-                    orgInfo,
-                    orgAddr,
-                    content,
+                  const { emailProps, reactBody } = await resetPasswordEmail({
+                    ctx,
+                    resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
+                    receiverEmail: user.contacts.email,
                   })
-                  await mySec.email.sendNow({
+                  await ctx.sysCall.moodle.iam.v1_0.sec.email.sendNow({
                     reactBody,
-                    sender: lib_moodle_org.v1_0.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
-                    subject: content.subject,
-                    to: lib_moodle_iam.v1_0.getUserNamedEmailAddress(session.user),
+                    subject: emailProps.content.subject,
+                    to: v1_0_lib.getUserNamedEmailAddress(user),
+                  })
+                  return
+                },
+                async logout(/* {sessionToken} */) {
+                  // TODO implement session_token invalidation
+                  //! -------------------------------------
+                  return
+                },
+              },
+
+              myAccount: {
+                async selfDeletionRequest({ redirectUrl }) {
+                  const authenticated_session =
+                    await v1_0_lib.assert_authorizeAuthenticatedUserSession(ctx)
+                  const {
+                    configs: { tokenExpireTime: userSelfDeletion },
+                  } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
+
+                  const selfDeletionConfirmationSession =
+                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.signDataToken({
+                      expiresIn: userSelfDeletion.userSelfDeletionRequest,
+                      data: {
+                        v: '1_0',
+                        type: 'selfDeletionRequestConfirm',
+                        redirectUrl,
+                        userId: authenticated_session.user.id,
+                      },
+                    })
+
+                  const { emailProps, reactBody } = await selfDeletionConfirmEmail({
+                    ctx,
+                    deleteAccountUrl: `${redirectUrl}?token=${selfDeletionConfirmationSession.token}`,
+                    receiverEmail: authenticated_session.user.contacts.email,
+                  })
+                  await ctx.sysCall.moodle.iam.v1_0.sec.email.sendNow({
+                    reactBody,
+                    subject: emailProps.content.subject,
+                    to: v1_0_lib.getUserNamedEmailAddress(authenticated_session.user),
                   })
                   return
                 },
 
                 async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
-                  const [verified, tokenData] = await mySec.crypto.decryptSession({
-                    token: selfDeletionConfirmationToken,
-                  })
+                  const [verified, tokenData] =
+                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.validateSignedToken({
+                      token: selfDeletionConfirmationToken,
+                    })
 
-                  if (!(verified && tokenData.v1_0 === 'selfDeletionRequestConfirm')) {
+                  if (!(verified && tokenData.type === 'selfDeletionRequestConfirm')) {
                     return [false, { reason: 'invalidToken' }]
                   }
 
-                  const [user] = await mySec.db.getUserById({ userId: tokenData.userId })
+                  const [user] = await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserById({
+                    userId: tokenData.userId,
+                  })
                   if (!user) {
                     return [false, { reason: 'unknownUser' }]
                   }
 
-                  const [deactivated] = await mySec.db.deactivateUser({
+                  const [deactivated] = await ctx.sysCall.moodle.iam.v1_0.sec.db.deactivateUser({
                     anonymize: true,
-                    reason: { v1_0: 'userSelfDeletionRequest', reason },
+                    reason: {
+                      v: '1_0',
+                      type: 'userSelfDeletionRequest',
+                      reason,
+                    },
                     userId: tokenData.userId,
                   })
-                  return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
+                  return deactivated ? [true, _never] : [false, { reason: 'unknown' }]
                 },
+                async resetPassword({ resetPasswordForm: { newPassword, token } }) {
+                  const [verified, tokenData] =
+                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.validateSignedToken({
+                      token,
+                    })
 
-                async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
-                  assertGuestSession(primarySession)
-                  const {
-                    iam: { tokenExpireTime: userSelfDeletion },
-                    org: { info: orgInfo, addresses: orgAddr },
-                  } = await mySec.db.getConfigs()
-
-                  const [, user] = await mySec.db.getUserByEmail({ email: declaredOwnEmail })
-                  if (!user) {
-                    return
+                  if (!(verified && tokenData.type === 'resetPasswordRequest')) {
+                    return [false, { reason: 'invalidToken' }]
                   }
-
-                  const resetPasswordConfirmationSession = await mySec.crypto.encryptSession({
-                    expiresIn: userSelfDeletion.userSelfDeletionRequest,
-                    data: {
-                      v1_0: 'passwordResetRequest',
-                      redirectUrl,
-                      email: user.contacts.email,
+                  const [found, userRecord] =
+                    await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserByEmail({
+                      email: tokenData.email,
+                    })
+                  if (!found) {
+                    return [false, { reason: 'userNotFound' }]
+                  }
+                  const { passwordHash } = await ctx.sysCall.moodle.iam.v1_0.sec.crypto.hashPassword(
+                    {
+                      plainPassword: newPassword,
                     },
+                  )
+                  const [pwdChanged] = await ctx.sysCall.moodle.iam.v1_0.sec.db.changeUserPassword({
+                    newPasswordHash: passwordHash,
+                    userId: userRecord.id,
                   })
-
-                  const content = email_moodle_iam.v1_0.resetPasswordContent({
-                    resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
-                    receiverEmail: user.contacts.email,
-                  })
-
-                  const reactBody = email_moodle_org.v1_0.EmailLayout({
-                    orgInfo,
-                    orgAddr,
-                    content,
-                  })
-                  await mySec.email.sendNow({
-                    reactBody,
-                    sender: lib_moodle_org.v1_0.getOrgNamedEmailAddress({ orgAddr, orgInfo }),
-                    subject: content.subject,
-                    to: lib_moodle_iam.v1_0.getUserNamedEmailAddress(user),
-                  })
-                  return
+                  return pwdChanged ? [true, _never] : [false, { reason: 'unknown' }]
                 },
 
                 async changePassword({ currentPassword, newPassword }) {
-                  const session = await assert_validateUserAuthenticatedSession(
-                    primarySession,
-                    worker,
-                  )
-                  const [, user] = await mySec.db.getUserById({ userId: session.user.id })
+                  const authenticated_session =
+                    await v1_0_lib.assert_authorizeAuthenticatedUserSession(ctx)
+
+                  const [, user] = await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserById({
+                    userId: authenticated_session.user.id,
+                  })
                   if (!user) {
-                    return [false, _void]
+                    return [false, { reason: 'unknown' }]
                   }
-                  const [currentPasswordVerified] = await mySec.crypto.verifyUserPasswordHash({
-                    plainPassword: currentPassword,
-                    passwordHash: user.passwordHash,
-                  })
+                  const [currentPasswordVerified] =
+                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.verifyUserPasswordHash({
+                      plainPassword: currentPassword,
+                      passwordHash: user.passwordHash,
+                    })
                   if (!currentPasswordVerified) {
-                    return [false, _void]
+                    return [false, { reason: 'wrongCurrentPassword' }]
                   }
-                  const { passwordHash } = await mySec.crypto.hashPassword({
-                    plainPassword: newPassword,
-                  })
-                  await mySec.db.changeUserPassword({
+                  const { passwordHash } = await ctx.sysCall.moodle.iam.v1_0.sec.crypto.hashPassword(
+                    {
+                      plainPassword: newPassword,
+                    },
+                  )
+                  await ctx.sysCall.moodle.iam.v1_0.sec.db.changeUserPassword({
                     newPasswordHash: passwordHash,
-                    userId: session.user.id,
+                    userId: authenticated_session.user.id,
                   })
-                  return [true, _void]
+                  return [true, _never]
                 },
               },
             },
@@ -344,7 +372,14 @@ export function core(): core_factory {
       },
     }
     return core_impl
+    async function fetchPrimarySchemas() {
+      const {
+        configs: { iamPrimaryMsgSchemaConfigs },
+      } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
+      return v1_0_lib.getIamPrimarySchemas(iamPrimaryMsgSchemaConfigs)
+    }
   }
+
 }
 
 // export const process: core_process = _ctx => {

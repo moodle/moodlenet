@@ -1,8 +1,7 @@
-import { Error4xx, reply, status_code_4xx } from '@moodle/domain'
+import { errorXxx, ErrorXxx, isCodeXxx, status_code_xxx, TransportData } from '@moodle/lib-ddd'
 import { _any, map } from '@moodle/lib-types'
 import express from 'express'
 import { Agent, fetch } from 'undici'
-import { TransportData } from '.'
 
 export function client(agent_opts?: Agent.Options) {
   const dispatcher = new Agent({
@@ -49,10 +48,9 @@ export function client(agent_opts?: Agent.Options) {
           const jsonBody = _parse(jsonBodyStrUtf8)
           return jsonBody
         }
-        const is4xx = response.status >= 400 && response.status < 500
-        if (is4xx) {
+        if (isCodeXxx(response.status)) {
           const jsonBody = _parse(jsonBodyStrUtf8)
-          throw new Error4xx(response.status as status_code_4xx, jsonBody?.details ?? undefined)
+          throw new ErrorXxx(response.status as status_code_xxx, jsonBody?.details)
         }
         throw new Error(`Server error: ${response.status}\n ${jsonBodyStrUtf8}`)
       })
@@ -65,7 +63,7 @@ export function client(agent_opts?: Agent.Options) {
   }
 }
 
-export type requestHandler = (_: TransportData) => Promise<reply<_any>>
+export type requestHandler = (_: TransportData) => Promise<_any>
 
 type srv_cfg = {
   request: requestHandler
@@ -84,9 +82,9 @@ export async function server({ request, port, baseUrl }: srv_cfg) {
         throw e
       })
       .catch(e => {
-        if (e instanceof Error4xx) {
-          res.status(e.code)
-          return { details: e.details }
+        if (e instanceof ErrorXxx) {
+          res.status(e.errorXxx.code)
+          return { details: e.errorXxx.details }
         } else {
           res.status(500)
           return e instanceof Error
