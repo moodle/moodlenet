@@ -1,9 +1,8 @@
 import { __redacted__key, email_address_schema, signed_token_schema } from '@moodle/lib-types'
 import { intersection, object, string } from 'zod'
-import { PrimaryMsgSchemaConfigs } from '../types'
+import { IamPrimaryMsgSchemaConfigs } from '../types'
 
-// export type primary_schemas = Awaited<ReturnType<typeof getPrimarySchemas>>
-export function getPrimarySchemas({ user, myAccount }: PrimaryMsgSchemaConfigs) {
+export function getIamPrimarySchemas({ user, myAccount }: IamPrimaryMsgSchemaConfigs) {
   const email = intersection(email_address_schema, string().min(user.email.min).max(user.email.max))
   const password = string().min(user.password.min).max(user.password.max)
   const displayName = string().min(user.displayName.min).max(user.displayName.max)

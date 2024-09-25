@@ -1,6 +1,6 @@
 'use server'
 
-import { getPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
+import { getIamPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { redirect } from 'next/navigation'
@@ -10,7 +10,7 @@ import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
 
 export async function getSignupSchema() {
   const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.v1_0.pri.schemaConfigs.iam()
-  const { signupSchema } = await getPrimarySchemas(iamSchemaConfigs)
+  const { signupSchema } = await getIamPrimarySchemas(iamSchemaConfigs)
   return signupSchema
 }
 

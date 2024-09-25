@@ -15,14 +15,16 @@ export type moodle_net_webapp_nextjs_mod = mod<{
   v1_0: {
     pri: {
       schemaConfigs: {
-        iam(): Promise<{ iamSchemaConfigs: iam_v1_0.PrimaryMsgSchemaConfigs }>
+        iam(): Promise<{ iamSchemaConfigs: iam_v1_0.IamPrimaryMsgSchemaConfigs }>
+        moodleNet(): Promise<{ moodleNetSchemaConfigs: net_v1_0.MoodleNetPrimaryMsgSchemaConfigs }>
+        org(): Promise<{ orgSchemaConfigs: org_v1_0.OrgPrimaryMsgSchemaConfigs }>
       }
       webapp: {
         layouts(): Promise<v1_0.Layouts>
         deployment(): Promise<v1_0.Deployment>
       }
       moodlenet: {
-        info(): Promise<{ info: net_v1_0.MoodleNetInfo; org: org_v1_0.OrgInfo }>
+        info(): Promise<{ moodlenet: net_v1_0.MoodleNetInfo; org: org_v1_0.OrgInfo }>
       }
       system: {
         configs(): Promise<{ configs: v1_0.Configs }>

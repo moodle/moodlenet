@@ -1,6 +1,6 @@
 import type { z } from 'zod'
-import type { getPrimarySchemas } from '../lib/primary-schemas'
-export interface PrimaryMsgSchemaConfigs {
+import type { getIamPrimarySchemas } from '../lib/primary-schemas'
+export interface IamPrimaryMsgSchemaConfigs {
   user: {
     email: { max: number; min: number }
     password: { max: number; min: number }
@@ -10,11 +10,11 @@ export interface PrimaryMsgSchemaConfigs {
     selfDeletionRequestReason: { max: number; min: number }
   }
 }
-export type loginForm = z.infer<ReturnType<typeof getPrimarySchemas>['loginSchema']>
+export type loginForm = z.infer<ReturnType<typeof getIamPrimarySchemas>['loginSchema']>
 
-export type signupForm = z.infer<ReturnType<typeof getPrimarySchemas>['signupSchema']>
+export type signupForm = z.infer<ReturnType<typeof getIamPrimarySchemas>['signupSchema']>
 
-export type changePasswordForm = z.infer<
-  ReturnType<typeof getPrimarySchemas>['changePasswordSchema']
+export type changePasswordForm = z.infer<ReturnType<typeof getIamPrimarySchemas>['changePasswordSchema']>
+export type resetPasswordForm = z.infer<
+  ReturnType<typeof getIamPrimarySchemas>['resetPasswordSchema']
 >
-export type resetPasswordForm = z.infer<ReturnType<typeof getPrimarySchemas>['resetPasswordSchema']>

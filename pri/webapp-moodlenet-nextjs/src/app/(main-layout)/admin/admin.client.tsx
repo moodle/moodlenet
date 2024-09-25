@@ -13,9 +13,9 @@ export function AdminMenu() {
   return (
     <Card role="navigation" className="menu">
       <MenuItem pathname={adminPath('/general')} title={t('General')} />
-      <MenuItem pathname={adminPath('/appearance')} title={t('Appearance')} />
-      <MenuItem pathname={adminPath('/users')} title={t('Users')} />
-      <MenuItem pathname={adminPath('/moderation')} title={t('Moderation')} />
+      <MenuItem pathname={'#' /* adminPath('/appearance') */} title={t('Appearance')} />
+      <MenuItem pathname={'#' /* adminPath('/users') */} title={t('Users')} />
+      <MenuItem pathname={'#' /* adminPath('/moderation') */} title={t('Moderation')} />
     </Card>
   )
 }

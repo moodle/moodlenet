@@ -1,7 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { getPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
-import { PrimaryMsgSchemaConfigs } from '@moodle/mod-iam/v1_0/types'
+import { getIamPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
+import { IamPrimaryMsgSchemaConfigs } from '@moodle/mod-iam/v1_0/types'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'next-i18next'
 import Link from 'next/link'
@@ -11,11 +11,11 @@ import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { TertiaryButton } from '../../../../ui/atoms/TertiaryButton/TertiaryButton'
 import { loginAction } from './login-email-pwd.server'
 
-export type LoginProps = { iamSchemaConfigs: PrimaryMsgSchemaConfigs }
+export type LoginProps = { iamSchemaConfigs: IamPrimaryMsgSchemaConfigs }
 
 export default function LoginPanel({ iamSchemaConfigs }: LoginProps) {
   const { t } = useTranslation()
-  const { loginSchema } = getPrimarySchemas(iamSchemaConfigs)
+  const { loginSchema } = getIamPrimarySchemas(iamSchemaConfigs)
   const {
     form: { formState, register },
     handleSubmitWithAction,

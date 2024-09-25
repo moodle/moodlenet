@@ -12,9 +12,11 @@ import Searchbox from '../../ui/atoms/Searchbox/Searchbox'
 import { TertiaryButton } from '../../ui/atoms/TertiaryButton/TertiaryButton'
 import ArrowsIcon from '../../ui/lib/assets/icons/arrows.svg'
 // FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
-import defaultAvatar from '../../ui/lib/assets//img/default-avatar.svg'
+import defaultAvatar from '../../ui/lib/assets/img/default-avatar.svg'
 // FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
 import { Href, clientSlotItem } from '../../lib/common/types'
+console.log({ defaultAvatar: defaultAvatar() })
+console.log({ defaultAvatarsrc: defaultAvatar.src })
 
 export function LoginHeaderButton() {
   const {
@@ -67,7 +69,8 @@ export function ProfileLink({ profileHref, avatarUrl }: ProfileLinkProps) {
     <Link href={profileHref} className="avatar">
       <div
         style={{
-          backgroundImage: 'url("' + avatarUrl ?? defaultAvatar + '")',
+          // FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
+          backgroundImage: 'url("' + avatarUrl ?? `data:image/svg+xml,${defaultAvatar}` + '")',
           backgroundSize: 'cover',
           borderRadius: '50%',
           height: '28px',

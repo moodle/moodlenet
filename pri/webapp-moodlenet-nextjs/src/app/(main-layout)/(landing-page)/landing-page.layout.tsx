@@ -22,8 +22,8 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
     <div className="landing">
       <div className="landing-header" style={headerStyle}>
         <div className="landing-title">
-          <div className="title">{moodlenet.info.title}</div>
-          <div className="subtitle">{moodlenet.info.subtitle}</div>
+          <div className="title">{moodlenet.moodlenet.title}</div>
+          <div className="subtitle">{moodlenet.moodlenet.subtitle}</div>
         </div>
         <LandingHeadSearchbox />
         {head}

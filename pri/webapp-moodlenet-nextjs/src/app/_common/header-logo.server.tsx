@@ -5,7 +5,7 @@ import HeaderLogo from '../../ui/organisms/Header/HeaderLogo/HeaderLogo'
 
 export async function LayoutHeaderLogo() {
   const {
-    info: { logo, smallLogo },
+    org: { logo, smallLogo },
   } = await priAccess().moodle.netWebappNextjs.v1_0.pri.moodlenet.info()
 
   const {

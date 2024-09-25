@@ -374,9 +374,9 @@ export function core(): core_factory {
     return core_impl
     async function fetchPrimarySchemas() {
       const {
-        configs: { primaryMsgSchemaConfigs },
+        configs: { iamPrimaryMsgSchemaConfigs },
       } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
-      return v1_0_lib.getPrimarySchemas(primaryMsgSchemaConfigs)
+      return v1_0_lib.getIamPrimarySchemas(iamPrimaryMsgSchemaConfigs)
     }
   }
 

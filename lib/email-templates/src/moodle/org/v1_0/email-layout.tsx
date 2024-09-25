@@ -17,8 +17,6 @@ export interface SenderInfo {
   physicalAddress: null | string
   websiteUrl: url_string
   copyright: null | string
-  // smallLogo: url_string
-  // emailAddress: null | email_address
 }
 
 export type EmailLayoutActionBtnProps = {
@@ -110,8 +108,8 @@ export async function getSenderInfo({
     copyright: orgInfo.copyright,
     logo: orgInfo.logo,
     name: orgInfo.name,
-    physicalAddress: orgInfo.addresses.physicalAddress,
-    websiteUrl: orgInfo.addresses.websiteUrl,
+    physicalAddress: orgInfo.physicalAddress,
+    websiteUrl: orgInfo.websiteUrl,
   }
   return senderInfo
 }

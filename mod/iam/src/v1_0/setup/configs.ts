@@ -2,7 +2,7 @@ import { time_duration_string_schema } from '@moodle/lib-types'
 import { Configs } from '../types'
 
 export const iam_default_configs: Configs = {
-  primaryMsgSchemaConfigs: {
+  iamPrimaryMsgSchemaConfigs: {
     myAccount: {
       selfDeletionRequestReason: {
         min: 0,

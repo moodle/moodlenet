@@ -30,22 +30,22 @@ export async function migrate({ db_struct }: { db_struct: v1_0.db_struct }) {
 
   await Promise.all([
     saveModConfigs({
-      db_struct,
+      db_struct_v1_0: db_struct,
       configs: iam_default_configs,
       mod_id: { ns: 'moodle', mod: 'iam', version: 'v1_0' },
     }),
     saveModConfigs({
-      db_struct,
+      db_struct_v1_0: db_struct,
       configs: net_default_configs,
       mod_id: { ns: 'moodle', mod: 'net', version: 'v1_0' },
     }),
     saveModConfigs({
-      db_struct,
+      db_struct_v1_0: db_struct,
       configs: net_webapp_nextjs_default_configs,
       mod_id: { ns: 'moodle', mod: 'netWebappNextjs', version: 'v1_0' },
     }),
     saveModConfigs({
-      db_struct,
+      db_struct_v1_0: db_struct,
       configs: org_default_configs,
       mod_id: { ns: 'moodle', mod: 'org', version: 'v1_0' },
     }),

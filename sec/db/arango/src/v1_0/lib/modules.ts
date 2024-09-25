@@ -21,17 +21,37 @@ export async function getModConfigs({
 }
 
 export async function saveModConfigs({
-  db_struct,
+  db_struct_v1_0,
   mod_id,
   configs,
 }: {
-  db_struct: db_struct
+  db_struct_v1_0: db_struct
   mod_id: mod_id
   configs: _any
 }) {
   const mod_int_id = getKey(mod_id)
-  await db_struct.mng.coll.module_configs.save(
+  const result = await db_struct_v1_0.mng.coll.module_configs.save(
     { _key: mod_int_id, ...configs },
     { overwriteMode: 'replace' },
   )
+  return result
 }
+
+export async function updateDeepPartialModConfigs({
+  db_struct_v1_0,
+  mod_id,
+  partialConfigs,
+}: {
+  db_struct_v1_0: db_struct
+  mod_id: mod_id
+  partialConfigs: _any
+}) {
+  const mod_int_id = getKey(mod_id)
+  const result = await db_struct_v1_0.mng.coll.module_configs.update(
+    { _key: mod_int_id },
+    partialConfigs,
+    { silent: true },
+  )
+  return result
+}
+

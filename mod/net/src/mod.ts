@@ -1,5 +1,5 @@
 import { mod } from '@moodle/lib-ddd'
-import { pretty } from '@moodle/lib-types'
+import { deep_partial, ok_ko, pretty } from '@moodle/lib-types'
 import * as v1_0 from './v1_0/types'
 
 declare module '@moodle/lib-ddd' {
@@ -16,12 +16,20 @@ interface MoodleNetMod {
           configs: v1_0.Configs
         }>
       }
+      admin: {
+        updatePartialMoodleNetInfo(_: {
+          partialInfo: deep_partial<v1_0.MoodleNetInfo>
+        }): Promise<ok_ko<void>>
+      }
     }
     sec: {
       db: {
         getConfigs(): Promise<{
           configs: v1_0.Configs
         }>
+        updatePartialConfigs(_: {
+          partialConfigs: deep_partial<v1_0.Configs>
+        }): Promise<ok_ko<void>>
       }
     }
     evt: never

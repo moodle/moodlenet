@@ -1,1 +1,1 @@
-export * from '../types'
+export default null

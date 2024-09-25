@@ -11,7 +11,15 @@ export function core(): core_factory {
               schemaConfigs: {
                 async iam() {
                   const iam = await ctx.sysCall.moodle.iam.v1_0.pri.system.configs()
-                  return { iamSchemaConfigs: iam.configs.primaryMsgSchemaConfigs }
+                  return { iamSchemaConfigs: iam.configs.iamPrimaryMsgSchemaConfigs }
+                },
+                async moodleNet() {
+                  const net = await ctx.sysCall.moodle.net.v1_0.pri.system.configs()
+                  return { moodleNetSchemaConfigs: net.configs.moodleNetPrimaryMsgSchemaConfigs }
+                },
+                async org() {
+                  const org = await ctx.sysCall.moodle.org.v1_0.pri.system.configs()
+                  return { orgSchemaConfigs: org.configs.orgPrimaryMsgSchemaConfigs }
                 },
               },
               webapp: {
@@ -41,7 +49,7 @@ export function core(): core_factory {
                     ctx.sysCall.moodle.net.v1_0.pri.system.configs(),
                     ctx.sysCall.moodle.org.v1_0.pri.system.configs(),
                   ])
-                  return { info, org }
+                  return { moodlenet: info, org }
                 },
               },
               system: {
