@@ -25,7 +25,7 @@ interface SendEmailConfig {
   env: NodemailerSecEnv
   body: email_body
   subject: string
-  sender?: named_or_email_address
+  sender: named_or_email_address
   inReplyTo?: named_or_email_address | undefined
   to: one_or_more_named_or_email_addresses
   replyTo?: one_or_more_named_or_email_addresses | undefined

@@ -11,12 +11,8 @@ import { PrimaryButton } from '../../ui/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../ui/atoms/Searchbox/Searchbox'
 import { TertiaryButton } from '../../ui/atoms/TertiaryButton/TertiaryButton'
 import ArrowsIcon from '../../ui/lib/assets/icons/arrows.svg'
-// FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
-import defaultAvatar from '../../ui/lib/assets/img/default-avatar.svg'
-// FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
+import defaultAvatar from '../../ui/lib/assets/img/default-avatar.png'
 import { Href, clientSlotItem } from '../../lib/common/types'
-console.log({ defaultAvatar: defaultAvatar() })
-console.log({ defaultAvatarsrc: defaultAvatar.src })
 
 export function LoginHeaderButton() {
   const {
@@ -69,8 +65,7 @@ export function ProfileLink({ profileHref, avatarUrl }: ProfileLinkProps) {
     <Link href={profileHref} className="avatar">
       <div
         style={{
-          // FIXME: defaultAvatar is a react component that renders the source svg can't be set as bgimage
-          backgroundImage: 'url("' + avatarUrl ?? `data:image/svg+xml,${defaultAvatar}` + '")',
+          backgroundImage: `url(${avatarUrl ?? defaultAvatar.src})`,
           backgroundSize: 'cover',
           borderRadius: '50%',
           height: '28px',
@@ -138,7 +133,7 @@ export type AvatarMenuProps = {
 
 export function AvatarMenu({ menuItems, avatarUrl }: AvatarMenuProps) {
   const avatarStyle = {
-    backgroundImage: `url(${avatarUrl ?? defaultAvatar})`,
+    backgroundImage: `url(${avatarUrl ?? defaultAvatar.src})`,
     backgroundSize: 'cover',
   }
   const menuItemsElement = menuItems.map<FloatingMenuContentItem>(Element => ({
