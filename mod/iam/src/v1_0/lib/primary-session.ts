@@ -104,10 +104,10 @@ export async function assert_authorizeAdminUserSession(
 ) {
   return assert_authorizeUserSessionWithRole(ctx, 'admin')
 }
-export async function assert_authorizePublisherUserSession(
+export async function assert_authorizeContributorUserSession(
   ctx: Pick<CoreContext, 'primarySession' | 'sysCall'>,
 ) {
-  return assert_authorizeUserSessionWithRole(ctx, 'publisher')
+  return assert_authorizeUserSessionWithRole(ctx, 'contributor')
 }
 export async function assert_authorizeAuthenticatedUserSession(
   ctx: Pick<CoreContext, 'primarySession' | 'sysCall'>,

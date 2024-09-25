@@ -68,9 +68,9 @@ export async function getAdminUserSession() {
     ? authenticatedUserSession
     : null
 }
-export async function getPublisherUserSession() {
+export async function getContributorUserSession() {
   const authenticatedUserSession = await getAuthenticatedUserSession()
-  return authenticatedUserSession && hasUserSessionRole(authenticatedUserSession, 'publisher')
+  return authenticatedUserSession && hasUserSessionRole(authenticatedUserSession, 'contributor')
     ? authenticatedUserSession
     : null
 }
