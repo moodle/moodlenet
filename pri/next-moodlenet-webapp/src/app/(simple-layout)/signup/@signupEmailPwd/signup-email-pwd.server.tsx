@@ -1,15 +1,16 @@
 'use server'
 
+import { getPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
+import { t } from 'i18next'
+import { returnValidationErrors } from 'next-safe-action'
 import { redirect } from 'next/navigation'
+import { actionClient } from '../../../../lib/server/safe-action'
 import { priAccess } from '../../../../lib/server/session-access'
 import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
-import { actionClient } from '../../../../lib/server/safe-action'
-import { fetchPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
-import { returnValidationErrors } from 'next-safe-action'
-import { t } from 'i18next'
 
 export async function getSignupSchema() {
-  const { signupSchema } = await fetchPrimarySchemas(priAccess())
+  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.v1_0.pri.schemaConfigs.iam()
+  const { signupSchema } = await getPrimarySchemas(iamSchemaConfigs)
   return signupSchema
 }
 

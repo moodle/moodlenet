@@ -3,7 +3,7 @@ import * as email_org_v1_0 from '../../org/v1_0'
 import { CoreContext } from '@moodle/lib-ddd'
 
 export type PasswordChangedEmailProps = {
-  ctx: Pick<CoreContext, 'worker'>
+  ctx: Pick<CoreContext, 'sysCall'>
   receiverEmail: string
 }
 

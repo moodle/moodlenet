@@ -74,7 +74,7 @@ export async function validateUserAuthenticatedSessionHasRole(
 // Assert Authorize
 export async function assert_authorizeSystemSession(ctx: Pick<CoreContext, 'primarySession'>) {
   const system_session = validateSystemSession(ctx.primarySession)
-  assert(system_session, new ErrorXxx('Unauthorized'))
+  assert(system_session, new ErrorXxx('Unauthorized', 'assert_authorizeSystemSession'))
   return system_session
 }
 
@@ -82,7 +82,10 @@ export async function assert_authorizeUserAuthenticatedSession(
   ctx: Pick<CoreContext, 'primarySession' | 'worker'>,
 ) {
   const authenticated_user_session = await validateUserAuthenticatedSession(ctx)
-  assert(authenticated_user_session, new ErrorXxx('Unauthorized'))
+  assert(
+    authenticated_user_session,
+    new ErrorXxx('Unauthorized', 'assert_authorizeUserAuthenticatedSession'),
+  )
   return authenticated_user_session
 }
 export async function assert_authorizeUserSessionWithRole(
@@ -90,7 +93,10 @@ export async function assert_authorizeUserSessionWithRole(
   role: user_role,
 ) {
   const authenticated_user_session = await validateUserAuthenticatedSessionHasRole(ctx, role)
-  assert(authenticated_user_session, new ErrorXxx('Unauthorized'))
+  assert(
+    authenticated_user_session,
+    new ErrorXxx('Unauthorized', `assert_authorizeUserSessionWithRole ${role}`),
+  )
   return authenticated_user_session
 }
 export async function assert_authorizeAdminUserSession(
@@ -107,7 +113,10 @@ export async function assert_authorizeAuthenticatedUserSession(
   ctx: Pick<CoreContext, 'primarySession' | 'worker'>,
 ) {
   const authenticated_user_session = await validateUserAuthenticatedSession(ctx)
-  assert(authenticated_user_session, new ErrorXxx('Unauthorized'))
+  assert(
+    authenticated_user_session,
+    new ErrorXxx('Unauthorized', 'assert_authorizeAuthenticatedUserSession'),
+  )
   return authenticated_user_session
 }
 

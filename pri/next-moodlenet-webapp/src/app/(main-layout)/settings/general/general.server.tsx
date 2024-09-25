@@ -1,13 +1,14 @@
 'use server'
 
-import { fetchPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
-import { priAccess } from '../../../../lib/server/session-access'
-import { actionClient } from '../../../../lib/server/safe-action'
-import { returnValidationErrors } from 'next-safe-action'
+import { getPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
 import { t } from 'i18next'
+import { returnValidationErrors } from 'next-safe-action'
+import { actionClient } from '../../../../lib/server/safe-action'
+import { priAccess } from '../../../../lib/server/session-access'
 
 async function getChangePasswordSchema() {
-  const { changePasswordSchema } = await fetchPrimarySchemas(priAccess())
+  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.v1_0.pri.schemaConfigs.iam()
+  const { changePasswordSchema } = await getPrimarySchemas(iamSchemaConfigs)
   return changePasswordSchema.superRefine(({ currentPassword, newPassword }, ctx) => {
     if (currentPassword.__redacted__ === newPassword.__redacted__) {
       ctx.addIssue({

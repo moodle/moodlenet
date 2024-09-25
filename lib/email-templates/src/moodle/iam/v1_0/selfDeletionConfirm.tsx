@@ -3,7 +3,7 @@ import React from 'react'
 import * as email_org_v1_0 from '../../org/v1_0'
 
 export type DeleteAccountEmailProps = {
-  ctx: Pick<CoreContext, 'worker'>
+  ctx: Pick<CoreContext, 'sysCall'>
   deleteAccountUrl: string
   receiverEmail: string
 }

@@ -77,7 +77,7 @@ async function request(transportData: TransportData) {
     primarySession: primary_session,
     forward: defaultAccessProxy.mod,
     sysCall: sysCallAccessProxy.mod,
-    worker: defaultAccessProxy.mod,
+    worker: sysCallAccessProxy.mod,
     transportData,
   }
 

@@ -1,14 +1,6 @@
-import { concrete } from '@moodle/lib-ddd'
 import { __redacted__key, email_address_schema, signed_token_schema } from '@moodle/lib-types'
 import { intersection, object, string } from 'zod'
 import { PrimaryMsgSchemaConfigs } from '../types'
-
-export async function fetchPrimarySchemas(pri: concrete<'pri'>) {
-  const {
-    configs: { primaryMsgSchemaConfigs },
-  } = await pri.moodle.iam.v1_0.pri.system.configs()
-  return getPrimarySchemas(primaryMsgSchemaConfigs)
-}
 
 // export type primary_schemas = Awaited<ReturnType<typeof getPrimarySchemas>>
 export function getPrimarySchemas({ user, myAccount }: PrimaryMsgSchemaConfigs) {

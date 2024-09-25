@@ -14,6 +14,20 @@ export function core(): core_factory {
                   return { iamSchemaConfigs: iam.configs.primaryMsgSchemaConfigs }
                 },
               },
+              webapp: {
+                async deployment() {
+                  const {
+                    configs: { deployment },
+                  } = await ctx.worker.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
+                  return deployment
+                },
+                async layouts() {
+                  const {
+                    configs: { layouts },
+                  } = await ctx.worker.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
+                  return layouts
+                },
+              },
               moodlenet: {
                 async info() {
                   const [

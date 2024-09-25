@@ -74,7 +74,7 @@ export function core(): core_factory {
               },
               access: {
                 async request({ signupForm, redirectUrl }) {
-                  const schemas = await v1_0_lib.fetchPrimarySchemas(ctx.forward)
+                  const schemas = await fetchPrimarySchemas()
                   const { displayName, email, password } = schemas.signupSchema.parse(signupForm)
                   const [found] = await ctx.worker.moodle.iam.v1_0.sec.db.getUserByEmail({
                     email,
@@ -372,7 +372,14 @@ export function core(): core_factory {
       },
     }
     return core_impl
+    async function fetchPrimarySchemas() {
+      const {
+        configs: { primaryMsgSchemaConfigs },
+      } = await ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
+      return v1_0_lib.getPrimarySchemas(primaryMsgSchemaConfigs)
+    }
   }
+
 }
 
 // export const process: core_process = _ctx => {

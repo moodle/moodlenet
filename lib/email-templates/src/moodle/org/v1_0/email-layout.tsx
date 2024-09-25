@@ -100,10 +100,12 @@ export function layoutEmail(emailProps: EmailLayoutProps) {
   }
 }
 
-export async function getSenderInfo({ worker }: Pick<CoreContext, 'worker'>): Promise<SenderInfo> {
+export async function getSenderInfo({
+  sysCall,
+}: Pick<CoreContext, 'sysCall'>): Promise<SenderInfo> {
   const {
     configs: { info: orgInfo },
-  } = await worker.moodle.org.v1_0.sec.db.getConfigs()
+  } = await sysCall.moodle.org.v1_0.pri.system.configs()
   const senderInfo: SenderInfo = {
     copyright: orgInfo.copyright,
     logo: orgInfo.logo,

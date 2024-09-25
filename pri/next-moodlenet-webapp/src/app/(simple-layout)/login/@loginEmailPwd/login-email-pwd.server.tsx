@@ -1,19 +1,20 @@
 'use server'
 
-import { redirect } from 'next/navigation'
-import { priAccess } from '../../../../lib/server/session-access'
-import { setAuthTokenCookie } from '../../../../lib/server/auth'
-import { revalidatePath } from 'next/cache'
-import { fetchPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
-import { actionClient } from '../../../../lib/server/safe-action'
-import { returnValidationErrors } from 'next-safe-action'
 import { t } from 'i18next'
-import QueryString from 'qs'
+import { returnValidationErrors } from 'next-safe-action'
+import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import QueryString from 'qs'
+import { setAuthTokenCookie } from '../../../../lib/server/auth'
+import { actionClient } from '../../../../lib/server/safe-action'
+import { priAccess } from '../../../../lib/server/session-access'
 import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
+import { getPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
 
 export async function getLoginSchema() {
-  const { loginSchema } = await fetchPrimarySchemas(priAccess())
+  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.v1_0.pri.schemaConfigs.iam()
+  const { loginSchema } = await getPrimarySchemas(iamSchemaConfigs)
   return loginSchema
 }
 export const loginAction = actionClient
