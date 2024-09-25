@@ -3,7 +3,6 @@
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { PropsWithChildren } from 'react'
 import { sitepaths } from '../../../lib/common/utils/sitepaths'
 import { Card } from '../../../ui/atoms/Card/Card'
 
@@ -19,18 +18,7 @@ export function SettingsMenu() {
   )
 }
 
-// export function NoAccess() {
-//   return (
-//     <div>
-//       <Trans>Please login</Trans>
-//     </div>
-//   )
-// }
-export function MenuItem({
-  children,
-  pathname,
-  title,
-}: PropsWithChildren<{ pathname: string; title: string }>) {
+export function MenuItem({ pathname, title }: { pathname: string; title: string }) {
   const isCurrent = pathname === usePathname()
   return (
     <Link href={pathname}>

@@ -22,8 +22,8 @@ export function sitepaths<as extends string = url_path_string>(baseUrl = '/') {
     const qstring = QueryString.stringify(query)
     return `${_(path)}?${qstring}` as as
   }
-  type admin_sub = '/users' | '/general' | '/appearance'
-  const admin = _sub<admin_sub>(`admin`)
+  type admin_settings_sub = '/users' | '/general' | '/appearance' | '/moderation'
+  const admin_settings = _sub<admin_settings_sub>(`admin`)
 
   type user_settings_sub = '/advanced' | '/general'
   const user_settings = _sub<user_settings_sub>(`settings`)
@@ -61,7 +61,9 @@ export function sitepaths<as extends string = url_path_string>(baseUrl = '/') {
         collection,
         subject,
       },
-      admin,
+      admin: {
+        settings: admin_settings,
+      },
     },
   }
 }
