@@ -25,7 +25,7 @@ export function priAccess(): Modules {
         {
           domain_msg,
           primary_session: primarySession,
-          core_mod_id: null,
+          // core_mod_id: null,
         },
         requestTarget,
       )

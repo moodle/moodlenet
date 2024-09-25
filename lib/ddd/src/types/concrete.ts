@@ -7,7 +7,7 @@ import { primary_session } from './primary-session'
 export interface TransportData {
   primary_session: primary_session
   domain_msg: domain_msg
-  core_mod_id: mod_id | null
+  //core_mod_id: mod_id | null
 }
 
 export interface CoreProcessContext {
@@ -24,7 +24,15 @@ export interface CoreContext {
   transportData: TransportData
 }
 
-export type EvtContext = CoreContext
+export type EvtContext = {
+  sysCall: concrete<'pri' | 'sec' | 'evt'>
+  forward: concrete<'pri'>
+  primarySession: primary_session
+  transportData: {
+    pri: TransportData
+    sec: TransportData
+  }
+}
 
 export interface WorkerContext {
   primarySession: primary_session

@@ -35,7 +35,7 @@ http_bind.server({
 })
 
 async function request(transportData: TransportData) {
-  const { domain_msg, primary_session, core_mod_id } = transportData
+  const { domain_msg, primary_session /* , core_mod_id */ } = transportData
 
   const _env_provider: EnvProvider = (
     await import(process.env.MOODLE_ENV_PROVIDER_MODULE ?? './default-env-provider.js')
@@ -44,11 +44,11 @@ async function request(transportData: TransportData) {
 
   // this could be inspected later to respond immediately with a "under maintainance" status
   await migration_status
+  const core_mod_id = coreModId(domain_msg)
 
   const defaultAccessProxy = createAcccessProxy({
     access(msg) {
-      const core_mod_id = coreModId(domain_msg)
-      return request({ domain_msg: msg, primary_session, core_mod_id }).catch(e => {
+      return request({ domain_msg: msg, primary_session /* , core_mod_id */ }).catch(e => {
         console.error({ msg })
         throw e
       })
@@ -65,7 +65,7 @@ async function request(transportData: TransportData) {
       return request({
         domain_msg: msg,
         primary_session: sysCallPrimarySession,
-        core_mod_id,
+        // core_mod_id,
       }).catch(e => {
         console.error({ msg })
         throw e
