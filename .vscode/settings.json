@@ -8,17 +8,18 @@
   },
   "javascript.updateImportsOnFileMove.enabled": "always",
   "todo-tree.filtering.excludeGlobs": [
-    "pri/moodlenet/webapp/nextjs/zz__legacy/**/*",
+    "pri/webapp-moodlenet-nextjs/zz__legacy/**/*",
+    "pri/webapp-moodlenet-nextjs/ui-cmps/**/*",
     "**/node_modules/*/**"
   ],
   "todo-tree.highlights.useColourScheme": true,
   "todo-tree.highlights.defaultHighlight": {
     "icon": "alert",
     "type": "text",
-    "foreground": "red",
-    "background": "white",
+    "foreground": "#ff4441",
+    "background": "#ffffff",
     "opacity": 50,
-    "iconColour": "blue"
+    "iconColour": "#41c9ff"
   },
   "todo-tree.highlights.customHighlight": {
     "TODO": {

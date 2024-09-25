@@ -1,0 +1,9 @@
+{
+  "name": "webapp-moodlenet-nextjs-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "pri/webapp-moodlenet-nextjs-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["webapp-moodlenet-nextjs"],
+  "// targets": "to see all targets run: nx show project webapp-moodlenet-nextjs-e2e --web",
+  "targets": {}
+}
