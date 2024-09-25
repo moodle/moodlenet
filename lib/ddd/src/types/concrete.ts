@@ -18,9 +18,8 @@ export type core_process = (ctx: CoreProcessContext) => stop_core_process
 export type stop_core_process = void | (() => unknown)
 
 export interface CoreContext {
-  sysCall: concrete<'pri'>
+  sysCall: concrete<'pri' | 'sec' | 'evt'>
   forward: concrete<'pri'>
-  worker: concrete<'sec'>
   primarySession: primary_session
   transportData: TransportData
 }
@@ -29,7 +28,7 @@ export type EvtContext = CoreContext
 
 export interface WorkerContext {
   primarySession: primary_session
-  core_mod_id: mod_id
+  modIdCaller: mod_id
   emit: concrete<'evt'>
   transportData: TransportData
 }

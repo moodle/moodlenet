@@ -77,7 +77,6 @@ async function request(transportData: TransportData) {
     primarySession: primary_session,
     forward: defaultAccessProxy.mod,
     sysCall: sysCallAccessProxy.mod,
-    worker: sysCallAccessProxy.mod,
     transportData,
   }
 
@@ -91,7 +90,12 @@ async function request(transportData: TransportData) {
   const core = composeImpl(...core_impls)
 
   const workerCtx: WorkerContext | null = core_mod_id
-    ? { primarySession: primary_session, emit: defaultAccessProxy.mod, core_mod_id, transportData }
+    ? {
+        primarySession: primary_session,
+        emit: sysCallAccessProxy.mod,
+        modIdCaller: core_mod_id,
+        transportData,
+      }
     : null
 
   const sec_impls: sec_impl[] = workerCtx

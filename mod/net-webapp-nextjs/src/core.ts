@@ -18,13 +18,13 @@ export function core(): core_factory {
                 async deployment() {
                   const {
                     configs: { deployment },
-                  } = await ctx.worker.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
+                  } = await ctx.sysCall.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
                   return deployment
                 },
                 async layouts() {
                   const {
                     configs: { layouts },
-                  } = await ctx.worker.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
+                  } = await ctx.sysCall.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
                   return layouts
                 },
               },
@@ -47,7 +47,7 @@ export function core(): core_factory {
               system: {
                 async configs() {
                   await assert_authorizeSystemSession(ctx)
-                  return ctx.worker.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
+                  return ctx.sysCall.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
                 },
               },
             },

@@ -19,12 +19,12 @@ export function validateSystemSession(session: primary_session) {
 }
 //
 
-export async function validateAnyUserSession(ctx: Pick<CoreContext, 'primarySession' | 'worker'>) {
+export async function validateAnyUserSession(ctx: Pick<CoreContext, 'primarySession' | 'sysCall'>) {
   const token = ctx.primarySession.type === 'user' && ctx.primarySession.sessionToken
   if (!token) {
     return guest_session
   }
-  const [valid, sessionResp] = await ctx.worker.moodle.iam.v1_0.sec.crypto.validateSignedToken({
+  const [valid, sessionResp] = await ctx.sysCall.moodle.iam.v1_0.sec.crypto.validateSignedToken({
     token,
   })
   const any_user_session =
@@ -42,7 +42,7 @@ const guest_session: user_session = {
 
 // Authenticated Session
 export async function validateUserAuthenticatedSession(
-  ctx: Pick<CoreContext, 'primarySession' | 'worker'>,
+  ctx: Pick<CoreContext, 'primarySession' | 'sysCall'>,
 ) {
   if (ctx.primarySession.type !== 'user') {
     return null
@@ -60,7 +60,7 @@ export async function validateUserAuthenticatedSession(
 
 /// Has User Role
 export async function validateUserAuthenticatedSessionHasRole(
-  ctx: Pick<CoreContext, 'primarySession' | 'worker'>,
+  ctx: Pick<CoreContext, 'primarySession' | 'sysCall'>,
   role: user_role,
 ) {
   const authenticated_user_session = await validateUserAuthenticatedSession(ctx)
@@ -79,7 +79,7 @@ export async function assert_authorizeSystemSession(ctx: Pick<CoreContext, 'prim
 }
 
 export async function assert_authorizeUserAuthenticatedSession(
-  ctx: Pick<CoreContext, 'primarySession' | 'worker'>,
+  ctx: Pick<CoreContext, 'primarySession' | 'sysCall'>,
 ) {
   const authenticated_user_session = await validateUserAuthenticatedSession(ctx)
   assert(
@@ -89,7 +89,7 @@ export async function assert_authorizeUserAuthenticatedSession(
   return authenticated_user_session
 }
 export async function assert_authorizeUserSessionWithRole(
-  ctx: Pick<CoreContext, 'primarySession' | 'worker'>,
+  ctx: Pick<CoreContext, 'primarySession' | 'sysCall'>,
   role: user_role,
 ) {
   const authenticated_user_session = await validateUserAuthenticatedSessionHasRole(ctx, role)
@@ -100,17 +100,17 @@ export async function assert_authorizeUserSessionWithRole(
   return authenticated_user_session
 }
 export async function assert_authorizeAdminUserSession(
-  ctx: Pick<CoreContext, 'primarySession' | 'worker'>,
+  ctx: Pick<CoreContext, 'primarySession' | 'sysCall'>,
 ) {
   return assert_authorizeUserSessionWithRole(ctx, 'admin')
 }
 export async function assert_authorizePublisherUserSession(
-  ctx: Pick<CoreContext, 'primarySession' | 'worker'>,
+  ctx: Pick<CoreContext, 'primarySession' | 'sysCall'>,
 ) {
   return assert_authorizeUserSessionWithRole(ctx, 'publisher')
 }
 export async function assert_authorizeAuthenticatedUserSession(
-  ctx: Pick<CoreContext, 'primarySession' | 'worker'>,
+  ctx: Pick<CoreContext, 'primarySession' | 'sysCall'>,
 ) {
   const authenticated_user_session = await validateUserAuthenticatedSession(ctx)
   assert(
@@ -136,10 +136,10 @@ export function isGuestSession(
 // GENERATE SESSION TOKEN
 
 export async function generateSessionForUserId(
-  ctx: Pick<CoreContext, 'worker'>,
+  ctx: Pick<CoreContext, 'sysCall'>,
   userId: user_id,
 ): Promise<ok_ko<signed_expire_token, { userNotFound: unknown }>> {
-  const mySec = ctx.worker.moodle.iam.v1_0.sec
+  const mySec = ctx.sysCall.moodle.iam.v1_0.sec
   const [, userRecord] = await mySec.db.getUserById({ userId })
   if (!userRecord) {
     return [false, { reason: 'userNotFound' }]
@@ -149,13 +149,13 @@ export async function generateSessionForUserId(
 }
 
 export async function generateSessionForUserData(
-  ctx: Pick<CoreContext, 'worker'>,
+  ctx: Pick<CoreContext, 'sysCall'>,
   user: sessionUserData,
 ): Promise<signed_expire_token> {
   const {
     configs: { tokenExpireTime },
-  } = await ctx.worker.moodle.iam.v1_0.sec.db.getConfigs()
-  const session = await ctx.worker.moodle.iam.v1_0.sec.crypto.signDataToken({
+  } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
+  const session = await ctx.sysCall.moodle.iam.v1_0.sec.crypto.signDataToken({
     data: {
       v: '1_0',
       type: 'userSession',

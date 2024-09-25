@@ -13,7 +13,7 @@ export function core(): core_factory {
               system: {
                 async configs() {
                   await assert_authorizeSystemSession(ctx)
-                  return ctx.worker.moodle.org.v1_0.sec.db.getConfigs()
+                  return ctx.sysCall.moodle.org.v1_0.sec.db.getConfigs()
                 },
               },
             },

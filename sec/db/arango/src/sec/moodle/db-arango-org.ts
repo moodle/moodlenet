@@ -11,7 +11,7 @@ export function org({ db_struct_v1_0 }: { db_struct_v1_0: db_struct }): sec_fact
             sec: {
               db: {
                 getConfigs() {
-                  return getModConfigs({ mod_id: ctx.core_mod_id, db_struct_v1_0 })
+                  return getModConfigs({ mod_id: ctx.modIdCaller, db_struct_v1_0 })
                 },
               },
             },

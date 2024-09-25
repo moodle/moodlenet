@@ -13,7 +13,7 @@ export function netWebappNextjs({ db_struct_v1_0 }: { db_struct_v1_0: db_struct 
               db: {
                 async getConfigs() {
                   const { configs } = await
-                  getModConfigs({ mod_id: ctx.core_mod_id, db_struct_v1_0 })
+                  getModConfigs({ mod_id: ctx.modIdCaller, db_struct_v1_0 })
                   return { configs }
                 },
               },

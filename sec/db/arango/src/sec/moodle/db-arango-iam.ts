@@ -16,7 +16,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
               db: {
                 async getConfigs() {
                   const { configs } = await v1_0.getModConfigs({
-                    mod_id: ctx.core_mod_id,
+                    mod_id: ctx.modIdCaller,
                     db_struct_v1_0,
                   })
                   return { configs }
