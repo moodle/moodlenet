@@ -1,7 +1,7 @@
-import { iam_default_configs } from '@moodle/mod-iam/v1_0_setup'
-import { net_webapp_nextjs_default_configs } from '@moodle/mod-net-webapp-nextjs/v1_0_setup'
-import { net_default_configs } from '@moodle/mod-net/v1_0_setup'
-import { org_default_configs } from '@moodle/mod-org/v1_0_setup'
+import { iam_default_configs } from '@moodle/mod-iam/v1_0/setup'
+import { net_webapp_nextjs_default_configs } from '@moodle/mod-net-webapp-nextjs/v1_0/setup'
+import { net_default_configs } from '@moodle/mod-net/v1_0/setup'
+import { org_default_configs } from '@moodle/mod-org/v1_0/setup'
 import { v1_0 } from '../..'
 import { saveModConfigs } from '../../v1_0/lib/modules'
 // import { removePropOnInsert } from '../lib/id'
@@ -30,27 +30,26 @@ export async function migrate({ db_struct }: { db_struct: v1_0.db_struct }) {
 
   await Promise.all([
     saveModConfigs({
-      db_struct,
+      db_struct_v1_0: db_struct,
       configs: iam_default_configs,
       mod_id: { ns: 'moodle', mod: 'iam', version: 'v1_0' },
     }),
     saveModConfigs({
-      db_struct,
+      db_struct_v1_0: db_struct,
       configs: net_default_configs,
       mod_id: { ns: 'moodle', mod: 'net', version: 'v1_0' },
     }),
     saveModConfigs({
-      db_struct,
+      db_struct_v1_0: db_struct,
       configs: net_webapp_nextjs_default_configs,
       mod_id: { ns: 'moodle', mod: 'netWebappNextjs', version: 'v1_0' },
     }),
     saveModConfigs({
-      db_struct,
+      db_struct_v1_0: db_struct,
       configs: org_default_configs,
       mod_id: { ns: 'moodle', mod: 'org', version: 'v1_0' },
     }),
   ])
-
   // bump_version
   const migrationDoc: v1_0.Migration = {
     v: 'v1_0',

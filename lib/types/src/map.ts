@@ -1,3 +1,5 @@
+import { DeepComplete } from './-deep-requires'
+
 export type _any = any
 export type _any_k = keyof _any
 
@@ -58,7 +60,6 @@ export type d_t_u<
 
 // discr_map<nmap, p> extends infer m ? m[keyof m] : never
 
-
 export type deep_partial<t> = {
   [P in keyof t]?: t[P] extends (_: _any) => _any
     ? t[P]
@@ -66,3 +67,5 @@ export type deep_partial<t> = {
       ? deep_partial<t[P]>
       : t[P]
 }
+
+export type deep_required<t> = DeepComplete<t>

@@ -1,5 +1,5 @@
 import { Database } from 'arangojs'
-import { IamUserDocument } from '../../sec/moodle/db-arango-iam-lib/types'
+import { userDocument } from '../../sec/moodle/db-arango-iam-lib/types'
 import { database_connections } from './types'
 
 export function getDbStruct(database_connections: database_connections) {
@@ -33,7 +33,7 @@ export function getDbStruct(database_connections: database_connections) {
     iam: {
       db: iam_db,
       coll: {
-        user: iam_db.collection<IamUserDocument>('user'),
+        user: iam_db.collection<userDocument>('user'),
       },
     },
   }

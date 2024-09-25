@@ -1,0 +1,9 @@
+{
+  "name": "webapp-moodlenet-nextjs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "pri/webapp-moodlenet-nextjs",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project webapp-moodlenet-nextjs --web",
+  "targets": {}
+}

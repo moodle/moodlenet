@@ -1,7 +1,7 @@
-import { sec_factory, sec_impl } from '@moodle/domain'
-import { lib_moodle_iam } from '@moodle/lib-domain'
+import { sec_factory, sec_impl } from '@moodle/lib-ddd'
 import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
-import { _void } from '@moodle/lib-types'
+import { _never, signed_token_payload_data, SIGNED_TOKEN_PAYLOAD_PROP } from '@moodle/lib-types'
+import { iamSignTokenData } from '@moodle/mod-iam/v1_0/types'
 import * as argon2 from 'argon2'
 export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 // ArgonPwdHashOpts : {
@@ -18,7 +18,7 @@ export function iam({
   joseEnv: joseEnv
   argonOpts: ArgonPwdHashOpts
 }): sec_factory {
-  return ctx => {
+  return (/* ctx */) => {
     const iam_sec_impl: sec_impl = {
       moodle: {
         iam: {
@@ -34,40 +34,28 @@ export function iam({
                   plainPassword: { __redacted__: plainPassword },
                 }) {
                   const verified = await argon2.verify(passwordHash, plainPassword, argonOpts)
-                  return [verified, _void]
+                  return [verified, _never]
                 },
 
-                //               async validateSessionToken({ sessionToken }) {
-                //                 const verifyResult = await joseVerify<lib_moodle_iam.v1_0.UserData>(joseEnv, sessionToken)
-                // if (!verifyResult) {
-                //   return [false, { reason: 'invalid' }]
-                // }
-                // return [true, { type: 'authenticated', user: verifyResult.payload.tokenPayload }]
-                //                 const [valid, validationResp] = await validateAuthenticatedUserSession({
-                //                   joseEnv,
-                //                   sessionToken,
-                //                 })
-                //                 if (!valid) {
-                //                   return [false, { reason: 'invalid' }]
-                //                 }
-                //                 return [true, validationResp]
-                //               },
-                async decryptSession({ token }) {
+                async validateSignedToken({ token }) {
                   // FIXME : CHECKS AUDIENCE ETC >>>
-                  const verifyResult =
-                    await joseVerify<lib_moodle_iam.v1_0.session_token_payload_data>(joseEnv, token)
+                  const verifyResult = await joseVerify<
+                    signed_token_payload_data<iamSignTokenData>
+                  >(joseEnv, token)
 
                   return verifyResult
-                    ? [true, verifyResult.payload[lib_moodle_iam.v1_0.TOKEN_PAYLOAD_PROP]]
-                    : [false, _void]
+                    ? [true, verifyResult.payload[SIGNED_TOKEN_PAYLOAD_PROP]]
+                    : [false, _never]
                 },
-                async encryptSession({ data, expiresIn }) {
-                  const session = await sign<lib_moodle_iam.v1_0.session_token_payload_data>({
+                async signDataToken({ data, expiresIn }) {
+                  const { expireDate, token /* , notBeforeDate */ } = await sign<
+                    signed_token_payload_data<iamSignTokenData>
+                  >({
                     joseEnv,
-                    payload: { [lib_moodle_iam.v1_0.TOKEN_PAYLOAD_PROP]: data },
+                    payload: { [SIGNED_TOKEN_PAYLOAD_PROP]: data },
                     expiresIn /*,stdClaims:{} ,opts:{} */,
                   })
-                  return session
+                  return { expires: expireDate, token }
                 },
               },
             },

@@ -1,6 +1,7 @@
-import { lib_moodle_net_webapp_nextjs } from '@moodle/lib-domain'
+import { Layouts } from './layouts'
+import { Deployment } from './webapp'
 
 export interface Configs {
-  layouts: lib_moodle_net_webapp_nextjs.v1_0.Layouts
-  deployment: lib_moodle_net_webapp_nextjs.v1_0.Deployment
+  layouts: Layouts
+  deployment: Deployment
 }

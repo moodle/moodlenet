@@ -5,5 +5,47 @@
     "https://asyncapi.com/schema-store/3.0.0-without-$id.json": "asyncapi/**/*.api.yml",
     "https://json-schema.org/draft-07/schema": "asyncapi/**/*.sch.yml"
     // "https://json-schema.org/draft/2020-12/schema": "asyncapi/**/*.sch.yml"
-  }
+  },
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "todo-tree.filtering.excludeGlobs": [
+    "pri/webapp-moodlenet-nextjs/zz__legacy/**/*",
+    "pri/webapp-moodlenet-nextjs/ui-cmps/**/*",
+    "**/node_modules/*/**"
+  ],
+  "todo-tree.highlights.useColourScheme": true,
+  "todo-tree.highlights.defaultHighlight": {
+    "icon": "alert",
+    "type": "text",
+    "foreground": "#ff4441",
+    "background": "#ffffff",
+    "opacity": 50,
+    "iconColour": "#41c9ff"
+  },
+  "todo-tree.highlights.customHighlight": {
+    "TODO": {
+      "icon": "uncheckbox",
+      "foreground": "#000000",
+      "iconColour": "#33ff00",
+      "background": "#33ff00",
+      "opacity": 80
+    },
+    "FIXME": {
+      "foreground": "#000000",
+      "iconColour": "#ff00ff",
+      "background": "#ff00ff",
+      "opacity": 90
+    },
+    "NOTE": {
+      "foreground": "#000000",
+      "iconColour": "#41c9ff",
+      "background": "#41c9ff",
+      "opacity": 80
+    }
+  },
+  "todo-tree.general.tags": ["TODO", "FIXME", "FIXIT", "FIX", "BUG", "NOTE"],
+  "todo-tree.general.tagGroups": {
+    "FIXME": ["FIXME", "FIXIT", "FIX"]
+  },
+  "javascript.preferences.importModuleSpecifier": "project-relative",
+  "typescript.preferences.importModuleSpecifier": "project-relative"
 }

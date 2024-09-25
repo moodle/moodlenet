@@ -1,0 +1,63 @@
+{
+  "name": "be-default",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "be/default/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/be/default",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "be/default/src/main.ts",
+        "tsConfig": "be/default/tsconfig.app.json",
+        "assets": ["be/default/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "generateLockfile": true,
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "be-default:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "be-default:build:development"
+        },
+        "production": {
+          "buildTarget": "be-default:build:production"
+        }
+      }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f be/default/Dockerfile . -t moodle-be-default"
+    }
+  }
+}

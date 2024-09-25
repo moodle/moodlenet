@@ -1,7 +1,8 @@
-import { Configs } from '../'
+import { time_duration_string_schema } from '@moodle/lib-types'
+import { Configs } from '../types'
 
 export const iam_default_configs: Configs = {
-  primaryMsgSchemaConfigs: {
+  iamPrimaryMsgSchemaConfigs: {
     myAccount: {
       selfDeletionRequestReason: {
         min: 0,
@@ -16,17 +17,17 @@ export const iam_default_configs: Configs = {
   },
   inactiveUsersPolicies: {
     deleteInactive: {
-      notLoggedInFor: '1y',
-      sendImminentDeletionNotificationBefore: '7d',
+      notLoggedInFor: time_duration_string_schema.parse('P1Y'),
+      sendImminentDeletionNotificationBefore: time_duration_string_schema.parse('P7D'),
     },
   },
   roles: {
     newlyCreatedUserRoles: [],
   },
   tokenExpireTime: {
-    userSession: '2d',
-    resetPasswordRequest: '2h',
-    signupEmailVerification: '2h',
-    userSelfDeletionRequest: '1h',
+    userSession: time_duration_string_schema.parse('P2D'),
+    resetPasswordRequest: time_duration_string_schema.parse('PT2H'),
+    signupEmailVerification: time_duration_string_schema.parse('PT2H'),
+    userSelfDeletionRequest: time_duration_string_schema.parse('PT1H'),
   },
 }

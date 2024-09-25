@@ -1,6 +1,8 @@
-export type ok_ko<success_result, fail_result> =
+import { d_u, map } from './map'
+
+export type ok_ko<success_result, fail_result extends map = never> =
   | readonly [success: true, result: success_result]
-  | readonly [success: false, result: fail_result]
+  | readonly [success: false, result: d_u<fail_result, 'reason'>]
 
 // const _0: ok_ko<never, never> = [, true] as const
 // const _1: ok_ko<never, never> = [, false] as const
