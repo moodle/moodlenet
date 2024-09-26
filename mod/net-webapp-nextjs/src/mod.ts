@@ -3,7 +3,8 @@ import type * as net_v1_0 from '@moodle/mod-net/v1_0/types'
 import type * as org_v1_0 from '@moodle/mod-org/v1_0/types'
 import type * as v1_0 from './v1_0/types'
 
-import { mod } from '@moodle/lib-ddd'
+import { mod, DeploymentInfo } from '@moodle/lib-ddd'
+import { _nullish } from '@moodle/lib-types'
 
 declare module '@moodle/lib-ddd' {
   export interface MoodleMods {
@@ -21,7 +22,7 @@ export type moodle_net_webapp_nextjs_mod = mod<{
       }
       webapp: {
         layouts(): Promise<v1_0.Layouts>
-        deployment(): Promise<v1_0.Deployment>
+        deploymentInfo(): Promise<DeploymentInfo>
       }
       moodlenet: {
         info(): Promise<{ moodlenet: net_v1_0.MoodleNetInfo; org: org_v1_0.OrgInfo }>

@@ -1,5 +1,6 @@
 import { core_factory } from '@moodle/lib-ddd'
 import { assert_authorizeSystemSession } from '@moodle/mod-iam/v1_0/lib'
+import assert from 'node:assert'
 
 export function core(): core_factory {
   return ctx => {
@@ -23,11 +24,16 @@ export function core(): core_factory {
                 },
               },
               webapp: {
-                async deployment() {
-                  const {
-                    configs: { deployment },
-                  } = await ctx.sysCall.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
-                  return deployment
+                async deploymentInfo() {
+                  const deployments = await ctx.sysCall.env.deployments.v1_0.sec.info.read()
+                  const moodleNetWebappDeploymentInfo =
+                    deployments.moodle.net.MoodleNetWebappDeploymentInfo
+                  assert(
+                    moodleNetWebappDeploymentInfo,
+                    new Error('No deployment info for MoodleNetWebappDeploymentInfo !'),
+                  )
+
+                  return moodleNetWebappDeploymentInfo
                 },
                 async layouts() {
                   const {

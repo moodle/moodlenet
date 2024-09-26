@@ -1,11 +1,6 @@
 import { Configs } from '../types'
 
 export const net_webapp_nextjs_default_configs: Configs = {
-  deployment: {
-    domain: 'localhost:3000',
-    basePath: '/',
-    secure: false,
-  },
   layouts: {
     roots: {
       main: {

@@ -1,10 +1,16 @@
-import { mod } from '@moodle/lib-ddd'
+import { DeploymentInfo, mod } from '@moodle/lib-ddd'
 import { deep_partial, ok_ko, pretty } from '@moodle/lib-types'
 import * as v1_0 from './v1_0/types'
 
 declare module '@moodle/lib-ddd' {
   export interface MoodleMods {
     net: moodle_net_mod
+  }
+
+  export interface MoodleDeployments {
+    net: {
+      MoodleNetWebappDeploymentInfo?: DeploymentInfo | null
+    }
   }
 }
 

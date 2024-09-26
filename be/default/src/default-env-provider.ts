@@ -74,6 +74,11 @@ const generateEnv: EnvProvider = async ({ migrate }) => {
           sender: MOODLE_NODEMAILER_SENDER_EMAIL_ADDRESS,
           logWarn: console.warn,
         },
+        deployments: {
+          moodle: {
+            net: {},
+          },
+        },
       }
 
       const migration_status = migrate({

@@ -4,7 +4,7 @@ export interface IamPrimaryMsgSchemaConfigs {
   user: {
     email: { max: number }
     password: { max: number; min: number }
-    displayName: { max: number; min: number; regex: [regex: string, flags: string] }
+    displayName: { max: number; min: number; regex: null | [regex: string, flags: string] }
   }
   myAccount: {
     selfDeletionRequestReason: { max: number }

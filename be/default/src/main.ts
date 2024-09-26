@@ -11,6 +11,7 @@ import {
   sec_impl,
   TransportData,
   SecondaryContext,
+  sec_factory,
 } from '@moodle/lib-ddd'
 import * as mod_iam from '@moodle/mod-iam'
 import * as mod_net from '@moodle/mod-net'
@@ -20,15 +21,22 @@ import { get_arango_persistence_factory } from '@moodle/sec-db-arango'
 
 import { get_default_crypto_secondarys_factory } from '@moodle/sec-crypto-default'
 import { get_nodemailer_secondarys_factory } from '@moodle/sec-email-nodemailer'
+import { migrate } from './migrate'
+import { dotEnvLoader, Env, EnvProvider } from './types'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
-import { migrate } from './migrate'
-import { EnvProvider } from './types'
-dotenvExpand(dotenv.config({ path: process.env.MOODLE_DOTENV_PATH }))
+const loadDotEnv: dotEnvLoader = options => {
+  return dotenvExpand(dotenv.config(options))
+}
+loadDotEnv()
+const MOODLE_ENV_PROVIDER_MODULE =
+  process.env.MOODLE_ENV_PROVIDER_MODULE ?? './default-env-provider.js'
+const MOODLE_HTTP_BINDER_PORT = parseInt(process.env.MOODLE_HTTP_BINDER_PORT ?? '9000')
+const MOODLE_HTTP_BINDER_BASEURL = process.env.MOODLE_HTTP_BINDER_BASEURL ?? '/'
 
 http_bind.server({
-  port: 9000,
-  baseUrl: '/',
+  port: MOODLE_HTTP_BINDER_PORT,
+  baseUrl: MOODLE_HTTP_BINDER_BASEURL,
   request(td) {
     return request(td)
   },
@@ -37,10 +45,8 @@ http_bind.server({
 async function request(transportData: TransportData) {
   const { domain_msg, primary_session /* , core_mod_id */ } = transportData
 
-  const _env_provider: EnvProvider = (
-    await import(process.env.MOODLE_ENV_PROVIDER_MODULE ?? './default-env-provider.js')
-  ).default.default
-  const { env, migration_status } = await _env_provider({ primary_session, migrate })
+  const _env_provider: EnvProvider = (await import(MOODLE_ENV_PROVIDER_MODULE)).default.default
+  const { env, migration_status } = await _env_provider({ primary_session, migrate, loadDotEnv })
 
   // this could be inspected later to respond immediately with a "under maintainance" status
   await migration_status
@@ -104,6 +110,7 @@ async function request(transportData: TransportData) {
         await get_arango_persistence_factory(env.arango_db)(secondaryCtx),
         await get_default_crypto_secondarys_factory(env.crypto)(secondaryCtx),
         await get_nodemailer_secondarys_factory(env.nodemailer)(secondaryCtx),
+        await env_provider_secondarys_factory(env)(secondaryCtx),
       ]
     : []
   const sec = composeImpl(...sec_impls)
@@ -129,5 +136,26 @@ NOT IMPLEMENTED: ${ns}.${mod}.${version}.${layer}.${channel}.${port}
 FOUND: [${String(found)}]
 `
     throw TypeError(err_msg)
+  }
+}
+
+function env_provider_secondarys_factory(env: Env): sec_factory {
+  return async function factory(/* ctx */) {
+    return {
+      env: {
+        deployments: {
+          v1_0: {
+            sec: {
+              info: {
+                async read() {
+                  // console.log({ env })
+                  return env.deployments
+                },
+              },
+            },
+          },
+        },
+      },
+    }
   }
 }

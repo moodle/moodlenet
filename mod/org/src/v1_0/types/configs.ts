@@ -1,10 +1,10 @@
-import { url_string } from '@moodle/lib-types'
+import { url_or_file_id, url_string } from '@moodle/lib-types'
 import { OrgPrimaryMsgSchemaConfigs } from './primary-schemas'
 
 export interface OrgInfo {
   name: string
-  logo: url_string
-  smallLogo: url_string
+  logo: url_or_file_id
+  smallLogo: url_or_file_id
   copyright: string
   physicalAddress: string
   websiteUrl: url_string

@@ -1,6 +1,6 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { signed_token } from '@moodle/lib-types'
+import { __redacted__, signed_token } from '@moodle/lib-types'
 import { getIamPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
 import { IamPrimaryMsgSchemaConfigs } from '@moodle/mod-iam/v1_0/types'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
@@ -28,7 +28,7 @@ export function ResetPasswordClient({
   } = useHookFormAction(resetMyPasswordAction, zodResolver(resetPasswordSchema), {
     formProps: {
       values: {
-        newPassword: { __redacted__: '' },
+        newPassword: __redacted__(''),
         token: resetPasswordToken,
       },
     },

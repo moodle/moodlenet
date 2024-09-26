@@ -1,7 +1,19 @@
-import { any, BRAND, intersection, object, string, union, z, ZodObject, ZodString } from 'zod'
+import {
+  any,
+  BRAND,
+  intersection,
+  object,
+  string,
+  union,
+  z,
+  ZodObject,
+  ZodSchema,
+  ZodString,
+} from 'zod'
 import { _any, map } from './map'
 
-export type _falsy = false | undefined | null
+export type _nullish = undefined | null
+export type _falsy = false | _nullish
 export const _never = void 0 as never
 export const _void = void 0 as void
 export type primitive = primitive_value | null | undefined
@@ -30,45 +42,76 @@ export function logRedact(obj: _any) {
   )
 }
 export function __redacted__<t>(data: t): __redacted__<t> {
-  return { [__redacted__key]: data }
+  return _unchecked_brand<__redacted__<t>>({ [__redacted__key]: data })
 }
-export type __redacted__<T> = { [k in typeof __redacted__key]: T }
-//
+export type __redacted__<T> = branded<
+  { [k in typeof __redacted__key]: T },
+  typeof __redacted__brand
+>
+declare const __redacted__brand: unique symbol
+export function __redacted_schema__<schema extends ZodSchema>(schema: schema) {
+  return object({
+    [__redacted__key]: schema,
+  }).brand<typeof __redacted__brand>()
+}
 
 export function date_time_string(date: Date | 'now'): date_time_string {
   const _date = date === 'now' ? new Date() : date
   return _date.toISOString() as date_time_string
 }
+export const single_line_string_schema = string().regex(/^[^\r\n]+$/gi)
 
+// FIXME: ------
+// FIXME: move file_id type and schema in file-server when implemented !
+// FIXME: ------
+
+export type url_or_file_id = url_string | file_id
 export function url_or_file_id_schema(opts?: {
   intersect?: { url?: ZodString; file_id?: ZodObject<map> }
 }) {
   return union([
-    intersection(opts?.intersect?.url ?? any(), url_string_schema),
-    intersection(opts?.intersect?.file_id ?? any(), file_id_schema),
+    intersection(opts?.intersect?.url ?? (any() as unknown as ZodString), url_string_schema),
+    intersection(opts?.intersect?.file_id ?? (any() as unknown as ZodObject<map>), file_id_schema),
   ])
 }
-// FIXME: move file_id type and schema in file-server when implemented !
+
 // // export const file_id_brand = Symbol('file_id_brand')
 // export type file_id = z.infer< typeof file_id_schema>
 declare const file_id_brand: unique symbol
-type ___file_idx = z.infer<typeof file_id_schema> // FIXME: define all types as z.infer (check DEV NOTES)
+type ___file_idx = z.infer<typeof file_id_schema> // FIXME: define all types as z.infer? (check DEV NOTES)
 export type file_id = branded<{ id: string }, typeof file_id_brand>
-export const file_id_schema = object({ id: string().trim() }).brand<typeof file_id_brand>()
+export const file_id_schema = object({ id: single_line_string_schema.and(string().trim()) }).brand<
+  typeof file_id_brand
+>()
+
+export async function getFileUrl(url_or_file_id: url_or_file_id) {
+  if (typeof url_or_file_id === 'string') {
+    return url_or_file_id
+  }
+  return _unchecked_brand<url_string>(url_or_file_id.id)
+}
+
+// FIXME: ------^^^^^^^^^^^^^^^^^^^^^^^^^^^^6
+// FIXME: move file_id type and schema in file-server when implemented !
+// FIXME: ------^^^^^^^^^^^^^^^^^^^^^^^^^^^^6
 
 // // export const url_string_brand = Symbol('url_string_brand')
 // export type url_string = z.infer< typeof url_string_schema>
 declare const url_string_brand: unique symbol
 export type url_string = branded<string, typeof url_string_brand>
-export const url_string_schema = string().trim().max(2048).url().brand<typeof url_string_brand>()
+export const url_string_schema = single_line_string_schema
+  .and(string().trim().max(2048).url())
+  .brand<typeof url_string_brand>()
 
 // // export const url_string_brand = Symbol('url_string_brand')
 // export type url_path_string = z.infer< typeof url_path_string_schema>
 declare const url_path_string_brand: unique symbol
 export type url_path_string = branded<string, typeof url_path_string_brand>
-export const url_path_string_schema = string()
-  .trim()
-  // FIXME: a good regex for paths (this is from https://regexr.com/3a19c ) .regex(/^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?/gim)
+export const url_path_string_schema = single_line_string_schema
+  .and(
+    string().trim(),
+    // FIXME: a good regex for paths (this is from https://regexr.com/3a19c ) .regex(/^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?/gim)
+  )
   .brand<typeof url_path_string_brand>()
 
 // // export const date_time_string_brand = Symbol('date_time_string_brand')
@@ -105,10 +148,8 @@ export const time_duration_string_schema = string()
 // export type signed_token = z.infer< typeof signed_token_schema> // .. JWT
 declare const signed_token_brand: unique symbol
 export type signed_token = branded<string, typeof signed_token_brand> // .. JWT
-export const signed_token_schema = string()
-  .trim()
-  .min(10)
-  .max(4096)
+export const signed_token_schema = single_line_string_schema
+  .and(string().trim().min(10).max(4096))
   .brand<typeof signed_token_brand>()
 
 export type signed_expire_token = {

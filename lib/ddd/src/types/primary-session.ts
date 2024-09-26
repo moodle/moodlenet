@@ -1,6 +1,5 @@
 import { d_u, map, signed_token } from '@moodle/lib-types'
 import { mod_id } from './mod'
-import { platform } from './platform'
 
 export type session_token = signed_token
 
@@ -46,3 +45,43 @@ export type primary_session = d_u<
   },
   'type'
 >
+
+export type platform = d_u<
+  {
+    browser: BrowserPlatform
+    nodeJs: NodeJsPlatform
+    other: unknown
+  },
+  'type'
+>
+
+export interface BrowserPlatform {
+  name?: string
+  version?: string
+  device?: {
+    model?: string
+    type?: string
+    vendor?: string
+  }
+  engine?: {
+    name?: string
+    version?: string
+  }
+  os?: {
+    name?: string
+    version?: string
+  }
+  cpu?: {
+    architecture?: string
+  }
+  geo?: {
+    city?: string
+    country?: string
+    region?: string
+  }
+}
+
+export interface NodeJsPlatform {
+  version: string
+  env?: map<string | undefined, string>
+}

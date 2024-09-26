@@ -1,6 +1,6 @@
 'use client'
 import { CoreContext } from '@moodle/lib-ddd'
-import { url_string } from '@moodle/lib-types'
+import { getFileUrl, url_string } from '@moodle/lib-types'
 import { Button } from '@react-email/button'
 import { Container } from '@react-email/container'
 import { Head } from '@react-email/head'
@@ -106,7 +106,7 @@ export async function getSenderInfo({
   } = await sysCall.moodle.org.v1_0.pri.system.configs()
   const senderInfo: SenderInfo = {
     copyright: orgInfo.copyright,
-    logo: orgInfo.logo,
+    logo: await getFileUrl(orgInfo.logo),
     name: orgInfo.name,
     physicalAddress: orgInfo.physicalAddress,
     websiteUrl: orgInfo.websiteUrl,

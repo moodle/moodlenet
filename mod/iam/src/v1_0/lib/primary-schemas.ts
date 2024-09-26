@@ -1,18 +1,27 @@
-import { __redacted__key, email_address_schema, signed_token_schema } from '@moodle/lib-types'
-import { object, string } from 'zod'
+import {
+  __redacted_schema__,
+  email_address_schema,
+  signed_token_schema,
+  single_line_string_schema,
+} from '@moodle/lib-types'
+import { any, object, string, ZodString } from 'zod'
 import { IamPrimaryMsgSchemaConfigs } from '../types'
 
 export function getIamPrimarySchemas({ user, myAccount }: IamPrimaryMsgSchemaConfigs) {
-  const email = string().max(user.email.max).and(email_address_schema)
-  const password = string().trim().min(user.password.min).max(user.password.max)
-  const displayName = string()
-    .trim()
-    .min(user.displayName.min)
-    .max(user.displayName.max)
-    .regex(new RegExp(...user.displayName.regex))
-  const redacted_password = object({
-    [__redacted__key]: password,
-  })
+  const email = email_address_schema.and(string().max(user.email.max))
+
+  const password = single_line_string_schema.and(
+    string().trim().min(user.password.min).max(user.password.max),
+  )
+  const displayName = single_line_string_schema
+    .and(string().trim().min(user.displayName.min).max(user.displayName.max))
+    .and(
+      user.displayName.regex
+        ? string().regex(new RegExp(...user.displayName.regex))
+        : (any() as unknown as ZodString),
+    )
+
+  const redacted_password = __redacted_schema__(password)
 
   const signupSchema = object({
     email,

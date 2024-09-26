@@ -11,7 +11,7 @@ export const iam_default_configs: Configs = {
     user: {
       email: { max: 35 },
       password: { min: 8, max: 35 },
-      displayName: { min: 3, max: 35, regex: ['^[^\\r\\n]+$', 'gi'] },
+      displayName: { min: 3, max: 35, regex: null },
     },
   },
   inactiveUsersPolicies: {
