@@ -21,7 +21,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                   })
                   return { configs }
                 },
-                async changeUserPassword({ newPasswordHash, userId }) {
+                async setUserPassword({ newPasswordHash, userId }) {
                   const {
                     iam: {
                       coll: { user },
@@ -37,7 +37,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     .catch(() => null)
                   return [!!updated, _never]
                 },
-                async changeUserRoles({ userId, roles }) {
+                async setUserRoles({ userId, roles }) {
                   const {
                     iam: {
                       coll: { user },

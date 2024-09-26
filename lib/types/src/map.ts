@@ -33,12 +33,12 @@ export type d_u<
 // union discrimination
 export type d_u__discrimination<
   du extends { [k in d_prop]: string },
-  d_prop extends _any_k,
+  d_prop extends keyof du,
   k extends du[d_prop],
 > = du extends { [n in d_prop]: k } ? du : never
 export type d_u__d<
   du extends { [k in d_prop]: string },
-  d_prop extends _any_k,
+  d_prop extends keyof du,
   k extends du[d_prop],
 > = d_u__discrimination<du, d_prop, k>
 

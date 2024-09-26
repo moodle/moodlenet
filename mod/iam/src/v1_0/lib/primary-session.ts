@@ -24,17 +24,20 @@ export async function validateAnyUserSession(ctx: Pick<CoreContext, 'primarySess
   if (!token) {
     return guest_session
   }
-  const [valid, sessionResp] = await ctx.sysCall.moodle.iam.v1_0.sec.crypto.validateSignedToken({
+  const [valid, validation] = await ctx.sysCall.moodle.iam.v1_0.sec.crypto.validateSignedToken({
     token,
+    type: 'userSession',
   })
-  const any_user_session =
-    valid && sessionResp.type === 'userSession'
-      ? ({
-          type: 'authenticated',
-          user: sessionResp.user,
-        } satisfies user_session)
-      : guest_session
-  return any_user_session
+  if (!valid) {
+    return guest_session
+  }
+  const { validatedSignedTokenData } = validation
+
+  const user_session: user_session = {
+    type: 'authenticated',
+    user: validatedSignedTokenData.user,
+  }
+  return user_session
 }
 const guest_session: user_session = {
   type: 'guest',

@@ -36,7 +36,7 @@ export type moodle_iam_mod = mod<{
       }
 
       admin: {
-        editUserRoles(_: {
+        setUserRoles(_: {
           userId: v1_0.user_id
           roles: v1_0.user_role[]
         }): Promise<ok_ko<never, { userNotFound: unknown }>>
@@ -109,8 +109,16 @@ export type moodle_iam_mod = mod<{
           data: v1_0.iamSignTokenData
           expiresIn: time_duration_string
         }): Promise<signed_expire_token>
-        validateSignedToken(_: { token: session_token }): Promise<ok_ko<v1_0.iamSignTokenData>>
-        //TODO: implement decodeNoValidateSignedToken(_: { token: session_token }): Promise<ok_ko<v1_0.iamSignTokenData>>
+        validateSignedToken<type extends v1_0.iamSignTokenData['type']>(_: {
+          token: signed_token
+          type: type
+        }): Promise<
+          ok_ko<
+            { validatedSignedTokenData: d_u__d<v1_0.iamSignTokenData, 'type', type> },
+            { invalid: unknown; validatedUnknownType: { data: unknown } }
+          >
+        >
+        //NOTE: implement decodeNoValidateSignedToken(_: { token: session_token }): Promise<ok_ko<{__NOT_VALIDATED_SESSION_TOKEN_DATA__:v1_0.iamSignTokenData}>>
       }
 
       email: {
@@ -124,10 +132,7 @@ export type moodle_iam_mod = mod<{
       db: {
         getConfigs(): Promise<{ configs: v1_0.Configs }>
 
-        changeUserPassword(_: {
-          userId: v1_0.user_id
-          newPasswordHash: string
-        }): Promise<ok_ko<never>>
+        setUserPassword(_: { userId: v1_0.user_id; newPasswordHash: string }): Promise<ok_ko<never>>
 
         deactivateUser(_: {
           userId: v1_0.user_id
@@ -146,7 +151,7 @@ export type moodle_iam_mod = mod<{
 
         saveNewUser(_: { newUser: v1_0.userRecord }): Promise<ok_ko<never>>
 
-        changeUserRoles(_: {
+        setUserRoles(_: {
           userId: v1_0.user_id
           roles: v1_0.user_role[]
           adminUserId: v1_0.user_id
