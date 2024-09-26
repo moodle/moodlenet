@@ -4,6 +4,8 @@
 
 ### Next
 
+[ ] admin user roles interface
+FIXME:[ ] define types as z.infer when zod schema defined (e.g. all def in types.data)
 [ ] file service
 
 ### Done
@@ -12,6 +14,7 @@
 
 ### Backlog
 
+CHECKOUT:[ ] zod provides many handy stuff, including discriminateed unions .. check if/how to use them
 [ ] nextjs docker image
 
 ---

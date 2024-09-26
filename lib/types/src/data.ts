@@ -1,5 +1,5 @@
-import { BRAND, string } from 'zod'
-import { _any } from './map'
+import { any, BRAND, intersection, object, string, union, z, ZodObject, ZodString } from 'zod'
+import { _any, map } from './map'
 
 export type _falsy = false | undefined | null
 export const _never = void 0 as never
@@ -40,43 +40,64 @@ export function date_time_string(date: Date | 'now'): date_time_string {
   return _date.toISOString() as date_time_string
 }
 
+export function url_or_file_id_schema(opts?: {
+  intersect?: { url?: ZodString; file_id?: ZodObject<map> }
+}) {
+  return union([
+    intersection(opts?.intersect?.url ?? any(), url_string_schema),
+    intersection(opts?.intersect?.file_id ?? any(), file_id_schema),
+  ])
+}
+// FIXME: move file_id type and schema in file-server when implemented !
+// // export const file_id_brand = Symbol('file_id_brand')
+// export type file_id = z.infer< typeof file_id_schema>
+declare const file_id_brand: unique symbol
+type ___file_idx = z.infer<typeof file_id_schema> // FIXME: define all types as z.infer (check DEV NOTES)
+export type file_id = branded<{ id: string }, typeof file_id_brand>
+export const file_id_schema = object({ id: string().trim() }).brand<typeof file_id_brand>()
+
 // // export const url_string_brand = Symbol('url_string_brand')
 // export type url_string = z.infer< typeof url_string_schema>
 declare const url_string_brand: unique symbol
 export type url_string = branded<string, typeof url_string_brand>
-export const url_string_schema = string().url().brand<typeof url_string_brand>()
+export const url_string_schema = string().trim().max(2048).url().brand<typeof url_string_brand>()
 
 // // export const url_string_brand = Symbol('url_string_brand')
 // export type url_path_string = z.infer< typeof url_path_string_schema>
 declare const url_path_string_brand: unique symbol
 export type url_path_string = branded<string, typeof url_path_string_brand>
 export const url_path_string_schema = string()
-  // TODO: a good regex for paths (this is from https://regexr.com/3a19c ) .regex(/^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?/gim)
+  .trim()
+  // FIXME: a good regex for paths (this is from https://regexr.com/3a19c ) .regex(/^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?/gim)
   .brand<typeof url_path_string_brand>()
 
 // // export const date_time_string_brand = Symbol('date_time_string_brand')
 // export type date_time_string = z.infer< typeof date_time_string_schema> // ISO 8601
 declare const date_time_string_brand: unique symbol
 export type date_time_string = branded<string, typeof date_time_string_brand> // ISO 8601
-export const date_time_string_schema = string().datetime().brand<typeof date_time_string_brand>()
+export const date_time_string_schema = string()
+  .trim()
+  .datetime()
+  .brand<typeof date_time_string_brand>()
 
 // // export const date_string_brand = Symbol('date_string_brand')
 // export type date_string = z.infer< typeof date_string_schema> // ISO 8601
 declare const date_string_brand: unique symbol
 export type date_string = branded<string, typeof date_string_brand> // ISO 8601
-export const date_string_schema = string().date().brand<typeof date_string_brand>()
+export const date_string_schema = string().trim().date().brand<typeof date_string_brand>()
 
 // // export const time_string_brand = Symbol('time_string_brand')
 // export type time_string = z.infer< typeof time_string_schema> // ISO 8601
 declare const time_string_brand: unique symbol
 export type time_string = branded<string, typeof time_string_brand> // ISO 8601
-export const time_string_schema = string().time().brand<typeof time_string_brand>()
+export const time_string_schema = string().trim().time().brand<typeof time_string_brand>()
 
 // // export const time_duration_string_brand = Symbol('time_duration_string_brand')
 // export type time_duration_string = z.infer< typeof time_duration_string_schema> // ISO 8601
 declare const time_duration_string_brand: unique symbol
 export type time_duration_string = branded<string, typeof time_duration_string_brand> // ISO 8601
 export const time_duration_string_schema = string()
+  .trim()
   .duration()
   .brand<typeof time_duration_string_brand>()
 
@@ -84,7 +105,11 @@ export const time_duration_string_schema = string()
 // export type signed_token = z.infer< typeof signed_token_schema> // .. JWT
 declare const signed_token_brand: unique symbol
 export type signed_token = branded<string, typeof signed_token_brand> // .. JWT
-export const signed_token_schema = string().min(10).max(2048).brand<typeof signed_token_brand>()
+export const signed_token_schema = string()
+  .trim()
+  .min(10)
+  .max(4096)
+  .brand<typeof signed_token_brand>()
 
 export type signed_expire_token = {
   token: signed_token
@@ -96,6 +121,7 @@ export type signed_expire_token = {
 declare const email_address_brand: unique symbol
 export type email_address = branded<string, typeof email_address_brand> // email format
 export const email_address_schema = string()
+  .trim()
   .toLowerCase()
   .email()
   .brand<typeof email_address_brand>()

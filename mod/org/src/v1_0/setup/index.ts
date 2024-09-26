@@ -12,12 +12,9 @@ export const org_default_configs: Configs = {
   },
   orgPrimaryMsgSchemaConfigs: {
     info: {
-      name: { min: 1, max: 50 },
-      smallLogo: { min: 0, max: 256 },
-      logo: { min: 0, max: 256 },
-      websiteUrl: { min: 0, max: 256 },
-      physicalAddress: { min: 0, max: 200 },
-      copyright: { min: 0, max: 100 },
+      name: { min: 3, max: 100 },
+      physicalAddress: { max: 500 },
+      copyright: { max: 300 },
     },
   },
 }

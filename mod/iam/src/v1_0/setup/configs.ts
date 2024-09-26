@@ -5,14 +5,13 @@ export const iam_default_configs: Configs = {
   iamPrimaryMsgSchemaConfigs: {
     myAccount: {
       selfDeletionRequestReason: {
-        min: 0,
         max: 300,
       },
     },
     user: {
-      email: { min: 5, max: 35 },
+      email: { max: 35 },
       password: { min: 8, max: 35 },
-      displayName: { min: 3, max: 35 },
+      displayName: { min: 3, max: 35, regex: ['^[^\\r\\n]+$', 'gi'] },
     },
   },
   inactiveUsersPolicies: {

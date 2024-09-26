@@ -13,6 +13,7 @@
     "**/node_modules/*/**"
   ],
   // -TODO-TREE
+  // "todo-tree.tree.filterCaseSensitive": false,
   "todo-tree.highlights.useColourScheme": true,
   "todo-tree.highlights.defaultHighlight": {
     "icon": "alert",
