@@ -8,11 +8,15 @@ export async function middleware(request: NextRequest) {
   request.headers.set('x-geo', JSON.stringify(geo))
 
   // const isProduction = process.env.NODE_ENV === 'production' // redirect only in production
-
+  // console.log('---------\n'.repeat(5))
+  // request.headers.forEach((a, b) => {
+  //   console.log(`${b}:[${a}]`)
+  // })
+  // console.log('---------\n'.repeat(5))
   const url = request.nextUrl.clone()
   const urlHost = request.headers.get('X-Forwarded-Host') || url.host
   const urlPort = request.headers.get('X-Forwarded-Port') || url.port
-  const urlPath = url.pathname
+  const urlPathname = url.pathname
   const urlProto = (request.headers.get('X-Forwarded-Proto') || url.protocol).toLowerCase()
   url.host = urlHost
   url.protocol = urlProto
@@ -36,7 +40,7 @@ export async function middleware(request: NextRequest) {
       'x-host': urlHost,
       'x-proto': urlProto,
       'x-port': urlPort,
-      'x-path': urlPath,
+      'x-pathname': urlPathname,
       'x-search': xSearch,
     },
   })

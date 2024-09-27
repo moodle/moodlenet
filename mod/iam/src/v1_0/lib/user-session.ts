@@ -11,6 +11,12 @@ export function hasUserSessionRole(
   }
   return user_session.user.roles.includes(role)
 }
+export function isContributorUserSession(user_session: user_session) {
+  return hasUserSessionRole(user_session, 'contributor')
+}
+export function isAdminUserSession(user_session: user_session) {
+  return hasUserSessionRole(user_session, 'admin')
+}
 //
 
 // Authenticated Session

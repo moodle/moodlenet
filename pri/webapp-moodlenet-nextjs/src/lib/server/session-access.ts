@@ -1,14 +1,16 @@
 import { http_bind } from '@moodle/bindings-node'
 import { createAcccessProxy, Modules, primary_session } from '@moodle/lib-ddd'
 import type {} from '@moodle/mod-iam'
-import { hasUserSessionRole } from '@moodle/mod-iam/v1_0/lib'
+import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/mod-iam/v1_0/lib'
 import type {} from '@moodle/mod-net'
 import type {} from '@moodle/mod-net-webapp-nextjs'
 import type {} from '@moodle/mod-org'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
+import { redirect, RedirectType } from 'next/navigation'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'
+import { sitepaths } from '../common/utils/sitepaths'
 import { getAuthTokenCookie } from './auth'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
@@ -59,22 +61,31 @@ export function priAccess(): Modules {
   return ap.mod
 }
 
-export async function getAuthenticatedUserSession() {
+export async function getUserSession() {
   const { userSession } = await priAccess().moodle.iam.v1_0.pri.session.getCurrentUserSession()
-  return userSession.type === 'authenticated' ? userSession : null
+  return userSession
 }
-export async function getAdminUserSession() {
-  const authenticatedUserSession = await getAuthenticatedUserSession()
-  return authenticatedUserSession && hasUserSessionRole(authenticatedUserSession, 'admin')
-    ? authenticatedUserSession
-    : null
+
+export async function getAuthenticatedUserSessionOrRedirectToLogin() {
+  const maybe_authenticatedUserSession = await getUserSession()
+  if (isAuthenticatedUserSession(maybe_authenticatedUserSession)) {
+    return maybe_authenticatedUserSession
+  }
+
+  const loginUrl = sitepaths().pages.access.login({
+    redirect: headers().get('x-pathname') ?? sitepaths().pages.landing,
+  })
+  redirect(loginUrl, RedirectType.replace)
 }
-export async function getContributorUserSession() {
-  const authenticatedUserSession = await getAuthenticatedUserSession()
-  return authenticatedUserSession && hasUserSessionRole(authenticatedUserSession, 'contributor')
-    ? authenticatedUserSession
-    : null
+
+export async function getAdminUserSessionOrRedirect(path = '/') {
+  const authenticatedUserSession = await getAuthenticatedUserSessionOrRedirectToLogin()
+  if (!isAdminUserSession(authenticatedUserSession)) {
+    redirect('/')
+  }
+  return authenticatedUserSession
 }
+
 
 function getPrimarySession() {
   i18next.init({

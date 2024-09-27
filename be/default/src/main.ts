@@ -8,10 +8,10 @@ import {
   dispatch,
   domain_msg,
   primary_session,
-  sec_impl,
-  TransportData,
-  SecondaryContext,
   sec_factory,
+  sec_impl,
+  SecondaryContext,
+  TransportData,
 } from '@moodle/lib-ddd'
 import * as mod_iam from '@moodle/mod-iam'
 import * as mod_net from '@moodle/mod-net'
@@ -21,10 +21,10 @@ import { get_arango_persistence_factory } from '@moodle/sec-db-arango'
 
 import { get_default_crypto_secondarys_factory } from '@moodle/sec-crypto-default'
 import { get_nodemailer_secondarys_factory } from '@moodle/sec-email-nodemailer'
-import { migrate } from './migrate'
-import { dotEnvLoader, Env, EnvProvider } from './types'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
+import { migrate } from './migrate'
+import { dotEnvLoader, Env, EnvProvider } from './types'
 const loadDotEnv: dotEnvLoader = options => {
   return dotenvExpand(dotenv.config(options))
 }
@@ -141,6 +141,7 @@ FOUND: [${String(found)}]
 
 function env_provider_secondarys_factory(env: Env): sec_factory {
   return async function factory(/* ctx */) {
+    // console.log('env_provider_secondarys_factory', inspect(env, false, 15, true))
     return {
       env: {
         deployments: {
