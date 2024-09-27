@@ -2,11 +2,12 @@ import { sec_factory, sec_impl } from '@moodle/lib-ddd'
 import { _never } from '@moodle/lib-types'
 import { Document } from 'arangojs/documents'
 import { createHash } from 'node:crypto'
-import { v1_0 } from '../..'
 import { userDocument2userRecord, userRecord2userDocument } from './db-arango-iam-lib/mappings'
 import { userDocument } from './db-arango-iam-lib/types'
+import { db_struct } from '../../db-structure'
+import { getModConfigs } from '../../lib'
 
-export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec_factory {
+export function iam({ db_struct }: { db_struct: db_struct }): sec_factory {
   return ctx => {
     const iam_sec_impl: sec_impl = {
       moodle: {
@@ -15,9 +16,9 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
             sec: {
               db: {
                 async getConfigs() {
-                  const { configs } = await v1_0.getModConfigs({
-                    mod_id: ctx.modIdCaller,
-                    db_struct_v1_0,
+                  const { configs } = await getModConfigs({
+                    mod_id: ctx.invoked_by,
+                    db_struct,
                   })
                   return { configs }
                 },
@@ -26,7 +27,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     iam: {
                       coll: { user },
                     },
-                  } = db_struct_v1_0
+                  } = db_struct
                   const updated = await user
                     .update(
                       { _key: userId },
@@ -42,7 +43,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     iam: {
                       coll: { user },
                     },
-                  } = db_struct_v1_0
+                  } = db_struct
                   const updated = await user
                     .update(
                       { _key: userId },
@@ -60,7 +61,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                       db,
                       coll: { user },
                     },
-                  } = db_struct_v1_0
+                  } = db_struct
                   const cursor = await db.query<Document<userDocument>>(
                     `FOR user IN ${user.name} FILTER user.contacts.email == @email LIMIT 1 RETURN user`,
                     { email },
@@ -73,7 +74,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     iam: {
                       coll: { user },
                     },
-                  } = db_struct_v1_0
+                  } = db_struct
 
                   const foundUser = await user.document({ _key: userId }, { graceful: true })
                   return foundUser ? [true, userDocument2userRecord(foundUser)] : [false, _never]
@@ -83,7 +84,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     iam: {
                       coll: { user },
                     },
-                  } = db_struct_v1_0
+                  } = db_struct
                   const userDocument = userRecord2userDocument(newUser)
                   const savedUser = await user
                     .save(userDocument, { overwriteMode: 'conflict' })
@@ -96,7 +97,7 @@ export function iam({ db_struct_v1_0 }: { db_struct_v1_0: v1_0.db_struct }): sec
                     iam: {
                       coll: { user },
                     },
-                  } = db_struct_v1_0
+                  } = db_struct
                   const deactivatingUser = await user.document({ _key: userId }, { graceful: true })
                   if (!deactivatingUser) return [false, _never]
 

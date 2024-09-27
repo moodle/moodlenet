@@ -3,8 +3,8 @@ import { mod_id } from './mod'
 
 export type session_token = signed_token
 
-export interface UserPrimarySession extends PriSessionBase {
-  connection: d_u<Connections, 'proto'>
+export interface UserAccessSession extends AccessSessionBase {
+  protocol: d_u<Protocols, 'type'>
 
   app: { name: string; pkg: string; version: string }
 
@@ -16,7 +16,7 @@ export interface UserPrimarySession extends PriSessionBase {
   }
 }
 
-interface Connections {
+interface Protocols {
   http: {
     secure: boolean
     mode?: string
@@ -30,18 +30,18 @@ interface Connections {
   other: map
 }
 
-export interface SystemPrimarySession extends PriSessionBase {
+export interface SystemAccessSession extends AccessSessionBase {
   mod_id: mod_id
 }
 
-export interface PriSessionBase {
+export interface AccessSessionBase {
   domain: string
 }
 
-export type primary_session = d_u<
+export type access_session = d_u<
   {
-    user: UserPrimarySession
-    system: SystemPrimarySession
+    user: UserAccessSession
+    system: SystemAccessSession
   },
   'type'
 >

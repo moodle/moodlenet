@@ -11,21 +11,21 @@ export function core(): core_factory {
             pri: {
               schemaConfigs: {
                 async iam() {
-                  const iam = await ctx.sysCall.moodle.iam.v1_0.pri.system.configs()
+                  const iam = await ctx.sys_call.moodle.iam.v1_0.pri.system.configs()
                   return { iamSchemaConfigs: iam.configs.iamPrimaryMsgSchemaConfigs }
                 },
                 async moodleNet() {
-                  const net = await ctx.sysCall.moodle.net.v1_0.pri.system.configs()
+                  const net = await ctx.sys_call.moodle.net.v1_0.pri.system.configs()
                   return { moodleNetSchemaConfigs: net.configs.moodleNetPrimaryMsgSchemaConfigs }
                 },
                 async org() {
-                  const org = await ctx.sysCall.moodle.org.v1_0.pri.system.configs()
+                  const org = await ctx.sys_call.moodle.org.v1_0.pri.system.configs()
                   return { orgSchemaConfigs: org.configs.orgPrimaryMsgSchemaConfigs }
                 },
               },
               webapp: {
                 async deploymentInfo() {
-                  const deployments = await ctx.sysCall.env.deployments.v1_0.sec.info.read()
+                  const deployments = await ctx.sys_call.env.deployments.v1_0.sec.info.read()
                   const moodleNetWebappDeploymentInfo =
                     deployments.moodle.net.MoodleNetWebappDeploymentInfo
                   assert(
@@ -38,7 +38,7 @@ export function core(): core_factory {
                 async layouts() {
                   const {
                     configs: { layouts },
-                  } = await ctx.sysCall.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
+                  } = await ctx.sys_call.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
                   return layouts
                 },
               },
@@ -52,8 +52,8 @@ export function core(): core_factory {
                       configs: { info: org },
                     },
                   ] = await Promise.all([
-                    ctx.sysCall.moodle.net.v1_0.pri.system.configs(),
-                    ctx.sysCall.moodle.org.v1_0.pri.system.configs(),
+                    ctx.sys_call.moodle.net.v1_0.pri.system.configs(),
+                    ctx.sys_call.moodle.org.v1_0.pri.system.configs(),
                   ])
                   return { moodlenet: info, org }
                 },
@@ -61,7 +61,7 @@ export function core(): core_factory {
               system: {
                 async configs() {
                   await assert_authorizeSystemSession(ctx)
-                  return ctx.sysCall.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
+                  return ctx.sys_call.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
                 },
               },
             },

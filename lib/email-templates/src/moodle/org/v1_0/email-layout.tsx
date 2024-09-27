@@ -99,11 +99,11 @@ export function layoutEmail(emailProps: EmailLayoutProps) {
 }
 
 export async function getSenderInfo({
-  sysCall,
-}: Pick<CoreContext, 'sysCall'>): Promise<SenderInfo> {
+  sys_call: sys_call,
+}: Pick<CoreContext, 'sys_call'>): Promise<SenderInfo> {
   const {
     configs: { info: orgInfo },
-  } = await sysCall.moodle.org.v1_0.pri.system.configs()
+  } = await sys_call.moodle.org.v1_0.pri.system.configs()
   const senderInfo: SenderInfo = {
     copyright: orgInfo.copyright,
     logo: await getFileUrl(orgInfo.logo),

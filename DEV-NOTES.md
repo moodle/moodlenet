@@ -10,7 +10,7 @@ FIXME:[ ] define types as z.infer when zod schema defined (e.g. all def in types
 
 ### Done
 
-[x] for other mods configs use other_mod.pri.getConfigs() with systemPrimary (need another contextproxy [sysCall])
+[x] for other mods configs use other_mod.pri.getConfigs() with systemPrimary (need another contextproxy [sys_call])
 
 ### Backlog
 

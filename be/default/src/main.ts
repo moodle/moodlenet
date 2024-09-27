@@ -1,18 +1,5 @@
 import { http_bind } from '@moodle/bindings-node'
-import {
-  composeImpl,
-  core_impl,
-  CoreContext,
-  coreModId,
-  createAcccessProxy,
-  dispatch,
-  domain_msg,
-  primary_session,
-  sec_factory,
-  sec_impl,
-  SecondaryContext,
-  TransportData,
-} from '@moodle/lib-ddd'
+import { core_factory, sec_factory, domainSessionAccess } from '@moodle/lib-ddd'
 import * as mod_iam from '@moodle/mod-iam'
 import * as mod_net from '@moodle/mod-net'
 import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
@@ -37,126 +24,50 @@ const MOODLE_HTTP_BINDER_BASEURL = process.env.MOODLE_HTTP_BINDER_BASEURL ?? '/'
 http_bind.server({
   port: MOODLE_HTTP_BINDER_PORT,
   baseUrl: MOODLE_HTTP_BINDER_BASEURL,
-  request(td) {
-    return request(td)
-  },
-})
+  async request({ access_session, domain_msg }) {
+    const _env_provider: EnvProvider = (await import(MOODLE_ENV_PROVIDER_MODULE)).default.default
+    const { env, migration_status } = await _env_provider({ access_session, migrate, loadDotEnv })
 
-async function request(transportData: TransportData) {
-  const { domain_msg, primary_session /* , core_mod_id */ } = transportData
+    // this could be inspected later to respond immediately with a "under maintainance" status
+    await migration_status
+    const core_factories: core_factory[] = [
+      // core modules
+      mod_net.core(),
+      mod_org.core(),
+      mod_iam.core(),
+      mod_net_webapp_nextjs.core(),
+    ]
 
-  const _env_provider: EnvProvider = (await import(MOODLE_ENV_PROVIDER_MODULE)).default.default
-  const { env, migration_status } = await _env_provider({ primary_session, migrate, loadDotEnv })
+    const sec_factories: sec_factory[] = [
+      // sec modules
+      get_arango_persistence_factory(env.arango_db),
+      get_default_crypto_secondarys_factory(env.crypto),
+      get_nodemailer_secondarys_factory(env.nodemailer),
+      env_provider_secondarys_factory(),
+    ]
+    return domainSessionAccess({ access_session, domain_msg, core_factories, sec_factories })
 
-  // this could be inspected later to respond immediately with a "under maintainance" status
-  await migration_status
-  const core_mod_id = coreModId(domain_msg)
-
-  const defaultAccessProxy = createAcccessProxy({
-    access(msg) {
-      return request({ domain_msg: msg, primary_session /* , core_mod_id */ }).catch(e => {
-        console.error({ msg })
-        throw e
-      })
-    },
-  })
-  const sysCallAccessProxy = createAcccessProxy({
-    access(msg) {
-      const core_mod_id = coreModId(domain_msg)
-      const sysCallPrimarySession: primary_session = {
-        type: 'system',
-        domain: primary_session.domain,
-        mod_id: core_mod_id,
-      }
-      return request({
-        domain_msg: msg,
-        primary_session: sysCallPrimarySession,
-        // core_mod_id,
-      }).catch(e => {
-        console.error({ msg })
-        throw e
-      })
-    },
-  })
-
-  const coreCtx: CoreContext = {
-    primarySession: primary_session,
-    forward: defaultAccessProxy.mod,
-    sysCall: sysCallAccessProxy.mod,
-    transportData,
-  }
-
-  const core_impls: core_impl[] = [
-    // core modules
-    await mod_net.core()(coreCtx),
-    await mod_org.core()(coreCtx),
-    await mod_iam.core()(coreCtx),
-    await mod_net_webapp_nextjs.core()(coreCtx),
-  ]
-  const core = composeImpl(...core_impls)
-
-  const secondaryCtx: SecondaryContext | null = core_mod_id
-    ? {
-        primarySession: primary_session,
-        emit: sysCallAccessProxy.mod,
-        modIdCaller: core_mod_id,
-        transportData,
-      }
-    : null
-
-  const sec_impls: sec_impl[] = secondaryCtx
-    ? [
-        // sec modules
-        await get_arango_persistence_factory(env.arango_db)(secondaryCtx),
-        await get_default_crypto_secondarys_factory(env.crypto)(secondaryCtx),
-        await get_nodemailer_secondarys_factory(env.nodemailer)(secondaryCtx),
-        await env_provider_secondarys_factory(env)(secondaryCtx),
-      ]
-    : []
-  const sec = composeImpl(...sec_impls)
-
-  // console.log(inspect(moodleDomain, true, 10, true))
-  if (domain_msg.layer === 'pri') {
-    return dispatch(core, domain_msg, not_implemented_here(domain_msg))
-  } else if (domain_msg.layer === 'sec') {
-    return dispatch(sec, domain_msg, not_implemented_here(domain_msg))
-  } else if (domain_msg.layer === 'evt') {
-    core_impls.forEach(core_impl => {
-      dispatch(core_impl, domain_msg, not_implemented_here(domain_msg))
-    })
-  } else {
-    throw TypeError(`unknown msg layer: ${domain_msg.layer}`)
-  }
-}
-function not_implemented_here(domain_msg: domain_msg): (found: unknown) => void {
-  return found => {
-    const { channel, layer, mod, ns, port, version } = domain_msg
-    const err_msg = `
-NOT IMPLEMENTED: ${ns}.${mod}.${version}.${layer}.${channel}.${port}
-FOUND: [${String(found)}]
-`
-    throw TypeError(err_msg)
-  }
-}
-
-function env_provider_secondarys_factory(env: Env): sec_factory {
-  return async function factory(/* ctx */) {
-    // console.log('env_provider_secondarys_factory', inspect(env, false, 15, true))
-    return {
-      env: {
-        deployments: {
-          v1_0: {
-            sec: {
-              info: {
-                async read() {
-                  // console.log({ env })
-                  return env.deployments
+    function env_provider_secondarys_factory(): sec_factory {
+      return async function factory(/* ctx */) {
+        // console.log('env_provider_secondarys_factory', inspect(env, false, 15, true))
+        return {
+          env: {
+            deployments: {
+              v1_0: {
+                sec: {
+                  info: {
+                    async read() {
+                      // console.log({ env })
+                      return env.deployments
+                    },
+                  },
                 },
               },
             },
           },
-        },
-      },
+        }
+      }
     }
-  }
-}
+  },
+})
+

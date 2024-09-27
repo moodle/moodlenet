@@ -2,51 +2,39 @@ import { _any, deep_partial, deep_required } from '@moodle/lib-types'
 import { merge } from 'lodash'
 import { Modules } from '../domain'
 import { any_endpoint, domain_msg, layers, mod_id } from './mod'
-import { primary_session } from './primary-session'
-
-export interface TransportData {
-  primary_session: primary_session
-  domain_msg: domain_msg
-  //core_mod_id: mod_id | null
-}
+import { access_session } from './access-session'
 
 export interface CoreProcessContext {
-  sysCall: concrete<'pri' | 'sec' | 'evt'>
+  sys_call: concrete<'pri' | 'sec' | 'evt'>
 }
 
 export type core_process = (ctx: CoreProcessContext) => stop_core_process
 export type stop_core_process = void | (() => unknown)
 
 export interface CoreContext {
-  sysCall: concrete<'pri' | 'sec' | 'evt'>
+  sys_call: concrete<'pri' | 'sec'>
   forward: concrete<'pri'>
-  primarySession: primary_session
-  transportData: TransportData
+  access_session: access_session
+  pri_domain_msg: domain_msg
 }
 
 export type EvtContext = {
-  sysCall: concrete<'pri' | 'sec' | 'evt'>
+  sys_call: concrete<'pri' | 'sec'>
   forward: concrete<'pri'>
-  primarySession: primary_session
-  transportData: {
-    pri: TransportData
-    sec: TransportData
-  }
+  access_session: access_session
+  evt_domain_msg: domain_msg
+  // sec_domain_msg: domain_msg
+  // pri_domain_msg: domain_msg
 }
 
 export interface SecondaryContext {
-  primarySession: primary_session
-  modIdCaller: mod_id
+  invoked_by: mod_id
   emit: concrete<'evt'>
-  transportData: TransportData
+  sys_call: concrete<'sec'>
+  access_session: access_session
+  sec_domain_msg: domain_msg
+  // pri_domain_msg: domain_msg
 }
-
-// export type execution_context = {
-//   forward: Modules
-//   push: Modules
-//   primarySession: primary_session
-//   permissions: concrete
-// }
 
 export type layer_contexts = {
   pri: CoreContext

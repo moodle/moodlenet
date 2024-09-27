@@ -4,12 +4,7 @@ export type _any = any
 export type _any_k = keyof _any
 
 export type map<t = _any, k extends _any_k = _any_k> = Record<k, t>
-export type m_map<t = _any, k extends _any_k = _any_k> =
-  | map<t, k>
-  | void
-  | undefined
-  | null
-  | unknown
+ type m_map<t = _any, k extends _any_k = _any_k> = map<t, k> | void | undefined | null | unknown
 
 // discriminate maps
 export type d_m<nmap extends m_map, p extends _any_k> = discriminated_map<nmap, p>

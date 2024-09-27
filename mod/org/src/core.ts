@@ -14,12 +14,12 @@ export function core(): core_factory {
               system: {
                 async configs() {
                   await assert_authorizeSystemSession(ctx)
-                  return ctx.sysCall.moodle.org.v1_0.sec.db.getConfigs()
+                  return ctx.sys_call.moodle.org.v1_0.sec.db.getConfigs()
                 },
               },
               admin: {
                 async updatePartialOrgInfo({ partialInfo }) {
-                  const [done] = await ctx.sysCall.moodle.org.v1_0.sec.db.updatePartialConfigs({
+                  const [done] = await ctx.sys_call.moodle.org.v1_0.sec.db.updatePartialConfigs({
                     partialConfigs: { info: partialInfo },
                   })
                   return [done, _never]

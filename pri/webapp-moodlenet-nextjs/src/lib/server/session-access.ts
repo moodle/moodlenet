@@ -1,5 +1,5 @@
 import { http_bind } from '@moodle/bindings-node'
-import { createAcccessProxy, Modules, primary_session } from '@moodle/lib-ddd'
+import { createAcccessProxy, Modules, access_session } from '@moodle/lib-ddd'
 import type {} from '@moodle/mod-iam'
 import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/mod-iam/v1_0/lib'
 import type {} from '@moodle/mod-net'
@@ -21,13 +21,13 @@ const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhos
 
 export function priAccess(): Modules {
   const trnspClient = http_bind.client()
-  const primarySession = getPrimarySession()
+  const accessSession = getAccessSession()
   const ap = createAcccessProxy({
-    access(domain_msg) {
+    access({ domain_msg }) {
       return trnspClient(
         {
           domain_msg,
-          primary_session: primarySession,
+          access_session: accessSession,
           // core_mod_id: null,
         },
         requestTarget,
@@ -41,9 +41,9 @@ export function priAccess(): Modules {
   // however we can't set the cookie here :
   // [Error]: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
   //
-  // if (primarySession.sessionToken) {
+  // if (accessSession.sessionToken) {
   //   const [valid, info] = iam_v1_0.noValidationParseUserSessionToken(
-  //     primarySession.sessionToken,
+  //     accessSession.sessionToken,
   //   )
   //   if (valid && !info.expired && info.expires.inSecs < 5 * 60) {
   //     !! VALIDATE IT BEFORE REFRESHING !!
@@ -86,8 +86,7 @@ export async function getAdminUserSessionOrRedirect(path = '/') {
   return authenticatedUserSession
 }
 
-
-function getPrimarySession() {
+function getAccessSession() {
   i18next.init({
     // ns: ['common', 'moduleA'],
     // defaultNS: 'moduleA',
@@ -104,7 +103,7 @@ function getPrimarySession() {
   const xGeo = JSON.parse(_headers.get('x-geo') ?? '{}')
   const ua = userAgent({ headers: _headers })
   assert(xHost, 'x-host not found in headers')
-  const primarySession: primary_session = {
+  const accessSession: access_session = {
     type: 'user',
     sessionToken: getAuthTokenCookie().sessionToken,
     app: {
@@ -112,8 +111,8 @@ function getPrimarySession() {
       pkg: 'webapp-moodlenet-nextjs',
       version: '0.1',
     },
-    connection: {
-      proto: 'http',
+    protocol: {
+      type: 'http',
       secure: xProto === 'https',
       mode: xMode,
       url: xUrl,
@@ -142,5 +141,5 @@ function getPrimarySession() {
       },
     },
   }
-  return primarySession
+  return accessSession
 }

@@ -17,7 +17,7 @@ export function core(): core_factory {
               system: {
                 async configs() {
                   await v1_0_lib.assert_authorizeSystemSession(ctx)
-                  return ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
+                  return ctx.sys_call.moodle.iam.v1_0.sec.db.getConfigs()
                 },
               },
               session: {
@@ -35,7 +35,7 @@ export function core(): core_factory {
                 async setUserRoles({ userId, roles }) {
                   const admin_user_session = await v1_0_lib.assert_authorizeAdminUserSession(ctx)
 
-                  const [done] = await ctx.sysCall.moodle.iam.v1_0.sec.db.setUserRoles({
+                  const [done] = await ctx.sys_call.moodle.iam.v1_0.sec.db.setUserRoles({
                     userId,
                     roles,
                     adminUserId: admin_user_session.user.id,
@@ -48,7 +48,7 @@ export function core(): core_factory {
 
                 async searchUsers({ textSearch }) {
                   await v1_0_lib.assert_authorizeAdminUserSession(ctx)
-                  const { users } = await ctx.sysCall.moodle.iam.v1_0.sec.db.findUsersByText({
+                  const { users } = await ctx.sys_call.moodle.iam.v1_0.sec.db.findUsersByText({
                     text: textSearch,
                   })
                   return { users }
@@ -56,7 +56,7 @@ export function core(): core_factory {
 
                 async deactivateUser({ userId, anonymize, reason }) {
                   const admin_user_session = await v1_0_lib.assert_authorizeAdminUserSession(ctx)
-                  const [done] = await ctx.sysCall.moodle.iam.v1_0.sec.db.deactivateUser({
+                  const [done] = await ctx.sys_call.moodle.iam.v1_0.sec.db.deactivateUser({
                     userId,
                     reason: {
                       type: 'adminRequest',
@@ -76,7 +76,7 @@ export function core(): core_factory {
                 async request({ signupForm, redirectUrl }) {
                   const schemas = await fetchPrimarySchemas()
                   const { displayName, email, password } = schemas.signupSchema.parse(signupForm)
-                  const [found] = await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserByEmail({
+                  const [found] = await ctx.sys_call.moodle.iam.v1_0.sec.db.getUserByEmail({
                     email,
                   })
                   if (found) {
@@ -84,15 +84,15 @@ export function core(): core_factory {
                   }
                   const {
                     configs: { tokenExpireTime },
-                  } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
+                  } = await ctx.sys_call.moodle.iam.v1_0.sec.db.getConfigs()
 
                   const { passwordHash } =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.hashPassword({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.crypto.hashPassword({
                       plainPassword: password,
                     })
 
                   const confirmEmailSession =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.signDataToken({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.crypto.signDataToken({
                       expiresIn: tokenExpireTime.signupEmailVerification,
                       data: {
                         v: '1_0',
@@ -110,7 +110,7 @@ export function core(): core_factory {
                     receiverEmail: signupForm.email,
                   })
 
-                  await ctx.sysCall.moodle.iam.v1_0.sec.email.sendNow({
+                  await ctx.sys_call.moodle.iam.v1_0.sec.email.sendNow({
                     reactBody,
                     subject: emailProps.content.subject,
                     to: signupForm.email,
@@ -123,9 +123,9 @@ export function core(): core_factory {
                     configs: {
                       roles: { newlyCreatedUserRoles },
                     },
-                  } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
+                  } = await ctx.sys_call.moodle.iam.v1_0.sec.db.getConfigs()
                   const [verified, validation] =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.validateSignedToken({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.crypto.validateSignedToken({
                       token: signupEmailVerificationToken,
                       type: 'signupRequestEmailVerification',
                     })
@@ -135,7 +135,7 @@ export function core(): core_factory {
                   }
                   const { validatedSignedTokenData } = validation
                   const [, foundSameEmailUser] =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserByEmail({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.db.getUserByEmail({
                       email: validatedSignedTokenData.email,
                     })
 
@@ -152,7 +152,7 @@ export function core(): core_factory {
                     passwordHash: validatedSignedTokenData.passwordHash,
                     lastLogin: now,
                   })
-                  const [newUserCreated] = await ctx.sysCall.moodle.iam.v1_0.sec.db.saveNewUser({
+                  const [newUserCreated] = await ctx.sys_call.moodle.iam.v1_0.sec.db.saveNewUser({
                     newUser,
                   })
                   return newUserCreated
@@ -161,14 +161,14 @@ export function core(): core_factory {
                 },
                 async login({ loginForm }) {
                   const [found, userRecord] =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserByEmail({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.db.getUserByEmail({
                       email: loginForm.email,
                     })
                   if (!(found && !userRecord.deactivated)) {
                     return [false, _never]
                   }
                   const [verified] =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.verifyUserPasswordHash({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.crypto.verifyUserPasswordHash({
                       plainPassword: loginForm.password,
                       passwordHash: userRecord.passwordHash,
                     })
@@ -193,9 +193,9 @@ export function core(): core_factory {
                 async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
                   const {
                     configs: { tokenExpireTime: userSelfDeletion },
-                  } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
+                  } = await ctx.sys_call.moodle.iam.v1_0.sec.db.getConfigs()
 
-                  const [, user] = await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserByEmail({
+                  const [, user] = await ctx.sys_call.moodle.iam.v1_0.sec.db.getUserByEmail({
                     email: declaredOwnEmail,
                   })
                   if (!user) {
@@ -203,7 +203,7 @@ export function core(): core_factory {
                   }
 
                   const resetPasswordConfirmationSession =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.signDataToken({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.crypto.signDataToken({
                       expiresIn: userSelfDeletion.resetPasswordRequest,
                       data: {
                         v: '1_0',
@@ -218,7 +218,7 @@ export function core(): core_factory {
                     resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
                     receiverEmail: user.contacts.email,
                   })
-                  await ctx.sysCall.moodle.iam.v1_0.sec.email.sendNow({
+                  await ctx.sys_call.moodle.iam.v1_0.sec.email.sendNow({
                     reactBody,
                     subject: emailProps.content.subject,
                     to: v1_0_lib.getUserNamedEmailAddress(user),
@@ -238,10 +238,10 @@ export function core(): core_factory {
                     await v1_0_lib.assert_authorizeAuthenticatedUserSession(ctx)
                   const {
                     configs: { tokenExpireTime: userSelfDeletion },
-                  } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
+                  } = await ctx.sys_call.moodle.iam.v1_0.sec.db.getConfigs()
 
                   const selfDeletionConfirmationSession =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.signDataToken({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.crypto.signDataToken({
                       expiresIn: userSelfDeletion.userSelfDeletionRequest,
                       data: {
                         v: '1_0',
@@ -256,7 +256,7 @@ export function core(): core_factory {
                     deleteAccountUrl: `${redirectUrl}?token=${selfDeletionConfirmationSession.token}`,
                     receiverEmail: authenticated_session.user.contacts.email,
                   })
-                  await ctx.sysCall.moodle.iam.v1_0.sec.email.sendNow({
+                  await ctx.sys_call.moodle.iam.v1_0.sec.email.sendNow({
                     reactBody,
                     subject: emailProps.content.subject,
                     to: v1_0_lib.getUserNamedEmailAddress(authenticated_session.user),
@@ -266,7 +266,7 @@ export function core(): core_factory {
 
                 async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
                   const [verified, validation] =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.validateSignedToken({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.crypto.validateSignedToken({
                       token: selfDeletionConfirmationToken,
                       type: 'selfDeletionRequestConfirm',
                     })
@@ -276,14 +276,14 @@ export function core(): core_factory {
                   }
                   const { validatedSignedTokenData } = validation
 
-                  const [user] = await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserById({
+                  const [user] = await ctx.sys_call.moodle.iam.v1_0.sec.db.getUserById({
                     userId: validatedSignedTokenData.userId,
                   })
                   if (!user) {
                     return [false, { reason: 'unknownUser' }]
                   }
 
-                  const [deactivated] = await ctx.sysCall.moodle.iam.v1_0.sec.db.deactivateUser({
+                  const [deactivated] = await ctx.sys_call.moodle.iam.v1_0.sec.db.deactivateUser({
                     anonymize: true,
                     reason: {
                       v: '1_0',
@@ -296,7 +296,7 @@ export function core(): core_factory {
                 },
                 async resetPassword({ resetPasswordForm: { newPassword, token } }) {
                   const [verified, validation] =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.validateSignedToken({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.crypto.validateSignedToken({
                       token,
                       type: 'resetPasswordRequest',
                     })
@@ -307,17 +307,17 @@ export function core(): core_factory {
 
                   const { validatedSignedTokenData } = validation
                   const [found, userRecord] =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserByEmail({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.db.getUserByEmail({
                       email: validatedSignedTokenData.email,
                     })
                   if (!found) {
                     return [false, { reason: 'userNotFound' }]
                   }
                   const { passwordHash } =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.hashPassword({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.crypto.hashPassword({
                       plainPassword: newPassword,
                     })
-                  const [pwdChanged] = await ctx.sysCall.moodle.iam.v1_0.sec.db.setUserPassword({
+                  const [pwdChanged] = await ctx.sys_call.moodle.iam.v1_0.sec.db.setUserPassword({
                     newPasswordHash: passwordHash,
                     userId: userRecord.id,
                   })
@@ -328,14 +328,14 @@ export function core(): core_factory {
                   const authenticated_session =
                     await v1_0_lib.assert_authorizeAuthenticatedUserSession(ctx)
 
-                  const [, user] = await ctx.sysCall.moodle.iam.v1_0.sec.db.getUserById({
+                  const [, user] = await ctx.sys_call.moodle.iam.v1_0.sec.db.getUserById({
                     userId: authenticated_session.user.id,
                   })
                   if (!user) {
                     return [false, { reason: 'unknown' }]
                   }
                   const [currentPasswordVerified] =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.verifyUserPasswordHash({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.crypto.verifyUserPasswordHash({
                       plainPassword: currentPassword,
                       passwordHash: user.passwordHash,
                     })
@@ -343,10 +343,10 @@ export function core(): core_factory {
                     return [false, { reason: 'wrongCurrentPassword' }]
                   }
                   const { passwordHash } =
-                    await ctx.sysCall.moodle.iam.v1_0.sec.crypto.hashPassword({
+                    await ctx.sys_call.moodle.iam.v1_0.sec.crypto.hashPassword({
                       plainPassword: newPassword,
                     })
-                  await ctx.sysCall.moodle.iam.v1_0.sec.db.setUserPassword({
+                  await ctx.sys_call.moodle.iam.v1_0.sec.db.setUserPassword({
                     newPasswordHash: passwordHash,
                     userId: authenticated_session.user.id,
                   })
@@ -378,7 +378,7 @@ export function core(): core_factory {
     async function fetchPrimarySchemas() {
       const {
         configs: { iamPrimaryMsgSchemaConfigs },
-      } = await ctx.sysCall.moodle.iam.v1_0.sec.db.getConfigs()
+      } = await ctx.sys_call.moodle.iam.v1_0.sec.db.getConfigs()
       return v1_0_lib.getIamPrimarySchemas(iamPrimaryMsgSchemaConfigs)
     }
   }

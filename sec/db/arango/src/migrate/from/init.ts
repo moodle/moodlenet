@@ -2,12 +2,13 @@ import { iam_default_configs } from '@moodle/mod-iam/v1_0/setup'
 import { net_webapp_nextjs_default_configs } from '@moodle/mod-net-webapp-nextjs/v1_0/setup'
 import { net_default_configs } from '@moodle/mod-net/v1_0/setup'
 import { org_default_configs } from '@moodle/mod-org/v1_0/setup'
-import { v1_0 } from '../..'
-import { saveModConfigs } from '../../v1_0/lib/modules'
+import { saveModConfigs } from '../../lib/modules'
+import { db_struct } from '../../db-structure'
+import { Migration_Record } from '../types'
 // import { removePropOnInsert } from '../lib/id'
 
 export const VERSION = 'v0_1'
-export async function migrate({ db_struct }: { db_struct: v1_0.db_struct }) {
+export async function migrate({ db_struct }: { db_struct: db_struct }) {
   // create databases
 
   await db_struct.sys_db.createDatabase(db_struct.data.db.name)
@@ -26,33 +27,32 @@ export async function migrate({ db_struct }: { db_struct: v1_0.db_struct }) {
     unique: true,
   })
   // data
-  //  await db_struct_v1_0.data.coll.xxx.create({})
+  //  await db_struct.data.coll.xxx.create({})
 
   await Promise.all([
     saveModConfigs({
-      db_struct_v1_0: db_struct,
+      db_struct,
       configs: iam_default_configs,
       mod_id: { ns: 'moodle', mod: 'iam', version: 'v1_0' },
     }),
     saveModConfigs({
-      db_struct_v1_0: db_struct,
+      db_struct,
       configs: net_default_configs,
       mod_id: { ns: 'moodle', mod: 'net', version: 'v1_0' },
     }),
     saveModConfigs({
-      db_struct_v1_0: db_struct,
+      db_struct,
       configs: net_webapp_nextjs_default_configs,
       mod_id: { ns: 'moodle', mod: 'netWebappNextjs', version: 'v1_0' },
     }),
     saveModConfigs({
-      db_struct_v1_0: db_struct,
+      db_struct,
       configs: org_default_configs,
       mod_id: { ns: 'moodle', mod: 'org', version: 'v1_0' },
     }),
   ])
   // bump_version
-  const migrationDoc: v1_0.Migration = {
-    v: 'v1_0',
+  const migrationDoc: Migration_Record = {
     previous: 'null',
     current: VERSION,
     date: new Date().toISOString(),

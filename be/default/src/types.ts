@@ -1,6 +1,6 @@
-import { DomainDeployments, primary_session } from '@moodle/lib-ddd'
+import { DomainDeployments, access_session } from '@moodle/lib-ddd'
 import type { CryptoDefaultEnv } from '@moodle/sec-crypto-default'
-import type { v1_0 as arango_v1_0 } from '@moodle/sec-db-arango'
+import type { ArangoDbSecEnv } from '@moodle/sec-db-arango'
 import { DbMigrateConfig } from '@moodle/sec-db-arango/migrate'
 import type { NodemailerSecEnv } from '@moodle/sec-email-nodemailer'
 import type dotenv from 'dotenv'
@@ -16,7 +16,7 @@ export type migrate_fn = (_: {
 }) => Promise<migration_status>
 
 export type EnvProvider = (_: {
-  primary_session: primary_session
+  access_session: access_session
   migrate: migrate_fn
   loadDotEnv: dotEnvLoader
 }) => EnvProviderResult
@@ -29,7 +29,7 @@ export interface EnvResult {
 }
 
 export interface Env {
-  arango_db: arango_v1_0.ArangoDbSecEnv
+  arango_db: ArangoDbSecEnv
   crypto: CryptoDefaultEnv
   nodemailer: NodemailerSecEnv
   deployments: DomainDeployments

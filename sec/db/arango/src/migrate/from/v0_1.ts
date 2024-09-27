@@ -1,7 +1,8 @@
-import { v1_0 } from '../..'
+import { db_struct } from '../../db-structure'
+import { Migration_Record } from '../types'
 
 export const VERSION = 'v0_2'
-export async function migrate({ db_struct }: { db_struct: v1_0.db_struct }) {
+export async function migrate({ db_struct }: { db_struct: db_struct }) {
   await db_struct.iam.db.query(
     `
 FOR user in @@userCollection
@@ -13,8 +14,7 @@ FOR user in @@userCollection
     },
   )
   // bump_version
-  const migrationDoc: v1_0.Migration = {
-    v: 'v1_0',
+  const migrationDoc: Migration_Record = {
     previous: 'v0_1',
     current: VERSION,
     date: new Date().toISOString(),

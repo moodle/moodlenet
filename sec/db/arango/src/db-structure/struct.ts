@@ -1,5 +1,5 @@
 import { Database } from 'arangojs'
-import { userDocument } from '../../sec/moodle/db-arango-iam-lib/types'
+import { userDocument } from '../sec/moodle/db-arango-iam-lib/types'
 import { database_connections } from './types'
 
 export function getDbStruct(database_connections: database_connections) {

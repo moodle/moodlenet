@@ -5,7 +5,7 @@ import { CoreContext } from '@moodle/lib-ddd'
 export type ResetPasswordContentEmailProps = {
   receiverEmail: string
   resetPasswordUrl: string
-  ctx: Pick<CoreContext, 'sysCall'>
+  ctx: Pick<CoreContext, 'sys_call'>
 }
 
 export async function resetPasswordEmail({

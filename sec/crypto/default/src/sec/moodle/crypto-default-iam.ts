@@ -1,5 +1,5 @@
 import { sec_factory, sec_impl } from '@moodle/lib-ddd'
-import { joseEnv, joseVerify, sign } from '@moodle/lib-jwt-jose'
+import { joseOpts, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import {
   _never,
   signed_token_payload_data as signed_token_with_payload_data,
@@ -17,10 +17,10 @@ export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 // }
 
 export function iam({
-  joseEnv,
+  joseOpts,
   argonOpts,
 }: {
-  joseEnv: joseEnv
+  joseOpts: joseOpts
   argonOpts: ArgonPwdHashOpts
 }): sec_factory {
   return (/* ctx */) => {
@@ -46,7 +46,7 @@ export function iam({
                   // FIXME : CHECKS AUDIENCE ETC >>>
                   const verifyResult = await joseVerify<
                     signed_token_with_payload_data<d_u__d<iamSignTokenData, 'type', typeof type>>
-                  >(joseEnv, token)
+                  >(joseOpts, token)
                   if (!verifyResult) {
                     return [false, { reason: 'invalid' }]
                   }
@@ -61,7 +61,7 @@ export function iam({
                   const { expireDate, token /* , notBeforeDate */ } = await sign<
                     signed_token_with_payload_data<iamSignTokenData>
                   >({
-                    joseEnv,
+                    joseOpts,
                     payload: { [SIGNED_TOKEN_PAYLOAD_PROP]: data },
                     expiresIn /*,stdClaims:{} ,opts:{} */,
                   })

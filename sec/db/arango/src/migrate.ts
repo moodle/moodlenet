@@ -1,10 +1,9 @@
 import { email_address } from '@moodle/lib-types'
 import { createNewUserRecordData } from '@moodle/mod-iam/v1_0/lib'
 import assert from 'assert'
-import { v1_0 } from '.'
 import * as migrations from './migrate/from'
 import { userRecord2userDocument } from './sec/moodle/db-arango-iam-lib/mappings'
-import { ArangoDbSecEnv } from './v1_0'
+import { ArangoDbSecEnv, db_struct, getDbStruct } from './db-structure'
 
 const TARGET_V = migrations.v0_1.VERSION
 
@@ -16,7 +15,7 @@ export async function migrate(
   { database_connections }: ArangoDbSecEnv,
   dbMigrateConfig: DbMigrateConfig,
 ): Promise<string> {
-  const db_struct = v1_0.getDbStruct(database_connections)
+  const db_struct = getDbStruct(database_connections)
   const isInit = !(await db_struct.mng.db.exists())
 
   if (isInit) {
@@ -46,7 +45,7 @@ export async function migrate(
   })
 }
 
-export async function upgrade({ db_struct }: { db_struct: v1_0.db_struct }): Promise<string> {
+export async function upgrade({ db_struct }: { db_struct: db_struct }): Promise<string> {
   const from_v: keyof typeof migrations | typeof TARGET_V =
     (await db_struct.mng.coll.migrations.document('latest', { graceful: true }))?.current ?? 'init'
 
