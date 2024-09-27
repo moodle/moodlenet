@@ -31,7 +31,7 @@ const loadDotEnv: dotEnvLoader = options => {
 loadDotEnv()
 const MOODLE_ENV_PROVIDER_MODULE =
   process.env.MOODLE_ENV_PROVIDER_MODULE ?? './default-env-provider.js'
-const MOODLE_HTTP_BINDER_PORT = parseInt(process.env.MOODLE_HTTP_BINDER_PORT ?? '9000')
+const MOODLE_HTTP_BINDER_PORT = parseInt(process.env.MOODLE_HTTP_BINDER_PORT ?? '8000')
 const MOODLE_HTTP_BINDER_BASEURL = process.env.MOODLE_HTTP_BINDER_BASEURL ?? '/'
 
 http_bind.server({

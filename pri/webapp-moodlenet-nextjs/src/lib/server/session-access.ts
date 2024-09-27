@@ -17,7 +17,7 @@ const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRI
 const MOODLE_NET_NEXTJS_APP_NAME =
   process.env.MOODLE_NET_NEXTJS_APP_NAME ?? 'webapp-moodlenet-nextjs'
 
-const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:9000'
+const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
 export function priAccess(): Modules {
   const trnspClient = http_bind.client()
