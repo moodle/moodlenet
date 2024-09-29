@@ -13,13 +13,13 @@ import { readFileSync } from 'fs'
 import * as path from 'path'
 import { inspect } from 'util'
 import { object } from 'zod'
-import { Configuration, Configurator } from './types'
+import { Configuration, configurator } from './types'
 // import * as argon2 from 'argon2'
 
 const cache: map<Promise<Configuration>> = {}
 const MOODLE_DOMAINS_ENV_HOME = process.env.MOODLE_DOMAINS_ENV_HOME ?? '.moodle.env.home'
 
-export const default_configurator: Configurator = async ({ access_session }) => {
+export const default_configurator: configurator = async ({ access_session }) => {
   const normalized_domain = access_session.domain.replace(/:/g, '_')
   if (!cache[normalized_domain]) {
     cache[normalized_domain] = new Promise<Configuration>(resolveConfiguration => {

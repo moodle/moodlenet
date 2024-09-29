@@ -10,7 +10,7 @@ export type ConfiguratorDeps = {
   access_session: access_session
 }
 
-export type Configurator = (_: ConfiguratorDeps) => Promise<Configuration>
+export type configurator = (_: ConfiguratorDeps) => Promise<Configuration>
 export interface Configuration {
   core_factories: core_factory[]
   sec_factories: sec_factory[]

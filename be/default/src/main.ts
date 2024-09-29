@@ -1,28 +1,32 @@
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
-import { Binder, Configurator, session_deployer } from './types.js'
+import { Binder, configurator, session_deployer } from './types.js'
+import { _maybe } from '@moodle/lib-types'
 dotenvExpand(dotenv.config())
 
-const binderPromise = process.env.MOODLE_BINDER_MODULE
-  ? import(process.env.MOODLE_BINDER_MODULE)
-  : import('./default-binder.js')
-
-binderPromise.then(({ default: { default: binder } }: { default: { default: Binder } }) => {
+optimport<Binder>(process.env.MOODLE_BINDER_MODULE, './default-binder.js').then(binder => {
   binder({
     domain_session_access: async ({ access_session, domain_msg }) => {
-      const configurator: Configurator = (
-        process.env.MOODLE_CONFIGURATOR_MODULE
-          ? await import(process.env.MOODLE_CONFIGURATOR_MODULE)
-          : await import('./default-configurator.js')
-      ).default.default
+      const configurator = await optimport<configurator>(
+        process.env.MOODLE_CONFIGURATOR_MODULE,
+        './default-configurator.js',
+      )
       const { core_factories, sec_factories } = await configurator({ access_session })
 
-      const session_deployer: session_deployer = (
-        process.env.MOODLE_DEPLOYMENT_MODULE
-          ? await import(process.env.MOODLE_DEPLOYMENT_MODULE)
-          : await import('./default-session-deployment.js')
-      ).default.default
+      const session_deployer = await optimport<session_deployer>(
+        process.env.MOODLE_DEPLOYMENT_MODULE,
+        './default-session-deployment.js',
+      )
       return session_deployer({ access_session, core_factories, domain_msg, sec_factories })
     },
   })
 })
+
+async function optimport<T>(
+  optional_module_path: _maybe<string>,
+  default_module_path: string,
+): Promise<T> {
+  return (
+    optional_module_path ? await import(optional_module_path) : await import(default_module_path)
+  ).default.default
+}
