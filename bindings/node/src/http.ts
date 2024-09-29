@@ -1,8 +1,13 @@
-import { ErrorXxx, isCodeXxx, status_code_xxx } from '@moodle/lib-ddd'
+import {
+  domain_session_access,
+  domain_session_access_deps,
+  ErrorXxx,
+  isCodeXxx,
+  status_code_xxx,
+} from '@moodle/lib-ddd'
 import { _any, map } from '@moodle/lib-types'
 import express from 'express'
 import { Agent, fetch } from 'undici'
-import { TransportData } from './types'
 
 export function client(agent_opts?: Agent.Options) {
   const dispatcher = new Agent({
@@ -23,7 +28,7 @@ export function client(agent_opts?: Agent.Options) {
     headers: map<string, string>
   }
   return async function request(
-    transport_data: TransportData,
+    domain_session_access_deps: domain_session_access_deps,
     req_http_target: string | req_http_target,
     _opts?: Partial<req_opts>,
   ) {
@@ -35,7 +40,7 @@ export function client(agent_opts?: Agent.Options) {
             req_http_target.basePath,
           )
 
-    const body = _serial(transport_data)
+    const body = _serial(domain_session_access_deps)
     const reply = await fetch(url, {
       method: 'POST',
       body,
@@ -64,20 +69,18 @@ export function client(agent_opts?: Agent.Options) {
   }
 }
 
-export type requestHandler = (_: TransportData) => Promise<_any>
-
 type srv_cfg = {
-  request: requestHandler
+  domain_session_access: domain_session_access
   port: number
   baseUrl: string
 }
-export async function server({ request, port, baseUrl }: srv_cfg) {
+export async function server({ domain_session_access: request, port, baseUrl }: srv_cfg) {
   const app = express()
   app.use(express.text({ defaultCharset: 'utf-8' }))
   app.post(baseUrl, async (req, res) => {
     res.setHeader('Content-Type', PROTOCOL_CONTENT_TYPE)
-    const transportData = _parse(req.body)
-    const reply = await request(transportData)
+    const domain_session_access_deps = _parse(req.body)
+    const reply = await request(domain_session_access_deps)
       .catch(e => {
         console.error(e)
         throw e

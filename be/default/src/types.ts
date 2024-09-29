@@ -1,37 +1,28 @@
-import { DomainDeployments, access_session } from '@moodle/lib-ddd'
-import type { CryptoDefaultEnv } from '@moodle/sec-crypto-default'
-import type { ArangoDbSecEnv } from '@moodle/sec-db-arango'
-import { DbMigrateConfig } from '@moodle/sec-db-arango/migrate'
-import type { NodemailerSecEnv } from '@moodle/sec-email-nodemailer'
-import type dotenv from 'dotenv'
-import type { DotenvExpandOutput } from 'dotenv-expand'
+import {
+  access_session,
+  core_factory,
+  domain_msg,
+  domain_session_access,
+  sec_factory,
+} from '@moodle/lib-ddd'
 
-export type EnvProviderResult = EnvResult | Promise<EnvResult>
-
-export type migrate_fn = (_: {
-  env: Env
-  configs: {
-    db: DbMigrateConfig
-  }
-}) => Promise<migration_status>
-
-export type EnvProvider = (_: {
+export type ConfiguratorDeps = {
   access_session: access_session
-  migrate: migrate_fn
-  loadDotEnv: dotEnvLoader
-}) => EnvProviderResult
-
-export type dotEnvLoader = (options?: dotenv.DotenvConfigOptions) => DotenvExpandOutput
-
-export interface EnvResult {
-  env: Env
-  migration_status: Promise<migration_status>
 }
 
-export interface Env {
-  arango_db: ArangoDbSecEnv
-  crypto: CryptoDefaultEnv
-  nodemailer: NodemailerSecEnv
-  deployments: DomainDeployments
+export type Configurator = (_: ConfiguratorDeps) => Promise<Configuration>
+export interface Configuration {
+  core_factories: core_factory[]
+  sec_factories: sec_factory[]
 }
-type migration_status = unknown // d_u<{done:unknown}, 'status'>
+export type session_deployer = (_: SessionDeploymentDeps) => Promise<any>
+export type SessionDeploymentDeps = {
+  access_session: access_session
+  domain_msg: domain_msg
+  core_factories: core_factory[]
+  sec_factories: sec_factory[]
+}
+
+export type BinderDeps = { domain_session_access: domain_session_access }
+
+export type Binder = (_: BinderDeps) => void
