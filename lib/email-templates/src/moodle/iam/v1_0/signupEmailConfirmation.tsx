@@ -1,6 +1,6 @@
 import { CoreContext } from '@moodle/lib-ddd'
 import React from 'react'
-import * as email_org_v1_0 from '../../org/v1_0'
+import * as email_org from '../../org'
 
 export type SignupEmailConfirmationProps = {
   ctx: Pick<CoreContext, 'sys_call'>
@@ -13,7 +13,7 @@ export async function signupEmailConfirmationEmail({
   receiverEmail,
   activateAccountUrl,
 }: SignupEmailConfirmationProps) {
-  const senderInfo = await email_org_v1_0.getSenderInfo(ctx)
+  const senderInfo = await email_org.getSenderInfo(ctx)
   const title = `Welcome to ${senderInfo.name} 🎉`
 
   const body = (
@@ -24,7 +24,7 @@ export async function signupEmailConfirmationEmail({
     </React.Fragment>
   )
 
-  return email_org_v1_0.layoutEmail({
+  return email_org.layoutEmail({
     senderInfo: senderInfo,
     content: {
       body,

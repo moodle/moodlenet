@@ -1,8 +1,8 @@
 import { core_factory } from '@moodle/lib-ddd'
 import { _never } from '@moodle/lib-types'
-import { assert_authorizeSystemSession } from '@moodle/mod-iam/v1_0/lib'
+import { assert_authorizeSystemSession } from '@moodle/mod-iam/lib'
 
-export * as v1_0 from './v1_0/types'
+export { Configs, OrgInfo, orgInfoForm, OrgPrimaryMsgSchemaConfigs } from './types'
 
 export function core(): core_factory {
   return ctx => {
@@ -14,12 +14,12 @@ export function core(): core_factory {
               system: {
                 async configs() {
                   await assert_authorizeSystemSession(ctx)
-                  return ctx.sys_call.moodle.org.v1_0.sec.db.getConfigs()
+                  return ctx.sys_call.moodle.org.sec.db.getConfigs()
                 },
               },
               admin: {
                 async updatePartialOrgInfo({ partialInfo }) {
-                  const [done] = await ctx.sys_call.moodle.org.v1_0.sec.db.updatePartialConfigs({
+                  const [done] = await ctx.sys_call.moodle.org.sec.db.updatePartialConfigs({
                     partialConfigs: { info: partialInfo },
                   })
                   return [done, _never]

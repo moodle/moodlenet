@@ -2,7 +2,7 @@ import { _any, deep_partial } from '@moodle/lib-types'
 import { inspect } from 'util'
 import {
   access_session,
-  composeImpl,
+  composeDomains,
   concrete,
   core_factory,
   CoreContext,
@@ -89,7 +89,7 @@ export const domain_session_access_provider: domain_session_access_provider = ({
       const core_impls = await Promise.all(
         core_factories.map(core_factory => core_factory(coreCtx)),
       )
-      const core = composeImpl(...core_impls)
+      const core = composeDomains(...core_impls)
       return dispatch(core, current_domain_msg)
     } else if (current_domain_msg.layer === 'sec') {
       if (access_session.type !== 'system') {
@@ -107,7 +107,7 @@ export const domain_session_access_provider: domain_session_access_provider = ({
       const sec_impls = await Promise.all(
         sec_factories.map(sec_factory => sec_factory(secondaryCtx)),
       )
-      const sec = composeImpl(...sec_impls)
+      const sec = composeDomains(...sec_impls)
       return dispatch(sec, current_domain_msg)
     } else if (current_domain_msg.layer === 'evt') {
       if (access_session.type !== 'system') {

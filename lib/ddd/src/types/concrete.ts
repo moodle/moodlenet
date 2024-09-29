@@ -1,6 +1,5 @@
 import { _any, deep_partial, deep_required } from '@moodle/lib-types'
 import { merge } from 'lodash'
-import { Modules } from '../domain'
 import { any_endpoint, domain_msg, layers, mod_id } from './mod'
 import { access_session } from './access-session'
 
@@ -42,20 +41,7 @@ export type layer_contexts = {
   sec: SecondaryContext
 }
 
-export type concrete<_layer extends keyof layers> = {
-  [ns in keyof Modules]: {
-    [mod_name in keyof Modules[ns]]: {
-      [version in keyof Modules[ns][mod_name]]: {
-        [_this_layer in _layer]: Modules[ns][mod_name][version] extends infer _layers
-          ? _layers extends layers
-            ? _layers[_this_layer]
-            : never
-          : never
-      }
-    }
-  }
-}
-export function composeImpl(...impls: impl<_any>[]): impl<_any> {
+export function composeDomains(...impls: impl<_any>[]): impl<_any> {
   return merge({}, ...impls)
 }
 

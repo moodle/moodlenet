@@ -2,7 +2,7 @@ import { CoreContext, ErrorXxx, access_session } from '@moodle/lib-ddd'
 import { d_u__d, ok_ko, signed_expire_token } from '@moodle/lib-types'
 import assert from 'assert'
 import { sessionUserData, user_id, user_role, user_session } from '../types'
-import { hasUserSessionRole, userRecord2SessionUserData } from './user-session'
+import { hasUserSessionRole, user_record2SessionUserData } from './user-session'
 
 // System Session
 export function isSystemSession(
@@ -26,7 +26,7 @@ export async function validateAnyUserSession(
   if (!token) {
     return guest_session
   }
-  const [valid, validation] = await ctx.sys_call.moodle.iam.v1_0.sec.crypto.validateSignedToken({
+  const [valid, validation] = await ctx.sys_call.moodle.iam.sec.crypto.validateSignedToken({
     token,
     type: 'userSession',
   })
@@ -144,12 +144,12 @@ export async function generateSessionForUserId(
   ctx: Pick<CoreContext, 'sys_call'>,
   userId: user_id,
 ): Promise<ok_ko<signed_expire_token, { userNotFound: unknown }>> {
-  const mySec = ctx.sys_call.moodle.iam.v1_0.sec
-  const [, userRecord] = await mySec.db.getUserById({ userId })
-  if (!userRecord) {
+  const mySec = ctx.sys_call.moodle.iam.sec
+  const [, user_record] = await mySec.db.getUserById({ userId })
+  if (!user_record) {
     return [false, { reason: 'userNotFound' }]
   }
-  const session = await generateSessionForUserData(ctx, userRecord2SessionUserData(userRecord))
+  const session = await generateSessionForUserData(ctx, user_record2SessionUserData(user_record))
   return [true, session]
 }
 
@@ -159,8 +159,8 @@ export async function generateSessionForUserData(
 ): Promise<signed_expire_token> {
   const {
     configs: { tokenExpireTime },
-  } = await ctx.sys_call.moodle.iam.v1_0.sec.db.getConfigs()
-  const session = await ctx.sys_call.moodle.iam.v1_0.sec.crypto.signDataToken({
+  } = await ctx.sys_call.moodle.iam.sec.db.getConfigs()
+  const session = await ctx.sys_call.moodle.iam.sec.crypto.signDataToken({
     data: {
       v: '1_0',
       type: 'userSession',

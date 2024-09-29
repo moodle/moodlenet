@@ -103,7 +103,7 @@ export async function getSenderInfo({
 }: Pick<CoreContext, 'sys_call'>): Promise<SenderInfo> {
   const {
     configs: { info: orgInfo },
-  } = await sys_call.moodle.org.v1_0.pri.system.configs()
+  } = await sys_call.moodle.org.pri.system.configs()
   const senderInfo: SenderInfo = {
     copyright: orgInfo.copyright,
     logo: await getFileUrl(orgInfo.logo),

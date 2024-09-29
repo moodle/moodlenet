@@ -1,5 +1,5 @@
 import { _any } from '@moodle/lib-types'
-import { Modules } from '../../domain'
+import { Modules_v0_1 } from '../../domain'
 import { domain_msg, layer_contexts } from '../../types'
 
 export const _inspect_symbol = Symbol('moduleAccessProxy inspect')
@@ -12,13 +12,15 @@ export type domain_access = (_: AccessPayload) => unknown
 
 //export type listener<ev extends event_layer>=()=>unknown
 export interface AccessProxy {
-  mod: Modules
+  mod: Modules_v0_1
 }
 export interface DomainProxyCtrl {
   access: domain_access
 }
-function isFullLength(path: string[]): path is [string, string, string, string, string, string] {
-  return path.length == 6
+function isFullLength(
+  path: string[],
+): path is [string, string, string, string, string, string, string] {
+  return path.length == 7
 }
 export function createAcccessProxy(ctrl: DomainProxyCtrl): AccessProxy {
   const mod = mod_access_proxy([])
@@ -28,9 +30,9 @@ export function createAcccessProxy(ctrl: DomainProxyCtrl): AccessProxy {
     if (isFullLength(path)) {
       return function call(payload: _any) {
         const domain_msg: domain_msg = {
-          ns: path[0],
-          mod: path[1],
-          version: path[2],
+          version: path[0],
+          ns: path[1],
+          mod: path[2],
           layer: path[3] as keyof layer_contexts,
           channel: path[4],
           port: path[5],

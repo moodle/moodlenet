@@ -5,8 +5,7 @@ import { sitepaths } from '../../common/utils/sitepaths'
 import { priAccess } from '../session-access'
 
 export async function srvSiteUrls() {
-  const webappDeploymentInfo =
-    await priAccess().moodle.netWebappNextjs.v1_0.pri.webapp.deploymentInfo()
+  const webappDeploymentInfo = await priAccess().moodle.netWebappNextjs.pri.webapp.deploymentInfo()
   const baseUrl = getDeploymentUrl(webappDeploymentInfo)
 
   return {

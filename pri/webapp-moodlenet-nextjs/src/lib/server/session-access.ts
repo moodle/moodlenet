@@ -1,7 +1,7 @@
 import { http_bind } from '@moodle/bindings-node'
 import { createAcccessProxy, Modules, access_session } from '@moodle/lib-ddd'
 import type {} from '@moodle/mod-iam'
-import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/mod-iam/v1_0/lib'
+import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/mod-iam/lib'
 import type {} from '@moodle/mod-net'
 import type {} from '@moodle/mod-net-webapp-nextjs'
 import type {} from '@moodle/mod-org'
@@ -42,12 +42,12 @@ export function priAccess(): Modules {
   // [Error]: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
   //
   // if (accessSession.sessionToken) {
-  //   const [valid, info] = iam_v1_0.noValidationParseUserSessionToken(
+  //   const [valid, info] = iam.noValidationParseUserSessionToken(
   //     accessSession.sessionToken,
   //   )
   //   if (valid && !info.expired && info.expires.inSecs < 5 * 60) {
   //     !! VALIDATE IT BEFORE REFRESHING !!
-  //     ap.mod.moodle.iam_v1_0_lib.pri.session
+  //     ap.mod.moodle.iam_lib.pri.session
   //       .generateSession({ userId: info.userData.id })
   //       .then(([generated, session]) => {
   //         if (!generated) {
@@ -62,7 +62,7 @@ export function priAccess(): Modules {
 }
 
 export async function getUserSession() {
-  const { userSession } = await priAccess().moodle.iam.v1_0.pri.session.getCurrentUserSession()
+  const { userSession } = await priAccess().moodle.iam.pri.session.getCurrentUserSession()
   return userSession
 }
 

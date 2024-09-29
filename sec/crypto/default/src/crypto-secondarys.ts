@@ -1,4 +1,4 @@
-import { composeImpl, sec_factory } from '@moodle/lib-ddd'
+import { composeDomains, sec_factory } from '@moodle/lib-ddd'
 import { joseOpts } from '@moodle/lib-jwt-jose'
 import { ArgonPwdHashOpts, iam } from './sec/moodle'
 
@@ -12,6 +12,6 @@ export function get_default_crypto_secondarys_factory({
   argonOpts,
 }: CryptoDefaultEnv): sec_factory {
   return async function factory(ctx) {
-    return composeImpl(await iam({ joseOpts, argonOpts })(ctx))
+    return composeDomains(await iam({ joseOpts, argonOpts })(ctx))
   }
 }

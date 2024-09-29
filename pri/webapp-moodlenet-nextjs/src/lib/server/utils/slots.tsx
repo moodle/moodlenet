@@ -1,5 +1,5 @@
 import { _any, filterOutFalsies } from '@moodle/lib-types'
-import { layoutSlotItem } from '@moodle/mod-net-webapp-nextjs/v1_0/types'
+import { layoutSlotItem } from '@moodle/mod-net-webapp-nextjs/types'
 import { PropsWithChildren, ReactElement } from 'react'
 import { clientSlotItem } from '../../common/types'
 // export type layoutPropsWithChildren = PropsWithChildren<map<ReactElement>>

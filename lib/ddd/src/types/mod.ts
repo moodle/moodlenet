@@ -2,11 +2,7 @@ import { _any, map } from '@moodle/lib-types'
 import { layer_contexts } from './concrete'
 
 export type mod_version = string
-export type mod<_mod extends module> = _mod
-export type module = {
-  // name: string
-  [version: mod_version]: layers
-}
+export type mod<_mod_layers extends layers> = _mod_layers
 
 export type layers = {
   pri: map<channels<core_endpoint>>

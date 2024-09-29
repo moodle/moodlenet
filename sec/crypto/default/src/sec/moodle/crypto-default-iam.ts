@@ -6,7 +6,7 @@ import {
   SIGNED_TOKEN_PAYLOAD_PROP,
   d_u__d,
 } from '@moodle/lib-types'
-import { iamSignTokenData } from '@moodle/mod-iam/v1_0/types'
+import { iamSignTokenData } from '@moodle/mod-iam/types'
 import * as argon2 from 'argon2'
 export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
 // ArgonPwdHashOpts : {

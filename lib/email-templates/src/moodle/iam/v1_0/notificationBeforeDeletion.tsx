@@ -1,6 +1,6 @@
 import { CoreContext } from '@moodle/lib-ddd'
 import React from 'react'
-import * as email_org_v1_0 from '../../org/v1_0'
+import * as email_org from '../../org'
 
 export type InactivityDeletionNotificationEmailProps = {
   ctx: Pick<CoreContext, 'sys_call'>
@@ -17,7 +17,7 @@ export async function notificationBeforeDeletionForInactivityEmail({
   userName,
   daysBeforeDeletion,
 }: InactivityDeletionNotificationEmailProps) {
-  const senderInfo = await email_org_v1_0.getSenderInfo(ctx)
+  const senderInfo = await email_org.getSenderInfo(ctx)
   const title = `${userName} we are missing you at ${senderInfo.name}`
 
   const body = (
@@ -34,7 +34,7 @@ export async function notificationBeforeDeletionForInactivityEmail({
     </div>
   )
 
-  return email_org_v1_0.layoutEmail({
+  return email_org.layoutEmail({
     senderInfo,
     content: {
       body,

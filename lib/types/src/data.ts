@@ -12,6 +12,7 @@ import {
 } from 'zod'
 import { _any, map } from './map'
 
+export type _maybe<t> = t | _nullish
 export type _nullish = undefined | null
 export type _falsy = false | _nullish
 export const _never = void 0 as never

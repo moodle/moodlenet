@@ -1,7 +1,7 @@
-import { getMoodleNetPrimarySchemas } from '@moodle/mod-net/v1_0/lib'
-import { MoodleNetPrimaryMsgSchemaConfigs } from '@moodle/mod-net/v1_0/types'
-import { getOrgPrimarySchemas } from '@moodle/mod-org/v1_0/lib'
-import { OrgPrimaryMsgSchemaConfigs } from '@moodle/mod-org/v1_0/types'
+import { getMoodleNetPrimarySchemas } from '@moodle/mod-net/lib'
+import { MoodleNetPrimaryMsgSchemaConfigs } from '@moodle/mod-net/types'
+import { getOrgPrimarySchemas } from '@moodle/mod-org/lib'
+import { OrgPrimaryMsgSchemaConfigs } from '@moodle/mod-org/types'
 
 export interface MakeAdminGeneralSchemaDeps {
   moodleNetSchemaConfigs: MoodleNetPrimaryMsgSchemaConfigs

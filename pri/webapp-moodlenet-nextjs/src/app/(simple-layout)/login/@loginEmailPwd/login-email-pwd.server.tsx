@@ -1,6 +1,6 @@
 'use server'
 
-import { getIamPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
+import { getIamPrimarySchemas } from '@moodle/mod-iam/lib'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
@@ -13,7 +13,7 @@ import { actionClient } from '../../../../lib/server/safe-action'
 import { priAccess } from '../../../../lib/server/session-access'
 
 export async function getLoginSchema() {
-  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.v1_0.pri.schemaConfigs.iam()
+  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.pri.schemaConfigs.iam()
   const { loginSchema } = await getIamPrimarySchemas(iamSchemaConfigs)
   return loginSchema
 }
@@ -29,7 +29,7 @@ export const loginAction = actionClient
 
     const redirectUrl = searchRedirectPath || sitepaths().pages.landing
 
-    const [loginSuccess, loginResponse] = await priAccess().moodle.iam.v1_0.pri.access.login({
+    const [loginSuccess, loginResponse] = await priAccess().moodle.iam.pri.access.login({
       loginForm,
     })
     if (!loginSuccess) {

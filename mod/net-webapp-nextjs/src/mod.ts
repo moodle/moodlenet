@@ -1,41 +1,45 @@
-import type * as iam_v1_0 from '@moodle/mod-iam/v1_0/types'
-import type * as net_v1_0 from '@moodle/mod-net/v1_0/types'
-import type * as org_v1_0 from '@moodle/mod-org/v1_0/types'
-import type * as v1_0 from './v1_0/types'
+import type * as iam from '@moodle/mod-iam/types'
+import type * as net from '@moodle/mod-net/types'
+import type * as org from '@moodle/mod-org/types'
+import type { Configs, Layouts } from './types'
 
-import { mod, DeploymentInfo } from '@moodle/lib-ddd'
-import { _nullish } from '@moodle/lib-types'
+import { DeploymentInfo } from '@moodle/lib-ddd'
 
 declare module '@moodle/lib-ddd' {
-  export interface MoodleMods {
-    netWebappNextjs: moodle_net_webapp_nextjs_mod
+  export interface Domain {
+    primary: {
+      'v5.0': {
+        moodle: {
+          netWebappNextjs: {
+            schemaConfigs: {
+              iam(): Promise<{ iamSchemaConfigs: iam.IamPrimaryMsgSchemaConfigs }>
+              moodleNet(): Promise<{ moodleNetSchemaConfigs: net.MoodleNetPrimaryMsgSchemaConfigs }>
+              org(): Promise<{ orgSchemaConfigs: org.OrgPrimaryMsgSchemaConfigs }>
+            }
+            webapp: {
+              layouts(): Promise<Layouts>
+              deploymentInfo(): Promise<Deploymen!tInfo>
+            }
+            moodlenet: {
+              info(): Promise<{ moodlenet: net.MoodleNetInfo; org: org.OrgInfo }>
+            }
+            system: {
+              configs(): Promise<{ configs: Configs }>
+            }
+          }
+        }
+      }
+    }
+    // secondary: {
+    //   'v5.0': {
+    //     moodle: {
+    //       netWebappNextjs: {
+    //         db: {
+    //           getConfigs(): Promise<{ configs: Configs }>
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
-
-export type moodle_net_webapp_nextjs_mod = mod<{
-  v1_0: {
-    pri: {
-      schemaConfigs: {
-        iam(): Promise<{ iamSchemaConfigs: iam_v1_0.IamPrimaryMsgSchemaConfigs }>
-        moodleNet(): Promise<{ moodleNetSchemaConfigs: net_v1_0.MoodleNetPrimaryMsgSchemaConfigs }>
-        org(): Promise<{ orgSchemaConfigs: org_v1_0.OrgPrimaryMsgSchemaConfigs }>
-      }
-      webapp: {
-        layouts(): Promise<v1_0.Layouts>
-        deploymentInfo(): Promise<DeploymentInfo>
-      }
-      moodlenet: {
-        info(): Promise<{ moodlenet: net_v1_0.MoodleNetInfo; org: org_v1_0.OrgInfo }>
-      }
-      system: {
-        configs(): Promise<{ configs: v1_0.Configs }>
-      }
-    }
-    sec: {
-      db: {
-        getConfigs(): Promise<{ configs: v1_0.Configs }>
-      }
-    }
-    evt: never
-  }
-}>

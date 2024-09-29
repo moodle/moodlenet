@@ -7,8 +7,8 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod'
 import { provideAdminGeneralSchemas, MakeAdminGeneralSchemaDeps } from './general.common'
 import { saveGeneralInfoAction } from './general.server'
-import { orgInfoForm } from '@moodle/mod-org/v1_0/types'
-import { moodlenetInfoForm } from '@moodle/mod-net/v1_0/types'
+import { orgInfoForm } from '@moodle/mod-org/types'
+import { moodlenetInfoForm } from '@moodle/mod-net/types'
 
 export type GeneralFormValues = Pick<
   orgInfoForm & moodlenetInfoForm,

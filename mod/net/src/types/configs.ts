@@ -1,6 +1,5 @@
 import { MoodleNetPrimaryMsgSchemaConfigs } from './primary-schemas'
 
-export * from '../../mod'
 export interface Configs {
   info: MoodleNetInfo
   moodleNetPrimaryMsgSchemaConfigs: MoodleNetPrimaryMsgSchemaConfigs

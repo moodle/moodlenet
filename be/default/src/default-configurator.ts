@@ -1,4 +1,4 @@
-import { core_factory, DeploymentInfo, DomainDeployments, sec_factory } from '@moodle/lib-ddd'
+import { core_factory, DeploymentInfo, Deployments_v0_1, sec_factory } from '@moodle/lib-ddd'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import * as mod_iam from '@moodle/mod-iam'
 import * as mod_net from '@moodle/mod-net'
@@ -57,7 +57,7 @@ export const default_configurator: Configurator = async ({ access_session }) => 
       const nodemailer_env: nodemailerSec.NodemailerSecEnv = nodemailerSec.provideEnv({
         env: proc_env,
       })
-      const deployments: DomainDeployments = {
+      const deployments: Deployments_v0_1 = {
         moodle: {
           net: {
             MoodleNetWebappDeploymentInfo: deploymentInfoFromUrlString(

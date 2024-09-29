@@ -16,7 +16,7 @@ import {
 } from './main-layout.client'
 
 import { filterOutFalsies } from '@moodle/lib-types'
-import { hasUserSessionRole, isAuthenticatedUserSession } from '@moodle/mod-iam/v1_0/lib'
+import { hasUserSessionRole, isAuthenticatedUserSession } from '@moodle/mod-iam/lib'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { priAccess } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
@@ -24,8 +24,8 @@ import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const [{ userSession }, layouts] = await Promise.all([
-    priAccess().moodle.iam.v1_0.pri.session.getCurrentUserSession(),
-    priAccess().moodle.netWebappNextjs.v1_0.pri.webapp.layouts(),
+    priAccess().moodle.iam.pri.session.getCurrentUserSession(),
+    priAccess().moodle.netWebappNextjs.pri.webapp.layouts(),
   ])
   return (
     <div className={`main-layout`}>

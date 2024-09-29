@@ -1,8 +1,8 @@
 import { email_address } from '@moodle/lib-types'
-import { createNewUserRecordData } from '@moodle/mod-iam/v1_0/lib'
+import { createNewUserRecordData } from '@moodle/mod-iam/lib'
 import assert from 'assert'
 import * as migrations from './migrate/from'
-import { userRecord2userDocument } from './sec/moodle/db-arango-iam-lib/mappings'
+import { user_record2userDocument } from './sec/moodle/db-arango-iam-lib/mappings'
 import { ArangoDbSecEnv, db_struct, getDbStruct } from './db-structure'
 
 const TARGET_V = migrations.v0_1.VERSION
@@ -39,7 +39,7 @@ export async function migrate(
       })
       console.log('initializing default admin user')
 
-      await db_struct.iam.coll.user.save(userRecord2userDocument(default_admin_db_user))
+      await db_struct.iam.coll.user.save(user_record2userDocument(default_admin_db_user))
     }
     return final_version
   })

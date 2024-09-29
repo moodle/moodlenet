@@ -2,7 +2,7 @@ import { sec_factory, sec_impl } from '@moodle/lib-ddd'
 import { _never } from '@moodle/lib-types'
 import { Document } from 'arangojs/documents'
 import { createHash } from 'node:crypto'
-import { userDocument2userRecord, userRecord2userDocument } from './db-arango-iam-lib/mappings'
+import { userDocument2user_record, user_record2userDocument } from './db-arango-iam-lib/mappings'
 import { userDocument } from './db-arango-iam-lib/types'
 import { db_struct } from '../../db-structure'
 import { getModConfigs } from '../../lib'
@@ -67,7 +67,7 @@ export function iam({ db_struct }: { db_struct: db_struct }): sec_factory {
                     { email },
                   )
                   const foundUser = await cursor.next()
-                  return foundUser ? [true, userDocument2userRecord(foundUser)] : [false, _never]
+                  return foundUser ? [true, userDocument2user_record(foundUser)] : [false, _never]
                 },
                 async getUserById({ userId }) {
                   const {
@@ -77,7 +77,7 @@ export function iam({ db_struct }: { db_struct: db_struct }): sec_factory {
                   } = db_struct
 
                   const foundUser = await user.document({ _key: userId }, { graceful: true })
-                  return foundUser ? [true, userDocument2userRecord(foundUser)] : [false, _never]
+                  return foundUser ? [true, userDocument2user_record(foundUser)] : [false, _never]
                 },
                 async saveNewUser({ newUser }) {
                   const {
@@ -85,7 +85,7 @@ export function iam({ db_struct }: { db_struct: db_struct }): sec_factory {
                       coll: { user },
                     },
                   } = db_struct
-                  const userDocument = userRecord2userDocument(newUser)
+                  const userDocument = user_record2userDocument(newUser)
                   const savedUser = await user
                     .save(userDocument, { overwriteMode: 'conflict' })
                     .catch(() => null)
