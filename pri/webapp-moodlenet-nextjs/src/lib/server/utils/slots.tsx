@@ -1,8 +1,9 @@
 import { _any, filterOutFalsies } from '@moodle/lib-types'
-import { layoutSlotItem } from '@moodle/mod-net-webapp-nextjs/types'
+import { netWebappNextjs } from '@moodle/domain'
 import { PropsWithChildren, ReactElement } from 'react'
 import { clientSlotItem } from '../../common/types'
 // export type layoutPropsWithChildren = PropsWithChildren<map<ReactElement>>
+type layoutSlotItem = netWebappNextjs.layoutSlotItem
 export type layoutPropsWithChildren = PropsWithChildren<_any>
 export function slotsMap<S extends Record<string, layoutSlotItem[]>>(
   props: layoutPropsWithChildren,

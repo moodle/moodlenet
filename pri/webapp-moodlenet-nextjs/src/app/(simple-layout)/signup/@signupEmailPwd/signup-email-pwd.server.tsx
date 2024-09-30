@@ -1,6 +1,6 @@
 'use server'
 
-import { getIamPrimarySchemas } from '@moodle/mod-iam/lib'
+import { iam } from '@moodle/domain'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { redirect } from 'next/navigation'
@@ -9,8 +9,8 @@ import { priAccess } from '../../../../lib/server/session-access'
 import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
 
 export async function getSignupSchema() {
-  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.pri.schemaConfigs.iam()
-  const { signupSchema } = await getIamPrimarySchemas(iamSchemaConfigs)
+  const { iamSchemaConfigs } = await priAccess().netWebappNextjs.schemaConfigs.iam()
+  const { signupSchema } = await iam.getIamPrimarySchemas(iamSchemaConfigs)
   return signupSchema
 }
 
@@ -22,7 +22,7 @@ export const signupAction = actionClient
   .action(async ({ parsedInput: signupForm }) => {
     const redirectUrl = (await srvSiteUrls()).full.apis.iam.basicAuth.verifySignupEmailToken
 
-    const [done, resp] = await priAccess().moodle.iam.pri.access.request({
+    const [done, resp] = await priAccess().iam.access.request({
       signupForm,
       redirectUrl,
     })

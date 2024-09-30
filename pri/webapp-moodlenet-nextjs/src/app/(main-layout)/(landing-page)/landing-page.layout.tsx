@@ -7,12 +7,12 @@ import './landing-page.style.scss'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
   const [moodlenet, layouts] = await Promise.all([
-    priAccess().moodle.netWebappNextjs.pri.moodlenet.info(),
-    priAccess().moodle.netWebappNextjs.pri.webapp.layouts(),
+    priAccess().netWebappNextjs.moodlenet.info(),
+    priAccess().netWebappNextjs.webapp.layouts(),
   ])
 
   const { head, content } = slotsMap(props, layouts.pages.landing.slots)
-  const { userSession } = await priAccess().moodle.iam.pri.session.getCurrentUserSession()
+  const { userSession } = await priAccess().iam.session.getCurrentUserSession()
 
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,

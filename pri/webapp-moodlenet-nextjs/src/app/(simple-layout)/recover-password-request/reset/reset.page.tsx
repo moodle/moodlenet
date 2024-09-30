@@ -7,7 +7,7 @@ export default async function ResetPage({ searchParams }: { searchParams?: { tok
   if (!success) {
     return 'invalid token'
   }
-  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.pri.schemaConfigs.iam()
+  const { iamSchemaConfigs } = await priAccess().netWebappNextjs.schemaConfigs.iam()
 
   return (
     <ResetPasswordClient

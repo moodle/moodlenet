@@ -1,19 +1,24 @@
-import { composeDomains, sec_factory } from '@moodle/lib-ddd'
+import { moodle_secondary_factory } from '@moodle/domain'
+import { composeDomains } from '@moodle/lib-ddd'
 import { ArangoDbSecEnv, getDbStruct } from './db-structure'
-import { iam, net, netWebappNextjs } from './sec/moodle'
-import { org } from './sec/moodle/db-arango-org'
+import {
+  iam_moodle_secondary_factory,
+  net_moodle_secondary_factory,
+  net_webapp_nextjs_moodle_secondary_factory,
+} from './sec/moodle'
+import { org_moodle_secondary_factory } from './sec/moodle/db-arango-org'
 export type { ArangoDbSecEnv } from './db-structure'
 
 export function get_arango_persistence_factory({
   database_connections: database_connections,
-}: ArangoDbSecEnv): sec_factory {
+}: ArangoDbSecEnv): moodle_secondary_factory {
   const db_struct = getDbStruct(database_connections)
-  return async function factory(ctx) {
-    return composeDomains(
-      await net({ db_struct })(ctx),
-      await org({ db_struct })(ctx),
-      await iam({ db_struct })(ctx),
-      await netWebappNextjs({ db_struct })(ctx),
-    )
+  return ctx => {
+    return composeDomains([
+      net_moodle_secondary_factory({ db_struct })(ctx),
+      org_moodle_secondary_factory({ db_struct })(ctx),
+      iam_moodle_secondary_factory({ db_struct })(ctx),
+      net_webapp_nextjs_moodle_secondary_factory({ db_struct })(ctx),
+    ])
   }
 }

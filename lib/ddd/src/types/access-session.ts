@@ -1,5 +1,5 @@
 import { d_u, map, signed_token } from '@moodle/lib-types'
-import { mod_id } from './mod'
+import { domain_endpoint } from './mod'
 
 export type session_token = signed_token
 
@@ -31,7 +31,7 @@ interface Protocols {
 }
 
 export interface SystemAccessSession extends AccessSessionBase {
-  mod_id: mod_id
+  from: domain_endpoint
 }
 
 export interface AccessSessionBase {

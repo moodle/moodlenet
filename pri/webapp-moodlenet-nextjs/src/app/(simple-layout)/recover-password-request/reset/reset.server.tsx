@@ -1,20 +1,20 @@
 'use server'
 
-import { getIamPrimarySchemas } from '@moodle/mod-iam/lib'
+import { iam } from '@moodle/domain'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { actionClient } from '../../../../lib/server/safe-action'
 import { priAccess } from '../../../../lib/server/session-access'
 
 export async function getResetMyPasswordSchema() {
-  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.pri.schemaConfigs.iam()
-  const { resetPasswordSchema } = await getIamPrimarySchemas(iamSchemaConfigs)
+  const { iamSchemaConfigs } = await priAccess().netWebappNextjs.schemaConfigs.iam()
+  const { resetPasswordSchema } = await iam.getIamPrimarySchemas(iamSchemaConfigs)
   return resetPasswordSchema
 }
 export const resetMyPasswordAction = actionClient
   .schema(getResetMyPasswordSchema)
   .action(async ({ parsedInput: resetPasswordForm }) => {
-    const [ok, resp] = await priAccess().moodle.iam.pri.myAccount.resetPassword({
+    const [ok, resp] = await priAccess().iam.myAccount.resetPassword({
       resetPasswordForm,
     })
     if (!ok) {

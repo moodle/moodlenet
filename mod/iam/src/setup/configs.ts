@@ -1,7 +1,7 @@
 import { time_duration_string_schema } from '@moodle/lib-types'
-import { Configs } from '../types'
+import { iam } from '@moodle/domain'
 
-export const iam_default_configs: Configs = {
+export const iam_default_configs: iam.Configs = {
   iamPrimaryMsgSchemaConfigs: {
     myAccount: {
       selfDeletionRequestReason: {

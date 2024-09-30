@@ -1,33 +1,34 @@
-import { sec_factory } from '@moodle/lib-ddd'
-import { getModConfigs, updateDeepPartialModConfigs } from '../../lib/modules'
+import { moodle_secondary_adapter, moodle_secondary_factory } from '@moodle/domain'
 import { _never } from '@moodle/lib-types'
 import { db_struct } from '../../db-structure'
+import { getModConfigs, updateDeepPartialModConfigs } from '../../lib/modules'
 
-export function net({ db_struct }: { db_struct: db_struct }): sec_factory {
+export function net_moodle_secondary_factory({
+  db_struct,
+}: {
+  db_struct: db_struct
+}): moodle_secondary_factory {
   return ctx => {
-    return {
-      moodle: {
+    const moodle_secondary_adapter: moodle_secondary_adapter = {
+      secondary: {
         net: {
-          v1_0: {
-            sec: {
-              db: {
-                async getConfigs() {
-                  const configs = await getModConfigs({ mod_id: ctx.invoked_by, db_struct })
-                  return configs
-                },
-                async updatePartialConfigs({ partialConfigs }) {
-                  const result = await updateDeepPartialModConfigs({
-                    mod_id: ctx.invoked_by,
-                    db_struct,
-                    partialConfigs,
-                  })
-                  return [!!result, _never]
-                },
-              },
+          db: {
+            async getConfigs() {
+              const configs = await getModConfigs({ domain_endpoint: ctx.invoked_by, db_struct })
+              return configs
+            },
+            async updatePartialConfigs({ partialConfigs }) {
+              const result = await updateDeepPartialModConfigs({
+                domain_endpoint: ctx.invoked_by,
+                db_struct,
+                partialConfigs,
+              })
+              return [!!result, _never]
             },
           },
         },
       },
     }
+    return moodle_secondary_adapter
   }
 }

@@ -4,8 +4,28 @@ import {
   signed_token_schema,
   single_line_string_schema,
 } from '@moodle/lib-types'
+import type { z } from 'zod'
 import { any, object, string, ZodString } from 'zod'
-import { IamPrimaryMsgSchemaConfigs } from '../types'
+export interface IamPrimaryMsgSchemaConfigs {
+  user: {
+    email: { max: number }
+    password: { max: number; min: number }
+    displayName: { max: number; min: number; regex: null | [regex: string, flags: string] }
+  }
+  myAccount: {
+    selfDeletionRequestReason: { max: number }
+  }
+}
+export type loginForm = z.infer<ReturnType<typeof getIamPrimarySchemas>['loginSchema']>
+
+export type signupForm = z.infer<ReturnType<typeof getIamPrimarySchemas>['signupSchema']>
+
+export type changePasswordForm = z.infer<
+  ReturnType<typeof getIamPrimarySchemas>['changePasswordSchema']
+>
+export type resetPasswordForm = z.infer<
+  ReturnType<typeof getIamPrimarySchemas>['resetPasswordSchema']
+>
 
 export function getIamPrimarySchemas({ user, myAccount }: IamPrimaryMsgSchemaConfigs) {
   const email = email_address_schema.and(string().max(user.email.max))

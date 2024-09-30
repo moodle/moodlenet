@@ -1,7 +1,7 @@
 import { url_string_schema } from '@moodle/lib-types'
-import { Configs } from '../types'
+import { org } from '@moodle/domain'
 
-export const org_default_configs: Configs = {
+export const org_default_configs: org.Configs = {
   info: {
     name: 'MoodleNet',
     logo: url_string_schema.parse('https://moodle.net/08469f8073a8f969253823d5d6ed6ffa.png'),

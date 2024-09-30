@@ -1,40 +1,40 @@
-import { _any, deep_partial } from '@moodle/lib-types'
+import { _any } from '@moodle/lib-types'
 import { inspect } from 'util'
+import { ddd } from '../../domain'
 import {
   access_session,
   composeDomains,
-  concrete,
   core_factory,
+  core_impl,
   CoreContext,
-  coreModId,
   domain_msg,
   EvtContext,
-  layer_contexts,
-  sec_factory,
+  secondary_adapter,
+  secondary_factory,
   SecondaryContext,
 } from '../../types'
-import { createAcccessProxy } from './access-proxy'
+import { create_access_proxy } from './access-proxy'
 
 export type domain_session_access_deps = {
   access_session: access_session
   domain_msg: domain_msg
 }
 
-export type domain_session_access = (_: domain_session_access_deps) => Promise<1000>
-export type domain_session_access_provider = (_: {
-  core_factories: core_factory[]
-  sec_factories: sec_factory[]
+export type domain_session_access = (_: domain_session_access_deps) => Promise<_any>
+export type domain_session_access_provider_deps<domain extends ddd> = {
+  core_factories: core_factory<domain>[]
+  secondary_factories: secondary_factory<domain>[]
   domain_session_access: domain_session_access
-}) => domain_session_access
+}
 
-export const domain_session_access_provider: domain_session_access_provider = ({
+export function domain_session_access_provider<domain extends ddd>({
   core_factories,
-  sec_factories,
+  secondary_factories,
   domain_session_access,
-}) => {
+}: domain_session_access_provider_deps<domain>): domain_session_access {
   return async ({ access_session, domain_msg: current_domain_msg }) => {
-    const forwardAccessProxy = createAcccessProxy({
-      access(forwardAccessPayload) {
+    const [forwardAccessProxy] = create_access_proxy({
+      sendDomainMsg(forwardAccessPayload) {
         return domain_session_access({
           domain_msg: forwardAccessPayload.domain_msg,
           access_session,
@@ -52,13 +52,12 @@ export const domain_session_access_provider: domain_session_access_provider = ({
       },
     })
 
-    const sysCallAccessProxy = createAcccessProxy({
-      access(sysCallAccessPayload) {
-        const sys_call_core_mod_id = coreModId(current_domain_msg)
+    const [sysCallAccessProxy] = create_access_proxy({
+      sendDomainMsg(sysCallAccessPayload) {
         const sysCallAccessSession: access_session = {
           type: 'system',
           domain: access_session.domain,
-          mod_id: sys_call_core_mod_id,
+          from: sysCallAccessPayload.domain_msg.endpoint,
         }
 
         return domain_session_access({
@@ -77,77 +76,66 @@ export const domain_session_access_provider: domain_session_access_provider = ({
         })
       },
     })
-
-    // console.log(inspect(moodleDomain, true, 10, true))
-    if (current_domain_msg.layer === 'pri') {
-      const coreCtx: CoreContext = {
+    if (current_domain_msg.endpoint.layer === 'primary') {
+      const coreCtx: CoreContext<domain> = {
         access_session,
-        forward: forwardAccessProxy.mod,
-        sys_call: sysCallAccessProxy.mod,
-        pri_domain_msg: current_domain_msg,
+        forward: forwardAccessProxy,
+        sys_call: sysCallAccessProxy,
       }
       const core_impls = await Promise.all(
         core_factories.map(core_factory => core_factory(coreCtx)),
       )
-      const core = composeDomains(...core_impls)
+      const core = composeDomains<domain>(core_impls)
       return dispatch(core, current_domain_msg)
-    } else if (current_domain_msg.layer === 'sec') {
+    } else if (current_domain_msg.endpoint.layer === 'secondary') {
       if (access_session.type !== 'system') {
         throw TypeError(`only system session can call sec layer`)
       }
-      const secondaryCtx: SecondaryContext = {
-        sys_call: sysCallAccessProxy.mod,
+      const secondaryCtx: SecondaryContext<domain> = {
+        sys_call: sysCallAccessProxy,
         access_session,
-        emit: sysCallAccessProxy.mod,
-        invoked_by: access_session.mod_id,
-        sec_domain_msg: current_domain_msg,
-        // pri_domain_msg,
+        emit: sysCallAccessProxy,
+        invoked_by: access_session.from,
       }
 
-      const sec_impls = await Promise.all(
-        sec_factories.map(sec_factory => sec_factory(secondaryCtx)),
+      const sec_adapters = await Promise.all(
+        secondary_factories.map(sec_factory => sec_factory(secondaryCtx)),
       )
-      const sec = composeDomains(...sec_impls)
+      const sec = composeDomains<domain>(sec_adapters)
       return dispatch(sec, current_domain_msg)
-    } else if (current_domain_msg.layer === 'evt') {
+    } else if (current_domain_msg.endpoint.layer === 'event') {
       if (access_session.type !== 'system') {
         throw TypeError(`only system session can call evt layer`)
       }
 
-      const evtContext: EvtContext = {
-        sys_call: sysCallAccessProxy.mod,
-        forward: forwardAccessProxy.mod,
+      const evtContext: EvtContext<domain> = {
+        sys_call: sysCallAccessProxy,
+        forward: forwardAccessProxy,
         access_session: access_session,
-        evt_domain_msg: current_domain_msg,
-        // pri_domain_msg,
-        // sec_domain_msg,
       }
       const core_impls = await Promise.all(
         core_factories.map(core_factory => core_factory(evtContext)),
       )
 
-      core_impls.forEach(core_factory => {
-        dispatch(core_factory, current_domain_msg)
+      core_impls.forEach(core_impl => {
+        dispatch(core_impl, current_domain_msg)
       })
     } else {
-      throw TypeError(`unknown msg layer: ${current_domain_msg.layer}`)
+      throw TypeError(`unknown msg layer: ${current_domain_msg.endpoint.layer}`)
     }
 
-    function dispatch(
-      modules: deep_partial<concrete<keyof layer_contexts>>,
-      { ns, mod, version, layer, channel, port, payload }: domain_msg,
-    ) {
-      //TODO: check version compatibility if exact version not found
-      const access = (modules as _any)?.[ns]?.[mod]?.[version]?.[layer]?.[channel]?.[port]
+    function dispatch(impl: core_impl<domain> | secondary_adapter<domain>, domain_msg: domain_msg) {
+      const { layer, module, channel, name } = domain_msg.endpoint
+      const endpoint_impl = impl?.[layer as keyof ddd]?.[module]?.[channel]?.[name]
 
-      if (typeof access !== 'function') {
+      if (typeof endpoint_impl !== 'function') {
         const err_msg = `
-      NOT IMPLEMENTED: ${ns}.${mod}.${version}.${layer}.${channel}.${port}
-      FOUND: ${inspect(access, { colors: true, showHidden: true, depth: 10 })}
+      NOT IMPLEMENTED: ${Object.entries(domain_msg.endpoint)}
+      FOUND: ${inspect(endpoint_impl, { colors: true, showHidden: true, depth: 10 })}
       `
         throw TypeError(err_msg)
       }
-      return access(payload)
+      return endpoint_impl(domain_msg.payload)
     }
   }
 }

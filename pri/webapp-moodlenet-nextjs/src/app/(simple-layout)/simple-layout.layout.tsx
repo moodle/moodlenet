@@ -9,7 +9,7 @@ import MinimalisticHeader from '../../ui/organisms/Header/Minimalistic/Minimalis
 import './simple-layout.style.scss'
 
 export default async function SimpleLayoutLayout(props: layoutPropsWithChildren) {
-  const layouts = await priAccess().moodle.netWebappNextjs.pri.webapp.layouts()
+  const layouts = await priAccess().netWebappNextjs.webapp.layouts()
   return (
     <div className={`simple-layout`}>
       <MinimalisticHeader slots={headerSlots()} />

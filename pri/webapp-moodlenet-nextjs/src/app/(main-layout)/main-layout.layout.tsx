@@ -24,8 +24,8 @@ import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const [{ userSession }, layouts] = await Promise.all([
-    priAccess().moodle.iam.pri.session.getCurrentUserSession(),
-    priAccess().moodle.netWebappNextjs.pri.webapp.layouts(),
+    priAccess().iam.session.getCurrentUserSession(),
+    priAccess().netWebappNextjs.webapp.layouts(),
   ])
   return (
     <div className={`main-layout`}>

@@ -1,7 +1,6 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { getIamPrimarySchemas } from '@moodle/mod-iam/lib'
-import type * as iam from '@moodle/mod-iam/types'
+import { iam } from '@moodle/domain'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'next-i18next'
 import { ReactElement, useEffect, useState } from 'react'
@@ -19,7 +18,7 @@ export interface GeneralSettingsProps {
 }
 export function GeneralSettingsClient({ iamSchemaConfigs, messages }: GeneralSettingsProps) {
   const { t } = useTranslation()
-  const { changePasswordSchema } = getIamPrimarySchemas(iamSchemaConfigs)
+  const { changePasswordSchema } = iam.getIamPrimarySchemas(iamSchemaConfigs)
   const [snackbarList, setSnackbarList] = useState<ReactElement[]>([])
 
   const {

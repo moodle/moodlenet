@@ -1,28 +1,29 @@
-import { sec_factory } from '@moodle/lib-ddd'
+import { moodle_secondary_adapter, moodle_secondary_factory } from '@moodle/domain'
 import type {} from '@moodle/mod-net-webapp-nextjs'
-import { getModConfigs } from '../../lib/modules'
 import { db_struct } from '../../db-structure'
+import { getModConfigs } from '../../lib/modules'
 
-export function netWebappNextjs({ db_struct }: { db_struct: db_struct }): sec_factory {
+export function net_webapp_nextjs_moodle_secondary_factory({
+  db_struct,
+}: {
+  db_struct: db_struct
+}): moodle_secondary_factory {
   return ctx => {
-    return {
-      moodle: {
+    const moodle_secondary_adapter: moodle_secondary_adapter = {
+      secondary: {
         netWebappNextjs: {
-          v1_0: {
-            sec: {
-              db: {
-                async getConfigs() {
-                  const { configs } = await getModConfigs({
-                    mod_id: ctx.invoked_by,
-                    db_struct,
-                  })
-                  return { configs }
-                },
-              },
+          db: {
+            async getConfigs() {
+              const { configs } = await getModConfigs({
+                domain_endpoint: ctx.invoked_by,
+                db_struct,
+              })
+              return { configs }
             },
           },
         },
       },
     }
+    return moodle_secondary_adapter
   }
 }

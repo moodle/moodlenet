@@ -1,18 +1,17 @@
 'use client'
+import { iam } from '@moodle/domain'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { getIamPrimarySchemas } from '@moodle/mod-iam/lib'
-import { IamPrimaryMsgSchemaConfigs } from '@moodle/mod-iam/types'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'next-i18next'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { signupAction } from './signup-email-pwd.server'
 
-export type SignupProps = { iamSchemaConfigs: IamPrimaryMsgSchemaConfigs }
+export type SignupProps = { iamSchemaConfigs: iam.IamPrimaryMsgSchemaConfigs }
 
 export default function SignupPanel({ iamSchemaConfigs }: SignupProps) {
   const { t } = useTranslation()
-  const { signupSchema } = getIamPrimarySchemas(iamSchemaConfigs)
+  const { signupSchema } = iam.getIamPrimarySchemas(iamSchemaConfigs)
   const {
     form: { formState, register },
     handleSubmitWithAction,

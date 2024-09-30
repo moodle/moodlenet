@@ -1,6 +1,6 @@
-import { Configs } from '../types'
+import { netWebappNextjs } from '@moodle/domain'
 
-export const net_webapp_nextjs_default_configs: Configs = {
+export const net_webapp_nextjs_default_configs: netWebappNextjs.Configs = {
   layouts: {
     roots: {
       main: {

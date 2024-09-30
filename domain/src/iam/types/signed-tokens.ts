@@ -3,7 +3,7 @@ import { v1_0 } from './configs'
 import { user_id } from './user'
 import { sessionUserData } from './user-session'
 
-export type iamSignTokenData = v1_0 &
+export type signTokenData = v1_0 &
   d_u<
     {
       selfDeletionRequestConfirm: {

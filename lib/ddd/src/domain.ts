@@ -1,5 +1,12 @@
-declare const _: unique symbol
+import { map } from '@moodle/lib-types'
+import { event_layer, primary_layer, secondary_layer } from './types'
 
-export interface Domain {
-  [_]?: never
+export type ddd<
+  primary extends map<primary_layer> = map<primary_layer>,
+  secondary extends map<secondary_layer> = map<secondary_layer>,
+  event extends map<event_layer> = map<event_layer>,
+> = {
+  primary: primary
+  secondary: secondary
+  event: event
 }

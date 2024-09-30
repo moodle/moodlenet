@@ -1,4 +1,5 @@
-import { core_factory, DeploymentInfo, Deployments_v0_1, sec_factory } from '@moodle/lib-ddd'
+import { moodle_core_factory, moodle_secondary_factory } from '@moodle/domain'
+import { DeploymentInfo } from '@moodle/lib-ddd'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import * as mod_iam from '@moodle/mod-iam'
 import * as mod_net from '@moodle/mod-net'
@@ -57,46 +58,40 @@ export const default_configurator: configurator = async ({ access_session }) => 
       const nodemailer_env: nodemailerSec.NodemailerSecEnv = nodemailerSec.provideEnv({
         env: proc_env,
       })
-      const deployments: Deployments_v0_1 = {
-        moodle: {
-          net: {
-            MoodleNetWebappDeploymentInfo: deploymentInfoFromUrlString(
-              env_config.MOODLE_NET_WEBAPP_DEPLOYMENT_URL,
-            ),
-          },
-        },
-      }
-      const core_factories: core_factory[] = [
-        // core modules
-        mod_net.core(),
-        mod_org.core(),
-        mod_iam.core(),
-        mod_net_webapp_nextjs.core(),
-        () => ({}),
-      ]
 
-      const sec_factories: sec_factory[] = [
-        // sec modules
-        arangoSec.get_arango_persistence_factory(arango_db_env),
-        cryptoSec.get_default_crypto_secondarys_factory(crypto_env),
-        nodemailerSec.get_nodemailer_secondarys_factory(nodemailer_env),
-        () => ({
-          env: {
-            deployments: {
-              v1_0: {
-                sec: {
-                  info: {
-                    async read() {
-                      return deployments
-                    },
+      const core_factories: moodle_core_factory[] = [
+        // core modules
+        mod_net.net_core(),
+        mod_org.org_core(),
+        mod_iam.iam_core(),
+        mod_net_webapp_nextjs.net_webapp_nextjs_core(),
+        (/* _ctx */) => {
+          return {
+            primary: {
+              env: {
+                deployments: {
+                  async info(app: 'moodlenet') {
+                    const app_url =
+                      app === 'moodlenet' ? env_config.MOODLE_NET_WEBAPP_DEPLOYMENT_URL : null
+                    if (!app_url) {
+                      return null
+                    }
+                    return deploymentInfoFromUrlString(app_url)
                   },
                 },
               },
             },
-          },
-        }),
+          }
+        },
       ]
-      resolveConfiguration({ core_factories, sec_factories })
+
+      const sec_factories: moodle_secondary_factory[] = [
+        // sec modules
+        arangoSec.get_arango_persistence_factory(arango_db_env),
+        cryptoSec.get_default_crypto_secondarys_factory(crypto_env),
+        nodemailerSec.get_nodemailer_secondary_factory(nodemailer_env),
+      ]
+      resolveConfiguration({ core_factories, secondary_factories: sec_factories })
     }).catch(e => {
       delete cache[normalized_domain]
       throw e

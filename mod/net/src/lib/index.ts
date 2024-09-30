@@ -1,1 +1,1 @@
-export * from './primary-schemas'
+export default null

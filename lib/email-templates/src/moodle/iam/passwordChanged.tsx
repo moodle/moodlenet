@@ -1,14 +1,14 @@
+import { moodle_core_context } from '@moodle/domain'
 import React from 'react'
-import * as email_org from '../../org'
-import { CoreContext } from '@moodle/lib-ddd'
+import * as main from '..'
 
 export type PasswordChangedEmailProps = {
-  ctx: Pick<CoreContext, 'sys_call'>
+  ctx: Pick<moodle_core_context, 'sys_call'>
   receiverEmail: string
 }
 
 export async function passwordChangedEmail({ receiverEmail, ctx }: PasswordChangedEmailProps) {
-  const senderInfo = await email_org.getSenderInfo(ctx)
+  const senderInfo = await main.getSenderInfo(ctx)
   const title = `Password changed 🔒💫`
   const body = (
     <React.Fragment>
@@ -16,7 +16,7 @@ export async function passwordChangedEmail({ receiverEmail, ctx }: PasswordChang
       in safer.
     </React.Fragment>
   )
-  return email_org.layoutEmail({
+  return main.layoutEmail({
     senderInfo,
     content: {
       body,

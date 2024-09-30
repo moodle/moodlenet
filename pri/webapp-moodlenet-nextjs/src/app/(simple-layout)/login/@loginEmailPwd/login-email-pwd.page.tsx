@@ -6,7 +6,7 @@ export default async function LoginEmailPwdPage(/* {
 }: {
   searchParams?: { redirect?: string }
 } */) {
-  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.pri.schemaConfigs.iam()
+  const { iamSchemaConfigs } = await priAccess().netWebappNextjs.schemaConfigs.iam()
   return (
     <LoginPanel
       {...{

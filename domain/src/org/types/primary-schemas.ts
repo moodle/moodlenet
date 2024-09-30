@@ -1,6 +1,14 @@
 import { url_or_file_id_schema, url_string_schema } from '@moodle/lib-types'
+import type { z } from 'zod'
 import { object, string } from 'zod'
-import { OrgPrimaryMsgSchemaConfigs } from '../types'
+export interface OrgPrimaryMsgSchemaConfigs {
+  info: {
+    name: { max: number; min: number }
+    copyright: { max: number }
+    physicalAddress: { max: number }
+  }
+}
+export type orgInfoForm = z.infer<ReturnType<typeof getOrgPrimarySchemas>['orgInfoSchema']>
 
 export function getOrgPrimarySchemas({ info }: OrgPrimaryMsgSchemaConfigs) {
   const name = string().trim().min(info.name.min).max(info.name.max)

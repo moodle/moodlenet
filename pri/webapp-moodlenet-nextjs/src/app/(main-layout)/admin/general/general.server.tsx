@@ -21,10 +21,10 @@ export const saveGeneralInfoAction = actionClient
     const { moodleNetInfoSchema, orgInfoSchema } = await getAdminGeneralSchemas()
 
     const [[mnetDone], [orgDone]] = await Promise.all([
-      priAccess().moodle.net.pri.admin.updatePartialMoodleNetInfo({
+      priAccess().net.admin.updatePartialMoodleNetInfo({
         partialInfo: moodleNetInfoSchema.parse(adminGeneralForm),
       }),
-      priAccess().moodle.org.pri.admin.updatePartialOrgInfo({
+      priAccess().org.admin.updatePartialOrgInfo({
         partialInfo: orgInfoSchema.parse(adminGeneralForm),
       }),
     ])
@@ -39,8 +39,8 @@ export const saveGeneralInfoAction = actionClient
 
 export async function fetchMakeAdminGeneralSchemaDeps(): Promise<MakeAdminGeneralSchemaDeps> {
   const [{ moodleNetSchemaConfigs }, { orgSchemaConfigs }] = await Promise.all([
-    priAccess().moodle.netWebappNextjs.pri.schemaConfigs.moodleNet(),
-    priAccess().moodle.netWebappNextjs.pri.schemaConfigs.org(),
+    priAccess().netWebappNextjs.schemaConfigs.moodleNet(),
+    priAccess().netWebappNextjs.schemaConfigs.org(),
   ])
   return { moodleNetSchemaConfigs, orgSchemaConfigs }
 }

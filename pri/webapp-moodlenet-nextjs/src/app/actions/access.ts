@@ -7,7 +7,7 @@ import { priAccess } from '../../lib/server/session-access'
 
 export async function logout() {
   const { sessionToken } = getAuthTokenCookie()
-  sessionToken && priAccess().moodle.iam.pri.access.logout({ sessionToken })
+  sessionToken && priAccess().iam.access.logout({ sessionToken })
   setAuthTokenCookie(null)
   revalidatePath('/')
   redirect('/')

@@ -11,13 +11,20 @@ optimport<Binder>(process.env.MOODLE_BINDER_MODULE, './default-binder.js').then(
         process.env.MOODLE_CONFIGURATOR_MODULE,
         './default-configurator.js',
       )
-      const { core_factories, sec_factories } = await configurator({ access_session })
+      const { core_factories, secondary_factories } = await configurator({
+        access_session,
+      })
 
       const session_deployer = await optimport<session_deployer>(
         process.env.MOODLE_DEPLOYMENT_MODULE,
         './default-session-deployment.js',
       )
-      return session_deployer({ access_session, core_factories, domain_msg, sec_factories })
+      return session_deployer({
+        domain_msg,
+        access_session,
+        core_factories,
+        secondary_factories,
+      })
     },
   })
 })

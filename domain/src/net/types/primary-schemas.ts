@@ -1,6 +1,15 @@
-import { object, string } from 'zod'
-import { MoodleNetPrimaryMsgSchemaConfigs } from '../types'
 import { single_line_string_schema } from '@moodle/lib-types'
+import type { z } from 'zod'
+import { object, string } from 'zod'
+export interface MoodleNetPrimaryMsgSchemaConfigs {
+  info: {
+    title: { max: number; min: number }
+    subtitle: { max: number; min: number }
+  }
+}
+export type moodlenetInfoForm = z.infer<
+  ReturnType<typeof getMoodleNetPrimarySchemas>['moodleNetInfoSchema']
+>
 
 export function getMoodleNetPrimarySchemas({ info }: MoodleNetPrimaryMsgSchemaConfigs) {
   const title = single_line_string_schema.and(

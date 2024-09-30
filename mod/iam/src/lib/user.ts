@@ -5,12 +5,12 @@ import {
   named_email_address,
   _unchecked_brand,
 } from '@moodle/lib-types'
-import { user_password_hash, user_role, user_record } from '../types'
+import { iam } from '@moodle/domain'
 
 export function getUserNamedEmailAddress({
   contacts,
   displayName,
-}: Pick<user_record, 'contacts' | 'displayName'>): named_email_address {
+}: Pick<iam.user_record, 'contacts' | 'displayName'>): named_email_address {
   return {
     address: contacts.email,
     name: displayName,
@@ -20,10 +20,10 @@ export function getUserNamedEmailAddress({
 export interface CreateNewUserRecordDataArg {
   displayName: string
   email: email_address
-  passwordHash: user_password_hash
+  passwordHash: iam.user_password_hash
   createdAt?: date_time_string
   lastLogin?: date_time_string
-  roles?: user_role[]
+  roles?: iam.user_role[]
   idType?: id_type
 }
 
@@ -35,7 +35,7 @@ export async function createNewUserRecordData({
   createdAt,
   lastLogin,
   idType,
-}: CreateNewUserRecordDataArg): Promise<user_record> {
+}: CreateNewUserRecordDataArg): Promise<iam.user_record> {
   const now = date_time_string('now')
   const id = await generateId(
     idType ?? {
@@ -43,7 +43,7 @@ export async function createNewUserRecordData({
       length: 8,
     },
   )
-  return _unchecked_brand<user_record>({
+  return _unchecked_brand<iam.user_record>({
     id,
     createdAt: createdAt ?? now,
     roles: roles,

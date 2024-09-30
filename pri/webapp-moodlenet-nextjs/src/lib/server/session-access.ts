@@ -1,10 +1,7 @@
 import { http_bind } from '@moodle/bindings-node'
-import { createAcccessProxy, Modules, access_session } from '@moodle/lib-ddd'
-import type {} from '@moodle/mod-iam'
+import { moodle_domain } from '@moodle/domain'
+import { access_session, create_access_proxy } from '@moodle/lib-ddd'
 import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/mod-iam/lib'
-import type {} from '@moodle/mod-net'
-import type {} from '@moodle/mod-net-webapp-nextjs'
-import type {} from '@moodle/mod-org'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
 import { redirect, RedirectType } from 'next/navigation'
@@ -19,11 +16,11 @@ const MOODLE_NET_NEXTJS_APP_NAME =
 
 const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
-export function priAccess(): Modules {
+export function priAccess(): moodle_domain['primary'] {
   const trnspClient = http_bind.client()
   const accessSession = getAccessSession()
-  const ap = createAcccessProxy({
-    access({ domain_msg }) {
+  const [ap] = create_access_proxy<moodle_domain>({
+    sendDomainMsg({ domain_msg }) {
       return trnspClient(
         {
           domain_msg,
@@ -47,7 +44,7 @@ export function priAccess(): Modules {
   //   )
   //   if (valid && !info.expired && info.expires.inSecs < 5 * 60) {
   //     !! VALIDATE IT BEFORE REFRESHING !!
-  //     ap.mod.moodle.iam_lib.pri.session
+  //     ap.mod.iam_lib.session
   //       .generateSession({ userId: info.userData.id })
   //       .then(([generated, session]) => {
   //         if (!generated) {
@@ -58,11 +55,11 @@ export function priAccess(): Modules {
   //   }
   // }
 
-  return ap.mod
+  return ap.primary
 }
 
 export async function getUserSession() {
-  const { userSession } = await priAccess().moodle.iam.pri.session.getCurrentUserSession()
+  const { userSession } = await priAccess().iam.session.getCurrentUserSession()
   return userSession
 }
 
