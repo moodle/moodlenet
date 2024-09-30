@@ -6,7 +6,6 @@ import { priAccess } from '../session-access'
 import assert from 'assert'
 
 export async function srvSiteUrls() {
-  // headers().
   const webappDeploymentInfo = await priAccess().env.deployments.info('moodlenet')
   assert(webappDeploymentInfo, new Error('No deployment info for moodlenet !'))
   const baseUrl = getDeploymentUrl(webappDeploymentInfo)

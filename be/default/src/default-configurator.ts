@@ -30,16 +30,17 @@ export const default_configurator: configurator = async ({ access_session }) => 
 
       const isDev = process.env.NODE_ENV === 'development'
 
-      const env_config = object({
+      const env = object({
         MOODLE_INITIAL_ADMIN_EMAIL: email_address_schema.optional(),
         MOODLE_NET_WEBAPP_DEPLOYMENT_URL: url_string_schema,
       }).parse({
         MOODLE_INITIAL_ADMIN_EMAIL: process.env.MOODLE_INITIAL_ADMIN_EMAIL,
         MOODLE_NET_WEBAPP_DEPLOYMENT_URL: process.env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL,
       })
+
       console.info(
         `domain [${normalized_domain}] env:`,
-        inspect({ MOODLE_DOMAINS_ENV_HOME, ...env_config }, { colors: true, sorted: true }),
+        inspect({ MOODLE_DOMAINS_ENV_HOME, ...env }, { colors: true, sorted: true }),
       )
       const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(env_home, `private.key`), 'utf8')
       const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(env_home, `public.key`), 'utf8')
@@ -72,7 +73,7 @@ export const default_configurator: configurator = async ({ access_session }) => 
                 deployments: {
                   async info(app: 'moodlenet') {
                     const app_url =
-                      app === 'moodlenet' ? env_config.MOODLE_NET_WEBAPP_DEPLOYMENT_URL : null
+                      app === 'moodlenet' ? env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL : null
                     if (!app_url) {
                       return null
                     }
@@ -103,7 +104,7 @@ export const default_configurator: configurator = async ({ access_session }) => 
 
 export default default_configurator
 
-// // FIXME: should this be in some lib ! ?
+//  FIXME: should this be in some lib ! ?
 function deploymentInfoFromUrlString(urlStr: string) {
   const url = new URL(urlStr)
   // const basePath = url.pathname.replace(/[(^\/)(\/$)]/g, '')
