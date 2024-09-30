@@ -57,6 +57,7 @@
     //
     "CHECK",
     "CHECKOUT",
+    "BEWARE",
     //
     "NOTE",
     "NOTICE"
@@ -64,7 +65,7 @@
   "todo-tree.general.tagGroups": {
     "FIXME": ["FIXME", "FIXIT", "FIX"],
     "NOTE": ["NOTE", "NOTICE"],
-    "CHECK": ["CHECK", "CHECKOUT"]
+    "CHECK": ["CHECK", "CHECKOUT", "BEWARE"]
   },
   "javascript.preferences.importModuleSpecifier": "project-relative",
   "typescript.preferences.importModuleSpecifier": "project-relative"

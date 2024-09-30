@@ -41,15 +41,17 @@ export function composeDomains<domain extends ddd>(
 ): deep_partial<domain> {
   return merge({}, ...impls)
 }
-//NOTE: :thinking: strict Pick<> brakes deep_partial in composeDomains
+//NOTE: strict Pick<> brakes deep_partial in composeDomains. don't knwo why.
 export type core_impl<domain extends ddd> = deep_partial<domain>
 export type secondary_adapter<domain extends ddd> = deep_partial<domain>
 // export type core_impl<domain extends ddd> = deep_partial<Pick<domain,'primary' | 'event'>>
 // export type secondary_adapter<domain extends ddd> = deep_partial<Pick<domain,'secondary'>>
 
-export type core_factory<domain extends ddd> = (_: CoreContext<domain>) => core_impl<domain>
+export type core_factory<domain extends ddd> = (ctx: CoreContext<domain>) => core_impl<domain>
+
+
 export type secondary_factory<domain extends ddd> = (
-  _: SecondaryContext<domain>,
+  ctx: SecondaryContext<domain>,
 ) => secondary_adapter<domain>
 
 // export type payload_of<_ extends any_endpoint> = Parameters<_>[0]

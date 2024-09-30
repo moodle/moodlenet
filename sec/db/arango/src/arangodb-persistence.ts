@@ -14,11 +14,13 @@ export function get_arango_persistence_factory({
 }: ArangoDbSecEnv): moodle_secondary_factory {
   const db_struct = getDbStruct(database_connections)
   return ctx => {
-    return composeDomains([
+    const secondary_adapter = composeDomains([
       net_moodle_secondary_factory({ db_struct })(ctx),
       org_moodle_secondary_factory({ db_struct })(ctx),
       iam_moodle_secondary_factory({ db_struct })(ctx),
       net_webapp_nextjs_moodle_secondary_factory({ db_struct })(ctx),
     ])
+    return secondary_adapter
+
   }
 }

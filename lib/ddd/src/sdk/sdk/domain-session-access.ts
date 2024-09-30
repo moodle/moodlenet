@@ -33,6 +33,8 @@ export function domain_session_access_provider<domain extends ddd>({
   domain_session_access,
 }: domain_session_access_provider_deps<domain>): domain_session_access {
   return async ({ access_session, domain_msg: current_domain_msg }) => {
+    current_domain_msg.endpoint.layer === 'event' &&
+      console.log(`domain_session_access_provider`, { access_session, current_domain_msg })
     const [forwardAccessProxy] = create_access_proxy({
       sendDomainMsg(forwardAccessPayload) {
         return domain_session_access({
@@ -117,18 +119,25 @@ export function domain_session_access_provider<domain extends ddd>({
         core_factories.map(core_factory => core_factory(evtContext)),
       )
 
-      core_impls.forEach(core_impl => {
-        dispatch(core_impl, current_domain_msg)
-      })
+      await Promise.all(
+        core_impls.map(core_impl => dispatch(core_impl, current_domain_msg, { graceful: true })),
+      )
     } else {
       throw TypeError(`unknown msg layer: ${current_domain_msg.endpoint.layer}`)
     }
-
-    function dispatch(impl: core_impl<domain> | secondary_adapter<domain>, domain_msg: domain_msg) {
+    type dispatch_opts = { graceful?: boolean }
+    async function dispatch(
+      impl: core_impl<domain> | secondary_adapter<domain>,
+      domain_msg: domain_msg,
+      opts?: dispatch_opts,
+    ) {
       const { layer, module, channel, name } = domain_msg.endpoint
       const endpoint_impl = impl?.[layer as keyof ddd]?.[module]?.[channel]?.[name]
 
       if (typeof endpoint_impl !== 'function') {
+        if (opts?.graceful) {
+          return
+        }
         const err_msg = `
       NOT IMPLEMENTED: ${Object.entries(domain_msg.endpoint)}
       FOUND: ${inspect(endpoint_impl, { colors: true, showHidden: true, depth: 10 })}
@@ -138,4 +147,5 @@ export function domain_session_access_provider<domain extends ddd>({
       return endpoint_impl(domain_msg.payload)
     }
   }
+
 }

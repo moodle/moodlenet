@@ -344,6 +344,13 @@ export function iam_core(): moodle_core_factory {
         },
       },
       event: {
+        env: {
+          system: {
+            async backgroundProcess({ action }) {
+              console.log('IAM - backgroundProcess', action)
+            },
+          },
+        },
         // userActivity: {
         //   userLoggedIn(ctx) {},
         // },
