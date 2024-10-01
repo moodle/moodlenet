@@ -33,8 +33,8 @@ export function domain_session_access_provider<domain extends ddd>({
   domain_session_access,
 }: domain_session_access_provider_deps<domain>): domain_session_access {
   return async ({ access_session, domain_msg: current_domain_msg }) => {
-    current_domain_msg.endpoint.layer === 'event' &&
-      console.log(`domain_session_access_provider`, { access_session, current_domain_msg })
+    // current_domain_msg.endpoint.layer === 'event' &&
+    //   console.log(`domain_session_access_provider`, { access_session, current_domain_msg })
     const [forwardAccessProxy] = create_access_proxy({
       sendDomainMsg(forwardAccessPayload) {
         return domain_session_access({

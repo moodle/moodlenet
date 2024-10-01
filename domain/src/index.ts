@@ -13,7 +13,7 @@ import { iam_event, iam_primary, iam_secondary } from './iam'
 import { net_primary, net_secondary } from './net'
 import { net_webapp_nextjs_primary, net_webapp_nextjs_secondary } from './netWebappNextjs'
 import { org_primary, org_secondary } from './org'
-import { storage_primary, storage_secondary } from './storage'
+import { storage_secondary } from './storage'
 
 export * as iam from './iam'
 export * as net from './net'
@@ -27,7 +27,6 @@ export type moodle_domain = ddd<
     iam: iam_primary
     net: net_primary
     netWebappNextjs: net_webapp_nextjs_primary
-    storage: storage_primary
     env: {
       application: {
         deployment(_: {

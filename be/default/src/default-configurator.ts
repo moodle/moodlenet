@@ -1,14 +1,16 @@
 import { moodle_core_factory, moodle_secondary_factory, sys_admin_info } from '@moodle/domain'
-import { DeploymentInfo, deploymentInfoFromUrlString } from '@moodle/lib-ddd'
+import { deploymentInfoFromUrlString } from '@moodle/lib-ddd'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import * as mod_iam from '@moodle/mod-iam'
 import * as mod_net from '@moodle/mod-net'
 import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
 import * as mod_org from '@moodle/mod-org'
-import * as fsStorage from '@moodle/sec-storage-file-system'
 import * as cryptoSec from '@moodle/sec-crypto-default'
 import * as arangoSec from '@moodle/sec-db-arango'
+import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
 import * as nodemailerSec from '@moodle/sec-email-nodemailer'
+import * as storageSec from '@moodle/sec-storage-default'
+import { makeLocalFsStorageLibProvider } from '@moodle/lib-storage-local-fs'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
@@ -16,7 +18,7 @@ import * as path from 'path'
 import { inspect } from 'util'
 import { literal, object } from 'zod'
 import { configuration, configurator } from './types'
-import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
+import { tmpdir } from 'os'
 // import * as argon2 from 'argon2'
 
 const cache: map<Promise<configuration>> = {}
@@ -66,8 +68,11 @@ export const default_configurator: configurator = async ({ access_session }) => 
       const sys_admin_info: sys_admin_info = {
         email: env.MOODLE_SYS_ADMIN_EMAIL,
       }
-      const file_system_storage_sec_env: fsStorage.FileSystemStorageSecEnv = {
-        fsHomeDir: path.join(env_home, 'fs-storage'),
+      const file_system_storage_sec_env: storageSec.StorageDefaultSecEnv = {
+        storageLibProvider: makeLocalFsStorageLibProvider({
+          homeDir: path.join(env_home, 'fs-storage'),
+          tempDir: tmpdir(),
+        }),
       }
 
       const secondary_factories: moodle_secondary_factory[] = [
@@ -75,7 +80,7 @@ export const default_configurator: configurator = async ({ access_session }) => 
         arangoSec.get_arango_persistence_factory(arango_db_env),
         cryptoSec.get_default_crypto_secondarys_factory(crypto_env),
         nodemailerSec.get_nodemailer_secondary_factory(nodemailer_env),
-        fsStorage.get_file_system_storage_factory(file_system_storage_sec_env),
+        storageSec.get_storage_default_secondary_factory(file_system_storage_sec_env),
       ]
 
       const core_factories: moodle_core_factory[] = [
@@ -132,4 +137,3 @@ export const default_configurator: configurator = async ({ access_session }) => 
 }
 
 export default default_configurator
-
