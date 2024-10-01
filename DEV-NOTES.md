@@ -7,6 +7,7 @@
 [ ] admin user roles interface
 FIXME:[ ] define types as z.infer when zod schema defined (e.g. all def in types.data)
 [ ] file service
+[ ] a "system" access_session for init/migration ? (e.g. create the first admin user)
 
 ### Done
 
@@ -20,6 +21,7 @@ CHECKOUT:[ ] zod provides many handy stuff, including discriminateed unions .. c
 ---
 
 ## Random notes
+
 
 ### CHECKOUT: Method Shorthand Syntax Considered Harmful
 

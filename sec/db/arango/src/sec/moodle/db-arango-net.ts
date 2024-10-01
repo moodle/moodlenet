@@ -14,12 +14,15 @@ export function net_moodle_secondary_factory({
         net: {
           db: {
             async getConfigs() {
-              const configs = await getModConfigs({ domain_endpoint: ctx.invoked_by, db_struct })
+              const configs = await getModConfigs({
+                moduleName: ctx.invoked_by.module,
+                db_struct,
+              })
               return configs
             },
             async updatePartialConfigs({ partialConfigs }) {
               const result = await updateDeepPartialModConfigs({
-                domain_endpoint: ctx.invoked_by,
+                moduleName: ctx.invoked_by.module,
                 db_struct,
                 partialConfigs,
               })

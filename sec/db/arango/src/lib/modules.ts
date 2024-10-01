@@ -1,37 +1,30 @@
-import { domain_endpoint } from '@moodle/lib-ddd'
 import { _any } from '@moodle/lib-types'
 import assert from 'assert'
 import { db_struct } from '../db-structure'
 
-function getKey(domain_endpoint: domain_endpoint) {
-  return domain_endpoint.module
-}
-
 export async function getModConfigs({
   db_struct,
-  domain_endpoint,
+  moduleName,
 }: {
   db_struct: db_struct
-  domain_endpoint: domain_endpoint
+  moduleName: string
 }) {
-  const mod_int_id = getKey(domain_endpoint)
-  const configs = await db_struct.mng.coll.module_configs.document(mod_int_id)
-  assert(configs, new Error(`${mod_int_id} config not found`))
+  const configs = await db_struct.mng.coll.module_configs.document(moduleName)
+  assert(configs, new Error(`config for module ${moduleName} not found`))
   return { configs }
 }
 
 export async function saveModConfigs({
   db_struct,
-  domain_endpoint,
+  moduleName,
   configs,
 }: {
   db_struct: db_struct
-  domain_endpoint: domain_endpoint
+  moduleName: string
   configs: _any
 }) {
-  const mod_int_id = getKey(domain_endpoint)
   const result = await db_struct.mng.coll.module_configs.save(
-    { _key: mod_int_id, ...configs },
+    { _key: moduleName, ...configs },
     { overwriteMode: 'replace' },
   )
   return result
@@ -39,16 +32,15 @@ export async function saveModConfigs({
 
 export async function updateDeepPartialModConfigs({
   db_struct,
-  domain_endpoint,
+  moduleName,
   partialConfigs,
 }: {
   db_struct: db_struct
-  domain_endpoint: domain_endpoint
+  moduleName: string
   partialConfigs: _any
 }) {
-  const mod_int_id = getKey(domain_endpoint)
   const result = await db_struct.mng.coll.module_configs.update(
-    { _key: mod_int_id },
+    { _key: moduleName },
     partialConfigs,
     { silent: true },
   )

@@ -11,18 +11,18 @@ services:
       - default
     volumes:
       - ./container-data/${DEP}/arangodb3:/var/lib/arangodb3
-  minio:
-    image: quay.io/minio/minio
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    user: "${UID}:${GID}"
-    # environment:
-      # MINIO_ROOT_USER: ROOTUSER
-      # MINIO_ROOT_PASSWORD: CHANGEME123
-    volumes:
-      - ./container-data/${DEP}/minio:/data
-    command: server /data --console-address ":9001"
+  # minio:
+  #   image: quay.io/minio/minio
+  #   ports:
+  #     - "9000:9000"
+  #     - "9001:9001"
+  #   user: "${UID}:${GID}"
+  #   # environment:
+  #     # MINIO_ROOT_USER: ROOTUSER
+  #     # MINIO_ROOT_PASSWORD: CHANGEME123
+  #   volumes:
+  #     - ./container-data/${DEP}/minio:/data
+  #   command: server /data --console-address ":9001"
 networks:
   default:
     driver: host

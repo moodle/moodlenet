@@ -33,22 +33,22 @@ export async function migrate({ db_struct }: { db_struct: db_struct }) {
     saveModConfigs({
       db_struct,
       configs: iam_default_configs,
-      mod_id: { ns: 'moodle', name: 'iam', version: 'v1_0' },
+      moduleName: 'iam',
     }),
     saveModConfigs({
       db_struct,
       configs: net_default_configs,
-      mod_id: { ns: 'moodle', name: 'net', version: 'v1_0' },
+      moduleName: 'net',
     }),
     saveModConfigs({
       db_struct,
       configs: net_webapp_nextjs_default_configs,
-      mod_id: { ns: 'moodle', name: 'netWebappNextjs', version: 'v1_0' },
+      moduleName: 'netWebappNextjs',
     }),
     saveModConfigs({
       db_struct,
       configs: org_default_configs,
-      mod_id: { ns: 'moodle', name: 'org', version: 'v1_0' },
+      moduleName: 'org',
     }),
   ])
   // bump_version

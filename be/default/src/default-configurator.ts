@@ -15,6 +15,7 @@ import * as path from 'path'
 import { inspect } from 'util'
 import { literal, object } from 'zod'
 import { configuration, configurator } from './types'
+import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
 // import * as argon2 from 'argon2'
 
 const cache: map<Promise<configuration>> = {}
@@ -82,7 +83,7 @@ export const default_configurator: configurator = async ({ access_session }) => 
             primary: {
               env: {
                 application: {
-                  async deployment({app}) {
+                  async deployment({ app }) {
                     const app_url =
                       app === 'moodlenet' ? env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL : null
                     if (!app_url) {
@@ -101,12 +102,15 @@ export const default_configurator: configurator = async ({ access_session }) => 
           }
         },
       ]
-
-      resolveConfiguration({
-        core_factories,
-        secondary_factories,
-        start_background_processes: env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true',
-      })
+      migrateArangoDB(arango_db_env, { moodlesysAdminEmail: env.MOODLE_SYS_ADMIN_EMAIL }).then(
+        () => {
+          resolveConfiguration({
+            core_factories,
+            secondary_factories,
+            start_background_processes: env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true',
+          })
+        },
+      )
     }).catch(e => {
       delete cache[normalized_domain]
       throw e

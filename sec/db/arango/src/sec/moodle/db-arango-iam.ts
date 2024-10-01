@@ -19,7 +19,7 @@ export function iam_moodle_secondary_factory({
           db: {
             async getConfigs() {
               const { configs } = await getModConfigs({
-                domain_endpoint: ctx.invoked_by,
+                moduleName: ctx.invoked_by.module,
                 db_struct,
               })
               return { configs }
