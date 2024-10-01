@@ -22,4 +22,5 @@ export interface OrgSecondary {
     }>
     updatePartialConfigs(_: { partialConfigs: deep_partial<Configs> }): Promise<ok_ko<void>>
   }
+  storage: { __placeholder__?(): Promise<unknown> }
 }

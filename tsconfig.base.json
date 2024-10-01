@@ -31,19 +31,20 @@
       "@moodle/mod-iam/lib": ["mod/iam/src/lib/index.ts"],
       "@moodle/mod-iam/setup": ["mod/iam/src/setup/index.ts"],
       "@moodle/mod-net": ["mod/net/src/index.ts"],
+      "@moodle/mod-net-webapp-nextjs": ["mod/net-webapp-nextjs/src/index.ts"],
+      "@moodle/mod-net-webapp-nextjs/lib": ["mod/net-webapp-nextjs/src/lib/index.ts"],
+      "@moodle/mod-net-webapp-nextjs/setup": ["mod/net-webapp-nextjs/src/setup/index.ts"],
       "@moodle/mod-net/lib": ["mod/net/src/lib/index.ts"],
       "@moodle/mod-net/setup": ["mod/net/src/setup/index.ts"],
       "@moodle/mod-org": ["mod/org/src/index.ts"],
       "@moodle/mod-org/lib": ["mod/org/src/lib/index.ts"],
       "@moodle/mod-org/setup": ["mod/org/src/setup/index.ts"],
-      "@moodle/mod-net-webapp-nextjs": ["mod/net-webapp-nextjs/src/index.ts"],
-      "@moodle/mod-net-webapp-nextjs/lib": ["mod/net-webapp-nextjs/src/lib/index.ts"],
-      "@moodle/mod-net-webapp-nextjs/setup": ["mod/net-webapp-nextjs/src/setup/index.ts"],
+      "@moodle/mod-storage": ["mod/storage/src/index.ts"],
       "@moodle/sec-crypto-default": ["sec/crypto/default/src/index.ts"],
       "@moodle/sec-db-arango": ["sec/db/arango/src/index.ts"],
       "@moodle/sec-db-arango/migrate": ["sec/db/arango/src/migrate.ts"],
       "@moodle/sec-email-nodemailer": ["sec/email/nodemailer/src/index.ts"],
-      "@moodle/sec-files-minio": ["sec/files/minio/src/index.ts"]
+      "@moodle/sec-storage-file-system": ["sec/storage/file-system/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

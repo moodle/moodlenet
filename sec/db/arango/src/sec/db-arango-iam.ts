@@ -2,8 +2,8 @@ import { moodle_secondary_adapter, moodle_secondary_factory } from '@moodle/doma
 import { _never } from '@moodle/lib-types'
 import { Document } from 'arangojs/documents'
 import { createHash } from 'node:crypto'
-import { db_struct } from '../../db-structure'
-import { getModConfigs } from '../../lib'
+import { db_struct } from '../db-structure'
+import { getModConfigs } from '../lib'
 import { userDocument2user_record, user_record2userDocument } from './db-arango-iam-lib/mappings'
 import { userDocument } from './db-arango-iam-lib/types'
 

@@ -13,6 +13,7 @@ import { iam_event, iam_primary, iam_secondary } from './iam'
 import { net_primary, net_secondary } from './net'
 import { net_webapp_nextjs_primary, net_webapp_nextjs_secondary } from './netWebappNextjs'
 import { org_primary, org_secondary } from './org'
+import { storage_primary, storage_secondary } from './storage'
 
 export * as iam from './iam'
 export * as net from './net'
@@ -26,9 +27,13 @@ export type moodle_domain = ddd<
     iam: iam_primary
     net: net_primary
     netWebappNextjs: net_webapp_nextjs_primary
+    storage: storage_primary
     env: {
       application: {
-        deployment(_: { app: 'moodlenet' }): Promise<_maybe<DeploymentInfo>>
+        deployment(_: {
+          app: 'moodlenet-webapp' | 'filestore-http'
+        }): Promise<_maybe<DeploymentInfo>>
+        fsHomeDir(): Promise<{ path: string }>
       }
       maintainance: {
         getSysAdminInfo(): Promise<sys_admin_info>
@@ -40,6 +45,7 @@ export type moodle_domain = ddd<
     iam: iam_secondary
     net: net_secondary
     netWebappNextjs: net_webapp_nextjs_secondary
+    storage: storage_secondary
   },
   {
     iam: iam_event

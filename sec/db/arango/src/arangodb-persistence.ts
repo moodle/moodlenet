@@ -5,8 +5,8 @@ import {
   iam_moodle_secondary_factory,
   net_moodle_secondary_factory,
   net_webapp_nextjs_moodle_secondary_factory,
-} from './sec/moodle'
-import { org_moodle_secondary_factory } from './sec/moodle/db-arango-org'
+} from './sec'
+import { org_moodle_secondary_factory } from './sec/db-arango-org'
 export type { ArangoDbSecEnv } from './db-structure'
 
 export function get_arango_persistence_factory({

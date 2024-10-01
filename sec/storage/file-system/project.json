@@ -1,0 +1,9 @@
+{
+  "name": "sec-storage-file-system",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "sec/storage/file-system/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project sec-storage-file-system --web",
+  "targets": {}
+}

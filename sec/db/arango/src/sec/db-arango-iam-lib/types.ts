@@ -1,6 +1,6 @@
-import { branded } from '@moodle/lib-types'
 import { iam } from '@moodle/domain'
-import { id_to_key } from '../../../types'
+import { branded } from '@moodle/lib-types'
+import { id_to_key } from '../../types'
 
 // export const user_document_brand = Symbol('user_document')
 declare const user_document_brand: unique symbol

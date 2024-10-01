@@ -1,10 +1,11 @@
 import { moodle_core_factory, moodle_secondary_factory, sys_admin_info } from '@moodle/domain'
-import { DeploymentInfo } from '@moodle/lib-ddd'
+import { DeploymentInfo, deploymentInfoFromUrlString } from '@moodle/lib-ddd'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import * as mod_iam from '@moodle/mod-iam'
 import * as mod_net from '@moodle/mod-net'
 import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
 import * as mod_org from '@moodle/mod-org'
+import * as fsStorage from '@moodle/sec-storage-file-system'
 import * as cryptoSec from '@moodle/sec-crypto-default'
 import * as arangoSec from '@moodle/sec-db-arango'
 import * as nodemailerSec from '@moodle/sec-email-nodemailer'
@@ -65,11 +66,16 @@ export const default_configurator: configurator = async ({ access_session }) => 
       const sys_admin_info: sys_admin_info = {
         email: env.MOODLE_SYS_ADMIN_EMAIL,
       }
+      const file_system_storage_sec_env: fsStorage.FileSystemStorageSecEnv = {
+        fsHomeDir: path.join(env_home, 'fs-storage'),
+      }
+
       const secondary_factories: moodle_secondary_factory[] = [
         // sec modules
         arangoSec.get_arango_persistence_factory(arango_db_env),
         cryptoSec.get_default_crypto_secondarys_factory(crypto_env),
         nodemailerSec.get_nodemailer_secondary_factory(nodemailer_env),
+        fsStorage.get_file_system_storage_factory(file_system_storage_sec_env),
       ]
 
       const core_factories: moodle_core_factory[] = [
@@ -85,11 +91,14 @@ export const default_configurator: configurator = async ({ access_session }) => 
                 application: {
                   async deployment({ app }) {
                     const app_url =
-                      app === 'moodlenet' ? env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL : null
+                      app === 'moodlenet-webapp' ? env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL : null
                     if (!app_url) {
                       return null
                     }
                     return deploymentInfoFromUrlString(app_url)
+                  },
+                  async fsHomeDir() {
+                    return { path: env_home }
                   },
                 },
                 maintainance: {
@@ -124,27 +133,3 @@ export const default_configurator: configurator = async ({ access_session }) => 
 
 export default default_configurator
 
-//  FIXME: should this be in some lib ! ?
-function deploymentInfoFromUrlString(urlStr: string) {
-  const url = new URL(urlStr)
-  // const basePath = url.pathname.replace(/[(^\/)(\/$)]/g, '')
-  const pathname = url.pathname
-  const hostname = url.hostname
-  const port = url.port
-  const protocol = url.protocol
-  // console.log('env_provider_secondarys_factory', {
-  //   url,
-  //   pathname,
-  //   hostname,
-  //   port,
-  //   protocol,
-  // })
-
-  const info: DeploymentInfo = {
-    basePath: pathname,
-    hostname,
-    port,
-    protocol,
-  }
-  return info
-}

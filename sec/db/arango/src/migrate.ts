@@ -1,7 +1,7 @@
 import { email_address } from '@moodle/lib-types'
 import { createNewUserRecordData } from '@moodle/mod-iam/lib'
 import * as migrations from './migrate/from'
-import { user_record2userDocument } from './sec/moodle/db-arango-iam-lib/mappings'
+import { user_record2userDocument } from './sec/db-arango-iam-lib/mappings'
 import { ArangoDbSecEnv, db_struct, getDbStruct } from './db-structure'
 
 const TARGET_V = migrations.v0_1.VERSION

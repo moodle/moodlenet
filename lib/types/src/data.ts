@@ -1,5 +1,6 @@
 import {
   any,
+  array,
   BRAND,
   intersection,
   object,
@@ -12,9 +13,9 @@ import {
 } from 'zod'
 import { _any, map } from './map'
 
-export type _maybe<t> = t | _nullish
-export type _nullish = undefined | null
-export type _falsy = false | _nullish
+export type _maybe<t> = t | _nil
+export type _nil = undefined | null
+export type _falsy = false | _nil
 export const _never = void 0 as never
 export const _void = void 0 as void
 export type primitive = primitive_value | null | undefined
@@ -182,3 +183,4 @@ export function namedEmailAddressString(addr: email_address | named_email_addres
 export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
   return arr.filter((x): x is t => !!x)
 }
+

@@ -17,7 +17,10 @@ FIXME:[ ] define types as z.infer when zod schema defined (e.g. all def in types
 
 CHECKOUT:[ ] zod provides many handy stuff, including discriminateed unions .. check if/how to use them
 [ ] nextjs docker image
-
+[ ] 3 phases version upgrade: 
+  #1 migration by secs. prepare a consistent (usable) env for domain
+  #2 processes perform module-specific operations
+  #3 webapp prompts admins for user-assisted finalizations
 ---
 
 ## Random notes

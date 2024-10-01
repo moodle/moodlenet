@@ -1,7 +1,7 @@
 import { moodle_secondary_adapter, moodle_secondary_factory } from '@moodle/domain'
 import type {} from '@moodle/mod-net-webapp-nextjs'
-import { db_struct } from '../../db-structure'
-import { getModConfigs } from '../../lib/modules'
+import { db_struct } from '../db-structure'
+import { getModConfigs } from '../lib/modules'
 
 export function net_webapp_nextjs_moodle_secondary_factory({
   db_struct,

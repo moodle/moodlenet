@@ -1,14 +1,16 @@
-import { getDeploymentUrl } from '@moodle/lib-ddd'
+import { getDeploymentInfoUrl } from '@moodle/lib-ddd'
 import { url_string } from '@moodle/lib-types'
+import assert from 'assert'
 import { headers } from 'next/headers'
 import { sitepaths } from '../../common/utils/sitepaths'
 import { priAccess } from '../session-access'
-import assert from 'assert'
 
 export async function srvSiteUrls() {
-  const webappDeploymentInfo = await priAccess().env.application.deployment({ app: 'moodlenet' })
+  const webappDeploymentInfo = await priAccess().env.application.deployment({
+    app: 'moodlenet-webapp',
+  })
   assert(webappDeploymentInfo, new Error('No deployment info for moodlenet !'))
-  const baseUrl = getDeploymentUrl(webappDeploymentInfo)
+  const baseUrl = getDeploymentInfoUrl(webappDeploymentInfo)
 
   return {
     baseUrl,
