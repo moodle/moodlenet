@@ -7,7 +7,8 @@ export function sitepaths<as extends string = url_path_string>(baseUrl = '/') {
   const _ = (path: string) => `${baseUrl}${path}` as as
 
   const DEF_SLUG = '-'
-  const _id_slug_sub =
+  const _by_id = (path: string) => (id: id) => `${_(path)}/${id}`
+  const _by_id_slug_sub =
     <sub extends string>(path: string) =>
     (id: id, slug = DEF_SLUG) =>
     (sub: sub) =>
@@ -29,10 +30,11 @@ export function sitepaths<as extends string = url_path_string>(baseUrl = '/') {
   const user_settings = _sub<user_settings_sub>(`settings`)
 
   type profile_sub = '/bookmarks' | '/followers' | '/following' | ''
-  const profile = _id_slug_sub<profile_sub>(`profile`)
-  const resource = _id_slug_sub(`resource`)
-  const collection = _id_slug_sub(`collection`)
-  const subject = _id_slug_sub(`subject`)
+  const profile = _by_id_slug_sub<profile_sub>(`profile`)
+  const user = _by_id(`user`)
+  const resource = _by_id_slug_sub(`resource`)
+  const collection = _by_id_slug_sub(`collection`)
+  const subject = _by_id_slug_sub(`subject`)
 
   return {
     apis: {
@@ -57,6 +59,7 @@ export function sitepaths<as extends string = url_path_string>(baseUrl = '/') {
       },
       homepages: {
         profile,
+        user,
         resource,
         collection,
         subject,

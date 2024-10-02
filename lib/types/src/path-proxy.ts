@@ -1,4 +1,4 @@
-import { _never } from './data'
+import { _void } from './data'
 import { _any } from './map'
 
 export const _inspect_symbol = Symbol('moduleAccessProxy inspect')
@@ -13,7 +13,7 @@ export function createPathProxy<t>(ctrl: access_proxy_ctrl): [t] {
   return [px] as const
 
   function access_proxy(path: string[]) {
-    return new Proxy(() => _never, {
+    return new Proxy(() => _void, {
       get(_target, prop /* , _receiver */) {
         if (typeof prop !== 'string') {
           return _thrower(new TypeError(`${String(prop)} not here`))

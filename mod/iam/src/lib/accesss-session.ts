@@ -111,10 +111,10 @@ export async function assert_authorizeAdminUserSession(
 ) {
   return assert_authorizeUserSessionWithRole(ctx, 'admin')
 }
-export async function assert_authorizeContributorUserSession(
+export async function assert_authorizePublisherUserSession(
   ctx: Pick<moodle_core_context, 'access_session' | 'sys_call'>,
 ) {
-  return assert_authorizeUserSessionWithRole(ctx, 'contributor')
+  return assert_authorizeUserSessionWithRole(ctx, 'publisher')
 }
 export async function assert_authorizeAuthenticatedUserSession(
   ctx: Pick<moodle_core_context, 'access_session' | 'sys_call'>,

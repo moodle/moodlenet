@@ -1,5 +1,5 @@
 import { moodle_secondary_adapter, moodle_secondary_factory } from '@moodle/domain'
-import { _never } from '@moodle/lib-types'
+import { _void } from '@moodle/lib-types'
 import { db_struct } from '../db-structure'
 import { getModConfigs, updateDeepPartialModConfigs } from '../lib/modules'
 
@@ -26,7 +26,7 @@ export function org_moodle_secondary_factory({
                 db_struct,
                 partialConfigs,
               })
-              return [!!result, _never]
+              return [!!result, _void]
             },
           },
         },

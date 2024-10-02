@@ -1,6 +1,5 @@
 import {
   any,
-  array,
   BRAND,
   intersection,
   object,
@@ -16,8 +15,8 @@ import { _any, map } from './map'
 export type _maybe<t> = t | _nil
 export type _nil = undefined | null
 export type _falsy = false | _nil
-export const _never = void 0 as never & never
-export const _void = void 0 as void & never
+// export const _void = void 0 as never // TOO DANGEROUS
+export const _void = void 0 as void
 export type primitive = primitive_value | null | undefined
 export type primitive_value = string | number | boolean | bigint
 

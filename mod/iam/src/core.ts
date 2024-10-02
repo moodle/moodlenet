@@ -4,8 +4,9 @@ import {
   selfDeletionConfirmEmail,
   signupEmailConfirmationEmail,
 } from '@moodle/lib-email-templates/iam'
-import { _never, date_time_string } from '@moodle/lib-types'
+import { _void, date_time_string } from '@moodle/lib-types'
 import * as lib from './lib'
+import { user_role } from 'domain/src/iam'
 
 export function iam_core(): moodle_core_factory {
   return ctx => {
@@ -30,18 +31,30 @@ export function iam_core(): moodle_core_factory {
 
           //get admin():moodle_iam_mod['v1_0']['pri']['admin'] {
           admin: {
-            async setUserRoles({ userId, roles }) {
+            async editUserRoles({ userId, role, action }) {
               const admin_user_session = await lib.assert_authorizeAdminUserSession(ctx)
+              const [found, user] = await ctx.sys_call.secondary.iam.db.getUserById({ userId })
+              if (!found) {
+                return [false, { reason: 'userNotFound' }]
+              }
+
+              const new_roles_set = new Set(user.roles)
+              new_roles_set[action === 'set' ? 'add' : 'delete'](role)
+              const new_roles = (
+                new_roles_set.has('admin')
+                  ? (['admin', 'publisher'] satisfies user_role[])
+                  : Array.from(new_roles_set)
+              ).sort()
 
               const [done] = await ctx.sys_call.secondary.iam.db.setUserRoles({
                 userId,
-                roles,
+                roles: new_roles,
                 adminUserId: admin_user_session.user.id,
               })
               if (!done) {
                 return [false, { reason: 'userNotFound' }]
               }
-              return [true, _never]
+              return [true, { updatedRoles: new_roles }]
             },
 
             async searchUsers({ textSearch }) {
@@ -67,7 +80,7 @@ export function iam_core(): moodle_core_factory {
               if (!done) {
                 return [false, { reason: 'userNotFound' }]
               }
-              return [true, _never]
+              return [true, _void]
             },
           },
           access: {
@@ -111,7 +124,7 @@ export function iam_core(): moodle_core_factory {
                 subject: emailProps.content.subject,
                 to: signupForm.email,
               })
-              return [true, _never]
+              return [true, _void]
             },
 
             async createNewUserByEmailVerificationToken({ signupEmailVerificationToken }) {
@@ -159,7 +172,7 @@ export function iam_core(): moodle_core_factory {
                 email: loginForm.email,
               })
               if (!(found && !user_record.deactivated)) {
-                return [false, _never]
+                return [false, _void]
               }
               const [verified] = await ctx.sys_call.secondary.iam.crypto.verifyUserPasswordHash({
                 plainPassword: loginForm.password,
@@ -167,7 +180,7 @@ export function iam_core(): moodle_core_factory {
               })
 
               if (!verified) {
-                return [false, _never]
+                return [false, _void]
               }
 
               const user = lib.user_record2SessionUserData(user_record)
@@ -284,7 +297,7 @@ export function iam_core(): moodle_core_factory {
                 },
                 userId: validatedSignedTokenData.userId,
               })
-              return deactivated ? [true, _never] : [false, { reason: 'unknown' }]
+              return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
             },
             async resetPassword({ resetPasswordForm: { newPassword, token } }) {
               const [verified, validation] =
@@ -311,7 +324,7 @@ export function iam_core(): moodle_core_factory {
                 newPasswordHash: passwordHash,
                 userId: user_record.id,
               })
-              return pwdChanged ? [true, _never] : [false, { reason: 'unknown' }]
+              return pwdChanged ? [true, _void] : [false, { reason: 'unknown' }]
             },
 
             async changePassword({ currentPassword, newPassword }) {
@@ -338,7 +351,7 @@ export function iam_core(): moodle_core_factory {
                 newPasswordHash: passwordHash,
                 userId: authenticated_session.user.id,
               })
-              return [true, _never]
+              return [true, _void]
             },
           },
         },

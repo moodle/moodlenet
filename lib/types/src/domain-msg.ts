@@ -2,16 +2,19 @@ import { d_u, map } from './map'
 
 export type ok_ko<
   success_result,
-  fail_result extends map = never,
+  fail_result extends map | void = void,
   fail_du_key extends string = 'reason',
 > =
   | readonly [success: true, result: success_result]
-  | readonly [success: false, result: d_u<fail_result, fail_du_key>]
+  | readonly [
+      success: false,
+      result: fail_result extends void ? void : d_u<fail_result, fail_du_key>,
+    ]
 
-// const _0: ok_ko<never, never> = [, true] as const
-// const _1: ok_ko<never, never> = [, false] as const
-// const _01: ok_ko<never, never> = [, true]
-// const _11: ok_ko<never, never> = [, false]
+// const _0: ok_ko<void, never> = [, true] as const
+// const _1: ok_ko<void, never> = [, false] as const
+// const _01: ok_ko<void, never> = [, true]
+// const _11: ok_ko<void, never> = [, false]
 
 // const _3: ok_ko<void, void> = [, true] as const
 // const _4: ok_ko<void, void> = [, false] as const
@@ -23,10 +26,10 @@ export type ok_ko<
 // const _321: ok_ko<unknown, unknown> = [, true]
 // const _421: ok_ko<unknown, unknown> = [, false]
 
-// const _00: ok_ko<never, never> = [true] as const
-// const _10: ok_ko<never, never> = [false] as const
-// const _010: ok_ko<never, never> = [true]
-// const _110: ok_ko<never, never> = [false]
+// const _00: ok_ko<void, never> = [true] as const
+// const _10: ok_ko<void, never> = [false] as const
+// const _010: ok_ko<void, never> = [true]
+// const _110: ok_ko<void, never> = [false]
 
 // const _30: ok_ko<void, void> = [true] as const
 // const _40: ok_ko<void, void> = [false] as const

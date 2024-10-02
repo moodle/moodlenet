@@ -42,9 +42,20 @@
       "iconColour": "#41c9ff",
       "background": "#41c9ff",
       "opacity": 80
+    },
+    "CREDITS": {
+      "foreground": "#000000",
+      "iconColour": "#fff241",
+      "background": "#fff241",
+      "opacity": 80
     }
   },
   "todo-tree.general.tags": [
+    "CREDITS",
+    "CREDIT",
+    "THANKS",
+    "THANK",
+    //
     "TODO",
     //
     "FIXME",
@@ -65,7 +76,8 @@
   "todo-tree.general.tagGroups": {
     "FIXME": ["FIXME", "FIXIT", "FIX"],
     "NOTE": ["NOTE", "NOTICE"],
-    "CHECK": ["CHECK", "CHECKOUT", "BEWARE"]
+    "CHECK": ["CHECK", "CHECKOUT", "BEWARE"],
+    "CREDITS": ["CREDITS", "CREDIT", "THANKS", "THANK"]
   },
   "javascript.preferences.importModuleSpecifier": "project-relative",
   "typescript.preferences.importModuleSpecifier": "project-relative"

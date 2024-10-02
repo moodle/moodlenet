@@ -27,7 +27,7 @@ export async function migrateArangoDB(
         displayName: 'Admin',
         email: env.moodlesysAdminEmail,
         passwordHash: '##UNSET##',
-        roles: ['admin', 'contributor'],
+        roles: ['admin', 'publisher'],
       })
       console.log('initializing default admin user')
 

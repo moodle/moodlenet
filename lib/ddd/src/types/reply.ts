@@ -28,7 +28,7 @@
 // export type reply_payload<_st_map extends part_reply_status_payload_map> = AtMostOne<_st_map>
 // export type reply_holder<t> = Promise<t>
 
-// // thanks [@grahamaj](https://stackoverflow.com/users/5666581/grahamaj) [so](https://stackoverflow.com/a/71131506/1455910)
+// //CREDIT: [@grahamaj](https://stackoverflow.com/users/5666581/grahamaj) [so](https://stackoverflow.com/a/71131506/1455910)
 // type Explode<T> = keyof T extends infer K
 //   ? K extends unknown
 //     ? { [I in keyof T]: I extends K ? T[I] : never }

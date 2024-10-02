@@ -10,8 +10,8 @@ export function hasUserSessionRole(
   }
   return user_session.user.roles.includes(role)
 }
-export function isContributorUserSession(user_session: iam.user_session) {
-  return hasUserSessionRole(user_session, 'contributor')
+export function isPublisherUserSession(user_session: iam.user_session) {
+  return hasUserSessionRole(user_session, 'publisher')
 }
 export function isAdminUserSession(user_session: iam.user_session) {
   return hasUserSessionRole(user_session, 'admin')

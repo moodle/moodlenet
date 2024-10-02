@@ -3,7 +3,7 @@ import { iam } from '@moodle/domain'
 import { Document } from 'arangojs/documents'
 import { userDocument } from './types'
 
-export function userDocument2user_record(doc: Document<userDocument>): iam.user_record {
+export function userDocument2user_record(doc: userDocument): iam.user_record {
   return _unchecked_brand<iam.user_record>({
     id: doc._key,
     createdAt: doc.createdAt,

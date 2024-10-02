@@ -47,23 +47,24 @@ export interface IamPrimary {
   }
 
   admin: {
-    setUserRoles(_: {
+    editUserRoles(_: {
       userId: user_id
-      roles: user_role[]
-    }): Promise<ok_ko<never, { userNotFound: unknown }>>
+      role: user_role
+      action: 'set' | 'unset'
+    }): Promise<ok_ko<{ updatedRoles: user_role[] }, { userNotFound: unknown }>>
     searchUsers(_: { textSearch: string }): Promise<{ users: user_record[] }>
     deactivateUser(_: {
       userId: user_id
       reason: string
       anonymize: boolean
-    }): Promise<ok_ko<never, { userNotFound: unknown }>>
+    }): Promise<ok_ko<void, { userNotFound: unknown }>>
   }
 
   access: {
     request(_: {
       signupForm: signupForm
       redirectUrl: url_string
-    }): Promise<ok_ko<never, { userWithSameEmailExists: unknown }>>
+    }): Promise<ok_ko<void, { userWithSameEmailExists: unknown }>>
 
     createNewUserByEmailVerificationToken(_: {
       signupEmailVerificationToken: signed_token
@@ -96,15 +97,15 @@ export interface IamPrimary {
     confirmSelfDeletionRequest(_: {
       selfDeletionConfirmationToken: signed_token
       reason: string
-    }): Promise<ok_ko<never, { invalidToken: unknown; unknownUser: unknown; unknown: unknown }>>
+    }): Promise<ok_ko<void, { invalidToken: unknown; unknownUser: unknown; unknown: unknown }>>
 
     resetPassword(_: {
       resetPasswordForm: resetPasswordForm
-    }): Promise<ok_ko<never, { invalidToken: unknown; userNotFound: unknown; unknown: unknown }>>
+    }): Promise<ok_ko<void, { invalidToken: unknown; userNotFound: unknown; unknown: unknown }>>
 
     changePassword(
       _: changePasswordForm,
-    ): Promise<ok_ko<never, { wrongCurrentPassword: unknown; unknown: unknown }>>
+    ): Promise<ok_ko<void, { wrongCurrentPassword: unknown; unknown: unknown }>>
   }
 }
 export interface IamSecondary {

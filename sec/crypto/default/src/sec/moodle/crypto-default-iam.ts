@@ -2,7 +2,7 @@ import { iam, moodle_secondary_adapter, moodle_secondary_factory } from '@moodle
 import { joseOpts, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import {
   SIGNED_TOKEN_PAYLOAD_PROP,
-  _never,
+  _void,
   d_u__d,
   signed_token_payload_data as signed_token_with_payload_data,
 } from '@moodle/lib-types'
@@ -36,7 +36,7 @@ export function iam_crypto_secondary_factory({
               plainPassword: { __redacted__: plainPassword },
             }) {
               const verified = await argon2.verify(passwordHash, plainPassword, argonOpts)
-              return [verified, _never]
+              return [verified, _void]
             },
 
             async validateSignedToken({ token, type }) {

@@ -7,8 +7,8 @@ import type {
 } from '@moodle/lib-types'
 import { v1_0 } from './configs'
 
-// NOTE: roles will be per-subsystem in future. e.g. export type user_role = 'moodle.net.admin' | 'moodle.net.contributor'
-export type user_role = 'admin' | 'contributor'
+// NOTE: roles will be per-subsystem in future. e.g. export type user_role = 'moodle.net.admin' | 'moodle.net.publisher'
+export type user_role = 'admin' | 'publisher'
 export interface UserRecord {
   id: user_id
   createdAt: date_time_string
@@ -20,7 +20,7 @@ export interface UserRecord {
   passwordHash: user_password_hash
   activityStatus: {
     lastLogin: date_time_string
-    inactiveNotificationSentAt: false | date_time_string
+    inactiveNotificationSentAt: false | date_time_string //FIXME: remove
   }
   deactivated:
     | false

@@ -1,11 +1,12 @@
 import { moodle_secondary_adapter, moodle_secondary_factory } from '@moodle/domain'
-import { _never } from '@moodle/lib-types'
+import { _void } from '@moodle/lib-types'
 import { Document } from 'arangojs/documents'
 import { createHash } from 'node:crypto'
 import { db_struct } from '../db-structure'
 import { getModConfigs } from '../lib'
 import { userDocument2user_record, user_record2userDocument } from './db-arango-iam-lib/mappings'
 import { userDocument } from './db-arango-iam-lib/types'
+import { aql } from 'arangojs'
 
 export function iam_moodle_secondary_factory({
   db_struct,
@@ -38,70 +39,43 @@ export function iam_moodle_secondary_factory({
                   },
                 )
                 .catch(() => null)
-              return [!!updated, _never]
+              return [!!updated, _void]
             },
             async setUserRoles({ userId, roles }) {
-              const {
-                iam: {
-                  coll: { user },
-                },
-              } = db_struct
-              const updated = await user
-                .update(
-                  { _key: userId },
-                  {
-                    roles,
-                  },
-                  { silent: true },
-                )
+              const updated = await db_struct.iam.coll.user
+                .update({ _key: userId }, { roles }, { returnNew: true })
                 .catch(() => null)
-              return [!!updated, _never]
+              return [!!updated, _void]
             },
             async getUserByEmail({ email }) {
-              const {
-                iam: {
-                  db,
-                  coll: { user },
-                },
-              } = db_struct
-              const cursor = await db.query<Document<userDocument>>(
-                `FOR user IN ${user.name} FILTER user.contacts.email == @email LIMIT 1 RETURN user`,
+              const cursor = await db_struct.iam.db.query<Document<userDocument>>(
+                `FOR user IN ${db_struct.iam.coll.user.name} FILTER user.contacts.email == @email LIMIT 1 RETURN user`,
                 { email },
               )
               const foundUser = await cursor.next()
-              return foundUser ? [true, userDocument2user_record(foundUser)] : [false, _never]
+              return foundUser ? [true, userDocument2user_record(foundUser)] : [false, _void]
             },
             async getUserById({ userId }) {
-              const {
-                iam: {
-                  coll: { user },
-                },
-              } = db_struct
-
-              const foundUser = await user.document({ _key: userId }, { graceful: true })
-              return foundUser ? [true, userDocument2user_record(foundUser)] : [false, _never]
+              const foundUser = await db_struct.iam.coll.user.document(
+                { _key: userId },
+                { graceful: true },
+              )
+              return foundUser ? [true, userDocument2user_record(foundUser)] : [false, _void]
             },
             async saveNewUser({ newUser }) {
-              const {
-                iam: {
-                  coll: { user },
-                },
-              } = db_struct
               const userDocument = user_record2userDocument(newUser)
-              const savedUser = await user
+              const savedUser = await db_struct.iam.coll.user
                 .save(userDocument, { overwriteMode: 'conflict' })
                 .catch(() => null)
 
-              return [!!savedUser, _never]
+              return [!!savedUser, _void]
             },
             async deactivateUser({ anonymize, reason, userId, at = new Date().toISOString() }) {
-              const {
-                iam: {
-                  coll: { user },
-                },
-              } = db_struct
-              const deactivatingUser = await user.document({ _key: userId }, { graceful: true })
-              if (!deactivatingUser) return [false, _never]
+              const deactivatingUser = await db_struct.iam.coll.user.document(
+                { _key: userId },
+                { graceful: true },
+              )
+              if (!deactivatingUser) return [false, _void]
 
               const anonymization = anonymize
                 ? {
@@ -116,7 +90,7 @@ export function iam_moodle_secondary_factory({
                   }
                 : null
 
-              await user.update(
+              await db_struct.iam.coll.user.update(
                 { _key: userId },
                 {
                   deactivated: { anonymized: anonymize, at, reason },
@@ -124,10 +98,29 @@ export function iam_moodle_secondary_factory({
                 },
                 { silent: true },
               )
-              return [true, _never]
+              return [true, _void]
             },
-            findUsersByText(_) {
-              throw new Error('Not implemented')
+            async findUsersByText({ text, includeDeactivated }) {
+              const lowerCaseText = text.toLowerCase()
+              const textFilter = text
+                ? aql`LET sim = NGRAM_SIMILARITY(LOWER(user.displayName),${lowerCaseText},2) + NGRAM_SIMILARITY(LOWER(user.contacts.email),${lowerCaseText},2)
+                      FILTER sim > 0.5
+                      SORT sim DESC`
+                : aql``
+              const deactivatedFilter = includeDeactivated
+                ? aql``
+                : aql`FILTER NOT(user.deactivated)`
+              const userDocs_cursor = await db_struct.iam.db.query<userDocument>(
+                aql`
+                FOR user IN ${db_struct.iam.coll.user}
+                ${deactivatedFilter}
+                ${textFilter}
+                LIMIT 50
+                RETURN user
+                `,
+              )
+              const userDocs = await userDocs_cursor.all()
+              return { users: userDocs.map(userDocument2user_record) }
             },
             getActiveUsersNotLoggedInFor(_) {
               throw new Error('Not implemented')
