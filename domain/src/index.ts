@@ -14,11 +14,13 @@ import { net_primary, net_secondary } from './net'
 import { net_webapp_nextjs_primary, net_webapp_nextjs_secondary } from './netWebappNextjs'
 import { org_primary, org_secondary } from './org'
 import { storage_secondary } from './storage'
+import { user_home_primary, user_home_secondary } from './user-hone'
 
 export * as iam from './iam'
 export * as net from './net'
 export * as netWebappNextjs from './netWebappNextjs'
 export * as org from './org'
+export * as userHome from './user-hone'
 
 export type sys_admin_info = { email: email_address }
 export type moodle_domain = ddd<
@@ -26,6 +28,7 @@ export type moodle_domain = ddd<
     org: org_primary
     iam: iam_primary
     net: net_primary
+    userHome: user_home_primary
     netWebappNextjs: net_webapp_nextjs_primary
     env: {
       application: {
@@ -43,6 +46,7 @@ export type moodle_domain = ddd<
     org: org_secondary
     iam: iam_secondary
     net: net_secondary
+    userHome: user_home_secondary
     netWebappNextjs: net_webapp_nextjs_secondary
     storage: storage_secondary
   },

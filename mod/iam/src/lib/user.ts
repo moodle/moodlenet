@@ -1,11 +1,11 @@
-import { generateId, id_type } from '@moodle/lib-id-gen'
+import { iam } from '@moodle/domain'
+import { generateNanoId } from '@moodle/lib-id-gen'
 import {
+  _unchecked_brand,
   date_time_string,
   email_address,
   named_email_address,
-  _unchecked_brand,
 } from '@moodle/lib-types'
-import { iam } from '@moodle/domain'
 
 export function getUserNamedEmailAddress({
   contacts,
@@ -24,7 +24,6 @@ export interface CreateNewUserRecordDataArg {
   createdAt?: date_time_string
   lastLogin?: date_time_string
   roles?: iam.user_role[]
-  idType?: id_type
 }
 
 export async function createNewUserRecordData({
@@ -34,15 +33,9 @@ export async function createNewUserRecordData({
   roles = [],
   createdAt,
   lastLogin,
-  idType,
 }: CreateNewUserRecordDataArg): Promise<iam.user_record> {
   const now = date_time_string('now')
-  const id = await generateId(
-    idType ?? {
-      type: 'alphanumeric',
-      length: 8,
-    },
-  )
+  const id = await generateNanoId()
   return _unchecked_brand<iam.user_record>({
     id,
     createdAt: createdAt ?? now,

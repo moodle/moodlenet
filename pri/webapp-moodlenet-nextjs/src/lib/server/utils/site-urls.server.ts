@@ -23,7 +23,7 @@ export async function getIfIsUrlOnThisSite(any_obj: unknown) {
   const urlString = String(any_obj)
   const baseUrl = (await srvSiteUrls()).baseUrl
   const isIt = urlString.startsWith(baseUrl)
-  console.log('getIfIsUrlOnThisSite', { any_obj, urlString, isIt, baseUrl })
+  // console.log('getIfIsUrlOnThisSite', { any_obj, urlString, isIt, baseUrl })
   return isIt ? urlString : null
 }
 

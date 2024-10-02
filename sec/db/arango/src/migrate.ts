@@ -1,19 +1,9 @@
-import { email_address } from '@moodle/lib-types'
-import { createNewUserRecordData } from '@moodle/mod-iam/lib'
-import * as migrations from './migrate/from'
-import { user_record2userDocument } from './sec/db-arango-iam-lib/mappings'
 import { ArangoDbSecEnv, db_struct, getDbStruct } from './db-structure'
+import * as migrations from './migrate/from'
 
-const TARGET_V = migrations.v0_1.VERSION
+const TARGET_V = 'v0_3'
 
-export interface Env {
-  moodlesysAdminEmail: email_address
-}
-
-export async function migrateArangoDB(
-  { database_connections }: ArangoDbSecEnv,
-  env: Env,
-): Promise<string> {
+export async function migrateArangoDB({ database_connections }: ArangoDbSecEnv): Promise<string> {
   const db_struct = getDbStruct(database_connections)
   const isInit = !(await db_struct.mng.db.exists())
 
@@ -22,17 +12,6 @@ export async function migrateArangoDB(
     await db_struct.mng.coll.migrations.create()
   }
   return upgrade({ db_struct }).then(async final_version => {
-    if (isInit) {
-      const default_admin_db_user = await createNewUserRecordData({
-        displayName: 'Admin',
-        email: env.moodlesysAdminEmail,
-        passwordHash: '##UNSET##',
-        roles: ['admin', 'publisher'],
-      })
-      console.log('initializing default admin user')
-
-      await db_struct.iam.coll.user.save(user_record2userDocument(default_admin_db_user))
-    }
     return final_version
   })
 }

@@ -1,6 +1,7 @@
 import { moodle_core_factory, moodle_secondary_factory, sys_admin_info } from '@moodle/domain'
 import { deploymentInfoFromUrlString } from '@moodle/lib-ddd'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
+import * as mod_user_home from '@moodle/mod-user-home'
 import * as mod_iam from '@moodle/mod-iam'
 import * as mod_net from '@moodle/mod-net'
 import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
@@ -89,6 +90,7 @@ export const default_configurator: configurator = async ({ access_session }) => 
         mod_org.org_core(),
         mod_iam.iam_core(),
         mod_net_webapp_nextjs.net_webapp_nextjs_core(),
+        mod_user_home.user_home_core(),
         (/* _ctx */) => {
           return {
             primary: {
@@ -116,21 +118,23 @@ export const default_configurator: configurator = async ({ access_session }) => 
           }
         },
       ]
-      migrateArangoDB(arango_db_env, { moodlesysAdminEmail: env.MOODLE_SYS_ADMIN_EMAIL }).then(
-        () => {
-          resolveConfiguration({
-            core_factories,
-            secondary_factories,
-            start_background_processes: env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true',
-          })
-        },
-      )
+      let do_start_background_processes = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
+      migrateArangoDB(arango_db_env).then(() => {
+        const configuration: configuration = {
+          core_factories,
+          secondary_factories,
+          get start_background_processes() {
+            const resp = do_start_background_processes
+            do_start_background_processes = false
+            return resp
+          },
+        }
+        resolveConfiguration(configuration)
+      })
     }).catch(e => {
       delete cache[normalized_domain]
       throw e
     })
-  } else {
-    ;(await cache[normalized_domain]).start_background_processes = false
   }
 
   return cache[normalized_domain]

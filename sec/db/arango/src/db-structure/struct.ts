@@ -1,6 +1,7 @@
 import { Database } from 'arangojs'
 import { userDocument } from '../sec/db-arango-iam-lib/types'
 import { database_connections } from './types'
+import { userHomeDocument } from '../sec/db-arango-user-home-lib/types'
 
 export function getDbStruct(database_connections: database_connections) {
   const baseConnectionConfig = {
@@ -28,7 +29,9 @@ export function getDbStruct(database_connections: database_connections) {
     },
     data: {
       db: data_db,
-      coll: {},
+      coll: {
+        userHome: data_db.collection<userHomeDocument>('userHome'),
+      },
     },
     iam: {
       db: iam_db,

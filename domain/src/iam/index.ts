@@ -61,7 +61,7 @@ export interface IamPrimary {
   }
 
   access: {
-    request(_: {
+    signupRequest(_: {
       signupForm: signupForm
       redirectUrl: url_string
     }): Promise<ok_ko<void, { userWithSameEmailExists: unknown }>>

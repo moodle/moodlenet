@@ -7,6 +7,7 @@ import {
   net_webapp_nextjs_moodle_secondary_factory,
 } from './sec'
 import { org_moodle_secondary_factory } from './sec/db-arango-org'
+import { user_home_moodle_secondary_factory } from './sec/db-arango-user-home'
 export type { ArangoDbSecEnv } from './db-structure'
 
 export function get_arango_persistence_factory({
@@ -19,8 +20,8 @@ export function get_arango_persistence_factory({
       org_moodle_secondary_factory({ db_struct })(ctx),
       iam_moodle_secondary_factory({ db_struct })(ctx),
       net_webapp_nextjs_moodle_secondary_factory({ db_struct })(ctx),
+      user_home_moodle_secondary_factory({ db_struct })(ctx),
     ])
     return secondary_adapter
-
   }
 }

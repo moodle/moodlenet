@@ -16,7 +16,7 @@ export async function generateUlid({ onDate }: { onDate: Date | number | string 
   return globalMonoUlid(date.valueOf())
 }
 
-export async function generateAlphaNumericId(opts?: { alpabet?: string; length?: number }) {
+export async function generateNanoId(opts?: { alpabet?: string; length?: number }) {
   const id = customAlphabet(
     opts?.alpabet || `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`,
     8,
@@ -27,7 +27,7 @@ export async function generateAlphaNumericId(opts?: { alpabet?: string; length?:
 export async function generateId(id_type: id_type) {
   switch (id_type.type) {
     case 'alphanumeric':
-      return generateAlphaNumericId({ length: id_type.length })
+      return generateNanoId({ length: id_type.length })
     case 'ulid':
       return generateUlid({ onDate: id_type.onDate ?? Date.now() })
   }

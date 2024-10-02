@@ -1,14 +1,18 @@
-import { iam, moodle_core_factory, moodle_core_impl } from '@moodle/domain'
+import { iam, moodle_core_factory, moodle_core_impl, moodle_domain } from '@moodle/domain'
+import { CoreContext } from '@moodle/lib-ddd'
 import {
   resetPasswordEmail,
   selfDeletionConfirmEmail,
   signupEmailConfirmationEmail,
 } from '@moodle/lib-email-templates/iam'
-import { _void, date_time_string } from '@moodle/lib-types'
-import * as lib from './lib'
+import { generateNanoId } from '@moodle/lib-id-gen'
+import { __redacted__, _void, date_time_string } from '@moodle/lib-types'
 import { user_role } from 'domain/src/iam'
+import * as lib from './lib'
 
 export function iam_core(): moodle_core_factory {
+  let background_process_running = false
+
   return ctx => {
     const core_impl: moodle_core_impl = {
       primary: {
@@ -84,7 +88,7 @@ export function iam_core(): moodle_core_factory {
             },
           },
           access: {
-            async request({ signupForm, redirectUrl }) {
+            async signupRequest({ signupForm, redirectUrl }) {
               const schemas = await fetchPrimarySchemas()
               const { displayName, email, password } = schemas.signupSchema.parse(signupForm)
               const [found] = await ctx.sys_call.secondary.iam.db.getUserByEmail({
@@ -360,7 +364,9 @@ export function iam_core(): moodle_core_factory {
         env: {
           system: {
             async backgroundProcess({ action }) {
-              console.log('IAM - backgroundProcess', action)
+              if (action === 'start') {
+                startIamProcess(ctx)
+              }
             },
           },
         },
@@ -387,8 +393,26 @@ export function iam_core(): moodle_core_factory {
       return iam.getIamPrimarySchemas(iamPrimaryMsgSchemaConfigs)
     }
   }
-}
 
-// export const process: core_process = _ctx => {
-//   // setTimeout(getinactiveUsers ....)
-// }
+  async function startIamProcess(ctx: CoreContext<moodle_domain>) {
+    background_process_running = true
+    const sysAdminInfo = await ctx.sys_call.primary.env.maintainance.getSysAdminInfo()
+    const [found] = await ctx.sys_call.secondary.iam.db.getUserByEmail({
+      email: sysAdminInfo.email,
+    })
+
+    if (!found) {
+      const { passwordHash } = await ctx.sys_call.secondary.iam.crypto.hashPassword({
+        plainPassword: __redacted__(await generateNanoId({length:20})),
+      })
+      const newUser = await lib.createNewUserRecordData({
+        displayName: 'Admin',
+        email: sysAdminInfo.email,
+        passwordHash,
+        roles: ['admin', 'publisher'],
+      })
+
+      await ctx.sys_call.secondary.iam.db.saveNewUser({ newUser })
+    }
+  }
+}

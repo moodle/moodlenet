@@ -8,6 +8,7 @@
 FIXME:[ ] define types as z.infer when zod schema defined (e.g. all def in types.data)
 [ ] file service
 [ ] a "system" access_session for init/migration ? (e.g. create the first admin user)
+[ ] add all "config changed" events
 
 ### Done
 

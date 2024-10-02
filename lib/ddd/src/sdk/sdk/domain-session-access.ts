@@ -118,7 +118,6 @@ export function domain_session_access_provider<domain extends ddd>({
       const core_impls = await Promise.all(
         core_factories.map(core_factory => core_factory(evtContext)),
       )
-
       await Promise.all(
         core_impls.map(core_impl => dispatch(core_impl, current_domain_msg, { graceful: true })),
       )
@@ -131,6 +130,7 @@ export function domain_session_access_provider<domain extends ddd>({
       domain_msg: domain_msg,
       opts?: dispatch_opts,
     ) {
+      // console.log({ impl, domain_msg, opts })
       const { layer, module, channel, name } = domain_msg.endpoint
       const endpoint_impl = impl?.[layer as keyof ddd]?.[module]?.[channel]?.[name]
 

@@ -22,7 +22,7 @@ export const signupAction = actionClient
   .action(async ({ parsedInput: signupForm }) => {
     const redirectUrl = (await srvSiteUrls()).full.apis.iam.basicAuth.verifySignupEmailToken
 
-    const [done, resp] = await priAccess().iam.access.request({
+    const [done, resp] = await priAccess().iam.access.signupRequest({
       signupForm,
       redirectUrl,
     })

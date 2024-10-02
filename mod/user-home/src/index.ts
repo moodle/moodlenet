@@ -1,1 +1,1 @@
-export * from './lib/mod-user-home'
+export * from './core'

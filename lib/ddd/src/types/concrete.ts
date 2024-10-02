@@ -17,16 +17,23 @@ export type sys_call<domain extends ddd> = Pick<domain, 'primary' | 'secondary'>
 export type forward<domain extends ddd> = Pick<domain, 'primary'>
 export type emit<domain extends ddd> = Pick<domain, 'event'>
 
+// interface Logger {
+//   (_: _any): void
+//   log(_: _any): void
+// }
+
 export interface CoreContext<domain extends ddd> {
   sys_call: sys_call<domain>
   forward: forward<domain>
   access_session: access_session
+  // log: Logger
 }
 
 export type EvtContext<domain extends ddd> = {
   sys_call: sys_call<domain>
   forward: forward<domain>
   access_session: access_session
+  // log: Logger
 }
 
 export interface SecondaryContext<domain extends ddd> {
@@ -34,6 +41,7 @@ export interface SecondaryContext<domain extends ddd> {
   sys_call: sys_call<domain>
   emit: emit<domain>
   access_session: access_session
+  // log: Logger
 }
 
 export function composeDomains<domain extends ddd>(
