@@ -175,7 +175,7 @@ export interface IamSecondary {
       includeDeactivated?: boolean
     }): Promise<{ users: user_record[] }>
   }
-  storage: { __placeholder__?(): Promise<unknown> }
+
 }
 export interface IamEvent {
   userBase: {

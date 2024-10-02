@@ -28,5 +28,4 @@ export interface NetWebappNextjsSecondary {
   db: {
     getConfigs(): Promise<{ configs: Configs }>
   }
-  storage: { __placeholder__?(): Promise<unknown> }
 }
