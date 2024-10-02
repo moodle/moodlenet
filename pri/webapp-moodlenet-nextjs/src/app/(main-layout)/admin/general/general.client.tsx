@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { provideAdminGeneralSchemas, MakeAdminGeneralSchemaDeps } from './general.common'
 import { saveGeneralInfoAction } from './general.server'
 import { org, net } from '@moodle/domain'
+import { object } from 'zod'
 
 export type GeneralFormValues = Pick<
   org.orgInfoForm & net.moodlenetInfoForm,
