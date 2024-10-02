@@ -1,31 +1,30 @@
 import { http_bind } from '@moodle/bindings-node'
-import { createAcccessProxy, Modules, primary_session } from '@moodle/lib-ddd'
-import type {} from '@moodle/mod-iam'
-import { hasUserSessionRole } from '@moodle/mod-iam/v1_0/lib'
-import type {} from '@moodle/mod-net'
-import type {} from '@moodle/mod-net-webapp-nextjs'
-import type {} from '@moodle/mod-org'
+import { moodle_domain } from '@moodle/domain'
+import { access_session, create_access_proxy } from '@moodle/lib-ddd'
+import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/mod-iam/lib'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
+import { redirect, RedirectType } from 'next/navigation'
 import { userAgent } from 'next/server'
 import assert from 'node:assert'
+import { sitepaths } from '../common/utils/sitepaths'
 import { getAuthTokenCookie } from './auth'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
 const MOODLE_NET_NEXTJS_APP_NAME =
   process.env.MOODLE_NET_NEXTJS_APP_NAME ?? 'webapp-moodlenet-nextjs'
 
-const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:9000'
+const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
-export function priAccess(): Modules {
+export function priAccess(): moodle_domain['primary'] {
   const trnspClient = http_bind.client()
-  const primarySession = getPrimarySession()
-  const ap = createAcccessProxy({
-    access(domain_msg) {
+  const accessSession = getAccessSession()
+  const [ap] = create_access_proxy<moodle_domain>({
+    sendDomainMsg({ domain_msg }) {
       return trnspClient(
         {
           domain_msg,
-          primary_session: primarySession,
+          access_session: accessSession,
           // core_mod_id: null,
         },
         requestTarget,
@@ -39,13 +38,13 @@ export function priAccess(): Modules {
   // however we can't set the cookie here :
   // [Error]: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
   //
-  // if (primarySession.sessionToken) {
-  //   const [valid, info] = iam_v1_0.noValidationParseUserSessionToken(
-  //     primarySession.sessionToken,
+  // if (accessSession.sessionToken) {
+  //   const [valid, info] = iam.noValidationParseUserSessionToken(
+  //     accessSession.sessionToken,
   //   )
   //   if (valid && !info.expired && info.expires.inSecs < 5 * 60) {
   //     !! VALIDATE IT BEFORE REFRESHING !!
-  //     ap.mod.moodle.iam_v1_0_lib.pri.session
+  //     ap.mod.iam_lib.session
   //       .generateSession({ userId: info.userData.id })
   //       .then(([generated, session]) => {
   //         if (!generated) {
@@ -56,27 +55,35 @@ export function priAccess(): Modules {
   //   }
   // }
 
-  return ap.mod
+  return ap.primary
 }
 
-export async function getAuthenticatedUserSession() {
-  const { userSession } = await priAccess().moodle.iam.v1_0.pri.session.getCurrentUserSession()
-  return userSession.type === 'authenticated' ? userSession : null
-}
-export async function getAdminUserSession() {
-  const authenticatedUserSession = await getAuthenticatedUserSession()
-  return authenticatedUserSession && hasUserSessionRole(authenticatedUserSession, 'admin')
-    ? authenticatedUserSession
-    : null
-}
-export async function getContributorUserSession() {
-  const authenticatedUserSession = await getAuthenticatedUserSession()
-  return authenticatedUserSession && hasUserSessionRole(authenticatedUserSession, 'contributor')
-    ? authenticatedUserSession
-    : null
+export async function getUserSession() {
+  const { userSession } = await priAccess().iam.session.getCurrentUserSession()
+  return userSession
 }
 
-function getPrimarySession() {
+export async function getAuthenticatedUserSessionOrRedirectToLogin() {
+  const maybe_authenticatedUserSession = await getUserSession()
+  if (isAuthenticatedUserSession(maybe_authenticatedUserSession)) {
+    return maybe_authenticatedUserSession
+  }
+
+  const loginUrl = sitepaths().pages.access.login({
+    redirect: headers().get('x-pathname') ?? sitepaths().pages.landing,
+  })
+  redirect(loginUrl, RedirectType.replace)
+}
+
+export async function getAdminUserSessionOrRedirect(path = '/') {
+  const authenticatedUserSession = await getAuthenticatedUserSessionOrRedirectToLogin()
+  if (!isAdminUserSession(authenticatedUserSession)) {
+    redirect('/')
+  }
+  return authenticatedUserSession
+}
+
+function getAccessSession() {
   i18next.init({
     // ns: ['common', 'moduleA'],
     // defaultNS: 'moduleA',
@@ -93,7 +100,7 @@ function getPrimarySession() {
   const xGeo = JSON.parse(_headers.get('x-geo') ?? '{}')
   const ua = userAgent({ headers: _headers })
   assert(xHost, 'x-host not found in headers')
-  const primarySession: primary_session = {
+  const accessSession: access_session = {
     type: 'user',
     sessionToken: getAuthTokenCookie().sessionToken,
     app: {
@@ -101,8 +108,8 @@ function getPrimarySession() {
       pkg: 'webapp-moodlenet-nextjs',
       version: '0.1',
     },
-    connection: {
-      proto: 'http',
+    protocol: {
+      type: 'http',
       secure: xProto === 'https',
       mode: xMode,
       url: xUrl,
@@ -131,5 +138,5 @@ function getPrimarySession() {
       },
     },
   }
-  return primarySession
+  return accessSession
 }

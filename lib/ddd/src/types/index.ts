@@ -1,3 +1,4 @@
 export * from './concrete'
 export * from './mod'
-export * from './primary-session'
+export * from './deployment'
+export * from './access-session'

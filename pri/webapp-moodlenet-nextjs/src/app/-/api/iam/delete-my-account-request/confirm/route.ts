@@ -14,18 +14,8 @@ export async function GET(req: NextRequest) {
       status: 400,
     })
   }
-  const {
-    moodle: {
-      iam: {
-        v1_0: {
-          pri: {
-            myAccount: { confirmSelfDeletionRequest },
-          },
-        },
-      },
-    },
-  } = priAccess()
-  const [ok, response] = await confirmSelfDeletionRequest({
+
+  const [ok, response] = await priAccess().iam.myAccount.confirmSelfDeletionRequest({
     selfDeletionConfirmationToken,
     reason: '',
   })

@@ -1,67 +1,58 @@
-import { core_factory } from '@moodle/lib-ddd'
-import { assert_authorizeSystemSession } from '@moodle/mod-iam/v1_0/lib'
+import { moodle_core_factory, moodle_core_impl } from '@moodle/domain'
+import { assert_authorizeSystemSession } from '@moodle/mod-iam/lib'
 
-export function core(): core_factory {
+export function net_webapp_nextjs_core(): moodle_core_factory {
   return ctx => {
-    return {
-      moodle: {
+    const moodle_core_impl: moodle_core_impl = {
+      primary: {
         netWebappNextjs: {
-          v1_0: {
-            pri: {
-              schemaConfigs: {
-                async iam() {
-                  const iam = await ctx.sysCall.moodle.iam.v1_0.pri.system.configs()
-                  return { iamSchemaConfigs: iam.configs.iamPrimaryMsgSchemaConfigs }
+          schemaConfigs: {
+            async iam() {
+              const iam = await ctx.sys_call.primary.iam.system.configs()
+              return { iamSchemaConfigs: iam.configs.iamPrimaryMsgSchemaConfigs }
+            },
+            async moodleNet() {
+              const net = await ctx.sys_call.primary.net.system.configs()
+              return { moodleNetSchemaConfigs: net.configs.moodleNetPrimaryMsgSchemaConfigs }
+            },
+            async org() {
+              const org = await ctx.sys_call.primary.org.system.configs()
+              return { orgSchemaConfigs: org.configs.orgPrimaryMsgSchemaConfigs }
+            },
+          },
+          webapp: {
+            async layouts() {
+              const {
+                configs: { layouts },
+              } = await ctx.sys_call.secondary.netWebappNextjs.db.getConfigs()
+              return layouts
+            },
+          },
+          moodlenet: {
+            async info() {
+              const [
+                {
+                  configs: { info },
                 },
-                async moodleNet() {
-                  const net = await ctx.sysCall.moodle.net.v1_0.pri.system.configs()
-                  return { moodleNetSchemaConfigs: net.configs.moodleNetPrimaryMsgSchemaConfigs }
+                {
+                  configs: { info: org },
                 },
-                async org() {
-                  const org = await ctx.sysCall.moodle.org.v1_0.pri.system.configs()
-                  return { orgSchemaConfigs: org.configs.orgPrimaryMsgSchemaConfigs }
-                },
-              },
-              webapp: {
-                async deployment() {
-                  const {
-                    configs: { deployment },
-                  } = await ctx.sysCall.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
-                  return deployment
-                },
-                async layouts() {
-                  const {
-                    configs: { layouts },
-                  } = await ctx.sysCall.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
-                  return layouts
-                },
-              },
-              moodlenet: {
-                async info() {
-                  const [
-                    {
-                      configs: { info },
-                    },
-                    {
-                      configs: { info: org },
-                    },
-                  ] = await Promise.all([
-                    ctx.sysCall.moodle.net.v1_0.pri.system.configs(),
-                    ctx.sysCall.moodle.org.v1_0.pri.system.configs(),
-                  ])
-                  return { moodlenet: info, org }
-                },
-              },
-              system: {
-                async configs() {
-                  await assert_authorizeSystemSession(ctx)
-                  return ctx.sysCall.moodle.netWebappNextjs.v1_0.sec.db.getConfigs()
-                },
-              },
+              ] = await Promise.all([
+                ctx.sys_call.primary.net.system.configs(),
+                ctx.sys_call.primary.org.system.configs(),
+              ])
+              return { moodlenet: info, org }
+            },
+          },
+          system: {
+            async configs() {
+              await assert_authorizeSystemSession(ctx)
+              return ctx.sys_call.secondary.netWebappNextjs.db.getConfigs()
             },
           },
         },
       },
     }
+    return moodle_core_impl
   }
 }

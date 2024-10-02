@@ -3,7 +3,7 @@ import { priAccess } from '../../../../lib/server/session-access'
 import { GeneralSettingsClient } from './general.client'
 
 export default async function GeneralPage() {
-  const { iamSchemaConfigs } = await priAccess().moodle.netWebappNextjs.v1_0.pri.schemaConfigs.iam()
+  const { iamSchemaConfigs } = await priAccess().netWebappNextjs.schemaConfigs.iam()
 
   const noEqualPasswordsError = t('Passwords must be different')
 

@@ -1,52 +1,22 @@
-import { email_address } from '@moodle/lib-types'
-import { createNewUserRecordData } from '@moodle/mod-iam/v1_0/lib'
-import assert from 'assert'
-import { v1_0 } from '.'
+import { ArangoDbSecEnv, db_struct, getDbStruct } from './db-structure'
 import * as migrations from './migrate/from'
-import { userRecord2userDocument } from './sec/moodle/db-arango-iam-lib/mappings'
-import { ArangoDbSecEnv } from './v1_0'
 
-const TARGET_V = migrations.v0_1.VERSION
+const TARGET_V = 'v0_3'
 
-export interface DbMigrateConfig {
-  init?: { moodleInitialAdminEmail: email_address }
-}
-
-export async function migrate(
-  { database_connections }: ArangoDbSecEnv,
-  dbMigrateConfig: DbMigrateConfig,
-): Promise<string> {
-  const db_struct = v1_0.getDbStruct(database_connections)
+export async function migrateArangoDB({ database_connections }: ArangoDbSecEnv): Promise<string> {
+  const db_struct = getDbStruct(database_connections)
   const isInit = !(await db_struct.mng.db.exists())
 
   if (isInit) {
-    if (!dbMigrateConfig.init?.moodleInitialAdminEmail) {
-      throw new Error('an email for the default admin user is required for first db initialization')
-    }
     await db_struct.sys_db.createDatabase(db_struct.mng.db.name)
     await db_struct.mng.coll.migrations.create()
   }
   return upgrade({ db_struct }).then(async final_version => {
-    if (isInit) {
-      assert(
-        dbMigrateConfig.init?.moodleInitialAdminEmail,
-        'default_admin_email is required for first db initialization',
-      )
-      const default_admin_db_user = await createNewUserRecordData({
-        displayName: 'Admin',
-        email: dbMigrateConfig.init.moodleInitialAdminEmail,
-        passwordHash: '##UNSET##',
-        roles: ['admin'],
-      })
-      console.log('initializing default admin user')
-
-      await db_struct.iam.coll.user.save(userRecord2userDocument(default_admin_db_user))
-    }
     return final_version
   })
 }
 
-export async function upgrade({ db_struct }: { db_struct: v1_0.db_struct }): Promise<string> {
+export async function upgrade({ db_struct }: { db_struct: db_struct }): Promise<string> {
   const from_v: keyof typeof migrations | typeof TARGET_V =
     (await db_struct.mng.coll.migrations.document('latest', { graceful: true }))?.current ?? 'init'
 

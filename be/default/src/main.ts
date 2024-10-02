@@ -1,133 +1,41 @@
-import { http_bind } from '@moodle/bindings-node'
-import {
-  composeImpl,
-  core_impl,
-  CoreContext,
-  coreModId,
-  createAcccessProxy,
-  dispatch,
-  domain_msg,
-  primary_session,
-  sec_impl,
-  TransportData,
-  SecondaryContext,
-} from '@moodle/lib-ddd'
-import * as mod_iam from '@moodle/mod-iam'
-import * as mod_net from '@moodle/mod-net'
-import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
-import * as mod_org from '@moodle/mod-org'
-import { get_arango_persistence_factory } from '@moodle/sec-db-arango'
-
-import { get_default_crypto_secondarys_factory } from '@moodle/sec-crypto-default'
-import { get_nodemailer_secondarys_factory } from '@moodle/sec-email-nodemailer'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
-import { migrate } from './migrate'
-import { EnvProvider } from './types'
-dotenvExpand(dotenv.config({ path: process.env.MOODLE_DOTENV_PATH }))
+import { binder, configurator, session_deployer } from './types.js'
+import { _maybe } from '@moodle/lib-types'
+dotenvExpand(dotenv.config())
 
-http_bind.server({
-  port: 9000,
-  baseUrl: '/',
-  request(td) {
-    return request(td)
-  },
+optimport<binder>(process.env.MOODLE_BINDER_MODULE, './default-binder.js').then(binder => {
+  binder({
+    domain_session_access: async ({ access_session, domain_msg }) => {
+      const configurator = await optimport<configurator>(
+        process.env.MOODLE_CONFIGURATOR_MODULE,
+        './default-configurator.js',
+      )
+      const { core_factories, secondary_factories, start_background_processes } =
+        await configurator({
+          access_session,
+        })
+
+      const session_deployer = await optimport<session_deployer>(
+        process.env.MOODLE_DEPLOYMENT_MODULE,
+        './default-session-deployment.js',
+      )
+      return session_deployer({
+        domain_msg,
+        access_session,
+        core_factories,
+        secondary_factories,
+        start_background_processes,
+      })
+    },
+  })
 })
 
-async function request(transportData: TransportData) {
-  const { domain_msg, primary_session /* , core_mod_id */ } = transportData
-
-  const _env_provider: EnvProvider = (
-    await import(process.env.MOODLE_ENV_PROVIDER_MODULE ?? './default-env-provider.js')
+async function optimport<T>(
+  optional_module_path: _maybe<string>,
+  default_module_path: string,
+): Promise<T> {
+  return (
+    optional_module_path ? await import(optional_module_path) : await import(default_module_path)
   ).default.default
-  const { env, migration_status } = await _env_provider({ primary_session, migrate })
-
-  // this could be inspected later to respond immediately with a "under maintainance" status
-  await migration_status
-  const core_mod_id = coreModId(domain_msg)
-
-  const defaultAccessProxy = createAcccessProxy({
-    access(msg) {
-      return request({ domain_msg: msg, primary_session /* , core_mod_id */ }).catch(e => {
-        console.error({ msg })
-        throw e
-      })
-    },
-  })
-  const sysCallAccessProxy = createAcccessProxy({
-    access(msg) {
-      const core_mod_id = coreModId(domain_msg)
-      const sysCallPrimarySession: primary_session = {
-        type: 'system',
-        domain: primary_session.domain,
-        mod_id: core_mod_id,
-      }
-      return request({
-        domain_msg: msg,
-        primary_session: sysCallPrimarySession,
-        // core_mod_id,
-      }).catch(e => {
-        console.error({ msg })
-        throw e
-      })
-    },
-  })
-
-  const coreCtx: CoreContext = {
-    primarySession: primary_session,
-    forward: defaultAccessProxy.mod,
-    sysCall: sysCallAccessProxy.mod,
-    transportData,
-  }
-
-  const core_impls: core_impl[] = [
-    // core modules
-    await mod_net.core()(coreCtx),
-    await mod_org.core()(coreCtx),
-    await mod_iam.core()(coreCtx),
-    await mod_net_webapp_nextjs.core()(coreCtx),
-  ]
-  const core = composeImpl(...core_impls)
-
-  const secondaryCtx: SecondaryContext | null = core_mod_id
-    ? {
-        primarySession: primary_session,
-        emit: sysCallAccessProxy.mod,
-        modIdCaller: core_mod_id,
-        transportData,
-      }
-    : null
-
-  const sec_impls: sec_impl[] = secondaryCtx
-    ? [
-        // sec modules
-        await get_arango_persistence_factory(env.arango_db)(secondaryCtx),
-        await get_default_crypto_secondarys_factory(env.crypto)(secondaryCtx),
-        await get_nodemailer_secondarys_factory(env.nodemailer)(secondaryCtx),
-      ]
-    : []
-  const sec = composeImpl(...sec_impls)
-
-  // console.log(inspect(moodleDomain, true, 10, true))
-  if (domain_msg.layer === 'pri') {
-    return dispatch(core, domain_msg, not_implemented_here(domain_msg))
-  } else if (domain_msg.layer === 'sec') {
-    return dispatch(sec, domain_msg, not_implemented_here(domain_msg))
-  } else if (domain_msg.layer === 'evt') {
-    core_impls.forEach(core_impl => {
-      dispatch(core_impl, domain_msg, not_implemented_here(domain_msg))
-    })
-  } else {
-    throw TypeError(`unknown msg layer: ${domain_msg.layer}`)
-  }
-}
-function not_implemented_here(domain_msg: domain_msg): (found: unknown) => void {
-  return found => {
-    const { channel, layer, mod, ns, port, version } = domain_msg
-    const err_msg = `
-NOT IMPLEMENTED: ${ns}.${mod}.${version}.${layer}.${channel}.${port}
-FOUND: [${String(found)}]
-`
-    throw TypeError(err_msg)
-  }
 }

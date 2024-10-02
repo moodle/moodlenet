@@ -1,86 +1,66 @@
-import { _any, deep_partial, deep_required } from '@moodle/lib-types'
+import { deep_partial } from '@moodle/lib-types'
 import { merge } from 'lodash'
-import { Modules } from '../domain'
-import { any_endpoint, domain_msg, layers, mod_id } from './mod'
-import { primary_session } from './primary-session'
+import { ddd } from '../domain'
+import { access_session } from './access-session'
+import { domain_endpoint } from './mod'
 
-export interface TransportData {
-  primary_session: primary_session
-  domain_msg: domain_msg
-  //core_mod_id: mod_id | null
+export interface CoreProcessContext<domain extends ddd> {
+  sys_call: domain
 }
 
-export interface CoreProcessContext {
-  sysCall: concrete<'pri' | 'sec' | 'evt'>
-}
-
-export type core_process = (ctx: CoreProcessContext) => stop_core_process
+export type core_process<domain extends ddd> = (
+  ctx: CoreProcessContext<domain>,
+) => stop_core_process
 export type stop_core_process = void | (() => unknown)
 
-export interface CoreContext {
-  sysCall: concrete<'pri' | 'sec' | 'evt'>
-  forward: concrete<'pri'>
-  primarySession: primary_session
-  transportData: TransportData
-}
+export type sys_call<domain extends ddd> = Pick<domain, 'primary' | 'secondary'>
+export type forward<domain extends ddd> = Pick<domain, 'primary'>
+export type emit<domain extends ddd> = Pick<domain, 'event'>
 
-export type EvtContext = {
-  sysCall: concrete<'pri' | 'sec' | 'evt'>
-  forward: concrete<'pri'>
-  primarySession: primary_session
-  transportData: {
-    pri: TransportData
-    sec: TransportData
-  }
-}
-
-export interface SecondaryContext {
-  primarySession: primary_session
-  modIdCaller: mod_id
-  emit: concrete<'evt'>
-  transportData: TransportData
-}
-
-// export type execution_context = {
-//   forward: Modules
-//   push: Modules
-//   primarySession: primary_session
-//   permissions: concrete
+// interface Logger {
+//   (_: _any): void
+//   log(_: _any): void
 // }
 
-export type layer_contexts = {
-  pri: CoreContext
-  evt: EvtContext
-  sec: SecondaryContext
+export interface CoreContext<domain extends ddd> {
+  sys_call: sys_call<domain>
+  forward: forward<domain>
+  access_session: access_session
+  // log: Logger
 }
 
-export type concrete<_layer extends keyof layers> = {
-  [ns in keyof Modules]: {
-    [mod_name in keyof Modules[ns]]: {
-      [version in keyof Modules[ns][mod_name]]: {
-        [_this_layer in _layer]: Modules[ns][mod_name][version] extends infer _layers
-          ? _layers extends layers
-            ? _layers[_this_layer]
-            : never
-          : never
-      }
-    }
-  }
+export type EvtContext<domain extends ddd> = {
+  sys_call: sys_call<domain>
+  forward: forward<domain>
+  access_session: access_session
+  // log: Logger
 }
-export function composeImpl(...impls: impl<_any>[]): impl<_any> {
+
+export interface SecondaryContext<domain extends ddd> {
+  invoked_by: domain_endpoint
+  sys_call: sys_call<domain>
+  emit: emit<domain>
+  access_session: access_session
+  // log: Logger
+}
+
+export function composeDomains<domain extends ddd>(
+  impls: deep_partial<domain>[],
+): deep_partial<domain> {
   return merge({}, ...impls)
 }
+//NOTE: strict Pick<> brakes deep_partial in composeDomains. don't knwo why.
+export type core_impl<domain extends ddd> = deep_partial<domain>
+export type secondary_adapter<domain extends ddd> = deep_partial<domain>
+// export type core_impl<domain extends ddd> = deep_partial<Pick<domain,'primary' | 'event'>>
+// export type secondary_adapter<domain extends ddd> = deep_partial<Pick<domain,'secondary'>>
 
-type impl<_layer extends keyof layer_contexts> = deep_partial<concrete<_layer>>
+export type core_factory<domain extends ddd> = (ctx: CoreContext<domain>) => core_impl<domain>
 
-export type core_factory = factory<'pri' | 'evt'>
-export type core_impl = impl<'pri' | 'evt'>
-export type sec_factory = factory<'sec'>
-export type sec_impl = impl<'sec'>
-type factory<_layer extends keyof layer_contexts> = (
-  ctx: layer_contexts[_layer],
-) => impl<_layer> | Promise<impl<_layer>>
 
-export declare const domain: deep_required<impl<keyof layer_contexts>>
-export type payload_of<_ extends any_endpoint> = Parameters<_>[0]
-export type reply_of<_ extends any_endpoint> = Awaited<ReturnType<_>>
+export type secondary_factory<domain extends ddd> = (
+  ctx: SecondaryContext<domain>,
+) => secondary_adapter<domain>
+
+// export type payload_of<_ extends any_endpoint> = Parameters<_>[0]
+// export type reply_of<_ extends any_endpoint> = Awaited<ReturnType<_>>

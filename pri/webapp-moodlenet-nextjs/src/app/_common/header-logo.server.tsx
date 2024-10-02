@@ -1,17 +1,12 @@
 'use server'
+import { getFileUrl } from '@moodle/lib-types'
+import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { priAccess } from '../../lib/server/session-access'
-import { srvSiteUrls } from '../../lib/server/utils/site-urls.server'
 import HeaderLogo from '../../ui/organisms/Header/HeaderLogo/HeaderLogo'
 
 export async function LayoutHeaderLogo() {
-  const {
-    org: { logo, smallLogo },
-  } = await priAccess().moodle.netWebappNextjs.v1_0.pri.moodlenet.info()
-
-  const {
-    site: {
-      pages: { landing: landingPath },
-    },
-  } = await srvSiteUrls()
+  const { org } = await priAccess().netWebappNextjs.moodlenet.info()
+  const [logo, smallLogo] = await Promise.all([getFileUrl(org.logo), getFileUrl(org.smallLogo)])
+  const landingPath = sitepaths().pages.landing
   return <HeaderLogo {...{ logo, smallLogo, landingPath }} />
 }

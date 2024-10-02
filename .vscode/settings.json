@@ -6,12 +6,14 @@
     "https://json-schema.org/draft-07/schema": "asyncapi/**/*.sch.yml"
     // "https://json-schema.org/draft/2020-12/schema": "asyncapi/**/*.sch.yml"
   },
-  "javascript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "prompt",
   "todo-tree.filtering.excludeGlobs": [
-    "pri/webapp-moodlenet-nextjs/zz__legacy/**/*",
-    "pri/webapp-moodlenet-nextjs/ui-cmps/**/*",
+    "**/pri/webapp-moodlenet-nextjs/zz__legacy/*/**",
+    "**/pri/webapp-moodlenet-nextjs/ui-cmps/*/**",
     "**/node_modules/*/**"
   ],
+  // -TODO-TREE
+  // "todo-tree.tree.filterCaseSensitive": false,
   "todo-tree.highlights.useColourScheme": true,
   "todo-tree.highlights.defaultHighlight": {
     "icon": "alert",
@@ -40,11 +42,42 @@
       "iconColour": "#41c9ff",
       "background": "#41c9ff",
       "opacity": 80
+    },
+    "CREDITS": {
+      "foreground": "#000000",
+      "iconColour": "#fff241",
+      "background": "#fff241",
+      "opacity": 80
     }
   },
-  "todo-tree.general.tags": ["TODO", "FIXME", "FIXIT", "FIX", "BUG", "NOTE"],
+  "todo-tree.general.tags": [
+    "CREDITS",
+    "CREDIT",
+    "THANKS",
+    "THANK",
+    //
+    "TODO",
+    //
+    "FIXME",
+    "FIXIT",
+    "FIX",
+    //
+    "BUG",
+    //
+    "HACK",
+    //
+    "CHECK",
+    "CHECKOUT",
+    "BEWARE",
+    //
+    "NOTE",
+    "NOTICE"
+  ],
   "todo-tree.general.tagGroups": {
-    "FIXME": ["FIXME", "FIXIT", "FIX"]
+    "FIXME": ["FIXME", "FIXIT", "FIX"],
+    "NOTE": ["NOTE", "NOTICE"],
+    "CHECK": ["CHECK", "CHECKOUT", "BEWARE"],
+    "CREDITS": ["CREDITS", "CREDIT", "THANKS", "THANK"]
   },
   "javascript.preferences.importModuleSpecifier": "project-relative",
   "typescript.preferences.importModuleSpecifier": "project-relative"

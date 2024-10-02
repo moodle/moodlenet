@@ -4,7 +4,7 @@ import { fetchMakeAdminGeneralSchemaDeps } from './general.server'
 
 export default async function GeneralPage() {
   const makeAdminGeneralSchemaDeps = await fetchMakeAdminGeneralSchemaDeps()
-  const { moodlenet, org } = await priAccess().moodle.netWebappNextjs.v1_0.pri.moodlenet.info()
+  const { moodlenet, org } = await priAccess().netWebappNextjs.moodlenet.info()
   const generalFormValues: GeneralFormValues = {
     name: org.name,
     copyright: org.copyright,

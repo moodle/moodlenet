@@ -1,46 +1,29 @@
 import { _any, map } from '@moodle/lib-types'
-import { layer_contexts } from './concrete'
 
-export type mod_version = string
-export type mod<_mod extends module> = _mod
-export type module = {
-  // name: string
-  [version: mod_version]: layers
-}
+export type primary_layer = map<channel<primary_endpoint>>
+export type secondary_layer = map<channel<secondary_endpoint>>
+export type event_layer = map<channel<event_endpoint>>
 
-export type layers = {
-  pri: map<channels<core_endpoint>>
-  sec: map<channels<secondary_endpoint>>
-  evt: map<channels<event_endpoint>>
-  // prm?: map
-}
+export type any_layer = primary_layer | secondary_layer | event_layer
 
-export type channels<_endpoint extends any_endpoint> = map<_endpoint>
+export type channel<_endpoint extends any_endpoint> = map<_endpoint>
 
 export type msg_payload = _any
 
-export type core_endpoint = (_: msg_payload | never) => Promise<msg_payload | void>
+export type primary_endpoint = (_: msg_payload | never) => Promise<msg_payload | void>
 export type secondary_endpoint = (_: msg_payload | never) => Promise<msg_payload | void>
 export type event_endpoint = (_: msg_payload | never) => unknown
-export type any_endpoint = event_endpoint | core_endpoint | secondary_endpoint
 
-// export type msgs_of<_layer extends any_endpoint> = [Parameters<_layer>[0], ReturnType<_layer>]
+export type any_endpoint = event_endpoint | primary_endpoint | secondary_endpoint
 
-// mod access path
-export type mod_id = {
-  ns: string
-  mod: string
-  version: string
-}
-export type mod_endpoint = mod_id & {
-  layer: keyof layer_contexts
-  channel: string
-  port: string
-}
-export type domain_msg = mod_endpoint & {
+export type domain_msg = {
+  endpoint: domain_endpoint
   payload: _any
 }
 
-export function coreModId({ mod, ns, version }: mod_id): mod_id {
-  return { mod, ns, version }
+export type domain_endpoint = {
+  layer: string
+  module: string
+  channel: string
+  name: string
 }

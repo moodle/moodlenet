@@ -1,8 +1,7 @@
 'use client'
+import { iam } from '@moodle/domain'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { signed_token } from '@moodle/lib-types'
-import { getIamPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
-import { IamPrimaryMsgSchemaConfigs } from '@moodle/mod-iam/v1_0/types'
+import { __redacted__, signed_token } from '@moodle/lib-types'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'next-i18next'
 import Link from 'next/link'
@@ -16,11 +15,11 @@ export function ResetPasswordClient({
   resetPasswordToken,
   iamSchemaConfigs,
 }: {
-  iamSchemaConfigs: IamPrimaryMsgSchemaConfigs
+  iamSchemaConfigs: iam.IamPrimaryMsgSchemaConfigs
   resetPasswordToken: signed_token
 }) {
   const { t } = useTranslation()
-  const { resetPasswordSchema } = getIamPrimarySchemas(iamSchemaConfigs)
+  const { resetPasswordSchema } = iam.getIamPrimarySchemas(iamSchemaConfigs)
 
   const {
     form: { formState, register },
@@ -28,7 +27,7 @@ export function ResetPasswordClient({
   } = useHookFormAction(resetMyPasswordAction, zodResolver(resetPasswordSchema), {
     formProps: {
       values: {
-        newPassword: { __redacted__: '' },
+        newPassword: __redacted__(''),
         token: resetPasswordToken,
       },
     },

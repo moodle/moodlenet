@@ -4,12 +4,7 @@ export type _any = any
 export type _any_k = keyof _any
 
 export type map<t = _any, k extends _any_k = _any_k> = Record<k, t>
-export type m_map<t = _any, k extends _any_k = _any_k> =
-  | map<t, k>
-  | void
-  | undefined
-  | null
-  | unknown
+ type m_map<t = _any, k extends _any_k = _any_k> = map<t, k> | void | undefined | null | unknown
 
 // discriminate maps
 export type d_m<nmap extends m_map, p extends _any_k> = discriminated_map<nmap, p>
@@ -33,12 +28,12 @@ export type d_u<
 // union discrimination
 export type d_u__discrimination<
   du extends { [k in d_prop]: string },
-  d_prop extends _any_k,
+  d_prop extends keyof du,
   k extends du[d_prop],
 > = du extends { [n in d_prop]: k } ? du : never
 export type d_u__d<
   du extends { [k in d_prop]: string },
-  d_prop extends _any_k,
+  d_prop extends keyof du,
   k extends du[d_prop],
 > = d_u__discrimination<du, d_prop, k>
 

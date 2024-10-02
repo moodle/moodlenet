@@ -6,19 +6,19 @@ import {
 } from '@moodle/lib-types'
 import * as iso8601duration from 'iso8601-duration'
 import * as jose from 'jose'
-import { joseEnv } from './types'
+import { joseOpts } from './types'
 
-export async function getJoseKeys(env: joseEnv) {
-  if (env.type !== 'PKCS8') {
-    throw new Error(`unsupported key type ${env.type} - only PKCS8 supported now`)
+export async function getJoseKeys(opts: joseOpts) {
+  if (opts.type !== 'PKCS8') {
+    throw new Error(`unsupported key type ${opts.type} - only PKCS8 supported now`)
   }
-  if (env.alg !== 'RS256') {
-    throw new Error(`unsupported algorithm ${env.alg} - only RS256 supported now`)
+  if (opts.alg !== 'RS256') {
+    throw new Error(`unsupported algorithm ${opts.alg} - only RS256 supported now`)
   }
 
   const [privateKeyLike, publicKeyLike] = await Promise.all([
-    jose.importPKCS8(env.privateKeyStr, env.alg),
-    jose.importSPKI(env.publicKeyStr, env.alg),
+    jose.importPKCS8(opts.privateKeyStr, opts.alg),
+    jose.importSPKI(opts.publicKeyStr, opts.alg),
   ])
 
   const keyLikes = {
@@ -30,7 +30,7 @@ export async function getJoseKeys(env: joseEnv) {
 }
 
 // FIXME: needs checks on audience, issuer, etc.
-export async function joseVerify<payload>(joseEnv: joseEnv, token: string) {
+export async function joseVerify<payload>(joseEnv: joseOpts, token: string) {
   const { /* jwk, */ keyLikes } = await getJoseKeys(joseEnv)
   const jwtVerifyResult = await jose.jwtVerify<payload>(token, keyLikes.public).catch(() => null)
   return jwtVerifyResult
@@ -74,18 +74,18 @@ export async function sign<payload>({
   expiresIn,
   notBefore,
   payload,
-  joseEnv,
+  joseOpts,
   stdClaims = {},
   opts,
 }: {
   expiresIn: number | time_duration_string
   notBefore?: number | time_duration_string
-  joseEnv: joseEnv
+  joseOpts: joseOpts
   payload: payload
   stdClaims?: JwtStdClaims
   opts?: jose.SignOptions
 }) {
-  const { /* jwk, */ keyLikes } = await getJoseKeys(joseEnv)
+  const { /* jwk, */ keyLikes } = await getJoseKeys(joseOpts)
   const _payload: JwtStdClaims & payload = { ...(payload as _any) }
   if (stdClaims.scope !== undefined) {
     _payload.scope = [stdClaims.scope].flat().join(' ')
@@ -97,7 +97,7 @@ export async function sign<payload>({
     ? expirations(notBefore)
     : ([null, null, null] as const)
   const signingJwt = new jose.SignJWT(_payload)
-    .setProtectedHeader({ alg: joseEnv.alg })
+    .setProtectedHeader({ alg: joseOpts.alg })
     .setExpirationTime(expireTimeSecs)
 
   if (stdClaims.issuer !== undefined) {

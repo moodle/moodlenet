@@ -1,7 +1,6 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { getIamPrimarySchemas } from '@moodle/mod-iam/v1_0/lib'
-import type * as iam_v1_0 from '@moodle/mod-iam/v1_0/types'
+import { iam } from '@moodle/domain'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'next-i18next'
 import { ReactElement, useEffect, useState } from 'react'
@@ -14,12 +13,12 @@ import { changePasswordAction } from './general.server'
 import './general.style.scss'
 
 export interface GeneralSettingsProps {
-  iamSchemaConfigs: iam_v1_0.IamPrimaryMsgSchemaConfigs
+  iamSchemaConfigs: iam.IamPrimaryMsgSchemaConfigs
   messages: { noEqualPasswordsError: string }
 }
 export function GeneralSettingsClient({ iamSchemaConfigs, messages }: GeneralSettingsProps) {
   const { t } = useTranslation()
-  const { changePasswordSchema } = getIamPrimarySchemas(iamSchemaConfigs)
+  const { changePasswordSchema } = iam.getIamPrimarySchemas(iamSchemaConfigs)
   const [snackbarList, setSnackbarList] = useState<ReactElement[]>([])
 
   const {

@@ -1,30 +1,26 @@
-import { sec_factory, sec_impl } from '@moodle/lib-ddd'
+import { moodle_secondary_adapter, moodle_secondary_factory } from '@moodle/domain'
 import { send } from '../../lib'
 import { NodemailerSecEnv } from '../../types'
 
-export function iam(env: NodemailerSecEnv): sec_factory {
+export function iam_moodle_secondary_factory(env: NodemailerSecEnv): moodle_secondary_factory {
   return (/* ctx */) => {
-    const iam_sec_impl: sec_impl = {
-      moodle: {
+    const moodle_secondary_adapter: moodle_secondary_adapter = {
+      secondary: {
         iam: {
-          v1_0: {
-            sec: {
-              email: {
-                async sendNow({ reactBody: body, subject, to }) {
-                  send({
-                    env,
-                    body: { contentType: 'react', element: body },
-                    to,
-                    subject,
-                    sender: env.sender,
-                  })
-                },
-              },
+          email: {
+            async sendNow({ reactBody: body, subject, to }) {
+              send({
+                env,
+                body: { contentType: 'react', element: body },
+                to,
+                subject,
+                sender: env.sender,
+              })
             },
           },
         },
       },
     }
-    return iam_sec_impl
+    return moodle_secondary_adapter
   }
 }

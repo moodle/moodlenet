@@ -14,19 +14,8 @@ export async function GET(req: NextRequest) {
       status: 400,
     })
   }
-  const {
-    moodle: {
-      iam: {
-        v1_0: {
-          pri: {
-            access: { createNewUserByEmailVerificationToken },
-            session: { generateUserSession },
-          },
-        },
-      },
-    },
-  } = priAccess()
-  const [ok, response] = await createNewUserByEmailVerificationToken({
+
+  const [ok, response] = await priAccess().iam.access.createNewUserByEmailVerificationToken({
     signupEmailVerificationToken,
   })
   if (!ok) {
@@ -34,7 +23,9 @@ export async function GET(req: NextRequest) {
       status: 400,
     })
   }
-  const [done, session] = await generateUserSession({ userId: response.userId })
+  const [done, session] = await await priAccess().iam.session.generateUserSession({
+    userId: response.userId,
+  })
   if (!done) {
     return new Response(`error generating session token. reason: ${session.reason}`, {
       status: 400,

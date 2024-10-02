@@ -6,7 +6,7 @@ import './signup.style.scss'
 export default async function SignupLayout(props: layoutPropsWithChildren) {
   const {
     pages: { signup },
-  } = await priAccess().moodle.netWebappNextjs.v1_0.pri.webapp.layouts()
+  } = await priAccess().netWebappNextjs.webapp.layouts()
 
   const signupCardProps: SignupCardProps = {
     signupMethods: signup.methods.map(({ label, panel }) => ({

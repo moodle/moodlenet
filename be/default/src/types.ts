@@ -1,31 +1,25 @@
-import { primary_session } from '@moodle/lib-ddd'
-import type { CryptoDefaultEnv } from '@moodle/sec-crypto-default'
-import type { v1_0 as arango_v1_0 } from '@moodle/sec-db-arango'
-import { DbMigrateConfig } from '@moodle/sec-db-arango/migrate'
-import type { NodemailerSecEnv } from '@moodle/sec-email-nodemailer'
+import { moodle_core_factory, moodle_secondary_factory } from '@moodle/domain'
+import { access_session, domain_msg, domain_session_access } from '@moodle/lib-ddd'
 
-export type EnvProviderResult = EnvResult | Promise<EnvResult>
-
-export type migrate_fn = (_: {
-  env: Env
-  configs: {
-    db: DbMigrateConfig
-  }
-}) => Promise<migration_status>
-
-export type EnvProvider = (_: {
-  primary_session: primary_session
-  migrate: migrate_fn
-}) => EnvProviderResult
-
-export interface EnvResult {
-  env: Env
-  migration_status: Promise<migration_status>
+export type configurator_deps = {
+  access_session: access_session
 }
 
-export interface Env {
-  arango_db: arango_v1_0.ArangoDbSecEnv
-  crypto: CryptoDefaultEnv
-  nodemailer: NodemailerSecEnv
+export type configurator = (_: configurator_deps) => Promise<configuration>
+export type configuration = {
+  core_factories: moodle_core_factory[]
+  secondary_factories: moodle_secondary_factory[]
+  start_background_processes: boolean
 }
-type migration_status = unknown // d_u<{done:unknown}, 'status'>
+export type session_deployer = (_: session_deployment_deps) => Promise<unknown>
+export type session_deployment_deps = {
+  access_session: access_session
+  domain_msg: domain_msg
+  core_factories: moodle_core_factory[]
+  secondary_factories: moodle_secondary_factory[]
+  start_background_processes: boolean
+}
+
+export type binder_deps = { domain_session_access: domain_session_access }
+
+export type binder = (_: binder_deps) => void

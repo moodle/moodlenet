@@ -16,3 +16,4 @@ export function setAuthTokenCookie(session: null | signed_expire_token) {
     : cookies().delete(AUTH_COOKIE)
   return reqCookie
 }
+

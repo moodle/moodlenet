@@ -1,5 +1,5 @@
 // deep require
-// thanks https://gist.github.com/prmichaelsen/39f4381dbe7ce617870028485aa74c3f
+//CREDIT: https://gist.github.com/prmichaelsen/39f4381dbe7ce617870028485aa74c3f
 
 import { any_function } from './function'
 

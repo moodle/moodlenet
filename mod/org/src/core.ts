@@ -1,34 +1,29 @@
-import { core_factory } from '@moodle/lib-ddd'
-import { _never } from '@moodle/lib-types'
-import { assert_authorizeSystemSession } from '@moodle/mod-iam/v1_0/lib'
+import { moodle_core_factory, moodle_core_impl } from '@moodle/domain'
+import { _void } from '@moodle/lib-types'
+import { assert_authorizeAdminUserSession } from '@moodle/mod-iam/lib'
 
-export * as v1_0 from './v1_0/types'
-
-export function core(): core_factory {
+export function org_core(): moodle_core_factory {
   return ctx => {
-    return {
-      moodle: {
+    const moodle_core_impl: moodle_core_impl = {
+      primary: {
         org: {
-          v1_0: {
-            pri: {
-              system: {
-                async configs() {
-                  await assert_authorizeSystemSession(ctx)
-                  return ctx.sysCall.moodle.org.v1_0.sec.db.getConfigs()
-                },
-              },
-              admin: {
-                async updatePartialOrgInfo({ partialInfo }) {
-                  const [done] = await ctx.sysCall.moodle.org.v1_0.sec.db.updatePartialConfigs({
-                    partialConfigs: { info: partialInfo },
-                  })
-                  return [done, _never]
-                },
-              },
+          system: {
+            async configs() {
+              return ctx.sys_call.secondary.org.db.getConfigs()
+            },
+          },
+          admin: {
+            async updatePartialOrgInfo({ partialInfo }) {
+              await assert_authorizeAdminUserSession(ctx)
+              const [done] = await ctx.sys_call.secondary.org.db.updatePartialConfigs({
+                partialConfigs: { info: partialInfo },
+              })
+              return [done, _void]
             },
           },
         },
       },
     }
+    return moodle_core_impl
   }
 }
