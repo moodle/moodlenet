@@ -28,18 +28,23 @@ export type resetPasswordForm = z.infer<
 >
 
 export function getIamPrimarySchemas({ user, myAccount }: IamPrimaryMsgSchemaConfigs) {
-  const email = email_address_schema.and(string().max(user.email.max))
+  const email = string().max(user.email.max).pipe(email_address_schema)
 
-  const password = single_line_string_schema.and(
-    string().trim().min(user.password.min).max(user.password.max),
-  )
-  const displayName = single_line_string_schema
-    .and(string().trim().min(user.displayName.min).max(user.displayName.max))
-    .and(
+  const password = string()
+    .trim()
+    .min(user.password.min)
+    .max(user.password.max)
+    .pipe(single_line_string_schema)
+  const displayName = string()
+    .trim()
+    .min(user.displayName.min)
+    .max(user.displayName.max)
+    .pipe(
       user.displayName.regex
         ? string().regex(new RegExp(...user.displayName.regex))
         : (any() as unknown as ZodString),
     )
+    .pipe(single_line_string_schema)
 
   const redacted_password = __redacted_schema__(password)
 

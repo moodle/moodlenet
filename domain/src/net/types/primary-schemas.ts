@@ -12,12 +12,16 @@ export type moodlenetInfoForm = z.infer<
 >
 
 export function getMoodleNetPrimarySchemas({ info }: MoodleNetPrimaryMsgSchemaConfigs) {
-  const title = single_line_string_schema.and(
-    string().trim().min(info.title.min).max(info.title.max),
-  )
-  const subtitle = single_line_string_schema.and(
-    string().trim().min(info.subtitle.min).max(info.subtitle.max),
-  )
+  const title = string()
+    .trim()
+    .min(info.title.min)
+    .max(info.title.max)
+    .pipe(single_line_string_schema)
+  const subtitle = string()
+    .trim()
+    .min(info.subtitle.min)
+    .max(info.subtitle.max)
+    .pipe(single_line_string_schema)
 
   const moodleNetInfoSchema = object({
     title,

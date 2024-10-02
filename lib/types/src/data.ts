@@ -81,7 +81,7 @@ export function url_or_file_id_schema(opts?: {
 export declare const file_id_brand: unique symbol
 type ___file_idx = z.infer<typeof file_id_schema> // FIXME: define all types as z.infer? (check DEV NOTES)
 export type file_id = branded<{ id: string }, typeof file_id_brand>
-export const file_id_schema = object({ id: single_line_string_schema.and(string().trim()) }).brand<
+export const file_id_schema = object({ id: string().trim().pipe(single_line_string_schema) }).brand<
   typeof file_id_brand
 >()
 
@@ -100,19 +100,20 @@ export async function getFileUrl(url_or_file_id: url_or_file_id) {
 // export type url_string = z.infer< typeof url_string_schema>
 export declare const url_string_brand: unique symbol
 export type url_string = branded<string, typeof url_string_brand>
-export const url_string_schema = single_line_string_schema
-  .and(string().trim().max(2048).url())
+export const url_string_schema = string()
+  .trim()
+  .max(2048)
+  .url()
+  .pipe(single_line_string_schema)
   .brand<typeof url_string_brand>()
 
 // // export const url_string_brand = Symbol('url_string_brand')
 // export type url_path_string = z.infer< typeof url_path_string_schema>
 export declare const url_path_string_brand: unique symbol
 export type url_path_string = branded<string, typeof url_path_string_brand>
-export const url_path_string_schema = single_line_string_schema
-  .and(
-    string().trim(),
-    // FIXME: a good regex for paths (this is from https://regexr.com/3a19c ) .regex(/^\/(([A-z0-9\-\%]+\/)*[A-z0-9\-\%]+$)?/gim)
-  )
+export const url_path_string_schema = string()
+  .trim()
+  .pipe(single_line_string_schema)
   .brand<typeof url_path_string_brand>()
 
 // // export const date_time_string_brand = Symbol('date_time_string_brand')
@@ -149,8 +150,11 @@ export const time_duration_string_schema = string()
 // export type signed_token = z.infer< typeof signed_token_schema> // .. JWT
 export declare const signed_token_brand: unique symbol
 export type signed_token = branded<string, typeof signed_token_brand> // .. JWT
-export const signed_token_schema = single_line_string_schema
-  .and(string().trim().min(10).max(4096))
+export const signed_token_schema = string()
+  .trim()
+  .min(10)
+  .max(4096)
+  .pipe(single_line_string_schema)
   .brand<typeof signed_token_brand>()
 
 export type signed_expire_token = {
@@ -163,8 +167,8 @@ export type signed_expire_token = {
 export declare const email_address_brand: unique symbol
 export type email_address = branded<string, typeof email_address_brand> // email format
 export const email_address_schema = string()
-  .trim()
   .toLowerCase()
+  .trim()
   .email()
   .brand<typeof email_address_brand>()
 
