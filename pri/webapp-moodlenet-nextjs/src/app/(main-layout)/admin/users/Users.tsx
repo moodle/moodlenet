@@ -12,7 +12,7 @@ import type { User } from '../../../../../common/types.mjs'
 import './Users.scss'
 
 /**
- search, filter non devono stare 
+ search, filter non devono stare
  */
 
 export type TableItem = {
