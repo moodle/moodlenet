@@ -1,14 +1,13 @@
 'use client'
-// import {
-//   Cached as CachedIcon,
-//   CloseRounded as CloseRoundedIcon,
-//   DeleteOutline as DeleteOutlineIcon,
-//   Edit as EditIcon,
-//   InsertDriveFile as InsertDriveFileIcon,
-//   Search as SearchIcon,
-//   Upload as UploadIcon,
-// } from '@mui/icons-material'
-import type { FC, ReactNode } from 'react'
+import CachedIcon from '@mui/icons-material/Cached'
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import EditIcon from '@mui/icons-material/Edit'
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
+import SearchIcon from '@mui/icons-material/Search'
+import UploadIcon from '@mui/icons-material/Upload'
+
+import type { ReactNode } from 'react'
 import './RoundButton.scss'
 
 export type RoundButtonProps = {
@@ -22,17 +21,17 @@ export type RoundButtonProps = {
   icon?: ReactNode
 } & React.HTMLAttributes<HTMLDivElement>
 
-export const RoundButton: FC<RoundButtonProps> = ({
+export function RoundButton({
+  type = 'cross',
+  color = 'gray',
+  onHoverColor = 'gray',
   className,
-  type,
-  color,
-  onHoverColor,
   tabIndex,
   disabled,
   abbrTitle,
   icon,
   ...props
-}) => {
+}: RoundButtonProps) {
   const svgClassName = `color-${color} hover-${onHoverColor}`
   return (
     <abbr
@@ -57,11 +56,3 @@ export const RoundButton: FC<RoundButtonProps> = ({
     </abbr>
   )
 }
-
-RoundButton.defaultProps = {
-  type: 'cross',
-  color: 'gray',
-  onHoverColor: 'gray',
-}
-
-export default RoundButton
