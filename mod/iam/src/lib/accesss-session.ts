@@ -1,14 +1,8 @@
-import { CoreContext, ErrorXxx, access_session } from '@moodle/lib-ddd'
-import { d_u, d_u__d, ok_ko, signed_expire_token } from '@moodle/lib-types'
-import assert from 'assert'
 import { iam, moodle_core_context } from '@moodle/domain'
-import {
-  hasUserSessionRole,
-  isAdminUserSession,
-  isPublisherUserSession,
-  user_record2SessionUserData,
-  userSessionInfo,
-} from './user-session'
+import { access_session, ErrorXxx } from '@moodle/lib-ddd'
+import { d_u__d, ok_ko, signed_expire_token } from '@moodle/lib-types'
+import assert from 'assert'
+import { hasUserSessionRole, user_record2SessionUserData, userSessionInfo } from './user-session'
 
 // System Session
 export function isSystemSession(

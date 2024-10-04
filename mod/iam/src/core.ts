@@ -10,8 +10,6 @@ import { user_role } from 'domain/src/iam'
 import * as lib from './lib'
 
 export function iam_core(): moodle_core_factory {
-  let background_process_running = false
-
   return ctx => {
     const core_impl: moodle_core_impl = {
       primary: {
@@ -408,7 +406,6 @@ export function iam_core(): moodle_core_factory {
   }
 
   async function startIamProcess(ctx: moodle_core_context) {
-    background_process_running = true
     const sysAdminInfo = await ctx.sys_call.primary.env.maintainance.getSysAdminInfo()
     const [found] = await ctx.sys_call.secondary.iam.db.getUserByEmail({
       email: sysAdminInfo.email,
