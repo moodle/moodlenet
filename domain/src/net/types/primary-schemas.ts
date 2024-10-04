@@ -8,7 +8,7 @@ export interface MoodleNetPrimaryMsgSchemaConfigs {
   }
 }
 export type moodlenetInfoForm = z.infer<
-  ReturnType<typeof getMoodleNetPrimarySchemas>['moodleNetInfoSchema']
+  ReturnType<typeof getMoodleNetPrimarySchemas>['updateMoodleNetInfoSchema']
 >
 
 export function getMoodleNetPrimarySchemas({ info }: MoodleNetPrimaryMsgSchemaConfigs) {
@@ -23,10 +23,10 @@ export function getMoodleNetPrimarySchemas({ info }: MoodleNetPrimaryMsgSchemaCo
     .max(info.subtitle.max)
     .pipe(single_line_string_schema)
 
-  const moodleNetInfoSchema = object({
+  const updateMoodleNetInfoSchema = object({
     title,
     subtitle,
-  }).partial()
+  })
 
   return {
     raw: {
@@ -35,6 +35,6 @@ export function getMoodleNetPrimarySchemas({ info }: MoodleNetPrimaryMsgSchemaCo
         subtitle,
       },
     },
-    moodleNetInfoSchema,
+    updateMoodleNetInfoSchema,
   }
 }

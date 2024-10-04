@@ -9,9 +9,12 @@ export interface UserHomePrimaryMsgSchemaConfigs {
     siteUrl: { max: number }
   }
 }
-export type orgInfoForm = z.infer<ReturnType<typeof getUserHomePrimarySchemas>['profileInfoSchema']>
+export type updateProfileInfoForm = z.infer<
+  ReturnType<typeof getUserHomePrimarySchemas>['updateProfileInfoSchema']
+>
 
 export function getUserHomePrimarySchemas({ profileInfo }: UserHomePrimaryMsgSchemaConfigs) {
+  const user_home_id = string().nanoid()
   const displayName = string()
     .trim()
     .min(profileInfo.displayName.min)
@@ -26,12 +29,13 @@ export function getUserHomePrimarySchemas({ profileInfo }: UserHomePrimaryMsgSch
   const location = string().trim().max(profileInfo.location.max).pipe(single_line_string_schema)
   const siteUrl = url_string_schema
 
-  const profileInfoSchema = object({
+  const updateProfileInfoSchema = object({
+    user_home_id,
     displayName,
     aboutMe,
     location,
     siteUrl,
-  }).partial()
+  })
 
   return {
     raw: {
@@ -42,6 +46,6 @@ export function getUserHomePrimarySchemas({ profileInfo }: UserHomePrimaryMsgSch
         siteUrl,
       },
     },
-    profileInfoSchema,
+    updateProfileInfoSchema,
   }
 }

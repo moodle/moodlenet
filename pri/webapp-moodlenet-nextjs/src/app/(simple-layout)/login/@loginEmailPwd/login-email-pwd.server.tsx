@@ -9,7 +9,7 @@ import { redirect } from 'next/navigation'
 import QueryString from 'qs'
 import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { setAuthTokenCookie } from '../../../../lib/server/auth'
-import { actionClient } from '../../../../lib/server/safe-action'
+import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
 import { priAccess } from '../../../../lib/server/session-access'
 
 export async function getLoginSchema() {
@@ -17,7 +17,7 @@ export async function getLoginSchema() {
   const { loginSchema } = await iam.getIamPrimarySchemas(iamSchemaConfigs)
   return loginSchema
 }
-export const loginAction = actionClient
+export const loginAction = defaultSafeActionClient
   .schema(getLoginSchema)
   .action(async ({ parsedInput: loginForm }) => {
     // const inSiteRefererUrl = await getInSiteReferer()

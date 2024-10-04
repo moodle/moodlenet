@@ -16,13 +16,39 @@ import { SecondaryButton } from '../../../../ui/atoms/SecondaryButton/SecondaryB
 import defaultAvatar from '../../../../ui/lib/assets/img/default-avatar.png'
 import defaultBackground from '../../../../ui/lib/assets/img/default-landing-background.png'
 import './MainProfileCard.scss'
+import {
+  getUserHomePrimarySchemas,
+  ProfileInfo,
+  updateProfileInfoForm,
+  UserHomePrimaryMsgSchemaConfigs,
+} from 'domain/src/user-hone'
+import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { updateProfileInfo } from '../profile.server'
+import { z } from 'zod'
 
 export interface MainProfileCardProps {
   can: flags<'un_follow' | 'un_approve' | 'edit' | 'sendMessage' | 'report'>
   is: flags<'following' | 'approved'>
+  userHomePrimaryMsgSchemaConfigs: UserHomePrimaryMsgSchemaConfigs
+  profileInfoForm: updateProfileInfoForm
 }
 
-export function MainProfileCard({ can, is }: MainProfileCardProps) {
+export function MainProfileCard({
+  can,
+  is,
+  userHomePrimaryMsgSchemaConfigs,
+  profileInfoForm,
+}: MainProfileCardProps) {
+  const { updateProfileInfoSchema: profileInfoSchema } = getUserHomePrimarySchemas(
+    userHomePrimaryMsgSchemaConfigs,
+  )
+  const {
+    form: { formState, register },
+    handleSubmitWithAction,
+  } = useHookFormAction(updateProfileInfo, zodResolver(profileInfoSchema), {
+    formProps: { defaultValues: profileInfoForm },
+  })
   const [isEditing, toggleIsEditing] = useReducer(isEditing => can.edit && !isEditing, false)
   return (
     <div className="main-profile-card" key="profile-card">
@@ -105,18 +131,16 @@ export function MainProfileCard({ can, is }: MainProfileCardProps) {
             )}
           </div>
         </div>
-        <form className="profile-card-header" key="card-header">
+        <form onSubmit={handleSubmitWithAction} className="profile-card-header" key="card-header">
           <div className="title" key="title-row">
             <InputTextField
               className="display-name underline"
               placeholder={`Display name`}
-              defaultValue={'form.values.displayName'}
-              // onChange={form.handleChange}
-              name="displayName"
               key="display-name"
               noBorder={true}
               edit={isEditing}
-              // error={isEditing && shouldShowErrors && form.errors.displayName}
+              {...register('displayName')}
+              error={isEditing && formState.errors.displayName?.message}
             />
           </div>
 
@@ -125,39 +149,33 @@ export function MainProfileCard({ can, is }: MainProfileCardProps) {
               <InputTextField
                 className="underline"
                 placeholder="Location"
-                defaultValue={'form.values.location'}
-                // onChange={form.handleChange}
                 noBorder
-                name="location"
                 edit={isEditing}
-                // error={isEditing && shouldShowErrors && form.errors.location}
+                {...register('location')}
+                error={isEditing && formState.errors.location?.message}
               />
             </span>
             <span key="edit-site-url">
               <InputTextField
                 className="underline"
-                defaultValue={'form.values.siteUrl'}
-                // onChange={form.handleChange}
                 noBorder
                 placeholder="Website"
-                name="siteUrl"
                 edit={isEditing}
-                // error={isEditing && shouldShowErrors && form.errors.siteUrl}
+                {...register('siteUrl')}
+                error={isEditing && formState.errors.siteUrl?.message}
               />
             </span>
           </div>
           <InputTextField
             className="description"
-            key="description"
-            name="aboutMe"
-            // onChange={form.handleChange}
+            key="aboutMe"
             isTextarea
             textAreaAutoSize
             noBorder
             edit={isEditing}
             placeholder={`What should others know about you?`}
-            defaultValue={'form.values.aboutMe'}
-            // error={isEditing && shouldShowErrors && form.errors.aboutMe}
+            {...register('aboutMe')}
+            error={isEditing && formState.errors.aboutMe?.message}
           />
         </form>
         <div className="main-profile-card-footer">

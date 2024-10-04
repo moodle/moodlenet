@@ -8,7 +8,7 @@ export interface OrgPrimaryMsgSchemaConfigs {
     physicalAddress: { max: number }
   }
 }
-export type orgInfoForm = z.infer<ReturnType<typeof getOrgPrimarySchemas>['orgInfoSchema']>
+export type orgInfoForm = z.infer<ReturnType<typeof getOrgPrimarySchemas>['updateOrgInfoSchema']>
 
 export function getOrgPrimarySchemas({ info }: OrgPrimaryMsgSchemaConfigs) {
   const name = string().trim().min(info.name.min).max(info.name.max)
@@ -18,14 +18,14 @@ export function getOrgPrimarySchemas({ info }: OrgPrimaryMsgSchemaConfigs) {
   const copyright = string().trim().max(info.copyright.max)
   const physicalAddress = string().trim().max(info.physicalAddress.max)
 
-  const orgInfoSchema = object({
+  const updateOrgInfoSchema = object({
     name,
     logo,
     smallLogo,
     copyright,
     physicalAddress,
     websiteUrl,
-  }).partial()
+  })
 
   return {
     raw: {
@@ -38,6 +38,6 @@ export function getOrgPrimarySchemas({ info }: OrgPrimaryMsgSchemaConfigs) {
         websiteUrl,
       },
     },
-    orgInfoSchema,
+    updateOrgInfoSchema,
   }
 }

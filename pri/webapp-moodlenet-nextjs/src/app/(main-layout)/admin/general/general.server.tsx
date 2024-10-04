@@ -2,7 +2,7 @@
 
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
-import { actionClient } from '../../../../lib/server/safe-action'
+import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
 import { priAccess } from '../../../../lib/server/session-access'
 import { MakeAdminGeneralSchemaDeps, provideAdminGeneralSchemas } from './general.common'
 import { revalidatePath } from 'next/cache'
@@ -15,7 +15,7 @@ async function getGeneralSchema() {
   const { generalSchema: general } = await getAdminGeneralSchemas()
   return general
 }
-export const saveGeneralInfoAction = actionClient
+export const saveGeneralInfoAction = defaultSafeActionClient
   .schema(getGeneralSchema)
   .action(async ({ parsedInput: adminGeneralForm }) => {
     const { moodleNetInfoSchema, orgInfoSchema } = await getAdminGeneralSchemas()
