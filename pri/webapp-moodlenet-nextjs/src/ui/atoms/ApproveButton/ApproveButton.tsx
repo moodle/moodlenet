@@ -1,4 +1,4 @@
-import { ReactComponent as ApprovedIcon } from '../../../ui/lib/assets/icons/approved.svg'
+import ApprovedIcon from '../../../ui/lib/assets/icons/approved.svg'
 import { PrimaryButton } from '../PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../SecondaryButton/SecondaryButton'
 import './ApproveButton.scss'

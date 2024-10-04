@@ -10,7 +10,7 @@ export async function migrate({ db_struct }: { db_struct: db_struct }) {
     previous: 'v0_2',
     current: VERSION,
     date: new Date().toISOString(),
-    meta: 'created userHome collection + index on userId',
+    meta: 'created userHome collection & configs + index on userId',
   }
 
   return migrationDoc

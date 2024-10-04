@@ -5,6 +5,7 @@ import { org_default_configs } from '@moodle/mod-org/setup'
 import { db_struct } from '../../db-structure'
 import { saveModConfigs } from '../../lib/modules'
 import { Migration_Record } from '../types'
+import { user_home_default_configs } from '@moodle/mod-user-home/setup'
 // import { removePropOnInsert } from '../lib/id'
 
 export const VERSION = 'v0_1'
@@ -49,6 +50,11 @@ export async function migrate({ db_struct }: { db_struct: db_struct }) {
       db_struct,
       configs: org_default_configs,
       moduleName: 'org',
+    }),
+    saveModConfigs({
+      db_struct,
+      configs: user_home_default_configs,
+      moduleName: 'userHome',
     }),
   ])
   // bump_version

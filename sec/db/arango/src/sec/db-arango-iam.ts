@@ -42,6 +42,11 @@ export function iam_moodle_secondary_factory({
               updated && ctx.emit.event.iam.userSecurity.userPasswordChanged({ userId })
               return [!!updated, _void]
             },
+            async align_userDisplayname({displayName,userId}) {
+              const done = !!(await db_struct.iam.coll.user.update({_key:userId},{displayName}).catch(()=>null))
+              return [done, _void]
+
+            },
             async setUserRoles({ userId, roles }) {
               const updated = await db_struct.iam.coll.user
                 .update({ _key: userId }, { roles }, { returnNew: true, returnOld: true })

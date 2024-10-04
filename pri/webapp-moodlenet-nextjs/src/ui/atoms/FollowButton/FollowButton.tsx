@@ -8,15 +8,14 @@ import { TertiaryButton } from '../TertiaryButton/TertiaryButton'
 import './FollowButton.scss'
 
 export type FollowButtonProps = {
-  is: flags<'followed'>
-  can: flags<'un_follow'>
-  toggleFollow: () => void
+  followed: boolean
+  toggleFollow?: undefined | (() => void)
 }
 
-export function FollowButton({ can, is, toggleFollow }: FollowButtonProps) {
-  return is.followed ? (
+export function FollowButton({ followed, toggleFollow }: FollowButtonProps) {
+  return followed ? (
     <SecondaryButton
-      disabled={!can.un_follow}
+      disabled={!!toggleFollow}
       onClick={toggleFollow}
       className="following-button"
       key="follow-button"
@@ -26,7 +25,7 @@ export function FollowButton({ can, is, toggleFollow }: FollowButtonProps) {
     </SecondaryButton>
   ) : (
     <PrimaryButton
-      disabled={!can.un_follow}
+      disabled={!!toggleFollow}
       onClick={toggleFollow}
       key="follow-button"
       className="follow-button"
@@ -36,15 +35,19 @@ export function FollowButton({ can, is, toggleFollow }: FollowButtonProps) {
   )
 }
 export type SmallFollowButtonProps = FollowButtonProps & { numFollowers: number }
-export function SmallFollowButton({ numFollowers, can, is, toggleFollow }: SmallFollowButtonProps) {
+export function SmallFollowButton({
+  numFollowers,
+  followed,
+  toggleFollow,
+}: SmallFollowButtonProps) {
   return (
     <TertiaryButton
-      className={`small-follow-button ${is.followed ? 'followed' : ''} `}
-      disabled={!can.un_follow}
+      className={`small-follow-button ${followed ? 'followed' : ''} `}
+      disabled={!!toggleFollow}
       onClick={toggleFollow}
       key="followers-button"
     >
-      {is.followed ? <Person /> : <PermIdentity />}
+      {followed ? <Person /> : <PermIdentity />}
       <span>{numFollowers}</span>
     </TertiaryButton>
   )

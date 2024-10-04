@@ -1,60 +1,59 @@
 'use client'
 
-import { flags } from '@moodle/lib-types'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Edit from '@mui/icons-material/Edit'
 import Flag from '@mui/icons-material/Flag'
 import Save from '@mui/icons-material/Save'
 import Share from '@mui/icons-material/Share'
-import { useReducer } from 'react'
-import { ApprovalButton } from '../../../../ui/atoms/ApproveButton/ApproveButton'
-import { FloatingMenu } from '../../../../ui/atoms/FloatingMenu/FloatingMenu'
-import { FollowButton } from '../../../../ui/atoms/FollowButton/FollowButton'
-import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
-import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
-import { RoundButton } from '../../../../ui/atoms/RoundButton/RoundButton'
-import { SecondaryButton } from '../../../../ui/atoms/SecondaryButton/SecondaryButton'
-import defaultAvatar from '../../../../ui/lib/assets/img/default-avatar.png'
-import defaultBackground from '../../../../ui/lib/assets/img/default-landing-background.png'
-import './MainProfileCard.scss'
-import {
-  getUserHomePrimarySchemas,
-  ProfileInfo,
-  updateProfileInfoForm,
-  UserHomePrimaryMsgSchemaConfigs,
-} from 'domain/src/user-hone'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { getProfileInfoPrimarySchemas, user_home_access_object } from 'domain/src/user-hone'
+import { useReducer, useRef } from 'react'
+import { never } from 'zod'
+import { ApprovalButton } from '../../../../../../ui/atoms/ApproveButton/ApproveButton'
+import { FloatingMenu } from '../../../../../../ui/atoms/FloatingMenu/FloatingMenu'
+import { FollowButton } from '../../../../../../ui/atoms/FollowButton/FollowButton'
+import InputTextField from '../../../../../../ui/atoms/InputTextField/InputTextField'
+import { PrimaryButton } from '../../../../../../ui/atoms/PrimaryButton/PrimaryButton'
+import { RoundButton } from '../../../../../../ui/atoms/RoundButton/RoundButton'
+import { SecondaryButton } from '../../../../../../ui/atoms/SecondaryButton/SecondaryButton'
+import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.png'
+import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
 import { updateProfileInfo } from '../profile.server'
-import { z } from 'zod'
+import './MainProfileCard.scss'
 
-export interface MainProfileCardProps {
-  can: flags<'un_follow' | 'un_approve' | 'edit' | 'sendMessage' | 'report'>
-  is: flags<'following' | 'approved'>
-  userHomePrimaryMsgSchemaConfigs: UserHomePrimaryMsgSchemaConfigs
-  profileInfoForm: updateProfileInfoForm
+export interface MainProfileCardDeps {
+  userHomeAccessObject: user_home_access_object
 }
 
 export function MainProfileCard({
-  can,
-  is,
-  userHomePrimaryMsgSchemaConfigs,
-  profileInfoForm,
-}: MainProfileCardProps) {
-  const { updateProfileInfoSchema: profileInfoSchema } = getUserHomePrimarySchemas(
-    userHomePrimaryMsgSchemaConfigs,
+  userHomeAccessObject: { permissions, profileInfo, user, flags, id },
+}: MainProfileCardDeps) {
+  const { updateProfileInfoSchema } = permissions.editProfile
+    ? getProfileInfoPrimarySchemas(permissions.validationConfigs)
+    : { updateProfileInfoSchema: never() }
+  const [isEditing, toggleIsEditing] = useReducer(
+    isEditing => permissions.editProfile && !isEditing,
+    false,
   )
   const {
-    form: { formState, register },
+    form: { formState, register, reset },
     handleSubmitWithAction,
-  } = useHookFormAction(updateProfileInfo, zodResolver(profileInfoSchema), {
-    formProps: { defaultValues: profileInfoForm },
+  } = useHookFormAction(updateProfileInfo, zodResolver(updateProfileInfoSchema), {
+    formProps: { defaultValues: { ...profileInfo, user_home_id: id } },
+    actionProps: {
+      onSuccess({ input }) {
+        toggleIsEditing()
+        reset(input)
+      },
+    },
   })
-  const [isEditing, toggleIsEditing] = useReducer(isEditing => can.edit && !isEditing, false)
+
+  const submitBtnRef = useRef<HTMLButtonElement | null>(null)
   return (
     <div className="main-profile-card" key="profile-card">
       <div className="main-column">
         <div className={`background-container`} key="background-container">
-          {!can.edit
+          {!permissions.editProfile
             ? null
             : isEditing && [
                 <input
@@ -81,7 +80,7 @@ export function MainProfileCard({
           />
         </div>
         <div className={`avatar-container`} key="avatar-container">
-          {!can.edit
+          {!permissions.editProfile
             ? null
             : isEditing && [
                 <input
@@ -110,15 +109,16 @@ export function MainProfileCard({
         </div>
         <div className="top-items" key="top-items">
           <div className="edit-save" key="edit-save">
-            {!can.edit ? null : isEditing ? (
+            {!permissions.editProfile ? null : isEditing ? (
               <PrimaryButton
                 color="green"
                 onClick={() => {
-                  // form.submitForm()
-                  // avatarForm.isValid && avatarForm.submitForm()
-                  // backgroundForm.isValid && backgroundForm.submitForm()
-                  // form.isValid &&
-                  toggleIsEditing()
+                  if (formState.isDirty) {
+                    submitBtnRef.current?.click()
+                  } else {
+                    toggleIsEditing()
+                  }
+                  //handleSubmitWithAction(e)
                 }}
                 key="save-button"
               >
@@ -132,10 +132,16 @@ export function MainProfileCard({
           </div>
         </div>
         <form onSubmit={handleSubmitWithAction} className="profile-card-header" key="card-header">
+          <button
+            disabled={!formState.isDirty}
+            ref={submitBtnRef}
+            type="submit"
+            style={{ display: 'none' }}
+          />
           <div className="title" key="title-row">
             <InputTextField
               className="display-name underline"
-              placeholder={`Display name`}
+              placeholder={isEditing ? `Display name` : ''}
               key="display-name"
               noBorder={true}
               edit={isEditing}
@@ -148,7 +154,7 @@ export function MainProfileCard({
             <span key="edit-location">
               <InputTextField
                 className="underline"
-                placeholder="Location"
+                placeholder={isEditing ? `Location` : ''}
                 noBorder
                 edit={isEditing}
                 {...register('location')}
@@ -159,9 +165,13 @@ export function MainProfileCard({
               <InputTextField
                 className="underline"
                 noBorder
-                placeholder="Website"
+                placeholder={isEditing ? `Website` : ''}
                 edit={isEditing}
-                {...register('siteUrl')}
+                {...register('siteUrl', {
+                  setValueAs(value) {
+                    return value || null
+                  },
+                })}
                 error={isEditing && formState.errors.siteUrl?.message}
               />
             </span>
@@ -173,31 +183,38 @@ export function MainProfileCard({
             textAreaAutoSize
             noBorder
             edit={isEditing}
-            placeholder={`What should others know about you?`}
+            placeholder={isEditing ? `What should others know about you?` : ''}
             {...register('aboutMe')}
             error={isEditing && formState.errors.aboutMe?.message}
           />
         </form>
         <div className="main-profile-card-footer">
           <FollowButton
-            is={{ followed: is.following }}
-            can={{ un_follow: can.un_follow }}
-            toggleFollow={alert}
+            followed={flags.followed}
+            toggleFollow={
+              permissions.follow
+                ? () => {
+                    alert('FollowButton')
+                  }
+                : undefined
+            }
             key="follow-button"
           />
-          {can.un_approve && (
+          {permissions.editRoles && user && (
             <ApprovalButton
-              isApproved={is.approved}
-              toggleIsApproved={alert}
+              isApproved={user.roles.includes('publisher')}
+              toggleIsApproved={() => {
+                alert('ApprovalButton')
+              }}
               key={'approval-button'}
             />
           )}
           <SecondaryButton
             color="grey"
             className={`message`}
-            disabled={!can.sendMessage}
+            disabled={!permissions.sendMessage}
             onClick={() => alert('open message modal')}
-            abbr={!can.sendMessage ? 'Login or signup to send messages' : 'Send a message'}
+            abbr={!permissions.sendMessage ? 'Login or signup to send messages' : 'Send a message'}
           >
             Message
           </SecondaryButton>
@@ -212,20 +229,24 @@ export function MainProfileCard({
                   </div>
                 ),
               },
-              {
-                Element: (
-                  <abbr
-                    className={`report-button ${can.report ? '' : 'disabled'}`}
-                    key="report"
-                    tabIndex={0}
-                    title={!can.report ? 'Login or signup to report' : undefined}
-                    onClick={() => can.report && alert('open-report-modal')}
-                  >
-                    <Flag />
-                    Report
-                  </abbr>
-                ),
-              },
+              ...(permissions.report
+                ? [
+                    {
+                      Element: (
+                        <abbr
+                          className={`report-button ${permissions.report ? '' : 'disabled'}`}
+                          key="report"
+                          tabIndex={0}
+                          title={!permissions.report ? 'Login or signup to report' : undefined}
+                          onClick={() => permissions.report && alert('open-report-modal')}
+                        >
+                          <Flag />
+                          Report
+                        </abbr>
+                      ),
+                    },
+                  ]
+                : []),
             ]}
             hoverElement={
               <>

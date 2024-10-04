@@ -1,6 +1,6 @@
-import { TertiaryButton } from '@moodlenet/component-library'
 import { Bookmark, BookmarkBorder } from '@mui/icons-material'
 import type { FC } from 'react'
+import { TertiaryButton } from '../TertiaryButton/TertiaryButton'
 import './BookmarkButton.scss'
 
 export type BookmarkButtonProps = {

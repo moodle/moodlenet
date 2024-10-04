@@ -60,7 +60,7 @@ export function date_time_string(date: Date | 'now'): date_time_string {
   const _date = date === 'now' ? new Date() : date
   return _date.toISOString() as date_time_string
 }
-export const single_line_string_schema = string().regex(/^[^\r\n]+$/gi)
+export const single_line_string_schema = string().regex(/^[^\r\n]*$/gi)
 
 // FIXME: ------
 // FIXME: move file_id type and schema in file-server when implemented !

@@ -14,7 +14,7 @@ import { net_primary, net_secondary } from './net'
 import { net_webapp_nextjs_primary, net_webapp_nextjs_secondary } from './netWebappNextjs'
 import { org_primary, org_secondary } from './org'
 import { storage_secondary } from './storage'
-import { user_home_primary, user_home_secondary } from './user-hone'
+import { user_home_event, user_home_primary, user_home_secondary } from './user-hone'
 
 export * as iam from './iam'
 export * as net from './net'
@@ -52,6 +52,7 @@ export type moodle_domain = ddd<
   },
   {
     iam: iam_event
+    userHome: user_home_event
     env: {
       system: {
         // BEWARE:this message is currently invoked manually (type-unchecked) in be/default/src/default-session-deployment.ts

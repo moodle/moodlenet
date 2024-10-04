@@ -1,5 +1,4 @@
-import { iam, moodle_core_factory, moodle_core_impl, moodle_domain } from '@moodle/domain'
-import { CoreContext } from '@moodle/lib-ddd'
+import { iam, moodle_core_context, moodle_core_factory, moodle_core_impl } from '@moodle/domain'
 import {
   resetPasswordEmail,
   selfDeletionConfirmEmail,
@@ -370,6 +369,20 @@ export function iam_core(): moodle_core_factory {
             },
           },
         },
+        userHome: {
+          edits: {
+            async profileInfo({ changes, userId }) {
+              if (typeof changes.displayName !== 'string') {
+                return
+              }
+              await ctx.sys_call.secondary.iam.db.align_userDisplayname({
+                displayName: changes.displayName,
+                userId,
+              })
+            },
+          },
+        },
+
         // userActivity: {
         //   userLoggedIn(ctx) {},
         // },
@@ -394,7 +407,7 @@ export function iam_core(): moodle_core_factory {
     }
   }
 
-  async function startIamProcess(ctx: CoreContext<moodle_domain>) {
+  async function startIamProcess(ctx: moodle_core_context) {
     background_process_running = true
     const sysAdminInfo = await ctx.sys_call.primary.env.maintainance.getSysAdminInfo()
     const [found] = await ctx.sys_call.secondary.iam.db.getUserByEmail({
@@ -403,7 +416,7 @@ export function iam_core(): moodle_core_factory {
 
     if (!found) {
       const { passwordHash } = await ctx.sys_call.secondary.iam.crypto.hashPassword({
-        plainPassword: __redacted__(await generateNanoId({length:20})),
+        plainPassword: __redacted__(await generateNanoId({ length: 20 })),
       })
       const newUser = await lib.createNewUserRecordData({
         displayName: 'Admin',

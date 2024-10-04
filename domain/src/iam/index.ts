@@ -170,12 +170,13 @@ export interface IamSecondary {
       adminUserId: user_id
     }): Promise<ok_ko<void>>
 
+    align_userDisplayname(_: { userId: user_id; displayName: string }): Promise<ok_ko<void>>
+
     findUsersByText(_: {
       text: string
       includeDeactivated?: boolean
     }): Promise<{ users: user_record[] }>
   }
-
 }
 export interface IamEvent {
   userBase: {

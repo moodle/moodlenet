@@ -9,7 +9,10 @@ export function userHomeDocument2user_home_record(
   return _unchecked_brand<userHome.user_home_record>({
     id: doc._key,
     profileInfo: doc.profileInfo,
-    userId: doc.userId,
+    user: {
+      id: doc.user.id,
+      roles: doc.user.roles,
+    },
   })
 }
 
@@ -19,6 +22,6 @@ export function user_home_record2userHomeDocument(
   return _unchecked_brand<userHomeDocument>({
     _key: user_home_record.id,
     profileInfo: user_home_record.profileInfo,
-    userId: user_home_record.userId,
+    user: user_home_record.user,
   })
 }

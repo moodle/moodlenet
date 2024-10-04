@@ -43,3 +43,23 @@ export function user_record2SessionUserData(
     contacts: user_record.contacts,
   }
 }
+
+export function userSessionInfo(user_session: iam.user_session): {
+  authenticated:
+    | false
+    | (iam.AuthenticatedSession & {
+        isAdmin: boolean
+        isPublisher: boolean
+      })
+} {
+  if (user_session.type === 'guest') {
+    return { authenticated: false }
+  }
+  return {
+    authenticated: {
+      ...user_session,
+      isAdmin: isAdminUserSession(user_session),
+      isPublisher: isPublisherUserSession(user_session),
+    },
+  }
+}

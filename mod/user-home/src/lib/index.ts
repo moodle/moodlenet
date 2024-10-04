@@ -1,1 +1,1 @@
-export default null
+export * from './primary-access'
