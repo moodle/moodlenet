@@ -4,7 +4,6 @@ import { generateNanoId } from '@moodle/lib-id-gen'
 import { _unchecked_brand, _void } from '@moodle/lib-types'
 import { user_home_record } from 'domain/src/user-hone'
 import { accessUserHome } from './lib'
-import { assert_authorizeSystemSession } from '@moodle/mod-iam/lib'
 
 export function user_home_core(): moodle_core_factory {
   return ctx => {
@@ -50,33 +49,40 @@ export function user_home_core(): moodle_core_factory {
           },
         },
       },
-      event: {
-        iam: {
-          userBase: {
-            async newUserCreated({ user }) {
-              const user_home_id = await generateNanoId()
-              return ctx.sys_call.secondary.userHome.db.createUserHome({
-                userHome: _unchecked_brand<user_home_record>({
-                  id: user_home_id,
-                  user: {
-                    id: user.id,
-                    roles: user.roles,
-                  },
-                  profileInfo: {
-                    displayName: user.displayName,
-                    aboutMe: '',
-                    location: '',
-                    siteUrl: null,
-                  },
-                }),
-              })
-            },
-          },
-          userRoles: {
-            async userRolesUpdated({ userId, roles }) {
-              await ctx.sys_call.secondary.userHome.db.align_userExcerpt({
-                userExcerpt: { id: userId, roles },
-              })
+      watch: {
+        secondary: {
+          iam: {
+            db: {
+              async saveNewUser([[created, resp]]) {
+                if (!created) {
+                  return
+                }
+                const user_home_id = await generateNanoId()
+                return ctx.sys_call.secondary.userHome.db.createUserHome({
+                  userHome: _unchecked_brand<user_home_record>({
+                    id: user_home_id,
+                    user: {
+                      id: resp.newUser.id,
+                      roles: resp.newUser.roles,
+                    },
+                    profileInfo: {
+                      displayName: resp.newUser.displayName,
+                      aboutMe: '',
+                      location: '',
+                      siteUrl: null,
+                    },
+                  }),
+                })
+              },
+
+              async setUserRoles([[done, result], { userId }]) {
+                if (!done) {
+                  return
+                }
+                await ctx.sys_call.secondary.userHome.db.align_userExcerpt({
+                  userExcerpt: { id: userId, roles: result.newRoles },
+                })
+              },
             },
           },
         },

@@ -32,7 +32,6 @@ import type {
 export * from './types'
 export type iam_primary = pretty<IamPrimary>
 export type iam_secondary = pretty<IamSecondary>
-export type iam_event = pretty<IamEvent>
 
 export interface IamPrimary {
   session: {
@@ -145,14 +144,17 @@ export interface IamSecondary {
   db: {
     getConfigs(): Promise<{ configs: Configs }>
 
-    setUserPassword(_: { userId: user_id; newPasswordHash: string }): Promise<ok_ko<void>>
+    setUserPassword(_: {
+      userId: user_id
+      newPasswordHash: string
+    }): Promise<ok_ko<{ userId: user_id }>>
 
     deactivateUser(_: {
       userId: user_id
       anonymize: boolean
       reason: user_deactivation_reason
       at?: date_time_string
-    }): Promise<ok_ko<void>>
+    }): Promise<ok_ko<{ deactivatedUser: user_record }>>
 
     getActiveUsersNotLoggedInFor(_: {
       time: time_duration_string
@@ -162,13 +164,13 @@ export interface IamSecondary {
     getUserById(_: { userId: user_id }): Promise<ok_ko<user_record>>
     getUserByEmail(_: { email: email_address }): Promise<ok_ko<user_record>>
 
-    saveNewUser(_: { newUser: user_record }): Promise<ok_ko<void>>
+    saveNewUser(_: { newUser: user_record }): Promise<ok_ko<{ newUser: user_record }>>
 
     setUserRoles(_: {
       userId: user_id
       roles: user_role[]
       adminUserId: user_id
-    }): Promise<ok_ko<void>>
+    }): Promise<ok_ko<{ newRoles: user_role[]; oldRoles: user_role[] }>>
 
     align_userDisplayname(_: { userId: user_id; displayName: string }): Promise<ok_ko<void>>
 
@@ -176,24 +178,5 @@ export interface IamSecondary {
       text: string
       includeDeactivated?: boolean
     }): Promise<{ users: user_record[] }>
-  }
-}
-export interface IamEvent {
-  userBase: {
-    userDeactivated(_: {
-      user: user_record
-      reason: user_deactivation_reason
-      anonymized: boolean
-    }): unknown
-    newUserCreated(_: { user: user_record }): unknown
-  }
-  userSecurity: {
-    userPasswordChanged(_: { userId: user_id }): unknown
-  }
-  userRoles: {
-    userRolesUpdated(_: { userId: user_id; roles: user_role[]; oldRoles: user_role[] }): unknown
-  }
-  userActivity: {
-    userLoggedIn(_: { userId: user_id }): unknown
   }
 }

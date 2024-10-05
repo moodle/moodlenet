@@ -55,20 +55,15 @@ export function user_home_moodle_secondary_factory({
                 db_struct,
                 partialConfigs,
               })
-              return [!!result, _void]
+              return [true, result.new]
             },
             async updatePartialProfileInfo({ partialProfileInfo, id }) {
               const updateResult = await db_struct.data.coll.userHome
                 .update({ _key: id }, { profileInfo: partialProfileInfo }, { returnNew: true })
                 .catch(() => null)
-              if (updateResult?.new) {
-                ctx.emit.event.userHome.edits.profileInfo({
-                  changes: partialProfileInfo,
-                  userHomeId: id,
-                  userId: updateResult.new.user.id,
-                })
-              }
-              return [!!updateResult?.new, _void]
+              return updateResult?.new
+                ? [true, { userHomeId: id, userId: updateResult.new.user.id }]
+                : [false, _void]
             },
             async createUserHome({ userHome }) {
               const result = await db_struct.data.coll.userHome

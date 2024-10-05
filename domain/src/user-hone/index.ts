@@ -12,7 +12,6 @@ export * from './types'
 
 export type user_home_primary = pretty<UserHomePrimary>
 export type user_home_secondary = pretty<UserHomeSecondary>
-export type user_home_event = pretty<UserHomeEvents>
 
 export type by_user_id_or_user_home_id = d_u<
   { user_home: { user_home_id: user_home_id }; user: { user_id: user_id } },
@@ -42,20 +41,10 @@ export interface UserHomeSecondary {
     align_userExcerpt(_: {
       userExcerpt: user_excerpt
     }): Promise<ok_ko<{ userHome: user_home_record }, { notFound: unknown }>>
-    updatePartialConfigs(_: { partialConfigs: deep_partial<Configs> }): Promise<ok_ko<void>>
+    updatePartialConfigs(_: { partialConfigs: deep_partial<Configs> }): Promise<ok_ko<Configs>>
     updatePartialProfileInfo(_: {
       id: user_home_id
       partialProfileInfo: deep_partial<ProfileInfo>
-    }): Promise<ok_ko<void>>
-  }
-}
-
-export interface UserHomeEvents {
-  edits: {
-    profileInfo(_: {
-      changes: deep_partial<ProfileInfo>
-      userHomeId: user_home_id
-      userId: user_id
-    }): unknown
+    }): Promise<ok_ko<{ userHomeId: user_home_id; userId: user_id }>>
   }
 }

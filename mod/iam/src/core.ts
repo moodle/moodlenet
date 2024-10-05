@@ -361,39 +361,36 @@ export function iam_core(): moodle_core_factory {
         env: {
           system: {
             async backgroundProcess({ action }) {
+              console.log('event backgroundProcess IAM')
               if (action === 'start') {
                 startIamProcess(ctx)
               }
             },
           },
         },
-        userHome: {
-          edits: {
-            async profileInfo({ changes, userId }) {
-              if (typeof changes.displayName !== 'string') {
-                return
-              }
-              await ctx.sys_call.secondary.iam.db.align_userDisplayname({
-                displayName: changes.displayName,
-                userId,
-              })
+      },
+      watch: {
+        secondary: {
+          userHome: {
+            db: {
+              async updatePartialProfileInfo([
+                [done, res],
+                {
+                  partialProfileInfo: { displayName },
+                },
+              ]) {
+                if (!done || typeof displayName !== 'string') {
+                  return
+                }
+
+                await ctx.sys_call.secondary.iam.db.align_userDisplayname({
+                  displayName,
+                  userId: res.userId,
+                })
+              },
             },
           },
         },
-
-        // userActivity: {
-        //   userLoggedIn(ctx) {},
-        // },
-        // userBase: {
-        //   newUserCreated(ctx) {},
-        //   userDeactivated(ctx) {},
-        // },
-        // userRoles: {
-        //   userRolesUpdated(ctx) {},
-        // },
-        // userSecurity: {
-        //   userPasswordChanged(ctx) {},
-        // },
       },
     }
     return core_impl

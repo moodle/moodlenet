@@ -1,5 +1,5 @@
 import { map } from '@moodle/lib-types'
-import { event_layer, primary_layer, secondary_layer } from './types'
+import { event_layer, primary_layer, secondary_layer, watcher } from './types'
 
 export type ddd<
   primary extends map<primary_layer> = map<primary_layer>,
@@ -9,4 +9,5 @@ export type ddd<
   primary: primary
   secondary: secondary
   event: event
+  watch: watcher<primary, secondary>
 }
