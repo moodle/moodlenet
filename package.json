@@ -51,10 +51,12 @@
     "react-email": "2.1.6",
     "react-hook-form": "^7.53.0",
     "react-i18next": "^15.0.2",
+    "sharp": "^0.33.5",
     "tslib": "^2.3.0",
     "ulidx": "^2.4.1",
     "undici": "^6.19.8",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zod-form-data": "^2.0.2"
   },
   "devDependencies": {
     "@asyncapi/cli": "^2.3.2",

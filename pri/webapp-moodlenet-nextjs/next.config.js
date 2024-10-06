@@ -77,10 +77,11 @@ const xport = async (phase, context) => {
   }
   config.transpilePackages = [
     ...(config.transpilePackages ?? []),
-    '@moodle/core/transport',
-    '@moodle/core/domain',
+    '@moodle/bindings-node',
     '@moodle/lib-types',
-    '@moodle/domain/mod/moodle/net',
+    '@moodle/domain',
+    '@moodle/mod-iam/lib',
+    '@moodle/lib-ddd',
   ]
   // config.serverRuntimeConfig = require('../../../../domain/src/index')
   // config.serverRuntimeConfig = require('@moodle/domain')
