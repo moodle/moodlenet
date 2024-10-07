@@ -3,12 +3,12 @@ import {
   core_impl,
   CoreContext,
   ddd,
-  DeploymentInfo,
   secondary_adapter,
   secondary_factory,
   SecondaryContext,
 } from '@moodle/lib-ddd'
-import { _maybe, email_address } from '@moodle/lib-types'
+import { email_address } from '@moodle/lib-types'
+import { env_primary } from './env'
 import { iam_primary, iam_secondary } from './iam'
 import { net_primary, net_secondary } from './net'
 import { net_webapp_nextjs_primary, net_webapp_nextjs_secondary } from './netWebappNextjs'
@@ -30,17 +30,7 @@ export type moodle_domain = ddd<
     net: net_primary
     userHome: user_home_primary
     netWebappNextjs: net_webapp_nextjs_primary
-    env: {
-      application: {
-        deployment(_: {
-          app: 'moodlenet-webapp' | 'filestore-http'
-        }): Promise<_maybe<DeploymentInfo>>
-        fsHomeDir(): Promise<{ path: string }>
-      }
-      maintainance: {
-        getSysAdminInfo(): Promise<sys_admin_info>
-      }
-    }
+    env: env_primary
   },
   {
     org: org_secondary

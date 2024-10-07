@@ -11,3 +11,15 @@ export type ddd<
   event: event
   watch: watcher<primary, secondary>
 }
+
+
+// NOTE : here's how to intersect all members of an arry of types
+// type x = [{ x: { a: string } }, { x: { c: Date } }, { x: { b: number } }]
+
+// type y<o extends any[]> = o extends [infer a, ...infer rest] ? a & y<rest> : unknown
+// type k = y<x>
+// declare const k: k
+
+// k.x.b.toExponential
+// k.x.a.toUpperCase
+// k.x.c.getDay

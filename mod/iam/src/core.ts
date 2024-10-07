@@ -360,6 +360,10 @@ export function iam_core(): moodle_core_factory {
       event: {
         env: {
           system: {
+            // BEWARE:these messages are manually crafted: no type-checking here
+            // and should be maintained aligned with be/default/src/default-session-deployment.ts#startBackgroundProcesses
+            // at least until we have a better way to generate them
+
             async backgroundProcess({ action }) {
               console.log('event backgroundProcess IAM')
               if (action === 'start') {

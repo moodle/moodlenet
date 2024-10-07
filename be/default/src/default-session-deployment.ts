@@ -27,7 +27,7 @@ const default_session_deployment: session_deployer = async ({
 
   async function startBackgroundProcesses() {
     // BEWARE:these messages are manually crafted: no type-checking here
-    // and should be maintained aligned with domain#env
+    // and should be maintained aligned with domain modules's event.env.system.backgroundProcess handler
     // at least until we have a better way to generate them
 
     // FIXME: after removed event layer must find another way to trigger this kind of events...
