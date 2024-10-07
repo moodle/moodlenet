@@ -7,7 +7,7 @@ import Save from '@mui/icons-material/Save'
 import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { getProfileInfoPrimarySchemas, user_home_access_object } from 'domain/src/user-hone'
-import { useReducer, useRef } from 'react'
+import { useCallback, useReducer, useRef } from 'react'
 import { never } from 'zod'
 import { ApprovalButton } from '../../../../../../ui/atoms/ApproveButton/ApproveButton'
 import { FloatingMenu } from '../../../../../../ui/atoms/FloatingMenu/FloatingMenu'
@@ -18,8 +18,10 @@ import { RoundButton } from '../../../../../../ui/atoms/RoundButton/RoundButton'
 import { SecondaryButton } from '../../../../../../ui/atoms/SecondaryButton/SecondaryButton'
 import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.png'
 import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
-import { updateProfileInfo } from '../profile.server'
+import { useFileUploader } from '../../../../../../ui/lib/nextjs/useFileUploader'
+import { updateProfileInfo, uploadAvatarAction } from '../profile.server'
 import './MainProfileCard.scss'
+import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
 
 export interface MainProfileCardDeps {
   userHomeAccessObject: user_home_access_object
@@ -37,18 +39,46 @@ export function MainProfileCard({
   )
   const {
     form: { formState, register, reset },
-    handleSubmitWithAction,
+    handleSubmitWithAction: submitForm,
   } = useHookFormAction(updateProfileInfo, zodResolver(updateProfileInfoSchema), {
     formProps: { defaultValues: { ...profileInfo, user_home_id: id } },
     actionProps: {
       onSuccess({ input }) {
-        toggleIsEditing()
         reset(input)
       },
     },
   })
+  // const { handleSubmitWithAction: uploadAvatar } = useHookFormAction(
+  //   uploadAvatarAction,
+  //   zodResolver(
+  //     zfd.formData({
+  //       avatar: zfd.file(),
+  //     }),
+  //   ),
+  // )
+  const submitFormBtnRef = useRef<HTMLButtonElement | null>(null)
 
-  const submitBtnRef = useRef<HTMLButtonElement | null>(null)
+  const [
+    chooseImageAvatar,
+    submitAvatar,
+    avatarChoosenFileError,
+    displaySrcAvatar,
+    // dirtyAvatar,
+  ] = useFileUploader({
+    currentSrc: defaultAvatar.src /* profileInfo.avatar */,
+    action: uploadAvatarAction,
+    maxSize: 1048576,
+    accept: useFileUploader.type.image,
+  })
+
+  const submitAll = useCallback(() => {
+    formState.isDirty && submitFormBtnRef.current?.click()
+
+    submitAvatar()
+    toggleIsEditing()
+    //handleSubmitWithAction(e)
+  }, [formState.isDirty, submitAvatar])
+
   return (
     <div className="main-profile-card" key="profile-card">
       <div className="main-column">
@@ -56,20 +86,13 @@ export function MainProfileCard({
           {!permissions.editProfile
             ? null
             : isEditing && [
-                <input
-                  // ref={uploadBackgroundRef}
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.gif"
-                  // onChange={uploadBackground}
-                  key="edit-background-input"
-                  hidden
-                />,
                 <RoundButton
                   className="change-background-button"
                   type="edit"
                   abbrTitle={`Edit background`}
                   key="edit-background-btn"
                 />,
+                avatarChoosenFileError && <Snackbar>{avatarChoosenFileError}</Snackbar>,
               ]}
           <div
             className={`background`}
@@ -79,49 +102,31 @@ export function MainProfileCard({
             }}
           />
         </div>
-        <div className={`avatar-container`} key="avatar-container">
+        <form className={`avatar-container`} key="avatar-container">
           {!permissions.editProfile
             ? null
             : isEditing && [
-                <input
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.gif"
-                  // onChange={uploadAvatar}
-                  key="edit-avatar-input"
-                  hidden
-                />,
                 <RoundButton
                   className="change-avatar-button"
                   type="edit"
                   abbrTitle={`Edit profile picture`}
-                  // onClick={selectAvatar}
+                  onClick={chooseImageAvatar}
                   key="edit-avatar-btn"
                 />,
               ]}
           <div
             className={`avatar`}
             style={{
-              backgroundImage: 'url("' + defaultAvatar.src + '")',
+              backgroundImage: 'url("' + displaySrcAvatar + '")',
               // pointerEvents: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'inherit',
               // cursor: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'pointer',
             }}
           ></div>
-        </div>
+        </form>
         <div className="top-items" key="top-items">
           <div className="edit-save" key="edit-save">
             {!permissions.editProfile ? null : isEditing ? (
-              <PrimaryButton
-                color="green"
-                onClick={() => {
-                  if (formState.isDirty) {
-                    submitBtnRef.current?.click()
-                  } else {
-                    toggleIsEditing()
-                  }
-                  //handleSubmitWithAction(e)
-                }}
-                key="save-button"
-              >
+              <PrimaryButton color="green" onClick={submitAll} key="save-button">
                 <Save />
               </PrimaryButton>
             ) : (
@@ -131,13 +136,8 @@ export function MainProfileCard({
             )}
           </div>
         </div>
-        <form onSubmit={handleSubmitWithAction} className="profile-card-header" key="card-header">
-          <button
-            disabled={!formState.isDirty}
-            ref={submitBtnRef}
-            type="submit"
-            style={{ display: 'none' }}
-          />
+        <form onSubmit={submitForm} className="profile-card-header" key="card-header">
+          <button disabled={!formState.isDirty} ref={submitFormBtnRef} type="submit" hidden />
           <div className="title" key="title-row">
             <InputTextField
               className="display-name underline"
@@ -265,3 +265,4 @@ export function MainProfileCard({
     </div>
   )
 }
+
