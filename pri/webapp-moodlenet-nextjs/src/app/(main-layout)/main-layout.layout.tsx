@@ -40,7 +40,6 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
     const { authenticated } = userSessionInfo(userSession)
-    const { pages } = sitepaths()
     const avatarUrl = null //user_session.user.avatarUrl
     const userHomeAccessObject =
       authenticated &&
@@ -50,9 +49,9 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
           return userHomeFound && userHomeResult.accessObject
         }))
 
-    const baseProfilePages =
+    const baseProfilePage =
       userHomeAccessObject &&
-      pages.homepages.profile(userHomeAccessObject.id, userHomeAccessObject.profileInfo.displayName)
+      sitepaths.profile[userHomeAccessObject.id]![userHomeAccessObject.profileInfo.displayName]!
     const defaultRights = authenticated
       ? await(async () => {
           return [
@@ -60,29 +59,29 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
               key="avatar-menu"
               avatarUrl={avatarUrl}
               menuItems={filterOutFalsies([
-                baseProfilePages && (
+                baseProfilePage && (
                   <ProfileLink
                     key="profile"
                     avatarUrl={avatarUrl}
-                    profileHref={baseProfilePages('')}
+                    profileHref={baseProfilePage()}
                   />
                 ),
-                baseProfilePages && (
-                  <BookmarksLink key="bookmarks" bookmarksHref={baseProfilePages('/bookmarks')} />
+                baseProfilePage && (
+                  <BookmarksLink key="bookmarks" bookmarksHref={baseProfilePage.bookmarks()} />
                 ),
-                baseProfilePages && (
-                  <FollowingLink key="following" followingHref={baseProfilePages('/followers')} />
+                baseProfilePage && (
+                  <FollowingLink key="following" followingHref={baseProfilePage.followers()} />
                 ),
-                baseProfilePages && (
+                baseProfilePage && (
                   <UserSettingsLink
                     key="user-settings"
-                    settingsHref={pages.user.settings('/general')}
+                    settingsHref={sitepaths.settings.general()}
                   />
                 ),
                 authenticated.isAdmin && (
                   <AdminSettingsLink
                     key="admin-settings"
-                    adminHref={pages.admin.settings('/general')}
+                    adminHref={sitepaths.settings.general()}
                   />
                 ),
                 <Logout key="logout" logout={logout} />,

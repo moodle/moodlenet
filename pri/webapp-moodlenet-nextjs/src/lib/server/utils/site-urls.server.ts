@@ -2,7 +2,7 @@ import { getDeploymentInfoUrl } from '@moodle/lib-ddd'
 import { url_string } from '@moodle/lib-types'
 import assert from 'assert'
 import { headers } from 'next/headers'
-import { sitepaths } from '../../common/utils/sitepaths'
+import { createSitepaths } from '../../common/utils/sitepaths'
 import { priAccess } from '../session-access'
 
 export async function srvSiteUrls() {
@@ -14,8 +14,8 @@ export async function srvSiteUrls() {
 
   return {
     baseUrl,
-    full: sitepaths<url_string>(baseUrl),
-    site: sitepaths(webappDeploymentInfo.basePath),
+    full: createSitepaths<url_string>(baseUrl),
+    site: createSitepaths(webappDeploymentInfo.basePath),
   }
 }
 //REVIEW improve check and argument typing

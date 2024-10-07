@@ -188,3 +188,4 @@ export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
 }
 
 export type flags<names extends string> = Record<names, boolean>
+

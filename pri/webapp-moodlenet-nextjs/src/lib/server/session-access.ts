@@ -69,8 +69,10 @@ export async function getAuthenticatedUserSessionOrRedirectToLogin() {
     return maybe_authenticatedUserSession
   }
 
-  const loginUrl = sitepaths().pages.access.login({
-    redirect: headers().get('x-pathname') ?? sitepaths().pages.landing,
+  const loginUrl = sitepaths.login({
+    query: {
+      redirect: headers().get('x-pathname') ?? sitepaths(),
+    },
   })
   redirect(loginUrl, RedirectType.replace)
 }

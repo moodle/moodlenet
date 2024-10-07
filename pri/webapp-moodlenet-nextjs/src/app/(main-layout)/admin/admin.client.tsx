@@ -7,15 +7,14 @@ import { sitepaths } from '../../../lib/common/utils/sitepaths'
 import { Card } from '../../../ui/atoms/Card/Card'
 
 export function AdminMenu() {
-  const adminPath = sitepaths().pages.admin.settings
   const { t } = useTranslation()
 
   return (
     <Card role="navigation" className="menu">
-      <MenuItem pathname={adminPath('/general')} title={t('General')} />
-      <MenuItem pathname={'#' /* adminPath('/appearance') */} title={t('Appearance')} />
-      <MenuItem pathname={adminPath('/users')} title={t('Users')} />
-      <MenuItem pathname={'#' /* adminPath('/moderation') */} title={t('Moderation')} />
+      <MenuItem pathname={sitepaths.admin.general()} title={t('General')} />
+      <MenuItem pathname={'#' /* sitepaths.admin.appearance() */} title={t('Appearance')} />
+      <MenuItem pathname={sitepaths.admin.users()} title={t('Users')} />
+      <MenuItem pathname={'#' /* sitepaths.admin.moderation() */} title={t('Moderation')} />
     </Card>
   )
 }

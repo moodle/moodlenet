@@ -27,7 +27,7 @@ export const loginAction = defaultSafeActionClient
       ? String(QueryString.parse(xSearchHeader).redirect)
       : undefined
 
-    const redirectUrl = searchRedirectPath || sitepaths().pages.landing
+    const redirectUrl = searchRedirectPath || sitepaths()
 
     const [loginSuccess, loginResponse] = await priAccess().iam.access.login({
       loginForm,

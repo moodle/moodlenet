@@ -34,7 +34,7 @@ export const updateProfileInfo = defaultSafeActionClient
       profileInfo: profileInfo,
     })
     if (editDone) {
-      revalidatePath(sitepaths().pages.homepages.profile(profileInfo.user_home_id)(''))
+      revalidatePath(sitepaths.profile[profileInfo.user_home_id]![profileInfo.displayName]!())
       return
     }
     returnValidationErrors(getProfileInfoSchema, {

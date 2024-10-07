@@ -74,7 +74,7 @@ type RowProps = {
 
 function Row({ user, editUserRole }: RowProps) {
   const { t } = useTranslation()
-  const profileHref = sitepaths().pages.homepages.user(user.id)
+  const profileHref = sitepaths.profile[user.id]![user.displayName]!()
   const [roles, setRoles] = useState(user.roles)
   const isAdmin = roles.includes('admin')
   const isPublisher = roles.includes('publisher')

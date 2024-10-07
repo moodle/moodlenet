@@ -19,7 +19,7 @@ export default function LoginPanel({ iamSchemaConfigs }: LoginProps) {
     form: { formState, register },
     handleSubmitWithAction,
   } = useHookFormAction(loginAction, zodResolver(loginSchema))
-  const recoverPasswordHref = sitepaths().pages.access.recoverPasswordRequest('')
+  const recoverPasswordHref = sitepaths['recover-password-request']()
 
   const loginErrorMsg = formState.errors.root?.message
   return (

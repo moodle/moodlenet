@@ -7,13 +7,13 @@ import { sitepaths } from '../../../lib/common/utils/sitepaths'
 import { Card } from '../../../ui/atoms/Card/Card'
 
 export function SettingsMenu() {
-  const settingsPath = sitepaths().pages.user.settings
+
   const { t } = useTranslation()
 
   return (
     <Card role="navigation" className="menu">
-      <MenuItem pathname={settingsPath('/general')} title={t('General')} />
-      <MenuItem pathname={settingsPath('/advanced')} title={t('Advanced')} />
+      <MenuItem pathname={sitepaths.settings.general()} title={t('General')} />
+      <MenuItem pathname={sitepaths.settings.advanced()} title={t('Advanced')} />
     </Card>
   )
 }

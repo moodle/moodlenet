@@ -3,12 +3,12 @@ import { _any } from './map'
 
 export const _inspect_symbol = Symbol('moduleAccessProxy inspect')
 
-export type proxy_applier = (_: { path: string[]; arg: _any }) => unknown
+export type proxy_applier<arg> = (_: { path: string[]; arg: arg }) => unknown
 
-export type access_proxy_ctrl = {
-  apply: proxy_applier
+export type access_proxy_ctrl<arg> = {
+  apply: proxy_applier<arg>
 }
-export function createPathProxy<t>(ctrl: access_proxy_ctrl): [t] {
+export function createPathProxy<t, arg = _any>(ctrl: access_proxy_ctrl<arg>): [t] {
   const px = access_proxy([])
   return [px] as const
 

@@ -20,7 +20,7 @@ export function RecoverPasswordRequestClient() {
   })
   const { t } = useTranslation()
 
-  const loginHref = sitepaths().pages.access.login()
+  const loginHref = sitepaths.login()
 
   const requestSent = formState.isSubmitSuccessful
   return (
