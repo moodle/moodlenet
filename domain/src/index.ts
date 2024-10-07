@@ -21,6 +21,7 @@ export * as net from './net'
 export * as netWebappNextjs from './netWebappNextjs'
 export * as org from './org'
 export * as userHome from './user-hone'
+export * as storage from './storage'
 
 export type sys_admin_info = { email: email_address }
 export type moodle_domain = ddd<

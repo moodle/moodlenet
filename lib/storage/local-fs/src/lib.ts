@@ -1,5 +1,5 @@
 import { _void, blob_meta, path } from '@moodle/lib-types'
-import { StorageLib, StorageLibProvider } from 'domain/src/storage'
+import { storage } from '@moodle/domain'
 import { mkdir, readFile, rename, stat } from 'fs/promises'
 import { join, sep } from 'path'
 import { rimraf } from 'rimraf'
@@ -10,9 +10,13 @@ export function makeLocalFsStorageLibProvider({
 }: {
   tempDir: string
   homeDir: string
-}): StorageLibProvider {
+}): storage.StorageLibProvider {
   return ({ base_path }) => {
-    const getTempFileMeta: StorageLib['getTempFileMeta'] = async ({ tmpId }: { tmpId: string }) => {
+    const getTempFileMeta: storage.StorageLib['getTempFileMeta'] = async ({
+      tmpId,
+    }: {
+      tmpId: string
+    }) => {
       const { tmp_file_meta_path } = get_tmp_file_paths(tmpId)
 
       const meta: blob_meta = await readFile(tmp_file_meta_path, 'utf8')
@@ -28,7 +32,7 @@ export function makeLocalFsStorageLibProvider({
       return [true, { meta }] //, tmp_file_full_path, tmp_file_name, tmp_file_dir }
     }
 
-    const mvTempFile: StorageLib['mvTempFile'] = async ({
+    const mvTempFile: storage.StorageLib['mvTempFile'] = async ({
       tmpId,
       dest_path,
     }: {
@@ -51,7 +55,7 @@ export function makeLocalFsStorageLibProvider({
       return [true, { meta: found_tmp_meta.meta }]
     }
 
-    const deletePath: StorageLib['deletePath'] = async ({
+    const deletePath: storage.StorageLib['deletePath'] = async ({
       path,
       type,
     }: {

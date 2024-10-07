@@ -12,9 +12,9 @@ import {
 } from 'zod'
 import { _any, map } from './map'
 
-export type _maybe<t> = t | _nil
-export type _nil = undefined | null
-export type _falsy = false | _nil
+export type _maybe<t> = t | _nullish
+export type _nullish = undefined | null
+export type _falsy = false | _nullish
 // export const _void = void 0 as never // TOO DANGEROUS
 export const _void = void 0 as void
 export type primitive = primitive_value | null | undefined

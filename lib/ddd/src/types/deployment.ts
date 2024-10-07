@@ -1,9 +1,9 @@
-import { _nil, path, url_string_schema } from '@moodle/lib-types'
+import { _nullish, path, url_string_schema } from '@moodle/lib-types'
 
 export interface DeploymentInfo {
   basePath: string
   hostname: string
-  port: _nil | number
+  port: _nullish | number
   protocol: string
 }
 export function getDeploymentInfoUrl(
