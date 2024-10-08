@@ -16,8 +16,11 @@ const MOODLE_NET_NEXTJS_APP_NAME =
 
 const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
+//CHECK: this was inside priAccess() .. why ? check it works now
+const trnspClient = http_bind.client()
 export function priAccess(): moodle_domain['primary'] {
-  const trnspClient = http_bind.client()
+  // const trnspClient = http_bind.client()
+
   const accessSession = getAccessSession()
   const [ap] = create_access_proxy<moodle_domain>({
     sendDomainMsg({ domain_msg }) {
@@ -86,6 +89,7 @@ export async function getAdminUserSessionOrRedirect(path = '/') {
 }
 
 function getAccessSession() {
+  //FIXME: why is it here inside ?
   i18next.init({
     // ns: ['common', 'moduleA'],
     // defaultNS: 'moduleA',

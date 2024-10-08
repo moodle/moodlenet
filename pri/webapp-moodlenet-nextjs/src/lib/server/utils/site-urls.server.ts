@@ -6,16 +6,14 @@ import { createSitepaths } from '../../common/utils/sitepaths'
 import { priAccess } from '../session-access'
 
 export async function srvSiteUrls() {
-  const webappDeploymentInfo = await priAccess().env.application.deployment({
-    app: 'moodlenet-webapp',
-  })
-  assert(webappDeploymentInfo, new Error('No deployment info for moodlenet !'))
-  const baseUrl = getDeploymentInfoUrl(webappDeploymentInfo)
+  const { moodlenetWebapp } = await priAccess().env.application.deployments()
+  assert(moodlenetWebapp, new Error('No deployment info for moodlenet !'))
+  const baseUrl = getDeploymentInfoUrl(moodlenetWebapp)
 
   return {
     baseUrl,
     full: createSitepaths<url_string>(baseUrl),
-    site: createSitepaths(webappDeploymentInfo.basePath),
+    site: createSitepaths(moodlenetWebapp.basePath),
   }
 }
 //REVIEW improve check and argument typing

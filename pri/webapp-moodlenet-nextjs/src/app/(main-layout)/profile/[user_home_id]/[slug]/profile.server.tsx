@@ -42,32 +42,14 @@ export const updateProfileInfo = defaultSafeActionClient
     })
   })
 
-export async function uploadAvatarAction(form: FormData) {
-  const { file: avatar } = zfd
-    .formData({
-      file: zfd.file(),
-    })
-    .parse(form)
-
-  console.log(
-    '->',
-    inspect(
-      { avatar },
-      {
-        colors: true,
-        depth: 10,
-        showHidden: true,
-        sorted: true,
-        getters: true,
-      },
-    ),
-  )
-  if (typeof avatar !== 'string') {
-    const writeStream = createWriteStream(`/home/alec/____uploaded___${avatar.name}`, {
-      flags: 'w',
-    })
-    Readable.from(avatar.stream() as any).pipe(writeStream)
-  }
+export async function uploadAvatarAction({ tmpId }: { tmpId: string }) {
+  console.log('->', { tmpId })
+  // if (typeof avatar !== 'string') {
+  //   const writeStream = createWriteStream(`/home/alec/____uploaded___${avatar.name}`, {
+  //     flags: 'w',
+  //   })
+  //   Readable.from(avatar.stream() as any).pipe(writeStream)
+  // }
   return {
     fileUrl: 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
   }

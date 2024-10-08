@@ -36,8 +36,8 @@ export function client(agent_opts?: Agent.Options) {
       typeof req_http_target === 'string'
         ? new URL(req_http_target)
         : new URL(
-            `${req_http_target.secure ? 'https' : 'http'}://${req_http_target.host}:${req_http_target.port}`,
             req_http_target.basePath,
+            `${req_http_target.secure ? 'https' : 'http'}://${req_http_target.host}:${req_http_target.port}`,
           )
 
     const body = _serial(domain_session_access_deps)

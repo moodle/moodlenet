@@ -1,18 +1,22 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { GlobalCtx } from '../../app/root-layout.client'
 
-export type fileUploadAction = (form: FormData) => Promise<{ fileUrl: string }>
+//SHAREDLIB
+const uploadTmpFieldName = 'file'
+const uploadTmpPath = '/.tmp'
+const uploadTmpMethod = 'POST'
+
+export type fileUploadedNotifyAction = (_: { tmpId: string }) => Promise<{ fileUrl: string }>
 useFileUploader.type = { image: '.jpg,.jpeg,.png,.gif', any: '*' }
 export function useFileUploader({
   currentSrc,
   action,
-  name = 'file',
   accept = useFileUploader.type.any,
   maxSize = 16777216, //16MB Math.pow(2,24)
 }: {
   currentSrc: string
-  action: fileUploadAction
+  action: fileUploadedNotifyAction
   maxSize?: number
-  name?: string
   accept?: string
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -77,17 +81,24 @@ export function useFileUploader({
     inputRef.current?.click()
   }, [])
   const dirty = !!choosenFile
+  const {
+    deployments: {
+      filestoreHttp: { href: filestoreHttpHref },
+    },
+  } = useContext(GlobalCtx)
   const submit = useCallback(() => {
     if (!dirty) return
     const formData = new FormData()
-    formData.append(name, choosenFile.file)
-    action(formData).then(({ fileUrl }) => {
-      inputRef.current && (inputRef.current.value = '')
-      setLatestUpdatedSrc(fileUrl)
-      setChoosenFile(null)
-    })
-  }, [action, choosenFile?.file, dirty, name])
+    formData.append(uploadTmpFieldName, choosenFile.file)
+
+    fetch(`${filestoreHttpHref}${uploadTmpPath}`, { body: formData, method: uploadTmpMethod })
+      .then(r => r.json())
+      .then(action)
+      .then(({ fileUrl }) => {
+        inputRef.current && (inputRef.current.value = '')
+        setLatestUpdatedSrc(fileUrl)
+        setChoosenFile(null)
+      })
+  }, [action, choosenFile?.file, dirty, filestoreHttpHref])
   return [openFileDialog, submit, error, localSrc, latestUpdatedSrc, dirty] as const
 }
-
-
