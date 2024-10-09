@@ -17,6 +17,20 @@ export function user_home_moodle_secondary_factory({
     const moodle_secondary_adapter: moodle_secondary_adapter = {
       secondary: {
         userHome: {
+          alignDb: {
+            async userExcerpt({ userExcerpt }) {
+              const userHomeDoc = await updateUserHomeByUserId({
+                userId: userExcerpt.id,
+                db_struct,
+                pUserHome: { user: userExcerpt },
+              })
+              if (!userHomeDoc) {
+                return [false, { reason: 'notFound' }]
+              }
+              //NOTE: throw no event : userExcerpt is data from iamUser
+              return [true, { userHome: userHomeDocument2user_home_record(userHomeDoc) }]
+            },
+          },
           db: {
             async getUserHome({ by }) {
               const userHomeDoc =
@@ -28,18 +42,6 @@ export function user_home_moodle_secondary_factory({
               if (!userHomeDoc) {
                 return [false, { reason: 'notFound' }]
               }
-              return [true, { userHome: userHomeDocument2user_home_record(userHomeDoc) }]
-            },
-            async align_userExcerpt({ userExcerpt }) {
-              const userHomeDoc = await updateUserHomeByUserId({
-                userId: userExcerpt.id,
-                db_struct,
-                pUserHome: { user: userExcerpt },
-              })
-              if (!userHomeDoc) {
-                return [false, { reason: 'notFound' }]
-              }
-              //NOTE: throw no event : userExcerpt is data from iamUser
               return [true, { userHome: userHomeDocument2user_home_record(userHomeDoc) }]
             },
             async getConfigs() {

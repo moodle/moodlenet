@@ -43,22 +43,22 @@ export function getSanitizedRelativeFilepath({
   return newFsFileRelativePath(sanitizedName, date)
 }
 export function startCleanupProcess({
-  tmpFileMaxRetentionSeconds,
+  tempFileMaxRetentionSeconds,
   //domainDir, for cleanup empty dirs
-  tmpDir,
+  tempDir,
 }: StorageDefaultSecEnv) {
   setInterval(async () => {
-    const tmp_dirs_or_whatever = await readdir(tmpDir)
-    tmp_dirs_or_whatever.forEach(async tmp_dir_or_whatever => {
-      const tmp_dir_or_whatever_path = join(tmpDir, tmp_dir_or_whatever)
-      const { ctime } = await stat(tmp_dir_or_whatever_path).catch(() => ({ ctime: null }))
+    const temp_dirs_or_whatever = await readdir(tempDir)
+    temp_dirs_or_whatever.forEach(async temp_dir_or_whatever => {
+      const temp_dir_or_whatever_path = join(tempDir, temp_dir_or_whatever)
+      const { ctime } = await stat(temp_dir_or_whatever_path).catch(() => ({ ctime: null }))
       const now = Date.now()
       const timeAgoMillis = ctime ? now - ctime.getTime() : Infinity
-      const expired = timeAgoMillis > tmpFileMaxRetentionSeconds * 1000
+      const expired = timeAgoMillis > tempFileMaxRetentionSeconds * 1000
       if (!expired) {
         return
       }
-      rimraf(tmp_dir_or_whatever_path, { maxRetries: 2 })
+      rimraf(temp_dir_or_whatever_path, { maxRetries: 2 })
     })
-  }, tmpFileMaxRetentionSeconds * 1000)
+  }, tempFileMaxRetentionSeconds * 1000)
 }

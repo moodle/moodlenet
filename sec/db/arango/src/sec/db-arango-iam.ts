@@ -17,6 +17,14 @@ export function iam_moodle_secondary_factory({
     const moodle_secondary_adapter: moodle_secondary_adapter = {
       secondary: {
         iam: {
+          alignDb: {
+            async userDisplayname({ displayName, userId }) {
+              const done = !!(await db_struct.iam.coll.user
+                .update({ _key: userId }, { displayName })
+                .catch(() => null))
+              return [done, _void]
+            },
+          },
           db: {
             async getConfigs() {
               const { configs } = await getModConfigs({
@@ -41,18 +49,13 @@ export function iam_moodle_secondary_factory({
                 .catch(() => null)
               return updated ? [true, { userId }] : [false, _void]
             },
-            async align_userDisplayname({displayName,userId}) {
-              const done = !!(await db_struct.iam.coll.user.update({_key:userId},{displayName}).catch(()=>null))
-              return [done, _void]
-
-            },
             async setUserRoles({ userId, roles }) {
               const updated = await db_struct.iam.coll.user
                 .update({ _key: userId }, { roles }, { returnOld: true })
                 .catch(() => null)
-                return updated?.old
-                  ? [true, { newRoles: roles, oldRoles: updated.old.roles }]
-                  : [false, _void]
+              return updated?.old
+                ? [true, { newRoles: roles, oldRoles: updated.old.roles }]
+                : [false, _void]
             },
             async getUserByEmail({ email }) {
               const cursor = await db_struct.iam.db.query<Document<userDocument>>(

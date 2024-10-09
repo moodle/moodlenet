@@ -11,30 +11,30 @@
 //   }
 
 //   async function getTempFileMeta({
-//     tmpId,
+//     tempId,
 //   }: {
-//     tmpId: string
+//     tempId: string
 //   }): Promise<ok_ko<{ meta: blob_meta }, { notFound: unknown }>> {
-//     const { tmp_file_meta_path } = get_tmp_file_paths(tmpId)
+//     const { temp_file_meta_path } = get_temp_file_paths(tempId)
 
-//     const meta: blob_meta = await readFile(tmp_file_meta_path, 'utf8').then(JSON.parse).catch(null)
+//     const meta: blob_meta = await readFile(temp_file_meta_path, 'utf8').then(JSON.parse).catch(null)
 
 //     if (!meta) {
-//       await deleteTemp({ tmpId }).catch(() => null)
+//       await deleteTemp({ tempId }).catch(() => null)
 //       return [false, { reason: 'notFound' }]
 //     }
 
-//     return [true, { meta }] //, tmp_file_full_path, tmp_file_name, tmp_file_dir }
+//     return [true, { meta }] //, temp_file_full_path, temp_file_name, temp_file_dir }
 //   }
 
 //   async function mvTempFile({
-//     tmpId,
+//     tempId,
 //     destPath,
 //   }: {
-//     tmpId: string
+//     tempId: string
 //     destPath: path
 //   }): Promise<ok_ko<{ meta: blob_meta }, { notFound: unknown }>> {
-//     const [found, found_tmp_meta] = await getTempFileMeta({ tmpId })
+//     const [found, found_temp_meta] = await getTempFileMeta({ tempId })
 
 //     if (!found) {
 //       return [false, { reason: 'notFound' }]
@@ -42,12 +42,12 @@
 
 //     const fs_dest_path = path2fs(destPath)
 //     await mkdir(fs_dest_path, { recursive: true })
-//     const { tmp_file_path } = get_tmp_file_paths(tmpId)
+//     const { temp_file_path } = get_temp_file_paths(tempId)
 
-//     await rename(tmp_file_path, fs_dest_path)
-//     await deleteTemp({ tmpId })
+//     await rename(temp_file_path, fs_dest_path)
+//     await deleteTemp({ tempId })
 
-//     return [true, { meta: found_tmp_meta.meta }]
+//     return [true, { meta: found_temp_meta.meta }]
 //   }
 
 //   async function deletePath({
@@ -88,16 +88,16 @@
 //     return _delete_and_clean_upper_empty_dirs({ fs_path: parent_dir })
 //   }
 
-//   function get_tmp_file_paths(tmpId: string) {
-//     const tmp_file_dir_path = join(tempDir, tmpId)
-//     const tmp_file_path = join(tmp_file_dir_path, 'tmp_file')
-//     const tmp_file_meta_path = join(tmp_file_dir_path, 'meta.json')
-//     return { tmp_file_dir_path, tmp_file_path, tmp_file_meta_path }
+//   function get_temp_file_paths(tempId: string) {
+//     const temp_file_dir_path = join(tempDir, tempId)
+//     const temp_file_path = join(temp_file_dir_path, 'temp_file')
+//     const temp_file_meta_path = join(temp_file_dir_path, 'meta.json')
+//     return { temp_file_dir_path, temp_file_path, temp_file_meta_path }
 //   }
 
-//   async function deleteTemp({ tmpId }: { tmpId: string }) {
-//     const { tmp_file_dir_path } = get_tmp_file_paths(tmpId)
-//     await rimraf(tmp_file_dir_path, { maxRetries: 2 }).catch(() => null)
+//   async function deleteTemp({ tempId }: { tempId: string }) {
+//     const { temp_file_dir_path } = get_temp_file_paths(tempId)
+//     await rimraf(temp_file_dir_path, { maxRetries: 2 }).catch(() => null)
 //   }
 
 //   function path2fs(path: path) {

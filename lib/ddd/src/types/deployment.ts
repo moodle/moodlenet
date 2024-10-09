@@ -1,4 +1,4 @@
-import { _nullish, path, url_string, url_string_schema } from '@moodle/lib-types'
+import { _nullish, url_string, url_string_schema } from '@moodle/lib-types'
 
 export interface DeploymentInfo {
   basePath: string
@@ -9,7 +9,7 @@ export interface DeploymentInfo {
 }
 export function getDeploymentInfoUrl(
   { hostname, port, protocol, basePath }: DeploymentInfo,
-  appendPath: string | path = '',
+  appendPath: string | string[] = '',
 ) {
   appendPath = [appendPath].flat().join('/')
   appendPath = appendPath.length && !appendPath.startsWith('/') ? `/${appendPath}` : appendPath

@@ -45,7 +45,7 @@ export type sitePaths<t extends string> = spc<t> & {
     moderation: spc<t>
   }
   'profile': {
-    [id: string]: {
+    [id: string]: spc<t> & {
       [slug: string]: spc<t> & {
         bookmarks: spc<t>
         followers: spc<t>
@@ -54,16 +54,16 @@ export type sitePaths<t extends string> = spc<t> & {
     }
   }
   'resource': {
-    [id: string]: {
+    [id: string]: spc<t> & {
       [slug: string]: spc<t>
     }
   }
   'collection': {
-    [id: string]: {
+    [id: string]: spc<t> & {
       [slug: string]: spc<t>
     }
   }
-  'subject': {
+  'subject': spc<t> & {
     [id: string]: {
       [slug: string]: spc<t>
     }

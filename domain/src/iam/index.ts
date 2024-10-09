@@ -140,7 +140,9 @@ export interface IamSecondary {
       reactBody: ReactElement
     }): Promise<void>
   }
-
+  alignDb: {
+    userDisplayname(_: { userId: user_id; displayName: string }): Promise<ok_ko<void>>
+  }
   db: {
     getConfigs(): Promise<{ configs: Configs }>
 
@@ -171,8 +173,6 @@ export interface IamSecondary {
       roles: user_role[]
       adminUserId: user_id
     }): Promise<ok_ko<{ newRoles: user_role[]; oldRoles: user_role[] }>>
-
-    align_userDisplayname(_: { userId: user_id; displayName: string }): Promise<ok_ko<void>>
 
     findUsersByText(_: {
       text: string

@@ -387,7 +387,7 @@ export function iam_core(): moodle_core_factory {
                   return
                 }
 
-                await ctx.sys_call.secondary.iam.db.align_userDisplayname({
+                await ctx.sys_call.secondary.iam.alignDb.userDisplayname({
                   displayName,
                   userId: res.userId,
                 })

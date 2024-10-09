@@ -4,6 +4,7 @@ import { generateNanoId } from '@moodle/lib-id-gen'
 import { _unchecked_brand, _void } from '@moodle/lib-types'
 import { user_home_record } from 'domain/src/user-hone'
 import { accessUserHome } from './lib'
+import { assert_authorizeAuthenticatedUserSession } from '@moodle/mod-iam/lib'
 
 export function user_home_core(): moodle_core_factory {
   return ctx => {
@@ -47,10 +48,52 @@ export function user_home_core(): moodle_core_factory {
               return [true, { accessObject: userHomeResult }]
             },
           },
+          uploads: {
+            async useImageInProfile({ as, tempId }) {
+              const { user } = await assert_authorizeAuthenticatedUserSession(ctx)
+              const userHome = await accessUserHome({
+                ctx,
+                by: { idOf: 'user', user_id: user.id },
+              })
+              assertWithErrorXxx(
+                userHome.result === 'found' &&
+                  userHome.access === 'allowed' &&
+                  userHome.permissions.editProfile,
+                'Unauthorized',
+              )
+              const [done, result] =
+                await ctx.sys_call.secondary.userHome.storage.useImageInProfile({
+                  as,
+                  id: userHome.id,
+                  tempId,
+                })
+              if (!done) {
+                return [false, result]
+              }
+              return [true, _void]
+            },
+          },
         },
       },
       watch: {
         secondary: {
+          userHome: {
+            db: {
+              async createUserHome([
+                [done],
+                {
+                  userHome: { id },
+                },
+              ]) {
+                //REVIEW - should this be in an eventual storafge core watch ?
+                // to maintain a consistent event dependency flow ?
+                if (!done) {
+                  return
+                }
+                return ctx.sys_call.secondary.userHome.storage.createUserHome({ userHomeId: id })
+              },
+            },
+          },
           iam: {
             db: {
               async saveNewUser([[created, resp]]) {
@@ -79,7 +122,7 @@ export function user_home_core(): moodle_core_factory {
                 if (!done) {
                   return
                 }
-                await ctx.sys_call.secondary.userHome.db.align_userExcerpt({
+                await ctx.sys_call.secondary.userHome.alignDb.userExcerpt({
                   userExcerpt: { id: userId, roles: result.newRoles },
                 })
               },

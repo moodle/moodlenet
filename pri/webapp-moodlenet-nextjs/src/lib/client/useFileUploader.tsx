@@ -1,23 +1,29 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { GlobalCtx } from '../../app/root-layout.client'
+import { _nullish, d_u, map, ok_ko } from '@moodle/lib-types'
 
 //SHAREDLIB
-const uploadTmpFieldName = 'file'
-const uploadTmpPath = '/.tmp'
-const uploadTmpMethod = 'POST'
+const uploadTempFieldName = 'file'
+const uploadTempPath = '/.temp'
+const uploadTempMethod = 'POST'
 
-export type fileUploadedNotifyAction = (_: { tmpId: string }) => Promise<{ fileUrl: string }>
+export type fileUploadedAction = (_: {
+  tempId: string
+}) => Promise<
+  { done: true; newCurrent?: string } | { done: false; error?: string | string[] | _nullish }
+>
 useFileUploader.type = { image: '.jpg,.jpeg,.png,.gif', any: '*' }
-export function useFileUploader({
+export function useFileUploader<actionMeta extends map<string> = never>({
   currentSrc,
-  action,
+  fileUploadedAction,
   accept = useFileUploader.type.any,
   maxSize = 16777216, //16MB Math.pow(2,24)
 }: {
   currentSrc: string
-  action: fileUploadedNotifyAction
+  fileUploadedAction: fileUploadedAction
   maxSize?: number
   accept?: string
+  withMeta: actionMeta extends never ? never : () => actionMeta
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null)
   // TODO: this complex state management definitely deserves a useReducer ;)
@@ -39,6 +45,7 @@ export function useFileUploader({
     // align localSrc when user has choosen a valid file (choosenFile)
     if (!choosenFile) {
       setLocalSrc(latestUpdatedSrc)
+      inputRef.current && (inputRef.current.value = '')
       return
     }
     setLocalSrc(choosenFile.url)
@@ -56,10 +63,12 @@ export function useFileUploader({
     inputElement.hidden = true
     inputElement.multiple = false
     inputElement.onchange = e => {
-      const file = (e.target as HTMLInputElement).files?.[0]
+      const inputEl = inputRef.current
+      const file = inputEl?.files?.[0]
       if (file) {
         if (file.size > maxSize) {
           setError('File size exceeds the limit')
+          setChoosenFile(null)
           return
         }
         setError('')
@@ -89,16 +98,22 @@ export function useFileUploader({
   const submit = useCallback(() => {
     if (!dirty) return
     const formData = new FormData()
-    formData.append(uploadTmpFieldName, choosenFile.file)
+    formData.append(uploadTempFieldName, choosenFile.file)
 
-    fetch(`${filestoreHttpHref}${uploadTmpPath}`, { body: formData, method: uploadTmpMethod })
+    fetch(`${filestoreHttpHref}${uploadTempPath}`, { body: formData, method: uploadTempMethod })
       .then(r => r.json())
-      .then(action)
-      .then(({ fileUrl }) => {
+      .then(fileUploadedAction)
+      .then(result => {
+        if (!result.done) {
+          setError([result.error ?? 'Unknown error'].flat().join('\n'))
+          return
+        }
         inputRef.current && (inputRef.current.value = '')
-        setLatestUpdatedSrc(fileUrl)
-        setChoosenFile(null)
+        if (result.newCurrent) {
+          setLatestUpdatedSrc(result.newCurrent)
+          setChoosenFile(null)
+        }
       })
-  }, [action, choosenFile?.file, dirty, filestoreHttpHref])
+  }, [fileUploadedAction, choosenFile?.file, dirty, filestoreHttpHref])
   return [openFileDialog, submit, error, localSrc, latestUpdatedSrc, dirty] as const
 }

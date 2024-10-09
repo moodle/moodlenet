@@ -11,7 +11,7 @@ export type appDeployemnts = map<DeploymentInfo, 'moodlenetWebapp' | 'filestoreH
 export interface EnvPrimary {
   application: {
     deployments(): Promise<appDeployemnts>
-    fsHomeDirs(): Promise<{ env: string; tmp: string; domain: string }>
+    fsHomeDirs(): Promise<{ env: string; temp: string; domain: string }>
   }
   maintainance: {
     getSysAdminInfo(): Promise<sys_admin_info>

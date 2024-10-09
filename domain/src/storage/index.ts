@@ -1,4 +1,6 @@
-import type { blob_meta, ok_ko, path, pretty } from '@moodle/lib-types'
+import type { blob_meta, ok_ko, path, pretty, temp_blob_meta } from '@moodle/lib-types'
+
+export * from './domain-files'
 
 export type storage_secondary = pretty<StorageSecondary>
 
@@ -32,11 +34,13 @@ export interface StorageSecondary {
   //   }): Promise<ok_ko<{ stream: Readable; meta: blob_meta }, { error: { message: string } }>>
   // }
   temp: {
-    getTempMeta(_: { tmpId: string }): Promise<ok_ko<{ meta: blob_meta }, { notFound: unknown }>>
-    useTempFile(_: {
-      tmpId: string
+    getTempMeta(_: {
+      tempId: string
+    }): Promise<ok_ko<{ meta: temp_blob_meta }, { notFound: unknown }>>
+    useTempFileAsWebImage(_: {
+      tempId: string
       destPath: path
-    }): Promise<ok_ko<{ meta: blob_meta }, { notFound: unknown }>>
+    }): Promise<ok_ko<{ meta: temp_blob_meta }, { notFound: unknown }>>
   }
   access: {
     deletePath(_: {

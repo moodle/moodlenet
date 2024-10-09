@@ -5,6 +5,7 @@ export interface ProfileInfo {
   aboutMe: string
   location: string
   siteUrl: _nullish | url_string
-  // backgroundImage: Image | _nullish
-  // avatarImage: Image | _nullish
+  // backgroundImage:  _nullish | file_or_url
+  // avatarImage:  _nullish | file_or_url
 }
+export type profileImage = 'avatar' | 'background'

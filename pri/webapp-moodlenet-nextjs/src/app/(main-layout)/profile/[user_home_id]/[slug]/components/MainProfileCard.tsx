@@ -19,9 +19,10 @@ import { SecondaryButton } from '../../../../../../ui/atoms/SecondaryButton/Seco
 import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.png'
 import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
 import { useFileUploader } from '../../../../../../lib/client/useFileUploader'
-import { updateProfileInfo, uploadAvatarAction } from '../profile.server'
+import { updateProfileInfo, adoptProfileImage } from '../profile.server'
 import './MainProfileCard.scss'
 import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
+import { useDomainFileUrls } from '../../../../../../lib/common/utils/file-urls'
 
 export interface MainProfileCardDeps {
   userHomeAccessObject: user_home_access_object
@@ -30,9 +31,9 @@ export interface MainProfileCardDeps {
 export function MainProfileCard({
   userHomeAccessObject: { permissions, profileInfo, user, flags, id },
 }: MainProfileCardDeps) {
-  const { updateProfileInfoSchema } = permissions.editProfile
+  const { updateProfileInfoSchema, useProfileImageSchema } = permissions.editProfile
     ? getProfileInfoPrimarySchemas(permissions.validationConfigs)
-    : { updateProfileInfoSchema: never() }
+    : { updateProfileInfoSchema: never(), useProfileImageSchema: never() }
   const [isEditing, toggleIsEditing] = useReducer(
     isEditing => permissions.editProfile && !isEditing,
     false,
@@ -48,6 +49,7 @@ export function MainProfileCard({
       },
     },
   })
+  const domainFileUrls = useDomainFileUrls()
   // const { handleSubmitWithAction: uploadAvatar } = useHookFormAction(
   //   uploadAvatarAction,
   //   zodResolver(
@@ -65,19 +67,30 @@ export function MainProfileCard({
     displaySrcAvatar,
     // dirtyAvatar,
   ] = useFileUploader({
-    currentSrc: defaultAvatar.src /* profileInfo.avatar */,
-    action: uploadAvatarAction,
-    maxSize: 1048576,
+    currentSrc: domainFileUrls.userHome[id]!.profile.avatar(), //defaultAvatar.src /* profileInfo.avatar */,
+    async fileUploadedAction({ tempId }) {
+      const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
+      if (!saveResult?.data) {
+        return { done: false, error: saveResult?.validationErrors?._errors }
+      }
+      return { done: true }
+    },
+    // maxSize: 1048576,
     accept: useFileUploader.type.image,
+    withMeta: () => ({
+      userHomeId: id,
+      as: 'avatar' as const,
+    }),
   })
 
   const submitAll = useCallback(() => {
-    formState.isDirty && submitFormBtnRef.current?.click()
-
-    submitAvatar()
+    submitFormBtnRef.current?.click()
+    if (!formState.isValid) return
     toggleIsEditing()
+    if (!formState.isDirty) return
+    submitAvatar()
     //handleSubmitWithAction(e)
-  }, [formState.isDirty, submitAvatar])
+  }, [formState.isDirty, formState.isValid, submitAvatar])
 
   return (
     <div className="main-profile-card" key="profile-card">
@@ -92,7 +105,9 @@ export function MainProfileCard({
                   abbrTitle={`Edit background`}
                   key="edit-background-btn"
                 />,
-                avatarChoosenFileError && <Snackbar>{avatarChoosenFileError}</Snackbar>,
+                avatarChoosenFileError && (
+                  <Snackbar key="edit-background-err">{avatarChoosenFileError}</Snackbar>
+                ),
               ]}
           <div
             className={`background`}

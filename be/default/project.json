@@ -16,7 +16,13 @@
         "bundle": false,
         "main": "be/default/src/main.ts",
         "tsConfig": "be/default/tsconfig.app.json",
-        "assets": ["be/default/src/assets"],
+        "assets": [
+          {
+            "input": "mod/*/initial-fs",
+            "glob": "**/*",
+            "output": "initial-fs/"
+          }
+        ],
         "generatePackageJson": true,
         "esbuildOptions": {
           "sourcemap": true,

@@ -1,6 +1,6 @@
-export type mime_type = keyof mimetypesmap
-export type mimetype_obj = mime_type extends infer type
-  ? type extends mime_type
+export type mime_main_type = keyof mimetypesmap
+export type mimetype_obj = mime_main_type extends infer type
+  ? type extends mime_main_type
     ? { type: type; sub: mimetypesmap[type][number] }
     : never
   : never
@@ -10,11 +10,11 @@ export type mimetype = mimetype_obj extends infer m
     : never
   : never
 
-export function isMimetype(mime: string): mime is mime_type {
+export function isMimetype(mime: string): mime is mimetype {
   const [_type, _sub] = mime.split('/')
   const type = String(_type)
   const sub = String(_sub)
-  return type in mimetypesmap && sub in mimetypesmap[type as keyof mimetypesmap]
+  return type in mimetypesmap && mimetypesmap[type as keyof mimetypesmap].includes(sub as never)
 }
 
 type mimetypesmap = typeof mimetypesmap

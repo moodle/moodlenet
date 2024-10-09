@@ -1,6 +1,6 @@
 import { single_line_string_schema, url_string_schema } from '@moodle/lib-types'
 import type { z, ZodString } from 'zod'
-import { any, object, string } from 'zod'
+import { any, literal, object, string, union } from 'zod'
 export interface ProfileInfoPrimaryMsgSchemaConfigs {
   displayName: { max: number; min: number; regex: null | [regex: string, flags: string] }
   aboutMe: { max: number }
@@ -12,6 +12,8 @@ export type updateProfileInfoForm = z.infer<
 >
 
 export function getProfileInfoPrimarySchemas(profileInfo: ProfileInfoPrimaryMsgSchemaConfigs) {
+  const profileImageSchema = union([literal('avatar'), literal('background')])
+
   const user_home_id = string().min(6)
   const displayName = string()
     .trim()
@@ -35,6 +37,12 @@ export function getProfileInfoPrimarySchemas(profileInfo: ProfileInfoPrimaryMsgS
     .pipe(single_line_string_schema)
   const siteUrl = url_string_schema.nullish()
 
+  const useProfileImageSchema = object({
+    as: profileImageSchema,
+    tempId: string(),
+    userHomeId: string(),
+  })
+
   const updateProfileInfoSchema = object({
     user_home_id,
     displayName,
@@ -53,5 +61,6 @@ export function getProfileInfoPrimarySchemas(profileInfo: ProfileInfoPrimaryMsgS
       },
     },
     updateProfileInfoSchema,
+    useProfileImageSchema,
   }
 }

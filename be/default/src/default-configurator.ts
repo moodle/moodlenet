@@ -35,13 +35,13 @@ export const default_configurator: configurator = async ({ access_session }) => 
       const isDev = process.env.NODE_ENV === 'development'
 
       const env = object({
-        MOODLE_TMP_FILE_MAX_RETENTION_SECONDS: coerce.number().default(60),
+        MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS: coerce.number().default(60),
         MOODLE_CORE_INIT_BACKGROUND_PROCESSES: literal('true').or(literal('false')).optional(),
         MOODLE_SYS_ADMIN_EMAIL: email_address_schema,
         MOODLE_NET_WEBAPP_DEPLOYMENT_URL: url_string_schema,
         MOODLE_FILE_SERVER_DEPLOYMENT_URL: url_string_schema,
       }).parse({
-        MOODLE_TMP_FILE_MAX_RETENTION_SECONDS: process.env.MOODLE_TMP_FILE_MAX_RETENTION_SECONDS,
+        MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS: process.env.MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS,
         MOODLE_CORE_INIT_BACKGROUND_PROCESSES: process.env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES,
         MOODLE_SYS_ADMIN_EMAIL: process.env.MOODLE_SYS_ADMIN_EMAIL,
         MOODLE_NET_WEBAPP_DEPLOYMENT_URL: process.env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL,
@@ -73,11 +73,11 @@ export const default_configurator: configurator = async ({ access_session }) => 
         email: env.MOODLE_SYS_ADMIN_EMAIL,
       }
       const domainDir = path.join(env_home, 'fs-storage')
-      const tmpDir = path.join(domainDir, '.tmp')
+      const tempDir = path.join(domainDir, '.temp')
       const file_system_storage_sec_env: storageSec.StorageDefaultSecEnv = {
         domainDir,
-        tmpDir,
-        tmpFileMaxRetentionSeconds: env.MOODLE_TMP_FILE_MAX_RETENTION_SECONDS,
+        tempDir,
+        tempFileMaxRetentionSeconds: env.MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS,
       }
 
       const secondary_factories: moodle_secondary_factory[] = [
@@ -111,7 +111,7 @@ export const default_configurator: configurator = async ({ access_session }) => 
                     }
                   },
                   async fsHomeDirs() {
-                    return { env: env_home, tmp: tmpDir, domain: domainDir }
+                    return { env: env_home, temp: tempDir, domain: domainDir }
                   },
                 },
                 maintainance: {

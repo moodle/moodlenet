@@ -1,88 +1,99 @@
-import { moodle_secondary_adapter, moodle_secondary_factory } from '@moodle/domain'
-import { _void, blob_meta, path } from '@moodle/lib-types'
+import { moodle_secondary_adapter, moodle_secondary_factory, storage } from '@moodle/domain'
+import { _void, path, temp_blob_meta } from '@moodle/lib-types'
+import { mkdirSync } from 'fs'
 import { mkdir, readdir, readFile, rename, stat } from 'fs/promises'
 import { dirname, join, normalize, sep } from 'path'
 import { rimraf } from 'rimraf'
 import { startCleanupProcess } from './lib'
 import { StorageDefaultSecEnv } from './types'
-import { mkdirSync } from 'fs'
 
 export function get_storage_default_secondary_factory({
   domainDir,
-  tmpDir,
-  tmpFileMaxRetentionSeconds,
+  tempDir,
+  tempFileMaxRetentionSeconds,
 }: StorageDefaultSecEnv): moodle_secondary_factory {
   mkdirSync(domainDir, { recursive: true })
-  mkdirSync(tmpDir, { recursive: true })
+  mkdirSync(tempDir, { recursive: true })
 
-  startCleanupProcess({ tmpFileMaxRetentionSeconds, domainDir, tmpDir })
+  startCleanupProcess({ tempFileMaxRetentionSeconds, domainDir, tempDir })
 
   return ctx => {
-    const moduleBaseDir = join(domainDir, ctx.invoked_by.module)
+    const moduleBaseDir = join(domainDir, 'modules')
+    const module_file_paths = storage.prefixed_domain_file_paths(moduleBaseDir)
     const moodle_secondary_adapter: moodle_secondary_adapter = {
       secondary: {
+        userHome: {
+          storage: {
+            async createUserHome({ userHomeId }) {
+              const userHomePath = module_file_paths.userHome[userHomeId]!()
+              await mkdir(userHomePath, { recursive: true })
+              return [true, _void]
+            },
+            async useImageInProfile({ as, id, tempId }) {
+              const tmpFile = join(tempDir, tempId)
+              const tmpFileMeta = `${tmpFile}.json`
+              const meta: temp_blob_meta = await readFile(tmpFileMeta, 'utf8')
+                .then(JSON.parse)
+                .catch(() => null)
+              if (!meta) {
+                return [false, { reason: 'tempNotFound' }]
+              }
+              const file = await stat(tmpFile).catch(() => null)
+              if (!file) {
+                return [false, { reason: 'tempNotFound' }]
+              }
+
+              const destPath = module_file_paths.userHome[id]!.profile[as]!()
+              const mvError = await rename(tmpFile, destPath).then(
+                () => false as const,
+                e => String(e),
+              )
+
+              // console.log({ destPath, mvError, file, meta, tmpFile, tmpFileMeta })
+              if (mvError) {
+                return [false, { reason: 'unknown', error: mvError }]
+              }
+
+              return [true, _void]
+            },
+          },
+        },
         storage: {
-          // 'stream-in': {
-          //   async temp({ readable, meta }) {
-          //     const tmpId = await generateUlid()
-          //     const { tmp_file_dir_path, tmp_file_path, tmp_file_meta_path } = get_tmp_file_paths({
-          //       tmpId,
-          //     })
-          //     return mkdir(tmp_file_dir_path, { recursive: true })
-          //       .then(async () => {
-          //         return new Promise<void>((resolve, reject) => {
-          //           const writeStream = createWriteStream(tmp_file_path)
-          //           readable.pipe(writeStream)
-          //           writeStream.on('finish', resolve)
-          //           writeStream.on('error', reject)
-          //         })
-          //       })
-          //       .then(async () => {
-          //         await writeFile(JSON.stringify(meta, null, 2), tmp_file_meta_path, 'utf8')
-          //         return [true, { meta, tmpId }] as const
-          //       })
-          //       .catch(e => {
-          //         deleteTemp({ tmpId }).catch(() => null)
-
-          //         return [false, { reason: 'error', message: String(e) }] as const
-          //       })
-          //   },
-          // },
           temp: {
-            async getTempMeta({ tmpId }) {
-              const { tmp_file_meta_path } = get_tmp_file_paths({ tmpId })
+            async getTempMeta({ tempId }) {
+              const { temp_file_meta_path } = get_temp_file_paths({ tempId })
 
-              const meta: blob_meta = await readFile(tmp_file_meta_path, 'utf8')
+              const meta: temp_blob_meta = await readFile(temp_file_meta_path, 'utf8')
                 .then(JSON.parse)
                 .catch(null)
 
               if (!meta) {
-                await deleteTemp({ tmpId }).catch(() => null)
+                await deleteTemp({ tempId }).catch(() => null)
                 return [false, { reason: 'notFound' }]
               }
 
-              return [true, { meta }] //, tmp_file_full_path, tmp_file_name, tmp_file_dir }
+              return [true, { meta }] //, temp_file_full_path, temp_file_name, temp_file_dir }
             },
-            async useTempFile({ destPath, tmpId }) {
-              const { tmp_file_meta_path } = get_tmp_file_paths({ tmpId })
+            // async useTempFile({ destPath, tempId }) {
+            //   const { temp_file_meta_path } = get_temp_file_paths({ tempId })
 
-              const meta: blob_meta = await readFile(tmp_file_meta_path, 'utf8')
-                .then(JSON.parse)
-                .catch(null)
-              if (!meta) {
-                await deleteTemp({ tmpId }).catch(() => null)
-                return [false, { reason: 'notFound' }]
-              }
+            //   const meta: temp_blob_meta = await readFile(temp_file_meta_path, 'utf8')
+            //     .then(JSON.parse)
+            //     .catch(null)
+            //   if (!meta) {
+            //     await deleteTemp({ tempId }).catch(() => null)
+            //     return [false, { reason: 'notFound' }]
+            //   }
 
-              const fs_dest_path = path2modFsPath({ path: destPath })
-              await mkdir(fs_dest_path, { recursive: true })
-              const { tmp_file_path } = get_tmp_file_paths({ tmpId })
+            //   const fs_dest_path = path2modFsPath({ path: destPath })
+            //   await mkdir(fs_dest_path, { recursive: true })
+            //   const { temp_file_path } = get_temp_file_paths({ tempId })
 
-              await rename(tmp_file_path, fs_dest_path)
-              await deleteTemp({ tmpId })
+            //   await rename(temp_file_path, fs_dest_path)
+            //   await deleteTemp({ tempId })
 
-              return [true, { meta }]
-            },
+            //   return [true, { meta }]
+            // },
           },
           access: {
             async deletePath({ path, type }) {
@@ -121,16 +132,15 @@ export function get_storage_default_secondary_factory({
       }
       return _delete_and_clean_upper_empty_dirs({ fs_path: parent_dir })
     }
-    function get_tmp_file_paths({ tmpId }: { tmpId: string }) {
-      const tmp_file_dir_path = join(tmpDir, tmpId)
-      const tmp_file_path = join(tmp_file_dir_path, 'tmp_file')
-      const tmp_file_meta_path = join(tmp_file_dir_path, 'meta.json')
-      return { tmp_file_dir_path, tmp_file_path, tmp_file_meta_path }
+    function get_temp_file_paths({ tempId }: { tempId: string }) {
+      const temp_file_path = join(tempDir, tempId)
+      const temp_file_meta_path = `${temp_file_path}.json`
+      return { temp_file_path, temp_file_meta_path }
     }
 
-    async function deleteTemp({ tmpId }: { tmpId: string }) {
-      const { tmp_file_dir_path } = get_tmp_file_paths({ tmpId })
-      await rimraf(tmp_file_dir_path, { maxRetries: 2 }).catch(() => null)
+    async function deleteTemp({ tempId }: { tempId: string }) {
+      const { temp_file_path } = get_temp_file_paths({ tempId })
+      await rimraf(`${temp_file_path}*`, { maxRetries: 2 }).catch(() => null)
     }
 
     function path2modFsPath({ path }: { path: path }) {

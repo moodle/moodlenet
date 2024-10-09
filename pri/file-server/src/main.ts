@@ -1,13 +1,20 @@
 import { http_bind } from '@moodle/bindings-node'
 import { moodle_domain } from '@moodle/domain'
 import { access_session, create_access_proxy } from '@moodle/lib-ddd'
-import { _any, signed_token_schema } from '@moodle/lib-types'
+import {
+  isMimetype,
+  _any,
+  date_time_string,
+  signed_token_schema,
+  temp_blob_meta,
+} from '@moodle/lib-types'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import { writeFile } from 'fs/promises'
 import multer from 'multer'
 import { userAgent } from 'next/server'
+import { join } from 'path'
 import { Headers } from 'undici'
 
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
@@ -19,9 +26,6 @@ const MOODLE_FS_FILE_SERVER_APP_NAME =
   process.env.MOODLE_FS_FILE_SERVER_APP_NAME ?? 'moodle-fs-file-server'
 
 const requestTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
-
-const MOODLE_FS_FILE_SERVER_BASE_FS_PATH =
-  process.env.MOODLE_FS_FILE_SERVER_BASE_FS_PATH ?? '.moodle.env.home'
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -61,36 +65,36 @@ const router = express.Router()
 //   const host = req.headers['x-host']
 //   assert(typeof host === 'string', `x-host not found as string in headers ${host}`)
 //   const normalized_domain = host.replace(/:/g, '_') //SHAREDLIB: equals default configurator ( need shared libs !! )
-//   const tmpDirpath = join(MOODLE_FS_FILE_SERVER_BASE_FS_PATH, normalized_domain, '.tmp') //SHAREDLIB: equals fs-storage secondary
+//   const tempDirpath = join(MOODLE_FS_FILE_SERVER_BASE_FS_PATH, normalized_domain, '.temp') //SHAREDLIB: equals fs-storage secondary
 // }
 router
 
-  .get(/\/\.tmp\/\.*/, async (req, res, next) => {
-    // console.log({ 'get .tmp': req.url })
-    req.url = req.url.replace(/^\/\.tmp\//, '')
+  .get(/\/\.temp\/\.*/, async (req, res, next) => {
+    // console.log({ 'get .temp': req.url })
+    req.url = req.url.replace(/^\/\.temp\//, '')
     const dirs = await req.moodlePrimary.env.application.fsHomeDirs()
-    express.static(dirs.tmp, {})(req, res, next)
+    express.static(dirs.temp, {})(req, res, next)
   })
   .get(/\.*/, async (req, res) => {
     // console.log({ 'get': req.url })
     const dirs = await req.moodlePrimary.env.application.fsHomeDirs()
-    const [module, ...path] = req.url.split('/')
-    if (!module) {
-      return res.status(404).send('NOT FOUND')
-    }
+    // const [module, ...path] = req.url.split('/')
+    // if (!module) {
+    //   return res.status(404).send('NOT FOUND')
+    // }
 
-    console.log({ get: { module, path } })
+    // console.log({ get: { module, path } })
     // req.moodlePrimary[module as keyof moodle_domain['primary']].fileServerQuery.canServe({ path })
-    const [canServe] = await (req.moodlePrimary as _any)[module].fileServerQuery.canServe({ path })
-    console.log({ canServe: { canServe, module, path } })
-    if (!canServe) {
-      return res.status(401).send('UNAUTHORIZED')
-    }
-    express.static(dirs.domain, {})(req, res, () => {
+    // const [canServe] = await (req.moodlePrimary as _any)[module].fileServerQuery.canServe({ path })
+    // console.log({ canServe: { canServe, module, path } })
+    // if (!canServe) {
+    //   return res.status(401).send('UNAUTHORIZED')
+    // }
+    express.static(join(dirs.domain, 'modules'), {})(req, res, () => {
       res.status(404).send('NOT FOUND')
     })
   })
-  .post('/.tmp', async (req, res) => {
+  .post('/.temp', async (req, res) => {
     // console.log('req', inspect(req, { colors: true, depth: 2 }))
     const { userSession } = await req.moodlePrimary.iam.session.getCurrentUserSession()
     if (userSession.type !== 'authenticated') {
@@ -100,30 +104,32 @@ router
     const multerOptions: multer.Options = {} //get from req.moodlePrimary
 
     console.log({ dirs })
-    multer({ dest: dirs.tmp, ...multerOptions }).single('file')(req, res, () => {
+    multer({ dest: dirs.temp, ...multerOptions }).single('file')(req, res, () => {
       if (!req.file) {
         return res.status(500).send('upload failed')
       }
-      writeFile(
-        `${req.file.path}.json`,
-        JSON.stringify({
-          userSession,
-          originalname: req.file.originalname,
-          mimetype: req.file.mimetype,
-          size: req.file.size,
-        }),
-        'utf8',
-      )
-      res.status(200).json({ tmpId: req.file.filename })
+      if (!isMimetype(req.file.mimetype)) {
+        return res.status(500).send(`invalid mimetype ${req.file.mimetype}`)
+      }
+
+      const temp_blob_meta: temp_blob_meta = {
+        userSession,
+        originalFilename: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+        created: date_time_string('now'),
+      }
+      writeFile(`${req.file.path}.json`, JSON.stringify(temp_blob_meta), 'utf8')
+      res.status(200).json({ tempId: req.file.filename })
       // console.log(inspect(req.file, { colors: true, depth: 4 }))
       //req.file: {
       //   fieldname: 'file',
       //   originalname: 'jp.jpg',
       //   encoding: '7bit',
       //   mimetype: 'image/jpeg',
-      //   destination: '/home/alec/MOODLENET/repo/mn-fork/.moodle.env.home/localhost/fs-storage/.tmp',
+      //   destination: '/home/alec/MOODLENET/repo/mn-fork/.moodle.env.home/localhost/fs-storage/.temp',
       //   filename: '085dcd493a51adf9e34bdc776926e225',
-      //   path: '/home/alec/MOODLENET/repo/mn-fork/.moodle.env.home/localhost/fs-storage/.tmp/085dcd493a51adf9e34bdc776926e225',
+      //   path: '/home/alec/MOODLENET/repo/mn-fork/.moodle.env.home/localhost/fs-storage/.temp/085dcd493a51adf9e34bdc776926e225',
       //   size: 129352
       // }
     })
