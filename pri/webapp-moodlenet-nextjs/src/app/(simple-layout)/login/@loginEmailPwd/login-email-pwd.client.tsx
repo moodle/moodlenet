@@ -9,16 +9,15 @@ import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { TertiaryButton } from '../../../../ui/atoms/TertiaryButton/TertiaryButton'
 import { loginAction } from './login-email-pwd.server'
+import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 
-export type LoginProps = { iamSchemaConfigs: iam.IamPrimaryMsgSchemaConfigs }
-
-export default function LoginPanel({ iamSchemaConfigs }: LoginProps) {
+export default function LoginPanel() {
   const { t } = useTranslation()
-  const { loginSchema } = iam.getIamPrimarySchemas(iamSchemaConfigs)
+  const { iam } = useAllPrimarySchemas()
   const {
     form: { formState, register },
     handleSubmitWithAction,
-  } = useHookFormAction(loginAction, zodResolver(loginSchema))
+  } = useHookFormAction(loginAction, zodResolver(iam.loginSchema))
   const recoverPasswordHref = sitepaths['recover-password-request']()
 
   const loginErrorMsg = formState.errors.root?.message

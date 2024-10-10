@@ -22,7 +22,7 @@ import { useFileUploader } from '../../../../../../lib/client/useFileUploader'
 import { updateProfileInfo, adoptProfileImage } from '../profile.server'
 import './MainProfileCard.scss'
 import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
-import { useDomainFileUrls } from '../../../../../../lib/common/utils/file-urls'
+import { useDomainFileUrls } from '../../../../../../lib/client/file-urls'
 
 export interface MainProfileCardDeps {
   userHomeAccessObject: user_home_access_object

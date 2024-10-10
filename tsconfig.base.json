@@ -27,7 +27,6 @@
       "@moodle/lib-email-templates/org": ["lib/email-templates/src/moodle/org/index.ts"],
       "@moodle/lib-id-gen": ["lib/id-gen/src/index.ts"],
       "@moodle/lib-jwt-jose": ["lib/jwt/jose/src/index.ts"],
-      "@moodle/lib-storage-local-fs": ["lib/storage/local-fs/src/index.ts"],
       "@moodle/lib-types": ["lib/types/src/index.ts"],
       "@moodle/mod-iam": ["mod/iam/src/index.ts"],
       "@moodle/mod-iam/lib": ["mod/iam/src/lib/index.ts"],

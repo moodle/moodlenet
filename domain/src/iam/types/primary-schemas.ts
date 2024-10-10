@@ -57,6 +57,14 @@ export function getIamPrimarySchemas({ user, myAccount }: IamPrimaryMsgSchemaCon
   const changePasswordSchema = object({
     currentPassword: redacted_password,
     newPassword: redacted_password,
+  }).superRefine(({ currentPassword, newPassword }, ctx) => {
+    if (currentPassword.__redacted__ === newPassword.__redacted__) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Passwords must be different',
+        path: ['newPassword.__redacted__'],
+      })
+    }
   })
 
   const selfDeletionSchema = object({

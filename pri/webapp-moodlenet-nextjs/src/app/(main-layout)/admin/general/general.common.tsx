@@ -1,17 +1,10 @@
-import { net, org } from '@moodle/domain'
+import { AllPrimarySchemas } from '@moodle/domain'
 
-export interface MakeAdminGeneralSchemaDeps {
-  moodleNetSchemaConfigs: net.MoodleNetPrimaryMsgSchemaConfigs
-  orgSchemaConfigs: org.OrgPrimaryMsgSchemaConfigs
-}
+export type MakeAdminGeneralSchemaDeps = Pick<AllPrimarySchemas, 'org' | 'moodleNet'>
 
-export function provideAdminGeneralSchemas({
-  moodleNetSchemaConfigs,
-  orgSchemaConfigs,
-}: MakeAdminGeneralSchemaDeps) {
-  const { updateMoodleNetInfoSchema: moodleNetInfoSchema } =
-    net.getMoodleNetPrimarySchemas(moodleNetSchemaConfigs)
-  const { updateOrgInfoSchema: orgInfoSchema } = org.getOrgPrimarySchemas(orgSchemaConfigs)
+export function provideAdminGeneralSchemas({ moodleNet, org }: MakeAdminGeneralSchemaDeps) {
+  const moodleNetInfoSchema = moodleNet.updateMoodleNetInfoSchema
+  const orgInfoSchema = org.updateOrgInfoSchema
   return {
     generalSchema: orgInfoSchema.merge(moodleNetInfoSchema),
     moodleNetInfoSchema,

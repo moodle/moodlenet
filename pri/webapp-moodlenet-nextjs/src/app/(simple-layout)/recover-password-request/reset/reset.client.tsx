@@ -10,21 +10,16 @@ import { Card } from '../../../../ui/atoms/Card/Card'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { resetMyPasswordAction } from './reset.server'
+import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 
-export function ResetPasswordClient({
-  resetPasswordToken,
-  iamSchemaConfigs,
-}: {
-  iamSchemaConfigs: iam.IamPrimaryMsgSchemaConfigs
-  resetPasswordToken: signed_token
-}) {
+export function ResetPasswordClient({ resetPasswordToken }: { resetPasswordToken: signed_token }) {
   const { t } = useTranslation()
-  const { resetPasswordSchema } = iam.getIamPrimarySchemas(iamSchemaConfigs)
+  const { iam } = useAllPrimarySchemas()
 
   const {
     form: { formState, register },
     handleSubmitWithAction,
-  } = useHookFormAction(resetMyPasswordAction, zodResolver(resetPasswordSchema), {
+  } = useHookFormAction(resetMyPasswordAction, zodResolver(iam.resetPasswordSchema), {
     formProps: {
       values: {
         newPassword: __redacted__(''),

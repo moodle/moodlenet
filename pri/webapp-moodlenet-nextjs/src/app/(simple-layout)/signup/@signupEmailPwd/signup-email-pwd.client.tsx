@@ -6,16 +6,15 @@ import { Trans, useTranslation } from 'next-i18next'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { signupAction } from './signup-email-pwd.server'
+import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 
-export type SignupProps = { iamSchemaConfigs: iam.IamPrimaryMsgSchemaConfigs }
-
-export default function SignupPanel({ iamSchemaConfigs }: SignupProps) {
+export default function SignupPanel() {
   const { t } = useTranslation()
-  const { signupSchema } = iam.getIamPrimarySchemas(iamSchemaConfigs)
+  const { iam } = useAllPrimarySchemas()
   const {
     form: { formState, register },
     handleSubmitWithAction,
-  } = useHookFormAction(signupAction, zodResolver(signupSchema))
+  } = useHookFormAction(signupAction, zodResolver(iam.signupSchema))
 
   const additionalError = formState.errors.root?.message
   return (

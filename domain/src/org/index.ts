@@ -1,11 +1,14 @@
 import type { deep_partial, ok_ko, pretty } from '@moodle/lib-types'
-import { Configs, OrgInfo } from './types'
+import { Configs, OrgInfo, OrgPrimaryMsgSchemaConfigs } from './types'
 export * from './types'
 
-export type org_primary=pretty<OrgPrimary>
-export type org_secondary=pretty<OrgSecondary>
+export type org_primary = pretty<OrgPrimary>
+export type org_secondary = pretty<OrgSecondary>
 
 export interface OrgPrimary {
+  session: {
+    moduleInfo(): Promise<{ info: OrgInfo; schemaConfigs: OrgPrimaryMsgSchemaConfigs }>
+  }
   system: {
     configs(): Promise<{
       configs: Configs

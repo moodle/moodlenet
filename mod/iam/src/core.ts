@@ -21,6 +21,12 @@ export function iam_core(): moodle_core_factory {
             },
           },
           session: {
+            async moduleInfo() {
+              const {
+                configs: { iamPrimaryMsgSchemaConfigs },
+              } = await ctx.sys_call.secondary.iam.db.getConfigs()
+              return { schemaConfigs: iamPrimaryMsgSchemaConfigs }
+            },
             async getCurrentUserSession() {
               const userSession = await lib.validateAnyUserSession(ctx)
               return { userSession }

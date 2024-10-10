@@ -17,6 +17,7 @@ import type { ReactElement } from 'react'
 import type {
   changePasswordForm,
   Configs,
+  IamPrimaryMsgSchemaConfigs,
   loginForm,
   resetPasswordForm,
   signTokenData,
@@ -39,6 +40,7 @@ export interface IamPrimary {
     generateUserSession(_: {
       userId: user_id
     }): Promise<ok_ko<signed_expire_token, { userNotFound: unknown }>>
+    moduleInfo(): Promise<{ schemaConfigs: IamPrimaryMsgSchemaConfigs }>
   }
 
   system: {

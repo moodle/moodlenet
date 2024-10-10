@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { provideAdminGeneralSchemas, MakeAdminGeneralSchemaDeps } from './general.common'
 import { saveGeneralInfoAction } from './general.server'
 import { org, net } from '@moodle/domain'
+import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 
 export type GeneralFormValues = Pick<
   org.orgInfoForm & net.moodlenetInfoForm,
@@ -15,13 +16,12 @@ export type GeneralFormValues = Pick<
 >
 
 export interface GeneralProps {
-  makeAdminGeneralSchemaDeps: MakeAdminGeneralSchemaDeps
   generalFormValues: GeneralFormValues
 }
 
-export function GeneralClient({ makeAdminGeneralSchemaDeps, generalFormValues }: GeneralProps) {
+export function GeneralClient({ generalFormValues }: GeneralProps) {
   const { t } = useTranslation()
-  const { generalSchema } = provideAdminGeneralSchemas(makeAdminGeneralSchemaDeps)
+  const { generalSchema } = provideAdminGeneralSchemas(useAllPrimarySchemas())
   const {
     form: { formState, register, reset },
     handleSubmitWithAction,

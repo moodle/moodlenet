@@ -7,6 +7,14 @@ export function org_core(): moodle_core_factory {
     const moodle_core_impl: moodle_core_impl = {
       primary: {
         org: {
+          session: {
+            async moduleInfo() {
+              const {
+                configs: { info, orgPrimaryMsgSchemaConfigs },
+              } = await ctx.sys_call.secondary.org.db.getConfigs()
+              return { info, schemaConfigs: orgPrimaryMsgSchemaConfigs }
+            },
+          },
           system: {
             async configs() {
               return ctx.sys_call.secondary.org.db.getConfigs()

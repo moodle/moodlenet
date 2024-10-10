@@ -1,6 +1,6 @@
 import type { blob_meta, ok_ko, path, pretty, temp_blob_meta } from '@moodle/lib-types'
 
-export * from './domain-files'
+export * from './domain-filesystem'
 
 export type storage_secondary = pretty<StorageSecondary>
 
@@ -19,20 +19,6 @@ export interface StorageSecondary {
     //   }): Promise<ok_ko<void, { notFound: unknown }>>
     readBlobMeta(_: { path: path }): Promise<ok_ko<{ meta: blob_meta }, { notFound: unknown }>>
   }
-  // 'stream-in': {
-  //   temp(_: {
-  //     readable: Readable
-  //     meta: blob_meta
-  //   }): Promise<ok_ko<{ tmpId: string; meta: blob_meta }, { error: { message: string } }>>
-  // }
-  // 'stream-out': {
-  //   temp(_: {
-  //     tmpId: string
-  //   }): Promise<ok_ko<{ stream: Readable; meta: blob_meta }, { error: { message: string } }>>
-  //   path(_: {
-  //     path: string
-  //   }): Promise<ok_ko<{ stream: Readable; meta: blob_meta }, { error: { message: string } }>>
-  // }
   temp: {
     getTempMeta(_: {
       tempId: string
@@ -47,9 +33,5 @@ export interface StorageSecondary {
       path: path
       type: 'file' | 'dir'
     }): Promise<ok_ko<void, { notFound: unknown; unexpectedType: unknown }>>
-    // getUrl(_: {
-    //   path: path
-    //   proto: 'http'
-    // }): Promise<ok_ko<{ url: url_string }, { notFound: unknown; notDeployed: unknown }>>
   }
 }

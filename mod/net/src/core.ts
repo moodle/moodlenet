@@ -7,6 +7,14 @@ export function net_core(): moodle_core_factory {
     const moodle_core_impl: moodle_core_impl = {
       primary: {
         net: {
+          session: {
+            async moduleInfo() {
+              const {
+                configs: { info, moodleNetPrimaryMsgSchemaConfigs },
+              } = await ctx.sys_call.secondary.net.db.getConfigs()
+              return { info, schemaConfigs: moodleNetPrimaryMsgSchemaConfigs }
+            },
+          },
           system: {
             async configs() {
               await assert_authorizeSystemSession(ctx)

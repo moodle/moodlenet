@@ -19,13 +19,13 @@ const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhos
 export function priAccess(): moodle_domain['primary'] {
   return _domainAccess().primary
 }
-// export function __beware__secondaryAccess(): moodle_domain['secondary'] {
-//   return _domainAccess().secondary
-// }
-//CHECK: this was inside _domainAccess() .. why ? check it's still working
-const trnspClient = http_bind.client()
+
 function _domainAccess(): moodle_domain {
-  // const trnspClient = http_bind.client()
+  //FIXME: _domainAccess() or priAccess() should be a singleton FOR THE CURRENT REQUEST
+  // so that it doesn't create a new instance of transportClient every time
+  // implying a new HTTPConnection on every priAccess()
+  // a singleton could be created in the middleware and passed to the request object
+  const trnspClient = http_bind.client()
 
   const accessSession = getAccessSession()
   const [moodle_domain] = create_access_proxy<moodle_domain>({

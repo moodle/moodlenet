@@ -3,18 +3,19 @@ import { join } from 'path'
 import { rimraf } from 'rimraf'
 import sanitizeFilename from 'sanitize-filename'
 import { StorageDefaultSecEnv } from './types'
+import { storage } from '@moodle/domain'
 
-export function newFsFileRelativePath(filename: string, date = new Date()) {
-  return [
-    String(date.getFullYear()),
-    String(date.getMonth() + 1).padStart(2, '0'),
-    String(date.getUTCDate()).padStart(2, '0'),
-    String(date.getUTCHours()).padStart(2, '0'),
-    String(date.getMinutes()).padStart(2, '0'),
-    String(date.getSeconds()).padStart(2, '0'),
-    filename,
-  ]
-}
+// export function newFsFileRelativePath(filename: string, date = new Date()) {
+//   return [
+//     String(date.getFullYear()),
+//     String(date.getMonth() + 1).padStart(2, '0'),
+//     String(date.getUTCDate()).padStart(2, '0'),
+//     String(date.getUTCHours()).padStart(2, '0'),
+//     String(date.getMinutes()).padStart(2, '0'),
+//     String(date.getSeconds()).padStart(2, '0'),
+//     filename,
+//   ]
+// }
 export function getSanitizedFileName(originalFilename: string) {
   const sanitized = sanitizeFilename(originalFilename)
     .normalize('NFKD')
@@ -32,25 +33,25 @@ export function getSanitizedFileName(originalFilename: string) {
   // String(Math.random()).substring(2, 20) + mDotExt
 }
 
-export function getSanitizedRelativeFilepath({
-  originalFilename,
-  date,
-}: {
-  originalFilename: string
-  date?: Date
-}) {
-  const sanitizedName = getSanitizedFileName(originalFilename)
-  return newFsFileRelativePath(sanitizedName, date)
-}
+// export function getSanitizedRelativeFilepath({
+//   originalFilename,
+//   date,
+// }: {
+//   originalFilename: string
+//   date?: Date
+// }) {
+//   const sanitizedName = getSanitizedFileName(originalFilename)
+//   return newFsFileRelativePath(sanitizedName, date)
+// }
 export function startCleanupProcess({
+  currentDomainDir,
   tempFileMaxRetentionSeconds,
-  //domainDir, for cleanup empty dirs
-  tempDir,
 }: StorageDefaultSecEnv) {
+  const { temp } = storage.getFsDirectories({ currentDomainDir })
   setInterval(async () => {
-    const temp_dirs_or_whatever = await readdir(tempDir)
+    const temp_dirs_or_whatever = await readdir(temp)
     temp_dirs_or_whatever.forEach(async temp_dir_or_whatever => {
-      const temp_dir_or_whatever_path = join(tempDir, temp_dir_or_whatever)
+      const temp_dir_or_whatever_path = join(temp, temp_dir_or_whatever)
       const { ctime } = await stat(temp_dir_or_whatever_path).catch(() => ({ ctime: null }))
       const now = Date.now()
       const timeAgoMillis = ctime ? now - ctime.getTime() : Infinity

@@ -23,6 +23,8 @@ export * as org from './org'
 export * as userHome from './user-hone'
 export * as storage from './storage'
 
+export * from './primarySchemas'
+
 export type sys_admin_info = { email: email_address }
 export type moodle_domain = ddd<
   {

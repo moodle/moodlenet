@@ -5,6 +5,7 @@ import {
   url_path_string,
   url_path_string_schema,
 } from '@moodle/lib-types'
+import { join } from 'path'
 import { moodle_domain } from '..'
 import { profileImage } from '../user-hone'
 
@@ -51,3 +52,20 @@ export function prefixed_domain_file_paths(prefix: path | string) {
   })
   return prefixed_domain_file_paths
 }
+
+export type fsDirectories = {
+  temp: string
+  fsStorage: string
+}
+export function getFsDirectories({
+  currentDomainDir,
+}: {
+  currentDomainDir: string
+}): fsDirectories {
+  return {
+    temp: join(currentDomainDir, '.temp'),
+    fsStorage: join(currentDomainDir, 'fs-storage'),
+  }
+}
+
+export const DEFAULT_DOMAINS_HOME_DIR_NAME = '.moodle.domains.home'

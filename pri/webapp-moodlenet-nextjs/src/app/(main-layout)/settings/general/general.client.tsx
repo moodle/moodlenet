@@ -1,9 +1,9 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { iam } from '@moodle/domain'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'next-i18next'
 import { ReactElement, useEffect, useState } from 'react'
+import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
@@ -12,41 +12,23 @@ import SnackbarStack from '../../../../ui/atoms/Snackbar/SnackbarStack'
 import { changePasswordAction } from './general.server'
 import './general.style.scss'
 
-export interface GeneralSettingsProps {
-  iamSchemaConfigs: iam.IamPrimaryMsgSchemaConfigs
-  messages: { noEqualPasswordsError: string }
-}
-export function GeneralSettingsClient({ iamSchemaConfigs, messages }: GeneralSettingsProps) {
+export function GeneralSettingsClient() {
   const { t } = useTranslation()
-  const { changePasswordSchema } = iam.getIamPrimarySchemas(iamSchemaConfigs)
+  const { iam } = useAllPrimarySchemas()
   const [snackbarList, setSnackbarList] = useState<ReactElement[]>([])
 
   const {
     form: { formState, register },
     resetFormAndAction,
     handleSubmitWithAction,
-  } = useHookFormAction(
-    changePasswordAction,
-    zodResolver(
-      changePasswordSchema.superRefine(({ currentPassword, newPassword }, ctx) => {
-        if (currentPassword.__redacted__ === newPassword.__redacted__) {
-          ctx.addIssue({
-            code: 'custom',
-            message: messages.noEqualPasswordsError,
-            path: ['newPassword.__redacted__'],
-          })
-        }
-      }),
-    ),
-    {
-      actionProps: {
-        onExecute() {
-          setSnackbarList([])
-          resetFormAndAction()
-        },
+  } = useHookFormAction(changePasswordAction, zodResolver(iam.changePasswordSchema), {
+    actionProps: {
+      onExecute() {
+        setSnackbarList([])
+        resetFormAndAction()
       },
     },
-  )
+  })
   useEffect(() => {
     setSnackbarList(
       formState.isSubmitting

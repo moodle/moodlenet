@@ -79,10 +79,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
                   />
                 ),
                 authenticated.isAdmin && (
-                  <AdminSettingsLink
-                    key="admin-settings"
-                    adminHref={sitepaths.settings.general()}
-                  />
+                  <AdminSettingsLink key="admin-settings" adminHref={sitepaths.admin.general()} />
                 ),
                 <Logout key="logout" logout={logout} />,
               ])}

@@ -1,6 +1,6 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { GlobalCtx } from '../../app/root-layout.client'
-import { _nullish, d_u, map, ok_ko } from '@moodle/lib-types'
+import { _nullish, map } from '@moodle/lib-types'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useDeployments } from './globalContexts'
 
 //SHAREDLIB
 const uploadTempFieldName = 'file'
@@ -90,17 +90,13 @@ export function useFileUploader<actionMeta extends map<string> = never>({
     inputRef.current?.click()
   }, [])
   const dirty = !!choosenFile
-  const {
-    deployments: {
-      filestoreHttp: { href: filestoreHttpHref },
-    },
-  } = useContext(GlobalCtx)
+  const { filestoreHttp } = useDeployments()
   const submit = useCallback(() => {
     if (!dirty) return
     const formData = new FormData()
     formData.append(uploadTempFieldName, choosenFile.file)
 
-    fetch(`${filestoreHttpHref}${uploadTempPath}`, { body: formData, method: uploadTempMethod })
+    fetch(`${filestoreHttp.href}${uploadTempPath}`, { body: formData, method: uploadTempMethod })
       .then(r => r.json())
       .then(fileUploadedAction)
       .then(result => {
@@ -114,6 +110,6 @@ export function useFileUploader<actionMeta extends map<string> = never>({
           setChoosenFile(null)
         }
       })
-  }, [fileUploadedAction, choosenFile?.file, dirty, filestoreHttpHref])
+  }, [fileUploadedAction, choosenFile?.file, dirty, filestoreHttp.href])
   return [openFileDialog, submit, error, localSrc, latestUpdatedSrc, dirty] as const
 }

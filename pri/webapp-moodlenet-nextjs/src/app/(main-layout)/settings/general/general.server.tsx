@@ -1,15 +1,14 @@
 'use server'
 
-import { iam } from '@moodle/domain'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
+import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
 import { priAccess } from '../../../../lib/server/session-access'
 
 async function getChangePasswordSchema() {
-  const { iamSchemaConfigs } = await priAccess().netWebappNextjs.schemaConfigs.iam()
-  const { changePasswordSchema } = await iam.getIamPrimarySchemas(iamSchemaConfigs)
-  return changePasswordSchema.superRefine(({ currentPassword, newPassword }, ctx) => {
+  const { iam } = await getAllPrimarySchemas()
+  return iam.changePasswordSchema /* .superRefine(({ currentPassword, newPassword }, ctx) => {
     if (currentPassword.__redacted__ === newPassword.__redacted__) {
       ctx.addIssue({
         code: 'custom',
@@ -17,7 +16,7 @@ async function getChangePasswordSchema() {
         path: ['newPassword.__redacted__'],
       })
     }
-  })
+  }) */
 }
 
 export const changePasswordAction = defaultSafeActionClient

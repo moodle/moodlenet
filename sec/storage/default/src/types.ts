@@ -1,5 +1,4 @@
 export interface StorageDefaultSecEnv {
-  domainDir: string
-  tempDir: string
+  currentDomainDir: string
   tempFileMaxRetentionSeconds: number
 }

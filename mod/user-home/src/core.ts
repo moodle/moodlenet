@@ -85,8 +85,7 @@ export function user_home_core(): moodle_core_factory {
                   userHome: { id },
                 },
               ]) {
-                //REVIEW - should this be in an eventual storafge core watch ?
-                // to maintain a consistent event dependency flow ?
+                //REVIEW - should this be in an eventual storage core watch, to maintain a consistent event dependency flow ?
                 if (!done) {
                   return
                 }

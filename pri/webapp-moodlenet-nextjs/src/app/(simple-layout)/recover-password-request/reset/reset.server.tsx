@@ -5,11 +5,11 @@ import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
 import { priAccess } from '../../../../lib/server/session-access'
+import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 
 export async function getResetMyPasswordSchema() {
-  const { iamSchemaConfigs } = await priAccess().netWebappNextjs.schemaConfigs.iam()
-  const { resetPasswordSchema } = await iam.getIamPrimarySchemas(iamSchemaConfigs)
-  return resetPasswordSchema
+  const { iam } = await getAllPrimarySchemas()
+  return iam.resetPasswordSchema
 }
 export const resetMyPasswordAction = defaultSafeActionClient
   .schema(getResetMyPasswordSchema)
