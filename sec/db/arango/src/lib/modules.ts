@@ -42,7 +42,8 @@ export async function updateDeepPartialModConfigs({
   const result = await db_struct.mng.coll.module_configs.update(
     { _key: moduleName },
     partialConfigs,
-    { silent: true },
+    { returnNew: true },
   )
+
   return result
 }

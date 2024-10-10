@@ -30,6 +30,14 @@
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nx/javascript"],
       "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@typescript-eslint/strict"],
+      "rules": {
+        "@typescript-eslint/no-non-null-assertion": "error",
+        "@typescript-eslint/no-invalid-void-type": "warn"
+      }
     }
   ]
 }

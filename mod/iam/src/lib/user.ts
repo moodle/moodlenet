@@ -47,7 +47,6 @@ export async function createNewUserRecordData({
     passwordHash,
     activityStatus: {
       lastLogin: lastLogin ?? now,
-      inactiveNotificationSentAt: false,
     },
     deactivated: false,
   })

@@ -17,9 +17,18 @@ const MOODLE_NET_NEXTJS_APP_NAME =
 const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
 export function priAccess(): moodle_domain['primary'] {
-  const trnspClient = http_bind.client()
+  return _domainAccess().primary
+}
+// export function __beware__secondaryAccess(): moodle_domain['secondary'] {
+//   return _domainAccess().secondary
+// }
+//CHECK: this was inside _domainAccess() .. why ? check it's still working
+const trnspClient = http_bind.client()
+function _domainAccess(): moodle_domain {
+  // const trnspClient = http_bind.client()
+
   const accessSession = getAccessSession()
-  const [ap] = create_access_proxy<moodle_domain>({
+  const [moodle_domain] = create_access_proxy<moodle_domain>({
     sendDomainMsg({ domain_msg }) {
       return trnspClient(
         {
@@ -55,7 +64,7 @@ export function priAccess(): moodle_domain['primary'] {
   //   }
   // }
 
-  return ap.primary
+  return moodle_domain
 }
 
 export async function getUserSession() {
@@ -69,8 +78,10 @@ export async function getAuthenticatedUserSessionOrRedirectToLogin() {
     return maybe_authenticatedUserSession
   }
 
-  const loginUrl = sitepaths().pages.access.login({
-    redirect: headers().get('x-pathname') ?? sitepaths().pages.landing,
+  const loginUrl = sitepaths.login({
+    query: {
+      redirect: headers().get('x-pathname') ?? sitepaths(),
+    },
   })
   redirect(loginUrl, RedirectType.replace)
 }
@@ -84,6 +95,7 @@ export async function getAdminUserSessionOrRedirect(path = '/') {
 }
 
 function getAccessSession() {
+  //FIXME: why is it here inside ?
   i18next.init({
     // ns: ['common', 'moduleA'],
     // defaultNS: 'moduleA',

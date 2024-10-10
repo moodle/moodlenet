@@ -3,13 +3,13 @@ import {
   core_impl,
   CoreContext,
   ddd,
-  DeploymentInfo,
   secondary_adapter,
   secondary_factory,
   SecondaryContext,
 } from '@moodle/lib-ddd'
-import { _maybe, email_address } from '@moodle/lib-types'
-import { iam_event, iam_primary, iam_secondary } from './iam'
+import { email_address } from '@moodle/lib-types'
+import { env_primary } from './env'
+import { iam_primary, iam_secondary } from './iam'
 import { net_primary, net_secondary } from './net'
 import { net_webapp_nextjs_primary, net_webapp_nextjs_secondary } from './netWebappNextjs'
 import { org_primary, org_secondary } from './org'
@@ -21,6 +21,7 @@ export * as net from './net'
 export * as netWebappNextjs from './netWebappNextjs'
 export * as org from './org'
 export * as userHome from './user-hone'
+export * as storage from './storage'
 
 export type sys_admin_info = { email: email_address }
 export type moodle_domain = ddd<
@@ -30,17 +31,7 @@ export type moodle_domain = ddd<
     net: net_primary
     userHome: user_home_primary
     netWebappNextjs: net_webapp_nextjs_primary
-    env: {
-      application: {
-        deployment(_: {
-          app: 'moodlenet-webapp' | 'filestore-http'
-        }): Promise<_maybe<DeploymentInfo>>
-        fsHomeDir(): Promise<{ path: string }>
-      }
-      maintainance: {
-        getSysAdminInfo(): Promise<sys_admin_info>
-      }
-    }
+    env: env_primary
   },
   {
     org: org_secondary
@@ -49,15 +40,6 @@ export type moodle_domain = ddd<
     userHome: user_home_secondary
     netWebappNextjs: net_webapp_nextjs_secondary
     storage: storage_secondary
-  },
-  {
-    iam: iam_event
-    env: {
-      system: {
-        // BEWARE:this message is currently invoked manually (type-unchecked) in be/default/src/default-session-deployment.ts
-        backgroundProcess(_: { action: 'start' | 'stop' }): Promise<unknown>
-      }
-    }
   }
 >
 

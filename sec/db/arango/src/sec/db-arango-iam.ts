@@ -17,6 +17,14 @@ export function iam_moodle_secondary_factory({
     const moodle_secondary_adapter: moodle_secondary_adapter = {
       secondary: {
         iam: {
+          alignDb: {
+            async userDisplayname({ displayName, userId }) {
+              const done = !!(await db_struct.iam.coll.user
+                .update({ _key: userId }, { displayName })
+                .catch(() => null))
+              return [done, _void]
+            },
+          },
           db: {
             async getConfigs() {
               const { configs } = await getModConfigs({
@@ -39,21 +47,15 @@ export function iam_moodle_secondary_factory({
                   },
                 )
                 .catch(() => null)
-              updated && ctx.emit.event.iam.userSecurity.userPasswordChanged({ userId })
-              return [!!updated, _void]
+              return updated ? [true, { userId }] : [false, _void]
             },
             async setUserRoles({ userId, roles }) {
               const updated = await db_struct.iam.coll.user
-                .update({ _key: userId }, { roles }, { returnNew: true, returnOld: true })
+                .update({ _key: userId }, { roles }, { returnOld: true })
                 .catch(() => null)
-
-                updated?.old &&
-                  ctx.emit.event.iam.userRoles.userRolesUpdated({
-                    userId,
-                    oldRoles: updated.old.roles,
-                    roles,
-                  })
-                return [!!updated, _void]
+              return updated?.old
+                ? [true, { newRoles: roles, oldRoles: updated.old.roles }]
+                : [false, _void]
             },
             async getUserByEmail({ email }) {
               const cursor = await db_struct.iam.db.query<Document<userDocument>>(
@@ -76,11 +78,9 @@ export function iam_moodle_secondary_factory({
                 .save(userDocument, { overwriteMode: 'conflict', returnNew: true })
                 .catch(() => null)
 
-              savedUser?.new &&
-                ctx.emit.event.iam.userBase.newUserCreated({
-                  user: userDocument2user_record(savedUser.new),
-                })
-              return [!!savedUser, _void]
+              return savedUser?.new
+                ? [true, { newUser: userDocument2user_record(savedUser.new) }]
+                : [false, _void]
             },
             async deactivateUser({ anonymize, reason, userId, at = new Date().toISOString() }) {
               const deactivatingUser = await db_struct.iam.coll.user.document(
@@ -102,21 +102,19 @@ export function iam_moodle_secondary_factory({
                   }
                 : null
 
-              const deactivatedUser = await db_struct.iam.coll.user.update(
-                { _key: userId },
-                {
-                  deactivated: { anonymized: anonymize, at, reason },
-                  ...anonymization,
-                },
-                { silent: true },
-              )
-              deactivatedUser &&
-                ctx.emit.event.iam.userBase.userDeactivated({
-                  user: userDocument2user_record(deactivatingUser),
-                  reason,
-                  anonymized: anonymize,
-                })
-              return [true, _void]
+              const deactivatedUser = await db_struct.iam.coll.user
+                .update(
+                  { _key: userId },
+                  {
+                    deactivated: { anonymized: anonymize, at, reason },
+                    ...anonymization,
+                  },
+                  { returnOld: true },
+                )
+                .catch(() => null)
+              return deactivatedUser?.old
+                ? [true, { deactivatedUser: userDocument2user_record(deactivatedUser.old) }]
+                : [false, _void]
             },
             async findUsersByText({ text, includeDeactivated }) {
               const lowerCaseText = text.toLowerCase()

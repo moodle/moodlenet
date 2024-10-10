@@ -1,72 +1,71 @@
-import { map, url_path_string } from '@moodle/lib-types'
+import { _maybe, createPathProxy, map, url_path_string } from '@moodle/lib-types'
 import QueryString from 'qs'
 
-export type sitepaths = ReturnType<typeof sitepaths>
-export function sitepaths<as extends string = url_path_string>(baseUrl = '/') {
-  type id = string
-  const _ = (path: string) => `${baseUrl}${path}` as as
+export function createSitepaths<path_type extends string = url_path_string>(baseUrl = '/') {
+  const [paths] = createPathProxy<sitePaths<path_type>, _maybe<{ query?: map<string | string[]> }>>(
+    {
+      apply({ path, arg }) {
+        const qstring = arg?.query ? `?${QueryString.stringify(arg.query)}` : ''
+        return `${baseUrl}${path.join('/')}${qstring}` as path_type
+      },
+    },
+  )
+  return paths
+}
+export const sitepaths = createSitepaths()
+type sitePathConstructor<t> = (_?: { query?: map<string | string[]> }) => t
+type spc<t> = sitePathConstructor<t>
 
-  const DEF_SLUG = '-'
-  const _by_id = (path: string) => (id: id) => `${_(path)}/${id}`
-  const _by_id_slug_sub =
-    <sub extends string>(path: string) =>
-    (id: id, slug = DEF_SLUG) =>
-    (sub: sub) =>
-      `${_(path)}/${id}/${slug}${sub}` as as
-
-  const _sub =
-    <sub extends string>(path: string) =>
-    (sub: sub) =>
-      `${_(path)}${sub}` as as
-
-  const _with_query = (path: string) => (query?: map<string | string[]>) => {
-    const qstring = QueryString.stringify(query)
-    return `${_(path)}?${qstring}` as as
-  }
-  type admin_settings_sub = '/users' | '/general' | '/appearance' | '/moderation'
-  const admin_settings = _sub<admin_settings_sub>(`admin`)
-
-  type user_settings_sub = '/advanced' | '/general'
-  const user_settings = _sub<user_settings_sub>(`settings`)
-
-  type profile_sub = '/bookmarks' | '/followers' | '/following' | ''
-  const profile = _by_id_slug_sub<profile_sub>(`profile`)
-  const user = _by_id(`user`)
-  const resource = _by_id_slug_sub(`resource`)
-  const collection = _by_id_slug_sub(`collection`)
-  const subject = _by_id_slug_sub(`subject`)
-
-  return {
-    apis: {
+export type sitePaths<t extends string> = spc<t> & {
+  '-': {
+    api: {
       iam: {
-        basicAuth: {
-          verifySignupEmailToken: _('-/api/iam/basic-auth/verify-signup-email-token'),
-        },
-        deleteMyAccountRequest: {
-          confirm: _('-/api/iam/delete-my-account-request/confirm'),
-        },
-      },
-    },
-    pages: {
-      landing: baseUrl,
-      access: {
-        login: _with_query('login'),
-        signup: _('signup'),
-        recoverPasswordRequest: _sub<'' | '/reset'>('recover-password-request'),
-      },
-      user: {
-        settings: user_settings,
-      },
-      homepages: {
-        profile,
-        user,
-        resource,
-        collection,
-        subject,
-      },
-      admin: {
-        settings: admin_settings,
-      },
-    },
+        'basic-auth': {
+          'verify-signup-email-token': spc<t>
+        }
+        'delete-my-account-request': {
+          confirm: spc<t>
+        }
+      }
+    }
+  }
+  'login': spc<t>
+  'signup': spc<t>
+  'recover-password-request': spc<t> & {
+    reset: spc<t>
+  }
+  'settings': {
+    general: spc<t>
+    advanced: spc<t>
+  }
+  'admin': {
+    general: spc<t>
+    users: spc<t>
+    appearance: spc<t>
+    moderation: spc<t>
+  }
+  'profile': {
+    [id: string]: spc<t> & {
+      [slug: string]: spc<t> & {
+        bookmarks: spc<t>
+        followers: spc<t>
+        following: spc<t>
+      }
+    }
+  }
+  'resource': {
+    [id: string]: spc<t> & {
+      [slug: string]: spc<t>
+    }
+  }
+  'collection': {
+    [id: string]: spc<t> & {
+      [slug: string]: spc<t>
+    }
+  }
+  'subject': spc<t> & {
+    [id: string]: {
+      [slug: string]: spc<t>
+    }
   }
 }

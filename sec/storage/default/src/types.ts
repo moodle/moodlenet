@@ -1,5 +1,5 @@
-import { StorageLibProvider } from 'domain/src/storage'
-
 export interface StorageDefaultSecEnv {
-  storageLibProvider: StorageLibProvider
+  domainDir: string
+  tempDir: string
+  tempFileMaxRetentionSeconds: number
 }

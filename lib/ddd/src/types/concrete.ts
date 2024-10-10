@@ -2,7 +2,7 @@ import { deep_partial } from '@moodle/lib-types'
 import { merge } from 'lodash'
 import { ddd } from '../domain'
 import { access_session } from './access-session'
-import { domain_endpoint } from './mod'
+import { any_endpoint, domain_endpoint, secondary_endpoint } from './mod'
 
 export interface CoreProcessContext<domain extends ddd> {
   sys_call: domain
@@ -50,8 +50,11 @@ export function composeDomains<domain extends ddd>(
   return merge({}, ...impls)
 }
 //NOTE: strict Pick<> brakes deep_partial in composeDomains. don't knwo why.
-export type core_impl<domain extends ddd> = deep_partial<domain>
-export type secondary_adapter<domain extends ddd> = deep_partial<domain>
+export type core_impl<domain extends ddd> = Pick<
+  deep_partial<domain>,
+  'primary' | 'event' | 'watch'
+>
+export type secondary_adapter<domain extends ddd> = Pick<deep_partial<domain>, 'secondary'>
 // export type core_impl<domain extends ddd> = deep_partial<Pick<domain,'primary' | 'event'>>
 // export type secondary_adapter<domain extends ddd> = deep_partial<Pick<domain,'secondary'>>
 

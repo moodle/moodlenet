@@ -27,15 +27,18 @@ const default_session_deployment: session_deployer = async ({
 
   async function startBackgroundProcesses() {
     // BEWARE:these messages are manually crafted: no type-checking here
-    // and should be maintained aligned with domain#env
+    // and should be maintained aligned with domain modules's event.env.system.backgroundProcess handler
     // at least until we have a better way to generate them
 
+    // FIXME: after removed event layer must find another way to trigger this kind of events...
+    // Maybe restoring the former event layer, in addition to the current (renaming it to e.g. "listener" ?)
     const bg_proc_domain_endpoint: domain_endpoint = {
       layer: 'event',
       module: 'env',
       channel: 'system',
       name: 'backgroundProcess',
     }
+
     const bg_proc_access_session: access_session = {
       type: 'system',
       domain: access_session.domain,

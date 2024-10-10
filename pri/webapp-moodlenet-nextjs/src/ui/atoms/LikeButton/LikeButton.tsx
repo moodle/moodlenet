@@ -1,6 +1,6 @@
-import { TertiaryButton } from '@moodlenet/component-library'
 import { Favorite, FavoriteBorder } from '@mui/icons-material'
 import type { FC } from 'react'
+import { TertiaryButton } from '../TertiaryButton/TertiaryButton'
 import './LikeButton.scss'
 
 export type LikeButtonProps = LikeButtonPropsData & LikeButtonPropsUI

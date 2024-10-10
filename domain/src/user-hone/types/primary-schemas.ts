@@ -1,17 +1,20 @@
 import { single_line_string_schema, url_string_schema } from '@moodle/lib-types'
 import type { z, ZodString } from 'zod'
-import { any, object, string } from 'zod'
-export interface UserHomePrimaryMsgSchemaConfigs {
-  profileInfo: {
-    displayName: { max: number; min: number; regex: null | [regex: string, flags: string] }
-    aboutMe: { max: number }
-    location: { max: number }
-    siteUrl: { max: number }
-  }
+import { any, literal, object, string, union } from 'zod'
+export interface ProfileInfoPrimaryMsgSchemaConfigs {
+  displayName: { max: number; min: number; regex: null | [regex: string, flags: string] }
+  aboutMe: { max: number }
+  location: { max: number }
+  siteUrl: { max: number }
 }
-export type orgInfoForm = z.infer<ReturnType<typeof getUserHomePrimarySchemas>['profileInfoSchema']>
+export type updateProfileInfoForm = z.infer<
+  ReturnType<typeof getProfileInfoPrimarySchemas>['updateProfileInfoSchema']
+>
 
-export function getUserHomePrimarySchemas({ profileInfo }: UserHomePrimaryMsgSchemaConfigs) {
+export function getProfileInfoPrimarySchemas(profileInfo: ProfileInfoPrimaryMsgSchemaConfigs) {
+  const profileImageSchema = union([literal('avatar'), literal('background')])
+
+  const user_home_id = string().min(6)
   const displayName = string()
     .trim()
     .min(profileInfo.displayName.min)
@@ -22,16 +25,31 @@ export function getUserHomePrimarySchemas({ profileInfo }: UserHomePrimaryMsgSch
         : (any() as unknown as ZodString),
     )
     .pipe(single_line_string_schema)
-  const aboutMe = string().trim().max(profileInfo.aboutMe.max).pipe(single_line_string_schema)
-  const location = string().trim().max(profileInfo.location.max).pipe(single_line_string_schema)
-  const siteUrl = url_string_schema
+  const aboutMe = string()
+    .trim()
+    .max(profileInfo.aboutMe.max)
+    .optional()
+    .pipe(single_line_string_schema)
+  const location = string()
+    .trim()
+    .max(profileInfo.location.max)
+    .optional()
+    .pipe(single_line_string_schema)
+  const siteUrl = url_string_schema.nullish()
 
-  const profileInfoSchema = object({
+  const useProfileImageSchema = object({
+    as: profileImageSchema,
+    tempId: string(),
+    userHomeId: string(),
+  })
+
+  const updateProfileInfoSchema = object({
+    user_home_id,
     displayName,
     aboutMe,
     location,
     siteUrl,
-  }).partial()
+  })
 
   return {
     raw: {
@@ -42,6 +60,7 @@ export function getUserHomePrimarySchemas({ profileInfo }: UserHomePrimaryMsgSch
         siteUrl,
       },
     },
-    profileInfoSchema,
+    updateProfileInfoSchema,
+    useProfileImageSchema,
   }
 }

@@ -11,8 +11,8 @@ export type id_type = d_u<
 >
 
 const globalMonoUlid = ulidx.monotonicFactory()
-export async function generateUlid({ onDate }: { onDate: Date | number | string }) {
-  const date = new Date(onDate)
+export async function generateUlid(cfg?: { onDate?: Date | number | string }) {
+  const date = new Date(cfg?.onDate ?? Date.now())
   return globalMonoUlid(date.valueOf())
 }
 
@@ -29,6 +29,6 @@ export async function generateId(id_type: id_type) {
     case 'alphanumeric':
       return generateNanoId({ length: id_type.length })
     case 'ulid':
-      return generateUlid({ onDate: id_type.onDate ?? Date.now() })
+      return generateUlid({ onDate: id_type.onDate })
   }
 }

@@ -1,14 +1,15 @@
-import { _nil, path, url_string_schema } from '@moodle/lib-types'
+import { _nullish, url_string, url_string_schema } from '@moodle/lib-types'
 
 export interface DeploymentInfo {
   basePath: string
   hostname: string
-  port: _nil | number
+  port: _nullish | number
   protocol: string
+  href: url_string
 }
 export function getDeploymentInfoUrl(
   { hostname, port, protocol, basePath }: DeploymentInfo,
-  appendPath: string | path = '',
+  appendPath: string | string[] = '',
 ) {
   appendPath = [appendPath].flat().join('/')
   appendPath = appendPath.length && !appendPath.startsWith('/') ? `/${appendPath}` : appendPath
@@ -37,6 +38,7 @@ export function deploymentInfoFromUrlString(urlStr: string) {
     hostname,
     port,
     protocol,
+    href: url_string_schema.parse(url.href),
   }
   return info
 }

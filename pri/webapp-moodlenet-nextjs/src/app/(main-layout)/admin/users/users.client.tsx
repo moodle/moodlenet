@@ -7,7 +7,7 @@ import { user_record, user_role } from 'domain/src/iam'
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import useQueryParams from '../../../../lib/client/queryParams'
+import useQueryParams from '../../../../ui/lib/nextjs/queryParams'
 import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import Searchbox from '../../../../ui/atoms/Searchbox/Searchbox'
@@ -74,7 +74,7 @@ type RowProps = {
 
 function Row({ user, editUserRole }: RowProps) {
   const { t } = useTranslation()
-  const profileHref = sitepaths().pages.homepages.user(user.id)
+  const profileHref = sitepaths.profile[user.id]![user.displayName]!()
   const [roles, setRoles] = useState(user.roles)
   const isAdmin = roles.includes('admin')
   const isPublisher = roles.includes('publisher')

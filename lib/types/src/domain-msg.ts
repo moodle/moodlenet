@@ -1,5 +1,10 @@
 import { d_u, map } from './map'
 
+export type access_obj<allowed_result, not_allowed_result = unknown> = d_u<
+  { allowed: allowed_result; notAllowed: not_allowed_result },
+  'access'
+>
+
 export type ok_ko<
   success_result,
   fail_result extends map | void = void,

@@ -1,7 +1,7 @@
 import { signed_expire_token, signed_token_schema } from '@moodle/lib-types'
 import { cookies } from 'next/headers'
 
-const AUTH_COOKIE = 'moodlenet-auth'
+const AUTH_COOKIE = 'moodle-auth'
 export function getAuthTokenCookie() {
   const { success, data: token } = signed_token_schema.safeParse(cookies().get(AUTH_COOKIE)?.value)
 

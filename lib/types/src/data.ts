@@ -12,9 +12,9 @@ import {
 } from 'zod'
 import { _any, map } from './map'
 
-export type _maybe<t> = t | _nil
-export type _nil = undefined | null
-export type _falsy = false | _nil
+export type _maybe<t> = t | _nullish
+export type _nullish = undefined | null
+export type _falsy = false | _nullish
 // export const _void = void 0 as never // TOO DANGEROUS
 export const _void = void 0 as void
 export type primitive = primitive_value | null | undefined
@@ -60,7 +60,7 @@ export function date_time_string(date: Date | 'now'): date_time_string {
   const _date = date === 'now' ? new Date() : date
   return _date.toISOString() as date_time_string
 }
-export const single_line_string_schema = string().regex(/^[^\r\n]+$/gi)
+export const single_line_string_schema = string().regex(/^[^\r\n]*$/gi)
 
 // FIXME: ------
 // FIXME: move file_id type and schema in file-server when implemented !
@@ -186,4 +186,6 @@ export function namedEmailAddressString(addr: email_address | named_email_addres
 export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
   return arr.filter((x): x is t => !!x)
 }
+
+export type flags<names extends string> = Record<names, boolean>
 

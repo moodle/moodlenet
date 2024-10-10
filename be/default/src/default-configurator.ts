@@ -1,5 +1,5 @@
 import { moodle_core_factory, moodle_secondary_factory, sys_admin_info } from '@moodle/domain'
-import { deploymentInfoFromUrlString } from '@moodle/lib-ddd'
+import { deploymentInfoFromUrlString, getDeploymentInfoUrl } from '@moodle/lib-ddd'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import * as mod_user_home from '@moodle/mod-user-home'
 import * as mod_iam from '@moodle/mod-iam'
@@ -11,15 +11,13 @@ import * as arangoSec from '@moodle/sec-db-arango'
 import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
 import * as nodemailerSec from '@moodle/sec-email-nodemailer'
 import * as storageSec from '@moodle/sec-storage-default'
-import { makeLocalFsStorageLibProvider } from '@moodle/lib-storage-local-fs'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
 import * as path from 'path'
 import { inspect } from 'util'
-import { literal, object } from 'zod'
+import { coerce, literal, object, string } from 'zod'
 import { configuration, configurator } from './types'
-import { tmpdir } from 'os'
 // import * as argon2 from 'argon2'
 
 const cache: map<Promise<configuration>> = {}
@@ -27,6 +25,7 @@ const MOODLE_DOMAINS_ENV_HOME = process.env.MOODLE_DOMAINS_ENV_HOME ?? '.moodle.
 
 export const default_configurator: configurator = async ({ access_session }) => {
   const normalized_domain = access_session.domain.replace(/:/g, '_')
+  // const normalized_domain = access_session.domain.split(':')[0]!.replace(/:/g, '_')
   if (!cache[normalized_domain]) {
     cache[normalized_domain] = new Promise<configuration>(resolveConfiguration => {
       const env_home = path.resolve(MOODLE_DOMAINS_ENV_HOME, normalized_domain)
@@ -36,13 +35,17 @@ export const default_configurator: configurator = async ({ access_session }) => 
       const isDev = process.env.NODE_ENV === 'development'
 
       const env = object({
+        MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS: coerce.number().default(60),
         MOODLE_CORE_INIT_BACKGROUND_PROCESSES: literal('true').or(literal('false')).optional(),
         MOODLE_SYS_ADMIN_EMAIL: email_address_schema,
         MOODLE_NET_WEBAPP_DEPLOYMENT_URL: url_string_schema,
+        MOODLE_FILE_SERVER_DEPLOYMENT_URL: url_string_schema,
       }).parse({
+        MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS: process.env.MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS,
         MOODLE_CORE_INIT_BACKGROUND_PROCESSES: process.env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES,
         MOODLE_SYS_ADMIN_EMAIL: process.env.MOODLE_SYS_ADMIN_EMAIL,
         MOODLE_NET_WEBAPP_DEPLOYMENT_URL: process.env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL,
+        MOODLE_FILE_SERVER_DEPLOYMENT_URL: process.env.MOODLE_FILE_SERVER_DEPLOYMENT_URL,
       })
 
       console.info(
@@ -69,11 +72,12 @@ export const default_configurator: configurator = async ({ access_session }) => 
       const sys_admin_info: sys_admin_info = {
         email: env.MOODLE_SYS_ADMIN_EMAIL,
       }
+      const domainDir = path.join(env_home, 'fs-storage')
+      const tempDir = path.join(domainDir, '.temp')
       const file_system_storage_sec_env: storageSec.StorageDefaultSecEnv = {
-        storageLibProvider: makeLocalFsStorageLibProvider({
-          homeDir: path.join(env_home, 'fs-storage'),
-          tempDir: tmpdir(),
-        }),
+        domainDir,
+        tempDir,
+        tempFileMaxRetentionSeconds: env.MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS,
       }
 
       const secondary_factories: moodle_secondary_factory[] = [
@@ -96,16 +100,18 @@ export const default_configurator: configurator = async ({ access_session }) => 
             primary: {
               env: {
                 application: {
-                  async deployment({ app }) {
-                    const app_url =
-                      app === 'moodlenet-webapp' ? env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL : null
-                    if (!app_url) {
-                      return null
+                  async deployments() {
+                    return {
+                      moodlenetWebapp: deploymentInfoFromUrlString(
+                        env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL,
+                      ),
+                      filestoreHttp: deploymentInfoFromUrlString(
+                        env.MOODLE_FILE_SERVER_DEPLOYMENT_URL,
+                      ),
                     }
-                    return deploymentInfoFromUrlString(app_url)
                   },
-                  async fsHomeDir() {
-                    return { path: env_home }
+                  async fsHomeDirs() {
+                    return { env: env_home, temp: tempDir, domain: domainDir }
                   },
                 },
                 maintainance: {

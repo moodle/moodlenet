@@ -3,7 +3,7 @@
 import { iam } from '@moodle/domain'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
-import { actionClient } from '../../../../lib/server/safe-action'
+import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
 import { priAccess } from '../../../../lib/server/session-access'
 
 async function getChangePasswordSchema() {
@@ -20,7 +20,7 @@ async function getChangePasswordSchema() {
   })
 }
 
-export const changePasswordAction = actionClient
+export const changePasswordAction = defaultSafeActionClient
   .schema(getChangePasswordSchema)
   .action(async ({ parsedInput: changePasswordForm }) => {
     const [done, result] = await priAccess().iam.myAccount.changePassword(changePasswordForm)

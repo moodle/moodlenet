@@ -1,5 +1,4 @@
-import { iam, moodle_core_factory, moodle_core_impl, moodle_domain } from '@moodle/domain'
-import { CoreContext } from '@moodle/lib-ddd'
+import { iam, moodle_core_context, moodle_core_factory, moodle_core_impl } from '@moodle/domain'
 import {
   resetPasswordEmail,
   selfDeletionConfirmEmail,
@@ -11,8 +10,6 @@ import { user_role } from 'domain/src/iam'
 import * as lib from './lib'
 
 export function iam_core(): moodle_core_factory {
-  let background_process_running = false
-
   return ctx => {
     const core_impl: moodle_core_impl = {
       primary: {
@@ -363,26 +360,41 @@ export function iam_core(): moodle_core_factory {
       event: {
         env: {
           system: {
+            // BEWARE:these messages are manually crafted: no type-checking here
+            // and should be maintained aligned with be/default/src/default-session-deployment.ts#startBackgroundProcesses
+            // at least until we have a better way to generate them
+
             async backgroundProcess({ action }) {
+              console.log('event backgroundProcess IAM')
               if (action === 'start') {
                 startIamProcess(ctx)
               }
             },
           },
         },
-        // userActivity: {
-        //   userLoggedIn(ctx) {},
-        // },
-        // userBase: {
-        //   newUserCreated(ctx) {},
-        //   userDeactivated(ctx) {},
-        // },
-        // userRoles: {
-        //   userRolesUpdated(ctx) {},
-        // },
-        // userSecurity: {
-        //   userPasswordChanged(ctx) {},
-        // },
+      },
+      watch: {
+        secondary: {
+          userHome: {
+            db: {
+              async updatePartialProfileInfo([
+                [done, res],
+                {
+                  partialProfileInfo: { displayName },
+                },
+              ]) {
+                if (!done || typeof displayName !== 'string') {
+                  return
+                }
+
+                await ctx.sys_call.secondary.iam.alignDb.userDisplayname({
+                  displayName,
+                  userId: res.userId,
+                })
+              },
+            },
+          },
+        },
       },
     }
     return core_impl
@@ -394,8 +406,7 @@ export function iam_core(): moodle_core_factory {
     }
   }
 
-  async function startIamProcess(ctx: CoreContext<moodle_domain>) {
-    background_process_running = true
+  async function startIamProcess(ctx: moodle_core_context) {
     const sysAdminInfo = await ctx.sys_call.primary.env.maintainance.getSysAdminInfo()
     const [found] = await ctx.sys_call.secondary.iam.db.getUserByEmail({
       email: sysAdminInfo.email,
@@ -403,7 +414,7 @@ export function iam_core(): moodle_core_factory {
 
     if (!found) {
       const { passwordHash } = await ctx.sys_call.secondary.iam.crypto.hashPassword({
-        plainPassword: __redacted__(await generateNanoId({length:20})),
+        plainPassword: __redacted__(await generateNanoId({ length: 20 })),
       })
       const newUser = await lib.createNewUserRecordData({
         displayName: 'Admin',

@@ -20,7 +20,6 @@ export interface UserRecord {
   passwordHash: user_password_hash
   activityStatus: {
     lastLogin: date_time_string
-    inactiveNotificationSentAt: false | date_time_string //FIXME: remove
   }
   deactivated:
     | false

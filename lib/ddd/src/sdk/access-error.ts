@@ -5,6 +5,7 @@ import {
   status_desc_by_code_xxx,
   status_desc_xxx,
 } from './access-error-status'
+import assert from 'assert'
 
 declare const error_xxx_brand: unique symbol
 export type errorXxx = branded<
@@ -48,4 +49,12 @@ export class ErrorXxx extends Error {
     )
     this.errorXxx = _errorXxx
   }
+}
+
+export function assertWithErrorXxx<assertionObj>(
+  assertionObj: assertionObj,
+  code_or_desc: statusXxx,
+  details?: _any,
+): asserts assertionObj {
+  assert(assertionObj, new ErrorXxx(code_or_desc, details))
 }

@@ -15,11 +15,8 @@ import defaultAvatar from '../../ui/lib/assets/img/default-avatar.png'
 import { Href, clientSlotItem } from '../../lib/common/types'
 
 export function LoginHeaderButton() {
-  const {
-    pages: { access },
-  } = sitepaths()
   return (
-    <Link href={access.login()} className="login-button access-button">
+    <Link href={sitepaths.login()} className="login-button access-button">
       <PrimaryButton>
         <Trans>
           <span>Login</span>
@@ -31,11 +28,8 @@ export function LoginHeaderButton() {
 }
 
 export function SignupHeaderButton() {
-  const {
-    pages: { access },
-  } = sitepaths()
   return (
-    <Link href={access.signup} className="signup-button access-button">
+    <Link href={sitepaths.signup()} className="signup-button access-button">
       <TertiaryButton /* style={{ backgroundColor: 'transparent', border: 'none' }} */>
         <Trans>Sign up</Trans>
       </TertiaryButton>

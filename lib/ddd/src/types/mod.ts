@@ -6,6 +6,27 @@ export type event_layer = map<channel<event_endpoint>>
 
 export type any_layer = primary_layer | secondary_layer | event_layer
 
+export type watcher<
+  primary extends map<primary_layer> = map<primary_layer>,
+  secondary extends map<secondary_layer> = map<secondary_layer>,
+> = {
+  secondary: layer_watcher<secondary>
+  primary: layer_watcher<primary>
+}
+
+export type layer_watcher<mod_layer extends map<primary_layer | secondary_layer>> = {
+  [module in keyof mod_layer]: {
+    [channel in keyof mod_layer[module]]: {
+      [endpoint in keyof mod_layer[module][channel]]: (
+        _: [
+          Awaited<ReturnType<mod_layer[module][channel][endpoint]>>,
+          Parameters<mod_layer[module][channel][endpoint]>[0],
+        ],
+      ) => Promise<unknown>
+    }
+  }
+}
+
 export type channel<_endpoint extends any_endpoint> = map<_endpoint>
 
 export type msg_payload = _any

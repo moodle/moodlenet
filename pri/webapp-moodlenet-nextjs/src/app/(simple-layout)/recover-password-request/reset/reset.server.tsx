@@ -3,7 +3,7 @@
 import { iam } from '@moodle/domain'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
-import { actionClient } from '../../../../lib/server/safe-action'
+import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
 import { priAccess } from '../../../../lib/server/session-access'
 
 export async function getResetMyPasswordSchema() {
@@ -11,7 +11,7 @@ export async function getResetMyPasswordSchema() {
   const { resetPasswordSchema } = await iam.getIamPrimarySchemas(iamSchemaConfigs)
   return resetPasswordSchema
 }
-export const resetMyPasswordAction = actionClient
+export const resetMyPasswordAction = defaultSafeActionClient
   .schema(getResetMyPasswordSchema)
   .action(async ({ parsedInput: resetPasswordForm }) => {
     const [ok, resp] = await priAccess().iam.myAccount.resetPassword({

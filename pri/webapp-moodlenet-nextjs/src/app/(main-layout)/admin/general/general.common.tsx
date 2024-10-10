@@ -9,8 +9,9 @@ export function provideAdminGeneralSchemas({
   moodleNetSchemaConfigs,
   orgSchemaConfigs,
 }: MakeAdminGeneralSchemaDeps) {
-  const { moodleNetInfoSchema } = net.getMoodleNetPrimarySchemas(moodleNetSchemaConfigs)
-  const { orgInfoSchema } = org.getOrgPrimarySchemas(orgSchemaConfigs)
+  const { updateMoodleNetInfoSchema: moodleNetInfoSchema } =
+    net.getMoodleNetPrimarySchemas(moodleNetSchemaConfigs)
+  const { updateOrgInfoSchema: orgInfoSchema } = org.getOrgPrimarySchemas(orgSchemaConfigs)
   return {
     generalSchema: orgInfoSchema.merge(moodleNetInfoSchema),
     moodleNetInfoSchema,

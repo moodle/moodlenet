@@ -7,6 +7,6 @@ import HeaderLogo from '../../ui/organisms/Header/HeaderLogo/HeaderLogo'
 export async function LayoutHeaderLogo() {
   const { org } = await priAccess().netWebappNextjs.moodlenet.info()
   const [logo, smallLogo] = await Promise.all([getFileUrl(org.logo), getFileUrl(org.smallLogo)])
-  const landingPath = sitepaths().pages.landing
+  const landingPath = sitepaths()
   return <HeaderLogo {...{ logo, smallLogo, landingPath }} />
 }

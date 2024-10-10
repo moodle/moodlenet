@@ -16,7 +16,7 @@ import {
 } from './main-layout.client'
 
 import { filterOutFalsies } from '@moodle/lib-types'
-import { hasUserSessionRole, isAuthenticatedUserSession } from '@moodle/mod-iam/lib'
+import { userSessionInfo } from '@moodle/mod-iam/lib'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { priAccess } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
@@ -39,37 +39,49 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const { center, left, right } = slotsMap(props, layouts.roots.main.header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
-    const isAuthenticated = isAuthenticatedUserSession(userSession)
-    const isAdmin = hasUserSessionRole(userSession, 'admin')
-    const { pages } = sitepaths()
+    const { authenticated } = userSessionInfo(userSession)
     const avatarUrl = null //user_session.user.avatarUrl
+    const userHomeAccessObject =
+      authenticated &&
+      (await priAccess()
+        .userHome.read.userHome({ by: { idOf: 'user', user_id: authenticated.user.id } })
+        .then(([userHomeFound, userHomeResult]) => {
+          return userHomeFound && userHomeResult.accessObject
+        }))
 
-    const defaultRights = isAuthenticated
-      ? (() => {
-          const {
-            user: { displayName, id },
-          } = userSession
-          const baseProfilePages = pages.homepages.profile(id, displayName)
+    const baseProfilePage =
+      userHomeAccessObject &&
+      sitepaths.profile[userHomeAccessObject.id]![userHomeAccessObject.profileInfo.displayName]!
+    const defaultRights = authenticated
+      ? await(async () => {
           return [
             <AvatarMenu
               key="avatar-menu"
               avatarUrl={avatarUrl}
               menuItems={filterOutFalsies([
-                <ProfileLink
-                  key="profile"
-                  avatarUrl={avatarUrl}
-                  profileHref={baseProfilePages('')}
-                />,
-                <BookmarksLink key="bookmarks" bookmarksHref={baseProfilePages('/bookmarks')} />,
-                <FollowingLink key="following" followingHref={baseProfilePages('/followers')} />,
-                <UserSettingsLink
-                  key="user-settings"
-                  settingsHref={pages.user.settings('/general')}
-                />,
-                isAdmin && (
+                baseProfilePage && (
+                  <ProfileLink
+                    key="profile"
+                    avatarUrl={avatarUrl}
+                    profileHref={baseProfilePage()}
+                  />
+                ),
+                baseProfilePage && (
+                  <BookmarksLink key="bookmarks" bookmarksHref={baseProfilePage.bookmarks()} />
+                ),
+                baseProfilePage && (
+                  <FollowingLink key="following" followingHref={baseProfilePage.followers()} />
+                ),
+                baseProfilePage && (
+                  <UserSettingsLink
+                    key="user-settings"
+                    settingsHref={sitepaths.settings.general()}
+                  />
+                ),
+                authenticated.isAdmin && (
                   <AdminSettingsLink
                     key="admin-settings"
-                    adminHref={pages.admin.settings('/general')}
+                    adminHref={sitepaths.settings.general()}
                   />
                 ),
                 <Logout key="logout" logout={logout} />,

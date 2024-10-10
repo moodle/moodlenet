@@ -104,7 +104,27 @@ export function domain_session_access_provider<domain extends ddd>({
         secondary_factories.map(sec_factory => sec_factory(secondaryCtx)),
       )
       const sec = composeDomains<domain>(sec_adapters)
-      return dispatch(sec, current_domain_msg)
+      const secondaryResult = await dispatch(sec, current_domain_msg)
+
+      const evtContext: EvtContext<domain> = {
+        sys_call: sysCallAccessProxy,
+        forward: forwardAccessProxy,
+        access_session: access_session,
+      }
+      core_factories
+        .map(core_factory => core_factory(evtContext))
+        .map(core => {
+          dispatch(
+            core.watch,
+            {
+              endpoint: current_domain_msg.endpoint,
+              payload: [secondaryResult, current_domain_msg.payload],
+            },
+            { graceful: true },
+          )
+        })
+
+      return secondaryResult
     } else if (current_domain_msg.endpoint.layer === 'event') {
       if (access_session.type !== 'system') {
         throw TypeError(`only system session can call evt layer`)
@@ -122,17 +142,18 @@ export function domain_session_access_provider<domain extends ddd>({
         core_impls.map(core_impl => dispatch(core_impl, current_domain_msg, { graceful: true })),
       )
     } else {
+      console.error({ current_domain_msg })
       throw TypeError(`unknown msg layer: ${current_domain_msg.endpoint.layer}`)
     }
     type dispatch_opts = { graceful?: boolean }
     async function dispatch(
-      impl: core_impl<domain> | secondary_adapter<domain>,
+      impl: _any, // core_impl<domain> | secondary_adapter<domain> | watcher<>,
       domain_msg: domain_msg,
       opts?: dispatch_opts,
     ) {
       // console.log({ impl, domain_msg, opts })
       const { layer, module, channel, name } = domain_msg.endpoint
-      const endpoint_impl = impl?.[layer as keyof ddd]?.[module]?.[channel]?.[name]
+      const endpoint_impl = impl?.[layer]?.[module]?.[channel]?.[name]
 
       if (typeof endpoint_impl !== 'function') {
         if (opts?.graceful) {
