@@ -1,9 +1,10 @@
-import { d_u, map, signed_token } from '@moodle/lib-types'
+import { d_u, d_u__d, map, signed_token } from '@moodle/lib-types'
 import { domain_endpoint } from './mod'
 
 export type session_token = signed_token
 
 export interface UserAccessSession extends AccessSessionBase {
+  id: d_u__d<session_id, 'type', 'primary-session'>
   protocol: d_u<Protocols, 'type'>
 
   app: { name: string; pkg: string; version: string }
@@ -31,8 +32,24 @@ interface Protocols {
 }
 
 export interface SystemAccessSession extends AccessSessionBase {
+  id: d_u__d<session_id, 'type', 'background-process' | 'session-sys-call'>
   from: domain_endpoint
 }
+
+type session_id = d_u<
+  {
+    'primary-session': {
+      uid: string
+    }
+    'session-sys-call': {
+      primarySessionUid: string
+    }
+    'background-process': {
+      domain: string
+    }
+  },
+  'type'
+>
 
 export interface AccessSessionBase {
   domain: string

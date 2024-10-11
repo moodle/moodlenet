@@ -40,6 +40,10 @@ const default_session_deployment: session_deployer = async ({
     }
 
     const bg_proc_access_session: access_session = {
+      id: {
+        type: 'background-process',
+        domain: access_session.domain,
+      },
       type: 'system',
       domain: access_session.domain,
       from: bg_proc_domain_endpoint,

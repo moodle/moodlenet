@@ -57,6 +57,13 @@ export function domain_session_access_provider<domain extends ddd>({
     const [sysCallAccessProxy] = create_access_proxy({
       sendDomainMsg(sysCallAccessPayload) {
         const sysCallAccessSession: access_session = {
+          id:
+            access_session.id.type === 'primary-session'
+              ? {
+                  type: 'session-sys-call',
+                  primarySessionUid: access_session.id.uid,
+                }
+              : access_session.id,
           type: 'system',
           domain: access_session.domain,
           from: sysCallAccessPayload.domain_msg.endpoint,

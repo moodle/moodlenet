@@ -16,6 +16,7 @@ import { userAgent } from 'next/server'
 import { join, resolve } from 'path'
 import { Headers } from 'undici'
 import sanitizeFileName from 'sanitize-filename'
+import { generateUlid } from '@moodle/lib-id-gen'
 
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
@@ -46,7 +47,7 @@ const app = express()
 const trnspClient = http_bind.client()
 console.log('!!! moodle-fs-file-server started !!!')
 app.use(cookieParser()).use(async (req, _res, next) => {
-  const accessSession = getAccessSession(req)
+  const accessSession = await getAccessSession(req)
   const [ap] = create_access_proxy<moodle_domain>({
     sendDomainMsg({ domain_msg }) {
       return trnspClient(
@@ -155,7 +156,7 @@ app.listen(PORT, () => {
 // check DEV-NOTES.md for more info
 const AUTH_COOKIE = 'moodle-auth'
 
-function getAccessSession(req: express.Request) {
+async function getAccessSession(req: express.Request) {
   const { headers } = middlewareHeaders(req)
   const xHost = headers.get('x-host')
   // const xPort = headers.get('x-port')
@@ -168,6 +169,7 @@ function getAccessSession(req: express.Request) {
   assert(xHost, 'x-host not found in headers')
   const accessSession: access_session = {
     type: 'user',
+    id: { type: 'primary-session', uid: await generateUlid() },
     sessionToken: getAuthTokenCookie(req).sessionToken,
     app: {
       name: MOODLE_FS_FILE_SERVER_APP_NAME,

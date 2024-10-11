@@ -9,6 +9,7 @@ import { userAgent } from 'next/server'
 import assert from 'node:assert'
 import { sitepaths } from '../common/utils/sitepaths'
 import { getAuthTokenCookie } from './auth'
+import { generateUlid } from '@moodle/lib-id-gen'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
 const MOODLE_NET_NEXTJS_APP_NAME =
@@ -27,9 +28,9 @@ function _domainAccess(): moodle_domain {
   // a singleton could be created in the middleware and passed to the request object
   const trnspClient = http_bind.client()
 
-  const accessSession = getAccessSession()
   const [moodle_domain] = create_access_proxy<moodle_domain>({
-    sendDomainMsg({ domain_msg }) {
+    async sendDomainMsg({ domain_msg }) {
+      const accessSession = await getAccessSession()
       return trnspClient(
         {
           domain_msg,
@@ -94,7 +95,7 @@ export async function getAdminUserSessionOrRedirect(path = '/') {
   return authenticatedUserSession
 }
 
-function getAccessSession() {
+async function getAccessSession() {
   //FIXME: why is it here inside ?
   i18next.init({
     // ns: ['common', 'moduleA'],
@@ -114,6 +115,7 @@ function getAccessSession() {
   assert(xHost, 'x-host not found in headers')
   const accessSession: access_session = {
     type: 'user',
+    id: { type: 'primary-session', uid: await generateUlid() },
     sessionToken: getAuthTokenCookie().sessionToken,
     app: {
       name: MOODLE_NET_NEXTJS_APP_NAME,
