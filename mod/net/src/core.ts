@@ -1,6 +1,5 @@
 import { moodle_core_factory, moodle_core_impl } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
-import { assert_authorizeSystemSession } from '@moodle/mod-iam/lib'
 
 export function net_core(): moodle_core_factory {
   return ctx => {
@@ -11,19 +10,15 @@ export function net_core(): moodle_core_factory {
             async moduleInfo() {
               const {
                 configs: { info, moodleNetPrimaryMsgSchemaConfigs },
-              } = await ctx.sys_call.secondary.net.db.getConfigs()
+              } = await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'net' })
               return { info, schemaConfigs: moodleNetPrimaryMsgSchemaConfigs }
             },
           },
-          system: {
-            async configs() {
-              await assert_authorizeSystemSession(ctx)
-              return ctx.sys_call.secondary.net.db.getConfigs()
-            },
-          },
+
           admin: {
             async updatePartialMoodleNetInfo({ partialInfo }) {
-              const [done] = await ctx.sys_call.secondary.net.db.updatePartialConfigs({
+              const [done] = await ctx.sys_call.secondary.db.modConfigs.updatePartial({
+                mod: 'net',
                 partialConfigs: { info: partialInfo },
               })
               return [done, _void]

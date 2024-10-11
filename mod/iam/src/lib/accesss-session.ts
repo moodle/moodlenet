@@ -166,7 +166,7 @@ export async function generateSessionForUserData(
 ): Promise<signed_expire_token> {
   const {
     configs: { tokenExpireTime },
-  } = await ctx.sys_call.secondary.iam.db.getConfigs()
+  } = await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'iam' })
   const session = await ctx.sys_call.secondary.iam.crypto.signDataToken({
     data: {
       v: '1_0',

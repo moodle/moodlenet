@@ -2,10 +2,11 @@ import { iam_default_configs } from '@moodle/mod-iam/setup'
 import { net_webapp_nextjs_default_configs } from '@moodle/mod-net-webapp-nextjs/setup'
 import { net_default_configs } from '@moodle/mod-net/setup'
 import { org_default_configs } from '@moodle/mod-org/setup'
+import { storage_default_configs } from '@moodle/mod-storage/setup'
+import { user_home_default_configs } from '@moodle/mod-user-home/setup'
 import { db_struct } from '../../db-structure'
 import { saveModConfigs } from '../../lib/modules'
 import { Migration_Record } from '../types'
-import { user_home_default_configs } from '@moodle/mod-user-home/setup'
 // import { removePropOnInsert } from '../lib/id'
 
 export const VERSION = 'v0_1'
@@ -55,6 +56,11 @@ export async function migrate({ db_struct }: { db_struct: db_struct }) {
       db_struct,
       configs: user_home_default_configs,
       moduleName: 'userHome',
+    }),
+    saveModConfigs({
+      db_struct,
+      configs: storage_default_configs,
+      moduleName: 'storage',
     }),
   ])
   // bump_version

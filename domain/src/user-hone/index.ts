@@ -9,6 +9,7 @@ import {
   user_home_record,
 } from './types'
 import { Configs } from './types/configs'
+import { useTempFileAsWebImageResult } from '../storage'
 export * from './types'
 
 export type user_home_primary = pretty<UserHomePrimary>
@@ -32,10 +33,7 @@ export interface UserHomePrimary {
     }): Promise<ok_ko<{ accessObject: user_home_access_object }, { notFound: unknown }>>
   }
   uploads: {
-    useImageInProfile(_: {
-      as: profileImage
-      tempId: string
-    }): Promise<ok_ko<void, { tempNotFound: unknown; invalidImage: unknown; unknown: unknown }>>
+    useImageInProfile(_: { as: profileImage; tempId: string }): Promise<useTempFileAsWebImageResult>
   }
 }
 export interface UserHomeSecondary {
@@ -45,12 +43,10 @@ export interface UserHomeSecondary {
     }): Promise<ok_ko<{ userHome: user_home_record }, { notFound: unknown }>>
   }
   db: {
-    getConfigs(): Promise<{ configs: Configs }>
     createUserHome(_: { userHome: user_home_record }): Promise<ok_ko<void>>
     getUserHome(_: {
       by: by_user_id_or_user_home_id
     }): Promise<ok_ko<{ userHome: user_home_record }, { notFound: unknown }>>
-    updatePartialConfigs(_: { partialConfigs: deep_partial<Configs> }): Promise<ok_ko<Configs>>
     updatePartialProfileInfo(_: {
       id: user_home_id
       partialProfileInfo: deep_partial<ProfileInfo>
@@ -63,8 +59,6 @@ export interface UserHomeSecondary {
       as: profileImage
       id: user_home_id
       tempId: string
-    }): Promise<
-      ok_ko<void, { tempNotFound: unknown; invalidImage: unknown; unknown: { error: string } }>
-    >
+    }): Promise<useTempFileAsWebImageResult>
   }
 }

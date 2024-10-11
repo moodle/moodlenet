@@ -7,8 +7,6 @@ export interface UserAccessSession extends AccessSessionBase {
   id: d_u__d<session_id, 'type', 'primary-session'>
   protocol: d_u<Protocols, 'type'>
 
-  app: { name: string; pkg: string; version: string }
-
   // NOTE: ? make it `modTokens: { [app_name:string]?: string | null  }`
   sessionToken: session_token | null
   platforms: {

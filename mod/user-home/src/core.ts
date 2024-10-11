@@ -2,7 +2,7 @@ import { moodle_core_factory, moodle_core_impl } from '@moodle/domain'
 import { assertWithErrorXxx } from '@moodle/lib-ddd'
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { _unchecked_brand, _void } from '@moodle/lib-types'
-import { user_home_record } from 'domain/src/user-hone'
+import { userHome } from '@moodle/domain'
 import { accessUserHome } from './lib'
 import { assert_authorizeAuthenticatedUserSession } from '@moodle/mod-iam/lib'
 
@@ -36,7 +36,9 @@ export function user_home_core(): moodle_core_factory {
           },
           read: {
             async configs() {
-              const { configs } = await ctx.sys_call.secondary.userHome.db.getConfigs()
+              const { configs } = await ctx.sys_call.secondary.db.modConfigs.get({
+                mod: 'userHome',
+              })
               return { configs }
             },
             async userHome({ by }) {
@@ -101,7 +103,7 @@ export function user_home_core(): moodle_core_factory {
                 }
                 const user_home_id = await generateNanoId()
                 return ctx.sys_call.secondary.userHome.db.createUserHome({
-                  userHome: _unchecked_brand<user_home_record>({
+                  userHome: _unchecked_brand<userHome.user_home_record>({
                     id: user_home_id,
                     user: {
                       id: resp.newUser.id,

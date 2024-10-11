@@ -1,12 +1,7 @@
 import { http_bind } from '@moodle/bindings-node'
 import { moodle_domain, storage } from '@moodle/domain'
 import { access_session, create_access_proxy } from '@moodle/lib-ddd'
-import {
-  date_time_string,
-  isMimetype,
-  signed_token_schema,
-  temp_blob_meta,
-} from '@moodle/lib-types'
+import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
@@ -17,6 +12,7 @@ import { join, resolve } from 'path'
 import { Headers } from 'undici'
 import sanitizeFileName from 'sanitize-filename'
 import { generateUlid } from '@moodle/lib-id-gen'
+import { getSanitizedFileName } from '@moodle/sec-storage-default'
 
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
@@ -27,8 +23,6 @@ const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(
   process.cwd(),
   process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? storage.DEFAULT_DOMAINS_HOME_DIR_NAME,
 )
-const MOODLE_FS_FILE_SERVER_APP_NAME =
-  process.env.MOODLE_FS_FILE_SERVER_APP_NAME ?? 'moodle-fs-file-server'
 
 const requestTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
@@ -101,15 +95,24 @@ const router = express
       res.status(404).send('NOT FOUND')
     })
   })
-  .post('/.temp', async (req, res) => {
+  .post('/.temp/:type', async (req, res) => {
     await mkdir(req.dirs.temp, { recursive: true })
-
     // console.log('req', inspect(req, { colors: true, depth: 2 }))
+    if (req.params.type !== 'file' && req.params.type !== 'webImage') {
+      res.status(404).end()
+    }
     const { userSession } = await req.moodlePrimary.iam.session.getCurrentUserSession()
     if (userSession.type !== 'authenticated') {
       return res.status(401).send('UNAUTHORIZED')
     }
-    const multerOptions: multer.Options = {} //get from req.moodlePrimary
+    const { uploadMaxSizeConfigs } = await req.moodlePrimary.storage.session.moduleInfo()
+    const fileSizeLimit =
+      req.params.type === 'file' ? uploadMaxSizeConfigs.max : uploadMaxSizeConfigs.webImage
+    const multerOptions: multer.Options = {
+      limits: {
+        fileSize: fileSizeLimit,
+      },
+    } //get from req.moodlePrimary
 
     multer({ dest: req.dirs.temp, ...multerOptions }).single('file')(req, res, () => {
       if (!req.file) {
@@ -119,12 +122,13 @@ const router = express
         return res.status(500).send(`invalid mimetype ${req.file.mimetype}`)
       }
 
-      const temp_blob_meta: temp_blob_meta = {
+      const temp_blob_meta: storage.temp_blob_meta = {
         userSession,
         originalFilename: req.file.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size,
         created: date_time_string('now'),
+        name: getSanitizedFileName(req.file.filename),
       }
       writeFile(`${req.file.path}.json`, JSON.stringify(temp_blob_meta), 'utf8')
       res.status(200).json({ tempId: req.file.filename })
@@ -172,8 +176,7 @@ async function getAccessSession(req: express.Request) {
     id: { type: 'primary-session', uid: await generateUlid() },
     sessionToken: getAuthTokenCookie(req).sessionToken,
     app: {
-      name: MOODLE_FS_FILE_SERVER_APP_NAME,
-      pkg: 'webapp-moodlenet-nextjs',
+      name: 'filestoreHttp',
       version: '0.1',
     },
     protocol: {

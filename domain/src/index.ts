@@ -10,12 +10,16 @@ import {
 import { email_address } from '@moodle/lib-types'
 import { env_primary } from './env'
 import { iam_primary, iam_secondary } from './iam'
-import { net_primary, net_secondary } from './net'
-import { net_webapp_nextjs_primary, net_webapp_nextjs_secondary } from './netWebappNextjs'
-import { org_primary, org_secondary } from './org'
-import { storage_secondary } from './storage'
+import { net_primary } from './net'
+import { net_webapp_nextjs_primary } from './netWebappNextjs'
+import { org_primary } from './org'
+import { storage_primary, storage_secondary } from './storage'
 import { user_home_primary, user_home_secondary } from './user-hone'
+import { db_secondary } from './db'
+import { moodle_app } from './env/types/app-deployments'
 
+export * as env from './env'
+export * as db from './db'
 export * as iam from './iam'
 export * as net from './net'
 export * as netWebappNextjs from './netWebappNextjs'
@@ -34,13 +38,12 @@ export type moodle_domain = ddd<
     userHome: user_home_primary
     netWebappNextjs: net_webapp_nextjs_primary
     env: env_primary
+    storage: storage_primary
   },
   {
-    org: org_secondary
+    db: db_secondary
     iam: iam_secondary
-    net: net_secondary
     userHome: user_home_secondary
-    netWebappNextjs: net_webapp_nextjs_secondary
     storage: storage_secondary
   }
 >
@@ -51,3 +54,9 @@ export type moodle_core_impl = core_impl<moodle_domain>
 export type moodle_secondary_context = SecondaryContext<moodle_domain>
 export type moodle_secondary_factory = secondary_factory<moodle_domain>
 export type moodle_secondary_adapter = secondary_adapter<moodle_domain>
+
+declare module '@moodle/lib-ddd' {
+  export interface UserAccessSession {
+    app: { name: moodle_app; version: string }
+  }
+}

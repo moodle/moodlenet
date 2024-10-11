@@ -44,21 +44,6 @@ export function user_home_moodle_secondary_factory({
               }
               return [true, { userHome: userHomeDocument2user_home_record(userHomeDoc) }]
             },
-            async getConfigs() {
-              const configs = await getModConfigs({
-                moduleName: ctx.invoked_by.module,
-                db_struct,
-              })
-              return configs
-            },
-            async updatePartialConfigs({ partialConfigs }) {
-              const result = await updateDeepPartialModConfigs({
-                moduleName: ctx.invoked_by.module,
-                db_struct,
-                partialConfigs,
-              })
-              return [true, result.new]
-            },
             async updatePartialProfileInfo({ partialProfileInfo, id }) {
               const updateResult = await db_struct.data.coll.userHome
                 .update({ _key: id }, { profileInfo: partialProfileInfo }, { returnNew: true })

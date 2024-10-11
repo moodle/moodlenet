@@ -146,8 +146,6 @@ export interface IamSecondary {
     userDisplayname(_: { userId: user_id; displayName: string }): Promise<ok_ko<void>>
   }
   db: {
-    getConfigs(): Promise<{ configs: Configs }>
-
     setUserPassword(_: {
       userId: user_id
       newPasswordHash: string

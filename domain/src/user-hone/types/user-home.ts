@@ -35,3 +35,4 @@ export type user_home_access_object = {
   flags: flags<'followed'>
   user: _maybe<user_excerpt>
 }
+

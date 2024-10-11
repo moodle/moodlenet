@@ -26,13 +26,6 @@ export function iam_moodle_secondary_factory({
             },
           },
           db: {
-            async getConfigs() {
-              const { configs } = await getModConfigs({
-                moduleName: ctx.invoked_by.module,
-                db_struct,
-              })
-              return { configs }
-            },
             async setUserPassword({ newPasswordHash, userId }) {
               const {
                 iam: {

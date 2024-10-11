@@ -3,7 +3,7 @@ import HowToReg from '@mui/icons-material/HowToReg'
 import HowToRegOutlined from '@mui/icons-material/HowToRegOutlined'
 import ManageAccounts from '@mui/icons-material/ManageAccounts'
 import ManageAccountsOutlined from '@mui/icons-material/ManageAccountsOutlined'
-import { user_record, user_role } from 'domain/src/iam'
+import { iam } from '@moodle/domain'
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -14,9 +14,9 @@ import Searchbox from '../../../../ui/atoms/Searchbox/Searchbox'
 
 type edit_user_role_fn = (_: {
   userId: string
-  role: user_role
+  role: iam.user_role
   action: 'set' | 'unset'
-}) => Promise<user_role[]>
+}) => Promise<iam.user_role[]>
 
 export type UsersProps = {
   users: UserRow[]
@@ -66,7 +66,7 @@ export function UsersClient({ users, editUserRole }: UsersProps) {
   )
 }
 
-export type UserRow = Pick<user_record, 'id' | 'contacts' | 'displayName' | 'roles'>
+export type UserRow = Pick<iam.user_record, 'id' | 'contacts' | 'displayName' | 'roles'>
 type RowProps = {
   user: UserRow
   editUserRole: edit_user_role_fn
@@ -79,7 +79,7 @@ function Row({ user, editUserRole }: RowProps) {
   const isAdmin = roles.includes('admin')
   const isPublisher = roles.includes('publisher')
   const toggleRole = useCallback(
-    (role: user_role) => {
+    (role: iam.user_role) => {
       editUserRole({
         role,
         action: roles.includes(role) ? 'unset' : 'set',

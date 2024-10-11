@@ -2,7 +2,7 @@ import { deep_partial } from '@moodle/lib-types'
 import { merge } from 'lodash'
 import { ddd } from '../domain'
 import { access_session } from './access-session'
-import { any_endpoint, domain_endpoint, secondary_endpoint } from './mod'
+import { domain_endpoint } from './mod'
 
 export interface CoreProcessContext<domain extends ddd> {
   sys_call: domain

@@ -1,30 +1,31 @@
-import { _nullish, map } from '@moodle/lib-types'
+import { _nullish } from '@moodle/lib-types'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useDeployments } from './globalContexts'
+import { useAllSchemaConfigs, useDeployments } from './globalContexts'
 
-//SHAREDLIB
+//SHAREDLIB: paths and also useFileUploader({type}) that acts as subpath (type) prop
 const uploadTempFieldName = 'file'
 const uploadTempPath = '/.temp'
 const uploadTempMethod = 'POST'
+useFileUploader.type = { webImage: '.jpg,.jpeg,.png,.gif', file: '*' }
 
 export type fileUploadedAction = (_: {
   tempId: string
 }) => Promise<
   { done: true; newCurrent?: string } | { done: false; error?: string | string[] | _nullish }
 >
-useFileUploader.type = { image: '.jpg,.jpeg,.png,.gif', any: '*' }
-export function useFileUploader<actionMeta extends map<string> = never>({
+
+export function useFileUploader({
   currentSrc,
   fileUploadedAction,
-  accept = useFileUploader.type.any,
-  maxSize = 16777216, //16MB Math.pow(2,24)
+  type,
 }: {
   currentSrc: string
   fileUploadedAction: fileUploadedAction
-  maxSize?: number
-  accept?: string
-  withMeta: actionMeta extends never ? never : () => actionMeta
+  type: 'webImage' | 'file'
 }) {
+  const { uploadMaxSizeConfigs } = useAllSchemaConfigs()
+  const maxSize = type === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max
+
   const inputRef = useRef<HTMLInputElement | null>(null)
   // TODO: this complex state management definitely deserves a useReducer ;)
   // NOTE: that would remove all (or most of) the useEffects !
@@ -59,7 +60,7 @@ export function useFileUploader<actionMeta extends map<string> = never>({
     // update it when configs changes ( accept, maxSize )
     const inputElement = document.createElement('input')
     inputElement.type = 'file'
-    inputElement.accept = accept
+    inputElement.accept = useFileUploader.type[type]
     inputElement.hidden = true
     inputElement.multiple = false
     inputElement.onchange = e => {
@@ -85,7 +86,7 @@ export function useFileUploader<actionMeta extends map<string> = never>({
       inputRef.current = null
       document.body.removeChild(inputElement)
     }
-  }, [accept, maxSize])
+  }, [type, maxSize])
   const openFileDialog = useCallback(() => {
     inputRef.current?.click()
   }, [])
@@ -96,7 +97,10 @@ export function useFileUploader<actionMeta extends map<string> = never>({
     const formData = new FormData()
     formData.append(uploadTempFieldName, choosenFile.file)
 
-    fetch(`${filestoreHttp.href}${uploadTempPath}`, { body: formData, method: uploadTempMethod })
+    fetch(`${filestoreHttp.href}${uploadTempPath}/${type}`, {
+      body: formData,
+      method: uploadTempMethod,
+    })
       .then(r => r.json())
       .then(fileUploadedAction)
       .then(result => {
@@ -110,6 +114,6 @@ export function useFileUploader<actionMeta extends map<string> = never>({
           setChoosenFile(null)
         }
       })
-  }, [fileUploadedAction, choosenFile?.file, dirty, filestoreHttp.href])
+  }, [dirty, choosenFile?.file, filestoreHttp.href, type, fileUploadedAction])
   return [openFileDialog, submit, error, localSrc, latestUpdatedSrc, dirty] as const
 }

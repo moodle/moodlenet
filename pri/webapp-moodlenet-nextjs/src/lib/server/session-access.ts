@@ -12,8 +12,7 @@ import { getAuthTokenCookie } from './auth'
 import { generateUlid } from '@moodle/lib-id-gen'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
-const MOODLE_NET_NEXTJS_APP_NAME =
-  process.env.MOODLE_NET_NEXTJS_APP_NAME ?? 'webapp-moodlenet-nextjs'
+
 
 const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
@@ -118,8 +117,7 @@ async function getAccessSession() {
     id: { type: 'primary-session', uid: await generateUlid() },
     sessionToken: getAuthTokenCookie().sessionToken,
     app: {
-      name: MOODLE_NET_NEXTJS_APP_NAME,
-      pkg: 'webapp-moodlenet-nextjs',
+      name: 'moodlenetWebapp',
       version: '0.1',
     },
     protocol: {

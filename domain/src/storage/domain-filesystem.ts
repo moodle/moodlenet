@@ -1,13 +1,7 @@
-import {
-  createPathProxy,
-  map,
-  path,
-  url_path_string,
-  url_path_string_schema,
-} from '@moodle/lib-types'
+import { createPathProxy, path, url_path_string, url_path_string_schema } from '@moodle/lib-types'
 import { join } from 'path'
 import { moodle_domain } from '..'
-import { profileImage } from '../user-hone'
+import { filesystem } from './types'
 
 type filetype = 'image'
 
@@ -16,14 +10,6 @@ type fsUrlPathGetter = () => url_path_string
 type fs<_fs, getterType> = {
   [fsId in keyof _fs]: getterType &
     (_fs[fsId] extends filetype ? _fs[fsId] : fs<_fs[fsId], getterType>)
-}
-
-export type filesystem = {
-  userHome: {
-    [userHomeId in string]: {
-      profile: map<'image', profileImage>
-    }
-  }
 }
 
 export const [domain_file_path_arr] = createPathProxy<fs<filesystem, fsPathGetter>>({

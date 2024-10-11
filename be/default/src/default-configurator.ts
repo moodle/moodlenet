@@ -11,6 +11,7 @@ import * as mod_net from '@moodle/mod-net'
 import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
 import * as mod_org from '@moodle/mod-org'
 import * as mod_user_home from '@moodle/mod-user-home'
+import * as mod_storage from '@moodle/mod-storage'
 import * as cryptoSec from '@moodle/sec-crypto-default'
 import * as arangoSec from '@moodle/sec-db-arango'
 import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
@@ -110,6 +111,7 @@ export const default_configurator: configurator = async ({ access_session }) => 
         mod_iam.iam_core(),
         mod_net_webapp_nextjs.net_webapp_nextjs_core(),
         mod_user_home.user_home_core(),
+        mod_storage.storage_core(),
         (/* _ctx */) => {
           return {
             primary: {

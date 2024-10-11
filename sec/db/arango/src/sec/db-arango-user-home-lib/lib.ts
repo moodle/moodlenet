@@ -1,7 +1,7 @@
 import { deep_partial } from '@moodle/lib-types'
 import { aql } from 'arangojs'
 import { AqlQuery } from 'arangojs/aql'
-import { user_id } from 'domain/src/iam'
+import { iam } from '@moodle/domain'
 import { db_struct } from '../../db-structure'
 import { userHomeDocument } from './types'
 
@@ -11,7 +11,7 @@ export async function getUserHomeByUserId<T = userHomeDocument>({
   apply = aql``,
 }: {
   db_struct: db_struct
-  userId: user_id
+  userId: iam.user_id
   apply?: AqlQuery
 }) {
   const cursor = await db_struct.data.db.query<T>(aql`
@@ -30,7 +30,7 @@ export async function updateUserHomeByUserId({
   userId,
   pUserHome,
 }: {
-  userId: user_id
+  userId: iam.user_id
   db_struct: db_struct
   pUserHome: deep_partial<userHomeDocument>
 }) {

@@ -1,6 +1,6 @@
 'use server'
 
-import { getProfileInfoPrimarySchemas, user_home_id } from 'domain/src/user-hone'
+import { userHome } from '@moodle/domain'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
@@ -10,7 +10,7 @@ import { priAccess } from '../../../../../lib/server/session-access'
 
 export async function getUserHomeSchemas() {
   const { configs } = await priAccess().userHome.read.configs()
-  return getProfileInfoPrimarySchemas(configs.profileInfoPrimaryMsgSchemaConfigs)
+  return userHome.getProfileInfoPrimarySchemas(configs.profileInfoPrimaryMsgSchemaConfigs)
 }
 export async function getProfileInfoSchema() {
   return (await getUserHomeSchemas()).updateProfileInfoSchema
@@ -39,7 +39,7 @@ export const updateProfileInfo = defaultSafeActionClient
     })
   })
 
-async function fetchCanEditProfile({ user_home_id }: { user_home_id: user_home_id }) {
+async function fetchCanEditProfile({ user_home_id }: { user_home_id: userHome.user_home_id }) {
   const [readUserHomeDone, userHomeRes] = await priAccess().userHome.read.userHome({
     by: { idOf: 'user_home', user_home_id },
   })

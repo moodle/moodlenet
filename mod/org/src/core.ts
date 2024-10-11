@@ -11,19 +11,15 @@ export function org_core(): moodle_core_factory {
             async moduleInfo() {
               const {
                 configs: { info, orgPrimaryMsgSchemaConfigs },
-              } = await ctx.sys_call.secondary.org.db.getConfigs()
+              } = await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'org' })
               return { info, schemaConfigs: orgPrimaryMsgSchemaConfigs }
-            },
-          },
-          system: {
-            async configs() {
-              return ctx.sys_call.secondary.org.db.getConfigs()
             },
           },
           admin: {
             async updatePartialOrgInfo({ partialInfo }) {
               await assert_authorizeAdminUserSession(ctx)
-              const [done] = await ctx.sys_call.secondary.org.db.updatePartialConfigs({
+              const [done] = await ctx.sys_call.secondary.db.modConfigs.updatePartial({
+                mod: 'org',
                 partialConfigs: { info: partialInfo },
               })
               return [done, _void]

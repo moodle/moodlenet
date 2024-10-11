@@ -1,9 +1,9 @@
 import { moodle_secondary_adapter, moodle_secondary_factory, storage } from '@moodle/domain'
-import { _void, path, temp_blob_meta } from '@moodle/lib-types'
-import { mkdir, readdir, readFile, rename, stat } from 'fs/promises'
-import { dirname, join, normalize, sep } from 'path'
+import { _void, ok_ko, path } from '@moodle/lib-types'
+import { mkdir, readdir, readFile, rename, stat, writeFile } from 'fs/promises'
+import { join, sep } from 'path'
 import { rimraf } from 'rimraf'
-import { startCleanupProcess } from './lib'
+import sharp from 'sharp'
 import { StorageDefaultSecEnv } from './types'
 
 export function get_storage_default_secondary_factory(
@@ -15,7 +15,7 @@ export function get_storage_default_secondary_factory(
   const fsDirs = storage.getFsDirectories(storageDefaultSecEnv)
 
   //FIXME: set in startbackground processss
-  startCleanupProcess(storageDefaultSecEnv)
+  startCleanupProcess()
 
   return ctx => {
     const fs_file_paths = storage.prefixed_domain_file_paths(fsDirs.fsStorage)
@@ -29,44 +29,21 @@ export function get_storage_default_secondary_factory(
               return [true, _void]
             },
             async useImageInProfile({ as, id, tempId }) {
-              const tmpFile = join(fsDirs.temp, tempId)
-              const tmpFileMeta = `${tmpFile}.json`
-              // console.log({ tmpFile, tmpFileMeta })
-              const meta: temp_blob_meta = await readFile(tmpFileMeta, 'utf8')
-                .then(JSON.parse)
-                .catch(() => null)
-              if (!meta) {
-                return [false, { reason: 'tempNotFound' }]
-              }
-              const file = await stat(tmpFile).catch(() => null)
-              if (!file) {
-                return [false, { reason: 'tempNotFound' }]
-              }
-
               const destPath = fs_file_paths.userHome[id]!.profile[as]!()
-              // console.log({ tmpFile, tmpFileMeta, destPath })
-
-              const mvError = await rename(tmpFile, destPath).then(
-                () => false as const,
-                e => String(e),
-              )
-              // console.log({ mvError })
-
-              // console.log({ destPath, mvError, file, meta, tmpFile, tmpFileMeta })
-              if (mvError) {
-                return [false, { reason: 'unknown', error: mvError }]
-              }
-
-              return [true, _void]
+              return use_temp_file_as_web_image({
+                destPath,
+                tempId,
+                size: as === 'avatar' ? 'medium' : 'large',
+              })
             },
           },
         },
         storage: {
           temp: {
             async getTempMeta({ tempId }) {
-              const { temp_file_meta_path } = get_temp_file_paths({ tempId })
+              const { meta: temp_file_meta_path } = get_temp_file_paths({ tempId })
 
-              const meta: temp_blob_meta = await readFile(temp_file_meta_path, 'utf8')
+              const meta: storage.temp_blob_meta = await readFile(temp_file_meta_path, 'utf8')
                 .then(JSON.parse)
                 .catch(null)
 
@@ -100,7 +77,7 @@ export function get_storage_default_secondary_factory(
           },
           access: {
             async deletePath({ path, type }) {
-              const fs_path = fsStoragePathOf({ path })
+              const fs_path = fs_storage_path_of({ path })
               const file_stats = await stat(fs_path).catch(() => null)
               if (!file_stats) {
                 return [false, { reason: 'notFound' }]
@@ -137,20 +114,146 @@ export function get_storage_default_secondary_factory(
 
     //SHAREDLIB: these below should be in some shared lib
     // possibly the above _delete_and_clean_upper_empty_dirs() too ?
-    function get_temp_file_paths({ tempId }: { tempId: string }) {
-      const temp_file_path = join(fsDirs.temp, tempId)
-      const temp_file_meta_path = `${temp_file_path}.json`
-      return { temp_file_path, temp_file_meta_path }
+
+    type temp_file_paths = {
+      file: string
+      meta: string
+    }
+
+    function get_temp_file_paths({ tempId }: { tempId: string }): temp_file_paths {
+      const file = join(fsDirs.temp, tempId)
+      const meta = `${file}.json`
+      return { file, meta }
     }
 
     async function deleteTemp({ tempId }: { tempId: string }) {
-      const { temp_file_path } = get_temp_file_paths({ tempId })
+      const { file: temp_file_path } = get_temp_file_paths({ tempId })
       await rimraf(`${temp_file_path}*`, { maxRetries: 2 }).catch(() => null)
     }
 
-    function fsStoragePathOf({ path }: { path: path }) {
+    function fs_storage_path_of({ path }: { path: path }) {
       const fs_path = [fsDirs.fsStorage, ...path].join(sep)
       return fs_path
     }
+
+    async function ensure_temp_file({ tempId }: { tempId: string }) {
+      const temp_paths = get_temp_file_paths({ tempId })
+      // console.log({ tmpFile, tmpFileMeta })
+      const meta: storage.temp_blob_meta = await readFile(temp_paths.meta, 'utf8')
+        .then(JSON.parse)
+        .catch(() => null)
+      if (!meta) {
+        return false
+      }
+      const file = await stat(temp_paths.file).catch(() => null)
+      if (!file) {
+        return false
+      }
+      return { temp_paths, meta, file }
+    }
+    async function use_temp_file_as_web_image({
+      tempId,
+      destPath,
+      size,
+    }: {
+      tempId: string
+      destPath: string
+      size: storage.webImageSize
+    }): Promise<storage.useTempFileAsWebImageResult> {
+      const [resizeDone, resizeResult] = await resizeTempImage({ size, tempId })
+      console.log({ resizeDone, resizeResult })
+      if (!resizeDone) {
+        return [false, resizeResult]
+      }
+      const use_temp_file_result = await use_temp_file({
+        tempId: resizeResult.resizedTempId,
+        destPath,
+      })
+      return use_temp_file_result
+    }
+
+    async function use_temp_file({
+      tempId,
+      destPath,
+    }: {
+      tempId: string
+      destPath: string
+    }): Promise<storage.useTempFileResult> {
+      const temp_file = await ensure_temp_file({ tempId })
+      if (!temp_file) {
+        return [false, { reason: 'tempNotFound' }]
+      }
+      const mvError = await rename(temp_file.temp_paths.file, destPath).then(
+        () => false as const,
+        e => String(e),
+      )
+      console.log('use_temp_file', { mvError, tempId, destPath })
+
+      if (mvError) {
+        return [false, { reason: 'move', error: mvError }]
+      }
+
+      return [true, _void]
+    }
+
+    async function resizeTempImage({
+      size,
+      tempId,
+    }: {
+      tempId: string
+      size: storage.webImageSize
+    }): Promise<
+      ok_ko<
+        { resizedTempId: string; resizedTempFilePaths: temp_file_paths },
+        { tempNotFound: unknown; invalidImage: unknown }
+      >
+    > {
+      const original_temp_file = await ensure_temp_file({ tempId })
+      if (!original_temp_file) {
+        return [false, { reason: 'tempNotFound' }]
+      }
+      const {
+        configs: { webImageResizes },
+      } = await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'storage' })
+      const resizeTo = webImageResizes[size]
+      original_temp_file.temp_paths.file
+
+      const resizedTempId = `${tempId}_${size}`
+      const resizedTempFilePaths = get_temp_file_paths({ tempId: resizedTempId })
+      const resizedInfo = await sharp(original_temp_file.temp_paths.file)
+        .resize({
+          width: resizeTo,
+          height: resizeTo,
+          fit: 'inside',
+          withoutEnlargement: true,
+        })
+        .toFile(resizedTempFilePaths.file)
+      const resized_temp_meta: storage.temp_blob_meta = {
+        ...original_temp_file.meta,
+        size: resizedInfo.size,
+        originalSize: original_temp_file.meta.size,
+      }
+      await writeFile(resizedTempFilePaths.meta, JSON.stringify(resized_temp_meta), 'utf8')
+
+      return [true, { resizedTempId, resizedTempFilePaths }]
+    }
+  }
+  function startCleanupProcess() {
+    const { temp } = fsDirs
+    const { tempFileMaxRetentionSeconds } = storageDefaultSecEnv
+    setInterval(async () => {
+      const temp_dirs_or_whatever = await readdir(temp)
+      temp_dirs_or_whatever.forEach(async temp_dir_or_whatever => {
+        const temp_dir_or_whatever_path = join(temp, temp_dir_or_whatever)
+        const { ctime } = await stat(temp_dir_or_whatever_path).catch(() => ({ ctime: null }))
+        const now = Date.now()
+        const timeAgoMillis = ctime ? now - ctime.getTime() : Infinity
+        const expired = timeAgoMillis > tempFileMaxRetentionSeconds * 1000
+        if (!expired) {
+          return
+        }
+        rimraf(temp_dir_or_whatever_path, { maxRetries: 2 })
+      })
+    }, tempFileMaxRetentionSeconds * 1000)
   }
 }

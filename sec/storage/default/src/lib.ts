@@ -1,9 +1,4 @@
-import { readdir, stat } from 'fs/promises'
-import { join } from 'path'
-import { rimraf } from 'rimraf'
 import sanitizeFilename from 'sanitize-filename'
-import { StorageDefaultSecEnv } from './types'
-import { storage } from '@moodle/domain'
 
 // export function newFsFileRelativePath(filename: string, date = new Date()) {
 //   return [
@@ -43,23 +38,3 @@ export function getSanitizedFileName(originalFilename: string) {
 //   const sanitizedName = getSanitizedFileName(originalFilename)
 //   return newFsFileRelativePath(sanitizedName, date)
 // }
-export function startCleanupProcess({
-  currentDomainDir,
-  tempFileMaxRetentionSeconds,
-}: StorageDefaultSecEnv) {
-  const { temp } = storage.getFsDirectories({ currentDomainDir })
-  setInterval(async () => {
-    const temp_dirs_or_whatever = await readdir(temp)
-    temp_dirs_or_whatever.forEach(async temp_dir_or_whatever => {
-      const temp_dir_or_whatever_path = join(temp, temp_dir_or_whatever)
-      const { ctime } = await stat(temp_dir_or_whatever_path).catch(() => ({ ctime: null }))
-      const now = Date.now()
-      const timeAgoMillis = ctime ? now - ctime.getTime() : Infinity
-      const expired = timeAgoMillis > tempFileMaxRetentionSeconds * 1000
-      if (!expired) {
-        return
-      }
-      rimraf(temp_dir_or_whatever_path, { maxRetries: 2 })
-    })
-  }, tempFileMaxRetentionSeconds * 1000)
-}

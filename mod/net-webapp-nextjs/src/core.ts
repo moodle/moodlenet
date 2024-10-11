@@ -1,5 +1,4 @@
 import { moodle_core_factory, moodle_core_impl } from '@moodle/domain'
-import { assert_authorizeSystemSession } from '@moodle/mod-iam/lib'
 
 export function net_webapp_nextjs_core(): moodle_core_factory {
   return ctx => {
@@ -10,14 +9,8 @@ export function net_webapp_nextjs_core(): moodle_core_factory {
             async layouts() {
               const {
                 configs: { layouts },
-              } = await ctx.sys_call.secondary.netWebappNextjs.db.getConfigs()
+              } = await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'netWebappNextjs' })
               return layouts
-            },
-          },
-          system: {
-            async configs() {
-              await assert_authorizeSystemSession(ctx)
-              return ctx.sys_call.secondary.netWebappNextjs.db.getConfigs()
             },
           },
         },

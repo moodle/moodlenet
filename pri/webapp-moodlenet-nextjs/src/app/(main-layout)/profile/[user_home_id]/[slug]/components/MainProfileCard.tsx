@@ -6,7 +6,7 @@ import Flag from '@mui/icons-material/Flag'
 import Save from '@mui/icons-material/Save'
 import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
-import { getProfileInfoPrimarySchemas, user_home_access_object } from 'domain/src/user-hone'
+import { userHome } from '@moodle/domain'
 import { useCallback, useReducer, useRef } from 'react'
 import { never } from 'zod'
 import { ApprovalButton } from '../../../../../../ui/atoms/ApproveButton/ApproveButton'
@@ -25,14 +25,14 @@ import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
 import { useDomainFileUrls } from '../../../../../../lib/client/file-urls'
 
 export interface MainProfileCardDeps {
-  userHomeAccessObject: user_home_access_object
+  userHomeAccessObject: userHome.user_home_access_object
 }
 
 export function MainProfileCard({
   userHomeAccessObject: { permissions, profileInfo, user, flags, id },
 }: MainProfileCardDeps) {
   const { updateProfileInfoSchema, useProfileImageSchema } = permissions.editProfile
-    ? getProfileInfoPrimarySchemas(permissions.validationConfigs)
+    ? userHome.getProfileInfoPrimarySchemas(permissions.validationConfigs)
     : { updateProfileInfoSchema: never(), useProfileImageSchema: never() }
   const [isEditing, toggleIsEditing] = useReducer(
     isEditing => permissions.editProfile && !isEditing,
@@ -76,11 +76,7 @@ export function MainProfileCard({
       return { done: true }
     },
     // maxSize: 1048576,
-    accept: useFileUploader.type.image,
-    withMeta: () => ({
-      userHomeId: id,
-      as: 'avatar' as const,
-    }),
+    type: 'webImage',
   })
 
   const submitAll = useCallback(() => {

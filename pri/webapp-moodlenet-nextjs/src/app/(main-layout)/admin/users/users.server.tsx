@@ -1,6 +1,6 @@
 'use server'
 
-import { user_role } from 'domain/src/iam'
+import { iam } from '@moodle/domain'
 import { priAccess } from '../../../../lib/server/session-access'
 import { UserRow } from './users.client'
 
@@ -22,7 +22,7 @@ export async function editUserRole({
   role,
 }: {
   userId: string
-  role: user_role
+  role: iam.user_role
   action: 'set' | 'unset'
 }) {
   const [done, result] = await priAccess().iam.admin.editUserRoles({ userId, role, action })

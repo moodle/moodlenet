@@ -1,19 +1,17 @@
 import { moodle_core_context } from '@moodle/domain'
 import { access_obj, d_u } from '@moodle/lib-types'
 import { validate_userSessionInfo } from '@moodle/mod-iam/lib'
-import {
-  by_user_id_or_user_home_id,
-  user_home_access_object,
-  user_home_permissions,
-} from 'domain/src/user-hone'
+import { userHome } from '@moodle/domain'
 
 export async function accessUserHome({
   ctx,
   by,
 }: {
   ctx: moodle_core_context
-  by: by_user_id_or_user_home_id
-}): Promise<d_u<{ found: access_obj<user_home_access_object>; notFound: unknown }, 'result'>> {
+  by: userHome.by_user_id_or_user_home_id
+}): Promise<
+  d_u<{ found: access_obj<userHome.user_home_access_object>; notFound: unknown }, 'result'>
+> {
   const [found, findResult] = await ctx.sys_call.secondary.userHome.db.getUserHome({ by })
 
   if (!found) {
@@ -66,12 +64,12 @@ export async function accessUserHome({
   }
 
   async function getProfileInfoValidationConfigs() {
-    return (await ctx.sys_call.secondary.userHome.db.getConfigs()).configs
+    return (await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'userHome' })).configs
       .profileInfoPrimaryMsgSchemaConfigs
   }
 }
 
-const _all_user_home_permissions_disallowed: user_home_permissions = {
+const _all_user_home_permissions_disallowed: userHome.user_home_permissions = {
   editRoles: false,
   editProfile: false,
   follow: false,

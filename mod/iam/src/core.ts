@@ -6,7 +6,6 @@ import {
 } from '@moodle/lib-email-templates/iam'
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { __redacted__, _void, date_time_string } from '@moodle/lib-types'
-import { user_role } from 'domain/src/iam'
 import * as lib from './lib'
 
 export function iam_core(): moodle_core_factory {
@@ -17,14 +16,14 @@ export function iam_core(): moodle_core_factory {
           system: {
             async configs() {
               await lib.assert_authorizeSystemSession(ctx)
-              return ctx.sys_call.secondary.iam.db.getConfigs()
+              return ctx.sys_call.secondary.db.modConfigs.get({ mod: 'iam' })
             },
           },
           session: {
             async moduleInfo() {
               const {
                 configs: { iamPrimaryMsgSchemaConfigs },
-              } = await ctx.sys_call.secondary.iam.db.getConfigs()
+              } = await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'iam' })
               return { schemaConfigs: iamPrimaryMsgSchemaConfigs }
             },
             async getCurrentUserSession() {
@@ -49,7 +48,7 @@ export function iam_core(): moodle_core_factory {
               new_roles_set[action === 'set' ? 'add' : 'delete'](role)
               const new_roles = (
                 new_roles_set.has('admin')
-                  ? (['admin', 'publisher'] satisfies user_role[])
+                  ? (['admin', 'publisher'] satisfies iam.user_role[])
                   : Array.from(new_roles_set)
               ).sort()
 
@@ -102,7 +101,7 @@ export function iam_core(): moodle_core_factory {
               }
               const {
                 configs: { tokenExpireTime },
-              } = await ctx.sys_call.secondary.iam.db.getConfigs()
+              } = await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'iam' })
 
               const { passwordHash } = await ctx.sys_call.secondary.iam.crypto.hashPassword({
                 plainPassword: password,
@@ -139,7 +138,7 @@ export function iam_core(): moodle_core_factory {
                 configs: {
                   roles: { newlyCreatedUserRoles },
                 },
-              } = await ctx.sys_call.secondary.iam.db.getConfigs()
+              } = await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'iam' })
               const [verified, validation] =
                 await ctx.sys_call.secondary.iam.crypto.validateSignedToken({
                   token: signupEmailVerificationToken,
@@ -206,7 +205,7 @@ export function iam_core(): moodle_core_factory {
             async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
               const {
                 configs: { tokenExpireTime: userSelfDeletion },
-              } = await ctx.sys_call.secondary.iam.db.getConfigs()
+              } = await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'iam' })
 
               const [, user] = await ctx.sys_call.secondary.iam.db.getUserByEmail({
                 email: declaredOwnEmail,
@@ -250,7 +249,7 @@ export function iam_core(): moodle_core_factory {
               const authenticated_session = await lib.assert_authorizeAuthenticatedUserSession(ctx)
               const {
                 configs: { tokenExpireTime: userSelfDeletion },
-              } = await ctx.sys_call.secondary.iam.db.getConfigs()
+              } = await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'iam' })
 
               const selfDeletionConfirmationSession =
                 await ctx.sys_call.secondary.iam.crypto.signDataToken({
@@ -407,7 +406,7 @@ export function iam_core(): moodle_core_factory {
     async function fetchPrimarySchemas() {
       const {
         configs: { iamPrimaryMsgSchemaConfigs },
-      } = await ctx.sys_call.secondary.iam.db.getConfigs()
+      } = await ctx.sys_call.secondary.db.modConfigs.get({ mod: 'iam' })
       return iam.getIamPrimarySchemas(iamPrimaryMsgSchemaConfigs)
     }
   }

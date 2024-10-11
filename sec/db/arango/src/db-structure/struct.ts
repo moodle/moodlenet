@@ -2,6 +2,7 @@ import { Database } from 'arangojs'
 import { userDocument } from '../sec/db-arango-iam-lib/types'
 import { database_connections } from './types'
 import { userHomeDocument } from '../sec/db-arango-user-home-lib/types'
+import { db } from '@moodle/domain'
 
 export function getDbStruct(database_connections: database_connections) {
   const baseConnectionConfig = {
@@ -23,7 +24,7 @@ export function getDbStruct(database_connections: database_connections) {
     mng: {
       db: mng_db,
       coll: {
-        module_configs: mng_db.collection('module_configs'),
+        module_configs: mng_db.collection<db.ModConfigs[db.modConfigName]>('module_configs'),
         migrations: mng_db.collection('migrations'),
       },
     },
