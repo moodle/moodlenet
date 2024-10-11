@@ -1,6 +1,6 @@
 import { date_time_string, map, mimetype, ok_ko, path, url_path_string } from '@moodle/lib-types'
 import { AuthenticatedSession } from '../../iam'
-import { profileImage } from '../../user-home'
+import { profileImage } from '../../userHome'
 
 export * from './primary-schemas'
 
