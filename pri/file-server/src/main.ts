@@ -13,7 +13,7 @@ import { Headers } from 'undici'
 import sanitizeFileName from 'sanitize-filename'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { getSanitizedFileName } from '@moodle/sec-storage-default'
-
+import { DEFAULT_DOMAINS_HOME_DIR_NAME, getFsDirectories } from '@moodle/mod-storage/lib'
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
 
@@ -21,7 +21,7 @@ const MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL =
   process.env.MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL
 const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(
   process.cwd(),
-  process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? storage.DEFAULT_DOMAINS_HOME_DIR_NAME,
+  process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? DEFAULT_DOMAINS_HOME_DIR_NAME,
 )
 
 const requestTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
@@ -61,7 +61,7 @@ app.use(cookieParser()).use(async (req, _res, next) => {
     sanitizeFileName(domainInfo.name),
   )
 
-  req.dirs = storage.getFsDirectories({
+  req.dirs = getFsDirectories({
     currentDomainDir,
   })
   console.log({ domainInfo, dirs: req.dirs })

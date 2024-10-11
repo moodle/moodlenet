@@ -7,5 +7,9 @@
     "types": ["node"]
   },
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts", "../mod/storage/src/setup/index.ts"]
+  "include": [
+    "src/**/*.ts",
+    "../mod/storage/src/setup/index.ts",
+    "../mod/storage/src/lib/domain-filesystem.ts"
+  ]
 }

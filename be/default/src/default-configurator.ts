@@ -26,11 +26,12 @@ import { inspect } from 'util'
 import { coerce, literal, object } from 'zod'
 import { configuration, configurator } from './types'
 // import * as argon2 from 'argon2'
+import { DEFAULT_DOMAINS_HOME_DIR_NAME } from '@moodle/mod-storage/lib'
 
 const cache: map<Promise<configuration>> = {}
 const MOODLE_DOMAINS_HOME = path.resolve(
   process.cwd(),
-  process.env.MOODLE_DOMAINS_HOME ?? storage.DEFAULT_DOMAINS_HOME_DIR_NAME,
+  process.env.MOODLE_DOMAINS_HOME ?? DEFAULT_DOMAINS_HOME_DIR_NAME,
 )
 
 export const default_configurator: configurator = async ({ access_session }) => {

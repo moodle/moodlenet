@@ -1,24 +1,18 @@
-import { createPathProxy, path, url_path_string, url_path_string_schema } from '@moodle/lib-types'
+import { moodle_domain, storage } from '@moodle/domain'
+import { createPathProxy, path, url_path_string_schema } from '@moodle/lib-types'
 import { join } from 'path'
-import { moodle_domain } from '..'
-import { filesystem } from './types'
 
-type filetype = 'image'
-
-type fsPathGetter = () => path
-type fsUrlPathGetter = () => url_path_string
-type fs<_fs, getterType> = {
-  [fsId in keyof _fs]: getterType &
-    (_fs[fsId] extends filetype ? _fs[fsId] : fs<_fs[fsId], getterType>)
-}
-
-export const [domain_file_path_arr] = createPathProxy<fs<filesystem, fsPathGetter>>({
+export const [domain_file_path_arr] = createPathProxy<
+  storage.fs<storage.filesystem, storage.fsPathGetter>
+>({
   apply({ path }) {
     return [url_path_string_schema.parse(path.join('/')), path]
   },
 })
 
-export const [domain_file_path] = createPathProxy<fs<filesystem, fsUrlPathGetter>>({
+export const [domain_file_path] = createPathProxy<
+  storage.fs<storage.filesystem, storage.fsUrlPathGetter>
+>({
   apply({ path }) {
     return url_path_string_schema.parse(path.join('/'))
   },
@@ -30,7 +24,9 @@ export async function domain_files_http_urls(primary: moodle_domain['primary']) 
 }
 export function prefixed_domain_file_paths(prefix: path | string) {
   const _prefix = [prefix].flat()
-  const [prefixed_domain_file_paths] = createPathProxy<fs<filesystem, fsUrlPathGetter>>({
+  const [prefixed_domain_file_paths] = createPathProxy<
+    storage.fs<storage.filesystem, storage.fsUrlPathGetter>
+  >({
     apply({ path }) {
       const _path = [..._prefix, ...path].join('/')
       return url_path_string_schema.parse(_path)
@@ -39,15 +35,11 @@ export function prefixed_domain_file_paths(prefix: path | string) {
   return prefixed_domain_file_paths
 }
 
-export type fsDirectories = {
-  temp: string
-  fsStorage: string
-}
 export function getFsDirectories({
   currentDomainDir,
 }: {
   currentDomainDir: string
-}): fsDirectories {
+}): storage.fsDirectories {
   return {
     temp: join(currentDomainDir, '.temp'),
     fsStorage: join(currentDomainDir, 'fs-storage'),

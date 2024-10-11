@@ -1,8 +1,5 @@
 import type { ok_ko, path, pretty } from '@moodle/lib-types'
-import { temp_blob_meta, uploadMaxSizeConfigs, useTempFileAsWebImageResult } from './types'
-
-export * from './domain-filesystem'
-export * from './primary-schemas'
+import { temp_blob_meta, uploadMaxSizeConfigs, useTempFileAsWebImageResult } from './types/fs'
 export * from './types'
 
 export type storage_secondary = pretty<StorageSecondary>

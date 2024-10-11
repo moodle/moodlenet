@@ -5,20 +5,20 @@ import { join, sep } from 'path'
 import { rimraf } from 'rimraf'
 import sharp from 'sharp'
 import { StorageDefaultSecEnv } from './types'
-
+import { getFsDirectories, prefixed_domain_file_paths } from '@moodle/mod-storage/lib'
 export function get_storage_default_secondary_factory(
   storageDefaultSecEnv: StorageDefaultSecEnv,
 ): moodle_secondary_factory {
   // const domainDir = path.join(env_home, 'fs-storage')
   // const fsDirs.temp = path.join(domainDir, '.temp')
 
-  const fsDirs = storage.getFsDirectories(storageDefaultSecEnv)
+  const fsDirs = getFsDirectories(storageDefaultSecEnv)
 
   //FIXME: set in startbackground processss
   startCleanupProcess()
 
   return ctx => {
-    const fs_file_paths = storage.prefixed_domain_file_paths(fsDirs.fsStorage)
+    const fs_file_paths = prefixed_domain_file_paths(fsDirs.fsStorage)
     const moodle_secondary_adapter: moodle_secondary_adapter = {
       secondary: {
         userHome: {

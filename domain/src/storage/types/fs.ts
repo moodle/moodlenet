@@ -1,6 +1,8 @@
-import { date_time_string, map, mimetype, ok_ko, path } from '@moodle/lib-types'
-import { AuthenticatedSession } from '../iam'
-import { profileImage } from '../user-hone'
+import { date_time_string, map, mimetype, ok_ko, path, url_path_string } from '@moodle/lib-types'
+import { AuthenticatedSession } from '../../iam'
+import { profileImage } from '../../user-hone'
+
+export * from './primary-schemas'
 
 export type blob_meta = {
   size: number
@@ -63,4 +65,18 @@ export type filesystem = {
       profile: map<'image', profileImage>
     }
   }
+}
+
+type filetype = 'image'
+
+export type fsPathGetter = () => path
+export type fsUrlPathGetter = () => url_path_string
+export type fs<_fs, getterType> = {
+  [fsId in keyof _fs]: getterType &
+    (_fs[fsId] extends filetype ? _fs[fsId] : fs<_fs[fsId], getterType>)
+}
+
+export type fsDirectories = {
+  temp: string
+  fsStorage: string
 }
