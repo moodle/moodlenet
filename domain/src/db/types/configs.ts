@@ -4,7 +4,7 @@ import * as net from '../../net'
 import * as netWebappNextjs from '../../netWebappNextjs'
 import * as org from '../../org'
 import * as storage from '../../storage'
-import * as userHome from '../../user-hone'
+import * as userHome from '../../user-home'
 
 export type modConfigName = keyof ModConfigs
 export interface ModConfigs {
