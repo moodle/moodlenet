@@ -1,9 +1,4 @@
-import {
-  moodle_core_factory,
-  moodle_secondary_factory,
-  storage,
-  sys_admin_info,
-} from '@moodle/domain'
+import { moodle_core_factory, moodle_secondary_factory, env } from '@moodle/domain'
 import { deploymentInfoFromUrlString } from '@moodle/lib-ddd'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import * as mod_iam from '@moodle/mod-iam'
@@ -88,7 +83,7 @@ export const default_configurator: configurator = async ({ access_session }) => 
       const nodemailer_env: nodemailerSec.NodemailerSecEnv = nodemailerSec.provideEnv({
         env: _process_env,
       })
-      const sys_admin_info: sys_admin_info = {
+      const sys_admin_info: env.sys_admin_info = {
         email: env.MOODLE_SYS_ADMIN_EMAIL,
       }
 

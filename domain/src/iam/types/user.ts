@@ -7,6 +7,7 @@ import type {
 } from '@moodle/lib-types'
 import { v1_0 } from './configs'
 
+
 // NOTE: roles will be per-subsystem in future. e.g. export type user_role = 'moodle.net.admin' | 'moodle.net.publisher'
 export type user_role = 'admin' | 'publisher'
 export interface UserRecord {

@@ -1,5 +1,5 @@
 import { pretty } from '@moodle/lib-types'
-import { sys_admin_info } from '..'
+import { sys_admin_info } from './types'
 import { appDeployments } from './types/app-deployments'
 export * from './deployment'
 export * from './types'
