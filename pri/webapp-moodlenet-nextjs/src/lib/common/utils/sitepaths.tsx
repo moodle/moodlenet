@@ -2,14 +2,12 @@ import { _maybe, createPathProxy, map, url_path_string } from '@moodle/lib-types
 import QueryString from 'qs'
 
 export function createSitepaths<path_type extends string = url_path_string>(baseUrl = '/') {
-  const [paths] = createPathProxy<sitePaths<path_type>, _maybe<{ query?: map<string | string[]> }>>(
-    {
-      apply({ path, arg }) {
-        const qstring = arg?.query ? `?${QueryString.stringify(arg.query)}` : ''
-        return `${baseUrl}${path.join('/')}${qstring}` as path_type
-      },
+  const paths = createPathProxy<sitePaths<path_type>, _maybe<{ query?: map<string | string[]> }>>({
+    apply({ path, arg }) {
+      const qstring = arg?.query ? `?${QueryString.stringify(arg.query)}` : ''
+      return `${baseUrl}${path.join('/')}${qstring}` as path_type
     },
-  )
+  })
   return paths
 }
 export const sitepaths = createSitepaths()

@@ -1,7 +1,8 @@
 import { http_bind } from '@moodle/bindings-node'
-import { moodle_domain, storage } from '@moodle/domain'
-import { access_session, create_access_proxy } from '@moodle/lib-ddd'
+import { MoodleDomain, primarySession, lib, storage } from '@moodle/domain'
+import { generateUlid } from '@moodle/lib-id-gen'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
+import { getSanitizedFileName } from '@moodle/sec-storage-default'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
@@ -10,10 +11,6 @@ import multer from 'multer'
 import { userAgent } from 'next/server'
 import { join, resolve } from 'path'
 import { Headers } from 'undici'
-import sanitizeFileName from 'sanitize-filename'
-import { generateUlid } from '@moodle/lib-id-gen'
-import { getSanitizedFileName } from '@moodle/sec-storage-default'
-import { DEFAULT_DOMAINS_HOME_DIR_NAME, getFsDirectories } from '@moodle/mod-storage/lib'
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
 
@@ -21,7 +18,7 @@ const MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL =
   process.env.MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL
 const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(
   process.cwd(),
-  process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? DEFAULT_DOMAINS_HOME_DIR_NAME,
+  process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? storage.MOODLE_DEFAULT_HOME_DIR,
 )
 
 const requestTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
@@ -30,8 +27,8 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     export interface Request {
-      moodlePrimary: moodle_domain['primary']
-      accessSession: access_session
+      moodlePrimary: MoodleDomain['primary']
+      primarySession: primarySession
       dirs: storage.fsDirectories
     }
   }
@@ -41,13 +38,13 @@ const app = express()
 const trnspClient = http_bind.client()
 console.log('!!! moodle-fs-file-server started !!!')
 app.use(cookieParser()).use(async (req, _res, next) => {
-  const accessSession = await getAccessSession(req)
-  const [ap] = create_access_proxy<moodle_domain>({
-    sendDomainMsg({ domain_msg }) {
+  const primarySession = await getPrimarySession(req)
+  const ap = lib.createMoodleDomainProxy({
+    ctrl({ domainMsg }) {
       return trnspClient(
         {
-          domain_msg,
-          access_session: accessSession,
+          ...domainMsg,
+          primarySession,
         },
         requestTarget,
       )
@@ -55,17 +52,12 @@ app.use(cookieParser()).use(async (req, _res, next) => {
   })
   const domainInfo = await ap.primary.env.domain.info()
 
-  //SHAREDLIB: `currentDomainDir` must be aligned as in default-configurator.ts !
-  const currentDomainDir = resolve(
-    MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR,
-    sanitizeFileName(domainInfo.name),
-  )
-
-  req.dirs = getFsDirectories({
-    currentDomainDir,
+  req.dirs = storage.getFsDirectories({
+    domainName: primarySession.domain,
+    homeDir: MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR,
   })
   console.log({ domainInfo, dirs: req.dirs })
-  req.accessSession = accessSession
+  req.primarySession = primarySession
   req.moodlePrimary = ap.primary
   next()
 })
@@ -73,21 +65,17 @@ app.use(cookieParser()).use(async (req, _res, next) => {
 const router = express
   .Router()
   .get(/\/\.temp\/\.*/, async (req, res, next) => {
-    // console.log({ 'get .temp': req.url })
     req.url = req.url.replace(/^\/\.temp\//, '')
     express.static(req.dirs.temp, {})(req, res, next)
   })
   .get(/\.*/, async (req, res) => {
-    // console.log({ 'get': req.url })
     // const [module, ...path] = req.url.split('/')
     // if (!module) {
     //   return res.status(404).send('NOT FOUND')
-    // }
 
-    // console.log({ get: { module, path } })
     // req.moodlePrimary[module as keyof moodle_domain['primary']].fileServerQuery.canServe({ path })
     // const [canServe] = await (req.moodlePrimary as _any)[module].fileServerQuery.canServe({ path })
-    // console.log({ canServe: { canServe, module, path } })
+
     // if (!canServe) {
     //   return res.status(401).send('UNAUTHORIZED')
     // }
@@ -97,11 +85,11 @@ const router = express
   })
   .post('/.temp/:type', async (req, res) => {
     await mkdir(req.dirs.temp, { recursive: true })
-    // console.log('req', inspect(req, { colors: true, depth: 2 }))
+
     if (req.params.type !== 'file' && req.params.type !== 'webImage') {
       res.status(404).end()
     }
-    const { userSession } = await req.moodlePrimary.iam.session.getCurrentUserSession()
+    const { userSession } = await req.moodlePrimary.iam.session.getUserSession()
     if (userSession.type !== 'authenticated') {
       return res.status(401).send('UNAUTHORIZED')
     }
@@ -132,7 +120,7 @@ const router = express
       }
       writeFile(`${req.file.path}.json`, JSON.stringify(temp_blob_meta), 'utf8')
       res.status(200).json({ tempId: req.file.filename })
-      // console.log(inspect(req.file, { colors: true, depth: 4 }))
+
       //req.file: {
       //   fieldname: 'file',
       //   originalname: 'jp.jpg',
@@ -160,7 +148,7 @@ app.listen(PORT, () => {
 // check DEV-NOTES.md for more info
 const AUTH_COOKIE = 'moodle-auth'
 
-async function getAccessSession(req: express.Request) {
+async function getPrimarySession(req: express.Request) {
   const { headers } = middlewareHeaders(req)
   const xHost = headers.get('x-host')
   // const xPort = headers.get('x-port')
@@ -171,10 +159,10 @@ async function getAccessSession(req: express.Request) {
   const xGeo = JSON.parse(headers.get('x-geo') ?? '{}')
   const ua = userAgent({ headers: headers })
   assert(xHost, 'x-host not found in headers')
-  const accessSession: access_session = {
-    type: 'user',
-    id: { type: 'primary-session', uid: await generateUlid() },
-    sessionToken: getAuthTokenCookie(req).sessionToken,
+  const userSession: primarySession = {
+    id: await generateUlid(),
+    domain: xHost,
+    token: getAuthTokenCookie(req).sessionToken,
     app: {
       name: 'filestoreHttp',
       version: '0.1',
@@ -190,7 +178,6 @@ async function getAccessSession(req: express.Request) {
         isBot: ua.isBot,
       },
     },
-    domain: xHost,
     platforms: {
       local: {
         type: 'nodeJs',
@@ -209,10 +196,9 @@ async function getAccessSession(req: express.Request) {
       },
     },
   }
-  return accessSession
+  return userSession
 }
 export function getAuthTokenCookie(req: express.Request) {
-  // console.log('cookies', inspect(req.cookies, { colors: true, depth: 2 }))
   const { success, data: token } = signed_token_schema.safeParse(req.cookies[AUTH_COOKIE])
 
   return { sessionToken: success ? token : null }
@@ -224,7 +210,7 @@ export function middlewareHeaders(request: express.Request) {
     .map(([k, v]) => [k, (v ?? null) && [v].flat().join(',')])
 
   const headers = new Headers(filteredHeaders)
-  // console.log(inspect(request, { colors: true, depth: 2 }))
+
   const urlHost = headers.get('X-Forwarded-Host') || request.hostname
   const urlPort = headers.get('X-Forwarded-Port') || `${PORT}`
   const urlPathname = request.path

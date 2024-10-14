@@ -1,9 +1,9 @@
-import { moodle_core_context } from '@moodle/domain'
+import { contextModuleAccess } from '@moodle/domain'
 import React from 'react'
 import * as main from '../'
 
 export type InactivityDeletionNotificationEmailProps = {
-  ctx: Pick<moodle_core_context, 'sys_call'>
+  modAccess: contextModuleAccess
   loginUrl: string
   receiverEmail: string
   userName: string
@@ -11,13 +11,13 @@ export type InactivityDeletionNotificationEmailProps = {
 }
 
 export async function notificationBeforeDeletionForInactivityEmail({
-  ctx,
+  modAccess,
   loginUrl,
   receiverEmail,
   userName,
   daysBeforeDeletion,
 }: InactivityDeletionNotificationEmailProps) {
-  const senderInfo = await main.getSenderInfo(ctx)
+  const senderInfo = await main.getSenderInfo({ modAccess })
   const title = `${userName} we are missing you at ${senderInfo.name}`
 
   const body = (

@@ -1,14 +1,14 @@
-import { moodle_secondary_adapter, moodle_secondary_factory } from '@moodle/domain'
+import { secondaryAdapter, secondaryBootstrap } from '@moodle/domain'
 import { send } from '../../lib'
 import { NodemailerSecEnv } from '../../types'
 
-export function iam_moodle_secondary_factory(env: NodemailerSecEnv): moodle_secondary_factory {
-  return (/* ctx */) => {
-    const moodle_secondary_adapter: moodle_secondary_adapter = {
-      secondary: {
+export function iam_secondary_factory(env: NodemailerSecEnv): secondaryBootstrap {
+  return bootstrapCtx => {
+    return secondaryCtx => {
+      const secondaryAdapter: secondaryAdapter = {
         iam: {
-          email: {
-            async sendNow({ reactBody: body, subject, to }) {
+          queue: {
+            async sendEmail({ reactBody: body, subject, to }) {
               send({
                 env,
                 body: { contentType: 'react', element: body },
@@ -19,8 +19,8 @@ export function iam_moodle_secondary_factory(env: NodemailerSecEnv): moodle_seco
             },
           },
         },
-      },
+      }
+      return secondaryAdapter
     }
-    return moodle_secondary_adapter
   }
 }

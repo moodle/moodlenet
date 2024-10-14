@@ -1,19 +1,19 @@
-import { moodle_core_context } from '@moodle/domain'
+import { contextModuleAccess } from '@moodle/domain'
 import React from 'react'
 import * as main from '..'
 
 export type SignupEmailConfirmationProps = {
-  ctx: Pick<moodle_core_context, 'sys_call'>
+  modAccess: contextModuleAccess
   activateAccountUrl: string
   receiverEmail: string
 }
 
 export async function signupEmailConfirmationEmail({
-  ctx,
+  modAccess,
   receiverEmail,
   activateAccountUrl,
 }: SignupEmailConfirmationProps) {
-  const senderInfo = await main.getSenderInfo(ctx)
+  const senderInfo = await main.getSenderInfo({ modAccess })
   const title = `Welcome to ${senderInfo.name} 🎉`
 
   const body = (

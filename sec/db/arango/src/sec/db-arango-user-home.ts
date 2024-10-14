@@ -1,23 +1,18 @@
-import { moodle_secondary_adapter, moodle_secondary_factory } from '@moodle/domain'
+import { secondaryAdapter, secondaryBootstrap } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
 import { db_struct } from '../db-structure'
-import { getModConfigs, updateDeepPartialModConfigs } from '../lib/modules'
 import { getUserHomeByUserId, updateUserHomeByUserId } from './db-arango-user-home-lib/lib'
 import {
   user_home_record2userHomeDocument,
   userHomeDocument2user_home_record,
 } from './db-arango-user-home-lib/mappings'
 
-export function user_home_moodle_secondary_factory({
-  db_struct,
-}: {
-  db_struct: db_struct
-}): moodle_secondary_factory {
-  return ctx => {
-    const moodle_secondary_adapter: moodle_secondary_adapter = {
-      secondary: {
+export function user_home_secondary_factory({ db_struct }: { db_struct: db_struct }): secondaryBootstrap {
+  return bootstrapCtx => {
+    return secondaryCtx => {
+      const secondaryAdapter: secondaryAdapter = {
         userHome: {
-          alignDb: {
+          sync: {
             async userExcerpt({ userExcerpt }) {
               const userHomeDoc = await updateUserHomeByUserId({
                 userId: userExcerpt.id,
@@ -25,13 +20,13 @@ export function user_home_moodle_secondary_factory({
                 pUserHome: { user: userExcerpt },
               })
               if (!userHomeDoc) {
-                return [false, { reason: 'notFound' }]
+                return [false, _void]
               }
               //NOTE: throw no event : userExcerpt is data from iamUser
-              return [true, { userHome: userHomeDocument2user_home_record(userHomeDoc) }]
+              return [true, _void]
             },
           },
-          db: {
+          query: {
             async getUserHome({ by }) {
               const userHomeDoc =
                 by.idOf === 'user_home'
@@ -44,6 +39,8 @@ export function user_home_moodle_secondary_factory({
               }
               return [true, { userHome: userHomeDocument2user_home_record(userHomeDoc) }]
             },
+          },
+          write: {
             async updatePartialProfileInfo({ partialProfileInfo, id }) {
               const updateResult = await db_struct.data.coll.userHome
                 .update({ _key: id }, { profileInfo: partialProfileInfo }, { returnNew: true })
@@ -61,8 +58,8 @@ export function user_home_moodle_secondary_factory({
             },
           },
         },
-      },
+      }
+      return secondaryAdapter
     }
-    return moodle_secondary_adapter
   }
 }

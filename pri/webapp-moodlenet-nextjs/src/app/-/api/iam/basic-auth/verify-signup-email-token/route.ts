@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
       status: 400,
     })
   }
-  const [done, session] = await await priAccess().iam.session.generateUserSession({
+  const [done, session] = await await priAccess().iam.session.generateUserSessionToken({
     userId: response.userId,
   })
   if (!done) {
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
       status: 400,
     })
   }
-  setAuthTokenCookie(session)
+  setAuthTokenCookie(session.userSessionToken)
   revalidatePath('/', 'layout')
   redirect('/')
 }

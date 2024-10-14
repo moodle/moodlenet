@@ -1,15 +1,13 @@
-import { moodle_secondary_adapter, moodle_secondary_factory } from '@moodle/domain'
+import { secondaryAdapter, secondaryBootstrap } from '@moodle/domain'
 import { db_struct } from '../db-structure'
 
-export function org_moodle_secondary_factory({
-  db_struct,
-}: {
-  db_struct: db_struct
-}): moodle_secondary_factory {
-  return ctx => {
-    const moodle_secondary_adapter: moodle_secondary_adapter = {
-      secondary: {},
+export function org_secondary_factory({ db_struct }: { db_struct: db_struct }): secondaryBootstrap {
+  return bootstrapCtx => {
+    return secondaryCtx => {
+      const secondaryAdapter: secondaryAdapter = {
+        org: {},
+      }
+      return secondaryAdapter
     }
-    return moodle_secondary_adapter
   }
 }

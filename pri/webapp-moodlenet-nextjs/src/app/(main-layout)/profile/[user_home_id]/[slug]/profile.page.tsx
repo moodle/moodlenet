@@ -9,7 +9,7 @@ export default async function ProfilePage({
 }: {
   params: params<'user_home_id' | 'slug'>
 }) {
-  const [foundUserHome, userHome] = await priAccess().userHome.read.userHome({
+  const [foundUserHome, userHome] = await priAccess().userHome.query.userHome({
     by: { idOf: 'user_home', user_home_id },
   })
   if (!foundUserHome) {

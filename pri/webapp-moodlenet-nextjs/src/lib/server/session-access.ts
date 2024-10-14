@@ -1,7 +1,7 @@
 import { http_bind } from '@moodle/bindings-node'
-import { moodle_domain } from '@moodle/domain'
-import { access_session, create_access_proxy } from '@moodle/lib-ddd'
-import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/mod-iam/lib'
+import { MoodleDomain, primarySession } from '@moodle/domain'
+import { lib } from '@moodle/domain'
+import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/core-iam/lib'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
 import { redirect, RedirectType } from 'next/navigation'
@@ -13,28 +13,26 @@ import { generateUlid } from '@moodle/lib-id-gen'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
 
-
 const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
-export function priAccess(): moodle_domain['primary'] {
+export function priAccess(): MoodleDomain['primary'] {
   return _domainAccess().primary
 }
 
-function _domainAccess(): moodle_domain {
+function _domainAccess(): MoodleDomain {
   //FIXME: _domainAccess() or priAccess() should be a singleton FOR THE CURRENT REQUEST
   // so that it doesn't create a new instance of transportClient every time
   // implying a new HTTPConnection on every priAccess()
   // a singleton could be created in the middleware and passed to the request object
   const trnspClient = http_bind.client()
 
-  const [moodle_domain] = create_access_proxy<moodle_domain>({
-    async sendDomainMsg({ domain_msg }) {
-      const accessSession = await getAccessSession()
+  const moodle_domain = lib.createMoodleDomainProxy({
+    async ctrl({ domainMsg }) {
+      const primarySession = await getPrimarySession()
       return trnspClient(
         {
-          domain_msg,
-          access_session: accessSession,
-          // core_mod_id: null,
+          ...domainMsg,
+          primarySession,
         },
         requestTarget,
       )
@@ -47,9 +45,9 @@ function _domainAccess(): moodle_domain {
   // however we can't set the cookie here :
   // [Error]: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
   //
-  // if (accessSession.sessionToken) {
+  // if (userSession.sessionToken) {
   //   const [valid, info] = iam.noValidationParseUserSessionToken(
-  //     accessSession.sessionToken,
+  //     userSession.sessionToken,
   //   )
   //   if (valid && !info.expired && info.expires.inSecs < 5 * 60) {
   //     !! VALIDATE IT BEFORE REFRESHING !!
@@ -68,7 +66,7 @@ function _domainAccess(): moodle_domain {
 }
 
 export async function getUserSession() {
-  const { userSession } = await priAccess().iam.session.getCurrentUserSession()
+  const { userSession } = await priAccess().iam.session.getUserSession()
   return userSession
 }
 
@@ -94,7 +92,7 @@ export async function getAdminUserSessionOrRedirect(path = '/') {
   return authenticatedUserSession
 }
 
-async function getAccessSession() {
+async function getPrimarySession() {
   //FIXME: why is it here inside ?
   i18next.init({
     // ns: ['common', 'moduleA'],
@@ -112,10 +110,9 @@ async function getAccessSession() {
   const xGeo = JSON.parse(_headers.get('x-geo') ?? '{}')
   const ua = userAgent({ headers: _headers })
   assert(xHost, 'x-host not found in headers')
-  const accessSession: access_session = {
-    type: 'user',
-    id: { type: 'primary-session', uid: await generateUlid() },
-    sessionToken: getAuthTokenCookie().sessionToken,
+  const primarySession: primarySession = {
+    id: await generateUlid(),
+    token: getAuthTokenCookie().sessionToken,
     app: {
       name: 'moodlenetWebapp',
       version: '0.1',
@@ -150,5 +147,5 @@ async function getAccessSession() {
       },
     },
   }
-  return accessSession
+  return primarySession
 }

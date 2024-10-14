@@ -1,19 +1,19 @@
-import { moodle_core_context } from '@moodle/domain'
+import { contextModuleAccess } from '@moodle/domain'
 import React from 'react'
 import * as main from '..'
 
 export type DeleteAccountEmailProps = {
-  ctx: Pick<moodle_core_context, 'sys_call'>
+  modAccess: contextModuleAccess
   deleteAccountUrl: string
   receiverEmail: string
 }
 
 export async function selfDeletionConfirmEmail({
-  ctx,
+  modAccess,
   deleteAccountUrl,
   receiverEmail,
 }: DeleteAccountEmailProps) {
-  const senderInfo = await main.getSenderInfo(ctx)
+  const senderInfo = await main.getSenderInfo({ modAccess })
   const title = `Confirm account deletion 🥀`
 
   const body = (

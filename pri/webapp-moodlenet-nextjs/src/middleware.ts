@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   // url.host = urlHost
   // url.protocol = urlProto
   // url.port = urlPort
-  // console.log({ url })
+
   const xUrl = request.nextUrl.toString()
   const xClientIp = request.headers.get('X-Forwarded-For') || request.ip || 'unknown'
   const xMode = request.mode

@@ -1,9 +1,0 @@
-{
-  "name": "mod-net-webapp-nextjs",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "mod/net-webapp-nextjs/src",
-  "projectType": "library",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project mod-net-webapp-nextjs --web",
-  "targets": {}
-}

@@ -11,6 +11,13 @@ import {
   ZodString,
 } from 'zod'
 import { _any, map } from './map'
+export type path = string[]
+
+export type intersection<types extends _any[]> = pretty<
+  types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
+>
+
+export type pretty<t> = { [k in keyof t]: t[k] } // utility type to convert make more readable maps
 
 export type _maybe<t> = t | _nullish
 export type _nullish = undefined | null
@@ -31,7 +38,6 @@ export type branded<type, b extends symbol /*  | string */> = BRAND<b> & type ex
     : { [_ in keyof _type]: _type[_] }
   : never
 
-export type pretty<t> = { [k in keyof t]: t[k] } // utility type to convert make more readable maps
 
 // redacted logging
 export const __redacted__key = '__redacted__'
@@ -189,3 +195,14 @@ export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
 
 export type flags<names extends string> = Record<names, boolean>
 
+
+
+// //CREDIT: [@grahamaj](https://stackoverflow.com/users/5666581/grahamaj) [so](https://stackoverflow.com/a/71131506/1455910)
+// type Explode<T> = keyof T extends infer K
+//   ? K extends unknown
+//     ? { [I in keyof T]: I extends K ? T[I] : never }
+//     : never
+//   : never
+// type AtMostOne<T> = Explode<Partial<T>>
+// type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> & U[keyof U]
+// type ExactlyOne<T> = AtMostOne<T> & AtLeastOne<T>

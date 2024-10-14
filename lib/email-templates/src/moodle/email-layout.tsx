@@ -1,5 +1,10 @@
 'use client'
-import { moodle_core_context } from '@moodle/domain'
+import {
+  primaryContext,
+  moodleModuleName,
+  moodlePrimary,
+  contextModuleAccess,
+} from '@moodle/domain'
 import { getFileUrl, url_string } from '@moodle/lib-types'
 import { Button } from '@react-email/button'
 import { Container } from '@react-email/container'
@@ -99,11 +104,13 @@ export function layoutEmail(emailProps: EmailLayoutProps) {
 }
 
 export async function getSenderInfo({
-  sys_call: sys_call,
-}: Pick<moodle_core_context, 'sys_call'>): Promise<SenderInfo> {
+  modAccess,
+}: {
+  modAccess: contextModuleAccess
+}): Promise<SenderInfo> {
   const {
     configs: { info: orgInfo },
-  } = await sys_call.secondary.db.modConfigs.get({ mod: 'org' })
+  } = await modAccess.env.query.modConfigs({ mod: 'org' })
   const senderInfo: SenderInfo = {
     copyright: orgInfo.copyright,
     logo: await getFileUrl(orgInfo.logo),

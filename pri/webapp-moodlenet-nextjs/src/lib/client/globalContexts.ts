@@ -1,5 +1,4 @@
-import { AllSchemaConfigs, makeAllPrimarySchemas } from '@moodle/domain'
-import { env } from '@moodle/domain'
+import { AllSchemaConfigs, env, lib } from '@moodle/domain'
 import { createContext, useContext } from 'react'
 
 export const GlobalCtx = createContext<GlobalCtx>(null as any)
@@ -20,6 +19,6 @@ export function useDeployments() {
 
 export function useAllPrimarySchemas() {
   const allSchemaConfigs = useAllSchemaConfigs()
-  const primarySchemas = makeAllPrimarySchemas(allSchemaConfigs)
+  const primarySchemas = lib.makeAllPrimarySchemas(allSchemaConfigs)
   return primarySchemas
 }

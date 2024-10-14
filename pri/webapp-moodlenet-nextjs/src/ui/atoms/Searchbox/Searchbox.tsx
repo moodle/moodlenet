@@ -42,7 +42,7 @@ export default function Searchbox({
         onKeyDown={
           !inputProps.disabled
             ? e => {
-                // console.log(inputRef.current, e)
+
                 triggerOnEnter && isEnterKeyEv(e) && triggerSearch()
                 inputProps.onKeyDown?.(e)
               }

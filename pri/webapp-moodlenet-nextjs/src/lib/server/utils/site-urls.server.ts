@@ -1,4 +1,4 @@
-import { getDeploymentInfoUrl } from '@moodle/lib-ddd'
+import { lib } from '@moodle/domain'
 import { url_string } from '@moodle/lib-types'
 import assert from 'assert'
 import { headers } from 'next/headers'
@@ -8,7 +8,7 @@ import { priAccess } from '../session-access'
 export async function srvSiteUrls() {
   const { moodlenetWebapp } = await priAccess().env.application.deployments()
   assert(moodlenetWebapp, new Error('No deployment info for moodlenet !'))
-  const baseUrl = getDeploymentInfoUrl(moodlenetWebapp)
+  const baseUrl = lib.getDeploymentInfoUrl(moodlenetWebapp)
 
   return {
     baseUrl,
@@ -21,7 +21,7 @@ export async function getIfIsUrlOnThisSite(any_obj: unknown) {
   const urlString = String(any_obj)
   const baseUrl = (await srvSiteUrls()).baseUrl
   const isIt = urlString.startsWith(baseUrl)
-  // console.log('getIfIsUrlOnThisSite', { any_obj, urlString, isIt, baseUrl })
+
   return isIt ? urlString : null
 }
 

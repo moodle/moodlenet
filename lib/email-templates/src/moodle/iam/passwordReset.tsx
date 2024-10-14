@@ -1,19 +1,19 @@
-import { moodle_core_context } from '@moodle/domain'
+import { contextModuleAccess } from '@moodle/domain'
 import React from 'react'
 import * as main from '..'
 
 export type ResetPasswordContentEmailProps = {
   receiverEmail: string
   resetPasswordUrl: string
-  ctx: Pick<moodle_core_context, 'sys_call'>
+  modAccess: contextModuleAccess
 }
 
 export async function resetPasswordEmail({
   resetPasswordUrl,
   receiverEmail,
-  ctx,
+  modAccess,
 }: ResetPasswordContentEmailProps) {
-  const senderInfo = await main.getSenderInfo(ctx)
+  const senderInfo = await main.getSenderInfo({ modAccess })
   const title = `Ready to change your password 🔑`
   const body = (
     <React.Fragment>

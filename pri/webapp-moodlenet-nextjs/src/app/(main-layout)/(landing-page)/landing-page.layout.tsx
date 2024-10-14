@@ -13,7 +13,7 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
   ])
 
   const { head, content } = slotsMap(props, layouts.pages.landing.slots)
-  const { userSession } = await priAccess().iam.session.getCurrentUserSession()
+  const { userSession } = await priAccess().iam.session.getUserSession()
 
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,

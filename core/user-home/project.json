@@ -1,0 +1,9 @@
+{
+  "name": "core-user-home",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "core/user-home/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project core-user-home --web",
+  "targets": {}
+}

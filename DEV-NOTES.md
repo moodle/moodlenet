@@ -7,14 +7,14 @@
 [ ] admin user roles interface
 FIXME:[ ] define types as z.infer when zod schema defined (e.g. all def in types.data)
 [ ] file service
-[ ] a "system" access_session for init/migration ? (e.g. create the first admin user)
+[ ] a "system" userSession for init/migration ? (e.g. create the first admin user)
 [ ] add all "config changed" events
 FIXME:[ ]  http primaries: 
   [ ] extract lib (cookies, access-session ... ) for all http primaries 
   [ ] use cookies "secret" 
 ### Done
 
-[x] for other mods configs use other_mod.pri.getConfigs() with systemPrimary (need another contextproxy [sys_call])
+[x] for other mods configs use other_mod.pri.getConfigs() with systemPrimary (need another contextproxy [secondary])
 
 ### Backlog
 

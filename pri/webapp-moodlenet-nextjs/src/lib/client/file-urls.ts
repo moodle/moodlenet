@@ -1,4 +1,4 @@
-import { prefixed_domain_file_paths } from '@moodle/mod-storage/lib'
+import { prefixed_domain_file_paths } from '@moodle/core-storage/lib'
 import { useDeployments } from './globalContexts'
 
 export function useDomainFileUrls() {

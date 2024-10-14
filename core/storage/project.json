@@ -1,0 +1,9 @@
+{
+  "name": "core-storage",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "core/storage/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project core-storage --web",
+  "targets": {}
+}

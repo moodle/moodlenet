@@ -1,14 +1,17 @@
-import { moodle_core_context } from '@moodle/domain'
+import { contextModuleAccess } from '@moodle/domain'
 import React from 'react'
 import * as main from '..'
 
 export type PasswordChangedEmailProps = {
-  ctx: Pick<moodle_core_context, 'sys_call'>
+  modAccess: contextModuleAccess
   receiverEmail: string
 }
 
-export async function passwordChangedEmail({ receiverEmail, ctx }: PasswordChangedEmailProps) {
-  const senderInfo = await main.getSenderInfo(ctx)
+export async function passwordChangedEmail({
+  receiverEmail,
+  modAccess,
+}: PasswordChangedEmailProps) {
+  const senderInfo = await main.getSenderInfo({ modAccess })
   const title = `Password changed 🔒💫`
   const body = (
     <React.Fragment>

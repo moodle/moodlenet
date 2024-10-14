@@ -92,7 +92,7 @@ export async function sign<payload>({
   }
 
   const [expireTimeSecs, expireDateStr] = expirations(expiresIn)
-  // console.log({ expireTimeSecs, expireDateStr })
+
   const [notBeforeTimeSecs, notBeforeDateStr] = notBefore
     ? expirations(notBefore)
     : ([null, null, null] as const)

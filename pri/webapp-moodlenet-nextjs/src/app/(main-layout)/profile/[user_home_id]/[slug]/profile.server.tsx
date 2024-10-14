@@ -9,7 +9,7 @@ import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
 import { priAccess } from '../../../../../lib/server/session-access'
 
 export async function getUserHomeSchemas() {
-  const { configs } = await priAccess().userHome.read.configs()
+  const { configs } = await priAccess().userHome.query.configs()
   return userHome.getProfileInfoPrimarySchemas(configs.profileInfoPrimaryMsgSchemaConfigs)
 }
 export async function getProfileInfoSchema() {
@@ -40,7 +40,7 @@ export const updateProfileInfo = defaultSafeActionClient
   })
 
 async function fetchCanEditProfile({ user_home_id }: { user_home_id: userHome.user_home_id }) {
-  const [readUserHomeDone, userHomeRes] = await priAccess().userHome.read.userHome({
+  const [readUserHomeDone, userHomeRes] = await priAccess().userHome.query.userHome({
     by: { idOf: 'user_home', user_home_id },
   })
   return readUserHomeDone && userHomeRes.accessObject.permissions.editProfile
