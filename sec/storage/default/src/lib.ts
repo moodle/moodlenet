@@ -1,7 +1,7 @@
 import { secondaryContext, storage } from '@moodle/domain'
-import { _void, ok_ko, path } from '@moodle/lib-types'
+import { ok_ko, path } from '@moodle/lib-types'
 import { mkdir, readFile, rename, stat, writeFile } from 'fs/promises'
-import { dirname, join, sep } from 'path'
+import { join, sep } from 'path'
 import { rimraf } from 'rimraf'
 import sharp from 'sharp'
 type temp_file_paths = {
@@ -108,8 +108,10 @@ export async function use_temp_file({
   if (!temp_file) {
     return [false, { reason: 'tempNotFound' }]
   }
-  await mkdir(dirname(destPath), { recursive: true })
-  const mvError = await rename(temp_file.temp_paths.file, destPath).then(
+  await rimraf(destPath, { maxRetries: 2 }).catch(() => null)
+  await mkdir(destPath, { recursive: true })
+
+  const mvError = await rename(temp_file.temp_paths.file, join(destPath, temp_file.meta.name)).then(
     () => false as const,
     e => String(e),
   )

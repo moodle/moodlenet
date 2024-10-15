@@ -81,7 +81,7 @@ const router = express
     // }
     // USA ALIAS NAME METTI UPLOADED_BLOB_META NEL DB NDO SERVE CO I WATCH !
 
-    req.url = dirname(req.url)
+    // req.url = dirname(req.url)
     express.static(join(req.moodleDirs.fsStorage), {})(req, res, () => {
       res.status(404).send('NOT FOUND')
     })
