@@ -1,4 +1,4 @@
-import { _maybe, branded, flags } from '@moodle/lib-types'
+import { _maybe, _nullish, assetRecord, branded, flags } from '@moodle/lib-types'
 import { user_id, user_role } from '../../iam'
 import { UserHomePrimaryMsgSchemaConfigs } from './primary-schemas'
 import { ProfileInfo } from './profile-info'
@@ -34,5 +34,6 @@ export type user_home_access_object = {
   permissions: user_home_permissions
   flags: flags<'followed'>
   user: _maybe<user_excerpt>
+  avatar: _nullish | assetRecord
+  background: _nullish | assetRecord
 }
-

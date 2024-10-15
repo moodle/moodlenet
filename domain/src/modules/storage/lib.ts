@@ -1,9 +1,43 @@
-import { createPathProxy, path, url_path_string_schema } from '@moodle/lib-types'
+import { asset, assetRecord, createPathProxy, url_path_string_schema } from '@moodle/lib-types'
 import { join, resolve } from 'path'
 import sanitizeFilename from 'sanitize-filename'
+import { moodlePrimary } from '../../'
 import { filesystem, fs, fsDirectories, fsUrlPathGetter } from './types'
 
-export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
+export function provide_assetRecord2asset(moodlePrimary: moodlePrimary, assetRecord: assetRecord) {
+  const prefixed_domain_file_paths = createPathProxy<fs<filesystem, () => Promise<asset>>>({
+    async apply({ path }) {
+      if (assetRecord.type === 'external') {
+        return {
+          type: 'external',
+          url: assetRecord.url,
+          credits: assetRecord.credits,
+        }
+      } else if (assetRecord.type === 'uploaded') {
+        const { filestoreHttp } = await moodlePrimary.env.application.deployments()
+        const url = url_path_string_schema.parse(
+          [filestoreHttp.href, ...path, assetRecord.uploadMeta.name].join('/'),
+        )
+        return {
+          type: 'uploaded',
+          url,
+        }
+      }
+      throw new Error(`Invalid assetRecord type ${JSON.stringify(assetRecord)}`)
+    },
+  })
+  return prefixed_domain_file_paths
+}
+export function file_server_domain_file_url({ primary }: { primary: moodlePrimary }) {
+  const prefixed_domain_file_paths = createPathProxy<fs<filesystem, fsUrlPathGetter>>({
+    async apply({ path }) {
+      const { filestoreHttp } = await primary.env.application.deployments()
+      const _path = [filestoreHttp.href, ...path].join('/')
+      return url_path_string_schema.parse(_path)
+    },
+  })
+  return prefixed_domain_file_paths
+}
 // export function newFsFileRelativePath(filename: string, date = new Date()) {
 //   return [
 //     String(date.getFullYear()),
@@ -49,6 +83,7 @@ export function getRndPrefixedSanitizedFileName(originalFilename: string, prefix
 //   const sanitizedName = getSanitizedFileName(originalFilename)
 //   return newFsFileRelativePath(sanitizedName, date)
 // }
+export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
 export function getFsDirectories({
   domainName,
   homeDir,
@@ -64,15 +99,4 @@ export function getFsDirectories({
     temp,
     fsStorage,
   }
-}
-
-export function prefixed_domain_file_paths(prefix: path | string) {
-  const _prefix = [prefix].flat()
-  const prefixed_domain_file_paths = createPathProxy<fs<filesystem, fsUrlPathGetter>>({
-    apply({ path }) {
-      const _path = [..._prefix, ...path].join('/')
-      return url_path_string_schema.parse(_path)
-    },
-  })
-  return prefixed_domain_file_paths
 }

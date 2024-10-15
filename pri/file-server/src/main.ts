@@ -2,14 +2,14 @@ import { http_bind } from '@moodle/bindings-node'
 import { MoodleDomain, primarySession, lib, storage } from '@moodle/domain'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
-import { getSanitizedFileName } from '@moodle/sec-storage-default'
+import { generateFileHashes } from '@moodle/core-storage/lib'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import { mkdir, writeFile } from 'fs/promises'
 import multer from 'multer'
 import { userAgent } from 'next/server'
-import { join, resolve } from 'path'
+import { dirname, join, resolve } from 'path'
 import { Headers } from 'undici'
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
@@ -28,8 +28,8 @@ declare global {
   namespace Express {
     export interface Request {
       moodlePrimary: MoodleDomain['primary']
-      primarySession: primarySession
-      dirs: storage.fsDirectories
+      moodlePrimarySession: primarySession
+      moodleDirs: storage.fsDirectories
     }
   }
 }
@@ -50,14 +50,14 @@ app.use(cookieParser()).use(async (req, _res, next) => {
       )
     },
   })
-  const domainInfo = await ap.primary.env.domain.info()
 
-  req.dirs = storage.getFsDirectories({
+  req.moodleDirs = storage.getFsDirectories({
     domainName: primarySession.domain,
     homeDir: MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR,
   })
-  console.log({ domainInfo, dirs: req.dirs })
-  req.primarySession = primarySession
+  // const domainInfo = await ap.primary.env.domain.info()
+  // console.log({ domainInfo, dirs: req.dirs })
+  req.moodlePrimarySession = primarySession
   req.moodlePrimary = ap.primary
   next()
 })
@@ -66,7 +66,7 @@ const router = express
   .Router()
   .get(/\/\.temp\/\.*/, async (req, res, next) => {
     req.url = req.url.replace(/^\/\.temp\//, '')
-    express.static(req.dirs.temp, {})(req, res, next)
+    express.static(req.moodleDirs.temp, {})(req, res, next)
   })
   .get(/\.*/, async (req, res) => {
     // const [module, ...path] = req.url.split('/')
@@ -79,12 +79,15 @@ const router = express
     // if (!canServe) {
     //   return res.status(401).send('UNAUTHORIZED')
     // }
-    express.static(join(req.dirs.fsStorage), {})(req, res, () => {
+    // USA ALIAS NAME METTI UPLOADED_BLOB_META NEL DB NDO SERVE CO I WATCH !
+
+    req.url = dirname(req.url)
+    express.static(join(req.moodleDirs.fsStorage), {})(req, res, () => {
       res.status(404).send('NOT FOUND')
     })
   })
   .post('/.temp/:type', async (req, res) => {
-    await mkdir(req.dirs.temp, { recursive: true })
+    await mkdir(req.moodleDirs.temp, { recursive: true })
 
     if (req.params.type !== 'file' && req.params.type !== 'webImage') {
       res.status(404).end()
@@ -102,7 +105,7 @@ const router = express
       },
     } //get from req.moodlePrimary
 
-    multer({ dest: req.dirs.temp, ...multerOptions }).single('file')(req, res, () => {
+    multer({ dest: req.moodleDirs.temp, ...multerOptions }).single('file')(req, res, async () => {
       if (!req.file) {
         return res.status(500).send('upload failed')
       }
@@ -110,15 +113,16 @@ const router = express
         return res.status(500).send(`invalid mimetype ${req.file.mimetype}`)
       }
 
-      const temp_blob_meta: storage.temp_blob_meta = {
-        userSession,
-        originalFilename: req.file.originalname,
+      const uploaded_blob_meta: storage.uploaded_blob_meta = {
+        uploadedBy: { primarySessionId: req.moodlePrimarySession.id, userId: userSession.user.id },
+        uploaded: date_time_string('now'),
+        name: storage.getSanitizedFileName(req.file.originalname),
+        hash: await generateFileHashes(req.file.path),
         mimetype: req.file.mimetype,
         size: req.file.size,
-        created: date_time_string('now'),
-        name: getSanitizedFileName(req.file.filename),
+        originalFilename: req.file.originalname,
       }
-      writeFile(`${req.file.path}.json`, JSON.stringify(temp_blob_meta), 'utf8')
+      writeFile(`${req.file.path}.json`, JSON.stringify(uploaded_blob_meta), 'utf8')
       res.status(200).json({ tempId: req.file.filename })
 
       //req.file: {

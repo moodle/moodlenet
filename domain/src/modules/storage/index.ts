@@ -1,6 +1,6 @@
 import type { ok_ko, path } from '@moodle/lib-types'
 import { user_home_id } from '../userHome'
-import { temp_blob_meta, uploadMaxSizeConfigs } from './types/fs'
+import { uploaded_blob_meta, uploadMaxSizeConfigs } from './types/fs'
 export * from './lib'
 export * from './types'
 
@@ -23,7 +23,7 @@ export default interface StorageDomain {
       query: {
         tempMeta(_: {
           tempId: string
-        }): Promise<ok_ko<{ meta: temp_blob_meta }, { notFound: unknown }>>
+        }): Promise<ok_ko<{ meta: uploaded_blob_meta }, { notFound: unknown }>>
       }
       write: {
         //REVIEW - should this be in service? for simple use for every module e.g. useImageInProfile() ?

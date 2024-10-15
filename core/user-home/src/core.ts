@@ -1,7 +1,7 @@
 import { assert_authorizeAuthenticatedUserSession } from '@moodle/core-iam/lib'
 import { assertWithErrorXxx, coreBootstrap, userHome } from '@moodle/domain'
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { _unchecked_brand, _void } from '@moodle/lib-types'
+import { _unchecked_brand, _void, assetRecord } from '@moodle/lib-types'
 import { accessUserHome } from './lib'
 
 export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
@@ -84,7 +84,7 @@ export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
                 if (!done) {
                   return [false, result]
                 }
-                return [true, _void]
+                return [true, result]
               },
             },
           }
@@ -92,6 +92,28 @@ export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
         watch(watchCtx) {
           return {
             secondary: {
+              userHome: {
+                write: {
+                  async useImageInProfile([[done, fileInfo], { id, as }]) {
+                    if (!done) {
+                      return
+                    }
+                    const assetRecord: assetRecord = {
+                      type: 'uploaded',
+                      uploadMeta: fileInfo.blobMeta,
+                    }
+                    await coreCtx.write.updatePartialProfileInfo({
+                      id,
+                      partialProfileInfo:
+                        as === 'avatar'
+                          ? { avatar: assetRecord }
+                          : as === 'background'
+                            ? { background: assetRecord }
+                            : {},
+                    })
+                  },
+                },
+              },
               iam: {
                 write: {
                   //REVIEW - this iam should emit an event and catch it here  in userhome
@@ -113,6 +135,8 @@ export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
                           aboutMe: '',
                           location: '',
                           siteUrl: null,
+                          avatar: null,
+                          background: null,
                         },
                       }),
                     })

@@ -1,5 +1,5 @@
 import { http_bind } from '@moodle/bindings-node'
-import { MoodleDomain, primarySession } from '@moodle/domain'
+import { MoodleDomain, primarySession, storage } from '@moodle/domain'
 import { lib } from '@moodle/domain'
 import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/core-iam/lib'
 import i18next from 'i18next'
@@ -10,10 +10,15 @@ import assert from 'node:assert'
 import { sitepaths } from '../common/utils/sitepaths'
 import { getAuthTokenCookie } from './auth'
 import { generateUlid } from '@moodle/lib-id-gen'
+import { assetRecord } from '@moodle/lib-types'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
 
 const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
+
+export function assetRecord2asset(assetRecord: assetRecord) {
+  return storage.provide_assetRecord2asset(priAccess(), assetRecord)
+}
 
 export function priAccess(): MoodleDomain['primary'] {
   return _domainAccess().primary

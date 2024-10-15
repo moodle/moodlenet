@@ -1,26 +1,33 @@
 import { date_time_string, map, mimetype, ok_ko, path, url_path_string } from '@moodle/lib-types'
-import { AuthenticatedUserSession } from '../../iam'
+import { user_id } from '../../iam'
 import { profileImage } from '../../userHome'
 
 export * from './primary-schemas'
 
-export type blob_meta = {
-  size: number
-  originalFilename: string
-  created: date_time_string
-  mimetype: mimetype
-  originalSize?: number
-  name: string
+export type fileHashes = {
+  sha256: string
+  // ssdeep: string
 }
 
-export type temp_blob_meta = blob_meta & {
-  userSession: AuthenticatedUserSession
+export type uploaded_blob_meta = {
+  name: string
+  size: number
+  mimetype: mimetype
+  uploaded: date_time_string
+  hash: fileHashes
+  uploadedBy: {
+    userId: user_id
+    primarySessionId: string
+  }
+  originalFilename: string
+  originalSize?: number
+  originalHash?: number
 }
 
 export type dir<_dir> = {
   [key in keyof _dir]: _dir[key] extends file ? file : dir<_dir[key]>
 }
-export type file = () => path
+export type file = (alias: string) => path
 
 export type webImageSize = 'small' | 'medium' | 'large'
 export type webImageResizesConfigs = {
@@ -41,7 +48,7 @@ export interface Configs {
 }
 
 export type useTempFileResult = ok_ko<
-  void,
+  { blobMeta: uploaded_blob_meta },
   {
     tempNotFound: unknown
     move: {
@@ -51,7 +58,7 @@ export type useTempFileResult = ok_ko<
 >
 
 export type useTempFileAsWebImageResult = ok_ko<
-  void,
+  { blobMeta: uploaded_blob_meta },
   {
     tempNotFound: unknown
     move: {

@@ -1,14 +1,13 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { _nullish, flags, url_string } from '@moodle/lib-types'
+import { _nullish, asset, flags, url_string } from '@moodle/lib-types'
 import Edit from '@mui/icons-material/Edit'
 import Flag from '@mui/icons-material/Flag'
 import Save from '@mui/icons-material/Save'
 import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useCallback, useReducer, useRef } from 'react'
-import { useDomainFileUrls } from '../../../../../../lib/client/file-urls'
 import { useAllPrimarySchemas } from '../../../../../../lib/client/globalContexts'
 import { useFileUploader } from '../../../../../../lib/client/useFileUploader'
 import { ApprovalButton } from '../../../../../../ui/atoms/ApproveButton/ApproveButton'
@@ -22,6 +21,7 @@ import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
 import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
 import { adoptProfileImage, updateProfileInfo } from '../profile.server'
 import './MainProfileCard.scss'
+import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.png'
 
 export interface MainProfileCardDeps {
   userProfile: {
@@ -32,13 +32,15 @@ export interface MainProfileCardDeps {
       location: string
       siteUrl: _nullish | url_string
     }
+    avatar: asset | _nullish // TODO: REMOVE this mullish, I want default avatar coming from server anyway
+    background: asset | _nullish // TODO: REMOVE this mullish, I want default avatar coming from server anyway
     permissions: flags<'follow' | 'editRoles' | 'sendMessage' | 'report' | 'canEdit'>
     flags: flags<'followed' | 'isPublisher'>
   }
 }
 
 export function MainProfileCard({
-  userProfile: { permissions, profileInfo, flags, id },
+  userProfile: { permissions, profileInfo, flags, id, avatar },
 }: MainProfileCardDeps) {
   const schemas = useAllPrimarySchemas()
   const [isEditing, toggleIsEditing] = useReducer(
@@ -57,16 +59,6 @@ export function MainProfileCard({
     },
   })
 
-  //FIXME: image urls must come from server !
-  const domainFileUrls = useDomainFileUrls()
-  // const { handleSubmitWithAction: uploadAvatar } = useHookFormAction(
-  //   uploadAvatarAction,
-  //   zodResolver(
-  //     zfd.formData({
-  //       avatar: zfd.file(),
-  //     }),
-  //   ),
-  // )
   const submitFormBtnRef = useRef<HTMLButtonElement | null>(null)
 
   const [
@@ -76,8 +68,7 @@ export function MainProfileCard({
     displaySrcAvatar,
     // dirtyAvatar,
   ] = useFileUploader({
-    //FIXME: image urls must come from server !
-    currentSrc: domainFileUrls.userHome[id]!.profile.avatar(), //defaultAvatar.src /* profileInfo.avatar */,
+    currentSrc: avatar?.url ?? defaultAvatar.src,
     async fileUploadedAction({ tempId }) {
       const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
       if (!saveResult?.data) {

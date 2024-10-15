@@ -1,4 +1,4 @@
-import { priAccess } from '../../../../../lib/server/session-access'
+import { assetRecord2asset, priAccess } from '../../../../../lib/server/session-access'
 import { params } from '../../../../../lib/server/types'
 import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'
 import { MainProfileCardDeps } from './components/MainProfileCard'
@@ -36,6 +36,17 @@ export default async function ProfilePage({
         location: userHome.accessObject.profileInfo.location,
         siteUrl: userHome.accessObject.profileInfo.siteUrl,
       },
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      avatar:
+        userHome.accessObject.avatar &&
+        (await assetRecord2asset(userHome.accessObject.avatar).userHome[
+          user_home_id
+        ]!.profile.avatar()),
+      background:
+        userHome.accessObject.background &&
+        (await assetRecord2asset(userHome.accessObject.background).userHome[
+          user_home_id
+        ]!.profile.background()),
     },
   }
 

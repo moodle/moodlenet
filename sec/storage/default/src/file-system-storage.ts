@@ -5,12 +5,14 @@ import { join } from 'path'
 import { rimraf } from 'rimraf'
 import * as lib from './lib'
 import { StorageDefaultSecEnv } from './types'
+import { prefixed_domain_file_fs_paths } from '@moodle/core-storage/lib'
+
 export function get_storage_default_secondary_factory({
   homeDir,
 }: StorageDefaultSecEnv): secondaryBootstrap {
   return ({ log, domain }) => {
     const fsDirs = storage.getFsDirectories({ domainName: domain, homeDir })
-    const fs_file_paths = storage.prefixed_domain_file_paths(fsDirs.fsStorage)
+    const fs_file_paths = prefixed_domain_file_fs_paths(fsDirs.fsStorage)
     return secondaryContext => {
       const secondaryAdapter: secondaryAdapter = {
         userHome: {
@@ -42,7 +44,7 @@ export function get_storage_default_secondary_factory({
             async tempMeta({ tempId }) {
               const { meta: temp_file_meta_path } = lib.get_temp_file_paths({ tempId, fsDirs })
 
-              const meta: storage.temp_blob_meta = await readFile(temp_file_meta_path, 'utf8')
+              const meta: storage.uploaded_blob_meta = await readFile(temp_file_meta_path, 'utf8')
                 .then(JSON.parse)
                 .catch(null)
 
@@ -95,7 +97,7 @@ export function get_storage_default_secondary_factory({
           // async useTempFile({ destPath, tempId }) {
           //   const { temp_file_meta_path } = get_temp_file_paths({ tempId })
 
-          //   const meta: temp_blob_meta = await readFile(temp_file_meta_path, 'utf8')
+          //   const meta: uploaded_blob_meta = await readFile(temp_file_meta_path, 'utf8')
           //     .then(JSON.parse)
           //     .catch(null)
           //   if (!meta) {

@@ -52,7 +52,7 @@ export async function ensure_temp_file({
 }) {
   const temp_paths = get_temp_file_paths({ tempId, fsDirs })
 
-  const meta: storage.temp_blob_meta = await readFile(temp_paths.meta, 'utf8')
+  const meta: storage.uploaded_blob_meta = await readFile(temp_paths.meta, 'utf8')
     .then(JSON.parse)
     .catch(() => null)
   if (!meta) {
@@ -119,7 +119,7 @@ export async function use_temp_file({
     return [false, { reason: 'move', error: mvError }]
   }
 
-  return [true, _void]
+  return [true, { blobMeta: temp_file.meta }]
 }
 
 export async function resizeTempImage({
@@ -158,7 +158,7 @@ export async function resizeTempImage({
       withoutEnlargement: true,
     })
     .toFile(resizedTempFilePaths.file)
-  const resized_temp_meta: storage.temp_blob_meta = {
+  const resized_temp_meta: storage.uploaded_blob_meta = {
     ...original_temp_file.meta,
     size: resizedInfo.size,
     originalSize: original_temp_file.meta.size,

@@ -24,10 +24,12 @@ export async function accessUserHome({
   if (!authenticated) {
     if (isPublisher) {
       return {
-        result: 'found',
         id,
+        result: 'found',
         access: 'allowed',
         profileInfo,
+        avatar: profileInfo.avatar,
+        background: profileInfo.background,
         permissions: _all_user_home_permissions_disallowed,
         user: null,
         flags: { followed: true },
@@ -40,10 +42,12 @@ export async function accessUserHome({
   const itsMe = authenticated.user.id === userHome.user.id
 
   return {
+    id,
     result: 'found',
     access: 'allowed',
-    id,
     profileInfo,
+    avatar: profileInfo.avatar,
+    background: profileInfo.background,
     permissions: {
       ...(itsMe
         ? {

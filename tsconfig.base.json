@@ -46,9 +46,9 @@
       "@moodle/sec-storage-default": ["sec/storage/default/src/index.ts"],
       // "@moodle/core-net-webapp-nextjs/lib": ["core/net-webapp-nextjs/src/lib/index.ts"],
       // "@moodle/core-net/lib": ["core/net/src/lib/index.ts"],
-      "@moodle/core-iam/lib": ["core/iam/src/lib/index.ts"] // must remove this .. all importable libs in domain !
       // "@moodle/core-org/lib": ["core/org/src/lib/index.ts"],
-      // "@moodle/core-storage/lib": ["core/storage/src/lib/index.ts"],
+      "@moodle/core-iam/lib": ["core/iam/src/lib/index.ts"], // must remove theses .. all importable libs in domain OR core, depending on pureness !
+      "@moodle/core-storage/lib": ["core/storage/src/lib/index.ts"]
       // "@moodle/core-user-home/lib": ["core/user-home/src/lib/index.ts"],
     }
   },

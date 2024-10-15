@@ -107,7 +107,10 @@ export type layerWatcher<layer extends 'secondary' | 'primary'> = {
     [channel in keyof MoodleDomain[layer][layer_mod]]: {
       [endpoint in keyof MoodleDomain[layer][layer_mod][channel]]: MoodleDomain[layer][layer_mod][channel][endpoint] extends infer endpoint_fn
         ? endpoint_fn extends any_function
-          ? (_: [Awaited<ReturnType<endpoint_fn>>, Parameters<endpoint_fn>[0]]) => Promise<unknown>
+          ? ([response, payload]: [
+              Awaited<ReturnType<endpoint_fn>>,
+              Parameters<endpoint_fn>[0],
+            ]) => Promise<unknown>
           : never
         : never
     }
