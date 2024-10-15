@@ -11,6 +11,14 @@ export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
       return {
         primary(priCtx) {
           return {
+            session: {
+              async moduleInfo() {
+                const {
+                  configs: { profileInfoPrimaryMsgSchemaConfigs },
+                } = await coreCtx.mod.env.query.modConfigs({ mod: 'userHome' })
+                return { schemaConfigs: profileInfoPrimaryMsgSchemaConfigs }
+              },
+            },
             write: {
               async editProfileInfo({ user_home_id, profileInfo }) {
                 const userHome = await accessUserHome({

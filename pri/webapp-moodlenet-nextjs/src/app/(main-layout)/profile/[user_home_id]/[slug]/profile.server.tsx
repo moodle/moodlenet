@@ -10,7 +10,7 @@ import { priAccess } from '../../../../../lib/server/session-access'
 
 export async function getUserHomeSchemas() {
   const { configs } = await priAccess().userHome.query.configs()
-  return userHome.getProfileInfoPrimarySchemas(configs.profileInfoPrimaryMsgSchemaConfigs)
+  return userHome.getUserHomePrimarySchemas(configs.profileInfoPrimaryMsgSchemaConfigs)
 }
 export async function getProfileInfoSchema() {
   return (await getUserHomeSchemas()).updateProfileInfoSchema

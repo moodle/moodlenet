@@ -5,7 +5,6 @@ import { inspect } from 'util'
 import { moodleModuleName } from '../moodle-domain'
 import {
   coreContext,
-  coreProvider,
   coreProviderObject,
   ctx_track,
   domainAccess,
@@ -62,19 +61,19 @@ export function provideMessageDispatcher({
       current_domainAccess,
     )
 
-    log('debug', 'messageDispatcher', {
-      domainAccess: {
-        endpoint: current_domainAccess.endpoint,
-        ctx_track: current_domainAccess.ctx_track,
-        from: current_domainAccess.from,
-        priSessId: current_domainAccess.primarySession?.id,
-      },
-      accessContext: {
-        currentLayer: currentDomainAccessLayer,
-        moduleName: currentDomainAccessModuleName,
-        id: currentDomainAccessContext.id,
-      },
-    })
+    // log('debug', 'messageDispatcher', {
+    //   domainAccess: {
+    //     endpoint: current_domainAccess.endpoint,
+    //     ctx_track: current_domainAccess.ctx_track,
+    //     from: current_domainAccess.from,
+    //     priSessId: current_domainAccess.primarySession?.id,
+    //   },
+    //   accessContext: {
+    //     currentLayer: currentDomainAccessLayer,
+    //     moduleName: currentDomainAccessModuleName,
+    //     id: currentDomainAccessContext.id,
+    //   },
+    // })
 
     if (start_background_processes) {
       await Promise.all(
@@ -134,7 +133,7 @@ export function provideMessageDispatcher({
       domainMsg: domainMsg,
       opts?: { graceful?: boolean },
     ) {
-      log('debug', `dispatchMsg`, domainMsg.endpoint, domainMsg.payload)
+      // log('debug', `dispatchMsg`, domainMsg.endpoint, domainMsg.payload)
 
       const endpoint = domainMsg.endpoint.reduce(
         (currProp, currPathSegment) => currProp?.[currPathSegment],
@@ -158,7 +157,7 @@ export function provideMessageDispatcher({
         coreProviderObjects.map(async ({ modName, provider }) => {
           const watchContext = await generateAccessContext('watch', modName, current_domainAccess)
           const maybe_watchImpl = provider(watchContext).watch?.(watchContext)
-          log('debug', `triggerWatchers`, current_domainAccess.endpoint, maybe_watchImpl)
+          // log('debug', `triggerWatchers`, current_domainAccess.endpoint, maybe_watchImpl)
           return (
             maybe_watchImpl &&
             dispatchMsg(

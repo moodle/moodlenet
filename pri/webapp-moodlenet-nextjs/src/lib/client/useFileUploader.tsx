@@ -18,13 +18,17 @@ export function useFileUploader({
   currentSrc,
   fileUploadedAction,
   type,
+  overrideMaxSize,
 }: {
   currentSrc: string
   fileUploadedAction: fileUploadedAction
   type: 'webImage' | 'file'
+  overrideMaxSize?: number
 }) {
   const { uploadMaxSizeConfigs } = useAllSchemaConfigs()
-  const maxSize = type === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max
+  const maxSize =
+    overrideMaxSize ??
+    (type === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max)
 
   const inputRef = useRef<HTMLInputElement | null>(null)
   // TODO: this complex state management definitely deserves a useReducer ;)

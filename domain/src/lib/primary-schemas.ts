@@ -1,17 +1,22 @@
-import { AllSchemaConfigs, MoodleDomain } from '..'
+import { MoodleDomain } from '..'
 import { getMoodleNetPrimarySchemas } from '../modules/env'
 import { getIamPrimarySchemas } from '../modules/iam'
 import { getOrgPrimarySchemas } from '../modules/org'
+import { getUserHomePrimarySchemas } from '../modules/userHome'
+import { AllSchemaConfigs } from '../types'
 
 export function makeAllPrimarySchemas({
   iamSchemaConfigs,
   moodleNetSchemaConfigs,
   orgSchemaConfigs,
+  uploadMaxSizeConfigs,
+  userHomeSchemaConfigs,
 }: AllSchemaConfigs) {
   const iam = getIamPrimarySchemas(iamSchemaConfigs)
   const moodleNet = getMoodleNetPrimarySchemas(moodleNetSchemaConfigs)
   const org = getOrgPrimarySchemas(orgSchemaConfigs)
-  return { iam, moodleNet, org }
+  const userHome = getUserHomePrimarySchemas(userHomeSchemaConfigs)
+  return { iam, moodleNet, org, userHome, uploadMaxSizeConfigs }
 }
 
 export async function fetchAllSchemaConfigs({
@@ -19,14 +24,26 @@ export async function fetchAllSchemaConfigs({
 }: {
   primary: MoodleDomain['primary']
 }): Promise<AllSchemaConfigs> {
-  const [iamSchemaConfigs, moodleNetSchemaConfigs, orgSchemaConfigs, uploadMaxSizeConfigs] =
-    await Promise.all([
-      primary.iam.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
-      primary.net.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
-      primary.org.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
-      primary.storage.session.moduleInfo().then(({ uploadMaxSizeConfigs }) => uploadMaxSizeConfigs),
-    ])
-  return { iamSchemaConfigs, moodleNetSchemaConfigs, orgSchemaConfigs, uploadMaxSizeConfigs }
+  const [
+    iamSchemaConfigs,
+    userHomeSchemaConfigs,
+    moodleNetSchemaConfigs,
+    orgSchemaConfigs,
+    uploadMaxSizeConfigs,
+  ] = await Promise.all([
+    primary.iam.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
+    primary.userHome.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
+    primary.net.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
+    primary.org.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
+    primary.storage.session.moduleInfo().then(({ uploadMaxSizeConfigs }) => uploadMaxSizeConfigs),
+  ])
+  return {
+    iamSchemaConfigs,
+    userHomeSchemaConfigs,
+    moodleNetSchemaConfigs,
+    orgSchemaConfigs,
+    uploadMaxSizeConfigs,
+  }
 }
 
 export async function fetchAllPrimarySchemas({ primary }: { primary: MoodleDomain['primary'] }) {

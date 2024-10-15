@@ -8,6 +8,7 @@ import {
   user_home_access_object,
   user_home_id,
   user_home_record,
+  UserHomePrimaryMsgSchemaConfigs,
 } from './types'
 import { Configs } from './types/configs'
 export * from './types'
@@ -20,6 +21,9 @@ export default interface UserHomeDomain {
   event: { userHome: unknown }
   primary: {
     userHome: {
+      session: {
+        moduleInfo(): Promise<{ schemaConfigs: UserHomePrimaryMsgSchemaConfigs }>
+      }
       write: {
         editProfileInfo(_: {
           user_home_id: user_home_id

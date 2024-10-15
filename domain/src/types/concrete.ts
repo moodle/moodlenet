@@ -87,7 +87,7 @@ export type domainCore<mod extends moodleModuleName> = {
   primary: (primaryContext: primaryContext) => primaryImpl<mod>[mod]
   event?: (eventContext: eventContext) => eventListenerImpl
   watch?: (watchContext: watchContext<mod>) => watchImpl
-  startBackgroundProcess?: () => Promise<void>
+  startBackgroundProcess?: () => void | Promise<void>
 }
 
 export type primaryImpl<mod extends moodleModuleName> = {

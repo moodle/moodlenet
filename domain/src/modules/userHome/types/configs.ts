@@ -1,5 +1,5 @@
-import { ProfileInfoPrimaryMsgSchemaConfigs } from './primary-schemas'
+import { UserHomePrimaryMsgSchemaConfigs } from './primary-schemas'
 
 export interface Configs {
-  profileInfoPrimaryMsgSchemaConfigs: ProfileInfoPrimaryMsgSchemaConfigs
+  profileInfoPrimaryMsgSchemaConfigs: UserHomePrimaryMsgSchemaConfigs
 }

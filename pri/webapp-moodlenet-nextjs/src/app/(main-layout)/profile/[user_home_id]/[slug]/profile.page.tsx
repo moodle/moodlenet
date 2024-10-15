@@ -17,7 +17,27 @@ export default async function ProfilePage({
   }
 
   const mainProfileCardDeps: MainProfileCardDeps = {
-    userHomeAccessObject: userHome.accessObject,
+    userProfile: {
+      flags: {
+        followed: userHome.accessObject.flags.followed,
+        isPublisher: !!userHome.accessObject.user?.roles.includes('publisher'),
+      },
+      id: user_home_id,
+      permissions: {
+        canEdit: userHome.accessObject.permissions.editProfile,
+        editRoles: userHome.accessObject.permissions.editRoles,
+        follow: userHome.accessObject.permissions.follow,
+        report: userHome.accessObject.permissions.report,
+        sendMessage: userHome.accessObject.permissions.sendMessage,
+      },
+      profileInfo: {
+        aboutMe: userHome.accessObject.profileInfo.aboutMe,
+        displayName: userHome.accessObject.profileInfo.displayName,
+        location: userHome.accessObject.profileInfo.location,
+        siteUrl: userHome.accessObject.profileInfo.siteUrl,
+      },
+    },
   }
+
   return <ProfileClient mainProfileCardDeps={mainProfileCardDeps} />
 }

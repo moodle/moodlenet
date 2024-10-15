@@ -1,7 +1,9 @@
+import { createPathProxy, path, url_path_string_schema } from '@moodle/lib-types'
 import { join, resolve } from 'path'
 import sanitizeFilename from 'sanitize-filename'
-import { fsDirectories } from './types'
+import { filesystem, fs, fsDirectories, fsUrlPathGetter } from './types'
 
+export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
 // export function newFsFileRelativePath(filename: string, date = new Date()) {
 //   return [
 //     String(date.getFullYear()),
@@ -64,4 +66,13 @@ export function getFsDirectories({
   }
 }
 
-export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
+export function prefixed_domain_file_paths(prefix: path | string) {
+  const _prefix = [prefix].flat()
+  const prefixed_domain_file_paths = createPathProxy<fs<filesystem, fsUrlPathGetter>>({
+    apply({ path }) {
+      const _path = [..._prefix, ...path].join('/')
+      return url_path_string_schema.parse(_path)
+    },
+  })
+  return prefixed_domain_file_paths
+}

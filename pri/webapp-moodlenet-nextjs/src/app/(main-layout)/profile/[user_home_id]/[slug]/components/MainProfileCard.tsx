@@ -1,14 +1,16 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { _nullish, flags, url_string } from '@moodle/lib-types'
 import Edit from '@mui/icons-material/Edit'
 import Flag from '@mui/icons-material/Flag'
 import Save from '@mui/icons-material/Save'
 import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
-import { userHome } from '@moodle/domain'
 import { useCallback, useReducer, useRef } from 'react'
-import { never } from 'zod'
+import { useDomainFileUrls } from '../../../../../../lib/client/file-urls'
+import { useAllPrimarySchemas } from '../../../../../../lib/client/globalContexts'
+import { useFileUploader } from '../../../../../../lib/client/useFileUploader'
 import { ApprovalButton } from '../../../../../../ui/atoms/ApproveButton/ApproveButton'
 import { FloatingMenu } from '../../../../../../ui/atoms/FloatingMenu/FloatingMenu'
 import { FollowButton } from '../../../../../../ui/atoms/FollowButton/FollowButton'
@@ -16,32 +18,37 @@ import InputTextField from '../../../../../../ui/atoms/InputTextField/InputTextF
 import { PrimaryButton } from '../../../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { RoundButton } from '../../../../../../ui/atoms/RoundButton/RoundButton'
 import { SecondaryButton } from '../../../../../../ui/atoms/SecondaryButton/SecondaryButton'
-import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.png'
-import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
-import { useFileUploader } from '../../../../../../lib/client/useFileUploader'
-import { updateProfileInfo, adoptProfileImage } from '../profile.server'
-import './MainProfileCard.scss'
 import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
-import { useDomainFileUrls } from '../../../../../../lib/client/file-urls'
+import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
+import { adoptProfileImage, updateProfileInfo } from '../profile.server'
+import './MainProfileCard.scss'
 
 export interface MainProfileCardDeps {
-  userHomeAccessObject: userHome.user_home_access_object
+  userProfile: {
+    id: string
+    profileInfo: {
+      displayName: string
+      aboutMe: string
+      location: string
+      siteUrl: _nullish | url_string
+    }
+    permissions: flags<'follow' | 'editRoles' | 'sendMessage' | 'report' | 'canEdit'>
+    flags: flags<'followed' | 'isPublisher'>
+  }
 }
 
 export function MainProfileCard({
-  userHomeAccessObject: { permissions, profileInfo, user, flags, id },
+  userProfile: { permissions, profileInfo, flags, id },
 }: MainProfileCardDeps) {
-  const { updateProfileInfoSchema, useProfileImageSchema } = permissions.editProfile
-    ? userHome.getProfileInfoPrimarySchemas(permissions.validationConfigs)
-    : { updateProfileInfoSchema: never(), useProfileImageSchema: never() }
+  const schemas = useAllPrimarySchemas()
   const [isEditing, toggleIsEditing] = useReducer(
-    isEditing => permissions.editProfile && !isEditing,
+    isEditing => permissions.canEdit && !isEditing,
     false,
   )
   const {
     form: { formState, register, reset },
     handleSubmitWithAction: submitForm,
-  } = useHookFormAction(updateProfileInfo, zodResolver(updateProfileInfoSchema), {
+  } = useHookFormAction(updateProfileInfo, zodResolver(schemas.userHome.updateProfileInfoSchema), {
     formProps: { defaultValues: { ...profileInfo, user_home_id: id } },
     actionProps: {
       onSuccess({ input }) {
@@ -49,6 +56,8 @@ export function MainProfileCard({
       },
     },
   })
+
+  //FIXME: image urls must come from server !
   const domainFileUrls = useDomainFileUrls()
   // const { handleSubmitWithAction: uploadAvatar } = useHookFormAction(
   //   uploadAvatarAction,
@@ -67,6 +76,7 @@ export function MainProfileCard({
     displaySrcAvatar,
     // dirtyAvatar,
   ] = useFileUploader({
+    //FIXME: image urls must come from server !
     currentSrc: domainFileUrls.userHome[id]!.profile.avatar(), //defaultAvatar.src /* profileInfo.avatar */,
     async fileUploadedAction({ tempId }) {
       const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
@@ -75,24 +85,22 @@ export function MainProfileCard({
       }
       return { done: true }
     },
-    // maxSize: 1048576,
     type: 'webImage',
   })
 
   const submitAll = useCallback(() => {
     submitFormBtnRef.current?.click()
     if (!formState.isValid) return
-    toggleIsEditing()
-    if (!formState.isDirty) return
     submitAvatar()
+    toggleIsEditing()
     //handleSubmitWithAction(e)
-  }, [formState.isDirty, formState.isValid, submitAvatar])
+  }, [formState.isValid, submitAvatar])
 
   return (
     <div className="main-profile-card" key="profile-card">
       <div className="main-column">
         <div className={`background-container`} key="background-container">
-          {!permissions.editProfile
+          {!permissions.canEdit
             ? null
             : isEditing && [
                 <RoundButton
@@ -114,7 +122,7 @@ export function MainProfileCard({
           />
         </div>
         <form className={`avatar-container`} key="avatar-container">
-          {!permissions.editProfile
+          {!permissions.canEdit
             ? null
             : isEditing && [
                 <RoundButton
@@ -136,7 +144,7 @@ export function MainProfileCard({
         </form>
         <div className="top-items" key="top-items">
           <div className="edit-save" key="edit-save">
-            {!permissions.editProfile ? null : isEditing ? (
+            {!permissions.canEdit ? null : isEditing ? (
               <PrimaryButton color="green" onClick={submitAll} key="save-button">
                 <Save />
               </PrimaryButton>
@@ -211,9 +219,9 @@ export function MainProfileCard({
             }
             key="follow-button"
           />
-          {permissions.editRoles && user && (
+          {permissions.editRoles && (
             <ApprovalButton
-              isApproved={user.roles.includes('publisher')}
+              isApproved={flags.isPublisher}
               toggleIsApproved={() => {
                 alert('ApprovalButton')
               }}

@@ -1,6 +1,6 @@
 import { _maybe, branded, flags } from '@moodle/lib-types'
 import { user_id, user_role } from '../../iam'
-import { ProfileInfoPrimaryMsgSchemaConfigs } from './primary-schemas'
+import { UserHomePrimaryMsgSchemaConfigs } from './primary-schemas'
 import { ProfileInfo } from './profile-info'
 
 export type user_home_id = string
@@ -24,7 +24,7 @@ export type user_home_permissions = flags<'follow' | 'editRoles' | 'sendMessage'
     | {
         editProfile: true
 
-        validationConfigs: ProfileInfoPrimaryMsgSchemaConfigs
+        validationConfigs: UserHomePrimaryMsgSchemaConfigs
       }
   )
 
