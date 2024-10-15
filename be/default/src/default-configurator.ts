@@ -1,19 +1,12 @@
-import * as mod_iam from '@moodle/core-iam'
-import * as mod_net from '@moodle/core-net'
-import * as mod_net_webapp_nextjs from '@moodle/core-net-webapp-nextjs'
-import * as mod_org from '@moodle/core-org'
-import * as mod_storage from '@moodle/core-storage'
-import * as mod_user_home from '@moodle/core-user-home'
-import {
-  coreProvider,
-  coreProviderObject,
-  domainCore,
-  env as domainEnv,
-  secondaryAdapter,
-  secondaryProvider,
-  storage,
-  sys_admin_info,
-} from '@moodle/domain'
+import * as core_iam from '@moodle/core/iam'
+import * as core_net from '@moodle/core/net'
+import * as core_net_webapp_nextjs from '@moodle/core/net-webapp-nextjs'
+import * as core_org from '@moodle/core/org'
+import * as core_storage from '@moodle/core/storage'
+import * as core_user_home from '@moodle/core/user-home'
+import { coreProviderObject, domainCore, secondaryAdapter, secondaryProvider, sys_admin_info } from '@moodle/domain'
+import { deploymentInfoFromUrlString } from '@moodle/domain/lib'
+import { getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import * as cryptoSec from '@moodle/sec-crypto-default'
 import * as arangoSec from '@moodle/sec-db-arango'
@@ -28,7 +21,6 @@ import { inspect } from 'util'
 import { coerce, literal, object } from 'zod'
 import { createDefaultDomainLoggerProvider } from './default-logger'
 import { configuration, configurator } from './types'
-import { getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
 
 const cache: map<Promise<configuration>> = {}
 
@@ -40,10 +32,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
   // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
   if (!cache[domainName]) {
     cache[domainName] = new Promise<configuration>(promiseResolveConfiguration => {
-      const MOODLE_HOME_DIR = path.resolve(
-        process.cwd(),
-        process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR,
-      )
+      const MOODLE_HOME_DIR = path.resolve(process.cwd(), process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
       const { currentDomainDir } = getFsDirectories({
         homeDir: MOODLE_HOME_DIR,
         domainName,
@@ -67,18 +56,9 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         MOODLE_FILE_SERVER_DEPLOYMENT_URL: process.env.MOODLE_FILE_SERVER_DEPLOYMENT_URL,
       })
 
-      console.info(
-        `domain [${domainName}] env:`,
-        inspect({ MOODLE_HOME_DIR, ...env }, { colors: true, sorted: true }),
-      )
-      const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(
-        path.join(currentDomainDir, `private.key`),
-        'utf8',
-      )
-      const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(
-        path.join(currentDomainDir, `public.key`),
-        'utf8',
-      )
+      console.info(`domain [${domainName}] env:`, inspect({ MOODLE_HOME_DIR, ...env }, { colors: true, sorted: true }))
+      const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(currentDomainDir, `private.key`), 'utf8')
+      const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(currentDomainDir, `public.key`), 'utf8')
       const _process_env = process.env as _any
 
       const arango_db_env: arangoSec.ArangoDbSecEnv = arangoSec.provideEnv({
@@ -142,15 +122,15 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
 
       const coreProviderObjects: coreProviderObject<_any>[] = [
         // core modules
-        mod_net.net_core({ domain: domainName, log: modLogger('net-core') }),
-        mod_org.org_core({ domain: domainName, log: modLogger('org-core') }),
-        mod_iam.iam_core({ domain: domainName, log: modLogger('iam-core') }),
-        mod_net_webapp_nextjs.net_webapp_nextjs_core({
+        core_net.net_core({ domain: domainName, log: modLogger('net-core') }),
+        core_org.org_core({ domain: domainName, log: modLogger('org-core') }),
+        core_iam.iam_core({ domain: domainName, log: modLogger('iam-core') }),
+        core_net_webapp_nextjs.net_webapp_nextjs_core({
           domain: domainName,
           log: modLogger('net_webapp_nextjs-core'),
         }),
-        mod_user_home.user_home_core({ domain: domainName, log: modLogger('user_home-core') }),
-        mod_storage.storage_core({ domain: domainName, log: modLogger('storage-core') }),
+        core_user_home.user_home_core({ domain: domainName, log: modLogger('user_home-core') }),
+        core_storage.storage_core({ domain: domainName, log: modLogger('storage-core') }),
         ((bootstrapContext): coreProviderObject<'env'> => {
           return {
             modName: 'env',
@@ -166,12 +146,8 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
                     application: {
                       async deployments() {
                         return {
-                          moodlenetWebapp: domainEnv.deploymentInfoFromUrlString(
-                            env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL,
-                          ),
-                          filestoreHttp: domainEnv.deploymentInfoFromUrlString(
-                            env.MOODLE_FILE_SERVER_DEPLOYMENT_URL,
-                          ),
+                          moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
+                          filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
                         }
                       },
                     },

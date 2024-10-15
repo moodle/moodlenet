@@ -1,5 +1,6 @@
 import { http_bind } from '@moodle/bindings-node'
-import { storage, lib, MoodleDomain, primarySession } from '@moodle/domain'
+import { MoodleDomain, primarySession } from '@moodle/domain'
+import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
 import {
   fsDirectories,
@@ -8,6 +9,7 @@ import {
   MOODLE_DEFAULT_HOME_DIR,
 } from '@moodle/lib-local-fs-storage'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
+import { getSanitizedFileName, uploaded_blob_meta } from '@moodle/module/storage'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
@@ -19,12 +21,8 @@ import { Headers } from 'undici'
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
 
-const MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL =
-  process.env.MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL
-const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(
-  process.cwd(),
-  process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR,
-)
+const MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL = process.env.MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL
+const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(process.cwd(), process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
 
 const requestTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
@@ -44,7 +42,7 @@ const trnspClient = http_bind.client()
 console.log('!!! moodle-fs-file-server started !!!')
 app.use(cookieParser()).use(async (req, _res, next) => {
   const primarySession = await getPrimarySession(req)
-  const ap = lib.createMoodleDomainProxy({
+  const ap = createMoodleDomainProxy({
     ctrl({ domainMsg }) {
       return trnspClient(
         {
@@ -102,8 +100,7 @@ const router = express
       return res.status(401).send('UNAUTHORIZED')
     }
     const { uploadMaxSizeConfigs } = await req.moodlePrimary.storage.session.moduleInfo()
-    const fileSizeLimit =
-      req.params.type === 'file' ? uploadMaxSizeConfigs.max : uploadMaxSizeConfigs.webImage
+    const fileSizeLimit = req.params.type === 'file' ? uploadMaxSizeConfigs.max : uploadMaxSizeConfigs.webImage
     const multerOptions: multer.Options = {
       limits: {
         fileSize: fileSizeLimit,
@@ -118,10 +115,10 @@ const router = express
         return res.status(500).send(`invalid mimetype ${req.file.mimetype}`)
       }
 
-      const uploaded_blob_meta: storage.uploaded_blob_meta = {
+      const uploaded_blob_meta: uploaded_blob_meta = {
         uploadedBy: { primarySessionId: req.moodlePrimarySession.id, userId: userSession.user.id },
         uploaded: date_time_string('now'),
-        name: storage.getSanitizedFileName(req.file.originalname),
+        name: getSanitizedFileName(req.file.originalname),
         hash: await generateFileHashes(req.file.path),
         mimetype: req.file.mimetype,
         size: req.file.size,

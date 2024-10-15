@@ -1,4 +1,4 @@
-import { lib } from '@moodle/domain'
+import { getDeploymentInfoUrl } from '@moodle/domain/lib'
 import { url_string } from '@moodle/lib-types'
 import assert from 'assert'
 import { headers } from 'next/headers'
@@ -8,7 +8,7 @@ import { priAccess } from '../session-access'
 export async function srvSiteUrls() {
   const { moodlenetWebapp } = await priAccess().env.application.deployments()
   assert(moodlenetWebapp, new Error('No deployment info for moodlenet !'))
-  const baseUrl = lib.getDeploymentInfoUrl(moodlenetWebapp)
+  const baseUrl = getDeploymentInfoUrl(moodlenetWebapp)
 
   return {
     baseUrl,

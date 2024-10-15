@@ -22,29 +22,22 @@ import defaultBackground from '../../../../../../ui/lib/assets/img/default-landi
 import { adoptProfileImage, updateProfileInfo } from '../profile.server'
 import './MainProfileCard.scss'
 import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.png'
+import { user_home_access_object } from '@moodle/module/user-home'
 
-export interface MainProfileCardDeps {
-  userProfile: {
-    id: string
-    profileInfo: {
-      displayName: string
-      aboutMe: string
-      location: string
-      siteUrl: _nullish | url_string
-    }
+export type mainProfileCardProps = {
+  userHome: Omit<user_home_access_object, 'avatar' | 'background'> & {
     avatar: asset | _nullish // TODO: REMOVE this mullish, I want default avatar coming from server anyway
     background: asset | _nullish // TODO: REMOVE this mullish, I want default avatar coming from server anyway
-    permissions: flags<'follow' | 'editRoles' | 'sendMessage' | 'report' | 'canEdit'>
-    flags: flags<'followed' | 'isPublisher'>
   }
 }
 
 export function MainProfileCard({
-  userProfile: { permissions, profileInfo, flags, id, avatar },
-}: MainProfileCardDeps) {
+  userHome: { permissions, profileInfo, flags, id, avatar, background, user },
+}: mainProfileCardProps) {
+  const isPublisher = !!user?.roles.includes('publisher')
   const schemas = useAllPrimarySchemas()
   const [isEditing, toggleIsEditing] = useReducer(
-    isEditing => permissions.canEdit && !isEditing,
+    isEditing => permissions.editProfile && !isEditing,
     false,
   )
   const {
@@ -91,7 +84,7 @@ export function MainProfileCard({
     <div className="main-profile-card" key="profile-card">
       <div className="main-column">
         <div className={`background-container`} key="background-container">
-          {!permissions.canEdit
+          {!permissions.editProfile
             ? null
             : isEditing && [
                 <RoundButton
@@ -113,7 +106,7 @@ export function MainProfileCard({
           />
         </div>
         <form className={`avatar-container`} key="avatar-container">
-          {!permissions.canEdit
+          {!permissions.editProfile
             ? null
             : isEditing && [
                 <RoundButton
@@ -135,7 +128,7 @@ export function MainProfileCard({
         </form>
         <div className="top-items" key="top-items">
           <div className="edit-save" key="edit-save">
-            {!permissions.canEdit ? null : isEditing ? (
+            {!permissions.editProfile ? null : isEditing ? (
               <PrimaryButton color="green" onClick={submitAll} key="save-button">
                 <Save />
               </PrimaryButton>
@@ -212,7 +205,7 @@ export function MainProfileCard({
           />
           {permissions.editRoles && (
             <ApprovalButton
-              isApproved={flags.isPublisher}
+              isApproved={isPublisher}
               toggleIsApproved={() => {
                 alert('ApprovalButton')
               }}

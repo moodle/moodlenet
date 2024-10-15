@@ -1,11 +1,2 @@
-export * as env from './modules/env'
-export * as iam from './modules/iam'
-export * as net from './modules/net'
-export * as netWebappNextjs from './modules/netWebappNextjs'
-export * as org from './modules/org'
-export * as storage from './modules/storage'
-export * as userHome from './modules/userHome'
-
-export * as lib from './lib'
 export * from './moodle-domain'
 export * from './types'

@@ -1,21 +1,13 @@
-import { secondaryAdapter, secondaryBootstrap, storage } from '@moodle/domain'
-import {
-  deleteTemp,
-  fs_storage_path_of,
-  get_temp_file_paths,
-  getFsDirectories,
-  prefixed_domain_file_fs_paths,
-  use_temp_file_as_web_image,
-} from '@moodle/lib-local-fs-storage'
+import { secondaryAdapter, secondaryBootstrap } from '@moodle/domain'
+import { deleteTemp, fs_storage_path_of, get_temp_file_paths, getFsDirectories, prefixed_domain_file_fs_paths, use_temp_file_as_web_image } from '@moodle/lib-local-fs-storage'
 import { _void } from '@moodle/lib-types'
+import { uploaded_blob_meta } from '@moodle/module/storage'
 import { mkdir, readdir, readFile, stat } from 'fs/promises'
 import { join } from 'path'
 import { rimraf } from 'rimraf'
 import { StorageDefaultSecEnv } from './types'
 
-export function get_storage_default_secondary_factory({
-  homeDir,
-}: StorageDefaultSecEnv): secondaryBootstrap {
+export function get_storage_default_secondary_factory({ homeDir }: StorageDefaultSecEnv): secondaryBootstrap {
   return ({ log, domain }) => {
     const fsDirs = getFsDirectories({ domainName: domain, homeDir })
     const fs_file_paths = prefixed_domain_file_fs_paths(fsDirs.fsStorage)
@@ -23,7 +15,7 @@ export function get_storage_default_secondary_factory({
       const secondaryAdapter: secondaryAdapter = {
         userHome: {
           write: {
-            async useImageInProfile({ as, id, tempId }) {
+            async useTempImageInProfile({ as, id, tempId }) {
               log('debug', 'useImageInProfile', { as, id, tempId })
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               const destPath = fs_file_paths.userHome[id]!.profile[as]!()
@@ -50,9 +42,7 @@ export function get_storage_default_secondary_factory({
             async tempMeta({ tempId }) {
               const { meta: temp_file_meta_path } = get_temp_file_paths({ tempId, fsDirs })
 
-              const meta: storage.uploaded_blob_meta = await readFile(temp_file_meta_path, 'utf8')
-                .then(JSON.parse)
-                .catch(null)
+              const meta: uploaded_blob_meta = await readFile(temp_file_meta_path, 'utf8').then(JSON.parse).catch(null)
 
               if (!meta) {
                 await deleteTemp({ tempId, fsDirs }).catch(() => null)

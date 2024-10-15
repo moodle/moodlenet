@@ -1,24 +1,15 @@
 import { _any, filterOutFalsies } from '@moodle/lib-types'
-import { netWebappNextjs } from '@moodle/domain'
+import { layoutSlotItem } from '@moodle/module/net-webapp-nextjs'
 import { PropsWithChildren, ReactElement } from 'react'
 import { clientSlotItem } from '../../common/types'
 // export type layoutPropsWithChildren = PropsWithChildren<map<ReactElement>>
-type layoutSlotItem = netWebappNextjs.layoutSlotItem
+
 export type layoutPropsWithChildren = PropsWithChildren<_any>
-export function slotsMap<S extends Record<string, layoutSlotItem[]>>(
-  props: layoutPropsWithChildren,
-  slots: S,
-) {
-  return Object.entries(slots).reduce(
-    (_, [k, items]) => ((_[k as keyof S] = slotItems(props, items)), _),
-    {} as Record<keyof S, clientSlotItem[]>,
-  )
+export function slotsMap<S extends Record<string, layoutSlotItem[]>>(props: layoutPropsWithChildren, slots: S) {
+  return Object.entries(slots).reduce((_, [k, items]) => ((_[k as keyof S] = slotItems(props, items)), _), {} as Record<keyof S, clientSlotItem[]>)
 }
 
-export function slotItems<S extends layoutSlotItem[]>(
-  props: layoutPropsWithChildren,
-  items: S | null | undefined,
-): JSX.Element[] {
+export function slotItems<S extends layoutSlotItem[]>(props: layoutPropsWithChildren, items: S | null | undefined): JSX.Element[] {
   const res = (items ?? []).map(item => slotItem(props, item))
 
   return filterOutFalsies(res)

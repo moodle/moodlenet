@@ -1,19 +1,11 @@
 import { deep_partial } from '@moodle/lib-types'
 import { aql } from 'arangojs'
 import { AqlQuery } from 'arangojs/aql'
-import { iam } from '@moodle/domain'
 import { db_struct } from '../../db-structure'
 import { userHomeDocument } from './types'
+import { user_id } from '@moodle/module/iam'
 
-export async function getUserHomeByUserId<T = userHomeDocument>({
-  db_struct,
-  userId,
-  apply = aql``,
-}: {
-  db_struct: db_struct
-  userId: iam.user_id
-  apply?: AqlQuery
-}) {
+export async function getUserHomeByUserId<T = userHomeDocument>({ db_struct, userId, apply = aql`` }: { db_struct: db_struct; userId: user_id; apply?: AqlQuery }) {
   const cursor = await db_struct.data.db.query<T>(aql`
     FOR userHome in ${db_struct.data.coll.userHome}
     FILTER userHome.user.id == ${userId}
@@ -25,15 +17,7 @@ export async function getUserHomeByUserId<T = userHomeDocument>({
   return userHome ?? null
 }
 
-export async function updateUserHomeByUserId({
-  db_struct,
-  userId,
-  pUserHome,
-}: {
-  userId: iam.user_id
-  db_struct: db_struct
-  pUserHome: deep_partial<userHomeDocument>
-}) {
+export async function updateUserHomeByUserId({ db_struct, userId, pUserHome }: { userId: user_id; db_struct: db_struct; pUserHome: deep_partial<userHomeDocument> }) {
   return getUserHomeByUserId({
     apply: aql`UPDATE userHome WITH ${pUserHome} IN ${db_struct.data.coll.userHome}`,
     db_struct,

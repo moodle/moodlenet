@@ -2,7 +2,7 @@ import { MoodleDomain } from '..'
 import { getMoodleNetPrimarySchemas } from '../modules/env'
 import { getIamPrimarySchemas } from '../modules/iam'
 import { getOrgPrimarySchemas } from '../modules/org'
-import { getUserHomePrimarySchemas } from '../modules/userHome'
+import { getUserHomePrimarySchemas } from '../modules/user-home'
 import { AllSchemaConfigs } from '../types'
 
 export function makeAllPrimarySchemas({

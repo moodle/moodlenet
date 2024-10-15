@@ -3,7 +3,6 @@ import HowToReg from '@mui/icons-material/HowToReg'
 import HowToRegOutlined from '@mui/icons-material/HowToRegOutlined'
 import ManageAccounts from '@mui/icons-material/ManageAccounts'
 import ManageAccountsOutlined from '@mui/icons-material/ManageAccountsOutlined'
-import { iam } from '@moodle/domain'
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -11,12 +10,9 @@ import useQueryParams from '../../../../ui/lib/nextjs/queryParams'
 import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import Searchbox from '../../../../ui/atoms/Searchbox/Searchbox'
+import { user_record, user_role } from '@moodle/module/iam'
 
-type edit_user_role_fn = (_: {
-  userId: string
-  role: iam.user_role
-  action: 'set' | 'unset'
-}) => Promise<iam.user_role[]>
+type edit_user_role_fn = (_: { userId: string; role: user_role; action: 'set' | 'unset' }) => Promise<user_role[]>
 
 export type UsersProps = {
   users: UserRow[]
@@ -66,7 +62,7 @@ export function UsersClient({ users, editUserRole }: UsersProps) {
   )
 }
 
-export type UserRow = Pick<iam.user_record, 'id' | 'contacts' | 'displayName' | 'roles'>
+export type UserRow = Pick<user_record, 'id' | 'contacts' | 'displayName' | 'roles'>
 type RowProps = {
   user: UserRow
   editUserRole: edit_user_role_fn
@@ -79,7 +75,7 @@ function Row({ user, editUserRole }: RowProps) {
   const isAdmin = roles.includes('admin')
   const isPublisher = roles.includes('publisher')
   const toggleRole = useCallback(
-    (role: iam.user_role) => {
+    (role: user_role) => {
       editUserRole({
         role,
         action: roles.includes(role) ? 'unset' : 'set',
@@ -101,18 +97,10 @@ function Row({ user, editUserRole }: RowProps) {
         </Link>
       </td>
       <td className="user-types">
-        <abbr
-          onClick={() => toggleRole('admin')}
-          className={`admin ${isAdmin ? 'on' : 'off'}`}
-          title={t('Admin')}
-        >
+        <abbr onClick={() => toggleRole('admin')} className={`admin ${isAdmin ? 'on' : 'off'}`} title={t('Admin')}>
           {isAdmin ? <ManageAccounts /> : <ManageAccountsOutlined />}
         </abbr>
-        <abbr
-          onClick={() => toggleRole('publisher')}
-          className={`publisher ${isPublisher ? 'on' : 'off'}`}
-          title={t('Publisher')}
-        >
+        <abbr onClick={() => toggleRole('publisher')} className={`publisher ${isPublisher ? 'on' : 'off'}`} title={t('Publisher')}>
           {isPublisher ? <HowToReg /> : <HowToRegOutlined />}
         </abbr>
       </td>

@@ -1,4 +1,4 @@
-import { UserHomePrimaryMsgSchemaConfigs } from 'domain/src/modules/userHome'
+import { UserHomePrimaryMsgSchemaConfigs } from 'domain/src/modules/user-home'
 import type { makeAllPrimarySchemas } from '../lib'
 import { IamPrimaryMsgSchemaConfigs } from '../modules/iam'
 import { MoodleNetPrimaryMsgSchemaConfigs } from '../modules/net'

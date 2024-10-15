@@ -1,24 +1,18 @@
-import { moodlePrimary, secondaryContext, storage } from '@moodle/domain'
-import {
-  asset,
-  assetRecord,
-  createPathProxy,
-  ok_ko,
-  path,
-  url_path_string_schema,
-} from '@moodle/lib-types'
+import { moodlePrimary, secondaryContext } from '@moodle/domain'
+import { asset, assetRecord, createPathProxy, ok_ko, path, url_path_string_schema } from '@moodle/lib-types'
 import { mkdir, readFile, rename, stat, writeFile } from 'fs/promises'
 import { join, resolve, sep } from 'path'
 import { rimraf } from 'rimraf'
 import sharp from 'sharp'
 import { filesystem, fs, fsDirectories, fsUrlPathGetter } from './types'
 
+import { fileHashes, getSanitizedFileName, uploaded_blob_meta, useTempFileAsWebImageResult, useTempFileResult, webImageSize } from '@moodle/module/storage'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
 
 export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
 
-export async function generateFileHashes(filePath: string): Promise<storage.fileHashes> {
+export async function generateFileHashes(filePath: string): Promise<fileHashes> {
   const sha256 = await new Promise<string>((resolve, reject) => {
     const hash = createHash('sha256')
     const rs = createReadStream(filePath)
@@ -42,14 +36,8 @@ export function prefixed_domain_file_fs_paths(prefix: path | string) {
   return prefixed_domain_file_paths
 }
 
-export function getFsDirectories({
-  domainName,
-  homeDir,
-}: {
-  homeDir: string
-  domainName: string
-}): fsDirectories {
-  const currentDomainDir = resolve(homeDir, storage.getSanitizedFileName(domainName))
+export function getFsDirectories({ domainName, homeDir }: { homeDir: string; domainName: string }): fsDirectories {
+  const currentDomainDir = resolve(homeDir, getSanitizedFileName(domainName))
   const temp = join(currentDomainDir, '.temp')
   const fsStorage = join(currentDomainDir, 'fs-storage')
   return {
@@ -70,9 +58,7 @@ export function provide_assetRecord2asset(moodlePrimary: moodlePrimary, assetRec
         }
       } else if (assetRecord.type === 'uploaded') {
         const { filestoreHttp } = await moodlePrimary.env.application.deployments()
-        const url = url_path_string_schema.parse(
-          [filestoreHttp.href, ...path, assetRecord.uploadMeta.name].join('/'),
-        )
+        const url = url_path_string_schema.parse([filestoreHttp.href, ...path, assetRecord.uploadMeta.name].join('/'))
         return {
           type: 'uploaded',
           url,
@@ -100,13 +86,7 @@ type temp_file_paths = {
   meta: string
 }
 
-export function get_temp_file_paths({
-  tempId,
-  fsDirs,
-}: {
-  tempId: string
-  fsDirs: fsDirectories
-}): temp_file_paths {
+export function get_temp_file_paths({ tempId, fsDirs }: { tempId: string; fsDirs: fsDirectories }): temp_file_paths {
   const file = join(fsDirs.temp, tempId)
   const meta = `${file}.json`
   return { file, meta }
@@ -122,16 +102,10 @@ export function fs_storage_path_of({ path, fsDirs }: { path: path; fsDirs: fsDir
   return fs_path
 }
 
-export async function ensure_temp_file({
-  tempId,
-  fsDirs,
-}: {
-  tempId: string
-  fsDirs: fsDirectories
-}) {
+export async function ensure_temp_file({ tempId, fsDirs }: { tempId: string; fsDirs: fsDirectories }) {
   const temp_paths = get_temp_file_paths({ tempId, fsDirs })
 
-  const meta: storage.uploaded_blob_meta = await readFile(temp_paths.meta, 'utf8')
+  const meta: uploaded_blob_meta = await readFile(temp_paths.meta, 'utf8')
     .then(JSON.parse)
     .catch(() => null)
   if (!meta) {
@@ -152,10 +126,10 @@ export async function use_temp_file_as_web_image({
 }: {
   tempId: string
   destPath: string
-  size: storage.webImageSize
+  size: webImageSize
   secondaryContext: secondaryContext
   fsDirs: fsDirectories
-}): Promise<storage.useTempFileAsWebImageResult> {
+}): Promise<useTempFileAsWebImageResult> {
   const [resizeDone, resizeResult] = await resizeTempImage({
     size,
     tempId,
@@ -174,15 +148,7 @@ export async function use_temp_file_as_web_image({
   return use_temp_file_result
 }
 
-export async function use_temp_file({
-  tempId,
-  destPath,
-  fsDirs,
-}: {
-  tempId: string
-  destPath: string
-  fsDirs: fsDirectories
-}): Promise<storage.useTempFileResult> {
+export async function use_temp_file({ tempId, destPath, fsDirs }: { tempId: string; destPath: string; fsDirs: fsDirectories }): Promise<useTempFileResult> {
   const temp_file = await ensure_temp_file({ tempId, fsDirs })
   if (!temp_file) {
     return [false, { reason: 'tempNotFound' }]
@@ -210,15 +176,10 @@ export async function resizeTempImage({
   fsDirs,
 }: {
   tempId: string
-  size: storage.webImageSize
+  size: webImageSize
   secondaryContext: secondaryContext
   fsDirs: fsDirectories
-}): Promise<
-  ok_ko<
-    { resizedTempId: string; resizedTempFilePaths: temp_file_paths },
-    { tempNotFound: unknown; invalidImage: unknown }
-  >
-> {
+}): Promise<ok_ko<{ resizedTempId: string; resizedTempFilePaths: temp_file_paths }, { tempNotFound: unknown; invalidImage: unknown }>> {
   const original_temp_file = await ensure_temp_file({ tempId, fsDirs })
   if (!original_temp_file) {
     return [false, { reason: 'tempNotFound' }]
@@ -239,7 +200,7 @@ export async function resizeTempImage({
       withoutEnlargement: true,
     })
     .toFile(resizedTempFilePaths.file)
-  const resized_temp_meta: storage.uploaded_blob_meta = {
+  const resized_temp_meta: uploaded_blob_meta = {
     ...original_temp_file.meta,
     size: resizedInfo.size,
     originalSize: original_temp_file.meta.size,

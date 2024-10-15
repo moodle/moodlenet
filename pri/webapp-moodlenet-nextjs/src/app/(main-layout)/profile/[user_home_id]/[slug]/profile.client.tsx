@@ -1,10 +1,10 @@
 'use client'
 
 import { Card } from '../../../../../ui/atoms/Card/Card'
-import { MainProfileCard, MainProfileCardDeps } from './components/MainProfileCard'
+import { MainProfileCard, mainProfileCardProps } from './components/MainProfileCard'
 
 export interface ProfileClientProps {
-  mainProfileCardDeps: MainProfileCardDeps
+  mainProfileCardDeps: mainProfileCardProps
 }
 
 export default function ProfileClient({ mainProfileCardDeps }: ProfileClientProps) {

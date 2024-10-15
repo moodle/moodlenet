@@ -16,11 +16,11 @@ import {
 } from './main-layout.client'
 
 import { filterOutFalsies } from '@moodle/lib-types'
-import { userSessionInfo } from '@moodle/core-iam/lib'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { priAccess } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
 import './main-layout.style.scss'
+import { userSessionInfo } from '@moodle/module/iam/lib'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const [{ userSession }, layouts] = await Promise.all([
@@ -44,7 +44,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const userHomeAccessObject =
       authenticated &&
       (await priAccess()
-        .userHome.query.userHome({ by: { idOf: 'user', user_id: authenticated.user.id } })
+        .userHome.userHome.access({ by: { idOf: 'user', user_id: authenticated.user.id } })
         .then(([userHomeFound, userHomeResult]) => {
           return userHomeFound && userHomeResult.accessObject
         }))

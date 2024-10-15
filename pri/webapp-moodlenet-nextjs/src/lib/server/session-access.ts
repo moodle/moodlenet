@@ -1,7 +1,7 @@
 import { http_bind } from '@moodle/bindings-node'
-import { MoodleDomain, primarySession, storage } from '@moodle/domain'
-import { lib } from '@moodle/domain'
-import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/core-iam/lib'
+import { MoodleDomain, primarySession } from '@moodle/domain'
+import {} from '@moodle/domain'
+import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/iam/lib'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
 import { redirect, RedirectType } from 'next/navigation'
@@ -12,6 +12,7 @@ import { getAuthTokenCookie } from './auth'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { assetRecord } from '@moodle/lib-types'
 import { provide_assetRecord2asset } from '@moodle/lib-local-fs-storage'
+import { createMoodleDomainProxy } from '@moodle/domain/lib'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
 
@@ -32,7 +33,7 @@ function _domainAccess(): MoodleDomain {
   // a singleton could be created in the middleware and passed to the request object
   const trnspClient = http_bind.client()
 
-  const moodle_domain = lib.createMoodleDomainProxy({
+  const moodle_domain = createMoodleDomainProxy({
     async ctrl({ domainMsg }) {
       const primarySession = await getPrimarySession()
       return trnspClient(

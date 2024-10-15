@@ -3,11 +3,11 @@ import { defaultStyle } from '../ui/lib/color-style'
 import { GlobalProviderDeps, GlobalProvider } from './root-layout.client'
 import './root-layout.scss'
 import { priAccess } from '../lib/server/session-access'
-import { lib } from '@moodle/domain'
+import { fetchAllSchemaConfigs } from '@moodle/domain/lib'
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const deployments = await priAccess().env.application.deployments()
-  const allSchemaConfigs = await lib.fetchAllSchemaConfigs({ primary: priAccess() })
+  const allSchemaConfigs = await fetchAllSchemaConfigs({ primary: priAccess() })
 
   const globalCtxDeps: GlobalProviderDeps = {
     deployments,
