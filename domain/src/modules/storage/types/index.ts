@@ -1,2 +1,2 @@
-export * from './fs'
+export * from './_types'
 export * from './primary-schemas'

@@ -28,6 +28,7 @@ import { inspect } from 'util'
 import { coerce, literal, object } from 'zod'
 import { createDefaultDomainLoggerProvider } from './default-logger'
 import { configuration, configurator } from './types'
+import { getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
 
 const cache: map<Promise<configuration>> = {}
 
@@ -41,9 +42,9 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
     cache[domainName] = new Promise<configuration>(promiseResolveConfiguration => {
       const MOODLE_HOME_DIR = path.resolve(
         process.cwd(),
-        process.env.MOODLE_HOME_DIR ?? storage.MOODLE_DEFAULT_HOME_DIR,
+        process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR,
       )
-      const { currentDomainDir } = storage.getFsDirectories({
+      const { currentDomainDir } = getFsDirectories({
         homeDir: MOODLE_HOME_DIR,
         domainName,
       })

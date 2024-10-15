@@ -1,15 +1,20 @@
 import { http_bind } from '@moodle/bindings-node'
-import { MoodleDomain, primarySession, lib, storage } from '@moodle/domain'
+import { storage, lib, MoodleDomain, primarySession } from '@moodle/domain'
 import { generateUlid } from '@moodle/lib-id-gen'
+import {
+  fsDirectories,
+  generateFileHashes,
+  getFsDirectories,
+  MOODLE_DEFAULT_HOME_DIR,
+} from '@moodle/lib-local-fs-storage'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
-import { generateFileHashes } from '@moodle/core-storage/lib'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import { mkdir, writeFile } from 'fs/promises'
 import multer from 'multer'
 import { userAgent } from 'next/server'
-import { dirname, join, resolve } from 'path'
+import { join, resolve } from 'path'
 import { Headers } from 'undici'
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
@@ -18,7 +23,7 @@ const MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL =
   process.env.MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL
 const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(
   process.cwd(),
-  process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? storage.MOODLE_DEFAULT_HOME_DIR,
+  process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR,
 )
 
 const requestTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
@@ -29,7 +34,7 @@ declare global {
     export interface Request {
       moodlePrimary: MoodleDomain['primary']
       moodlePrimarySession: primarySession
-      moodleDirs: storage.fsDirectories
+      moodleDirs: fsDirectories
     }
   }
 }
@@ -51,7 +56,7 @@ app.use(cookieParser()).use(async (req, _res, next) => {
     },
   })
 
-  req.moodleDirs = storage.getFsDirectories({
+  req.moodleDirs = getFsDirectories({
     domainName: primarySession.domain,
     homeDir: MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR,
   })

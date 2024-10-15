@@ -1,9 +1,100 @@
-import { secondaryContext, storage } from '@moodle/domain'
-import { ok_ko, path } from '@moodle/lib-types'
+import { moodlePrimary, secondaryContext, storage } from '@moodle/domain'
+import {
+  asset,
+  assetRecord,
+  createPathProxy,
+  ok_ko,
+  path,
+  url_path_string_schema,
+} from '@moodle/lib-types'
 import { mkdir, readFile, rename, stat, writeFile } from 'fs/promises'
-import { join, sep } from 'path'
+import { join, resolve, sep } from 'path'
 import { rimraf } from 'rimraf'
 import sharp from 'sharp'
+import { filesystem, fs, fsDirectories, fsUrlPathGetter } from './types'
+
+import { createHash } from 'crypto'
+import { createReadStream } from 'fs'
+
+export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
+
+export async function generateFileHashes(filePath: string): Promise<storage.fileHashes> {
+  const sha256 = await new Promise<string>((resolve, reject) => {
+    const hash = createHash('sha256')
+    const rs = createReadStream(filePath)
+    rs.on('error', reject)
+    rs.on('data', chunk => hash.update(chunk))
+    rs.on('end', () => resolve(hash.digest('hex')))
+  })
+  return {
+    sha256,
+  }
+}
+
+export function prefixed_domain_file_fs_paths(prefix: path | string) {
+  const _prefix = [prefix].flat()
+  const prefixed_domain_file_paths = createPathProxy<fs<filesystem, fsUrlPathGetter>>({
+    apply({ path }) {
+      const _path = [..._prefix, ...path].join(sep)
+      return url_path_string_schema.parse(_path)
+    },
+  })
+  return prefixed_domain_file_paths
+}
+
+export function getFsDirectories({
+  domainName,
+  homeDir,
+}: {
+  homeDir: string
+  domainName: string
+}): fsDirectories {
+  const currentDomainDir = resolve(homeDir, storage.getSanitizedFileName(domainName))
+  const temp = join(currentDomainDir, '.temp')
+  const fsStorage = join(currentDomainDir, 'fs-storage')
+  return {
+    currentDomainDir,
+    temp,
+    fsStorage,
+  }
+}
+
+export function provide_assetRecord2asset(moodlePrimary: moodlePrimary, assetRecord: assetRecord) {
+  const prefixed_domain_file_paths = createPathProxy<fs<filesystem, () => Promise<asset>>>({
+    async apply({ path }) {
+      if (assetRecord.type === 'external') {
+        return {
+          type: 'external',
+          url: assetRecord.url,
+          credits: assetRecord.credits,
+        }
+      } else if (assetRecord.type === 'uploaded') {
+        const { filestoreHttp } = await moodlePrimary.env.application.deployments()
+        const url = url_path_string_schema.parse(
+          [filestoreHttp.href, ...path, assetRecord.uploadMeta.name].join('/'),
+        )
+        return {
+          type: 'uploaded',
+          url,
+        }
+      }
+      throw new Error(`Invalid assetRecord type ${JSON.stringify(assetRecord)}`)
+    },
+  })
+  return prefixed_domain_file_paths
+}
+
+// export function file_server_domain_file_url({ primary }: { primary: moodlePrimary }) {
+//   const prefixed_domain_file_paths = createPathProxy<fs<filesystem, fsUrlPathGetter>>({
+//     async apply({ path }) {
+//       const { filestoreHttp } = await primary.env.application.deployments()
+//       const _path = [filestoreHttp.href, ...path].join('/')
+//       return url_path_string_schema.parse(_path)
+//     },
+//   })
+//   return prefixed_domain_file_paths
+// }
+
 type temp_file_paths = {
   file: string
   meta: string
@@ -14,31 +105,19 @@ export function get_temp_file_paths({
   fsDirs,
 }: {
   tempId: string
-  fsDirs: storage.fsDirectories
+  fsDirs: fsDirectories
 }): temp_file_paths {
   const file = join(fsDirs.temp, tempId)
   const meta = `${file}.json`
   return { file, meta }
 }
 
-export async function deleteTemp({
-  tempId,
-  fsDirs,
-}: {
-  tempId: string
-  fsDirs: storage.fsDirectories
-}) {
+export async function deleteTemp({ tempId, fsDirs }: { tempId: string; fsDirs: fsDirectories }) {
   const { file: temp_file_path } = get_temp_file_paths({ tempId, fsDirs })
   await rimraf(`${temp_file_path}*`, { maxRetries: 2 }).catch(() => null)
 }
 
-export function fs_storage_path_of({
-  path,
-  fsDirs,
-}: {
-  path: path
-  fsDirs: storage.fsDirectories
-}) {
+export function fs_storage_path_of({ path, fsDirs }: { path: path; fsDirs: fsDirectories }) {
   const fs_path = [fsDirs.fsStorage, ...path].join(sep)
   return fs_path
 }
@@ -48,7 +127,7 @@ export async function ensure_temp_file({
   fsDirs,
 }: {
   tempId: string
-  fsDirs: storage.fsDirectories
+  fsDirs: fsDirectories
 }) {
   const temp_paths = get_temp_file_paths({ tempId, fsDirs })
 
@@ -75,7 +154,7 @@ export async function use_temp_file_as_web_image({
   destPath: string
   size: storage.webImageSize
   secondaryContext: secondaryContext
-  fsDirs: storage.fsDirectories
+  fsDirs: fsDirectories
 }): Promise<storage.useTempFileAsWebImageResult> {
   const [resizeDone, resizeResult] = await resizeTempImage({
     size,
@@ -102,7 +181,7 @@ export async function use_temp_file({
 }: {
   tempId: string
   destPath: string
-  fsDirs: storage.fsDirectories
+  fsDirs: fsDirectories
 }): Promise<storage.useTempFileResult> {
   const temp_file = await ensure_temp_file({ tempId, fsDirs })
   if (!temp_file) {
@@ -133,7 +212,7 @@ export async function resizeTempImage({
   tempId: string
   size: storage.webImageSize
   secondaryContext: secondaryContext
-  fsDirs: storage.fsDirectories
+  fsDirs: fsDirectories
 }): Promise<
   ok_ko<
     { resizedTempId: string; resizedTempFilePaths: temp_file_paths },

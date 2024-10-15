@@ -9,6 +9,7 @@ export type credits = {
 
 type uploadedAssetRecord = {
   uploadMeta: uploaded_blob_meta
+  // storageId: string
 }
 
 type externalAssetRecord = {

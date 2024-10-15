@@ -11,13 +11,14 @@ import { sitepaths } from '../common/utils/sitepaths'
 import { getAuthTokenCookie } from './auth'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { assetRecord } from '@moodle/lib-types'
+import { provide_assetRecord2asset } from '@moodle/lib-local-fs-storage'
 
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
 
 const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
 export function assetRecord2asset(assetRecord: assetRecord) {
-  return storage.provide_assetRecord2asset(priAccess(), assetRecord)
+  return provide_assetRecord2asset(priAccess(), assetRecord)
 }
 
 export function priAccess(): MoodleDomain['primary'] {

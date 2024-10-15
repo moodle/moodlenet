@@ -1,6 +1,6 @@
 import type { ok_ko, path } from '@moodle/lib-types'
 import { user_home_id } from '../userHome'
-import { uploaded_blob_meta, uploadMaxSizeConfigs } from './types/fs'
+import { uploaded_blob_meta, uploadMaxSizeConfigs } from './types/_types'
 export * from './lib'
 export * from './types'
 

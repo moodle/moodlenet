@@ -1,17 +1,23 @@
 import { secondaryAdapter, secondaryBootstrap, storage } from '@moodle/domain'
+import {
+  deleteTemp,
+  fs_storage_path_of,
+  get_temp_file_paths,
+  getFsDirectories,
+  prefixed_domain_file_fs_paths,
+  use_temp_file_as_web_image,
+} from '@moodle/lib-local-fs-storage'
 import { _void } from '@moodle/lib-types'
 import { mkdir, readdir, readFile, stat } from 'fs/promises'
 import { join } from 'path'
 import { rimraf } from 'rimraf'
-import * as lib from './lib'
 import { StorageDefaultSecEnv } from './types'
-import { prefixed_domain_file_fs_paths } from '@moodle/core-storage/lib'
 
 export function get_storage_default_secondary_factory({
   homeDir,
 }: StorageDefaultSecEnv): secondaryBootstrap {
   return ({ log, domain }) => {
-    const fsDirs = storage.getFsDirectories({ domainName: domain, homeDir })
+    const fsDirs = getFsDirectories({ domainName: domain, homeDir })
     const fs_file_paths = prefixed_domain_file_fs_paths(fsDirs.fsStorage)
     return secondaryContext => {
       const secondaryAdapter: secondaryAdapter = {
@@ -21,7 +27,7 @@ export function get_storage_default_secondary_factory({
               log('debug', 'useImageInProfile', { as, id, tempId })
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               const destPath = fs_file_paths.userHome[id]!.profile[as]!()
-              return lib.use_temp_file_as_web_image({
+              return use_temp_file_as_web_image({
                 fsDirs,
                 secondaryContext,
                 destPath,
@@ -42,14 +48,14 @@ export function get_storage_default_secondary_factory({
           },
           query: {
             async tempMeta({ tempId }) {
-              const { meta: temp_file_meta_path } = lib.get_temp_file_paths({ tempId, fsDirs })
+              const { meta: temp_file_meta_path } = get_temp_file_paths({ tempId, fsDirs })
 
               const meta: storage.uploaded_blob_meta = await readFile(temp_file_meta_path, 'utf8')
                 .then(JSON.parse)
                 .catch(null)
 
               if (!meta) {
-                await lib.deleteTemp({ tempId, fsDirs }).catch(() => null)
+                await deleteTemp({ tempId, fsDirs }).catch(() => null)
                 return [false, { reason: 'notFound' }]
               }
 
@@ -58,7 +64,7 @@ export function get_storage_default_secondary_factory({
           },
           write: {
             async deletePath({ path, type }) {
-              const fs_path = lib.fs_storage_path_of({ path, fsDirs })
+              const fs_path = fs_storage_path_of({ path, fsDirs })
               const file_stats = await stat(fs_path).catch(() => null)
               if (!file_stats) {
                 return [false, { reason: 'notFound' }]
