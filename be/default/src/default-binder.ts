@@ -8,7 +8,7 @@ const MOODLE_HTTP_BINDER_BASEURL = process.env.MOODLE_HTTP_BINDER_BASEURL ?? '/'
 const default_binder: binder = ({ messageDispatcher }) => {
   return http_bind.server({
     port: MOODLE_HTTP_BINDER_PORT,
-    baseUrl: MOODLE_HTTP_BINDER_BASEURL,
+    basePath: MOODLE_HTTP_BINDER_BASEURL,
     messageDispatcher,
   })
 }

@@ -29,10 +29,7 @@ import { createDefaultDomainLoggerProvider } from './default-logger'
 import { configuration, configurator } from './types'
 
 const cache: map<Promise<configuration>> = {}
-const MOODLE_HOME_DIR = path.resolve(
-  process.cwd(),
-  process.env.MOODLE_HOME_DIR ?? storage.MOODLE_DEFAULT_HOME_DIR,
-)
+
 
 export const default_configurator: configurator = async ({ domainAccess, loggerConfigs }) => {
   if (!domainAccess.primarySession?.domain) {
@@ -42,9 +39,15 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
   // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
   if (!cache[domainName]) {
     cache[domainName] = new Promise<configuration>(promiseResolveConfiguration => {
-      const homeDir = MOODLE_HOME_DIR
-      const { currentDomainDir } = storage.getFsDirectories({ homeDir, domainName })
-
+      const MOODLE_HOME_DIR = path.resolve(
+        process.cwd(),
+        process.env.MOODLE_HOME_DIR ?? storage.MOODLE_DEFAULT_HOME_DIR,
+      )
+      const { currentDomainDir } = storage.getFsDirectories({
+        homeDir: MOODLE_HOME_DIR,
+        domainName,
+      })
+      console.log({ currentDomainDir, MOODLE_HOME_DIR, domainAccess })
       dotenvExpand(dotenv.config({ path: path.join(currentDomainDir, '.env'), override: true }))
 
       const isDev = process.env.NODE_ENV === 'development'
@@ -95,7 +98,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
       }
 
       const file_system_storage_sec_env: storageSec.StorageDefaultSecEnv = {
-        homeDir,
+        homeDir: MOODLE_HOME_DIR,
       }
       const domainLoggerProvider = createDefaultDomainLoggerProvider({ domainName, loggerConfigs })
       function modLogger(modName: string) {

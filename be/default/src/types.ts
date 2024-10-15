@@ -2,6 +2,7 @@ import {
   coreProvider,
   domainAccess,
   domainLogger,
+  LogSeverity,
   messageDispatcher,
   secondaryProvider,
 } from '@moodle/domain'
@@ -26,7 +27,7 @@ export type binder_deps = { messageDispatcher: messageDispatcher }
 
 export type binder = (_: binder_deps) => void
 export type loggerConfigs = {
-  consoleLevel?: string
+  consoleLevel?: LogSeverity
   file?: {
     path: string
     level: string

@@ -66,5 +66,5 @@ export type browserPlatform = {
 
 export interface NodeJsPlatform {
   version: string
-  env?: map<string | undefined, string>
+  //env?: map<string | undefined, string>
 }

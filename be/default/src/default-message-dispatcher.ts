@@ -5,16 +5,22 @@ const mainMessageDispatcherProvider: mainMessageDispatcherProvider = async ({
   configuration,
   domainAccess,
 }) => {
-  const defaultMessageDispatcher: messageDispatcher = lib.provideMessageDispatcher({
+  const feedbackDispatcher: messageDispatcher = lib.provideMessageDispatcher({
     coreProviders: configuration.coreProviders,
     secondaryProviders: configuration.secondaryProviders,
     log: configuration.mainLogger,
     feedbackDispatcher({ domainAccess }) {
-      return defaultMessageDispatcher({ domainAccess })
+      return feedbackDispatcher({ domainAccess })
     },
-    start_background_processes: configuration.start_background_processes,
+    start_background_processes: false,
   })
 
-  return defaultMessageDispatcher({ domainAccess })
+  return lib.provideMessageDispatcher({
+    coreProviders: configuration.coreProviders,
+    secondaryProviders: configuration.secondaryProviders,
+    log: configuration.mainLogger,
+    feedbackDispatcher,
+    start_background_processes: configuration.start_background_processes,
+  })({ domainAccess })
 }
 export default mainMessageDispatcherProvider

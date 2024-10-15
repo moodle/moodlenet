@@ -8,7 +8,7 @@ import { generateNanoId } from '@moodle/lib-id-gen'
 import { __redacted__, _void, date_time_string } from '@moodle/lib-types'
 import * as lib from './lib'
 
-export const iam_core: coreBootstrap<'iam'> = domain => {
+export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
   return coreCtx => {
     return {
       iam: {
@@ -400,6 +400,8 @@ export const iam_core: coreBootstrap<'iam'> = domain => {
           }
         },
         async startBackgroundProcess() {
+          log('debug', 'Starting background process IAM')
+
           const sysAdminInfo = await coreCtx.mod.env.query.getSysAdminInfo()
           const [found] = await coreCtx.mod.iam.query.userBy({
             by: 'email',

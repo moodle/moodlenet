@@ -133,7 +133,7 @@ async function getPrimarySession() {
       local: {
         type: 'nodeJs',
         version: process.version,
-        env: process.env,
+        //env: process.env,
       },
       remote: {
         type: 'browser',

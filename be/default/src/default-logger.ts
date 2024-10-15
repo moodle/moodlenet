@@ -20,8 +20,9 @@ export function createDefaultDomainLoggerProvider({
         format: winston.format.combine(
           winston.format.timestamp(),
           winston.format.colorize({ colors: logLevelColors, message: false }),
-          winston.format.printf(({ level, message: args, modName, timestamp, tag }) => {
-            return `${timestamp} [${level}] [${domainName}#${modName}#${tag}]: ${inspect(args, { colors: true, depth: 8 })}`
+          winston.format.printf(({ level, message, modName, timestamp }) => {
+            // const json_args = args.map((arg: unknown) => JSON.stringify(arg, null, 2)).join('\n')
+            return `${timestamp} [${level}] [${domainName} | ${modName}]: ${message}`
           }),
         ),
       }),
@@ -40,8 +41,8 @@ export function createDefaultDomainLoggerProvider({
             winston.format.padLevels(),
             winston.format.timestamp(),
             winston.format.uncolorize(),
-            winston.format.printf(({ level, message: args, modName, tag, timestamp }) => {
-              return `${timestamp} [${level}] [${domainName}#${modName}#${tag}]: ${args.map((arg: unknown) => JSON.stringify(arg, null, 2)).join('\n')}\n---\n`
+            winston.format.printf(({ level, message, modName, timestamp }) => {
+              return `${timestamp} [${level}] [${domainName} | ${modName}]: ${message}\n---\n`
             }),
           ),
         }),
@@ -50,10 +51,12 @@ export function createDefaultDomainLoggerProvider({
   return { getChildLogger }
 
   function getChildLogger({ modName }: { modName: string }): domainLogger {
-    const winstonLogger = mainLogger.child
-    return (level, tag) =>
-      (...args) => {
-        winstonLogger({ modName, tag }).log(level, args)
-      }
+    const winstonLogger = mainLogger.child.bind(mainLogger)
+    return (level, ...args) => {
+      const message = args
+        .map((arg: unknown) => inspect(arg, { colors: true, depth: 8 }))
+        .join('\n')
+      winstonLogger({ modName }).log(level, message)
+    }
   }
 }

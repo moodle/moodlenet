@@ -11,7 +11,10 @@ optimport<binder>(process.env.MOODLE_BINDER_MODULE, './default-binder.js').then(
         process.env.MOODLE_CONFIGURATOR_MODULE,
         './default-configurator.js',
       )
-      const configuration = await configurator({ domainAccess, loggerConfigs: {} })
+      const configuration = await configurator({
+        domainAccess,
+        loggerConfigs: { consoleLevel: 'debug' },
+      })
 
       const messageDispatcher = await optimport<mainMessageDispatcher>(
         process.env.MOODLE_DISPATCHER_MODULE,

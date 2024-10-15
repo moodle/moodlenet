@@ -22,8 +22,15 @@ export function getSanitizedFileName(originalFilename: string) {
     .replace(/[_-]+$/, '')
     .replace(/[_-]+/g, '_')
 
-  const rnd = String(Math.random()).substring(2, 5)
-  return `${rnd}_${sanitized}`
+  return sanitized
+  // originalFilename.normalize("NFD").replace(/\p{Diacritic}/gu, "")
+  // const origExt = originalFilename.split('.').pop()
+  // const mDotExt = origExt ? `.${origExt}` : ''
+  // String(Math.random()).substring(2, 20) + mDotExt
+}
+export function getRndPrefixedSanitizedFileName(originalFilename: string, prefixLength = 3) {
+  const rnd = String(Math.random()).substring(2, 2 + prefixLength)
+  return `${rnd}_${getSanitizedFileName(originalFilename)}`
   // originalFilename.normalize("NFD").replace(/\p{Diacritic}/gu, "")
   // const origExt = originalFilename.split('.').pop()
   // const mDotExt = origExt ? `.${origExt}` : ''

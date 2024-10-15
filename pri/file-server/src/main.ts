@@ -182,7 +182,7 @@ async function getPrimarySession(req: express.Request) {
       local: {
         type: 'nodeJs',
         version: process.version,
-        env: process.env,
+        //    env: process.env,
       },
       remote: {
         type: 'browser',

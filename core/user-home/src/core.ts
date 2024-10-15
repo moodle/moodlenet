@@ -4,7 +4,7 @@ import { generateNanoId } from '@moodle/lib-id-gen'
 import { _unchecked_brand, _void } from '@moodle/lib-types'
 import { accessUserHome } from './lib'
 
-export const user_home_core: coreBootstrap<'userHome'> = domain => {
+export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
   return coreCtx => {
     return {
       userHome: {
@@ -87,6 +87,7 @@ export const user_home_core: coreBootstrap<'userHome'> = domain => {
                 write: {
                   //REVIEW - this iam should emit an event and catch it here  in userhome
                   async saveNewUser([[created, resp], { newUser }]) {
+                    log('debug', 'user-home watch saveNewUser', { created, resp, newUser })
                     if (!created) {
                       return
                     }
