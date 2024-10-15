@@ -1,9 +1,10 @@
 import { coreBootstrap } from '@moodle/domain'
 
 export const org_core: coreBootstrap<'org'> = domain => {
-  return coreCtx => {
-    return {
-      org: {
+  return {
+    modName: 'org',
+    provider(coreCtx) {
+      return {
         primary(priCtx) {
           return {
             session: {
@@ -24,7 +25,7 @@ export const org_core: coreBootstrap<'org'> = domain => {
             },
           }
         },
-      },
-    }
+      }
+    },
   }
 }

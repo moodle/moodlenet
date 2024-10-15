@@ -1,9 +1,10 @@
 import { coreBootstrap } from '@moodle/domain'
 
 export const storage_core: coreBootstrap<'storage'> = domain => {
-  return coreCtx => {
-    return {
-      storage: {
+  return {
+    modName: 'storage',
+    provider(coreCtx) {
+      return {
         primary(priCtx) {
           return {
             session: {
@@ -32,7 +33,7 @@ export const storage_core: coreBootstrap<'storage'> = domain => {
             },
           }
         },
-      },
-    }
+      }
+    },
   }
 }

@@ -1,9 +1,10 @@
 import { coreBootstrap } from '@moodle/domain'
 
 export const net_webapp_nextjs_core: coreBootstrap<'netWebappNextjs'> = domain => {
-  return core => {
-    return {
-      netWebappNextjs: {
+  return {
+    modName: 'netWebappNextjs',
+    provider(core) {
+      return {
         primary(primary) {
           return {
             webapp: {
@@ -16,7 +17,7 @@ export const net_webapp_nextjs_core: coreBootstrap<'netWebappNextjs'> = domain =
             },
           }
         },
-      },
-    }
+      }
+    },
   }
 }

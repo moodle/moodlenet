@@ -6,6 +6,7 @@ import { moodleModuleName } from '../moodle-domain'
 import {
   coreContext,
   coreProvider,
+  coreProviderObject,
   ctx_track,
   domainAccess,
   domainLayer,
@@ -25,7 +26,7 @@ import { createMoodleDomainProxy } from './domain-proxy'
 
 export type messageDispatcherProviderDeps = {
   secondaryProviders: secondaryProvider[]
-  coreProviders: coreProvider<_any>[]
+  coreProviderObjects: coreProviderObject<_any>[]
   feedbackDispatcher: messageDispatcher
   log: domainLogger
   start_background_processes: boolean
@@ -40,26 +41,24 @@ export function mergePrimaryImplementations(primaryImpls: primaryImpl<_any>[]): 
 
 export function provideMessageDispatcher({
   secondaryProviders,
-  coreProviders,
+  coreProviderObjects,
   feedbackDispatcher,
   log,
   start_background_processes,
 }: messageDispatcherProviderDeps): messageDispatcher {
   return async ({ domainAccess: current_domainAccess }) => {
-    const [currentLayer, moduleName] = current_domainAccess.endpoint as [
-      domainLayer | undefined,
-      moodleModuleName | undefined,
-    ]
-    if (!(currentLayer && moduleName)) {
+    const [currentDomainAccessLayer, currentDomainAccessModuleName] =
+      current_domainAccess.endpoint as [domainLayer | undefined, moodleModuleName | undefined]
+    if (!(currentDomainAccessLayer && currentDomainAccessModuleName)) {
       throw TypeError(`endpoint layer and module is required`)
     }
-    if (currentLayer === 'primary' && !current_domainAccess.primarySession) {
+    if (currentDomainAccessLayer === 'primary' && !current_domainAccess.primarySession) {
       throw TypeError(`primary layer requires primarySession`)
     }
 
-    const accessContext = await generateAccessContext(
-      currentLayer,
-      moduleName,
+    const currentDomainAccessContext = await generateAccessContext(
+      currentDomainAccessLayer,
+      currentDomainAccessModuleName,
       current_domainAccess,
     )
 
@@ -71,58 +70,55 @@ export function provideMessageDispatcher({
         priSessId: current_domainAccess.primarySession?.id,
       },
       accessContext: {
-        currentLayer,
-        moduleName,
-        id: accessContext.id,
+        currentLayer: currentDomainAccessLayer,
+        moduleName: currentDomainAccessModuleName,
+        id: currentDomainAccessContext.id,
       },
     })
 
     if (start_background_processes) {
       await Promise.all(
-        coreProviders.map(provideCore => {
-          return Promise.all(
-            // HACK: Object.keys(provideCore(accessContext)) is called only to  modulename from coreProvider ! ^^'
-            Object.keys(provideCore(accessContext)).map(async moduleName => {
-              const moduleCore = provideCore(
-                await generateAccessContext('background', moduleName as moodleModuleName),
-              )[moduleName]
-              return moduleCore?.startBackgroundProcess?.()
-            }),
+        coreProviderObjects.map(async ({ modName, provider }) => {
+          const moduleCore = provider(
+            await generateAccessContext('background', modName as moodleModuleName),
           )
+          return moduleCore?.startBackgroundProcess?.()
         }),
       )
     }
 
-    if (currentLayer === 'primary') {
+    if (currentDomainAccessLayer === 'primary') {
       const primary = mergePrimaryImplementations(
-        coreProviders.map(provideCore => {
-          return Object.entries(provideCore(accessContext)).reduce((acc, [modName, moduleCore]) => {
-            acc[modName] = moduleCore.primary(accessContext)
-            return acc
-          }, {} as _any)
+        coreProviderObjects.map(({ modName, provider }) => {
+          return modName === currentDomainAccessModuleName
+            ? {
+                [modName]: provider(currentDomainAccessContext).primary(currentDomainAccessContext),
+              }
+            : {}
         }),
       )
-      const primaryResult = dispatchMsg({ primary }, current_domainAccess)
+      const primaryResult = await dispatchMsg({ primary }, current_domainAccess)
       triggerWatchers({ result: primaryResult })
 
       return primaryResult
-    } else if (currentLayer === 'event') {
+    } else if (currentDomainAccessLayer === 'event') {
       Promise.allSettled(
-        coreProviders
-          .map(provideCore =>
-            Object.values(provideCore(accessContext)).map(moduleCore =>
-              moduleCore.event?.(accessContext),
-            ),
+        coreProviderObjects.map(async ({ modName, provider }) => {
+          const eventAccessContext = await generateAccessContext(
+            'event',
+            modName as moodleModuleName,
+            current_domainAccess,
           )
-          .map(
-            maybe_eventImpl =>
-              maybe_eventImpl &&
-              dispatchMsg({ event: maybe_eventImpl }, current_domainAccess, { graceful: true }),
-          ),
+          const maybe_eventImpl = provider(eventAccessContext).event?.(eventAccessContext)
+          return (
+            maybe_eventImpl &&
+            dispatchMsg({ event: maybe_eventImpl }, current_domainAccess, { graceful: true })
+          )
+        }),
       ).catch(error => log('critical', { domainAccess: current_domainAccess }, error))
-    } else if (currentLayer === 'secondary') {
+    } else if (currentDomainAccessLayer === 'secondary') {
       const secondary = mergeSecondaryAdapters(
-        secondaryProviders.map(provideSecondary => provideSecondary(accessContext)),
+        secondaryProviders.map(provideSecondary => provideSecondary(currentDomainAccessContext)),
       )
 
       const secondaryResult = await dispatchMsg({ secondary }, current_domainAccess)
@@ -130,7 +126,7 @@ export function provideMessageDispatcher({
       return secondaryResult
     } else {
       log('error', { current_domainAccess })
-      throw TypeError(`cannot handle layer [${currentLayer}] here`)
+      throw TypeError(`cannot handle layer [${currentDomainAccessLayer}] here`)
     }
 
     async function dispatchMsg(
@@ -159,26 +155,22 @@ export function provideMessageDispatcher({
     }
     function triggerWatchers({ result }: { result: _any }) {
       return Promise.allSettled(
-        coreProviders.map(provideCore =>
-          Promise.allSettled(
-            Object.values(provideCore(accessContext))
-              .map(moduleCore => moduleCore.watch?.(accessContext))
-              .map(maybe_watchImpl => {
-                log('debug', `triggerWatchers`, current_domainAccess.endpoint, maybe_watchImpl)
-                return (
-                  maybe_watchImpl &&
-                  dispatchMsg(
-                    maybe_watchImpl,
-                    {
-                      ...current_domainAccess,
-                      payload: [result, current_domainAccess.payload],
-                    },
-                    { graceful: true },
-                  )
-                )
-              }),
-          ),
-        ),
+        coreProviderObjects.map(async ({ modName, provider }) => {
+          const watchContext = await generateAccessContext('watch', modName, current_domainAccess)
+          const maybe_watchImpl = provider(watchContext).watch?.(watchContext)
+          log('debug', `triggerWatchers`, current_domainAccess.endpoint, maybe_watchImpl)
+          return (
+            maybe_watchImpl &&
+            dispatchMsg(
+              maybe_watchImpl,
+              {
+                ...current_domainAccess,
+                payload: [result, current_domainAccess.payload],
+              },
+              { graceful: true },
+            )
+          )
+        }),
       ).catch(error => log('critical', { domainAccess: current_domainAccess }, error))
     }
   }

@@ -2,9 +2,10 @@ import { coreBootstrap } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
 
 export const net_core: coreBootstrap<'net'> = domain => {
-  return coreCtx => {
-    return {
-      net: {
+  return {
+    modName: 'net',
+    provider(coreCtx) {
+      return {
         primary(priCtx) {
           return {
             session: {
@@ -27,7 +28,7 @@ export const net_core: coreBootstrap<'net'> = domain => {
             },
           }
         },
-      },
-    }
+      }
+    },
   }
 }

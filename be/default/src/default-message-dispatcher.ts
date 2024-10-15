@@ -6,7 +6,7 @@ const mainMessageDispatcherProvider: mainMessageDispatcherProvider = async ({
   domainAccess,
 }) => {
   const feedbackDispatcher: messageDispatcher = lib.provideMessageDispatcher({
-    coreProviders: configuration.coreProviders,
+    coreProviderObjects: configuration.coreProviderObjects,
     secondaryProviders: configuration.secondaryProviders,
     log: configuration.mainLogger,
     feedbackDispatcher({ domainAccess }) {
@@ -16,7 +16,7 @@ const mainMessageDispatcherProvider: mainMessageDispatcherProvider = async ({
   })
 
   return lib.provideMessageDispatcher({
-    coreProviders: configuration.coreProviders,
+    coreProviderObjects: configuration.coreProviderObjects,
     secondaryProviders: configuration.secondaryProviders,
     log: configuration.mainLogger,
     feedbackDispatcher,

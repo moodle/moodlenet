@@ -6,6 +6,7 @@ import * as mod_storage from '@moodle/core-storage'
 import * as mod_user_home from '@moodle/core-user-home'
 import {
   coreProvider,
+  coreProviderObject,
   domainCore,
   env as domainEnv,
   secondaryAdapter,
@@ -29,7 +30,6 @@ import { createDefaultDomainLoggerProvider } from './default-logger'
 import { configuration, configurator } from './types'
 
 const cache: map<Promise<configuration>> = {}
-
 
 export const default_configurator: configurator = async ({ domainAccess, loggerConfigs }) => {
   if (!domainAccess.primarySession?.domain) {
@@ -139,7 +139,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         })({ domain: domainName, log: modLogger('env-secondary') }),
       ]
 
-      const coreProviders: coreProvider<_any>[] = [
+      const coreProviderObjects: coreProviderObject<_any>[] = [
         // core modules
         mod_net.net_core({ domain: domainName, log: modLogger('net-core') }),
         mod_org.org_core({ domain: domainName, log: modLogger('org-core') }),
@@ -150,10 +150,11 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         }),
         mod_user_home.user_home_core({ domain: domainName, log: modLogger('user_home-core') }),
         mod_storage.storage_core({ domain: domainName, log: modLogger('storage-core') }),
-        ((bootstrapContext): coreProvider<'env'> => {
-          return coreContext => {
-            const envCore: domainCore<'env'> = {
-              env: {
+        ((bootstrapContext): coreProviderObject<'env'> => {
+          return {
+            modName: 'env',
+            provider(coreContext) {
+              const envCore: domainCore<'env'> = {
                 primary(primaryCtx) {
                   return {
                     domain: {
@@ -175,9 +176,9 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
                     },
                   }
                 },
-              },
-            }
-            return envCore
+              }
+              return envCore
+            },
           }
         })({ domain: domainName, log: modLogger('env-core') }),
       ]
@@ -185,7 +186,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
       let do_start_background_processes = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
       migrateArangoDB(arango_db_env).then(() => {
         const configuration: configuration = {
-          coreProviders,
+          coreProviderObjects,
           secondaryProviders,
           mainLogger: modLogger('main'),
           get start_background_processes() {

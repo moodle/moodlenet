@@ -9,9 +9,10 @@ import { __redacted__, _void, date_time_string } from '@moodle/lib-types'
 import * as lib from './lib'
 
 export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
-  return coreCtx => {
-    return {
-      iam: {
+  return {
+    modName: 'iam',
+    provider(coreCtx) {
+      return {
         primary(priCtx) {
           return {
             session: {
@@ -422,13 +423,13 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
             await coreCtx.write.saveNewUser({ newUser })
           }
         },
-      },
-    }
-    async function fetchPrimarySchemas() {
-      const {
-        configs: { iamPrimaryMsgSchemaConfigs },
-      } = await coreCtx.mod.env.query.modConfigs({ mod: 'iam' })
-      return iam.getIamPrimarySchemas(iamPrimaryMsgSchemaConfigs)
-    }
+      }
+      async function fetchPrimarySchemas() {
+        const {
+          configs: { iamPrimaryMsgSchemaConfigs },
+        } = await coreCtx.mod.env.query.modConfigs({ mod: 'iam' })
+        return iam.getIamPrimarySchemas(iamPrimaryMsgSchemaConfigs)
+      }
+    },
   }
 }

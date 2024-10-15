@@ -2,7 +2,7 @@ import { prefixed_domain_file_paths } from '@moodle/core-storage/lib'
 import { secondaryAdapter, secondaryBootstrap, storage } from '@moodle/domain'
 import { _void, ok_ko, path } from '@moodle/lib-types'
 import { mkdir, readdir, readFile, rename, stat, writeFile } from 'fs/promises'
-import { join, sep } from 'path'
+import { dirname, join, sep } from 'path'
 import { rimraf } from 'rimraf'
 import sharp from 'sharp'
 import { StorageDefaultSecEnv } from './types'
@@ -15,14 +15,15 @@ export function get_storage_default_secondary_factory({
   //FIXME: set in startbackground processss
   // NOTE DO REALLY BACKGROUND PROCESS BE IN CORE ? SHOULDN'T IT BE IN SECONDARIES ?
 
-  return bootstrapCtx => {
-    const fsDirs = storage.getFsDirectories({ domainName: bootstrapCtx.domain, homeDir })
+  return ({ log, domain }) => {
+    const fsDirs = storage.getFsDirectories({ domainName: domain, homeDir })
     const fs_file_paths = prefixed_domain_file_paths(fsDirs.fsStorage)
     return secondaryContext => {
       const secondaryAdapter: secondaryAdapter = {
         userHome: {
           write: {
             async useImageInProfile({ as, id, tempId }) {
+              log('debug', 'useImageInProfile', { as, id, tempId })
               const destPath = fs_file_paths.userHome[id]!.profile[as]!()
               return use_temp_file_as_web_image({
                 destPath,
@@ -204,6 +205,7 @@ export function get_storage_default_secondary_factory({
         if (!temp_file) {
           return [false, { reason: 'tempNotFound' }]
         }
+        await mkdir(dirname(destPath), { recursive: true })
         const mvError = await rename(temp_file.temp_paths.file, destPath).then(
           () => false as const,
           e => String(e),

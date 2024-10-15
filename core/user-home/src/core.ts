@@ -5,9 +5,10 @@ import { _unchecked_brand, _void } from '@moodle/lib-types'
 import { accessUserHome } from './lib'
 
 export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
-  return coreCtx => {
-    return {
-      userHome: {
+  return {
+    modName: 'userHome',
+    provider(coreCtx) {
+      return {
         primary(priCtx) {
           return {
             write: {
@@ -122,7 +123,7 @@ export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
             },
           }
         },
-      },
-    }
+      }
+    },
   }
 }

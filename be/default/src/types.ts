@@ -1,5 +1,6 @@
 import {
   coreProvider,
+  coreProviderObject,
   domainAccess,
   domainLogger,
   LogSeverity,
@@ -11,7 +12,7 @@ import { _any } from '@moodle/lib-types'
 export type configurator_deps = { domainAccess: domainAccess; loggerConfigs: loggerConfigs }
 export type configurator = (_: configurator_deps) => Promise<configuration>
 export type configuration = {
-  coreProviders: coreProvider<_any>[]
+  coreProviderObjects: coreProviderObject<_any>[]
   secondaryProviders: secondaryProvider[]
   start_background_processes: boolean
   mainLogger: domainLogger

@@ -72,19 +72,22 @@ export type secondaryBootstrap = (bootstrapContext: bootstrapContext) => seconda
 export type secondaryProvider = (secondaryContext: secondaryContext) => secondaryAdapter
 export type secondaryAdapter = deep_partial<moodleSecondary>
 
+export type coreProviderObject<mod extends moodleModuleName> = {
+  modName: mod
+  provider: coreProvider<mod>
+}
+
 export type coreBootstrap<mod extends moodleModuleName> = (
   bootstrapContext: bootstrapContext,
-) => coreProvider<mod>
+) => coreProviderObject<mod>
 export type coreProvider<mod extends moodleModuleName> = (
   coreContext: coreContext<mod>,
 ) => domainCore<mod>
 export type domainCore<mod extends moodleModuleName> = {
-  [modName in mod]: {
-    primary: (primaryContext: primaryContext) => primaryImpl<mod>[mod]
-    event?: (eventContext: eventContext) => eventListenerImpl
-    watch?: (watchContext: watchContext<mod>) => watchImpl
-    startBackgroundProcess?: () => Promise<void>
-  }
+  primary: (primaryContext: primaryContext) => primaryImpl<mod>[mod]
+  event?: (eventContext: eventContext) => eventListenerImpl
+  watch?: (watchContext: watchContext<mod>) => watchImpl
+  startBackgroundProcess?: () => Promise<void>
 }
 
 export type primaryImpl<mod extends moodleModuleName> = {
