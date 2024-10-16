@@ -1,24 +1,21 @@
-import { contextModuleAccess } from '@moodle/domain'
+import { url_string } from '@moodle/lib-types'
 import React from 'react'
-import * as main from '..'
+import { EmailLayoutContentProps } from '../email-layout'
 
-export type DeleteAccountEmailProps = {
-  modAccess: contextModuleAccess
-  deleteAccountUrl: string
-  receiverEmail: string
+export type deleteAccountRequestNotificationEmailProps = {
+  siteName: string
+  deleteAccountUrl: url_string
 }
 
-export async function selfDeletionConfirmEmail({
-  modAccess,
+export function selfDeletionConfirmEmail({
+  siteName,
   deleteAccountUrl,
-  receiverEmail,
-}: DeleteAccountEmailProps) {
-  const senderInfo = await main.getSenderInfo({ modAccess })
+}: deleteAccountRequestNotificationEmailProps): EmailLayoutContentProps {
   const title = `Confirm account deletion 🥀`
 
   const body = (
     <div style={contentStyle}>
-      The deletion of your {senderInfo.name} account means that:
+      The deletion of your {siteName} account means that:
       <br />
       <ul style={listStyle}>
         <li>
@@ -26,26 +23,21 @@ export async function selfDeletionConfirmEmail({
         </li>
         <li>Your contributions will be kept anonymous.</li>
       </ul>
-      Before deleting your account, feel free to unpublish or remove any content you don&apos;t want
-      to be kept.
+      Before deleting your account, feel free to unpublish or remove any content you don&apos;t want to be kept.
     </div>
   )
 
-  return main.layoutEmail({
-    senderInfo,
-    content: {
-      body,
-      receiverEmail,
-      subject: title,
-      title,
-      action: {
-        title: 'Delete account permanently',
-        url: deleteAccountUrl,
-        buttonStyle: { background: '#ff0000', color: '#ffffff' },
-      },
-      hideIgnoreMessage: true,
+  return {
+    body,
+    subject: title,
+    title,
+    action: {
+      title: 'Delete account permanently',
+      url: deleteAccountUrl,
+      buttonStyle: { background: '#ff0000', color: '#ffffff' },
     },
-  })
+    hideIgnoreMessage: true,
+  }
 }
 
 const contentStyle: React.CSSProperties = {

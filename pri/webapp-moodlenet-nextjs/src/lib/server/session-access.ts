@@ -19,25 +19,33 @@ export function priAccess(): MoodleDomain['primary'] {
   return _domainAccess().primary
 }
 
+const request_session_async_storage = new AsyncLocalStorage<MoodleDomain>()
+
 function _domainAccess(): MoodleDomain {
-  //FIXME: _domainAccess() or priAccess() should be a singleton FOR THE CURRENT REQUEST
-  // so that it doesn't create a new instance of transportClient every time
-  // implying a new HTTPConnection on every priAccess()
-  // a singleton could be created in the middleware and passed to the request object
+  const _existing_currentStore = request_session_async_storage.getStore()
+  if (_existing_currentStore) {
+    console.log('using existing MoodleDomain')
+    return _existing_currentStore
+  }
+  console.log('creating new MoodleDomain')
+
+  const primarySessionPromise = getPrimarySession()
+
   const trnspClient = http_bind.client()
 
   const moodle_domain = createMoodleDomainProxy({
     async ctrl({ domainMsg }) {
-      const primarySession = await getPrimarySession()
       return trnspClient(
         {
           ...domainMsg,
-          primarySession,
+          primarySession: await primarySessionPromise,
         },
         requestTarget,
       )
     },
   })
+  request_session_async_storage.enterWith(moodle_domain)
+  return moodle_domain
   // FIXME:
   // The following block should refresh the session token before it expires
   // we need to fast-check-no-validation for expiration (jose.decodeJwt() ),

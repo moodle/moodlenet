@@ -1,4 +1,6 @@
 import sanitizeFilename from 'sanitize-filename'
+import { asset, uploaded_blob_meta, usingTempFile } from '../types'
+import { url_string } from '@moodle/lib-types'
 
 // export function newFsFileRelativePath(filename: string, date = new Date()) {
 //   return [
@@ -28,4 +30,20 @@ export function getSanitizedFileName(originalFilename: string) {
 export function getRndPrefixedSanitizedFileName(originalFilename: string, prefixLength = 3) {
   const rnd = String(Math.random()).substring(2, 2 + prefixLength)
   return `${rnd}_${getSanitizedFileName(originalFilename)}`
+}
+export function getAssetUrl(asset: asset, filestoreHttpHref: url_string) {
+  return asset.type === 'external' ? asset.url : `${filestoreHttpHref}/${asset.path}/${asset.name}`
+}
+
+export function uploaded_blob_meta_2_asset({ path, uploaded_blob_meta }: usingTempFile) {
+  const asset: asset = {
+    type: 'local',
+    path,
+    hash: uploaded_blob_meta.hash,
+    uploaded: { at: uploaded_blob_meta.uploaded.at, primarySessionId: uploaded_blob_meta.uploaded.primarySessionId },
+    mimetype: uploaded_blob_meta.mimetype,
+    name: uploaded_blob_meta.name,
+    size: uploaded_blob_meta.size,
+  }
+  return asset
 }

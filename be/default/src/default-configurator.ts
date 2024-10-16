@@ -37,8 +37,14 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         homeDir: MOODLE_HOME_DIR,
         domainName,
       })
-      console.log({ currentDomainDir, MOODLE_HOME_DIR, domainAccess })
       dotenvExpand(dotenv.config({ path: path.join(currentDomainDir, '.env'), override: true }))
+
+      const domainLoggerProvider = createDefaultDomainLoggerProvider({ domainName, loggerConfigs })
+      function modLogger(modName: string) {
+        return domainLoggerProvider.getChildLogger({ modName })
+      }
+      const configuratorLogger = modLogger('configurator')
+      configuratorLogger('debug', { currentDomainDir, MOODLE_HOME_DIR })
 
       const isDev = process.env.NODE_ENV === 'development'
 
@@ -56,7 +62,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         MOODLE_FILE_SERVER_DEPLOYMENT_URL: process.env.MOODLE_FILE_SERVER_DEPLOYMENT_URL,
       })
 
-      console.info(`domain [${domainName}] env:`, inspect({ MOODLE_HOME_DIR, ...env }, { colors: true, sorted: true }))
+      configuratorLogger('debug', `domain [${domainName}] env:`, { MOODLE_HOME_DIR, ...env })
       const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(currentDomainDir, `private.key`), 'utf8')
       const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(currentDomainDir, `public.key`), 'utf8')
       const _process_env = process.env as _any
@@ -80,10 +86,6 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
 
       const file_system_storage_sec_env: storageSec.StorageDefaultSecEnv = {
         homeDir: MOODLE_HOME_DIR,
-      }
-      const domainLoggerProvider = createDefaultDomainLoggerProvider({ domainName, loggerConfigs })
-      function modLogger(modName: string) {
-        return domainLoggerProvider.getChildLogger({ modName })
       }
 
       const secondaryProviders: secondaryProvider[] = [
@@ -109,6 +111,12 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
             const secondaryAdapter: secondaryAdapter = {
               env: {
                 query: {
+                  async deployments() {
+                    return {
+                      moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
+                      filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
+                    }
+                  },
                   async getSysAdminInfo() {
                     return sys_admin_info
                   },

@@ -22,6 +22,7 @@ export default interface EnvDomain {
       write: unknown
       sync: unknown
       query: {
+        deployments(): Promise<appDeployments>
         getSysAdminInfo(): Promise<sys_admin_info>
         modConfigs<mod extends keyof ModConfigs>(_: {
           mod: mod

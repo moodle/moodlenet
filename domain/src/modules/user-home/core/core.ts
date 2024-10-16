@@ -4,7 +4,7 @@ import { assertWithErrorXxx, coreBootstrap } from '../../../types'
 import { assert_authorizeAuthenticatedUserSession } from '../../iam/lib'
 import { accessUserHome } from '../lib'
 import { user_home_record } from '../types'
-import { assetRecord } from '../../storage'
+import { asset, uploaded_blob_meta_2_asset } from '../../storage'
 
 export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
   return {
@@ -80,18 +80,15 @@ export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
             secondary: {
               userHome: {
                 write: {
-                  async useTempImageInProfile([[done, fileInfo], { id, as }]) {
+                  async useTempImageInProfile([[done, usingTempFile], { id, as }]) {
                     if (!done) {
                       return
                     }
+                    const asset = uploaded_blob_meta_2_asset(usingTempFile)
                     await coreCtx.write.updatePartialProfileInfo({
                       id,
                       partialProfileInfo:
-                        as === 'avatar'
-                          ? { avatar: fileInfo.assetRecord }
-                          : as === 'background'
-                            ? { background: fileInfo.assetRecord }
-                            : {},
+                        as === 'avatar' ? { avatar: asset } : as === 'background' ? { background: asset } : {},
                     })
                   },
                 },

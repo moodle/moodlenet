@@ -1,7 +1,7 @@
 import { _nullish } from '@moodle/lib-types'
-import { asset } from '@moodle/module/storage'
+import { asset, getAssetUrl } from '@moodle/module/storage'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useAllSchemaConfigs, useDeployments } from './globalContexts'
+import { useAllSchemaConfigs, useAsset, useDeployments } from './globalContexts'
 
 //SHAREDLIB: paths and also useFileUploader({type}) that acts as subpath (type) prop
 const uploadTempFieldName = 'file'
@@ -13,12 +13,12 @@ export type fileUploadedAction = (_: {
   tempId: string
 }) => Promise<{ done: true; newAsset?: asset } | { done: false; error?: string | string[] | _nullish }>
 export function useFileUploader({
-  currentAsset,
+  asset,
   fileUploadedAction,
   type,
   overrideMaxSize,
 }: {
-  currentAsset: asset
+  asset: asset
   fileUploadedAction: fileUploadedAction
   type: 'webImage' | 'file'
   overrideMaxSize?: number
@@ -26,27 +26,25 @@ export function useFileUploader({
   const { filestoreHttp } = useDeployments()
   const { uploadMaxSizeConfigs } = useAllSchemaConfigs()
   const maxSize = overrideMaxSize ?? (type === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max)
-
   const inputRef = useRef<HTMLInputElement | null>(null)
   // TODO: this complex state management definitely deserves a useReducer ;)
   // NOTE: that would remove all (or most of) the useEffects !
   // NOTE: and make the whole logic simple and understandable
+  const [currentAsset, setCurrentAsset] = useState(asset)
+  const [currentAssetUrl] = useAsset(currentAsset)
 
-  const [latestUpdatedSrc, setLatestUpdatedSrc] = useState(assetUrl(currentAsset, filestoreHttp.href))
-  const [localSrc, setLocalSrc] = useState(latestUpdatedSrc)
+  // const [latestUpdatedSrc, setLatestUpdatedSrc] = useState(getAssetUrl(asset, filestoreHttp.href))
+  const [localSrc, setLocalSrc] = useState(currentAssetUrl)
   const [error, setError] = useState('')
   const [choosenFile, setChoosenFile] = useState<{ file: File; url: string } | null>(null)
   useEffect(() => {
-    // (reset) align all srcs with the currentAsset when it changes from parent
-    const currentSrc = assetUrl(currentAsset, filestoreHttp.href)
-    setLatestUpdatedSrc(currentSrc)
-    setLocalSrc(currentSrc)
+    setLocalSrc(currentAssetUrl)
     inputRef.current && (inputRef.current.value = '')
-  }, [currentAsset, filestoreHttp.href])
+  }, [currentAssetUrl, filestoreHttp.href])
   useEffect(() => {
     // align localSrc when user has choosen a valid file (choosenFile)
     if (!choosenFile) {
-      setLocalSrc(latestUpdatedSrc)
+      setCurrentAsset(asset)
       inputRef.current && (inputRef.current.value = '')
       return
     }
@@ -54,7 +52,7 @@ export function useFileUploader({
     return () => {
       URL.revokeObjectURL(choosenFile.url)
     }
-  }, [choosenFile, latestUpdatedSrc])
+  }, [choosenFile, asset])
   useEffect(() => {
     // create input element for file upload
     // append it to the body
@@ -110,13 +108,10 @@ export function useFileUploader({
         }
         inputRef.current && (inputRef.current.value = '')
         if (result.newAsset) {
-          setLatestUpdatedSrc(assetUrl(result.newAsset, filestoreHttp.href))
+          setCurrentAsset(result.newAsset)
           setChoosenFile(null)
         }
       })
   }, [dirty, choosenFile?.file, filestoreHttp.href, type, fileUploadedAction])
-  return [localSrc, openFileDialog, submit, error, latestUpdatedSrc, dirty] as const
-}
-function assetUrl(asset: asset, filestoreHttpHref: string) {
-  return asset.type === 'external' ? asset.url : `${filestoreHttpHref}/${asset.path}/${asset.name}`
+  return [localSrc, openFileDialog, submit, error, currentAsset, dirty] as const
 }

@@ -1,39 +1,32 @@
-import { contextModuleAccess } from '@moodle/domain'
+import { url_string } from '@moodle/lib-types'
 import React from 'react'
-import * as main from '..'
+import { EmailLayoutContentProps } from '../email-layout'
 
-export type ResetPasswordContentEmailProps = {
-  receiverEmail: string
-  resetPasswordUrl: string
-  modAccess: contextModuleAccess
+export type resetPasswordRequestNotificationEmailProps = {
+  siteName: string
+  resetPasswordUrl: url_string
 }
 
-export async function resetPasswordEmail({
+export function resetPasswordEmail({
   resetPasswordUrl,
-  receiverEmail,
-  modAccess,
-}: ResetPasswordContentEmailProps) {
-  const senderInfo = await main.getSenderInfo({ modAccess })
+  siteName,
+}: resetPasswordRequestNotificationEmailProps): EmailLayoutContentProps {
   const title = `Ready to change your password 🔑`
   const body = (
     <React.Fragment>
-      Someone (probably you) requested a password change on MoodleNet. If that was you, please click
-      on the button below and choose a new password for your account.
+      Someone (probably you) requested a password change on {siteName}. If that was you, please click on the button below and
+      choose a new password for your account.
     </React.Fragment>
   )
 
-  return main.layoutEmail({
-    senderInfo,
-    content: {
-      body,
-      receiverEmail,
-      subject: title,
-      title,
-      hideIgnoreMessage: false,
-      action: {
-        title: 'Change password',
-        url: resetPasswordUrl,
-      },
+  return {
+    body,
+    subject: title,
+    title,
+    hideIgnoreMessage: false,
+    action: {
+      title: 'Change password',
+      url: resetPasswordUrl,
     },
-  })
+  }
 }

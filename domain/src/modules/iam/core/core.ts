@@ -1,6 +1,5 @@
-import { resetPasswordEmail, selfDeletionConfirmEmail, signupEmailConfirmationEmail } from '@moodle/lib-email-templates/iam'
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { __redacted__, _void, date_time_string } from '@moodle/lib-types'
+import { __redacted__, _void, date_time_string, url_string_schema } from '@moodle/lib-types'
 import { getIamPrimarySchemas, user_role } from '../'
 import { coreBootstrap } from '../../../types'
 import {
@@ -9,7 +8,6 @@ import {
   createNewUserRecordData,
   generateSessionForUserData,
   generateSessionForUserId,
-  getUserNamedEmailAddress,
   user_record2SessionUserData,
   validateAnyUserSession,
 } from '../lib'
@@ -52,7 +50,9 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
 
                 const new_roles_set = new Set(user.roles)
                 new_roles_set[action === 'set' ? 'add' : 'delete'](role)
-                const new_roles = (new_roles_set.has('admin') ? (['admin', 'publisher'] satisfies user_role[]) : Array.from(new_roles_set)).sort()
+                const new_roles = (
+                  new_roles_set.has('admin') ? (['admin', 'publisher'] satisfies user_role[]) : Array.from(new_roles_set)
+                ).sort()
 
                 const [done] = await coreCtx.write.setUserRoles({
                   userId,
@@ -123,16 +123,10 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                   },
                 })
 
-                const { emailProps, reactBody } = await signupEmailConfirmationEmail({
-                  modAccess: coreCtx.mod,
-                  activateAccountUrl: `${redirectUrl}?token=${confirmEmailSession.token}`,
-                  receiverEmail: signupForm.email,
-                })
-
-                await coreCtx.queue.sendEmail({
-                  reactBody,
-                  subject: emailProps.content.subject,
-                  to: signupForm.email,
+                coreCtx.queue.notifyUserOnSignupWithEmailConfirmation({
+                  activateAccountUrl: url_string_schema.parse(`${redirectUrl}?token=${confirmEmailSession.token}`),
+                  signupEmail: signupForm.email,
+                  userName: signupForm.displayName,
                 })
                 return [true, _void]
               },
@@ -228,15 +222,11 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                   },
                 })
 
-                const { emailProps, reactBody } = await resetPasswordEmail({
-                  modAccess: coreCtx.mod,
-                  resetPasswordUrl: `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
-                  receiverEmail: user.contacts.email,
-                })
-                await coreCtx.queue.sendEmail({
-                  reactBody,
-                  subject: emailProps.content.subject,
-                  to: getUserNamedEmailAddress(user),
+                coreCtx.queue.notifyUserOnResetPasswordRequest({
+                  resetPasswordUrl: url_string_schema.parse(
+                    `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
+                  ),
+                  toUserId: user.id,
                 })
                 return
               },
@@ -267,15 +257,9 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                   },
                 })
 
-                const { emailProps, reactBody } = await selfDeletionConfirmEmail({
-                  modAccess: coreCtx.mod,
-                  deleteAccountUrl: `${redirectUrl}?token=${selfDeletionConfirmationSession.token}`,
-                  receiverEmail: authenticated_session.user.contacts.email,
-                })
-                await coreCtx.queue.sendEmail({
-                  reactBody,
-                  subject: emailProps.content.subject,
-                  to: getUserNamedEmailAddress(authenticated_session.user),
+                coreCtx.queue.notifyUserOnAccountSelfDeletionRequest({
+                  deleteAccountUrl: url_string_schema.parse(`${redirectUrl}?token=${selfDeletionConfirmationSession.token}`),
+                  toUserId: authenticated_session.user.id,
                 })
                 return
               },
@@ -361,10 +345,16 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                 const { passwordHash } = await coreCtx.mod.iam.service.hashPassword({
                   plainPassword: newPassword,
                 })
-                await coreCtx.write.setUserPassword({
+                const [done] = await coreCtx.write.setUserPassword({
                   newPasswordHash: passwordHash,
                   userId: authenticated_session.user.id,
                 })
+
+                if (!done) {
+                  return [false, { reason: 'unknown' }]
+                }
+
+                coreCtx.queue.notifyUserOnPasswordChanged({ toUserId: authenticated_session.user.id })
                 return [true, _void]
               },
             },
@@ -373,13 +363,23 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
         watch(watchCtx) {
           return {
             secondary: {
+              iam: {
+                write: {
+                  async setUserPassword([[done], { userId }]) {
+                    //FIXME: put quite all notification sends as reaction to some atomic event (just like in the case of password change here)
+                    if (!done) {
+                      return
+                    }
+                    coreCtx.queue.notifyUserOnPasswordChanged({ toUserId: userId })
+                  },
+                },
+              },
               userHome: {
                 write: {
                   async updatePartialProfileInfo([
                     [done, res],
                     {
                       partialProfileInfo: { displayName },
-                      id,
                     },
                   ]) {
                     if (!done || typeof displayName !== 'string') {

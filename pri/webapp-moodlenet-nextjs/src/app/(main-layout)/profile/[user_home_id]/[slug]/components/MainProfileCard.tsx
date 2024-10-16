@@ -54,7 +54,7 @@ export function MainProfileCard({
     avatarChoosenFileError,
     // dirtyAvatar,
   ] = useFileUploader({
-    currentAsset: avatar ?? defaultImageAsset,
+    asset: avatar ?? defaultImageAsset,
     async fileUploadedAction({ tempId }) {
       const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
       if (!saveResult?.data) {

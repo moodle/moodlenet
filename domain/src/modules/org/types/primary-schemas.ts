@@ -1,4 +1,4 @@
-import { url_or_file_id_schema, url_string_schema } from '@moodle/lib-types'
+import { url_string_schema } from '@moodle/lib-types'
 import type { z } from 'zod'
 import { object, string } from 'zod'
 export interface OrgPrimaryMsgSchemaConfigs {
@@ -12,16 +12,12 @@ export type orgInfoForm = z.infer<ReturnType<typeof getOrgPrimarySchemas>['updat
 
 export function getOrgPrimarySchemas({ info }: OrgPrimaryMsgSchemaConfigs) {
   const name = string().trim().min(info.name.min).max(info.name.max)
-  const logo = url_or_file_id_schema()
-  const smallLogo = url_or_file_id_schema()
   const websiteUrl = url_string_schema
   const copyright = string().trim().max(info.copyright.max)
   const physicalAddress = string().trim().max(info.physicalAddress.max)
 
   const updateOrgInfoSchema = object({
     name,
-    logo,
-    smallLogo,
     copyright,
     physicalAddress,
     websiteUrl,
@@ -31,8 +27,6 @@ export function getOrgPrimarySchemas({ info }: OrgPrimaryMsgSchemaConfigs) {
     raw: {
       info: {
         name,
-        logo,
-        smallLogo,
         copyright,
         physicalAddress,
         websiteUrl,

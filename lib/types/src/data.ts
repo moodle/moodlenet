@@ -10,9 +10,9 @@ import {
   ZodSchema,
   ZodString,
 } from 'zod'
-import { _any, map } from './map'
+import { _any, d_u, map } from './map'
+import { ReactElement } from 'react'
 export type path = string[]
-
 
 export type intersection<types extends _any[]> = pretty<
   types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
@@ -39,23 +39,15 @@ export type branded<type, b extends symbol /*  | string */> = BRAND<b> & type ex
     : { [_ in keyof _type]: _type[_] }
   : never
 
-
 // redacted logging
 export const __redacted__key = '__redacted__'
 export function logRedact(obj: _any) {
-  return JSON.stringify(
-    obj,
-    (key, value) => (key === __redacted__key ? '###__redacted__###' : value),
-    2,
-  )
+  return JSON.stringify(obj, (key, value) => (key === __redacted__key ? '###__redacted__###' : value), 2)
 }
 export function __redacted__<t>(data: t): __redacted__<t> {
   return _unchecked_brand<__redacted__<t>>({ [__redacted__key]: data })
 }
-export type __redacted__<T> = branded<
-  { [k in typeof __redacted__key]: T },
-  typeof __redacted__brand
->
+export type __redacted__<T> = branded<{ [k in typeof __redacted__key]: T }, typeof __redacted__brand>
 export declare const __redacted__brand: unique symbol
 export function __redacted_schema__<schema extends ZodSchema>(schema: schema) {
   return object({
@@ -68,40 +60,6 @@ export function date_time_string(date: Date | 'now'): date_time_string {
   return _date.toISOString() as date_time_string
 }
 export const single_line_string_schema = string().regex(/^[^\r\n]*$/gi)
-
-// FIXME: ------
-// FIXME: move file_id type and schema in file-server when implemented !
-// FIXME: ------
-
-export type url_or_file_id = url_string | file_id
-export function url_or_file_id_schema(opts?: {
-  intersect?: { url?: ZodString; file_id?: ZodObject<map> }
-}) {
-  return union([
-    intersection(opts?.intersect?.url ?? (any() as unknown as ZodString), url_string_schema),
-    intersection(opts?.intersect?.file_id ?? (any() as unknown as ZodObject<map>), file_id_schema),
-  ])
-}
-
-// // export const file_id_brand = Symbol('file_id_brand')
-// export type file_id = z.infer< typeof file_id_schema>
-export declare const file_id_brand: unique symbol
-type ___file_idx = z.infer<typeof file_id_schema> // FIXME: define all types as z.infer? (check DEV NOTES)
-export type file_id = branded<{ id: string }, typeof file_id_brand>
-export const file_id_schema = object({ id: string().trim().pipe(single_line_string_schema) }).brand<
-  typeof file_id_brand
->()
-
-export async function getFileUrl(url_or_file_id: url_or_file_id) {
-  if (typeof url_or_file_id === 'string') {
-    return url_or_file_id
-  }
-  return _unchecked_brand<url_string>(url_or_file_id.id)
-}
-
-// FIXME: ------^^^^^^^^^^^^^^^^^^^^^^^^^^^^6
-// FIXME: move file_id type and schema in file-server when implemented !
-// FIXME: ------^^^^^^^^^^^^^^^^^^^^^^^^^^^^6
 
 // // export const url_string_brand = Symbol('url_string_brand')
 // export type url_string = z.infer< typeof url_string_schema>
@@ -196,7 +154,22 @@ export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
 
 export type flags<names extends string> = Record<names, boolean>
 
-
+// FIXME: here's not the best place for type `email_body`
+export type email_body = d_u<
+  {
+    react: {
+      element: ReactElement
+    }
+    text: {
+      text: string
+    }
+    html: {
+      html: string
+      // opts?: check @react-email/render Options @react-email/render/dist/browser/index.d.ts#3
+    }
+  },
+  'contentType'
+>
 
 // //CREDIT: [@grahamaj](https://stackoverflow.com/users/5666581/grahamaj) [so](https://stackoverflow.com/a/71131506/1455910)
 // type Explode<T> = keyof T extends infer K
@@ -207,3 +180,5 @@ export type flags<names extends string> = Record<names, boolean>
 // type AtMostOne<T> = Explode<Partial<T>>
 // type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> & U[keyof U]
 // type ExactlyOne<T> = AtMostOne<T> & AtLeastOne<T>
+
+

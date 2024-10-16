@@ -116,13 +116,18 @@ const router = express
       }
 
       const uploaded_blob_meta: uploaded_blob_meta = {
-        uploadedBy: { primarySessionId: req.moodlePrimarySession.id, userId: userSession.user.id },
-        uploaded: date_time_string('now'),
-        name: getSanitizedFileName(req.file.originalname),
         hash: await generateFileHashes(req.file.path),
+        name: getSanitizedFileName(req.file.originalname),
         mimetype: req.file.mimetype,
         size: req.file.size,
-        originalFilename: req.file.originalname,
+        uploaded: {
+          primarySessionId: req.moodlePrimarySession.id,
+          byUserId: userSession.user.id,
+          at: date_time_string('now'),
+        },
+        original: {
+          name: req.file.originalname,
+        },
       }
       writeFile(`${req.file.path}.json`, JSON.stringify(uploaded_blob_meta), 'utf8')
       res.status(200).json({ tempId: req.file.filename })

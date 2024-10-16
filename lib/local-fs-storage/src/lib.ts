@@ -7,7 +7,7 @@ import sharp from 'sharp'
 import { filesystem, fs, fsDirectories, fsUrlPathGetter } from './types'
 
 import {
-  assetRecord,
+  asset,
   fileHashes,
   getSanitizedFileName,
   uploaded_blob_meta,
@@ -16,7 +16,6 @@ import {
 } from '@moodle/module/storage'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
-import { omit, pick } from 'lodash'
 
 export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
 
@@ -181,20 +180,10 @@ export async function use_temp_file({
   if (mvError) {
     return [false, { reason: 'move', error: mvError }]
   }
-  const blobMeta = pick(temp_file.meta, 'hash', 'uploadedBy', 'originalSize', 'originalHash')
-  const asset = omit(temp_file.meta, 'hash', 'uploadedBy', 'originalSize', 'originalHash')
 
-  const assetRecordPath = relative(fsDirs.fsStorage, absolutePath) //join(absolutePath, temp_file.meta.name))
-  const assetRecord: assetRecord = {
-    type: 'uploaded',
-    asset: {
-      type: 'uploaded',
-      path: assetRecordPath,
-      ...asset,
-    },
-    blobMeta,
-  }
-  return [true, { assetRecord }]
+  const path = relative(fsDirs.fsStorage, absolutePath) //join(absolutePath, temp_file.meta.name))
+
+  return [true, { uploaded_blob_meta: temp_file.meta, path }]
 }
 
 export async function resizeTempImage({
@@ -232,9 +221,21 @@ export async function resizeTempImage({
     .toFile(resizedTempFilePaths.file)
   const resized_temp_meta: uploaded_blob_meta = {
     ...original_temp_file.meta,
+    hash: await generateFileHashes(resizedTempFilePaths.file),
     size: resizedInfo.size,
-    originalSize: original_temp_file.meta.size,
+    original: {
+      size: original_temp_file.meta.size,
+      hash: original_temp_file.meta.hash,
+      ...original_temp_file.meta.original,
+    },
   }
+  //   ...original_temp_file.meta,
+  //   size: resizedInfo.size,
+  //   original: {
+  //     ...original_temp_file.meta.original,
+  //     size: original_temp_file.meta.size,
+  //   },
+  // }
   await writeFile(resizedTempFilePaths.meta, JSON.stringify(resized_temp_meta), 'utf8')
 
   return [true, { resizedTempId, resizedTempFilePaths }]

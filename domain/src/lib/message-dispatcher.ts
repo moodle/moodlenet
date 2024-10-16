@@ -61,19 +61,13 @@ export function provideMessageDispatcher({
       current_domainAccess,
     )
 
-    // log('debug', 'messageDispatcher', {
-    //   domainAccess: {
-    //     endpoint: current_domainAccess.endpoint,
-    //     ctx_track: current_domainAccess.ctx_track,
-    //     from: current_domainAccess.from,
-    //     priSessId: current_domainAccess.primarySession?.id,
-    //   },
-    //   accessContext: {
-    //     currentLayer: currentDomainAccessLayer,
-    //     moduleName: currentDomainAccessModuleName,
-    //     id: currentDomainAccessContext.id,
-    //   },
-    // })
+    log('debug', 'messageDispatcher:', {
+      endpoint: current_domainAccess.endpoint.join('.'),
+      ctx_track: current_domainAccess.ctx_track,
+      from: current_domainAccess.from,
+      primarySessionId: current_domainAccess.primarySession?.id,
+      accessContextId: currentDomainAccessContext.id,
+    })
 
     if (start_background_processes) {
       await Promise.all(

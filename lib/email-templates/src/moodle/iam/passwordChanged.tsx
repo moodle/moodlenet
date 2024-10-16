@@ -1,32 +1,21 @@
-import { contextModuleAccess } from '@moodle/domain'
 import React from 'react'
-import * as main from '..'
+import { EmailLayoutContentProps } from '../email-layout'
 
-export type PasswordChangedEmailProps = {
-  modAccess: contextModuleAccess
-  receiverEmail: string
+export type passwordChangedNotificationEmailProps = {
+  siteName: string
 }
 
-export async function passwordChangedEmail({
-  receiverEmail,
-  modAccess,
-}: PasswordChangedEmailProps) {
-  const senderInfo = await main.getSenderInfo({ modAccess })
+export function passwordChangedEmail({ siteName }: passwordChangedNotificationEmailProps): EmailLayoutContentProps {
   const title = `Password changed 🔒💫`
   const body = (
     <React.Fragment>
-      Your password has been successfully changed. If it was not you, recover your password and keep
-      in safer.
+      Your password has been successfully changed in {siteName}. If it was not you, recover your password and keep in safer.
     </React.Fragment>
   )
-  return main.layoutEmail({
-    senderInfo,
-    content: {
-      body,
-      receiverEmail,
-      subject: title,
-      title,
-      hideIgnoreMessage: false,
-    },
-  })
+  return {
+    body,
+    subject: title,
+    title,
+    hideIgnoreMessage: false,
+  }
 }
