@@ -63,7 +63,7 @@
 
 //   const setQueryParams = useCallback(
 //     (newQueryParams: Partial<QParamsArray>) => {
-//       // console.log({ queryParamsArray, newQueryParams })
+
 //       const qstring = getQueryString({ ...queryParamsArray, ...newQueryParams })
 //       setQueryString(qstring)
 //     },

@@ -70,6 +70,8 @@
     //
     "BUG",
     //
+    "REVIEW",
+    //
     "HACK",
     //
     "CHECK",
@@ -99,6 +101,5 @@
       "SHARED_LIB_NEEDED"
     ]
   },
-  "javascript.preferences.importModuleSpecifier": "project-relative",
   "typescript.preferences.importModuleSpecifier": "project-relative"
 }

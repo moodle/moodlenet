@@ -1,50 +1,49 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { GlobalCtx } from '../../app/root-layout.client'
-import { _nullish, d_u, map, ok_ko } from '@moodle/lib-types'
+import { _nullish } from '@moodle/lib-types'
+import { asset, getAssetUrl } from '@moodle/module/storage'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useAllSchemaConfigs, useAsset, useDeployments } from './globalContexts'
 
-//SHAREDLIB
+//SHAREDLIB: paths and also useFileUploader({type}) that acts as subpath (type) prop
 const uploadTempFieldName = 'file'
 const uploadTempPath = '/.temp'
 const uploadTempMethod = 'POST'
+useFileUploader.type = { webImage: '.jpg,.jpeg,.png,.gif', file: '*' }
 
 export type fileUploadedAction = (_: {
   tempId: string
-}) => Promise<
-  { done: true; newCurrent?: string } | { done: false; error?: string | string[] | _nullish }
->
-useFileUploader.type = { image: '.jpg,.jpeg,.png,.gif', any: '*' }
-export function useFileUploader<actionMeta extends map<string> = never>({
-  currentSrc,
+}) => Promise<{ done: true; newAsset?: asset } | { done: false; error?: string | string[] | _nullish }>
+export function useFileUploader({
+  asset,
   fileUploadedAction,
-  accept = useFileUploader.type.any,
-  maxSize = 16777216, //16MB Math.pow(2,24)
+  type,
+  overrideMaxSize,
 }: {
-  currentSrc: string
+  asset: asset
   fileUploadedAction: fileUploadedAction
-  maxSize?: number
-  accept?: string
-  withMeta: actionMeta extends never ? never : () => actionMeta
+  type: 'webImage' | 'file'
+  overrideMaxSize?: number
 }) {
+  const { filestoreHttp } = useDeployments()
+  const { uploadMaxSizeConfigs } = useAllSchemaConfigs()
+  const maxSize = overrideMaxSize ?? (type === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max)
   const inputRef = useRef<HTMLInputElement | null>(null)
   // TODO: this complex state management definitely deserves a useReducer ;)
   // NOTE: that would remove all (or most of) the useEffects !
   // NOTE: and make the whole logic simple and understandable
-  const [currentSrcCache, setCurrentSrcCache] = useState(currentSrc)
-  const [latestUpdatedSrc, setLatestUpdatedSrc] = useState(currentSrc)
-  const [localSrc, setLocalSrc] = useState(currentSrc)
+  const [currentAsset, setCurrentAsset] = useState(asset)
+  const [currentAssetUrl] = useAsset(currentAsset)
+
+  // const [latestUpdatedSrc, setLatestUpdatedSrc] = useState(getAssetUrl(asset, filestoreHttp.href))
+  const [localSrc, setLocalSrc] = useState(currentAssetUrl)
   const [error, setError] = useState('')
   const [choosenFile, setChoosenFile] = useState<{ file: File; url: string } | null>(null)
   useEffect(() => {
-    // align all srcs to the currentSrc when it changes
-    setCurrentSrcCache(currentSrc)
-    setLatestUpdatedSrc(currentSrc)
-    setLocalSrc(currentSrc)
+    setLocalSrc(currentAssetUrl)
     inputRef.current && (inputRef.current.value = '')
-  }, [currentSrc])
+  }, [currentAssetUrl, filestoreHttp.href])
   useEffect(() => {
     // align localSrc when user has choosen a valid file (choosenFile)
     if (!choosenFile) {
-      setLocalSrc(latestUpdatedSrc)
       inputRef.current && (inputRef.current.value = '')
       return
     }
@@ -52,14 +51,14 @@ export function useFileUploader<actionMeta extends map<string> = never>({
     return () => {
       URL.revokeObjectURL(choosenFile.url)
     }
-  }, [choosenFile, currentSrcCache, latestUpdatedSrc])
+  }, [choosenFile])
   useEffect(() => {
     // create input element for file upload
     // append it to the body
     // update it when configs changes ( accept, maxSize )
     const inputElement = document.createElement('input')
     inputElement.type = 'file'
-    inputElement.accept = accept
+    inputElement.accept = useFileUploader.type[type]
     inputElement.hidden = true
     inputElement.multiple = false
     inputElement.onchange = e => {
@@ -85,22 +84,20 @@ export function useFileUploader<actionMeta extends map<string> = never>({
       inputRef.current = null
       document.body.removeChild(inputElement)
     }
-  }, [accept, maxSize])
+  }, [type, maxSize])
   const openFileDialog = useCallback(() => {
     inputRef.current?.click()
   }, [])
   const dirty = !!choosenFile
-  const {
-    deployments: {
-      filestoreHttp: { href: filestoreHttpHref },
-    },
-  } = useContext(GlobalCtx)
   const submit = useCallback(() => {
     if (!dirty) return
     const formData = new FormData()
     formData.append(uploadTempFieldName, choosenFile.file)
 
-    fetch(`${filestoreHttpHref}${uploadTempPath}`, { body: formData, method: uploadTempMethod })
+    fetch(`${filestoreHttp.href}${uploadTempPath}/${type}`, {
+      body: formData,
+      method: uploadTempMethod,
+    })
       .then(r => r.json())
       .then(fileUploadedAction)
       .then(result => {
@@ -109,11 +106,11 @@ export function useFileUploader<actionMeta extends map<string> = never>({
           return
         }
         inputRef.current && (inputRef.current.value = '')
-        if (result.newCurrent) {
-          setLatestUpdatedSrc(result.newCurrent)
+        if (result.newAsset) {
+          setCurrentAsset(result.newAsset)
           setChoosenFile(null)
         }
       })
-  }, [fileUploadedAction, choosenFile?.file, dirty, filestoreHttpHref])
-  return [openFileDialog, submit, error, localSrc, latestUpdatedSrc, dirty] as const
+  }, [dirty, choosenFile?.file, filestoreHttp.href, type, fileUploadedAction])
+  return [localSrc, openFileDialog, submit, error, currentAsset, dirty] as const
 }

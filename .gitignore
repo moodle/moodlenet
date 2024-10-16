@@ -48,6 +48,6 @@ out
 # general
 .ignore
 .env*
-.moodle.env.home
+.moodle.home
 
 docker/dev/services/container-data

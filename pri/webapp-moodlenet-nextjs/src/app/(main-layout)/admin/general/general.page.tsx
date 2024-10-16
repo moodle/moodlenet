@@ -1,22 +1,15 @@
-import { priAccess } from '../../../../lib/server/session-access'
+import { getSiteGeneralInfo } from '../../../../lib/server/siteGeneralInfo'
 import { GeneralClient, GeneralFormValues } from './general.client'
-import { fetchMakeAdminGeneralSchemaDeps } from './general.server'
 
 export default async function GeneralPage() {
-  const makeAdminGeneralSchemaDeps = await fetchMakeAdminGeneralSchemaDeps()
-  const { moodlenet, org } = await priAccess().netWebappNextjs.moodlenet.info()
+  const { net, org } = await getSiteGeneralInfo()
   const generalFormValues: GeneralFormValues = {
     name: org.name,
     copyright: org.copyright,
-    title: moodlenet.title,
+    title: net.title,
     physicalAddress: org.physicalAddress,
-    subtitle: moodlenet.subtitle,
+    subtitle: net.subtitle,
     websiteUrl: org.websiteUrl,
   }
-  return (
-    <GeneralClient
-      makeAdminGeneralSchemaDeps={makeAdminGeneralSchemaDeps}
-      generalFormValues={generalFormValues}
-    />
-  )
+  return <GeneralClient generalFormValues={generalFormValues} />
 }

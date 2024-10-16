@@ -1,4 +1,4 @@
-import { getDeploymentInfoUrl } from '@moodle/lib-ddd'
+import { getDeploymentInfoUrl } from '@moodle/domain/lib'
 import { url_string } from '@moodle/lib-types'
 import assert from 'assert'
 import { headers } from 'next/headers'
@@ -21,7 +21,7 @@ export async function getIfIsUrlOnThisSite(any_obj: unknown) {
   const urlString = String(any_obj)
   const baseUrl = (await srvSiteUrls()).baseUrl
   const isIt = urlString.startsWith(baseUrl)
-  // console.log('getIfIsUrlOnThisSite', { any_obj, urlString, isIt, baseUrl })
+
   return isIt ? urlString : null
 }
 

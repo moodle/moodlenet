@@ -1,31 +1,28 @@
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
-import { binder, configurator, session_deployer } from './types.js'
+import { binder, configurator, mainMessageDispatcher } from './types.js'
 import { _maybe } from '@moodle/lib-types'
 dotenvExpand(dotenv.config())
 
 optimport<binder>(process.env.MOODLE_BINDER_MODULE, './default-binder.js').then(binder => {
   binder({
-    domain_session_access: async ({ access_session, domain_msg }) => {
+    messageDispatcher: async ({ domainAccess }) => {
       const configurator = await optimport<configurator>(
         process.env.MOODLE_CONFIGURATOR_MODULE,
         './default-configurator.js',
       )
-      const { core_factories, secondary_factories, start_background_processes } =
-        await configurator({
-          access_session,
-        })
+      const configuration = await configurator({
+        domainAccess,
+        loggerConfigs: { consoleLevel: 'debug' },
+      })
 
-      const session_deployer = await optimport<session_deployer>(
-        process.env.MOODLE_DEPLOYMENT_MODULE,
-        './default-session-deployment.js',
+      const messageDispatcher = await optimport<mainMessageDispatcher>(
+        process.env.MOODLE_DISPATCHER_MODULE,
+        './default-message-dispatcher.js',
       )
-      return session_deployer({
-        domain_msg,
-        access_session,
-        core_factories,
-        secondary_factories,
-        start_background_processes,
+      return messageDispatcher({
+        configuration,
+        domainAccess,
       })
     },
   })

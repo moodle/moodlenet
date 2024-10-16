@@ -2,14 +2,14 @@
 
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
+import { revalidatePath } from 'next/cache'
+import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
 import { priAccess } from '../../../../lib/server/session-access'
-import { MakeAdminGeneralSchemaDeps, provideAdminGeneralSchemas } from './general.common'
-import { revalidatePath } from 'next/cache'
+import { provideAdminGeneralSchemas } from './general.common'
 
 export async function getAdminGeneralSchemas() {
-  const { moodleNetSchemaConfigs, orgSchemaConfigs } = await fetchMakeAdminGeneralSchemaDeps()
-  return provideAdminGeneralSchemas({ moodleNetSchemaConfigs, orgSchemaConfigs })
+  return provideAdminGeneralSchemas(await getAllPrimarySchemas())
 }
 async function getGeneralSchema() {
   const { generalSchema: general } = await getAdminGeneralSchemas()
@@ -36,12 +36,3 @@ export const saveGeneralInfoAction = defaultSafeActionClient
       _errors: [t(`something went wrong while saving the general info`)],
     })
   })
-
-export async function fetchMakeAdminGeneralSchemaDeps(): Promise<MakeAdminGeneralSchemaDeps> {
-  const [{ moodleNetSchemaConfigs }, { orgSchemaConfigs }] = await Promise.all([
-    priAccess().netWebappNextjs.schemaConfigs.moodleNet(),
-    priAccess().netWebappNextjs.schemaConfigs.org(),
-  ])
-  return { moodleNetSchemaConfigs, orgSchemaConfigs }
-}
-

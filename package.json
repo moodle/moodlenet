@@ -58,6 +58,8 @@
     "tslib": "^2.3.0",
     "ulidx": "^2.4.1",
     "undici": "^6.19.8",
+    "winston": "^3.15.0",
+    "winston-daily-rotate-file": "^5.0.0",
     "zod": "^3.23.8",
     "zod-form-data": "^2.0.2"
   },
@@ -80,8 +82,8 @@
     "@testing-library/react": "15.0.6",
     "@types/cookie-parser": "^1.4.7",
     "@types/jest": "29.5.12",
-    "@types/lodash-es": "^4.17.12",
     "@types/lodash": "^4.17.7",
+    "@types/lodash-es": "^4.17.12",
     "@types/multer": "^1.4.12",
     "@types/node": "18.16.9",
     "@types/nodemailer": "^6.4.15",

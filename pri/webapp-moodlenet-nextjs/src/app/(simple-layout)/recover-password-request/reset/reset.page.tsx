@@ -1,5 +1,4 @@
 import { signed_token_schema } from '@moodle/lib-types'
-import { priAccess } from '../../../../lib/server/session-access'
 import { ResetPasswordClient } from './reset.client'
 
 export default async function ResetPage({ searchParams }: { searchParams?: { token?: string } }) {
@@ -7,12 +6,6 @@ export default async function ResetPage({ searchParams }: { searchParams?: { tok
   if (!success) {
     return 'invalid token'
   }
-  const { iamSchemaConfigs } = await priAccess().netWebappNextjs.schemaConfigs.iam()
 
-  return (
-    <ResetPasswordClient
-      iamSchemaConfigs={iamSchemaConfigs}
-      resetPasswordToken={resetPasswordToken}
-    />
-  )
+  return <ResetPasswordClient resetPasswordToken={resetPasswordToken} />
 }

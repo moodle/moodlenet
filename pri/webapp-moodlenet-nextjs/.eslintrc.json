@@ -6,7 +6,7 @@
     "../../.eslintrc.base.json",
     "../../.eslintrc.base.json"
   ],
-  "ignorePatterns": ["!**/*", ".next/**/*"],
+  "ignorePatterns": ["!**/*", ".next/**/*", "zz__legacy/**/*", "ui-cmps/**/*"],
   "rules": {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error"

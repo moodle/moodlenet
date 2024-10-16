@@ -1,10 +1,10 @@
 import {
-  domain_session_access,
-  domain_session_access_deps,
+  domainAccess,
   ErrorXxx,
   isCodeXxx,
+  messageDispatcher,
   status_code_xxx,
-} from '@moodle/lib-ddd'
+} from '@moodle/domain'
 import { _any, map } from '@moodle/lib-types'
 import express from 'express'
 import { Agent, fetch } from 'undici'
@@ -28,19 +28,21 @@ export function client(agent_opts?: Agent.Options) {
     headers: map<string, string>
   }
   return async function request(
-    domain_session_access_deps: domain_session_access_deps,
+    domainAccess: domainAccess,
     req_http_target: string | req_http_target,
     _opts?: Partial<req_opts>,
   ) {
+    const { endpoint, ...accessBody } = domainAccess
     const url =
       typeof req_http_target === 'string'
-        ? new URL(req_http_target)
+        ? new URL([req_http_target, ...endpoint].join('/'))
         : new URL(
-            req_http_target.basePath,
+            [req_http_target.basePath, ...endpoint].join('/'),
             `${req_http_target.secure ? 'https' : 'http'}://${req_http_target.host}:${req_http_target.port}`,
           )
 
-    const body = _serial(domain_session_access_deps)
+    const body = _serial(accessBody)
+    // console.log('http client', { url: url.href, endpoint })
     const reply = await fetch(url, {
       method: 'POST',
       body,
@@ -70,17 +72,23 @@ export function client(agent_opts?: Agent.Options) {
 }
 
 type srv_cfg = {
-  domain_session_access: domain_session_access
+  messageDispatcher: messageDispatcher
   port: number
-  baseUrl: string
+  basePath: string
 }
-export async function server({ domain_session_access: request, port, baseUrl }: srv_cfg) {
+export async function server({ messageDispatcher, port, basePath }: srv_cfg) {
   const app = express()
   app.use(express.text({ defaultCharset: 'utf-8' }))
-  app.post(baseUrl, async (req, res) => {
+  // console.log('http server', { basePath })
+  const router = express.Router().use(async (req, res) => {
     res.setHeader('Content-Type', PROTOCOL_CONTENT_TYPE)
-    const domain_session_access_deps = _parse(req.body)
-    const reply = await request(domain_session_access_deps)
+    // console.log('http server', { url: req.url })
+    const endpointless_domain_access: Omit<domainAccess, 'endpoint'> = _parse(req.body)
+    const domainAccess: domainAccess = {
+      ...endpointless_domain_access,
+      endpoint: req.url.replace(/^\//, '').split('/'),
+    }
+    const reply = await messageDispatcher({ domainAccess })
       .catch(e => {
         console.error(e)
         throw e
@@ -99,6 +107,7 @@ export async function server({ domain_session_access: request, port, baseUrl }: 
     const replyStr = _serial(reply)
     res.send(replyStr)
   })
+  app.use(basePath, router)
   return new Promise<void>((resolve /* , reject */) => {
     app.listen(port, resolve)
   })

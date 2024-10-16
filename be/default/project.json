@@ -18,7 +18,7 @@
         "tsConfig": "be/default/tsconfig.app.json",
         "assets": [
           {
-            "input": "mod/*/initial-fs",
+            "input": "core/*/initial-fs",
             "glob": "**/*",
             "output": "initial-fs/"
           }

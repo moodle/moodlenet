@@ -1,6 +1,5 @@
 'use server'
 
-import { iam } from '@moodle/domain'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
@@ -11,11 +10,11 @@ import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { setAuthTokenCookie } from '../../../../lib/server/auth'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
 import { priAccess } from '../../../../lib/server/session-access'
+import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 
 export async function getLoginSchema() {
-  const { iamSchemaConfigs } = await priAccess().netWebappNextjs.schemaConfigs.iam()
-  const { loginSchema } = await iam.getIamPrimarySchemas(iamSchemaConfigs)
-  return loginSchema
+  const { iam } = await getAllPrimarySchemas()
+  return iam.loginSchema
 }
 export const loginAction = defaultSafeActionClient
   .schema(getLoginSchema)
@@ -23,11 +22,11 @@ export const loginAction = defaultSafeActionClient
     // const inSiteRefererUrl = await getInSiteReferer()
 
     const xSearchHeader = headers().get('x-search')
-    const searchRedirectPath = xSearchHeader
+    const redirectPathAfterLogin = xSearchHeader
       ? String(QueryString.parse(xSearchHeader).redirect)
       : undefined
 
-    const redirectUrl = searchRedirectPath || sitepaths()
+    const redirectUrl = redirectPathAfterLogin || sitepaths()
 
     const [loginSuccess, loginResponse] = await priAccess().iam.access.login({
       loginForm,

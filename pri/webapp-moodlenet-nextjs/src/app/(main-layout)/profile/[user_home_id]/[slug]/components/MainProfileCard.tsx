@@ -1,14 +1,15 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { user_home_access_object } from '@moodle/module/user-home'
 import Edit from '@mui/icons-material/Edit'
 import Flag from '@mui/icons-material/Flag'
 import Save from '@mui/icons-material/Save'
 import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
-import { getProfileInfoPrimarySchemas, user_home_access_object } from 'domain/src/user-hone'
 import { useCallback, useReducer, useRef } from 'react'
-import { never } from 'zod'
+import { useAllPrimarySchemas } from '../../../../../../lib/client/globalContexts'
+import { useFileUploader } from '../../../../../../lib/client/useFileUploader'
 import { ApprovalButton } from '../../../../../../ui/atoms/ApproveButton/ApproveButton'
 import { FloatingMenu } from '../../../../../../ui/atoms/FloatingMenu/FloatingMenu'
 import { FollowButton } from '../../../../../../ui/atoms/FollowButton/FollowButton'
@@ -16,32 +17,25 @@ import InputTextField from '../../../../../../ui/atoms/InputTextField/InputTextF
 import { PrimaryButton } from '../../../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { RoundButton } from '../../../../../../ui/atoms/RoundButton/RoundButton'
 import { SecondaryButton } from '../../../../../../ui/atoms/SecondaryButton/SecondaryButton'
-import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.png'
-import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
-import { useFileUploader } from '../../../../../../lib/client/useFileUploader'
-import { updateProfileInfo, adoptProfileImage } from '../profile.server'
-import './MainProfileCard.scss'
 import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
-import { useDomainFileUrls } from '../../../../../../lib/common/utils/file-urls'
+import { adoptProfileImage, updateProfileInfo } from '../profile.server'
+import './MainProfileCard.scss'
+import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
 
-export interface MainProfileCardDeps {
-  userHomeAccessObject: user_home_access_object
+export type mainProfileCardProps = {
+  userHome: user_home_access_object
 }
 
 export function MainProfileCard({
-  userHomeAccessObject: { permissions, profileInfo, user, flags, id },
-}: MainProfileCardDeps) {
-  const { updateProfileInfoSchema, useProfileImageSchema } = permissions.editProfile
-    ? getProfileInfoPrimarySchemas(permissions.validationConfigs)
-    : { updateProfileInfoSchema: never(), useProfileImageSchema: never() }
-  const [isEditing, toggleIsEditing] = useReducer(
-    isEditing => permissions.editProfile && !isEditing,
-    false,
-  )
+  userHome: { permissions, profileInfo, flags, id, avatar, background, user },
+}: mainProfileCardProps) {
+  const isPublisher = !!user?.roles.includes('publisher')
+  const schemas = useAllPrimarySchemas()
+  const [isEditing, toggleIsEditing] = useReducer(isEditing => permissions.editProfile && !isEditing, false)
   const {
     form: { formState, register, reset },
     handleSubmitWithAction: submitForm,
-  } = useHookFormAction(updateProfileInfo, zodResolver(updateProfileInfoSchema), {
+  } = useHookFormAction(updateProfileInfo, zodResolver(schemas.userHome.updateProfileInfoSchema), {
     formProps: { defaultValues: { ...profileInfo, user_home_id: id } },
     actionProps: {
       onSuccess({ input }) {
@@ -49,48 +43,55 @@ export function MainProfileCard({
       },
     },
   })
-  const domainFileUrls = useDomainFileUrls()
-  // const { handleSubmitWithAction: uploadAvatar } = useHookFormAction(
-  //   uploadAvatarAction,
-  //   zodResolver(
-  //     zfd.formData({
-  //       avatar: zfd.file(),
-  //     }),
-  //   ),
-  // )
+
   const submitFormBtnRef = useRef<HTMLButtonElement | null>(null)
 
   const [
+    displaySrcAvatar,
     chooseImageAvatar,
     submitAvatar,
     avatarChoosenFileError,
-    displaySrcAvatar,
     // dirtyAvatar,
   ] = useFileUploader({
-    currentSrc: domainFileUrls.userHome[id]!.profile.avatar(), //defaultAvatar.src /* profileInfo.avatar */,
+    asset: avatar ?? defaultProfileAvatarAsset,
     async fileUploadedAction({ tempId }) {
       const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
       if (!saveResult?.data) {
         return { done: false, error: saveResult?.validationErrors?._errors }
       }
-      return { done: true }
+
+      return { done: true, newAsset: saveResult.data }
     },
-    // maxSize: 1048576,
-    accept: useFileUploader.type.image,
-    withMeta: () => ({
-      userHomeId: id,
-      as: 'avatar' as const,
-    }),
+    type: 'webImage',
+  })
+
+  const [
+    displaySrcBackground,
+    chooseImageBackground,
+    submitBackground,
+    backgroundChoosenFileError,
+    // dirtyBackground,
+  ] = useFileUploader({
+    asset: background ?? defaultProfileBackgroundAsset,
+    async fileUploadedAction({ tempId }) {
+      const saveResult = await adoptProfileImage({ as: 'background', tempId, userHomeId: id })
+      if (!saveResult?.data) {
+        return { done: false, error: saveResult?.validationErrors?._errors }
+      }
+
+      return { done: true, newAsset: saveResult.data }
+    },
+    type: 'webImage',
   })
 
   const submitAll = useCallback(() => {
     submitFormBtnRef.current?.click()
     if (!formState.isValid) return
-    toggleIsEditing()
-    if (!formState.isDirty) return
     submitAvatar()
+    submitBackground()
+    toggleIsEditing()
     //handleSubmitWithAction(e)
-  }, [formState.isDirty, formState.isValid, submitAvatar])
+  }, [formState.isValid, submitAvatar, submitBackground])
 
   return (
     <div className="main-profile-card" key="profile-card">
@@ -103,17 +104,16 @@ export function MainProfileCard({
                   className="change-background-button"
                   type="edit"
                   abbrTitle={`Edit background`}
+                  onClick={chooseImageBackground}
                   key="edit-background-btn"
                 />,
-                avatarChoosenFileError && (
-                  <Snackbar key="edit-background-err">{avatarChoosenFileError}</Snackbar>
-                ),
+                backgroundChoosenFileError && <Snackbar key="edit-background-err">{backgroundChoosenFileError}</Snackbar>,
               ]}
           <div
             className={`background`}
             key="background"
             style={{
-              backgroundImage: 'url("' + defaultBackground.src + '")',
+              backgroundImage: 'url("' + displaySrcBackground + '")',
             }}
           />
         </div>
@@ -128,6 +128,7 @@ export function MainProfileCard({
                   onClick={chooseImageAvatar}
                   key="edit-avatar-btn"
                 />,
+                avatarChoosenFileError && <Snackbar key="edit-avatar-err">{avatarChoosenFileError}</Snackbar>,
               ]}
           <div
             className={`avatar`}
@@ -215,9 +216,9 @@ export function MainProfileCard({
             }
             key="follow-button"
           />
-          {permissions.editRoles && user && (
+          {permissions.editRoles && (
             <ApprovalButton
-              isApproved={user.roles.includes('publisher')}
+              isApproved={isPublisher}
               toggleIsApproved={() => {
                 alert('ApprovalButton')
               }}

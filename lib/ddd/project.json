@@ -1,9 +1,0 @@
-{
-  "name": "lib-ddd",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "lib/ddd/src",
-  "projectType": "library",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project lib-ddd --web",
-  "targets": {}
-}

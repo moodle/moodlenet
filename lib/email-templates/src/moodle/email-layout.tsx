@@ -1,6 +1,7 @@
 'use client'
-import { moodle_core_context } from '@moodle/domain'
-import { getFileUrl, url_string } from '@moodle/lib-types'
+import { email_body, url_string } from '@moodle/lib-types'
+import { OrgInfo } from '@moodle/module/org'
+import { getAssetUrl } from '@moodle/module/storage'
 import { Button } from '@react-email/button'
 import { Container } from '@react-email/container'
 import { Head } from '@react-email/head'
@@ -11,14 +12,6 @@ import { Section } from '@react-email/section'
 import { Text } from '@react-email/text'
 import React from 'react'
 
-export interface SenderInfo {
-  name: string
-  logo: url_string
-  physicalAddress: null | string
-  websiteUrl: url_string
-  copyright: null | string
-}
-
 export type EmailLayoutActionBtnProps = {
   title: string
   url: string
@@ -26,7 +19,6 @@ export type EmailLayoutActionBtnProps = {
 }
 
 export type EmailLayoutContentProps = {
-  receiverEmail: string
   subject: string
   title: React.ReactNode
   body: React.ReactNode
@@ -34,84 +26,68 @@ export type EmailLayoutContentProps = {
   action?: EmailLayoutActionBtnProps
 }
 export type EmailLayoutProps = {
-  senderInfo: SenderInfo
+  receiverEmail: string
+  orgInfo: OrgInfo
   content: EmailLayoutContentProps
+  filestoreHttpHref: url_string
 }
 
-export function layoutEmail(emailProps: EmailLayoutProps) {
-  const { senderInfo, content } = emailProps
-  return {
-    emailProps,
-    reactBody: (
-      <Html lang="en" className="html">
-        <Head />
-        <Preview>{content.subject}</Preview>
-        <div className="body" style={bodyStyle}>
-          <Container className="container" style={containerStyle}>
-            <Section className="logo-header">
-              <a href={senderInfo.websiteUrl} target="_blank" rel="noreferrer" style={logo}>
-                <Img width={162} src={senderInfo.logo} />
-              </a>
-            </Section>
-            <Section className="title" style={titleSection}>
-              <Text style={titleText}>{content.title}</Text>
-            </Section>
-            <Section className="content" style={contentSection}>
-              <div style={contentText}>{content.body}</div>
-            </Section>
-            {content.action && (
-              <Section className="action" style={{ ...actionSection }}>
-                <Button
-                  className="action-button"
-                  href={content.action.url}
-                  target="_blank"
-                  style={{ ...actionButton, ...content.action.buttonStyle }}
-                >
-                  {content.action.title}
-                </Button>
+export function layoutEmail(emailProps: EmailLayoutProps): [EmailLayoutContentProps, email_body] {
+  const { orgInfo, content, filestoreHttpHref, receiverEmail } = emailProps
+  return [
+    emailProps.content,
+    {
+      contentType: 'react',
+      element: (
+        <Html lang="en" className="html">
+          <Head />
+          <Preview>{content.subject}</Preview>
+          <div className="body" style={bodyStyle}>
+            <Container className="container" style={containerStyle}>
+              <Section className="logo-header">
+                <a href={orgInfo.websiteUrl} target="_blank" rel="noreferrer" style={logo}>
+                  <Img width={162} src={getAssetUrl(orgInfo.logo, filestoreHttpHref)} />
+                </a>
               </Section>
-            )}
-            {content.hideIgnoreMessage ? (
-              <div style={separatorStyle} />
-            ) : (
-              <div style={ignoreMessage}>Not you? Just ignore this message</div>
-            )}
-          </Container>
-          <Container style={containerBottom}>
-            <a
-              href={senderInfo.websiteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={addressButton}
-            >
-              {senderInfo.physicalAddress}
-            </a>
-            <div style={copyrightStyle}>
-              {senderInfo.copyright}
-              <br />
-              This email was intended for {content.receiverEmail}. This is a service email.
-            </div>
-          </Container>
-        </div>
-      </Html>
-    ),
-  }
-}
-
-export async function getSenderInfo({
-  sys_call: sys_call,
-}: Pick<moodle_core_context, 'sys_call'>): Promise<SenderInfo> {
-  const {
-    configs: { info: orgInfo },
-  } = await sys_call.primary.org.system.configs()
-  const senderInfo: SenderInfo = {
-    copyright: orgInfo.copyright,
-    logo: await getFileUrl(orgInfo.logo),
-    name: orgInfo.name,
-    physicalAddress: orgInfo.physicalAddress,
-    websiteUrl: orgInfo.websiteUrl,
-  }
-  return senderInfo
+              <Section className="title" style={titleSection}>
+                <Text style={titleText}>{content.title}</Text>
+              </Section>
+              <Section className="content" style={contentSection}>
+                <div style={contentText}>{content.body}</div>
+              </Section>
+              {content.action && (
+                <Section className="action" style={{ ...actionSection }}>
+                  <Button
+                    className="action-button"
+                    href={content.action.url}
+                    target="_blank"
+                    style={{ ...actionButton, ...content.action.buttonStyle }}
+                  >
+                    {content.action.title}
+                  </Button>
+                </Section>
+              )}
+              {content.hideIgnoreMessage ? (
+                <div style={separatorStyle} />
+              ) : (
+                <div style={ignoreMessage}>Not you? Just ignore this message</div>
+              )}
+            </Container>
+            <Container style={containerBottom}>
+              <a href={orgInfo.websiteUrl} target="_blank" rel="noopener noreferrer" style={addressButton}>
+                {orgInfo.physicalAddress}
+              </a>
+              <div style={copyrightStyle}>
+                {orgInfo.copyright}
+                <br />
+                This email was intended for {receiverEmail}. This is a service email.
+              </div>
+            </Container>
+          </div>
+        </Html>
+      ),
+    },
+  ]
 }
 
 const bodyStyle: React.CSSProperties = {

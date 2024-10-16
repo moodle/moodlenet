@@ -22,7 +22,7 @@ export async function gen() {
   })
 
   //const privateKey = await jose.importPKCS8(keystr.privateKey, alg)
-  // console.log(inspect({ keysLike1 }))
+
   return {
     privateKey: await jose.exportPKCS8(keysLike.privateKey),
     publicKey: await jose.exportSPKI(keysLike.publicKey),

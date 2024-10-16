@@ -1,16 +1,13 @@
 'use client'
 
-import { appDeployemnts } from 'domain/src/env'
-import { createContext, PropsWithChildren } from 'react'
+import { PropsWithChildren } from 'react'
+import { GlobalCtx } from '../lib/client/globalContexts'
 
-// export interface GlobalCtx {}
-export type GlobalCtx = {
-  deployments: appDeployemnts
-}
-export const GlobalCtx = createContext<GlobalCtx>(null as any)
-export function GlobalProviders({
+export type GlobalProviderDeps = Pick<GlobalCtx, keyof GlobalCtx>
+
+export function GlobalProvider({
   children,
-  deployments,
-}: PropsWithChildren<{ deployments: appDeployemnts }>) {
-  return <GlobalCtx.Provider value={{ deployments }}>{children}</GlobalCtx.Provider>
+  ctxDeps,
+}: PropsWithChildren<{ ctxDeps: GlobalProviderDeps }>) {
+  return <GlobalCtx.Provider value={{ ...ctxDeps }}>{children}</GlobalCtx.Provider>
 }

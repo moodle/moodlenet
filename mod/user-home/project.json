@@ -1,9 +1,0 @@
-{
-  "name": "mod-user-home",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "mod/user-home/src",
-  "projectType": "library",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project mod-user-home --web",
-  "targets": {}
-}

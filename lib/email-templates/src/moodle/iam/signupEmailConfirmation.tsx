@@ -1,38 +1,31 @@
-import { moodle_core_context } from '@moodle/domain'
 import React from 'react'
-import * as main from '..'
-
-export type SignupEmailConfirmationProps = {
-  ctx: Pick<moodle_core_context, 'sys_call'>
+import { EmailLayoutContentProps } from '../email-layout'
+export type signupWithEmailConfirmationNotificationProps = {
+  siteName: string
+  userName: string
   activateAccountUrl: string
-  receiverEmail: string
 }
 
-export async function signupEmailConfirmationEmail({
-  ctx,
-  receiverEmail,
+export function signupEmailConfirmationEmail({
+  userName,
   activateAccountUrl,
-}: SignupEmailConfirmationProps) {
-  const senderInfo = await main.getSenderInfo(ctx)
-  const title = `Welcome to ${senderInfo.name} 🎉`
+  siteName,
+}: signupWithEmailConfirmationNotificationProps): EmailLayoutContentProps {
+  const title = `Welcome to ${siteName} 🎉`
 
   const body = (
     <React.Fragment>
-      Thanks for signing up to {senderInfo.name}!<br />
+      Thank you {userName} for signing up to {siteName}!<br />
       <br />
       Click the button below to activate your account.
     </React.Fragment>
   )
 
-  return main.layoutEmail({
-    senderInfo: senderInfo,
-    content: {
-      body,
-      receiverEmail,
-      subject: title,
-      title,
-      hideIgnoreMessage: false,
-      action: { title: 'Activate account', url: activateAccountUrl },
-    },
-  })
+  return {
+    body,
+    subject: title,
+    title,
+    hideIgnoreMessage: false,
+    action: { title: 'Activate account', url: activateAccountUrl },
+  }
 }

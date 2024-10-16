@@ -1,11 +1,13 @@
-import { moodle_core_factory, moodle_secondary_factory, sys_admin_info } from '@moodle/domain'
-import { deploymentInfoFromUrlString, getDeploymentInfoUrl } from '@moodle/lib-ddd'
+import * as core_iam from '@moodle/core/iam'
+import * as core_net from '@moodle/core/net'
+import * as core_net_webapp_nextjs from '@moodle/core/net-webapp-nextjs'
+import * as core_org from '@moodle/core/org'
+import * as core_storage from '@moodle/core/storage'
+import * as core_user_home from '@moodle/core/user-home'
+import { coreProviderObject, domainCore, secondaryAdapter, secondaryProvider, sys_admin_info } from '@moodle/domain'
+import { deploymentInfoFromUrlString } from '@moodle/domain/lib'
+import { getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
-import * as mod_user_home from '@moodle/mod-user-home'
-import * as mod_iam from '@moodle/mod-iam'
-import * as mod_net from '@moodle/mod-net'
-import * as mod_net_webapp_nextjs from '@moodle/mod-net-webapp-nextjs'
-import * as mod_org from '@moodle/mod-org'
 import * as cryptoSec from '@moodle/sec-crypto-default'
 import * as arangoSec from '@moodle/sec-db-arango'
 import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
@@ -16,21 +18,33 @@ import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
 import * as path from 'path'
 import { inspect } from 'util'
-import { coerce, literal, object, string } from 'zod'
+import { coerce, literal, object } from 'zod'
+import { createDefaultDomainLoggerProvider } from './default-logger'
 import { configuration, configurator } from './types'
-// import * as argon2 from 'argon2'
 
 const cache: map<Promise<configuration>> = {}
-const MOODLE_DOMAINS_ENV_HOME = process.env.MOODLE_DOMAINS_ENV_HOME ?? '.moodle.env.home'
 
-export const default_configurator: configurator = async ({ access_session }) => {
-  const normalized_domain = access_session.domain.replace(/:/g, '_')
-  // const normalized_domain = access_session.domain.split(':')[0]!.replace(/:/g, '_')
-  if (!cache[normalized_domain]) {
-    cache[normalized_domain] = new Promise<configuration>(resolveConfiguration => {
-      const env_home = path.resolve(MOODLE_DOMAINS_ENV_HOME, normalized_domain)
-      dotenvExpand(dotenv.config({ path: path.join(env_home, '.env'), override: true }))
-      //      console.log({ env_home, env: Object.fromEntries(Object.entries(process.env).filter(([n]) => n.startsWith('MOOD'))) })
+export const default_configurator: configurator = async ({ domainAccess, loggerConfigs }) => {
+  if (!domainAccess.primarySession?.domain) {
+    throw new Error('domainAccess.primarySession.domain is required')
+  }
+  const domainName = domainAccess.primarySession.domain
+  // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
+  if (!cache[domainName]) {
+    cache[domainName] = new Promise<configuration>(promiseResolveConfiguration => {
+      const MOODLE_HOME_DIR = path.resolve(process.cwd(), process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
+      const { currentDomainDir } = getFsDirectories({
+        homeDir: MOODLE_HOME_DIR,
+        domainName,
+      })
+      dotenvExpand(dotenv.config({ path: path.join(currentDomainDir, '.env'), override: true }))
+
+      const domainLoggerProvider = createDefaultDomainLoggerProvider({ domainName, loggerConfigs })
+      function modLogger(modName: string) {
+        return domainLoggerProvider.getChildLogger({ modName })
+      }
+      const configuratorLogger = modLogger('configurator')
+      configuratorLogger('debug', { currentDomainDir, MOODLE_HOME_DIR })
 
       const isDev = process.env.NODE_ENV === 'development'
 
@@ -48,19 +62,16 @@ export const default_configurator: configurator = async ({ access_session }) => 
         MOODLE_FILE_SERVER_DEPLOYMENT_URL: process.env.MOODLE_FILE_SERVER_DEPLOYMENT_URL,
       })
 
-      console.info(
-        `domain [${normalized_domain}] env:`,
-        inspect({ MOODLE_DOMAINS_ENV_HOME, ...env }, { colors: true, sorted: true }),
-      )
-      const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(env_home, `private.key`), 'utf8')
-      const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(env_home, `public.key`), 'utf8')
+      configuratorLogger('debug', `domain [${domainName}] env:`, { MOODLE_HOME_DIR, ...env })
+      const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(currentDomainDir, `private.key`), 'utf8')
+      const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(currentDomainDir, `public.key`), 'utf8')
       const _process_env = process.env as _any
 
       const arango_db_env: arangoSec.ArangoDbSecEnv = arangoSec.provideEnv({
         env: {
           ..._process_env,
           MOODLE_ARANGODB_ISDEV: `${isDev}`,
-          MOODLE_ARANGODB_DB_PREFIX: normalized_domain,
+          MOODLE_ARANGODB_DOMAIN_NAME: domainName,
         },
       })
       const crypto_env: cryptoSec.CryptoDefaultEnv = cryptoSec.provideEnv({
@@ -72,78 +83,112 @@ export const default_configurator: configurator = async ({ access_session }) => 
       const sys_admin_info: sys_admin_info = {
         email: env.MOODLE_SYS_ADMIN_EMAIL,
       }
-      const domainDir = path.join(env_home, 'fs-storage')
-      const tempDir = path.join(domainDir, '.temp')
+
       const file_system_storage_sec_env: storageSec.StorageDefaultSecEnv = {
-        domainDir,
-        tempDir,
-        tempFileMaxRetentionSeconds: env.MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS,
+        homeDir: MOODLE_HOME_DIR,
       }
 
-      const secondary_factories: moodle_secondary_factory[] = [
+      const secondaryProviders: secondaryProvider[] = [
         // sec modules
-        arangoSec.get_arango_persistence_factory(arango_db_env),
-        cryptoSec.get_default_crypto_secondarys_factory(crypto_env),
-        nodemailerSec.get_nodemailer_secondary_factory(nodemailer_env),
-        storageSec.get_storage_default_secondary_factory(file_system_storage_sec_env),
-      ]
-
-      const core_factories: moodle_core_factory[] = [
-        // core modules
-        mod_net.net_core(),
-        mod_org.org_core(),
-        mod_iam.iam_core(),
-        mod_net_webapp_nextjs.net_webapp_nextjs_core(),
-        mod_user_home.user_home_core(),
-        (/* _ctx */) => {
-          return {
-            primary: {
+        arangoSec.get_arango_persistence_factory(arango_db_env)({
+          domain: domainName,
+          log: modLogger('arango-secondary'),
+        }),
+        cryptoSec.get_default_crypto_secondarys_factory(crypto_env)({
+          domain: domainName,
+          log: modLogger('crypto-secondary'),
+        }),
+        nodemailerSec.get_nodemailer_secondary_factory(nodemailer_env)({
+          domain: domainName,
+          log: modLogger('nodemailer-secondary'),
+        }),
+        storageSec.get_storage_default_secondary_factory(file_system_storage_sec_env)({
+          domain: domainName,
+          log: modLogger('storage-secondary'),
+        }),
+        (bootstrapContext => {
+          return secondaryContext => {
+            const secondaryAdapter: secondaryAdapter = {
               env: {
-                application: {
+                query: {
                   async deployments() {
                     return {
-                      moodlenetWebapp: deploymentInfoFromUrlString(
-                        env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL,
-                      ),
-                      filestoreHttp: deploymentInfoFromUrlString(
-                        env.MOODLE_FILE_SERVER_DEPLOYMENT_URL,
-                      ),
+                      moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
+                      filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
                     }
                   },
-                  async fsHomeDirs() {
-                    return { env: env_home, temp: tempDir, domain: domainDir }
-                  },
-                },
-                maintainance: {
                   async getSysAdminInfo() {
                     return sys_admin_info
                   },
                 },
               },
+            }
+            return secondaryAdapter
+          }
+        })({ domain: domainName, log: modLogger('env-secondary') }),
+      ]
+
+      const coreProviderObjects: coreProviderObject<_any>[] = [
+        // core modules
+        core_net.net_core({ domain: domainName, log: modLogger('net-core') }),
+        core_org.org_core({ domain: domainName, log: modLogger('org-core') }),
+        core_iam.iam_core({ domain: domainName, log: modLogger('iam-core') }),
+        core_net_webapp_nextjs.net_webapp_nextjs_core({
+          domain: domainName,
+          log: modLogger('net_webapp_nextjs-core'),
+        }),
+        core_user_home.user_home_core({ domain: domainName, log: modLogger('user_home-core') }),
+        core_storage.storage_core({ domain: domainName, log: modLogger('storage-core') }),
+        ((bootstrapContext): coreProviderObject<'env'> => {
+          return {
+            modName: 'env',
+            provider(coreContext) {
+              const envCore: domainCore<'env'> = {
+                primary(primaryCtx) {
+                  return {
+                    domain: {
+                      async info() {
+                        return { name: domainName }
+                      },
+                    },
+                    application: {
+                      async deployments() {
+                        return {
+                          moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
+                          filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
+                        }
+                      },
+                    },
+                  }
+                },
+              }
+              return envCore
             },
           }
-        },
+        })({ domain: domainName, log: modLogger('env-core') }),
       ]
+
       let do_start_background_processes = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
       migrateArangoDB(arango_db_env).then(() => {
         const configuration: configuration = {
-          core_factories,
-          secondary_factories,
+          coreProviderObjects,
+          secondaryProviders,
+          mainLogger: modLogger('main'),
           get start_background_processes() {
             const resp = do_start_background_processes
             do_start_background_processes = false
             return resp
           },
         }
-        resolveConfiguration(configuration)
+        promiseResolveConfiguration(configuration)
       })
     }).catch(e => {
-      delete cache[normalized_domain]
+      delete cache[domainName]
       throw e
     })
   }
 
-  return cache[normalized_domain]
+  return cache[domainName]
 }
 
 export default default_configurator

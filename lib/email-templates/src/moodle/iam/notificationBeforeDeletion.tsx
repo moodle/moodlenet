@@ -1,24 +1,19 @@
-import { moodle_core_context } from '@moodle/domain'
 import React from 'react'
-import * as main from '../'
+import { EmailLayoutContentProps } from '../email-layout'
 
-export type InactivityDeletionNotificationEmailProps = {
-  ctx: Pick<moodle_core_context, 'sys_call'>
+export type inactivityBeforeDeletionNotificationEmailProps = {
   loginUrl: string
-  receiverEmail: string
   userName: string
   daysBeforeDeletion: number
+  siteName: string
 }
-
-export async function notificationBeforeDeletionForInactivityEmail({
-  ctx,
+export function notificationBeforeDeletionForInactivityEmail({
   loginUrl,
-  receiverEmail,
   userName,
   daysBeforeDeletion,
-}: InactivityDeletionNotificationEmailProps) {
-  const senderInfo = await main.getSenderInfo(ctx)
-  const title = `${userName} we are missing you at ${senderInfo.name}`
+  siteName,
+}: inactivityBeforeDeletionNotificationEmailProps): EmailLayoutContentProps {
+  const title = `${userName} we are missing you at ${siteName}`
 
   const body = (
     <div style={contentStyle}>
@@ -29,25 +24,20 @@ export async function notificationBeforeDeletionForInactivityEmail({
       If you don&apos;t log in within the next {daysBeforeDeletion} days, your account{' '}
       <span style={contentDeleteSpan}>will be deleted permanently</span>.
       <br />
-      All your personal information and contributions{' '}
-      <span style={contentDeleteSpan}>will be removed.</span>
+      All your personal information and contributions <span style={contentDeleteSpan}>will be removed.</span>
     </div>
   )
 
-  return main.layoutEmail({
-    senderInfo,
-    content: {
-      body,
-      receiverEmail,
-      subject: title,
-      title,
-      action: {
-        title: `Log in to ${senderInfo.name} now`,
-        url: loginUrl,
-      },
-      hideIgnoreMessage: true,
+  return {
+    body,
+    subject: title,
+    title,
+    action: {
+      title: `Log in to ${siteName} now`,
+      url: loginUrl,
     },
-  })
+    hideIgnoreMessage: true,
+  }
 }
 
 const contentStyle: React.CSSProperties = {

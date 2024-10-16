@@ -1,27 +1,25 @@
-import { moodle_secondary_factory } from '@moodle/domain'
-import { composeDomains } from '@moodle/lib-ddd'
+import { secondaryBootstrap } from '@moodle/domain'
+import { mergeSecondaryAdapters } from '@moodle/domain/lib'
 import { ArangoDbSecEnv, getDbStruct } from './db-structure'
-import {
-  iam_moodle_secondary_factory,
-  net_moodle_secondary_factory,
-  net_webapp_nextjs_moodle_secondary_factory,
-} from './sec'
-import { org_moodle_secondary_factory } from './sec/db-arango-org'
-import { user_home_moodle_secondary_factory } from './sec/db-arango-user-home'
+import { iam_secondary_factory, net_secondary_factory, net_webapp_nextjs_secondary_factory } from './sec'
+import { org_secondary_factory } from './sec/db-arango-org'
+import { user_home_secondary_factory } from './sec/db-arango-user-home'
+import { env_secondary_factory } from './sec/env-arango-db'
 export type { ArangoDbSecEnv } from './db-structure'
 
-export function get_arango_persistence_factory({
-  database_connections: database_connections,
-}: ArangoDbSecEnv): moodle_secondary_factory {
+export function get_arango_persistence_factory({ database_connections }: ArangoDbSecEnv): secondaryBootstrap {
   const db_struct = getDbStruct(database_connections)
-  return ctx => {
-    const secondary_adapter = composeDomains([
-      net_moodle_secondary_factory({ db_struct })(ctx),
-      org_moodle_secondary_factory({ db_struct })(ctx),
-      iam_moodle_secondary_factory({ db_struct })(ctx),
-      net_webapp_nextjs_moodle_secondary_factory({ db_struct })(ctx),
-      user_home_moodle_secondary_factory({ db_struct })(ctx),
-    ])
-    return secondary_adapter
+  return bootstrapCtx => {
+    return secondaryCtx => {
+      const secondaryAdapter = mergeSecondaryAdapters([
+        net_secondary_factory({ db_struct })(bootstrapCtx)(secondaryCtx),
+        org_secondary_factory({ db_struct })(bootstrapCtx)(secondaryCtx),
+        iam_secondary_factory({ db_struct })(bootstrapCtx)(secondaryCtx),
+        net_webapp_nextjs_secondary_factory({ db_struct })(bootstrapCtx)(secondaryCtx),
+        user_home_secondary_factory({ db_struct })(bootstrapCtx)(secondaryCtx),
+        env_secondary_factory({ db_struct })(bootstrapCtx)(secondaryCtx),
+      ])
+      return secondaryAdapter
+    }
   }
 }

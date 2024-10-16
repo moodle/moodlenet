@@ -27,10 +27,10 @@ const nextConfigFn = composePlugins(...plugins)(nextConfig)
  **/
 const xport = async (phase, context) => {
   const config = await nextConfigFn(phase, context)
-  // console.log({ phase, context })
+
   const webpack = config.webpack
   config.webpack = (wpConfig, options) => {
-    // console.log({ wpConfig, options })
+
     // https://github.com/vercel/next.js/issues/28774#issuecomment-1208649870
     // wpConfig.plugins = wpConfig.plugins ?? []
     // wpConfig.plugins.push(
@@ -80,12 +80,12 @@ const xport = async (phase, context) => {
     '@moodle/bindings-node',
     '@moodle/lib-types',
     '@moodle/domain',
-    '@moodle/mod-iam/lib',
-    '@moodle/lib-ddd',
+    '@moodle/core-iam/lib',
+    '@moodle/domain',
   ]
   // config.serverRuntimeConfig = require('../../../../domain/src/index')
   // config.serverRuntimeConfig = require('@moodle/domain')
-  // console.log(inspect(config, true, 10, true), config)
+
   return config
 }
 

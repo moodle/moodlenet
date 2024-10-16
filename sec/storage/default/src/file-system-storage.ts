@@ -1,103 +1,60 @@
-import { moodle_secondary_adapter, moodle_secondary_factory, storage } from '@moodle/domain'
-import { _void, path, temp_blob_meta } from '@moodle/lib-types'
-import { mkdirSync } from 'fs'
-import { mkdir, readdir, readFile, rename, stat } from 'fs/promises'
-import { dirname, join, normalize, sep } from 'path'
+import { secondaryAdapter, secondaryBootstrap } from '@moodle/domain'
+import { deleteTemp, fs_storage_path_of, get_temp_file_paths, getFsDirectories, prefixed_domain_file_fs_paths, use_temp_file_as_web_image } from '@moodle/lib-local-fs-storage'
+import { _void } from '@moodle/lib-types'
+import { uploaded_blob_meta } from '@moodle/module/storage'
+import { mkdir, readdir, readFile, stat } from 'fs/promises'
+import { join } from 'path'
 import { rimraf } from 'rimraf'
-import { startCleanupProcess } from './lib'
 import { StorageDefaultSecEnv } from './types'
 
-export function get_storage_default_secondary_factory({
-  domainDir,
-  tempDir,
-  tempFileMaxRetentionSeconds,
-}: StorageDefaultSecEnv): moodle_secondary_factory {
-  mkdirSync(domainDir, { recursive: true })
-  mkdirSync(tempDir, { recursive: true })
-
-  startCleanupProcess({ tempFileMaxRetentionSeconds, domainDir, tempDir })
-
-  return ctx => {
-    const moduleBaseDir = join(domainDir, 'modules')
-    const module_file_paths = storage.prefixed_domain_file_paths(moduleBaseDir)
-    const moodle_secondary_adapter: moodle_secondary_adapter = {
-      secondary: {
+export function get_storage_default_secondary_factory({ homeDir }: StorageDefaultSecEnv): secondaryBootstrap {
+  return ({ log, domain }) => {
+    const fsDirs = getFsDirectories({ domainName: domain, homeDir })
+    const fs_file_paths = prefixed_domain_file_fs_paths(fsDirs.fsStorage)
+    return secondaryContext => {
+      const secondaryAdapter: secondaryAdapter = {
         userHome: {
-          storage: {
-            async createUserHome({ userHomeId }) {
-              const userHomePath = module_file_paths.userHome[userHomeId]!()
-              await mkdir(userHomePath, { recursive: true })
-              return [true, _void]
-            },
-            async useImageInProfile({ as, id, tempId }) {
-              const tmpFile = join(tempDir, tempId)
-              const tmpFileMeta = `${tmpFile}.json`
-              const meta: temp_blob_meta = await readFile(tmpFileMeta, 'utf8')
-                .then(JSON.parse)
-                .catch(() => null)
-              if (!meta) {
-                return [false, { reason: 'tempNotFound' }]
-              }
-              const file = await stat(tmpFile).catch(() => null)
-              if (!file) {
-                return [false, { reason: 'tempNotFound' }]
-              }
-
-              const destPath = module_file_paths.userHome[id]!.profile[as]!()
-              const mvError = await rename(tmpFile, destPath).then(
-                () => false as const,
-                e => String(e),
-              )
-
-              // console.log({ destPath, mvError, file, meta, tmpFile, tmpFileMeta })
-              if (mvError) {
-                return [false, { reason: 'unknown', error: mvError }]
-              }
-
-              return [true, _void]
+          write: {
+            async useTempImageInProfile({ as, id, tempId }) {
+              log('debug', 'useImageInProfile', { as, id, tempId })
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              const absolutePath = fs_file_paths.userHome[id]!.profile[as]!()
+              return use_temp_file_as_web_image({
+                fsDirs,
+                secondaryContext,
+                absolutePath,
+                tempId,
+                size: as === 'avatar' ? 'medium' : 'large',
+              })
             },
           },
         },
         storage: {
-          temp: {
-            async getTempMeta({ tempId }) {
-              const { temp_file_meta_path } = get_temp_file_paths({ tempId })
+          sync: {
+            async createUserHome({ userHomeId }) {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              const userHomePath = fs_file_paths.userHome[userHomeId]!()
+              await mkdir(userHomePath, { recursive: true })
+              return [true, _void]
+            },
+          },
+          query: {
+            async tempMeta({ tempId }) {
+              const { meta: temp_file_meta_path } = get_temp_file_paths({ tempId, fsDirs })
 
-              const meta: temp_blob_meta = await readFile(temp_file_meta_path, 'utf8')
-                .then(JSON.parse)
-                .catch(null)
+              const meta: uploaded_blob_meta = await readFile(temp_file_meta_path, 'utf8').then(JSON.parse).catch(null)
 
               if (!meta) {
-                await deleteTemp({ tempId }).catch(() => null)
+                await deleteTemp({ tempId, fsDirs }).catch(() => null)
                 return [false, { reason: 'notFound' }]
               }
 
               return [true, { meta }] //, temp_file_full_path, temp_file_name, temp_file_dir }
             },
-            // async useTempFile({ destPath, tempId }) {
-            //   const { temp_file_meta_path } = get_temp_file_paths({ tempId })
-
-            //   const meta: temp_blob_meta = await readFile(temp_file_meta_path, 'utf8')
-            //     .then(JSON.parse)
-            //     .catch(null)
-            //   if (!meta) {
-            //     await deleteTemp({ tempId }).catch(() => null)
-            //     return [false, { reason: 'notFound' }]
-            //   }
-
-            //   const fs_dest_path = path2modFsPath({ path: destPath })
-            //   await mkdir(fs_dest_path, { recursive: true })
-            //   const { temp_file_path } = get_temp_file_paths({ tempId })
-
-            //   await rename(temp_file_path, fs_dest_path)
-            //   await deleteTemp({ tempId })
-
-            //   return [true, { meta }]
-            // },
           },
-          access: {
+          write: {
             async deletePath({ path, type }) {
-              const fs_path = path2modFsPath({ path })
+              const fs_path = fs_storage_path_of({ path, fsDirs })
               const file_stats = await stat(fs_path).catch(() => null)
               if (!file_stats) {
                 return [false, { reason: 'notFound' }]
@@ -108,44 +65,54 @@ export function get_storage_default_secondary_factory({
               if (type === 'file' && !file_stats.isFile()) {
                 return [false, { reason: 'unexpectedType' }]
               }
-              await _delete_and_clean_upper_empty_dirs({ fs_path })
               return [true, _void]
             },
+            async deleteStaleTemp() {
+              const {
+                configs: { tempFileMaxRetentionSeconds },
+              } = await secondaryContext.mod.env.query.modConfigs({ mod: 'storage' })
+              const tempFileMaxRetentionMilliseconds = tempFileMaxRetentionSeconds * 1000
+              const { temp } = fsDirs
+              const temp_dirs_or_whatever = await readdir(temp)
+              temp_dirs_or_whatever.forEach(async temp_dir_or_whatever => {
+                const temp_dir_or_whatever_path = join(temp, temp_dir_or_whatever)
+                const { ctime } = await stat(temp_dir_or_whatever_path).catch(() => ({
+                  ctime: null,
+                }))
+                const now = Date.now()
+                const timeAgoMillis = ctime ? now - ctime.getTime() : Infinity
+                const expired = timeAgoMillis > tempFileMaxRetentionMilliseconds
+                if (!expired) {
+                  return
+                }
+                rimraf(temp_dir_or_whatever_path, { maxRetries: 2 })
+              })
+              //setTimeout(cleanupTemp, tempFileMaxRetentionMilliseconds)
+            },
           },
+          // async useTempFile({ absolutePath, tempId }) {
+          //   const { temp_file_meta_path } = get_temp_file_paths({ tempId })
+
+          //   const meta: uploaded_blob_meta = await readFile(temp_file_meta_path, 'utf8')
+          //     .then(JSON.parse)
+          //     .catch(null)
+          //   if (!meta) {
+          //     await deleteTemp({ tempId }).catch(() => null)
+          //     return [false, { reason: 'notFound' }]
+          //   }
+
+          //   const fs_dest_path = path2modFsPath({ path: absolutePath })
+          //   await mkdir(fs_dest_path, { recursive: true })
+          //   const { temp_file_path } = get_temp_file_paths({ tempId })
+
+          //   await rename(temp_file_path, fs_dest_path)
+          //   await deleteTemp({ tempId })
+
+          //   return [true, { meta }]
+          // },
         },
-      },
-    }
-    return moodle_secondary_adapter
-    async function _delete_and_clean_upper_empty_dirs({ fs_path }: { fs_path: string }) {
-      //TODO: ensure this check is enough to avoid climbing up too much !
-      if (normalize(moduleBaseDir).startsWith(normalize(fs_path))) {
-        return
       }
-      await rimraf(fs_path, { maxRetries: 2 }).catch(() => null)
-      const parent_dir = dirname(fs_path)
-      const parent_dir_files = await readdir(parent_dir).catch(() => [
-        `placeholder in case of (unlikely) readdir error
-          to prevent deleting this dir, as it's not ensured to be empy`,
-      ])
-      if (parent_dir_files.length > 0) {
-        return
-      }
-      return _delete_and_clean_upper_empty_dirs({ fs_path: parent_dir })
-    }
-    function get_temp_file_paths({ tempId }: { tempId: string }) {
-      const temp_file_path = join(tempDir, tempId)
-      const temp_file_meta_path = `${temp_file_path}.json`
-      return { temp_file_path, temp_file_meta_path }
-    }
-
-    async function deleteTemp({ tempId }: { tempId: string }) {
-      const { temp_file_path } = get_temp_file_paths({ tempId })
-      await rimraf(`${temp_file_path}*`, { maxRetries: 2 }).catch(() => null)
-    }
-
-    function path2modFsPath({ path }: { path: path }) {
-      const fs_path = [moduleBaseDir, ...path].join(sep)
-      return fs_path
+      return secondaryAdapter
     }
   }
 }

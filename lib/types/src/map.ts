@@ -1,5 +1,7 @@
 import { DeepComplete } from './-deep-requires'
 
+export type splitMap<T, right extends keyof T> = [Pick<T, right>, Omit<T, right>]
+
 export type _any = any
 export type _any_k = keyof _any
 

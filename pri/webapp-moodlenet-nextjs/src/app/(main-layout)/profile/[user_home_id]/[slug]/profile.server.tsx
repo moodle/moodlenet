@@ -1,19 +1,20 @@
 'use server'
 
-import { getProfileInfoPrimarySchemas, user_home_id } from 'domain/src/user-hone'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { sitepaths } from '../../../../../lib/common/utils/sitepaths'
 import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
 import { priAccess } from '../../../../../lib/server/session-access'
+import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
+import { user_home_id } from '@moodle/module/user-home'
+import { usingTempFile2asset } from '@moodle/module/storage'
 
-export async function getUserHomeSchemas() {
-  const { configs } = await priAccess().userHome.read.configs()
-  return getProfileInfoPrimarySchemas(configs.profileInfoPrimaryMsgSchemaConfigs)
-}
 export async function getProfileInfoSchema() {
-  return (await getUserHomeSchemas()).updateProfileInfoSchema
+  const {
+    userHome: { updateProfileInfoSchema },
+  } = await fetchAllPrimarySchemas({ primary: priAccess() })
+  return updateProfileInfoSchema
 }
 
 export const updateProfileInfo = defaultSafeActionClient
@@ -26,12 +27,12 @@ export const updateProfileInfo = defaultSafeActionClient
       })
     }
 
-    const [editDone, editResult] = await priAccess().userHome.write.editProfileInfo({
+    const [editDone, editResult] = await priAccess().userHome.editProfile.editProfileInfo({
       user_home_id: profileInfo.user_home_id,
       profileInfo: profileInfo,
     })
     if (editDone) {
-      revalidatePath(sitepaths.profile[profileInfo.user_home_id]!())
+      // revalidatePath(sitepaths.profile[profileInfo.user_home_id]!())
       return
     }
     returnValidationErrors(getProfileInfoSchema, {
@@ -40,34 +41,34 @@ export const updateProfileInfo = defaultSafeActionClient
   })
 
 async function fetchCanEditProfile({ user_home_id }: { user_home_id: user_home_id }) {
-  const [readUserHomeDone, userHomeRes] = await priAccess().userHome.read.userHome({
+  const [readUserHomeDone, userHomeRes] = await priAccess().userHome.userHome.access({
     by: { idOf: 'user_home', user_home_id },
   })
   return readUserHomeDone && userHomeRes.accessObject.permissions.editProfile
 }
 
 export async function getUseProfileImageSchema() {
-  return (await getUserHomeSchemas()).useProfileImageSchema
+  const {
+    userHome: { useProfileImageSchema },
+  } = await fetchAllPrimarySchemas({ primary: priAccess() })
+  return useProfileImageSchema
 }
+
 export const adoptProfileImage = defaultSafeActionClient
   .schema(getUseProfileImageSchema)
   .action(async ({ parsedInput: useProfileImageForm }) => {
     console.log('->', { useProfileImageForm })
 
-    const [done, editResult] =
-      await priAccess().userHome.uploads.useImageInProfile(useProfileImageForm)
+    const [done, usingTempFile] = await priAccess().userHome.editProfile.useTempImageAsProfileImage(useProfileImageForm)
     // const user_home_id = myUserHomeRes.accessObject.id
     if (!done) {
       returnValidationErrors(getProfileInfoSchema, {
-        _errors: [
-          t(`something went wrong while saving ${useProfileImageForm.as}`) +
-            ` : ${editResult.reason}`,
-        ],
+        _errors: [t(`something went wrong while saving ${useProfileImageForm.as}`) + ` : ${usingTempFile.reason}`],
       })
     }
 
-    revalidatePath(sitepaths.profile[useProfileImageForm.userHomeId]!())
+    // revalidatePath(sitepaths.profile[useProfileImageForm.userHomeId]!())
 
-    return true
+    return usingTempFile2asset(usingTempFile)
   })
 

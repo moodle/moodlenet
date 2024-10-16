@@ -1,30 +1,24 @@
 'use client'
-import { iam } from '@moodle/domain'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { __redacted__, signed_token } from '@moodle/lib-types'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'next-i18next'
 import Link from 'next/link'
+import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { resetMyPasswordAction } from './reset.server'
 
-export function ResetPasswordClient({
-  resetPasswordToken,
-  iamSchemaConfigs,
-}: {
-  iamSchemaConfigs: iam.IamPrimaryMsgSchemaConfigs
-  resetPasswordToken: signed_token
-}) {
+export function ResetPasswordClient({ resetPasswordToken }: { resetPasswordToken: signed_token }) {
   const { t } = useTranslation()
-  const { resetPasswordSchema } = iam.getIamPrimarySchemas(iamSchemaConfigs)
+  const { iam } = useAllPrimarySchemas()
 
   const {
     form: { formState, register },
     handleSubmitWithAction,
-  } = useHookFormAction(resetMyPasswordAction, zodResolver(resetPasswordSchema), {
+  } = useHookFormAction(resetMyPasswordAction, zodResolver(iam.resetPasswordSchema), {
     formProps: {
       values: {
         newPassword: __redacted__(''),
@@ -67,10 +61,7 @@ export function ResetPasswordClient({
               <div className="subtitle">
                 {actionError || (
                   <Link href={loginHref}>
-                    <Trans>
-                      Your password has been successfully changed. You can now login with your new
-                      password.
-                    </Trans>
+                    <Trans>Your password has been successfully changed. You can now login with your new password.</Trans>
                   </Link>
                 )}
               </div>

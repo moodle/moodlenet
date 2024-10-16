@@ -1,25 +1,36 @@
-import { moodle_core_factory, moodle_secondary_factory } from '@moodle/domain'
-import { access_session, domain_msg, domain_session_access } from '@moodle/lib-ddd'
+import {
+  coreProvider,
+  coreProviderObject,
+  domainAccess,
+  domainLogger,
+  LogSeverity,
+  messageDispatcher,
+  secondaryProvider,
+} from '@moodle/domain'
+import { _any } from '@moodle/lib-types'
 
-export type configurator_deps = {
-  access_session: access_session
-}
-
+export type configurator_deps = { domainAccess: domainAccess; loggerConfigs: loggerConfigs }
 export type configurator = (_: configurator_deps) => Promise<configuration>
 export type configuration = {
-  core_factories: moodle_core_factory[]
-  secondary_factories: moodle_secondary_factory[]
+  coreProviderObjects: coreProviderObject<_any>[]
+  secondaryProviders: secondaryProvider[]
   start_background_processes: boolean
-}
-export type session_deployer = (_: session_deployment_deps) => Promise<unknown>
-export type session_deployment_deps = {
-  access_session: access_session
-  domain_msg: domain_msg
-  core_factories: moodle_core_factory[]
-  secondary_factories: moodle_secondary_factory[]
-  start_background_processes: boolean
+  mainLogger: domainLogger
 }
 
-export type binder_deps = { domain_session_access: domain_session_access }
+export type mainMessageDispatcherDeps = {
+  domainAccess: domainAccess
+  configuration: configuration
+}
+export type mainMessageDispatcher = (_: mainMessageDispatcherDeps) => Promise<unknown>
+
+export type binder_deps = { messageDispatcher: messageDispatcher }
 
 export type binder = (_: binder_deps) => void
+export type loggerConfigs = {
+  consoleLevel?: LogSeverity
+  file?: {
+    path: string
+    level: string
+  }
+}
