@@ -12,10 +12,6 @@ import { domainLogger } from './log'
 type ctx_id = string
 export type domainLayer = 'primary' | 'secondary' | 'background' | 'watch' | 'event'
 
-export type ctx_track = {
-  type: domainLayer
-  id: ctx_id
-}
 
 // type p_track<ctx_type extends context_types> = {
 //   track: { [req in ctx_type]?: ctx_id }
@@ -33,6 +29,10 @@ export type contextModuleAccess = {
   [modName in keyof moodleSecondary]: Pick<moodleSecondary[modName], 'query' | 'service'>
 }
 
+export type ctx_track = {
+  type: domainLayer
+  id: ctx_id
+}
 export type baseContext = {
   id: ctx_id
   track?: ctx_track

@@ -35,7 +35,7 @@ export function getAssetUrl(asset: asset, filestoreHttpHref: url_string) {
   return asset.type === 'external' ? asset.url : `${filestoreHttpHref}/${asset.path}/${asset.name}`
 }
 
-export function uploaded_blob_meta_2_asset({ path, uploaded_blob_meta }: usingTempFile) {
+export function usingTempFile2asset({ path, uploaded_blob_meta }: usingTempFile) {
   const asset: asset = {
     type: 'local',
     path,

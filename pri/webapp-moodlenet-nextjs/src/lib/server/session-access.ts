@@ -24,10 +24,8 @@ const request_session_async_storage = new AsyncLocalStorage<MoodleDomain>()
 function _domainAccess(): MoodleDomain {
   const _existing_currentStore = request_session_async_storage.getStore()
   if (_existing_currentStore) {
-    console.log('using existing MoodleDomain')
     return _existing_currentStore
   }
-  console.log('creating new MoodleDomain')
 
   const primarySessionPromise = getPrimarySession()
 

@@ -4,6 +4,7 @@
 
 ### Next
 
+FIXME !!! [ ] logger with context ids
 [ ] admin user roles interface
 FIXME:[ ] define types as z.infer when zod schema defined (e.g. all def in types.data)
 [x] file service

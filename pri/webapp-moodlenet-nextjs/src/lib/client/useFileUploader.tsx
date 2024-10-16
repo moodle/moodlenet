@@ -44,7 +44,6 @@ export function useFileUploader({
   useEffect(() => {
     // align localSrc when user has choosen a valid file (choosenFile)
     if (!choosenFile) {
-      setCurrentAsset(asset)
       inputRef.current && (inputRef.current.value = '')
       return
     }
@@ -52,7 +51,7 @@ export function useFileUploader({
     return () => {
       URL.revokeObjectURL(choosenFile.url)
     }
-  }, [choosenFile, asset])
+  }, [choosenFile])
   useEffect(() => {
     // create input element for file upload
     // append it to the body

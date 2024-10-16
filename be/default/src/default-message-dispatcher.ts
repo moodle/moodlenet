@@ -2,13 +2,16 @@ import { messageDispatcher } from '@moodle/domain'
 import { provideMessageDispatcher } from '@moodle/domain/lib'
 import { mainMessageDispatcher as mainMessageDispatcherProvider } from './types'
 
-const mainMessageDispatcherProvider: mainMessageDispatcherProvider = async ({ configuration, domainAccess }) => {
-  const feedbackDispatcher: messageDispatcher = provideMessageDispatcher({
+const mainMessageDispatcherProvider: mainMessageDispatcherProvider = async ({
+  configuration,
+  domainAccess: mainDomainAccess,
+}) => {
+  const mainFeedbackDispatcher: messageDispatcher = provideMessageDispatcher({
     coreProviderObjects: configuration.coreProviderObjects,
     secondaryProviders: configuration.secondaryProviders,
     log: configuration.mainLogger,
     feedbackDispatcher({ domainAccess }) {
-      return feedbackDispatcher({ domainAccess })
+      return mainFeedbackDispatcher({ domainAccess })
     },
     start_background_processes: false,
   })
@@ -17,8 +20,8 @@ const mainMessageDispatcherProvider: mainMessageDispatcherProvider = async ({ co
     coreProviderObjects: configuration.coreProviderObjects,
     secondaryProviders: configuration.secondaryProviders,
     log: configuration.mainLogger,
-    feedbackDispatcher,
+    feedbackDispatcher: mainFeedbackDispatcher,
     start_background_processes: configuration.start_background_processes,
-  })({ domainAccess })
+  })({ domainAccess: mainDomainAccess })
 }
 export default mainMessageDispatcherProvider

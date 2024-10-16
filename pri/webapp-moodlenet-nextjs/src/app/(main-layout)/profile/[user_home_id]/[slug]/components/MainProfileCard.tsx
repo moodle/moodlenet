@@ -18,10 +18,9 @@ import { PrimaryButton } from '../../../../../../ui/atoms/PrimaryButton/PrimaryB
 import { RoundButton } from '../../../../../../ui/atoms/RoundButton/RoundButton'
 import { SecondaryButton } from '../../../../../../ui/atoms/SecondaryButton/SecondaryButton'
 import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
-import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
 import { adoptProfileImage, updateProfileInfo } from '../profile.server'
 import './MainProfileCard.scss'
-import { defaultImageAsset } from './defaultImagesAsset'
+import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
 
 export type mainProfileCardProps = {
   userHome: user_home_access_object
@@ -54,13 +53,33 @@ export function MainProfileCard({
     avatarChoosenFileError,
     // dirtyAvatar,
   ] = useFileUploader({
-    asset: avatar ?? defaultImageAsset,
+    asset: avatar ?? defaultProfileAvatarAsset,
     async fileUploadedAction({ tempId }) {
       const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
       if (!saveResult?.data) {
         return { done: false, error: saveResult?.validationErrors?._errors }
       }
-      return { done: true }
+
+      return { done: true, newAsset: saveResult.data }
+    },
+    type: 'webImage',
+  })
+
+  const [
+    displaySrcBackground,
+    chooseImageBackground,
+    submitBackground,
+    backgroundChoosenFileError,
+    // dirtyBackground,
+  ] = useFileUploader({
+    asset: background ?? defaultProfileBackgroundAsset,
+    async fileUploadedAction({ tempId }) {
+      const saveResult = await adoptProfileImage({ as: 'background', tempId, userHomeId: id })
+      if (!saveResult?.data) {
+        return { done: false, error: saveResult?.validationErrors?._errors }
+      }
+
+      return { done: true, newAsset: saveResult.data }
     },
     type: 'webImage',
   })
@@ -69,9 +88,10 @@ export function MainProfileCard({
     submitFormBtnRef.current?.click()
     if (!formState.isValid) return
     submitAvatar()
+    submitBackground()
     toggleIsEditing()
     //handleSubmitWithAction(e)
-  }, [formState.isValid, submitAvatar])
+  }, [formState.isValid, submitAvatar, submitBackground])
 
   return (
     <div className="main-profile-card" key="profile-card">
@@ -84,15 +104,16 @@ export function MainProfileCard({
                   className="change-background-button"
                   type="edit"
                   abbrTitle={`Edit background`}
+                  onClick={chooseImageBackground}
                   key="edit-background-btn"
                 />,
-                avatarChoosenFileError && <Snackbar key="edit-background-err">{avatarChoosenFileError}</Snackbar>,
+                backgroundChoosenFileError && <Snackbar key="edit-background-err">{backgroundChoosenFileError}</Snackbar>,
               ]}
           <div
             className={`background`}
             key="background"
             style={{
-              backgroundImage: 'url("' + defaultBackground.src + '")',
+              backgroundImage: 'url("' + displaySrcBackground + '")',
             }}
           />
         </div>
@@ -107,6 +128,7 @@ export function MainProfileCard({
                   onClick={chooseImageAvatar}
                   key="edit-avatar-btn"
                 />,
+                avatarChoosenFileError && <Snackbar key="edit-avatar-err">{avatarChoosenFileError}</Snackbar>,
               ]}
           <div
             className={`avatar`}

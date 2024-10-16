@@ -30,6 +30,6 @@ export function useAsset(asset: asset) {
   const { filestoreHttp } = useDeployments()
   return useMemo(() => {
     const url = getAssetUrl(asset, filestoreHttp.href)
-    return [url]
+    return [url] as const
   }, [asset, filestoreHttp.href])
 }

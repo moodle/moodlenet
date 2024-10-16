@@ -46,8 +46,10 @@ export function provideMessageDispatcher({
   start_background_processes,
 }: messageDispatcherProviderDeps): messageDispatcher {
   return async ({ domainAccess: current_domainAccess }) => {
-    const [currentDomainAccessLayer, currentDomainAccessModuleName] =
-      current_domainAccess.endpoint as [domainLayer | undefined, moodleModuleName | undefined]
+    const [currentDomainAccessLayer, currentDomainAccessModuleName] = current_domainAccess.endpoint as [
+      domainLayer | undefined,
+      moodleModuleName | undefined,
+    ]
     if (!(currentDomainAccessLayer && currentDomainAccessModuleName)) {
       throw TypeError(`endpoint layer and module is required`)
     }
@@ -61,20 +63,18 @@ export function provideMessageDispatcher({
       current_domainAccess,
     )
 
-    log('debug', 'messageDispatcher:', {
-      endpoint: current_domainAccess.endpoint.join('.'),
-      ctx_track: current_domainAccess.ctx_track,
-      from: current_domainAccess.from,
-      primarySessionId: current_domainAccess.primarySession?.id,
-      accessContextId: currentDomainAccessContext.id,
-    })
+    // log('debug', 'messageDispatcher:', {
+    //   endpoint: current_domainAccess.endpoint,
+    //   ctx_track: current_domainAccess.ctx_track,
+    //   from: current_domainAccess.from,
+    //   primarySessionId: current_domainAccess.primarySession?.id,
+    //   accessContextId: currentDomainAccessContext.id,
+    // })
 
     if (start_background_processes) {
       await Promise.all(
         coreProviderObjects.map(async ({ modName, provider }) => {
-          const moduleCore = provider(
-            await generateAccessContext('background', modName as moodleModuleName),
-          )
+          const moduleCore = provider(await generateAccessContext('background', modName as moodleModuleName))
           return moduleCore?.startBackgroundProcess?.()
         }),
       )
@@ -97,16 +97,9 @@ export function provideMessageDispatcher({
     } else if (currentDomainAccessLayer === 'event') {
       Promise.allSettled(
         coreProviderObjects.map(async ({ modName, provider }) => {
-          const eventAccessContext = await generateAccessContext(
-            'event',
-            modName as moodleModuleName,
-            current_domainAccess,
-          )
+          const eventAccessContext = await generateAccessContext('event', modName as moodleModuleName, current_domainAccess)
           const maybe_eventImpl = provider(eventAccessContext).event?.(eventAccessContext)
-          return (
-            maybe_eventImpl &&
-            dispatchMsg({ event: maybe_eventImpl }, current_domainAccess, { graceful: true })
-          )
+          return maybe_eventImpl && dispatchMsg({ event: maybe_eventImpl }, current_domainAccess, { graceful: true })
         }),
       ).catch(error => log('critical', { domainAccess: current_domainAccess }, error))
     } else if (currentDomainAccessLayer === 'secondary') {
@@ -129,10 +122,7 @@ export function provideMessageDispatcher({
     ) {
       // log('debug', `dispatchMsg`, domainMsg.endpoint, domainMsg.payload)
 
-      const endpoint = domainMsg.endpoint.reduce(
-        (currProp, currPathSegment) => currProp?.[currPathSegment],
-        impl,
-      )
+      const endpoint = domainMsg.endpoint.reduce((currProp, currPathSegment) => currProp?.[currPathSegment], impl)
 
       if (typeof endpoint !== 'function') {
         if (opts?.graceful) {
@@ -181,15 +171,19 @@ export function provideMessageDispatcher({
           id: currentContextId,
           type: currentLayer,
         }
-        return feedbackDispatcher({ domainAccess: { endpoint, payload, ctx_track } })
+        return feedbackDispatcher({
+          domainAccess: {
+            endpoint,
+            payload,
+            ctx_track,
+            from: current_domainAccess?.endpoint,
+            primarySession: current_domainAccess?.primarySession,
+          },
+        })
       },
     })
 
-    const accessContext: coreContext<modName> &
-      primaryContext &
-      eventContext &
-      watchContext<modName> &
-      secondaryContext = {
+    const accessContext: coreContext<modName> & primaryContext & eventContext & watchContext<modName> & secondaryContext = {
       id: currentContextId,
       session: current_domainAccess?.primarySession as primarySession, // HACK : could be undefined -
       track: current_domainAccess?.ctx_track,
