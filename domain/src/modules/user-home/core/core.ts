@@ -1,9 +1,10 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { _unchecked_brand, _void, assetRecord } from '@moodle/lib-types'
+import { _unchecked_brand, _void } from '@moodle/lib-types'
 import { assertWithErrorXxx, coreBootstrap } from '../../../types'
 import { assert_authorizeAuthenticatedUserSession } from '../../iam/lib'
 import { accessUserHome } from '../lib'
 import { user_home_record } from '../types'
+import { assetRecord } from '../../storage'
 
 export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
   return {
@@ -28,7 +29,10 @@ export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
                   priCtx,
                   by: { idOf: 'user', user_id: user.id },
                 })
-                assertWithErrorXxx(userHome.result === 'found' && userHome.access === 'allowed' && userHome.permissions.editProfile, 'Unauthorized')
+                assertWithErrorXxx(
+                  userHome.result === 'found' && userHome.access === 'allowed' && userHome.permissions.editProfile,
+                  'Unauthorized',
+                )
                 const [done, result] = await coreCtx.write.useTempImageInProfile({
                   as,
                   id: userHome.id,
@@ -80,13 +84,14 @@ export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
                     if (!done) {
                       return
                     }
-                    const assetRecord: assetRecord = {
-                      type: 'uploaded',
-                      uploadMeta: fileInfo.blobMeta,
-                    }
                     await coreCtx.write.updatePartialProfileInfo({
                       id,
-                      partialProfileInfo: as === 'avatar' ? { avatar: assetRecord } : as === 'background' ? { background: assetRecord } : {},
+                      partialProfileInfo:
+                        as === 'avatar'
+                          ? { avatar: fileInfo.assetRecord }
+                          : as === 'background'
+                            ? { background: fileInfo.assetRecord }
+                            : {},
                     })
                   },
                 },

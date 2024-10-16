@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { _nullish, asset, flags, url_string } from '@moodle/lib-types'
+import { user_home_access_object } from '@moodle/module/user-home'
 import Edit from '@mui/icons-material/Edit'
 import Flag from '@mui/icons-material/Flag'
 import Save from '@mui/icons-material/Save'
@@ -21,14 +21,10 @@ import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
 import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
 import { adoptProfileImage, updateProfileInfo } from '../profile.server'
 import './MainProfileCard.scss'
-import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.png'
-import { user_home_access_object } from '@moodle/module/user-home'
+import { defaultImageAsset } from './defaultImagesAsset'
 
 export type mainProfileCardProps = {
-  userHome: Omit<user_home_access_object, 'avatar' | 'background'> & {
-    avatar: asset | _nullish // TODO: REMOVE this mullish, I want default avatar coming from server anyway
-    background: asset | _nullish // TODO: REMOVE this mullish, I want default avatar coming from server anyway
-  }
+  userHome: user_home_access_object
 }
 
 export function MainProfileCard({
@@ -36,10 +32,7 @@ export function MainProfileCard({
 }: mainProfileCardProps) {
   const isPublisher = !!user?.roles.includes('publisher')
   const schemas = useAllPrimarySchemas()
-  const [isEditing, toggleIsEditing] = useReducer(
-    isEditing => permissions.editProfile && !isEditing,
-    false,
-  )
+  const [isEditing, toggleIsEditing] = useReducer(isEditing => permissions.editProfile && !isEditing, false)
   const {
     form: { formState, register, reset },
     handleSubmitWithAction: submitForm,
@@ -55,13 +48,13 @@ export function MainProfileCard({
   const submitFormBtnRef = useRef<HTMLButtonElement | null>(null)
 
   const [
+    displaySrcAvatar,
     chooseImageAvatar,
     submitAvatar,
     avatarChoosenFileError,
-    displaySrcAvatar,
     // dirtyAvatar,
   ] = useFileUploader({
-    currentSrc: avatar?.url ?? defaultAvatar.src,
+    currentAsset: avatar ?? defaultImageAsset,
     async fileUploadedAction({ tempId }) {
       const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
       if (!saveResult?.data) {
@@ -93,9 +86,7 @@ export function MainProfileCard({
                   abbrTitle={`Edit background`}
                   key="edit-background-btn"
                 />,
-                avatarChoosenFileError && (
-                  <Snackbar key="edit-background-err">{avatarChoosenFileError}</Snackbar>
-                ),
+                avatarChoosenFileError && <Snackbar key="edit-background-err">{avatarChoosenFileError}</Snackbar>,
               ]}
           <div
             className={`background`}

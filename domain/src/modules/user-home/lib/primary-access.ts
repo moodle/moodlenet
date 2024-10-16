@@ -26,8 +26,8 @@ export async function accessUserHome({
         result: 'found',
         access: 'allowed',
         profileInfo,
-        avatar: profileInfo.avatar,
-        background: profileInfo.background,
+        avatar: profileInfo.avatar?.asset,
+        background: profileInfo.background?.asset,
         permissions: _all_user_home_permissions_disallowed,
         user: null,
         flags: { followed: true },
@@ -44,8 +44,8 @@ export async function accessUserHome({
     result: 'found',
     access: 'allowed',
     profileInfo,
-    avatar: profileInfo.avatar,
-    background: profileInfo.background,
+    avatar: profileInfo.avatar?.asset,
+    background: profileInfo.background?.asset,
     permissions: {
       ...(itsMe
         ? {

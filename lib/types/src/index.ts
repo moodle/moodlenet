@@ -1,4 +1,3 @@
-export * from './assets'
 export * from './crypto'
 export * from './data'
 export * from './domain-msg'

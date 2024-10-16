@@ -1,4 +1,5 @@
-import { _nullish, assetRecord, url_string } from '@moodle/lib-types'
+import { _nullish, url_string } from '@moodle/lib-types'
+import { assetRecord } from '../../storage'
 
 export interface ProfileInfo {
   displayName: string

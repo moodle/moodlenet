@@ -13,6 +13,7 @@ import {
 import { _any, map } from './map'
 export type path = string[]
 
+
 export type intersection<types extends _any[]> = pretty<
   types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
 >

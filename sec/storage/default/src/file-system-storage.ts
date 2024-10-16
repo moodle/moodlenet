@@ -18,11 +18,11 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
             async useTempImageInProfile({ as, id, tempId }) {
               log('debug', 'useImageInProfile', { as, id, tempId })
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              const destPath = fs_file_paths.userHome[id]!.profile[as]!()
+              const absolutePath = fs_file_paths.userHome[id]!.profile[as]!()
               return use_temp_file_as_web_image({
                 fsDirs,
                 secondaryContext,
-                destPath,
+                absolutePath,
                 tempId,
                 size: as === 'avatar' ? 'medium' : 'large',
               })
@@ -90,7 +90,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
               //setTimeout(cleanupTemp, tempFileMaxRetentionMilliseconds)
             },
           },
-          // async useTempFile({ destPath, tempId }) {
+          // async useTempFile({ absolutePath, tempId }) {
           //   const { temp_file_meta_path } = get_temp_file_paths({ tempId })
 
           //   const meta: uploaded_blob_meta = await readFile(temp_file_meta_path, 'utf8')
@@ -101,7 +101,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
           //     return [false, { reason: 'notFound' }]
           //   }
 
-          //   const fs_dest_path = path2modFsPath({ path: destPath })
+          //   const fs_dest_path = path2modFsPath({ path: absolutePath })
           //   await mkdir(fs_dest_path, { recursive: true })
           //   const { temp_file_path } = get_temp_file_paths({ tempId })
 

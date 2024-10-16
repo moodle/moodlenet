@@ -1,6 +1,6 @@
 import type { d_u, deep_partial, ok_ko } from '@moodle/lib-types'
 import { user_id } from '../iam'
-import { useTempFileAsWebImageResult } from '../storage'
+import { useTempFileResult } from '../storage'
 import {
   profileImage,
   ProfileInfo,
@@ -10,7 +10,6 @@ import {
   user_home_record,
   UserHomePrimaryMsgSchemaConfigs,
 } from './types'
-import { Configs } from './types/configs'
 export * from './types'
 
 export type by_user_id_or_user_home_id = d_u<
@@ -25,10 +24,7 @@ export default interface UserHomeDomain {
         moduleInfo(): Promise<{ schemaConfigs: UserHomePrimaryMsgSchemaConfigs }>
       }
       editProfile: {
-        useTempImageAsProfileImage(_: {
-          as: profileImage
-          tempId: string
-        }): Promise<useTempFileAsWebImageResult>
+        useTempImageAsProfileImage(_: { as: profileImage; tempId: string }): Promise<useTempFileResult>
         editProfileInfo(_: {
           user_home_id: user_home_id
           profileInfo: deep_partial<ProfileInfo>
@@ -59,11 +55,7 @@ export default interface UserHomeDomain {
           id: user_home_id
           partialProfileInfo: deep_partial<ProfileInfo>
         }): Promise<ok_ko<{ userHomeId: user_home_id; userId: user_id }>>
-        useTempImageInProfile(_: {
-          as: profileImage
-          id: user_home_id
-          tempId: string
-        }): Promise<useTempFileAsWebImageResult>
+        useTempImageInProfile(_: { as: profileImage; id: user_home_id; tempId: string }): Promise<useTempFileResult>
       }
     }
   }

@@ -1,14 +1,22 @@
-import { moodlePrimary, secondaryContext } from '@moodle/domain'
-import { asset, assetRecord, createPathProxy, ok_ko, path, url_path_string_schema } from '@moodle/lib-types'
+import { secondaryContext } from '@moodle/domain'
+import { createPathProxy, ok_ko, path, url_path_string_schema } from '@moodle/lib-types'
 import { mkdir, readFile, rename, stat, writeFile } from 'fs/promises'
-import { join, resolve, sep } from 'path'
+import { join, relative, resolve, sep } from 'path'
 import { rimraf } from 'rimraf'
 import sharp from 'sharp'
 import { filesystem, fs, fsDirectories, fsUrlPathGetter } from './types'
 
-import { fileHashes, getSanitizedFileName, uploaded_blob_meta, useTempFileAsWebImageResult, useTempFileResult, webImageSize } from '@moodle/module/storage'
+import {
+  assetRecord,
+  fileHashes,
+  getSanitizedFileName,
+  uploaded_blob_meta,
+  useTempFileResult,
+  webImageSize,
+} from '@moodle/module/storage'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
+import { omit, pick } from 'lodash'
 
 export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
 
@@ -47,28 +55,28 @@ export function getFsDirectories({ domainName, homeDir }: { homeDir: string; dom
   }
 }
 
-export function provide_assetRecord2asset(moodlePrimary: moodlePrimary, assetRecord: assetRecord) {
-  const prefixed_domain_file_paths = createPathProxy<fs<filesystem, () => Promise<asset>>>({
-    async apply({ path }) {
-      if (assetRecord.type === 'external') {
-        return {
-          type: 'external',
-          url: assetRecord.url,
-          credits: assetRecord.credits,
-        }
-      } else if (assetRecord.type === 'uploaded') {
-        const { filestoreHttp } = await moodlePrimary.env.application.deployments()
-        const url = url_path_string_schema.parse([filestoreHttp.href, ...path, assetRecord.uploadMeta.name].join('/'))
-        return {
-          type: 'uploaded',
-          url,
-        }
-      }
-      throw new Error(`Invalid assetRecord type ${JSON.stringify(assetRecord)}`)
-    },
-  })
-  return prefixed_domain_file_paths
-}
+// export function provide_assetRecord2asset(moodlePrimary: moodlePrimary, assetRecord: assetRecord) {
+//   const prefixed_domain_file_paths = createPathProxy<fs<filesystem, () => Promise<asset>>>({
+//     async apply({ path }) {
+//       if (assetRecord.type === 'external') {
+//         return {
+//           type: 'external',
+//           url: assetRecord.url,
+//           credits: assetRecord.credits,
+//         }
+//       } else if (assetRecord.type === 'uploaded') {
+//         const { filestoreHttp } = await moodlePrimary.env.application.deployments()
+//         const url = url_path_string_schema.parse([filestoreHttp.href, ...path, assetRecord.uploadMeta.name].join('/'))
+//         return {
+//           type: 'uploaded',
+//           url,
+//         }
+//       }
+//       throw new Error(`Invalid assetRecord type ${JSON.stringify(assetRecord)}`)
+//     },
+//   })
+//   return prefixed_domain_file_paths
+// }
 
 // export function file_server_domain_file_url({ primary }: { primary: moodlePrimary }) {
 //   const prefixed_domain_file_paths = createPathProxy<fs<filesystem, fsUrlPathGetter>>({
@@ -119,17 +127,17 @@ export async function ensure_temp_file({ tempId, fsDirs }: { tempId: string; fsD
 }
 export async function use_temp_file_as_web_image({
   tempId,
-  destPath,
+  absolutePath,
   size,
   secondaryContext,
   fsDirs,
 }: {
   tempId: string
-  destPath: string
+  absolutePath: string
   size: webImageSize
   secondaryContext: secondaryContext
   fsDirs: fsDirectories
-}): Promise<useTempFileAsWebImageResult> {
+}): Promise<useTempFileResult> {
   const [resizeDone, resizeResult] = await resizeTempImage({
     size,
     tempId,
@@ -142,31 +150,51 @@ export async function use_temp_file_as_web_image({
   }
   const use_temp_file_result = await use_temp_file({
     tempId: resizeResult.resizedTempId,
-    destPath,
+    absolutePath,
     fsDirs,
   })
   return use_temp_file_result
 }
 
-export async function use_temp_file({ tempId, destPath, fsDirs }: { tempId: string; destPath: string; fsDirs: fsDirectories }): Promise<useTempFileResult> {
+export async function use_temp_file({
+  tempId,
+  absolutePath,
+  fsDirs,
+}: {
+  tempId: string
+  absolutePath: string
+  fsDirs: fsDirectories
+}): Promise<useTempFileResult> {
   const temp_file = await ensure_temp_file({ tempId, fsDirs })
   if (!temp_file) {
     return [false, { reason: 'tempNotFound' }]
   }
-  await rimraf(destPath, { maxRetries: 2 }).catch(() => null)
-  await mkdir(destPath, { recursive: true })
+  await rimraf(absolutePath, { maxRetries: 2 }).catch(() => null)
+  await mkdir(absolutePath, { recursive: true })
 
-  const mvError = await rename(temp_file.temp_paths.file, join(destPath, temp_file.meta.name)).then(
+  const mvError = await rename(temp_file.temp_paths.file, join(absolutePath, temp_file.meta.name)).then(
     () => false as const,
     e => String(e),
   )
-  // console.log('use_temp_file', { mvError, tempId, destPath })
+  // console.log('use_temp_file', { mvError, tempId, absolutePath })
 
   if (mvError) {
     return [false, { reason: 'move', error: mvError }]
   }
+  const blobMeta = pick(temp_file.meta, 'hash', 'uploadedBy', 'originalSize', 'originalHash')
+  const asset = omit(temp_file.meta, 'hash', 'uploadedBy', 'originalSize', 'originalHash')
 
-  return [true, { blobMeta: temp_file.meta }]
+  const assetRecordPath = relative(fsDirs.fsStorage, absolutePath) //join(absolutePath, temp_file.meta.name))
+  const assetRecord: assetRecord = {
+    type: 'uploaded',
+    asset: {
+      type: 'uploaded',
+      path: assetRecordPath,
+      ...asset,
+    },
+    blobMeta,
+  }
+  return [true, { assetRecord }]
 }
 
 export async function resizeTempImage({
@@ -179,7 +207,9 @@ export async function resizeTempImage({
   size: webImageSize
   secondaryContext: secondaryContext
   fsDirs: fsDirectories
-}): Promise<ok_ko<{ resizedTempId: string; resizedTempFilePaths: temp_file_paths }, { tempNotFound: unknown; invalidImage: unknown }>> {
+}): Promise<
+  ok_ko<{ resizedTempId: string; resizedTempFilePaths: temp_file_paths }, { tempNotFound: unknown; invalidFile: unknown }>
+> {
   const original_temp_file = await ensure_temp_file({ tempId, fsDirs })
   if (!original_temp_file) {
     return [false, { reason: 'tempNotFound' }]

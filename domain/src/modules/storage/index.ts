@@ -1,6 +1,7 @@
 import type { ok_ko, path } from '@moodle/lib-types'
 import { user_home_id } from '../user-home'
-import { uploaded_blob_meta, uploadMaxSizeConfigs } from './types/_types'
+import { uploaded_blob_meta } from './types/temp'
+import { uploadMaxSizeConfigs } from './types/configs'
 export * from './lib'
 export * from './types'
 
@@ -21,14 +22,9 @@ export default interface StorageDomain {
         createUserHome(_: { userHomeId: user_home_id }): Promise<ok_ko<void>>
       }
       query: {
-        tempMeta(_: {
-          tempId: string
-        }): Promise<ok_ko<{ meta: uploaded_blob_meta }, { notFound: unknown }>>
+        tempMeta(_: { tempId: string }): Promise<ok_ko<{ meta: uploaded_blob_meta }, { notFound: unknown }>>
       }
       write: {
-        //REVIEW - should this be in service? for simple use for every module e.g. useImageInProfile() ?
-        // useTempFileAsWebImage(_: { tempId: string; destPath: path }): Promise<void>
-        //
         deletePath(_: {
           path: path
           type: 'file' | 'dir'
