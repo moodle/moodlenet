@@ -99,7 +99,7 @@ export function getIamPrimarySchemas({ user, myAccount }: IamPrimaryMsgSchemaCon
   }
 }
 
-// FIXME: This is a solution to the password complexity issue from https://forum.codewithmosh.com/t/password-complexity-for-zod/23622
+// CHECK: This is a solution to the password complexity issue from https://forum.codewithmosh.com/t/password-complexity-for-zod/23622
 //! eventually add this to password schema, after investigating on how to configure it
 // CHECK this too (and others) https://grad.ucla.edu/gasaa/etd/specialcharacters.pdf
 // string().superRefine((password, checkPassComplexity) => {

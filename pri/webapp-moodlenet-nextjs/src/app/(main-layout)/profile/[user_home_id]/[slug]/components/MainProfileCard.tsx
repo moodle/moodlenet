@@ -9,7 +9,7 @@ import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useCallback, useReducer, useRef } from 'react'
 import { useAllPrimarySchemas } from '../../../../../../lib/client/globalContexts'
-import { useFileUploader } from '../../../../../../lib/client/useFileUploader'
+import { useAssetUploader } from '../../../../../../lib/client/useAssetUploader'
 import { ApprovalButton } from '../../../../../../ui/atoms/ApproveButton/ApproveButton'
 import { FloatingMenu } from '../../../../../../ui/atoms/FloatingMenu/FloatingMenu'
 import { FollowButton } from '../../../../../../ui/atoms/FollowButton/FollowButton'
@@ -47,33 +47,32 @@ export function MainProfileCard({
   const submitFormBtnRef = useRef<HTMLButtonElement | null>(null)
 
   const [
-    displaySrcAvatar,
+    [displaySrcAvatar],
     chooseImageAvatar,
     submitAvatar,
     avatarChoosenFileError,
     // dirtyAvatar,
-  ] = useFileUploader({
-    asset: avatar ?? defaultProfileAvatarAsset,
-    async fileUploadedAction({ tempId }) {
+  ] = useAssetUploader({
+    assets: [avatar ?? defaultProfileAvatarAsset],
+    async action({ tempIds: [tempId] }) {
       const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
-      if (!saveResult?.data) {
-        return { done: false, error: saveResult?.validationErrors?._errors }
-      }
 
-      return { done: true, newAsset: saveResult.data }
+      return saveResult?.data
+        ? { done: true, newAssets: [saveResult.data] }
+        : { done: false, error: saveResult?.validationErrors?._errors }
     },
     type: 'webImage',
   })
 
   const [
-    displaySrcBackground,
+    [displaySrcBackground],
     chooseImageBackground,
     submitBackground,
     backgroundChoosenFileError,
     // dirtyBackground,
-  ] = useFileUploader({
-    asset: background ?? defaultProfileBackgroundAsset,
-    async fileUploadedAction({ tempId }) {
+  ] = useAssetUploader({
+    assets: [background ?? defaultProfileBackgroundAsset],
+    async action({ tempIds: [tempId] }) {
       const saveResult = await adoptProfileImage({ as: 'background', tempId, userHomeId: id })
       if (!saveResult?.data) {
         return { done: false, error: saveResult?.validationErrors?._errors }

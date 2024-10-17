@@ -101,7 +101,7 @@ export type watcher = {
   primary: layerWatcher<'primary'>
 }
 
-//TODO: try to free it from rigid layer/channel/endpoint structure
+//REVIEW: try to free it from rigid layer/channel/endpoint structure (?)
 export type layerWatcher<layer extends 'secondary' | 'primary'> = {
   [layer_mod in keyof MoodleDomain[layer]]: {
     [channel in keyof MoodleDomain[layer][layer_mod]]: {

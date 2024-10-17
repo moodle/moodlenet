@@ -185,7 +185,7 @@ export function provideMessageDispatcher({
 
     const accessContext: coreContext<modName> & primaryContext & eventContext & watchContext<modName> & secondaryContext = {
       id: currentContextId,
-      session: current_domainAccess?.primarySession as primarySession, // HACK : could be undefined -
+      session: current_domainAccess?.primarySession as primarySession, // HACK : could be undefined - but this is a one-fit-all-context ;)
       track: current_domainAccess?.ctx_track,
       from: current_domainAccess?.from,
       emit: moodleDomainProxy.event,

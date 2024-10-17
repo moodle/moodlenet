@@ -32,7 +32,7 @@ export const updateProfileInfo = defaultSafeActionClient
       profileInfo: profileInfo,
     })
     if (editDone) {
-      // revalidatePath(sitepaths.profile[profileInfo.user_home_id]!())
+      revalidatePath(sitepaths.profile[profileInfo.user_home_id]!())
       return
     }
     returnValidationErrors(getProfileInfoSchema, {
@@ -67,7 +67,7 @@ export const adoptProfileImage = defaultSafeActionClient
       })
     }
 
-    // revalidatePath(sitepaths.profile[useProfileImageForm.userHomeId]!())
+    revalidatePath(sitepaths.profile[useProfileImageForm.userHomeId]!())
 
     return usingTempFile2asset(usingTempFile)
   })

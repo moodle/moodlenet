@@ -154,6 +154,7 @@ export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
 
 export type flags<names extends string> = Record<names, boolean>
 
+// SHAREDLIB
 // FIXME: here's not the best place for type `email_body`
 export type email_body = d_u<
   {
