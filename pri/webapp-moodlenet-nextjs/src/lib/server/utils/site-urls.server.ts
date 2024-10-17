@@ -1,7 +1,6 @@
 import { getDeploymentInfoUrl } from '@moodle/domain/lib'
 import { url_string } from '@moodle/lib-types'
 import assert from 'assert'
-import { headers } from 'next/headers'
 import { createSitepaths } from '../../common/utils/sitepaths'
 import { priAccess } from '../session-access'
 
