@@ -30,11 +30,21 @@ function _domainAccess(): MoodleDomain {
   const trnspClient = http_bind.client()
   const primarySessionPromise = getPrimarySession()
   const cache = new Map<string, _any>()
-  const { hash } = hasher({ coerce: false, alg: 'sha1' })
+  const { hash } = hasher({
+    coerce: false,
+    alg: 'sha1',
+    enc: 'hex',
+    // NOTE : see, this kind of cache can become tricky because of sorting:
+    // it's good in general but for certain cases, it can be a problem
+    // maybe priAccess & _domainAccess could have a flag to disable
+    // moreover, cache should be enabled for query endpoints only
+    // but atm we have query|write channel discrimination in secondary only
+    sort: true,
+  })
   const moodle_domain = createMoodleDomainProxy({
     async ctrl({ domainMsg }) {
       const domainMsgHash = hash(domainMsg)
-      console.log(cache.has(domainMsgHash) ? `**cache**  ` : '--fetch--  ', domainMsg.endpoint.join('.'))
+      // console.log(cache.has(domainMsgHash) ? `${domainMsgHash}**cache**  ` : '--fetch--  ', domainMsg.endpoint.join('.'))
       if (!cache.has(domainMsgHash)) {
         cache.set(
           domainMsgHash,

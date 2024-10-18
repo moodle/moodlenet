@@ -28,7 +28,7 @@ export function useAssetUploader({
   optimisticAssetUrlUpdate = false,
   overrideMaxSize,
 }: {
-  assets: asset[]
+  assets: _nullish | asset | asset[]
   action: fileUploadedAction
   type: 'webImage' | 'file'
   multiple?: boolean
@@ -42,7 +42,7 @@ export function useAssetUploader({
   const [state, dispatch] = useReducer(getFileUploaderReducer({ maxSize }), {
     type: 'idle',
     dirty: false,
-    assets,
+    assets: assets ? [assets].flat() : [],
     selection: null,
     submission: { s: 'never-submitted' },
     error: null,

@@ -20,7 +20,9 @@ import { SecondaryButton } from '../../../../../../ui/atoms/SecondaryButton/Seco
 import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
 import { adoptProfileImage, updateProfileInfo } from '../profile.server'
 import './MainProfileCard.scss'
-import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
+// import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
+import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.png'
+import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
 
 export type mainProfileCardProps = {
   userHome: user_home_access_object
@@ -47,13 +49,13 @@ export function MainProfileCard({
   const submitFormBtnRef = useRef<HTMLButtonElement | null>(null)
 
   const [
-    [displaySrcAvatar],
+    [displayAvatarSrc],
     chooseImageAvatar,
     submitAvatar,
     avatarChoosenFileError,
     // dirtyAvatar,
   ] = useAssetUploader({
-    assets: [avatar ?? defaultProfileAvatarAsset],
+    assets: avatar,
     async action({ tempIds: [tempId] }) {
       const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
 
@@ -65,13 +67,13 @@ export function MainProfileCard({
   })
 
   const [
-    [displaySrcBackground],
+    [displayBackgroundSrc],
     chooseImageBackground,
     submitBackground,
     backgroundChoosenFileError,
     // dirtyBackground,
   ] = useAssetUploader({
-    assets: [background ?? defaultProfileBackgroundAsset],
+    assets: background,
     async action({ tempIds: [tempId] }) {
       const saveResult = await adoptProfileImage({ as: 'background', tempId, userHomeId: id })
       if (!saveResult?.data) {
@@ -112,7 +114,7 @@ export function MainProfileCard({
             className={`background`}
             key="background"
             style={{
-              backgroundImage: 'url("' + displaySrcBackground + '")',
+              backgroundImage: 'url("' + (displayBackgroundSrc ?? defaultBackground.src) + '")',
             }}
           />
         </div>
@@ -132,7 +134,7 @@ export function MainProfileCard({
           <div
             className={`avatar`}
             style={{
-              backgroundImage: 'url("' + displaySrcAvatar + '")',
+              backgroundImage: 'url("' + (displayAvatarSrc ?? defaultAvatar.src) + '")',
               // pointerEvents: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'inherit',
               // cursor: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'pointer',
             }}

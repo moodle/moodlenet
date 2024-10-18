@@ -1,6 +1,17 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    // these below taken for testing from a fresh create-next-app
+    // "module": "esnext",
+    // "moduleResolution": "bundler",
+    // "lib": [
+    //   "dom",
+    //   "dom.iterable",
+    //   "esnext"
+    // ],
+    // "skipLibCheck": true,
+    // these above taken for testing from a fresh create-next-app
+
     "jsx": "preserve",
     "allowJs": true,
     "esModuleInterop": true,
