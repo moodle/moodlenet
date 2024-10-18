@@ -121,11 +121,14 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                     passwordHash,
                   },
                 })
-
-                coreCtx.queue.notifyUserOnSignupWithEmailConfirmation({
-                  activateAccountUrl: url_string_schema.parse(`${redirectUrl}?token=${confirmEmailSession.token}`),
-                  signupEmail: signupForm.email,
-                  userName: signupForm.displayName,
+                coreCtx.mod.userNotification.service.enqueueNotificationToUser({
+                  data: {
+                    module: 'iam',
+                    type: 'signupWithEmailConfirmation',
+                    activateAccountUrl: url_string_schema.parse(`${redirectUrl}?token=${confirmEmailSession.token}`),
+                    signupEmail: signupForm.email,
+                    userName: signupForm.displayName,
+                  },
                 })
                 return [true, _void]
               },
@@ -222,11 +225,15 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                   },
                 })
 
-                coreCtx.queue.notifyUserOnResetPasswordRequest({
-                  resetPasswordUrl: url_string_schema.parse(
-                    `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
-                  ),
-                  toUserId: user.id,
+                coreCtx.mod.userNotification.service.enqueueNotificationToUser({
+                  data: {
+                    module: 'iam',
+                    type: 'resetPasswordRequest',
+                    resetPasswordUrl: url_string_schema.parse(
+                      `${redirectUrl}?token=${resetPasswordConfirmationSession.token}`,
+                    ),
+                    toUserId: user.id,
+                  },
                 })
                 return
               },
@@ -257,9 +264,15 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                   },
                 })
 
-                coreCtx.queue.notifyUserOnAccountSelfDeletionRequest({
-                  deleteAccountUrl: url_string_schema.parse(`${redirectUrl}?token=${selfDeletionConfirmationSession.token}`),
-                  toUserId: authenticated_session.user.id,
+                coreCtx.mod.userNotification.service.enqueueNotificationToUser({
+                  data: {
+                    module: 'iam',
+                    type: 'deleteAccountRequest',
+                    deleteAccountUrl: url_string_schema.parse(
+                      `${redirectUrl}?token=${selfDeletionConfirmationSession.token}`,
+                    ),
+                    toUserId: authenticated_session.user.id,
+                  },
                 })
                 return
               },
@@ -355,7 +368,6 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                   return [false, { reason: 'unknown' }]
                 }
 
-                coreCtx.queue.notifyUserOnPasswordChanged({ toUserId: authenticated_session.user.id })
                 return [true, _void]
               },
             },
@@ -371,7 +383,9 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                     if (!done) {
                       return
                     }
-                    coreCtx.queue.notifyUserOnPasswordChanged({ toUserId: userId })
+                    coreCtx.mod.userNotification.service.enqueueNotificationToUser({
+                      data: { module: 'iam', type: 'passwordChanged', toUserId: userId },
+                    })
                   },
                 },
               },

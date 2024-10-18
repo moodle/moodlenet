@@ -12,15 +12,10 @@ import type {
 
 import type {
   changePasswordForm,
-  deleteAccountRequestNotificationData,
   IamPrimaryMsgSchemaConfigs,
-  inactivityBeforeDeletionNotificationData,
   loginForm,
-  passwordChangedNotificationData,
   resetPasswordForm,
-  resetPasswordRequestNotificationData,
   signupForm,
-  signupWithEmailConfirmationNotificationData,
   user_deactivation_reason,
   user_id,
   user_record,
@@ -100,6 +95,7 @@ export default interface IamDomain {
   }
   secondary: {
     iam: {
+      queue: unknown
       write: {
         saveNewUser(_: { newUser: user_record }): Promise<ok_ko<void>>
         setUserPassword(_: { userId: user_id; newPasswordHash: string }): Promise<ok_ko<void>>
@@ -117,7 +113,7 @@ export default interface IamDomain {
           adminUserId: user_id
         }): Promise<ok_ko<{ newRoles: user_role[]; oldRoles: user_role[] }>>
       }
-     service: unknown
+      service: unknown
       // service: {
       //   hashPassword(_: { plainPassword: __redacted__<plain_password> }): Promise<{ passwordHash: string }>
 
@@ -147,17 +143,6 @@ export default interface IamDomain {
         userBy(_: d_u<{ email: { email: email_address }; id: { userId: user_id } }, 'by'>): Promise<ok_ko<user_record>>
 
         usersByText(_: { text: string; includeDeactivated?: boolean }): Promise<{ users: user_record[] }>
-      }
-      queue: {
-        notifyUserOnInactivityBeforeDeletion(
-          inactivityBeforeDeletionData: inactivityBeforeDeletionNotificationData,
-        ): Promise<void>
-        notifyUserOnPasswordChanged(passwordChangedData: passwordChangedNotificationData): Promise<void>
-        notifyUserOnResetPasswordRequest(resetPasswordRequestData: resetPasswordRequestNotificationData): Promise<void>
-        notifyUserOnAccountSelfDeletionRequest(deleteAccountRequestData: deleteAccountRequestNotificationData): Promise<void>
-        notifyUserOnSignupWithEmailConfirmation(
-          signupWithEmailConfirmationData: signupWithEmailConfirmationNotificationData,
-        ): Promise<void>
       }
       sync: {
         userDisplayname(_: { userId: user_id; displayName: string }): Promise<ok_ko<void>>
