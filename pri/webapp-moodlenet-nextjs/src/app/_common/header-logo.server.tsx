@@ -1,5 +1,5 @@
 'use server'
-import { getAssetUrl } from '@moodle/module/storage'
+import { getAssetUrl } from '@moodle/module/storage/lib'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { getSiteGeneralInfo } from '../../lib/server/siteGeneralInfo'
 import HeaderLogo from '../../ui/organisms/Header/HeaderLogo/HeaderLogo'

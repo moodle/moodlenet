@@ -8,7 +8,7 @@ import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
 import { priAccess } from '../../../../../lib/server/session-access'
 import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
 import { user_home_id } from '@moodle/module/user-home'
-import { usingTempFile2asset } from '@moodle/module/storage'
+import { usingTempFile2asset } from '@moodle/module/storage/lib'
 
 export async function getProfileInfoSchema() {
   const {

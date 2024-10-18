@@ -93,13 +93,7 @@
     "NOTE": ["NOTE", "NOTICE"],
     "CHECK": ["CHECK", "CHECKOUT", "BEWARE"],
     "CREDITS": ["CREDITS", "CREDIT", "THANKS", "THANK"],
-    "SHAREDLIB": [
-      "SHAREDLIB",
-      "SHARED_LIB",
-      "MAKE_SHARED_LIB",
-      "NEED_SHARED_LIB",
-      "SHARED_LIB_NEEDED"
-    ]
+    "SHAREDLIB": ["SHAREDLIB", "SHARED_LIB", "MAKE_SHARED_LIB", "NEED_SHARED_LIB", "SHARED_LIB_NEEDED"]
   },
   "typescript.preferences.importModuleSpecifier": "project-relative"
 }

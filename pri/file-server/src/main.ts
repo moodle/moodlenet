@@ -9,7 +9,8 @@ import {
   MOODLE_DEFAULT_HOME_DIR,
 } from '@moodle/lib-local-fs-storage'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
-import { getSanitizedFileName, uploaded_blob_meta } from '@moodle/module/storage'
+import { uploaded_blob_meta } from '@moodle/module/storage'
+import { getSanitizedFileName } from '@moodle/module/storage/lib'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'

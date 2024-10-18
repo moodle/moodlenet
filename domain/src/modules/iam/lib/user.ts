@@ -1,8 +1,12 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { _unchecked_brand, date_time_string, email_address, named_email_address } from '@moodle/lib-types'
-import { user_password_hash, user_record, user_role } from '../types'
+import { user_record, user_role } from '../types'
+import { password_hash } from '../../crypto/types'
 
-export function getUserNamedEmailAddress({ contacts, displayName }: Pick<user_record, 'contacts' | 'displayName'>): named_email_address {
+export function getUserNamedEmailAddress({
+  contacts,
+  displayName,
+}: Pick<user_record, 'contacts' | 'displayName'>): named_email_address {
   return {
     address: contacts.email,
     name: displayName,
@@ -12,7 +16,7 @@ export function getUserNamedEmailAddress({ contacts, displayName }: Pick<user_re
 export interface CreateNewUserRecordDataArg {
   displayName: string
   email: email_address
-  passwordHash: user_password_hash
+  passwordHash: password_hash
   createdAt?: date_time_string
   lastLogin?: date_time_string
   roles?: user_role[]

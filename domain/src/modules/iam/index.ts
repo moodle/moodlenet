@@ -1,19 +1,15 @@
 import type {
-  __redacted__,
   d_u,
   d_u__d,
   date_time_string,
   email_address,
-  named_or_email_address,
   ok_ko,
   signed_expire_token,
   signed_token,
   time_duration_string,
   url_string,
 } from '@moodle/lib-types'
-import type { ReactElement } from 'react'
 
-import { session_token } from '../../types'
 import type {
   changePasswordForm,
   deleteAccountRequestNotificationData,
@@ -23,12 +19,10 @@ import type {
   passwordChangedNotificationData,
   resetPasswordForm,
   resetPasswordRequestNotificationData,
-  signTokenData,
   signupForm,
   signupWithEmailConfirmationNotificationData,
   user_deactivation_reason,
   user_id,
-  user_plain_password,
   user_record,
   user_role,
   userSession,
@@ -83,7 +77,7 @@ export default interface IamDomain {
             authenticatedUser: d_u__d<userSession, 'type', 'authenticated'>
           }>
         >
-        logout(_: { sessionToken: session_token }): Promise<void>
+        logout(_: { sessionToken: signed_token }): Promise<void>
 
         resetPasswordRequest(_: { redirectUrl: url_string; declaredOwnEmail: email_address }): Promise<void>
       }
@@ -123,26 +117,27 @@ export default interface IamDomain {
           adminUserId: user_id
         }): Promise<ok_ko<{ newRoles: user_role[]; oldRoles: user_role[] }>>
       }
-      service: {
-        hashPassword(_: { plainPassword: __redacted__<user_plain_password> }): Promise<{ passwordHash: string }>
+     service: unknown
+      // service: {
+      //   hashPassword(_: { plainPassword: __redacted__<plain_password> }): Promise<{ passwordHash: string }>
 
-        verifyUserPasswordHash(_: {
-          plainPassword: __redacted__<user_plain_password>
-          passwordHash: string
-        }): Promise<ok_ko<void>>
+      //   verifyPasswordHash(_: {
+      //     plainPassword: __redacted__<plain_password>
+      //     passwordHash: string
+      //   }): Promise<ok_ko<void>>
 
-        validateSignedToken<type extends signTokenData['type']>(_: {
-          token: signed_token
-          type: type
-        }): Promise<
-          ok_ko<
-            { validatedSignedTokenData: d_u__d<signTokenData, 'type', type> },
-            { invalid: unknown; validatedUnknownType: { data: unknown } }
-          >
-        >
-        //NOTE: implement decodeNoValidateSignedToken(_: { token: session_token }): Promise<ok_ko<{__NOT_VALIDATED_SESSION_TOKEN_DATA__:iamSignTokenData}>>
-        signDataToken(_: { data: signTokenData; expiresIn: time_duration_string }): Promise<signed_expire_token>
-      }
+      //   validateSignedToken<type extends iamSignTokenData['type']>(_: {
+      //     token: signed_token
+      //     type: type
+      //   }): Promise<
+      //     ok_ko<
+      //       { validatedSignedTokenData: d_u__d<iamSignTokenData, 'type', type> },
+      //       { invalid: unknown; validatedUnknownType: { data: unknown } }
+      //     >
+      //   >
+      //   //NOTE: implement decodeNoValidateSignedToken(_: { token: session_token }): Promise<ok_ko<{__NOT_VALIDATED_SESSION_TOKEN_DATA__:iamSignTokenData}>>
+      //   signDataToken(_: { data: iamSignTokenData; expiresIn: time_duration_string }): Promise<signed_expire_token>
+      // }
       query: {
         activeUsersNotLoggedInFor(_: {
           time: time_duration_string

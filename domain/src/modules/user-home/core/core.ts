@@ -2,9 +2,9 @@ import { generateNanoId } from '@moodle/lib-id-gen'
 import { _unchecked_brand, _void } from '@moodle/lib-types'
 import { assertWithErrorXxx, coreBootstrap } from '../../../types'
 import { assert_authorizeAuthenticatedUserSession } from '../../iam/lib'
-import { usingTempFile2asset } from '../../storage'
 import { accessUserHome } from '../lib'
 import { user_home_record } from '../types'
+import { usingTempFile2asset } from '../../storage/lib'
 
 export const user_home_core: coreBootstrap<'userHome'> = ({ log }) => {
   return {

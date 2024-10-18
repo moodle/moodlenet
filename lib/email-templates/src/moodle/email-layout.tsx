@@ -1,7 +1,7 @@
 'use client'
 import { email_body, url_string } from '@moodle/lib-types'
 import { OrgInfo } from '@moodle/module/org'
-import { getAssetUrl } from '@moodle/module/storage'
+import { getAssetUrl } from '@moodle/module/storage/lib'
 import { Button } from '@react-email/button'
 import { Container } from '@react-email/container'
 import { Head } from '@react-email/head'

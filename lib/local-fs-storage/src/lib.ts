@@ -6,15 +6,10 @@ import { rimraf } from 'rimraf'
 import sharp from 'sharp'
 import { filesystem, fs, fsDirectories, fsUrlPathGetter } from './types'
 
-import {
-  fileHashes,
-  getSanitizedFileName,
-  uploaded_blob_meta,
-  useTempFileResult,
-  webImageSize,
-} from '@moodle/module/storage'
+import { fileHashes, uploaded_blob_meta, useTempFileResult, webImageSize } from '@moodle/module/storage'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
+import { getSanitizedFileName } from '@moodle/module/storage/lib'
 
 export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
 

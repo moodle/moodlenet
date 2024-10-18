@@ -15,8 +15,9 @@ export async function validateAnyUserSession({ coreCtx, priCtx }: sessionLibDep)
   if (!priCtx.session.token) {
     return guest_session
   }
-  const [valid, validation] = await coreCtx.mod.iam.service.validateSignedToken({
+  const [valid, validation] = await coreCtx.mod.crypto.service.validateSignedToken({
     token: priCtx.session.token,
+    module: 'iam',
     type: 'userSession',
   })
   if (!valid) {
@@ -103,13 +104,19 @@ export async function generateSessionForUserId({
   return [true, { userSessionToken }]
 }
 
-export async function generateSessionForUserData({ coreCtx, user }: { coreCtx: Pick<coreContext<never>, 'mod'>; user: userSessionData }): Promise<signed_expire_token> {
+export async function generateSessionForUserData({
+  coreCtx,
+  user,
+}: {
+  coreCtx: Pick<coreContext<never>, 'mod'>
+  user: userSessionData
+}): Promise<signed_expire_token> {
   const {
     configs: { tokenExpireTime },
   } = await coreCtx.mod.env.query.modConfigs({ mod: 'iam' })
-  const session = await coreCtx.mod.iam.service.signDataToken({
+  const session = await coreCtx.mod.crypto.service.signDataToken({
     data: {
-      v: '1_0',
+      module: 'iam',
       type: 'userSession',
       user,
     },

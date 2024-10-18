@@ -1,46 +1,46 @@
 import { secondaryAdapter, secondaryBootstrap } from '@moodle/domain'
 import { joseOpts, joseVerify, sign } from '@moodle/lib-jwt-jose'
-import { _void, d_u__d, SIGNED_TOKEN_PAYLOAD_PROP, signed_token_payload_data as signed_token_with_payload_data } from '@moodle/lib-types'
-import { signTokenData } from '@moodle/module/iam'
+import { _void, signed_token_payload_data, SIGNED_TOKEN_PAYLOAD_PROP } from '@moodle/lib-types'
 import * as argon2 from 'argon2'
-export type ArgonPwdHashOpts = Parameters<typeof argon2.hash>[1]
-// ArgonPwdHashOpts : {
-//   memoryCost: 100000,
-//   timeCost: 8,
-//   parallelism: 4,
-//   type: argon2id,
-// }
+import { signedToken } from 'domain/src/modules/crypto/types'
+import { ArgonPwdHashOpts } from '../types'
 
-export function iam_crypto_secondary_factory({ joseOpts, argonOpts }: { joseOpts: joseOpts; argonOpts: ArgonPwdHashOpts }): secondaryBootstrap {
+export function crypto_secondary_services_factory({
+  joseOpts,
+  argonOpts,
+}: {
+  joseOpts: joseOpts
+  argonOpts: ArgonPwdHashOpts
+}): secondaryBootstrap {
   return bootstrapCtx => {
     return secondaryCtx => {
       const iam_secondary_adapter: secondaryAdapter = {
-        iam: {
+        crypto: {
           service: {
             async hashPassword({ plainPassword: { __redacted__: plainPassword } }) {
               const passwordHash = await argon2.hash(plainPassword, argonOpts)
               return { passwordHash }
             },
-            async verifyUserPasswordHash({ passwordHash, plainPassword: { __redacted__: plainPassword } }) {
+            async verifyPasswordHash({ passwordHash, plainPassword: { __redacted__: plainPassword } }) {
               const verified = await argon2.verify(passwordHash, plainPassword, argonOpts)
               return [verified, _void]
             },
 
-            async validateSignedToken({ token, type }) {
+            async validateSignedToken({ token, type, module }) {
               // FIXME : CHECKS AUDIENCE ETC >>>
-              const verifyResult = await joseVerify<signed_token_with_payload_data<d_u__d<signTokenData, 'type', typeof type>>>(joseOpts, token)
+              const verifyResult = await joseVerify<signed_token_payload_data<signedToken>>(joseOpts, token)
               if (!verifyResult) {
                 return [false, { reason: 'invalid' }]
               }
               const signedTokenData = verifyResult.payload[SIGNED_TOKEN_PAYLOAD_PROP]
-              if (signedTokenData.type !== type) {
+              if (!(signedTokenData.type === type && signedTokenData.module === module)) {
                 return [false, { reason: 'validatedUnknownType', data: signedTokenData }]
               }
 
               return [true, { validatedSignedTokenData: signedTokenData }]
             },
             async signDataToken({ data, expiresIn }) {
-              const { expireDate, token /* , notBeforeDate */ } = await sign<signed_token_with_payload_data<signTokenData>>({
+              const { expireDate, token /* , notBeforeDate */ } = await sign<signed_token_payload_data<signedToken>>({
                 joseOpts,
                 payload: { [SIGNED_TOKEN_PAYLOAD_PROP]: data },
                 expiresIn /*,stdClaims:{} ,opts:{} */,

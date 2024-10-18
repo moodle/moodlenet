@@ -85,7 +85,6 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                     type: 'adminRequest',
                     adminUserId: admin_user_session.user.id,
                     reason,
-                    v: '1_0',
                   },
                   anonymize,
                 })
@@ -107,14 +106,14 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                   configs: { tokenExpireTime },
                 } = await coreCtx.mod.env.query.modConfigs({ mod: 'iam' })
 
-                const { passwordHash } = await coreCtx.mod.iam.service.hashPassword({
+                const { passwordHash } = await coreCtx.mod.crypto.service.hashPassword({
                   plainPassword: password,
                 })
 
-                const confirmEmailSession = await coreCtx.mod.iam.service.signDataToken({
+                const confirmEmailSession = await coreCtx.mod.crypto.service.signDataToken({
                   expiresIn: tokenExpireTime.signupEmailVerification,
                   data: {
-                    v: '1_0',
+                    module: 'iam',
                     type: 'signupRequestEmailVerification',
                     redirectUrl,
                     displayName,
@@ -137,8 +136,9 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                     roles: { newlyCreatedUserRoles },
                   },
                 } = await coreCtx.mod.env.query.modConfigs({ mod: 'iam' })
-                const [verified, validation] = await coreCtx.mod.iam.service.validateSignedToken({
+                const [verified, validation] = await coreCtx.mod.crypto.service.validateSignedToken({
                   token: signupEmailVerificationToken,
+                  module: 'iam',
                   type: 'signupRequestEmailVerification',
                 })
 
@@ -177,7 +177,7 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                 if (!(found && !user_record.deactivated)) {
                   return [false, _void]
                 }
-                const [verified] = await coreCtx.mod.iam.service.verifyUserPasswordHash({
+                const [verified] = await coreCtx.mod.crypto.service.verifyPasswordHash({
                   plainPassword: loginForm.password,
                   passwordHash: user_record.passwordHash,
                 })
@@ -212,10 +212,10 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                   return
                 }
 
-                const resetPasswordConfirmationSession = await coreCtx.mod.iam.service.signDataToken({
+                const resetPasswordConfirmationSession = await coreCtx.mod.crypto.service.signDataToken({
                   expiresIn: userSelfDeletion.resetPasswordRequest,
                   data: {
-                    v: '1_0',
+                    module: 'iam',
                     type: 'resetPasswordRequest',
                     redirectUrl,
                     email: user.contacts.email,
@@ -247,10 +247,10 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                   configs: { tokenExpireTime: userSelfDeletion },
                 } = await coreCtx.mod.env.query.modConfigs({ mod: 'iam' })
 
-                const selfDeletionConfirmationSession = await coreCtx.mod.iam.service.signDataToken({
+                const selfDeletionConfirmationSession = await coreCtx.mod.crypto.service.signDataToken({
                   expiresIn: userSelfDeletion.userSelfDeletionRequest,
                   data: {
-                    v: '1_0',
+                    module: 'iam',
                     type: 'selfDeletionRequestConfirm',
                     redirectUrl,
                     userId: authenticated_session.user.id,
@@ -265,8 +265,9 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
               },
 
               async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
-                const [verified, validation] = await coreCtx.mod.iam.service.validateSignedToken({
+                const [verified, validation] = await coreCtx.mod.crypto.service.validateSignedToken({
                   token: selfDeletionConfirmationToken,
+                  module: 'iam',
                   type: 'selfDeletionRequestConfirm',
                 })
 
@@ -286,7 +287,6 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                 const [deactivated] = await coreCtx.write.deactivateUser({
                   anonymize: true,
                   reason: {
-                    v: '1_0',
                     type: 'userSelfDeletionRequest',
                     reason,
                   },
@@ -295,8 +295,9 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                 return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
               },
               async resetPassword({ resetPasswordForm: { newPassword, token } }) {
-                const [verified, validation] = await coreCtx.mod.iam.service.validateSignedToken({
+                const [verified, validation] = await coreCtx.mod.crypto.service.validateSignedToken({
                   token,
+                  module: 'iam',
                   type: 'resetPasswordRequest',
                 })
 
@@ -312,7 +313,7 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                 if (!found) {
                   return [false, { reason: 'userNotFound' }]
                 }
-                const { passwordHash } = await coreCtx.mod.iam.service.hashPassword({
+                const { passwordHash } = await coreCtx.mod.crypto.service.hashPassword({
                   plainPassword: newPassword,
                 })
                 const [pwdChanged] = await coreCtx.write.setUserPassword({
@@ -335,14 +336,14 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
                 if (!user) {
                   return [false, { reason: 'unknown' }]
                 }
-                const [currentPasswordVerified] = await coreCtx.mod.iam.service.verifyUserPasswordHash({
+                const [currentPasswordVerified] = await coreCtx.mod.crypto.service.verifyPasswordHash({
                   plainPassword: currentPassword,
                   passwordHash: user.passwordHash,
                 })
                 if (!currentPasswordVerified) {
                   return [false, { reason: 'wrongCurrentPassword' }]
                 }
-                const { passwordHash } = await coreCtx.mod.iam.service.hashPassword({
+                const { passwordHash } = await coreCtx.mod.crypto.service.hashPassword({
                   plainPassword: newPassword,
                 })
                 const [done] = await coreCtx.write.setUserPassword({
@@ -406,7 +407,7 @@ export const iam_core: coreBootstrap<'iam'> = ({ log, domain }) => {
           })
 
           if (!found) {
-            const { passwordHash } = await coreCtx.mod.iam.service.hashPassword({
+            const { passwordHash } = await coreCtx.mod.crypto.service.hashPassword({
               plainPassword: __redacted__(await generateNanoId({ length: 20 })),
             })
             const newUser = await createNewUserRecordData({

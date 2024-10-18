@@ -1,5 +1,6 @@
 import { _nullish, d_u } from '@moodle/lib-types'
-import { asset, getAssetUrl } from '@moodle/module/storage'
+import { asset } from '@moodle/module/storage'
+import { getAssetUrl } from '@moodle/module/storage/lib'
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { humanFileSize } from '../../ui/lib/misc'
 import { useAllSchemaConfigs, useDeployments } from './globalContexts'
