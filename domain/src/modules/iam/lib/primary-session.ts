@@ -1,22 +1,21 @@
 import { ok_ko, signed_expire_token } from '@moodle/lib-types'
 import assert from 'assert'
-import { contextModuleAccess, coreContext, ErrorXxx, primaryContext } from '../../../types'
+import { baseContext, ErrorXxx, primaryContext } from '../../../types'
 import { user_id, user_role, userSession, userSessionData } from '../types'
 import { hasUserSessionRole, user_record2SessionUserData, userSessionInfo } from './user-session'
 
 // System Session
 export type sessionLibDep = {
-  coreCtx: { mod: contextModuleAccess }
-  priCtx: Pick<primaryContext, 'session'>
+  ctx: Pick<primaryContext, 'session' | 'mod'>
 }
 export type sessionLibDepWithRole = sessionLibDep & { role: user_role }
 
-export async function validateAnyUserSession({ coreCtx, priCtx }: sessionLibDep) {
-  if (!priCtx.session.token) {
+export async function validateAnyUserSession({ ctx }: sessionLibDep) {
+  if (!ctx.session.token) {
     return guest_session
   }
-  const [valid, validation] = await coreCtx.mod.crypto.service.validateSignedToken({
-    token: priCtx.session.token,
+  const [valid, validation] = await ctx.mod.crypto.service.validateSignedToken({
+    token: ctx.session.token,
     module: 'iam',
     type: 'userSession',
   })
@@ -35,14 +34,14 @@ const guest_session: userSession = {
   type: 'guest',
 }
 
-export async function validate_userSessionInfo({ coreCtx, priCtx }: sessionLibDep) {
-  const userSession = await validateAnyUserSession({ coreCtx, priCtx })
+export async function validate_userSessionInfo({ ctx }: sessionLibDep) {
+  const userSession = await validateAnyUserSession({ ctx })
   return userSessionInfo(userSession)
 }
 
 // Authenticated Session
-export async function validateUserAuthenticatedSession({ coreCtx, priCtx }: sessionLibDep) {
-  const m_authenticated_userSession = await validateAnyUserSession({ coreCtx, priCtx })
+export async function validateUserAuthenticatedSession({ ctx }: sessionLibDep) {
+  const m_authenticated_userSession = await validateAnyUserSession({ ctx })
   if (m_authenticated_userSession.type !== 'authenticated') {
     return null
   }
@@ -87,34 +86,34 @@ export async function assert_authorizeAuthenticatedUserSession(dep: sessionLibDe
 // GENERATE SESSION TOKEN
 
 export async function generateSessionForUserId({
-  coreCtx,
+  ctx,
   userId,
 }: {
-  coreCtx: Pick<coreContext<never>, 'mod'>
+  ctx: Pick<baseContext, 'mod'>
   userId: user_id
 }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>> {
-  const [, user_record] = await coreCtx.mod.iam.query.userBy({ by: 'id', userId })
+  const [, user_record] = await ctx.mod.iam.query.userBy({ by: 'id', userId })
   if (!user_record) {
     return [false, { reason: 'userNotFound' }]
   }
   const userSessionToken = await generateSessionForUserData({
-    coreCtx,
+    ctx,
     user: user_record2SessionUserData(user_record),
   })
   return [true, { userSessionToken }]
 }
 
 export async function generateSessionForUserData({
-  coreCtx,
+  ctx,
   user,
 }: {
-  coreCtx: Pick<coreContext<never>, 'mod'>
+  ctx: Pick<baseContext, 'mod'>
   user: userSessionData
 }): Promise<signed_expire_token> {
   const {
     configs: { tokenExpireTime },
-  } = await coreCtx.mod.env.query.modConfigs({ mod: 'iam' })
-  const session = await coreCtx.mod.crypto.service.signDataToken({
+  } = await ctx.mod.env.query.modConfigs({ mod: 'iam' })
+  const session = await ctx.mod.crypto.service.signDataToken({
     data: {
       module: 'iam',
       type: 'userSession',

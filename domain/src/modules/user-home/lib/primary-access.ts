@@ -3,19 +3,18 @@ import { by_user_id_or_user_home_id, user_home_access_object, user_home_permissi
 import { sessionLibDep, validate_userSessionInfo } from '../../iam/lib'
 
 export async function accessUserHome({
-  coreCtx,
-  priCtx,
+  ctx,
   by,
 }: sessionLibDep & {
   by: by_user_id_or_user_home_id
 }): Promise<d_u<{ found: access_obj<user_home_access_object>; notFound: unknown }, 'result'>> {
-  const [found, findResult] = await coreCtx.mod.userHome.query.getUserHome({ by })
+  const [found, findResult] = await ctx.mod.userHome.query.getUserHome({ by })
 
   if (!found) {
     return { result: 'notFound' }
   }
   const { userHome } = findResult
-  const { authenticated } = await validate_userSessionInfo({ coreCtx, priCtx })
+  const { authenticated } = await validate_userSessionInfo({ ctx })
   const { profileInfo, id } = userHome
   const isPublisher = userHome.user.roles.includes('publisher')
 
@@ -65,7 +64,7 @@ export async function accessUserHome({
   }
 
   async function getProfileInfoValidationConfigs() {
-    return (await coreCtx.mod.env.query.modConfigs({ mod: 'userHome' })).configs.profileInfoPrimaryMsgSchemaConfigs
+    return (await ctx.mod.env.query.modConfigs({ mod: 'userHome' })).configs.profileInfoPrimaryMsgSchemaConfigs
   }
 }
 

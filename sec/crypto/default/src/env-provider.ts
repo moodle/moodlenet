@@ -10,7 +10,7 @@ export type env_keys =
   | 'MOODLE_ARGON_OPTS_TIME_COST'
   | 'MOODLE_ARGON_OPTS_PARALLELISM'
   | 'MOODLE_ARGON_OPTS_TYPE'
-export function provideEnv({ env }: { env: map<unknown, env_keys> }): CryptoDefaultEnv {
+export function provideCryptoDefaultEnv({ env }: { env: map<unknown, env_keys> }): CryptoDefaultEnv {
   function string_int_schema(def: number) {
     return string().transform(Number).pipe(number().positive().int().default(def))
   }

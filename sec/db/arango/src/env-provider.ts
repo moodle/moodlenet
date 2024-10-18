@@ -12,7 +12,7 @@ export type env_keys =
   | 'MOODLE_ARANGODB_USER'
   | 'MOODLE_ARANGODB_PWD'
   | 'MOODLE_ARANGODB_VERSION'
-export function provideEnv({ env }: { env: map<unknown, env_keys> }): ArangoDbSecEnv {
+export function provideArangoDbSecEnv({ env }: { env: map<unknown, env_keys> }): ArangoDbSecEnv {
   function int_schema(dflt: number) {
     return string().transform(Number).pipe(number().positive().int().default(dflt))
   }
