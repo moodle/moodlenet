@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 import _slugify from 'slugify'
-import { BRAND, intersection, object, string, ZodSchema } from 'zod'
+import { BRAND, intersection, number, object, string, ZodSchema } from 'zod'
 import { _any, d_u } from './map'
 export type path = string[]
 
@@ -108,14 +108,13 @@ export type signed_expire_token = {
   expires: date_time_string
 }
 
-
 export declare const integer_brand: unique symbol
 export type integer = branded<number, typeof integer_brand>
-export const integer_schema = z.number().int().brand<typeof integer_brand>()
+export const integer_schema = number().int().brand<typeof integer_brand>()
 
 export declare const positive_integer_brand: unique symbol
 export type positive_integer = branded<number, typeof positive_integer_brand>
-export const positive_integer_schema = z.number().int().positive().brand<typeof positive_integer_brand>()
+export const positive_integer_schema = number().int().positive().brand<typeof positive_integer_brand>()
 
 // // export const email_address_brand = Symbol('email_address_brand')
 // export type email_address = z.infer< typeof email_address_schema> // email format
