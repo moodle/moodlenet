@@ -1,6 +1,6 @@
 import { access_obj, d_u } from '@moodle/lib-types'
 import { by_user_id_or_user_home_id, user_home_access_object, user_home_permissions } from '..'
-import { sessionLibDep, validate_userSessionInfo } from '../../iam/lib'
+import { sessionLibDep, validate_currentUserSessionInfo } from '../../iam/lib'
 
 export async function accessUserHome({
   ctx,
@@ -14,7 +14,7 @@ export async function accessUserHome({
     return { result: 'notFound' }
   }
   const { userHome } = findResult
-  const currentUserSessionInfo = await validate_userSessionInfo({ ctx })
+  const currentUserSessionInfo = await validate_currentUserSessionInfo({ ctx })
   const { profileInfo, id } = userHome
   const isThisUserHomePublisher = userHome.user.roles.includes('publisher')
   if (!currentUserSessionInfo.authenticated) {
@@ -26,8 +26,6 @@ export async function accessUserHome({
         result: 'found',
         access: 'allowed',
         profileInfo,
-        avatar: profileInfo.avatar,
-        background: profileInfo.background,
         permissions: _all_user_home_permissions_disallowed,
         user: null,
         flags: { followed: true },
@@ -47,8 +45,6 @@ export async function accessUserHome({
     result: 'found',
     access: 'allowed',
     profileInfo,
-    avatar: profileInfo.avatar,
-    background: profileInfo.background,
     permissions: {
       ...(itsMe
         ? {

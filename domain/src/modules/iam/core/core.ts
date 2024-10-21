@@ -3,13 +3,13 @@ import { __redacted__, _void, date_time_string, url_string_schema } from '@moodl
 import { getIamPrimarySchemas, user_role } from '../'
 import { moduleCore } from '../../../types'
 import {
-  assert_authorizeAuthenticatedUserSession,
-  assert_authorizeUserSessionWithRole,
+  assert_authorizeAuthenticatedCurrentUserSession,
+  assert_authorizeCurrentUserSessionWithRole,
   createNewUserRecordData,
   generateSessionForUserData,
   generateSessionForUserId,
   user_record2SessionUserData,
-  validateAnyUserSession,
+  validateCurrentUserSession,
 } from '../lib'
 
 export const iam_core: moduleCore<'iam'> = {
@@ -24,7 +24,7 @@ export const iam_core: moduleCore<'iam'> = {
           return { schemaConfigs: iamPrimaryMsgSchemaConfigs }
         },
         async getUserSession() {
-          const userSession = await validateAnyUserSession({ ctx })
+          const userSession = await validateCurrentUserSession({ ctx })
           return { userSession }
         },
         async generateUserSessionToken({ userId }) {
@@ -35,7 +35,7 @@ export const iam_core: moduleCore<'iam'> = {
       //get admin(){ check () return { ... } }
       admin: {
         async editUserRoles({ userId, role, action }) {
-          const admin_user_session = await assert_authorizeUserSessionWithRole({
+          const admin_user_session = await assert_authorizeCurrentUserSessionWithRole({
             ctx,
             role: 'admin',
           })
@@ -62,7 +62,7 @@ export const iam_core: moduleCore<'iam'> = {
         },
 
         async searchUsers({ textSearch }) {
-          await assert_authorizeUserSessionWithRole({ ctx, role: 'admin' })
+          await assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' })
           const { users } = await ctx.mod.iam.query.usersByText({
             text: textSearch,
           })
@@ -70,7 +70,7 @@ export const iam_core: moduleCore<'iam'> = {
         },
 
         async deactivateUser({ userId, anonymize, reason }) {
-          const admin_user_session = await assert_authorizeUserSessionWithRole({
+          const admin_user_session = await assert_authorizeCurrentUserSessionWithRole({
             ctx,
             role: 'admin',
           })
@@ -239,7 +239,7 @@ export const iam_core: moduleCore<'iam'> = {
 
       myAccount: {
         async selfDeletionRequest({ redirectUrl }) {
-          const authenticated_session = await assert_authorizeAuthenticatedUserSession({ ctx })
+          const authenticated_session = await assert_authorizeAuthenticatedCurrentUserSession({ ctx })
           const {
             configs: { tokenExpireTime: userSelfDeletion },
           } = await ctx.mod.env.query.modConfigs({ mod: 'iam' })
@@ -325,7 +325,7 @@ export const iam_core: moduleCore<'iam'> = {
         },
 
         async changePassword({ currentPassword, newPassword }) {
-          const authenticated_session = await assert_authorizeAuthenticatedUserSession({
+          const authenticated_session = await assert_authorizeAuthenticatedCurrentUserSession({
             ctx,
           })
 

@@ -28,9 +28,7 @@ export type mainProfileCardProps = {
   userHome: user_home_access_object
 }
 
-export function MainProfileCard({
-  userHome: { permissions, profileInfo, flags, id, avatar, background, user },
-}: mainProfileCardProps) {
+export function MainProfileCard({ userHome: { permissions, profileInfo, flags, id, user } }: mainProfileCardProps) {
   const isPublisher = !!user?.roles.includes('publisher')
   const schemas = useAllPrimarySchemas()
   const [isEditing, toggleIsEditing] = useReducer(isEditing => permissions.editProfile && !isEditing, false)
@@ -55,7 +53,7 @@ export function MainProfileCard({
     avatarChoosenFileError,
     // dirtyAvatar,
   ] = useAssetUploader({
-    assets: avatar,
+    assets: profileInfo.avatar,
     async action({ tempIds: [tempId] }) {
       const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
 
@@ -73,7 +71,7 @@ export function MainProfileCard({
     backgroundChoosenFileError,
     // dirtyBackground,
   ] = useAssetUploader({
-    assets: background,
+    assets: profileInfo.background,
     async action({ tempIds: [tempId] }) {
       const saveResult = await adoptProfileImage({ as: 'background', tempId, userHomeId: id })
       if (!saveResult?.data) {

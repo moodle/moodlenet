@@ -1,7 +1,10 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { _unchecked_brand, _void, webSlug } from '@moodle/lib-types'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
-import { assert_authorizeAuthenticatedUserSession, validateUserAuthenticatedSessionHasRole } from '../../iam/lib'
+import {
+  assert_authorizeAuthenticatedCurrentUserSession,
+  validateCurrentUserAuthenticatedSessionHasRole,
+} from '../../iam/lib'
 import { usingTempFile2asset } from '../../storage/lib'
 import { accessUserHome } from '../lib'
 import { user_home_record } from '../types'
@@ -20,7 +23,7 @@ export const user_home_core: moduleCore<'userHome'> = {
       },
       editProfile: {
         async useTempImageAsProfileImage({ as, tempId }) {
-          const { user } = await assert_authorizeAuthenticatedUserSession({ ctx })
+          const { user } = await assert_authorizeAuthenticatedCurrentUserSession({ ctx })
           const userHome = await accessUserHome({
             ctx,
             by: { idOf: 'user', user_id: user.id },
@@ -60,7 +63,7 @@ export const user_home_core: moduleCore<'userHome'> = {
       },
       userHome: {
         async access({ by }) {
-          if (by.idOf === 'user' && !(await validateUserAuthenticatedSessionHasRole({ ctx, role: 'admin' }))) {
+          if (by.idOf === 'user' && !(await validateCurrentUserAuthenticatedSessionHasRole({ ctx, role: 'admin' }))) {
             return [false, { reason: 'notFound' }]
           }
           const userHomeResult = await accessUserHome({ ctx, by })

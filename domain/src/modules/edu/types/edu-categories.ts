@@ -7,8 +7,8 @@ export type bloomCognitive = {
   learningOutcome: string
 }
 
-export type iscedField = string
-export type iscedFieldMeta = { desc: string; field: iscedField; subjectPath: [string, string, string]; url: url_string }
+export type isced_field_id = string
+export type iscedField = { desc: string; id: isced_field_id; subjectPath: [string, string, string]; url: url_string }
 
-export type iscedLevel = positive_integer
-export type iscedLevelMeta = { desc: string; level: iscedLevel }
+export type isced_level_id = positive_integer
+export type iscedLevel = { desc: string; id: isced_level_id }

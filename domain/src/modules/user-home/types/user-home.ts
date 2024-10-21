@@ -24,6 +24,6 @@ export type user_home_access_object = {
   permissions: user_home_permissions
   flags: flags<'followed'>
   user: _maybe<user_excerpt>
-  avatar: _nullish | asset
-  background: _nullish | asset
+  // avatar: _nullish | asset
+  // background: _nullish | asset
 }
