@@ -127,15 +127,20 @@ export type signed_expire_token = {
   expires: date_time_string
 }
 
+
+export declare const integer_brand: unique symbol
+export type integer = branded<number, typeof integer_brand>
+export const integer_schema = z.number().int().brand<typeof integer_brand>()
+
+export declare const positive_integer_brand: unique symbol
+export type positive_integer = branded<number, typeof positive_integer_brand>
+export const positive_integer_schema = z.number().int().positive().brand<typeof positive_integer_brand>()
+
 // // export const email_address_brand = Symbol('email_address_brand')
 // export type email_address = z.infer< typeof email_address_schema> // email format
 export declare const email_address_brand: unique symbol
 export type email_address = branded<string, typeof email_address_brand> // email format
-export const email_address_schema = string()
-  .toLowerCase()
-  .trim()
-  .email()
-  .brand<typeof email_address_brand>()
+export const email_address_schema = string().toLowerCase().trim().email().brand<typeof email_address_brand>()
 
 export interface named_email_address {
   address: email_address
@@ -153,6 +158,8 @@ export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
 }
 
 export type flags<names extends string> = Record<names, boolean>
+
+
 
 // SHAREDLIB
 // FIXME: here's not the best place for type `email_body`
