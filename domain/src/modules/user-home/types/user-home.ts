@@ -1,26 +1,26 @@
 import { _maybe, _nullish, branded, flags } from '@moodle/lib-types'
 import { user_id, user_role } from '../../iam'
 import { asset } from '../../storage'
-import { ProfileInfo } from './profile-info'
+import { profileInfo } from './profile-info'
 
 export type user_home_id = string
 export type user_excerpt = { id: user_id; roles: user_role[] }
 
-export interface UserHomeRecord {
+export type userHomeRecord = {
   id: user_home_id
   user: user_excerpt
-  profileInfo: ProfileInfo
+  profileInfo: profileInfo
   //drafts: {}
 }
 
 declare const user_home_record_brand: unique symbol
-export type user_home_record = branded<UserHomeRecord, typeof user_home_record_brand>
+export type user_home_record = branded<userHomeRecord, typeof user_home_record_brand>
 
 export type user_home_permissions = flags<'follow' | 'editRoles' | 'sendMessage' | 'report' | 'editProfile'>
 
 export type user_home_access_object = {
   id: user_home_id
-  profileInfo: ProfileInfo
+  profileInfo: profileInfo
   permissions: user_home_permissions
   flags: flags<'followed'>
   user: _maybe<user_excerpt>

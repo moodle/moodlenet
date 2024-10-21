@@ -3,15 +3,6 @@ import { _unchecked_brand, date_time_string, email_address, named_email_address 
 import { user_record, user_role } from '../types'
 import { password_hash } from '../../crypto/types'
 
-export function getUserNamedEmailAddress({
-  contacts,
-  displayName,
-}: Pick<user_record, 'contacts' | 'displayName'>): named_email_address {
-  return {
-    address: contacts.email,
-    name: displayName,
-  }
-}
 
 export interface CreateNewUserRecordDataArg {
   displayName: string
