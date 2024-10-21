@@ -1,7 +1,7 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { _unchecked_brand, _void } from '@moodle/lib-types'
+import { _unchecked_brand, _void, webSlug } from '@moodle/lib-types'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
-import { assert_authorizeAuthenticatedUserSession } from '../../iam/lib'
+import { assert_authorizeAuthenticatedUserSession, validateUserAuthenticatedSessionHasRole } from '../../iam/lib'
 import { usingTempFile2asset } from '../../storage/lib'
 import { accessUserHome } from '../lib'
 import { user_home_record } from '../types'
@@ -47,7 +47,10 @@ export const user_home_core: moduleCore<'userHome'> = {
           assertWithErrorXxx(userHome.access === 'allowed' && userHome.permissions.editProfile, 'Unauthorized')
           const [done] = await ctx.write.updatePartialProfileInfo({
             id: user_home_id,
-            partialProfileInfo: profileInfo,
+            partialProfileInfo: {
+              ...profileInfo,
+              urlSafeName: profileInfo.displayName ? webSlug(profileInfo.displayName) : undefined,
+            },
           })
           if (!done) {
             return [false, { reason: 'unknown' }]
@@ -57,6 +60,9 @@ export const user_home_core: moduleCore<'userHome'> = {
       },
       userHome: {
         async access({ by }) {
+          if (by.idOf === 'user' && !(await validateUserAuthenticatedSessionHasRole({ ctx, role: 'admin' }))) {
+            return [false, { reason: 'notFound' }]
+          }
           const userHomeResult = await accessUserHome({ ctx, by })
 
           if (userHomeResult.result === 'notFound' || userHomeResult.access === 'notAllowed') {
@@ -102,6 +108,7 @@ export const user_home_core: moduleCore<'userHome'> = {
                   },
                   profileInfo: {
                     displayName: newUser.displayName,
+                    urlSafeName: webSlug(newUser.displayName),
                     aboutMe: '',
                     location: '',
                     siteUrl: null,
