@@ -51,6 +51,9 @@ export type sitePaths<t extends string> = spc<t> & {
       }
     }
   }
+  'user-profile': {
+    [id: string]: spc<t>
+  }
   'resource': {
     [id: string]: spc<t> & {
       [slug: string]: spc<t>

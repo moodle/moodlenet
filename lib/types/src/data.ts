@@ -1,17 +1,7 @@
-import {
-  any,
-  BRAND,
-  intersection,
-  object,
-  string,
-  union,
-  z,
-  ZodObject,
-  ZodSchema,
-  ZodString,
-} from 'zod'
-import { _any, d_u, map } from './map'
 import { ReactElement } from 'react'
+import _slugify from 'slugify'
+import { BRAND, intersection, object, string, ZodSchema } from 'zod'
+import { _any, d_u } from './map'
 export type path = string[]
 
 export type intersection<types extends _any[]> = pretty<
@@ -76,19 +66,13 @@ export const url_string_schema = string()
 // export type url_path_string = z.infer< typeof url_path_string_schema>
 export declare const url_path_string_brand: unique symbol
 export type url_path_string = branded<string, typeof url_path_string_brand>
-export const url_path_string_schema = string()
-  .trim()
-  .pipe(single_line_string_schema)
-  .brand<typeof url_path_string_brand>()
+export const url_path_string_schema = string().trim().pipe(single_line_string_schema).brand<typeof url_path_string_brand>()
 
 // // export const date_time_string_brand = Symbol('date_time_string_brand')
 // export type date_time_string = z.infer< typeof date_time_string_schema> // ISO 8601
 export declare const date_time_string_brand: unique symbol
 export type date_time_string = branded<string, typeof date_time_string_brand> // ISO 8601
-export const date_time_string_schema = string()
-  .trim()
-  .datetime()
-  .brand<typeof date_time_string_brand>()
+export const date_time_string_schema = string().trim().datetime().brand<typeof date_time_string_brand>()
 
 // // export const date_string_brand = Symbol('date_string_brand')
 // export type date_string = z.infer< typeof date_string_schema> // ISO 8601
@@ -106,10 +90,7 @@ export const time_string_schema = string().trim().time().brand<typeof time_strin
 // export type time_duration_string = z.infer< typeof time_duration_string_schema> // ISO 8601
 export declare const time_duration_string_brand: unique symbol
 export type time_duration_string = branded<string, typeof time_duration_string_brand> // ISO 8601
-export const time_duration_string_schema = string()
-  .trim()
-  .duration()
-  .brand<typeof time_duration_string_brand>()
+export const time_duration_string_schema = string().trim().duration().brand<typeof time_duration_string_brand>()
 
 // // export const signed_token_brand = Symbol('signed_token_brand')
 // export type signed_token = z.infer< typeof signed_token_schema> // .. JWT
@@ -179,6 +160,11 @@ export type email_body = d_u<
   'contentType'
 >
 
+export function webSlug(str: string, opts?: { locale?: string }) {
+  const slug = _slugify(str ?? '', { locale: opts?.locale, lower: true, strict: true }) || '-'
+  return slug.substring(0, 75)
+}
+
 // //CREDIT: [@grahamaj](https://stackoverflow.com/users/5666581/grahamaj) [so](https://stackoverflow.com/a/71131506/1455910)
 // type Explode<T> = keyof T extends infer K
 //   ? K extends unknown
@@ -188,5 +174,3 @@ export type email_body = d_u<
 // type AtMostOne<T> = Explode<Partial<T>>
 // type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> & U[keyof U]
 // type ExactlyOne<T> = AtMostOne<T> & AtLeastOne<T>
-
-

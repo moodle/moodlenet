@@ -3,7 +3,7 @@ import { user_id } from '../iam'
 import { useTempFileResult } from '../storage'
 import {
   profileImage,
-  ProfileInfo,
+  profileInfo,
   user_excerpt,
   user_home_access_object,
   user_home_id,
@@ -27,7 +27,7 @@ export default interface UserHomeDomain {
         useTempImageAsProfileImage(_: { as: profileImage; tempId: string }): Promise<useTempFileResult>
         editProfileInfo(_: {
           user_home_id: user_home_id
-          profileInfo: deep_partial<ProfileInfo>
+          profileInfo: deep_partial<profileInfo>
         }): Promise<ok_ko<void, { notFound: unknown; unknown: unknown }>>
       }
       userHome: {
@@ -53,7 +53,7 @@ export default interface UserHomeDomain {
         createUserHome(_: { userHome: user_home_record }): Promise<ok_ko<void>>
         updatePartialProfileInfo(_: {
           id: user_home_id
-          partialProfileInfo: deep_partial<ProfileInfo>
+          partialProfileInfo: deep_partial<profileInfo>
         }): Promise<ok_ko<{ userHomeId: user_home_id; userId: user_id }>>
         useTempImageInProfile(_: { as: profileImage; id: user_home_id; tempId: string }): Promise<useTempFileResult>
       }

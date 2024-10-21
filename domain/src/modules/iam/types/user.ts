@@ -13,6 +13,7 @@ export interface UserRecord {
   }
   passwordHash: password_hash
   activityStatus: {
+    // REVIEW: move to a specific module?
     lastLogin: date_time_string
   }
   deactivated:

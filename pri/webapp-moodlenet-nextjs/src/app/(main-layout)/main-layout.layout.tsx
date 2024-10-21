@@ -50,8 +50,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
         }))
 
     const baseProfilePage =
-      userHomeAccessObject &&
-      sitepaths.profile[userHomeAccessObject.id]![userHomeAccessObject.profileInfo.displayName]!
+      userHomeAccessObject && sitepaths.profile[userHomeAccessObject.id]![userHomeAccessObject.profileInfo.urlSafeName]!
     const defaultRights = authenticated
       ? await(async () => {
           return [
