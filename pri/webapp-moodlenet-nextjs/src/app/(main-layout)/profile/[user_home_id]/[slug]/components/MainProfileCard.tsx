@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { user_home_access_object } from '@moodle/module/user-home'
+import { user_profile_access_object } from '@moodle/module/user-profile'
 import Edit from '@mui/icons-material/Edit'
 import Flag from '@mui/icons-material/Flag'
 import Save from '@mui/icons-material/Save'
@@ -25,18 +25,18 @@ import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.pn
 import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
 
 export type mainProfileCardProps = {
-  userHome: user_home_access_object
+  userProfile: user_profile_access_object
 }
 
-export function MainProfileCard({ userHome: { permissions, profileInfo, flags, id, user } }: mainProfileCardProps) {
+export function MainProfileCard({ userProfile: { permissions, profileInfo, flags, id, user } }: mainProfileCardProps) {
   const isPublisher = !!user?.roles.includes('publisher')
   const schemas = useAllPrimarySchemas()
   const [isEditing, toggleIsEditing] = useReducer(isEditing => permissions.editProfile && !isEditing, false)
   const {
     form: { formState, register, reset },
     handleSubmitWithAction: submitForm,
-  } = useHookFormAction(updateProfileInfo, zodResolver(schemas.userHome.updateProfileInfoSchema), {
-    formProps: { defaultValues: { ...profileInfo, userHomeId: id } },
+  } = useHookFormAction(updateProfileInfo, zodResolver(schemas.userProfile.updateProfileInfoSchema), {
+    formProps: { defaultValues: { ...profileInfo, userProfileId: id } },
     actionProps: {
       onSuccess({ input }) {
         reset(input)
@@ -55,7 +55,7 @@ export function MainProfileCard({ userHome: { permissions, profileInfo, flags, i
   ] = useAssetUploader({
     assets: profileInfo.avatar,
     async action({ tempIds: [tempId] }) {
-      const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
+      const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userProfileId: id })
 
       return saveResult?.data
         ? { done: true, newAssets: [saveResult.data] }
@@ -73,7 +73,7 @@ export function MainProfileCard({ userHome: { permissions, profileInfo, flags, i
   ] = useAssetUploader({
     assets: profileInfo.background,
     async action({ tempIds: [tempId] }) {
-      const saveResult = await adoptProfileImage({ as: 'background', tempId, userHomeId: id })
+      const saveResult = await adoptProfileImage({ as: 'background', tempId, userProfileId: id })
       if (!saveResult?.data) {
         return { done: false, error: saveResult?.validationErrors?._errors }
       }

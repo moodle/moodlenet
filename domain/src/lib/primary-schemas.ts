@@ -2,7 +2,7 @@ import { MoodleDomain } from '..'
 import { getMoodleNetPrimarySchemas } from '../modules/env'
 import { getIamPrimarySchemas } from '../modules/iam'
 import { getOrgPrimarySchemas } from '../modules/org'
-import { getUserHomePrimarySchemas } from '../modules/user-home'
+import { getUserProfilePrimarySchemas } from '../modules/user-profile'
 import { AllSchemaConfigs } from '../types'
 
 export function makeAllPrimarySchemas({
@@ -10,36 +10,27 @@ export function makeAllPrimarySchemas({
   moodleNetSchemaConfigs,
   orgSchemaConfigs,
   uploadMaxSizeConfigs,
-  userHomeSchemaConfigs,
+  userProfileSchemaConfigs,
 }: AllSchemaConfigs) {
   const iam = getIamPrimarySchemas(iamSchemaConfigs)
   const moodleNet = getMoodleNetPrimarySchemas(moodleNetSchemaConfigs)
   const org = getOrgPrimarySchemas(orgSchemaConfigs)
-  const userHome = getUserHomePrimarySchemas(userHomeSchemaConfigs)
-  return { iam, moodleNet, org, userHome, uploadMaxSizeConfigs }
+  const userProfile = getUserProfilePrimarySchemas(userProfileSchemaConfigs)
+  return { iam, moodleNet, org, userProfile, uploadMaxSizeConfigs }
 }
 
-export async function fetchAllSchemaConfigs({
-  primary,
-}: {
-  primary: MoodleDomain['primary']
-}): Promise<AllSchemaConfigs> {
-  const [
-    iamSchemaConfigs,
-    userHomeSchemaConfigs,
-    moodleNetSchemaConfigs,
-    orgSchemaConfigs,
-    uploadMaxSizeConfigs,
-  ] = await Promise.all([
-    primary.iam.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
-    primary.userHome.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
-    primary.net.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
-    primary.org.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
-    primary.storage.session.moduleInfo().then(({ uploadMaxSizeConfigs }) => uploadMaxSizeConfigs),
-  ])
+export async function fetchAllSchemaConfigs({ primary }: { primary: MoodleDomain['primary'] }): Promise<AllSchemaConfigs> {
+  const [iamSchemaConfigs, userProfileSchemaConfigs, moodleNetSchemaConfigs, orgSchemaConfigs, uploadMaxSizeConfigs] =
+    await Promise.all([
+      primary.iam.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
+      primary.userProfile.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
+      primary.net.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
+      primary.org.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
+      primary.storage.session.moduleInfo().then(({ uploadMaxSizeConfigs }) => uploadMaxSizeConfigs),
+    ])
   return {
     iamSchemaConfigs,
-    userHomeSchemaConfigs,
+    userProfileSchemaConfigs,
     moodleNetSchemaConfigs,
     orgSchemaConfigs,
     uploadMaxSizeConfigs,

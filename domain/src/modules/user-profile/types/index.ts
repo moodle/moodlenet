@@ -1,4 +1,4 @@
 export * from './configs'
 export * from './primary-schemas'
 export * from './profile-info'
-export * from './user-home'
+export * from './user-profile'

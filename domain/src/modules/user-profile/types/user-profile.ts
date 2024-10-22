@@ -6,10 +6,10 @@ import { profileInfo } from './profile-info'
 import { myDrafts } from './drafts'
 import { moodlenetUserData } from '../../net'
 
-export type userHomeId = string
+export type userProfileId = string
 
-export type userHomeRecord = {
-  id: userHomeId
+export type userProfileRecord = {
+  id: userProfileId
   iamUser: iamUserExcerpt
   profileInfo: profileInfo
   myDrafts: myDrafts
@@ -25,12 +25,12 @@ export type userInterestFields = {
   languages: languageId[]
   licenses: licenseId[]
 }
-export type userHomePermissions = flags<'follow' | 'editRoles' | 'sendMessage' | 'report' | 'editProfile'>
+export type userProfilePermissions = flags<'follow' | 'editRoles' | 'sendMessage' | 'report' | 'editProfile'>
 
-export type user_home_access_object = {
-  id: userHomeId
+export type user_profile_access_object = {
+  id: userProfileId
   profileInfo: profileInfo
-  permissions: userHomePermissions
+  permissions: userProfilePermissions
   flags: flags<'followed'>
   user: _maybe<iamUserExcerpt>
 }

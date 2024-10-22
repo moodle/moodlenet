@@ -3,7 +3,7 @@ import { net_webapp_nextjs_default_configs } from '@moodle/module/net-webapp-nex
 import { net_default_configs } from '@moodle/module/net/setup'
 import { org_default_configs } from '@moodle/module/org/setup'
 import { storage_default_configs } from '@moodle/module/storage/setup'
-import { user_home_default_configs } from '@moodle/module/user-home/setup'
+import { user_profile_default_configs } from '@moodle/module/user-profile/setup'
 import { db_struct } from '../../db-structure'
 import { saveModConfigs } from '../../lib/modules'
 import { Migration_Record } from '../types'
@@ -54,8 +54,8 @@ export async function migrate({ db_struct }: { db_struct: db_struct }) {
     }),
     saveModConfigs({
       db_struct,
-      configs: user_home_default_configs,
-      moduleName: 'userHome',
+      configs: user_profile_default_configs,
+      moduleName: 'userProfile',
     }),
     saveModConfigs({
       db_struct,

@@ -7,10 +7,10 @@ import {
   eduResourceCollectionData,
   eduResourceData,
 } from '../../edu/types/edu-content'
-import { userHomeId } from '../../user-home'
+import { userProfileId } from '../../user-profile'
 
-export type published_content_id = user_contribution_id | userHomeId | iscedFieldId
-export type publishedContentType = userContributionType | 'user-home' | 'isced-field'
+export type published_content_id = user_contribution_id | userProfileId | iscedFieldId
+export type publishedContentType = userContributionType | 'user-profile' | 'isced-field'
 export type userContributionType = 'edu-resource' | 'edu-resource-collection'
 
 export type user_contribution_id = eduResourceId | eduResourceCollectionId

@@ -1,7 +1,7 @@
 import { modConfigName, ModConfigs } from '@moodle/domain'
 import { Database } from 'arangojs'
 import { userDocument } from '../sec/db-arango-iam-lib/types'
-import { userHomeDocument } from '../sec/db-arango-user-home-lib/types'
+import { userProfileDocument } from '../sec/db-arango-user-profile-lib/types'
 import { database_connections } from './types'
 
 export function getDbStruct(database_connections: database_connections) {
@@ -31,7 +31,7 @@ export function getDbStruct(database_connections: database_connections) {
     data: {
       db: data_db,
       coll: {
-        userHome: data_db.collection<userHomeDocument>('userHome'),
+        userProfile: data_db.collection<userProfileDocument>('userProfile'),
       },
     },
     iam: {

@@ -33,13 +33,13 @@ export const storage_core: moduleCore<'storage'> = {
   watch(ctx) {
     return {
       secondary: {
-        userHome: {
+        userProfile: {
           queue: {
-            async createUserHome([[done], { userHome }]) {
+            async createUserProfile([[done], { userProfile }]) {
               if (!done) {
                 return
               }
-              ctx.sync.createUserHome({ userHomeId: userHome.id })
+              ctx.sync.createUserProfile({ userProfileId: userProfile.id })
             },
           },
         },

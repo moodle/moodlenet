@@ -70,10 +70,10 @@
       "@moodle/module/storage/core": ["domain/src/modules/storage/core/index.ts"],
       "@moodle/module/storage/setup": ["domain/src/modules/storage/setup/index.ts"],
       //
-      "@moodle/module/user-home": ["domain/src/modules/user-home/index.ts"],
-      "@moodle/module/user-home/lib": ["domain/src/modules/user-home/lib/index.ts"],
-      "@moodle/module/user-home/core": ["domain/src/modules/user-home/core/index.ts"],
-      "@moodle/module/user-home/setup": ["domain/src/modules/user-home/setup/index.ts"],
+      "@moodle/module/user-profile": ["domain/src/modules/user-profile/index.ts"],
+      "@moodle/module/user-profile/lib": ["domain/src/modules/user-profile/lib/index.ts"],
+      "@moodle/module/user-profile/core": ["domain/src/modules/user-profile/core/index.ts"],
+      "@moodle/module/user-profile/setup": ["domain/src/modules/user-profile/setup/index.ts"],
       //
       "@moodle/module/user-notification": ["domain/src/modules/user-notification/index.ts"],
       "@moodle/module/user-notification/lib": ["domain/src/modules/user-notification/lib/index.ts"],

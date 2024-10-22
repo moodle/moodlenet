@@ -41,16 +41,17 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
     const { authenticated } = userSessionInfo(userSession)
     const avatarUrl = null //user_session.user.avatarUrl
-    const userHomeAccessObject =
+    const userProfileAccessObject =
       authenticated &&
-      (await primary.moodle.userHome.userHome
+      (await primary.moodle.userProfile.userProfile
         .access({ by: { idOf: 'user', userId: authenticated.user.id } })
-        .then(([userHomeFound, userHomeResult]) => {
-          return userHomeFound && userHomeResult.accessObject
+        .then(([userProfileFound, userProfileResult]) => {
+          return userProfileFound && userProfileResult.accessObject
         }))
 
     const baseProfilePage =
-      userHomeAccessObject && sitepaths.profile[userHomeAccessObject.id]![userHomeAccessObject.profileInfo.urlSafeName]!
+      userProfileAccessObject &&
+      sitepaths.profile[userProfileAccessObject.id]![userProfileAccessObject.profileInfo.urlSafeName]!
     const defaultRights = authenticated
       ? await (async () => {
           return [

@@ -1,40 +1,39 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { _unchecked_brand, _void, webSlug } from '@moodle/lib-types'
+import { _void, webSlug } from '@moodle/lib-types'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
 import {
   assert_authorizeAuthenticatedCurrentUserSession,
   validateCurrentUserAuthenticatedSessionHasRole,
 } from '../../iam/lib'
 import { usingTempFile2asset } from '../../storage/lib'
-import { accessUserHome } from '../lib'
-import { userHomeRecord } from '../types'
+import { accessUserProfile } from '../lib'
 
-export const user_home_core: moduleCore<'userHome'> = {
-  modName: 'userHome',
+export const user_profile_core: moduleCore<'userProfile'> = {
+  modName: 'userProfile',
   primary(ctx) {
     return {
       session: {
         async moduleInfo() {
           const {
             configs: { profileInfoPrimaryMsgSchemaConfigs },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'userHome' })
+          } = await ctx.mod.env.query.modConfigs({ mod: 'userProfile' })
           return { schemaConfigs: profileInfoPrimaryMsgSchemaConfigs }
         },
       },
       editProfile: {
         async useTempImageAsProfileImage({ as, tempId }) {
           const { user } = await assert_authorizeAuthenticatedCurrentUserSession({ ctx })
-          const userHome = await accessUserHome({
+          const userProfile = await accessUserProfile({
             ctx,
             by: { idOf: 'user', userId: user.id },
           })
           assertWithErrorXxx(
-            userHome.result === 'found' && userHome.access === 'allowed' && userHome.permissions.editProfile,
+            userProfile.result === 'found' && userProfile.access === 'allowed' && userProfile.permissions.editProfile,
             'Unauthorized',
           )
           const [done, result] = await ctx.write.useTempImageInProfile({
             as,
-            id: userHome.id,
+            id: userProfile.id,
             tempId,
           })
           if (!done) {
@@ -42,14 +41,14 @@ export const user_home_core: moduleCore<'userHome'> = {
           }
           return [true, result]
         },
-        async editProfileInfo({ userHomeId: userHomeId, profileInfo }) {
-          const userHome = await accessUserHome({ ctx, by: { idOf: 'userHome', userHomeId: userHomeId } })
-          if (userHome.result === 'notFound') {
+        async editProfileInfo({ userProfileId: userProfileId, profileInfo }) {
+          const userProfile = await accessUserProfile({ ctx, by: { idOf: 'userProfile', userProfileId: userProfileId } })
+          if (userProfile.result === 'notFound') {
             return [false, { reason: 'notFound' }]
           }
-          assertWithErrorXxx(userHome.access === 'allowed' && userHome.permissions.editProfile, 'Unauthorized')
+          assertWithErrorXxx(userProfile.access === 'allowed' && userProfile.permissions.editProfile, 'Unauthorized')
           const [done] = await ctx.write.updatePartialProfileInfo({
-            id: userHomeId,
+            id: userProfileId,
             partialProfileInfo: {
               ...profileInfo,
               urlSafeName: profileInfo.displayName ? webSlug(profileInfo.displayName) : undefined,
@@ -61,17 +60,17 @@ export const user_home_core: moduleCore<'userHome'> = {
           return [done, _void]
         },
       },
-      userHome: {
+      userProfile: {
         async access({ by }) {
           if (by.idOf === 'user' && !(await validateCurrentUserAuthenticatedSessionHasRole({ ctx, role: 'admin' }))) {
             return [false, { reason: 'notFound' }]
           }
-          const userHomeResult = await accessUserHome({ ctx, by })
+          const userProfileResult = await accessUserProfile({ ctx, by })
 
-          if (userHomeResult.result === 'notFound' || userHomeResult.access === 'notAllowed') {
+          if (userProfileResult.result === 'notFound' || userProfileResult.access === 'notAllowed') {
             return [false, { reason: 'notFound' }]
           }
-          return [true, { accessObject: userHomeResult }]
+          return [true, { accessObject: userProfileResult }]
         },
       },
     }
@@ -79,7 +78,7 @@ export const user_home_core: moduleCore<'userHome'> = {
   watch(ctx) {
     return {
       secondary: {
-        userHome: {
+        userProfile: {
           write: {
             async useTempImageInProfile([[done, usingTempFile], { id, as }]) {
               if (!done) {
@@ -95,16 +94,16 @@ export const user_home_core: moduleCore<'userHome'> = {
         },
         iam: {
           write: {
-            //REVIEW - this iam should emit an event and catch it here  in userhome
+            //REVIEW - this iam should emit an event and catch it here  in userprofile
             async saveNewUser([[created, resp], { newUser }]) {
-              ctx.log('debug', 'user-home watch saveNewUser', { created, resp, newUser })
+              ctx.log('debug', 'user-profile watch saveNewUser', { created, resp, newUser })
               if (!created) {
                 return
               }
-              const userHomeId = await generateNanoId()
-              ctx.queue.createUserHome({
-                userHome: {
-                  id: userHomeId,
+              const userProfileId = await generateNanoId()
+              ctx.queue.createUserProfile({
+                userProfile: {
+                  id: userProfileId,
                   iamUser: {
                     id: newUser.id,
                     roles: newUser.roles,

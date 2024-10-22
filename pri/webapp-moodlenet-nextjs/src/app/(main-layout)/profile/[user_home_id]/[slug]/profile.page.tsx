@@ -6,19 +6,23 @@ import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'
 import { mainProfileCardProps } from './components/MainProfileCard'
 import ProfileClient from './profile.client'
 
-export default async function ProfilePage({ params: { userHomeId, slug } }: { params: params<'userHomeId' | 'slug'> }) {
-  const [foundUserHome, userHome] = await primary.moodle.userHome.userHome.access({
-    by: { idOf: 'userHome', userHomeId },
+export default async function ProfilePage({
+  params: { userProfileId, slug },
+}: {
+  params: params<'userProfileId' | 'slug'>
+}) {
+  const [foundUserProfile, userProfile] = await primary.moodle.userProfile.userProfile.access({
+    by: { idOf: 'userProfile', userProfileId },
   })
-  if (!foundUserHome) {
+  if (!foundUserProfile) {
     return <Fallback />
   }
-  if (userHome.accessObject.profileInfo.urlSafeName !== slug) {
-    redirect(sitepaths.profile[userHome.accessObject.id]![userHome.accessObject.profileInfo.urlSafeName]!())
+  if (userProfile.accessObject.profileInfo.urlSafeName !== slug) {
+    redirect(sitepaths.profile[userProfile.accessObject.id]![userProfile.accessObject.profileInfo.urlSafeName]!())
   }
 
   const mainProfileCardDeps: mainProfileCardProps = {
-    userHome: userHome.accessObject,
+    userProfile: userProfile.accessObject,
   }
 
   return <ProfileClient mainProfileCardDeps={mainProfileCardDeps} />

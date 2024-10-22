@@ -5,10 +5,10 @@ import { params } from '../../../../lib/server/types'
 import { Fallback } from '../../../../ui/pages/Fallback/Fallback'
 
 export default async function UserProfilePage({ params: { userId } }: { params: params<'userId'> }) {
-  const [found, userHome] = await primary.moodle.userHome.userHome.access({ by: { idOf: 'user', userId } })
+  const [found, userProfile] = await primary.moodle.userProfile.userProfile.access({ by: { idOf: 'user', userId } })
   if (!found) {
     return <Fallback />
   }
-  const profileInfo = userHome.accessObject.profileInfo
-  redirect(sitepaths.profile[userHome.accessObject.id]![profileInfo.urlSafeName]!())
+  const profileInfo = userProfile.accessObject.profileInfo
+  redirect(sitepaths.profile[userProfile.accessObject.id]![profileInfo.urlSafeName]!())
 }

@@ -9,7 +9,7 @@ export type userId = string
 export type userRecord = {
   id: userId
   createdAt: date_time_string
-  //REVIEW: possibly replace `displayName` with a `user_home_excerpt` type. (ATM userHomeRecord is created as a consequence of a new userRecord creation whereas `displayName` is provided during signup.)
+  //REVIEW: possibly replace `displayName` with a `user_profile_excerpt` type. (ATM userProfileRecord is created as a consequence of a new userRecord creation whereas `displayName` is provided during signup.)
   displayName: string
   roles: userRole[]
   roleHistory: { at: date_time_string; by: userId; oldRoles: userRole[]; newRoles: userRole[] }[]
@@ -30,7 +30,7 @@ export type userRecord = {
       }
   //REVIEW: `moodlenet` also raises concerns on these data in iam, may need `im` and `account`? .
   //REVIEW: or maybe there should be a `moodlenet user database`?
-  //REVIEW: also notice we indeed have a `moodlenet` prop in userHomeRecord though....
+  //REVIEW: also notice we indeed have a `moodlenet` prop in userProfileRecord though....
   moodlenet: {
     moderation: userModerations
   }

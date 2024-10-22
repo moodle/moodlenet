@@ -19,12 +19,12 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
     const fsDirs = getFsDirectories({ domainName: ctx.domain, homeDir })
     const fs_file_paths = prefixed_domain_file_fs_paths(fsDirs.fsStorage)
     const secondaryAdapter: secondaryAdapter = {
-      userHome: {
+      userProfile: {
         write: {
           async useTempImageInProfile({ as, id, tempId }) {
             ctx.log('debug', 'useImageInProfile', { as, id, tempId })
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const absolutePath = fs_file_paths.userHome[id]!.profile[as]!()
+            const absolutePath = fs_file_paths.userProfile[id]!.profile[as]!()
             return use_temp_file_as_web_image({
               fsDirs,
               secondaryContext: ctx,
@@ -37,10 +37,10 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
       },
       storage: {
         sync: {
-          async createUserHome({ userHomeId }) {
+          async createUserProfile({ userProfileId }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const userHomePath = fs_file_paths.userHome[userHomeId]!()
-            await mkdir(userHomePath, { recursive: true })
+            const userProfilePath = fs_file_paths.userProfile[userProfileId]!()
+            await mkdir(userProfilePath, { recursive: true })
             return [true, _void]
           },
         },

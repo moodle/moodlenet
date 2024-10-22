@@ -5,12 +5,12 @@ import net from './modules/net'
 import netWebappNextjs from './modules/net-webapp-nextjs'
 import org from './modules/org'
 import storage from './modules/storage'
-import userHome from './modules/user-home'
+import userProfile from './modules/user-profile'
 import crypto from './modules/crypto'
 import userNotification from './modules/user-notification'
 
 export type MoodleDomain = intersection<
-  [{ version: '5.0' }, env, iam, net, netWebappNextjs, org, storage, userHome, crypto, userNotification]
+  [{ version: '5.0' }, env, iam, net, netWebappNextjs, org, storage, userProfile, crypto, userNotification]
 >
 export type moodlePrimary = MoodleDomain['primary']
 export type moodleModuleName = keyof moodlePrimary & keyof moodleSecondary

@@ -1,20 +1,18 @@
 import { single_line_string_schema, url_string_schema } from '@moodle/lib-types'
 import type { z, ZodString } from 'zod'
 import { any, literal, object, string, union } from 'zod'
-export interface UserHomePrimaryMsgSchemaConfigs {
+export interface UserProfilePrimaryMsgSchemaConfigs {
   displayName: { max: number; min: number; regex: null | [regex: string, flags: string] }
   aboutMe: { max: number }
   location: { max: number }
   siteUrl: { max: number }
 }
-export type updateProfileInfoForm = z.infer<
-  ReturnType<typeof getUserHomePrimarySchemas>['updateProfileInfoSchema']
->
+export type updateProfileInfoForm = z.infer<ReturnType<typeof getUserProfilePrimarySchemas>['updateProfileInfoSchema']>
 
-export function getUserHomePrimarySchemas(profileInfo: UserHomePrimaryMsgSchemaConfigs) {
+export function getUserProfilePrimarySchemas(profileInfo: UserProfilePrimaryMsgSchemaConfigs) {
   const profileImageSchema = union([literal('avatar'), literal('background')])
 
-  const userHomeId = string().min(6)
+  const userProfileId = string().min(6)
   const displayName = string()
     .trim()
     .min(profileInfo.displayName.min)
@@ -25,26 +23,18 @@ export function getUserHomePrimarySchemas(profileInfo: UserHomePrimaryMsgSchemaC
         : (any() as unknown as ZodString),
     )
     .pipe(single_line_string_schema)
-  const aboutMe = string()
-    .trim()
-    .max(profileInfo.aboutMe.max)
-    .optional()
-    .pipe(single_line_string_schema)
-  const location = string()
-    .trim()
-    .max(profileInfo.location.max)
-    .optional()
-    .pipe(single_line_string_schema)
+  const aboutMe = string().trim().max(profileInfo.aboutMe.max).optional().pipe(single_line_string_schema)
+  const location = string().trim().max(profileInfo.location.max).optional().pipe(single_line_string_schema)
   const siteUrl = url_string_schema.nullish()
 
   const useProfileImageSchema = object({
     as: profileImageSchema,
     tempId: string(),
-    userHomeId: string(),
+    userProfileId: string(),
   })
 
   const updateProfileInfoSchema = object({
-    userHomeId,
+    userProfileId,
     displayName,
     aboutMe,
     location,

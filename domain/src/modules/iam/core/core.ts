@@ -382,7 +382,7 @@ export const iam_core: moduleCore<'iam'> = {
             },
           },
         },
-        userHome: {
+        userProfile: {
           write: {
             async updatePartialProfileInfo([
               [done, res],

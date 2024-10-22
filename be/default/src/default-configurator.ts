@@ -7,7 +7,7 @@ import { net_webapp_nextjs_core } from '@moodle/module/net-webapp-nextjs/core'
 import { net_core } from '@moodle/module/net/core'
 import { org_core } from '@moodle/module/org/core'
 import { storage_core } from '@moodle/module/storage/core'
-import { user_home_core } from '@moodle/module/user-home/core'
+import { user_profile_core } from '@moodle/module/user-profile/core'
 import { CryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
 import { ArangoDbSecEnv, get_arango_persistence_factory, provideArangoDbSecEnv } from '@moodle/sec-db-arango'
 import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
@@ -115,7 +115,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         org_core,
         iam_core,
         net_webapp_nextjs_core,
-        user_home_core,
+        user_profile_core,
         storage_core,
         {
           modName: 'env',
