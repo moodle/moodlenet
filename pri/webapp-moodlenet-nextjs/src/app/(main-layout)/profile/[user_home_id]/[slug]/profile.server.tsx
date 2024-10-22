@@ -5,7 +5,7 @@ import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { sitepaths } from '../../../../../lib/common/utils/sitepaths'
 import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
-import { priAccess } from '../../../../../lib/server/session-access'
+import { primary } from '../../../../../lib/server/session-access'
 import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
 import { user_home_id } from '@moodle/module/user-home'
 import { usingTempFile2asset } from '@moodle/module/storage/lib'
@@ -13,7 +13,7 @@ import { usingTempFile2asset } from '@moodle/module/storage/lib'
 export async function getProfileInfoSchema() {
   const {
     userHome: { updateProfileInfoSchema },
-  } = await fetchAllPrimarySchemas({ primary: priAccess() })
+  } = await fetchAllPrimarySchemas({ primary: primary.moodle })
   return updateProfileInfoSchema
 }
 
@@ -27,7 +27,7 @@ export const updateProfileInfo = defaultSafeActionClient
       })
     }
 
-    const [editDone, editResult] = await priAccess().userHome.editProfile.editProfileInfo({
+    const [editDone, editResult] = await primary.moodle.userHome.editProfile.editProfileInfo({
       user_home_id: profileInfo.user_home_id,
       profileInfo: profileInfo,
     })
@@ -41,7 +41,7 @@ export const updateProfileInfo = defaultSafeActionClient
   })
 
 async function fetchCanEditProfile({ user_home_id }: { user_home_id: user_home_id }) {
-  const [readUserHomeDone, userHomeRes] = await priAccess().userHome.userHome.access({
+  const [readUserHomeDone, userHomeRes] = await primary.moodle.userHome.userHome.access({
     by: { idOf: 'user_home', user_home_id },
   })
   return readUserHomeDone && userHomeRes.accessObject.permissions.editProfile
@@ -50,7 +50,7 @@ async function fetchCanEditProfile({ user_home_id }: { user_home_id: user_home_i
 export async function getUseProfileImageSchema() {
   const {
     userHome: { useProfileImageSchema },
-  } = await fetchAllPrimarySchemas({ primary: priAccess() })
+  } = await fetchAllPrimarySchemas({ primary: primary.moodle })
   return useProfileImageSchema
 }
 
@@ -59,7 +59,7 @@ export const adoptProfileImage = defaultSafeActionClient
   .action(async ({ parsedInput: useProfileImageForm }) => {
     console.log('->', { useProfileImageForm })
 
-    const [done, usingTempFile] = await priAccess().userHome.editProfile.useTempImageAsProfileImage(useProfileImageForm)
+    const [done, usingTempFile] = await primary.moodle.userHome.editProfile.useTempImageAsProfileImage(useProfileImageForm)
     // const user_home_id = myUserHomeRes.accessObject.id
     if (!done) {
       returnValidationErrors(getProfileInfoSchema, {

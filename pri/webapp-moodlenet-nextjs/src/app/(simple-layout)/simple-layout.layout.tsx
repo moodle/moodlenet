@@ -3,13 +3,13 @@ import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
 import { Footer, FooterProps } from '../../ui/organisms/Footer/Footer'
 import { MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 // import { } from './client.layout.simple'
-import { priAccess } from '../../lib/server/session-access'
+import { primary } from '../../lib/server/session-access'
 import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
 import MinimalisticHeader from '../../ui/organisms/Header/Minimalistic/MinimalisticHeader'
 import './simple-layout.style.scss'
 
 export default async function SimpleLayoutLayout(props: layoutPropsWithChildren) {
-  const layouts = await priAccess().netWebappNextjs.webapp.layouts()
+  const layouts = await primary.moodle.netWebappNextjs.webapp.layouts()
   return (
     <div className={`simple-layout`}>
       <MinimalisticHeader slots={headerSlots()} />

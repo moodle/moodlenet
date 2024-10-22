@@ -2,12 +2,12 @@ import type { PropsWithChildren } from 'react'
 import { defaultStyle } from '../ui/lib/color-style'
 import { GlobalProviderDeps, GlobalProvider } from './root-layout.client'
 import './root-layout.scss'
-import { priAccess } from '../lib/server/session-access'
+import { primary } from '../lib/server/session-access'
 import { fetchAllSchemaConfigs } from '@moodle/domain/lib'
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const deployments = await priAccess().env.application.deployments()
-  const allSchemaConfigs = await fetchAllSchemaConfigs({ primary: priAccess() })
+  const deployments = await primary.moodle.env.application.deployments()
+  const allSchemaConfigs = await fetchAllSchemaConfigs({ primary: primary.moodle })
 
   const globalCtxDeps: GlobalProviderDeps = {
     deployments,
