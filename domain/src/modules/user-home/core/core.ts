@@ -26,7 +26,7 @@ export const user_home_core: moduleCore<'userHome'> = {
           const { user } = await assert_authorizeAuthenticatedCurrentUserSession({ ctx })
           const userHome = await accessUserHome({
             ctx,
-            by: { idOf: 'user', user_id: user.id },
+            by: { idOf: 'user', userId: user.id },
           })
           assertWithErrorXxx(
             userHome.result === 'found' && userHome.access === 'allowed' && userHome.permissions.editProfile,
@@ -42,14 +42,14 @@ export const user_home_core: moduleCore<'userHome'> = {
           }
           return [true, result]
         },
-        async editProfileInfo({ user_home_id, profileInfo }) {
-          const userHome = await accessUserHome({ ctx, by: { idOf: 'user_home', user_home_id } })
+        async editProfileInfo({ userHomeId: userHomeId, profileInfo }) {
+          const userHome = await accessUserHome({ ctx, by: { idOf: 'userHome', userHomeId: userHomeId } })
           if (userHome.result === 'notFound') {
             return [false, { reason: 'notFound' }]
           }
           assertWithErrorXxx(userHome.access === 'allowed' && userHome.permissions.editProfile, 'Unauthorized')
           const [done] = await ctx.write.updatePartialProfileInfo({
-            id: user_home_id,
+            id: userHomeId,
             partialProfileInfo: {
               ...profileInfo,
               urlSafeName: profileInfo.displayName ? webSlug(profileInfo.displayName) : undefined,
@@ -101,10 +101,10 @@ export const user_home_core: moduleCore<'userHome'> = {
               if (!created) {
                 return
               }
-              const user_home_id = await generateNanoId()
+              const userHomeId = await generateNanoId()
               ctx.queue.createUserHome({
                 userHome: {
-                  id: user_home_id,
+                  id: userHomeId,
                   iamUser: {
                     id: newUser.id,
                     roles: newUser.roles,

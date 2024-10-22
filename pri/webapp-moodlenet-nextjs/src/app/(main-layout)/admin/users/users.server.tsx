@@ -1,6 +1,6 @@
 'use server'
 
-import { user_id, user_role } from '@moodle/module/iam'
+import { userId, userRole } from '@moodle/module/iam'
 import { primary } from '../../../../lib/server/session-access'
 import { UserRow } from './users.client'
 
@@ -16,7 +16,7 @@ export async function searchUsers({ textSearch }: { textSearch: string }) {
   })
   return userRows
 }
-export async function editUserRole({ userId, action, role }: { userId: user_id; role: user_role; action: 'set' | 'unset' }) {
+export async function editUserRole({ userId, action, role }: { userId: userId; role: userRole; action: 'set' | 'unset' }) {
   const [done, result] = await primary.moodle.iam.admin.editUserRoles({ userId, role, action })
   return done ? result.updatedRoles : []
 }

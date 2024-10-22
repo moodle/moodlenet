@@ -1,4 +1,3 @@
-import { _unchecked_brand } from '@moodle/lib-types'
 import { userHomeRecord } from '@moodle/module/user-home'
 import { Document } from 'arangojs/documents'
 import { userHomeDocument } from './types'

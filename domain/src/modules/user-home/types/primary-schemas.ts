@@ -14,7 +14,7 @@ export type updateProfileInfoForm = z.infer<
 export function getUserHomePrimarySchemas(profileInfo: UserHomePrimaryMsgSchemaConfigs) {
   const profileImageSchema = union([literal('avatar'), literal('background')])
 
-  const user_home_id = string().min(6)
+  const userHomeId = string().min(6)
   const displayName = string()
     .trim()
     .min(profileInfo.displayName.min)
@@ -44,7 +44,7 @@ export function getUserHomePrimarySchemas(profileInfo: UserHomePrimaryMsgSchemaC
   })
 
   const updateProfileInfoSchema = object({
-    user_home_id,
+    userHomeId,
     displayName,
     aboutMe,
     location,

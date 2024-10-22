@@ -2,17 +2,17 @@ import type { d_u, date_time_string, email_address, time_duration_string } from 
 import { password_hash } from '../../crypto/types'
 import { userModerations } from '../../net/types/moderation'
 
-// NOTE: roles will eventually be per-subsystem . e.g. export type user_role = 'moodle.net.admin' | 'moodle.net.publisher'
-export type user_role = 'admin' | 'publisher'
+// NOTE: roles will eventually be per-subsystem . e.g. export type userRole = 'moodle.net.admin' | 'moodle.net.publisher'
+export type userRole = 'admin' | 'publisher'
 
-export type user_id = string
+export type userId = string
 export type userRecord = {
-  id: user_id
+  id: userId
   createdAt: date_time_string
   //REVIEW: possibly replace `displayName` with a `user_home_excerpt` type. (ATM userHomeRecord is created as a consequence of a new userRecord creation whereas `displayName` is provided during signup.)
   displayName: string
-  roles: user_role[]
-  roleHistory: { at: date_time_string; by: user_id; old_roles: user_role[]; new_roles: user_role[] }[]
+  roles: userRole[]
+  roleHistory: { at: date_time_string; by: userId; oldRoles: userRole[]; newRoles: userRole[] }[]
   contacts: {
     email: email_address
   }
@@ -25,7 +25,7 @@ export type userRecord = {
     | false
     | {
         anonymized: boolean
-        reason: user_deactivation_reason
+        reason: userDeactivationReason
         at: date_time_string
       }
   //REVIEW: `moodlenet` also raises concerns on these data in iam, may need `im` and `account`? .
@@ -36,11 +36,11 @@ export type userRecord = {
   }
 }
 
-export type user_deactivation_reason = d_u<
+export type userDeactivationReason = d_u<
   {
     inactivityPolicies: { notLoggedInFor: time_duration_string }
     userSelfDeletionRequest: { reason: string }
-    adminRequest: { reason: string; adminUserId: user_id }
+    adminRequest: { reason: string; adminUserId: userId }
   },
   'type'
 >

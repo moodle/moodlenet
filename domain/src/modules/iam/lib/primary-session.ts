@@ -1,14 +1,14 @@
 import { ok_ko, signed_expire_token } from '@moodle/lib-types'
 import assert from 'assert'
 import { baseContext, ErrorXxx, primaryContext } from '../../../types'
-import { user_id, user_role, userSession, userSessionData } from '../types'
+import { userId, userRole, userSession, userSessionData } from '../types'
 import { hasUserSessionRole, userRecord2SessionUserData, userSessionInfo } from './user-session'
 
 // System Session
 export type sessionLibDep = {
   ctx: Pick<primaryContext, 'session' | 'mod'>
 }
-export type sessionLibDepWithRole = sessionLibDep & { role: user_role }
+export type sessionLibDepWithRole = sessionLibDep & { role: userRole }
 
 export async function validateCurrentUserSession({ ctx }: sessionLibDep) {
   if (!ctx.session.token) {
@@ -90,7 +90,7 @@ export async function generateSessionForUserId({
   userId,
 }: {
   ctx: Pick<baseContext, 'mod'>
-  userId: user_id
+  userId: userId
 }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>> {
   const [, userRecord] = await ctx.mod.iam.query.userBy({ by: 'id', userId })
   if (!userRecord) {

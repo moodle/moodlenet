@@ -7,7 +7,7 @@ import { sitepaths } from '../../../../../lib/common/utils/sitepaths'
 import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
 import { primary } from '../../../../../lib/server/session-access'
 import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
-import { user_home_id } from '@moodle/module/user-home'
+import { userHomeId } from '@moodle/module/user-home'
 import { usingTempFile2asset } from '@moodle/module/storage/lib'
 
 export async function getProfileInfoSchema() {
@@ -20,7 +20,7 @@ export async function getProfileInfoSchema() {
 export const updateProfileInfo = defaultSafeActionClient
   .schema(getProfileInfoSchema)
   .action(async ({ parsedInput: profileInfo }) => {
-    const canEditProfile = await fetchCanEditProfile({ user_home_id: profileInfo.user_home_id })
+    const canEditProfile = await fetchCanEditProfile({ userHomeId: profileInfo.userHomeId })
     if (!canEditProfile) {
       returnValidationErrors(getProfileInfoSchema, {
         _errors: [t(`cannot edit this profile info`)],
@@ -28,11 +28,11 @@ export const updateProfileInfo = defaultSafeActionClient
     }
 
     const [editDone, editResult] = await primary.moodle.userHome.editProfile.editProfileInfo({
-      user_home_id: profileInfo.user_home_id,
+      userHomeId: profileInfo.userHomeId,
       profileInfo: profileInfo,
     })
     if (editDone) {
-      revalidatePath(sitepaths.profile[profileInfo.user_home_id]!())
+      revalidatePath(sitepaths.profile[profileInfo.userHomeId]!())
       return
     }
     returnValidationErrors(getProfileInfoSchema, {
@@ -40,9 +40,9 @@ export const updateProfileInfo = defaultSafeActionClient
     })
   })
 
-async function fetchCanEditProfile({ user_home_id }: { user_home_id: user_home_id }) {
+async function fetchCanEditProfile({ userHomeId }: { userHomeId: userHomeId }) {
   const [readUserHomeDone, userHomeRes] = await primary.moodle.userHome.userHome.access({
-    by: { idOf: 'user_home', user_home_id },
+    by: { idOf: 'userHome', userHomeId },
   })
   return readUserHomeDone && userHomeRes.accessObject.permissions.editProfile
 }
@@ -60,7 +60,7 @@ export const adoptProfileImage = defaultSafeActionClient
     console.log('->', { useProfileImageForm })
 
     const [done, usingTempFile] = await primary.moodle.userHome.editProfile.useTempImageAsProfileImage(useProfileImageForm)
-    // const user_home_id = myUserHomeRes.accessObject.id
+    // const userHomeId = myUserHomeRes.accessObject.id
     if (!done) {
       returnValidationErrors(getProfileInfoSchema, {
         _errors: [t(`something went wrong while saving ${useProfileImageForm.as}`) + ` : ${usingTempFile.reason}`],

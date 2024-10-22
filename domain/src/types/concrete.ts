@@ -9,7 +9,7 @@ import {
 import { primarySession } from './access-session'
 import { Logger } from './log'
 
-type ctx_id = string
+type ctxId = string
 export type domainLayer = 'primary' | 'secondary' | 'background' | 'watch' | 'event'
 
 // type p_track<ctx_type extends context_types> = {
@@ -23,16 +23,16 @@ export type contextModuleAccess = {
   [modName in keyof moodleSecondary]: Pick<moodleSecondary[modName], 'query' | 'service'>
 }
 
-export type ctx_track = {
+export type ctxTrack = {
   layer: domainLayer
-  ctxId: ctx_id
+  ctxId: ctxId
 }
 export type baseContext = {
-  id: ctx_id
+  id: ctxId
   domain: string
   log: Logger
   mod: contextModuleAccess
-  track?: ctx_track
+  track?: ctxTrack
   from?: path
 }
 

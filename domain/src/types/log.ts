@@ -1,6 +1,6 @@
 import { _any } from '@moodle/lib-types'
 import { baseContext, domainLayer } from './concrete'
-import { domain_endpoint, domainAccess } from './msg'
+import { domainEndpoint, domainAccess } from './msg'
 
 //https://datatracker.ietf.org/doc/html/rfc5424
 export type LogSeverity = 'emergency' | 'alert' | 'critical' | 'error' | 'warn' | 'notice' | 'info' | 'debug'
@@ -18,7 +18,7 @@ export const logLevelMap: Record<LogSeverity, number> = {
 export type loggerContext = {
   primarySessionId?: string
   contextLayer: domainLayer
-  endpoint?: domain_endpoint
+  endpoint?: domainEndpoint
 } & Pick<baseContext, 'domain' | 'id'> &
   Pick<domainAccess, 'ctx_track' | 'from'>
 

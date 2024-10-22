@@ -1,11 +1,11 @@
 import type { time_duration_string } from '@moodle/lib-types'
 import { IamPrimaryMsgSchemaConfigs } from './primary-schemas'
-import type { user_role } from './user'
+import type { userRole } from './user'
 
 export interface Configs {
   iamPrimaryMsgSchemaConfigs: IamPrimaryMsgSchemaConfigs
   roles: {
-    newlyCreatedUserRoles: user_role[]
+    newlyCreatedUserRoles: userRole[]
   }
   inactiveUsersPolicies: {
     deleteInactive: {

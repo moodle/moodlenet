@@ -1,6 +1,6 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { __redacted__, _void, date_time_string, url_string_schema } from '@moodle/lib-types'
-import { getIamPrimarySchemas, user_role } from '../'
+import { getIamPrimarySchemas, userRole } from '../'
 import { moduleCore } from '../../../types'
 import {
   assert_authorizeAuthenticatedCurrentUserSession,
@@ -47,7 +47,7 @@ export const iam_core: moduleCore<'iam'> = {
           const new_roles_set = new Set(user.roles)
           new_roles_set[action === 'set' ? 'add' : 'delete'](role)
           const new_roles = (
-            new_roles_set.has('admin') ? (['admin', 'publisher'] satisfies user_role[]) : Array.from(new_roles_set)
+            new_roles_set.has('admin') ? (['admin', 'publisher'] satisfies userRole[]) : Array.from(new_roles_set)
           ).sort()
 
           const [done] = await ctx.write.setUserRoles({

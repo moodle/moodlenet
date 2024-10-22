@@ -6,9 +6,9 @@ import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'
 import { mainProfileCardProps } from './components/MainProfileCard'
 import ProfileClient from './profile.client'
 
-export default async function ProfilePage({ params: { user_home_id, slug } }: { params: params<'user_home_id' | 'slug'> }) {
+export default async function ProfilePage({ params: { userHomeId, slug } }: { params: params<'userHomeId' | 'slug'> }) {
   const [foundUserHome, userHome] = await primary.moodle.userHome.userHome.access({
-    by: { idOf: 'user_home', user_home_id },
+    by: { idOf: 'userHome', userHomeId },
   })
   if (!foundUserHome) {
     return <Fallback />

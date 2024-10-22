@@ -36,7 +36,7 @@ export function MainProfileCard({ userHome: { permissions, profileInfo, flags, i
     form: { formState, register, reset },
     handleSubmitWithAction: submitForm,
   } = useHookFormAction(updateProfileInfo, zodResolver(schemas.userHome.updateProfileInfoSchema), {
-    formProps: { defaultValues: { ...profileInfo, user_home_id: id } },
+    formProps: { defaultValues: { ...profileInfo, userHomeId: id } },
     actionProps: {
       onSuccess({ input }) {
         reset(input)

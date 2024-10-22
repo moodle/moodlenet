@@ -3,9 +3,17 @@ import { aql } from 'arangojs'
 import { AqlQuery } from 'arangojs/aql'
 import { db_struct } from '../../db-structure'
 import { userHomeDocument } from './types'
-import { user_id } from '@moodle/module/iam'
+import { userId } from '@moodle/module/iam'
 
-export async function getUserHomeByUserId<T = userHomeDocument>({ db_struct, userId, apply = aql`` }: { db_struct: db_struct; userId: user_id; apply?: AqlQuery }) {
+export async function getUserHomeByUserId<T = userHomeDocument>({
+  db_struct,
+  userId,
+  apply = aql``,
+}: {
+  db_struct: db_struct
+  userId: userId
+  apply?: AqlQuery
+}) {
   const cursor = await db_struct.data.db.query<T>(aql`
     FOR userHome in ${db_struct.data.coll.userHome}
     FILTER userHome.user.id == ${userId}
@@ -22,7 +30,7 @@ export async function updateUserHomeByUserId({
   userId,
   partialUserHome,
 }: {
-  userId: user_id
+  userId: userId
   db_struct: db_struct
   partialUserHome: deep_partial<userHomeDocument>
 }) {

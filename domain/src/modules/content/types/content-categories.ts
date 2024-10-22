@@ -6,9 +6,9 @@ export type credits = {
 }
 export type external_content = { url: url_string; credits?: credits }
 
-export type language_id = string
+export type languageId = string
 export type language = {
-  id: language_id
+  id: languageId
   part2b: string | null
   part2t: string | null
   part1: string | null
@@ -17,9 +17,9 @@ export type language = {
   name: string
 }
 
-export type license_id = string
+export type licenseId = string
 export type license = {
-  id: license_id
+  id: licenseId
   name: string
   restrictiveness: positive_integer
 }

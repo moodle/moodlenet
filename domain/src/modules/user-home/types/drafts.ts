@@ -14,7 +14,7 @@ export type myDrafts = {
   eduResourceCollections: draft<eduResourceCollectionData>[]
 }
 
-export type draft_id = edu_resource_draft_id | edu_resource_collection_draft_id
+export type draft_id = eduResourceDraftId | eduResourceCollectionDraftId
 type draft<dataType extends eduResourceData | eduResourceCollectionData, meta = undefined> = {
   id: draft_id
   data: dataType
@@ -24,5 +24,5 @@ type draft<dataType extends eduResourceData | eduResourceCollectionData, meta = 
   // updates: { at: date_time_string; diff: jsonDiff }[]
 }
 
-export type edu_resource_draft_id = string
-export type edu_resource_collection_draft_id = string
+export type eduResourceDraftId = string
+export type eduResourceCollectionDraftId = string

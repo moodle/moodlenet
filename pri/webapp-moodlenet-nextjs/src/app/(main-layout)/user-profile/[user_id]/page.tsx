@@ -4,8 +4,8 @@ import { primary } from '../../../../lib/server/session-access'
 import { params } from '../../../../lib/server/types'
 import { Fallback } from '../../../../ui/pages/Fallback/Fallback'
 
-export default async function UserProfilePage({ params: { user_id } }: { params: params<'user_id'> }) {
-  const [found, userHome] = await primary.moodle.userHome.userHome.access({ by: { idOf: 'user', user_id } })
+export default async function UserProfilePage({ params: { userId } }: { params: params<'userId'> }) {
+  const [found, userHome] = await primary.moodle.userHome.userHome.access({ by: { idOf: 'user', userId } })
   if (!found) {
     return <Fallback />
   }

@@ -1,10 +1,10 @@
 import type { email_address, url_string } from '@moodle/lib-types'
-import { user_id } from './user'
+import { userId } from './user'
 import { userSessionData } from './user-session'
 
 export type iamSignTokenData = {
   selfDeletionRequestConfirm: {
-    userId: user_id
+    userId: userId
     redirectUrl: url_string
   }
   resetPasswordRequest: {

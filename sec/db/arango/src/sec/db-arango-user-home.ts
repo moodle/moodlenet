@@ -24,9 +24,9 @@ export function user_home_secondary_factory({ db_struct }: { db_struct: db_struc
         query: {
           async getUserHome({ by }) {
             const userHomeDoc =
-              by.idOf === 'user_home'
-                ? await db_struct.data.coll.userHome.document({ _key: by.user_home_id }).catch(() => null)
-                : await getUserHomeByUserId({ db_struct, userId: by.user_id })
+              by.idOf === 'userHome'
+                ? await db_struct.data.coll.userHome.document({ _key: by.userHomeId }).catch(() => null)
+                : await getUserHomeByUserId({ db_struct, userId: by.userId })
             if (!userHomeDoc) {
               return [false, { reason: 'notFound' }]
             }

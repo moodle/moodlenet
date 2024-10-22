@@ -1,9 +1,9 @@
 import { d_u__d } from '@moodle/lib-types'
-import { AuthenticatedUserSession, userRecord, user_role, userSession, userSessionData } from '../types'
+import { AuthenticatedUserSession, userRecord, userRole, userSession, userSessionData } from '../types'
 
 export function hasUserSessionRole(
   userSession: userSession,
-  role: user_role,
+  role: userRole,
 ): userSession is d_u__d<userSession, 'type', 'authenticated'> {
   if (!isAuthenticatedUserSession(userSession)) {
     return false

@@ -1,33 +1,33 @@
 import { _nullish, date_time_string, positive_integer } from '@moodle/lib-types'
-import { language_id, license_id } from '../../content'
+import { languageId, licenseId } from '../../content'
 import { asset } from '../../storage'
-import { bloom_cognitive_level, edu_resource_type_id, isced_field_id, isced_level_id } from './edu-categories'
+import { bloomCognitiveLevel, eduResourceTypeId, iscedFieldId, iscedLevelId } from './edu-categories'
 
-export type edu_resource_id = string
+export type eduResourceId = string
 export type eduResourceData = {
-  id: edu_resource_id
+  id: eduResourceId
   asset: asset
   image: _nullish | asset
   title: string
   description: string
-  iscedField: _nullish | isced_field_id
-  iscedLevel: _nullish | isced_level_id
+  iscedField: _nullish | iscedFieldId
+  iscedLevel: _nullish | iscedLevelId
   bloomLearningOutcomes: bloomLearningOutcome[]
-  type: _nullish | edu_resource_type_id
-  language: _nullish | language_id
-  license: _nullish | license_id
+  type: _nullish | eduResourceTypeId
+  language: _nullish | languageId
+  license: _nullish | licenseId
   publicationDate: _nullish | { month: positive_integer; year: positive_integer }
 }
 
 export type bloomLearningOutcome = {
-  level: bloom_cognitive_level
+  level: bloomCognitiveLevel
   verb: string
   learningOutcome: string
 }
 
-export type edu_resource_collection_id = string
+export type eduResourceCollectionId = string
 export type eduResourceCollectionData = {
-  id: edu_resource_collection_id
+  id: eduResourceCollectionId
   title: string
   description: string
   image: _nullish | asset
@@ -35,5 +35,5 @@ export type eduResourceCollectionData = {
 }
 export type eduResourceCollectionItem = {
   added: date_time_string
-  eduResourceId: edu_resource_id
+  eduResourceId: eduResourceId
 }

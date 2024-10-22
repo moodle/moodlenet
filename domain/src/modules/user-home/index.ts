@@ -1,21 +1,18 @@
 import type { d_u, deep_partial, ok_ko } from '@moodle/lib-types'
-import { user_id } from '../iam'
+import { userId } from '../iam'
 import { useTempFileResult } from '../storage'
 import {
   profileImage,
   profileInfo,
-  iam_user_excerpt,
+  iamUserExcerpt,
   user_home_access_object,
-  user_home_id,
+  userHomeId,
   userHomeRecord,
   UserHomePrimaryMsgSchemaConfigs,
 } from './types'
 export * from './types'
 
-export type by_user_id_or_user_home_id = d_u<
-  { user_home: { user_home_id: user_home_id }; user: { user_id: user_id } },
-  'idOf'
->
+export type by_user_id_or_user_home_id = d_u<{ userHome: { userHomeId: userHomeId }; user: { userId: userId } }, 'idOf'>
 export default interface UserHomeDomain {
   event: { userHome: unknown }
   primary: {
@@ -26,7 +23,7 @@ export default interface UserHomeDomain {
       editProfile: {
         useTempImageAsProfileImage(_: { as: profileImage; tempId: string }): Promise<useTempFileResult>
         editProfileInfo(_: {
-          user_home_id: user_home_id
+          userHomeId: userHomeId
           profileInfo: deep_partial<profileInfo>
         }): Promise<ok_ko<void, { notFound: unknown; unknown: unknown }>>
       }
@@ -44,7 +41,7 @@ export default interface UserHomeDomain {
       }
       service: unknown
       sync: {
-        iamUserExcerpt(_: { iamUserExcerpt: iam_user_excerpt }): Promise<ok_ko<void>>
+        iamUserExcerpt(_: { iamUserExcerpt: iamUserExcerpt }): Promise<ok_ko<void>>
       }
       query: {
         getUserHome(_: {
@@ -53,10 +50,10 @@ export default interface UserHomeDomain {
       }
       write: {
         updatePartialProfileInfo(_: {
-          id: user_home_id
+          id: userHomeId
           partialProfileInfo: deep_partial<profileInfo>
-        }): Promise<ok_ko<{ userHomeId: user_home_id; userId: user_id }>>
-        useTempImageInProfile(_: { as: profileImage; id: user_home_id; tempId: string }): Promise<useTempFileResult>
+        }): Promise<ok_ko<{ userHomeId: userHomeId; userId: userId }>>
+        useTempImageInProfile(_: { as: profileImage; id: userHomeId; tempId: string }): Promise<useTempFileResult>
       }
     }
   }

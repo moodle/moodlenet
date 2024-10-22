@@ -1,5 +1,5 @@
 import { date_time_string, mimetype, ok_ko } from '@moodle/lib-types'
-import { user_id } from '../../iam'
+import { userId } from '../../iam'
 
 export * from './primary-schemas'
 
@@ -15,7 +15,7 @@ export type uploaded_blob_meta = {
   hash: fileHashes
   uploaded: {
     at: date_time_string
-    byUserId: user_id
+    byUserId: userId
     primarySessionId: string
   }
   original: {

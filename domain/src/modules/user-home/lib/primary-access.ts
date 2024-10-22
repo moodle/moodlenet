@@ -1,5 +1,5 @@
 import { access_obj, d_u } from '@moodle/lib-types'
-import { by_user_id_or_user_home_id, user_home_access_object, user_home_permissions } from '..'
+import { by_user_id_or_user_home_id, user_home_access_object, userHomePermissions } from '..'
 import { sessionLibDep, validate_currentUserSessionInfo } from '../../iam/lib'
 
 // REVIEW : consider put this access logic - as well as `access_obj` - in `iam` (a as access)
@@ -70,7 +70,7 @@ export async function accessUserHome({
   }
 }
 
-const _all_user_home_permissions_disallowed: user_home_permissions = {
+const _all_user_home_permissions_disallowed: userHomePermissions = {
   editRoles: false,
   editProfile: false,
   follow: false,

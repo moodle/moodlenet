@@ -16,10 +16,10 @@ import type {
   loginForm,
   resetPasswordForm,
   signupForm,
-  user_deactivation_reason,
-  user_id,
+  userDeactivationReason,
+  userId,
   userRecord,
-  user_role,
+  userRole,
   userSession,
 } from './types'
 
@@ -32,20 +32,20 @@ export default interface IamDomain {
       session: {
         getUserSession(): Promise<{ userSession: userSession }>
         generateUserSessionToken(_: {
-          userId: user_id
+          userId: userId
         }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>>
         moduleInfo(): Promise<{ schemaConfigs: IamPrimaryMsgSchemaConfigs }>
       }
 
       admin: {
         editUserRoles(_: {
-          userId: user_id
-          role: user_role
+          userId: userId
+          role: userRole
           action: 'set' | 'unset'
-        }): Promise<ok_ko<{ updatedRoles: user_role[] }, { userNotFound: unknown }>>
+        }): Promise<ok_ko<{ updatedRoles: userRole[] }, { userNotFound: unknown }>>
         searchUsers(_: { textSearch: string }): Promise<{ users: userRecord[] }>
         deactivateUser(_: {
-          userId: user_id
+          userId: userId
           reason: string
           anonymize: boolean
         }): Promise<ok_ko<void, { userNotFound: unknown }>>
@@ -59,7 +59,7 @@ export default interface IamDomain {
 
         createNewUserByEmailVerificationToken(_: { signupEmailVerificationToken: signed_token }): Promise<
           ok_ko<
-            { userId: user_id },
+            { userId: userId },
             {
               /* userWithThisEmailExists: unknown; */ invalidToken: unknown
               unknown: unknown
@@ -98,20 +98,20 @@ export default interface IamDomain {
       queue: unknown
       write: {
         saveNewUser(_: { newUser: userRecord }): Promise<ok_ko<void>>
-        setUserPassword(_: { userId: user_id; newPasswordHash: string }): Promise<ok_ko<void>>
+        setUserPassword(_: { userId: userId; newPasswordHash: string }): Promise<ok_ko<void>>
 
         deactivateUser(_: {
-          userId: user_id
+          userId: userId
           anonymize: boolean
-          reason: user_deactivation_reason
+          reason: userDeactivationReason
           at?: date_time_string
         }): Promise<ok_ko<{ deactivatedUser: userRecord }>>
 
         setUserRoles(_: {
-          userId: user_id
-          roles: user_role[]
-          adminUserId: user_id
-        }): Promise<ok_ko<{ newRoles: user_role[]; oldRoles: user_role[] }>>
+          userId: userId
+          roles: userRole[]
+          adminUserId: userId
+        }): Promise<ok_ko<{ newRoles: userRole[]; oldRoles: userRole[] }>>
       }
       service: unknown
       // service: {
@@ -140,12 +140,12 @@ export default interface IamDomain {
           inactiveNotificationSent: boolean
         }): Promise<{ inactiveUsers: userRecord[] }>
 
-        userBy(_: d_u<{ email: { email: email_address }; id: { userId: user_id } }, 'by'>): Promise<ok_ko<userRecord>>
+        userBy(_: d_u<{ email: { email: email_address }; id: { userId: userId } }, 'by'>): Promise<ok_ko<userRecord>>
 
         usersByText(_: { text: string; includeDeactivated?: boolean }): Promise<{ users: userRecord[] }>
       }
       sync: {
-        userDisplayname(_: { userId: user_id; displayName: string }): Promise<ok_ko<void>>
+        userDisplayname(_: { userId: userId; displayName: string }): Promise<ok_ko<void>>
       }
     }
   }

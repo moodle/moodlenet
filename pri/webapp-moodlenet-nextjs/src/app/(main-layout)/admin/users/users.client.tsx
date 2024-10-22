@@ -10,7 +10,7 @@ import useQueryParams from '../../../../ui/lib/nextjs/queryParams'
 import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import Searchbox from '../../../../ui/atoms/Searchbox/Searchbox'
-import { userRecord, user_role } from '@moodle/module/iam'
+import { userRecord, userRole } from '@moodle/module/iam'
 import { editUserRole } from './users.server'
 
 export type UsersProps = {
@@ -72,7 +72,7 @@ function Row({ user }: RowProps) {
   const isAdmin = roles.includes('admin')
   const isPublisher = roles.includes('publisher')
   const toggleRole = useCallback(
-    (role: user_role) => {
+    (role: userRole) => {
       editUserRole({
         role,
         action: roles.includes(role) ? 'unset' : 'set',

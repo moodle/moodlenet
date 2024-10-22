@@ -6,7 +6,7 @@ import { moodleModuleName } from '../moodle-domain'
 import {
   backgroundContext,
   moduleCore,
-  ctx_track,
+  ctxTrack,
   domainAccess,
   domainLayer,
   domainMsg,
@@ -175,7 +175,7 @@ export function provideDomainAccessDispatcher({
 
     const moodleDomainProxy = createMoodleDomainProxy({
       ctrl({ domainMsg: { endpoint, payload } }) {
-        const ctx_track: ctx_track = {
+        const ctx_track: ctxTrack = {
           ctxId: id,
           layer: contextLayer,
         }

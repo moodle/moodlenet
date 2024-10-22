@@ -44,7 +44,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const userHomeAccessObject =
       authenticated &&
       (await primary.moodle.userHome.userHome
-        .access({ by: { idOf: 'user', user_id: authenticated.user.id } })
+        .access({ by: { idOf: 'user', userId: authenticated.user.id } })
         .then(([userHomeFound, userHomeResult]) => {
           return userHomeFound && userHomeResult.accessObject
         }))

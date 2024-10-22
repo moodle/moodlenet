@@ -1,24 +1,24 @@
 import { email_address, url_string } from '@moodle/lib-types'
-import { user_id } from './user'
+import { userId } from './user'
 
 export type iamUserNotifications = {
   // inactivityBeforeDeletion: {
-  //   toUserId: user_id
+  //   toUserId: userId
   //   loginUrl: url_string
   //   daysBeforeDeletion: number
   // }
 
   passwordChanged: {
-    toUserId: user_id
+    toUserId: userId
   }
 
   resetPasswordRequest: {
-    toUserId: user_id
+    toUserId: userId
     resetPasswordUrl: url_string
   }
 
   deleteAccountRequest: {
-    toUserId: user_id
+    toUserId: userId
     deleteAccountUrl: url_string
   }
 
