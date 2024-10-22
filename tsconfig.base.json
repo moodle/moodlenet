@@ -35,6 +35,21 @@
       "@moodle/module/iam/core": ["domain/src/modules/iam/core/index.ts"],
       "@moodle/module/iam/setup": ["domain/src/modules/iam/setup/index.ts"],
       //
+      "@moodle/module/edu": ["domain/src/modules/edu/index.ts"],
+      "@moodle/module/edu/lib": ["domain/src/modules/edu/lib/index.ts"],
+      "@moodle/module/edu/core": ["domain/src/modules/edu/core/index.ts"],
+      "@moodle/module/edu/setup": ["domain/src/modules/edu/setup/index.ts"],
+      //
+      "@moodle/module/ai-agent": ["domain/src/modules/ai-agent/index.ts"],
+      "@moodle/module/ai-agent/lib": ["domain/src/modules/ai-agent/lib/index.ts"],
+      "@moodle/module/ai-agent/core": ["domain/src/modules/ai-agent/core/index.ts"],
+      "@moodle/module/ai-agent/setup": ["domain/src/modules/ai-agent/setup/index.ts"],
+      //
+      "@moodle/module/asset-text-extraction": ["domain/src/modules/asset-text-extraction/index.ts"],
+      "@moodle/module/asset-text-extraction/lib": ["domain/src/modules/asset-text-extraction/lib/index.ts"],
+      "@moodle/module/asset-text-extraction/core": ["domain/src/modules/asset-text-extraction/core/index.ts"],
+      "@moodle/module/asset-text-extraction/setup": ["domain/src/modules/asset-text-extraction/setup/index.ts"],
+      //
       "@moodle/module/net": ["domain/src/modules/net/index.ts"],
       "@moodle/module/net/lib": ["domain/src/modules/net/lib/index.ts"],
       "@moodle/module/net/core": ["domain/src/modules/net/core/index.ts"],
@@ -59,6 +74,11 @@
       "@moodle/module/user-home/lib": ["domain/src/modules/user-home/lib/index.ts"],
       "@moodle/module/user-home/core": ["domain/src/modules/user-home/core/index.ts"],
       "@moodle/module/user-home/setup": ["domain/src/modules/user-home/setup/index.ts"],
+      //
+      "@moodle/module/user-notification": ["domain/src/modules/user-notification/index.ts"],
+      "@moodle/module/user-notification/lib": ["domain/src/modules/user-notification/lib/index.ts"],
+      "@moodle/module/user-notification/core": ["domain/src/modules/user-notification/core/index.ts"],
+      "@moodle/module/user-notification/setup": ["domain/src/modules/user-notification/setup/index.ts"],
       //
       "@moodle/sec-crypto-default": ["sec/crypto/default/src/index.ts"],
       "@moodle/sec-db-arango": ["sec/db/arango/src/index.ts"],

@@ -40,6 +40,8 @@ export function user_home_secondary_factory({ db_struct }: { db_struct: db_struc
               .catch(() => null)
             return updateResult?.new ? [true, { userHomeId: id, userId: updateResult.new.iamUser.id }] : [false, _void]
           },
+        },
+        queue: {
           async createUserHome({ userHome }) {
             const result = await db_struct.data.coll.userHome
               .save(user_home_record2userHomeDocument(userHome))

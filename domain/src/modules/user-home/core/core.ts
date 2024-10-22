@@ -102,7 +102,7 @@ export const user_home_core: moduleCore<'userHome'> = {
                 return
               }
               const user_home_id = await generateNanoId()
-              ctx.write.createUserHome({
+              ctx.queue.createUserHome({
                 userHome: {
                   id: user_home_id,
                   iamUser: {

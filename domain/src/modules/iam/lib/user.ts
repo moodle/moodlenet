@@ -1,5 +1,12 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { _unchecked_brand, date_time_string, email_address, named_email_address } from '@moodle/lib-types'
+import {
+  _unchecked_brand,
+  date_time_string,
+  email_address,
+  named_email_address,
+  non_negative_integer_brand,
+  non_negative_integer_schema,
+} from '@moodle/lib-types'
 import { userRecord, user_role } from '../types'
 import { password_hash } from '../../crypto/types'
 
@@ -35,5 +42,8 @@ export async function createNewUserRecordData({
       lastLogin: lastLogin ?? now,
     },
     deactivated: false,
+    moodlenet: {
+      moderation: { reports: { amount: non_negative_integer_schema.parse(0), items: [] } },
+    },
   }
 }

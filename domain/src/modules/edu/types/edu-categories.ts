@@ -12,7 +12,9 @@ export type iscedField = { desc: string; id: isced_field_id; subjectPath: [strin
 
 export type isced_level_id = positive_integer
 export type iscedLevel = { desc: string; id: isced_level_id }
-4
 
-export type ed_resource_type_id = string
-export type edResourceType = { desc: string; id: ed_resource_type_id }
+
+export type edu_resource_type_id = string
+export type eduResourceType = { desc: string; id: edu_resource_type_id }
+
+

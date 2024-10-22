@@ -39,7 +39,9 @@ export default interface UserHomeDomain {
   }
   secondary: {
     userHome: {
-      queue: unknown
+      queue: {
+        createUserHome(_: { userHome: userHomeRecord }): Promise<ok_ko<void>>
+      }
       service: unknown
       sync: {
         iamUserExcerpt(_: { iamUserExcerpt: iam_user_excerpt }): Promise<ok_ko<void>>
@@ -50,7 +52,6 @@ export default interface UserHomeDomain {
         }): Promise<ok_ko<{ userHome: userHomeRecord }, { notFound: unknown }>>
       }
       write: {
-        createUserHome(_: { userHome: userHomeRecord }): Promise<ok_ko<void>>
         updatePartialProfileInfo(_: {
           id: user_home_id
           partialProfileInfo: deep_partial<profileInfo>

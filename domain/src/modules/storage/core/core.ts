@@ -34,7 +34,7 @@ export const storage_core: moduleCore<'storage'> = {
     return {
       secondary: {
         userHome: {
-          write: {
+          queue: {
             async createUserHome([[done], { userHome }]) {
               if (!done) {
                 return

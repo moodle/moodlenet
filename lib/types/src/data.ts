@@ -4,6 +4,8 @@ import { BRAND, intersection, number, object, string, ZodSchema } from 'zod'
 import { _any, d_u } from './map'
 export type path = string[]
 
+export type jsonDiff = unknown
+
 export type intersection<types extends _any[]> = pretty<
   types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
 >
@@ -115,6 +117,10 @@ export const integer_schema = number().int().brand<typeof integer_brand>()
 export declare const positive_integer_brand: unique symbol
 export type positive_integer = branded<number, typeof positive_integer_brand>
 export const positive_integer_schema = number().int().positive().brand<typeof positive_integer_brand>()
+
+export declare const non_negative_integer_brand: unique symbol
+export type non_negative_integer = branded<number, typeof non_negative_integer_brand>
+export const non_negative_integer_schema = number().int().nonnegative().brand<typeof non_negative_integer_brand>()
 
 export declare const fraction_brand: unique symbol
 export type fraction = branded<number, typeof fraction_brand>
