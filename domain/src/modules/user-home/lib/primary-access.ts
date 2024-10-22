@@ -2,6 +2,8 @@ import { access_obj, d_u } from '@moodle/lib-types'
 import { by_user_id_or_user_home_id, user_home_access_object, user_home_permissions } from '..'
 import { sessionLibDep, validate_currentUserSessionInfo } from '../../iam/lib'
 
+// REVIEW : consider put this access logic - as well as `access_obj` - in `iam` (a as access)
+// or consider renaming `iam` to `im` or something
 export async function accessUserHome({
   ctx,
   by,

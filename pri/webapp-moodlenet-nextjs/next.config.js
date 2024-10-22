@@ -75,14 +75,16 @@ const xport = async (phase, context) => {
       },
     },
   }
-  config.transpilePackages = [
-    ...(config.transpilePackages ?? []),
-    '@moodle/bindings-node',
-    '@moodle/lib-types',
-    '@moodle/domain',
-    '@moodle/core-iam/lib',
-    '@moodle/domain',
-  ]
+
+  // https://github.com/vercel/next.js/discussions/26420#discussioncomment-1415418 (https://github.com/vercel/next.js/discussions/50861)
+  // config.transpilePackages = [
+  //   ...(config.transpilePackages ?? []),
+  //   '@moodle/bindings-node',
+  //   '@moodle/lib-types',
+  //   '@moodle/domain',
+  //   '@moodle/core-i am/lib',
+  //   '@moodle/domain',
+  // ]
   // config.serverRuntimeConfig = require('../../../../domain/src/index')
   // config.serverRuntimeConfig = require('@moodle/domain')
 
