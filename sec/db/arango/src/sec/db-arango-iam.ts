@@ -3,7 +3,7 @@ import { _void } from '@moodle/lib-types'
 import { aql } from 'arangojs'
 import { createHash } from 'node:crypto'
 import { db_struct } from '../db-structure'
-import { user_record2userDocument, userDocument2user_record } from './db-arango-iam-lib/mappings'
+import { userRecord2userDocument, userDocument2userRecord } from './db-arango-iam-lib/mappings'
 import { getUserByEmail, getUserById } from './db-arango-iam-lib/queries'
 import { userDocument } from './db-arango-iam-lib/types'
 
@@ -19,7 +19,7 @@ export function iam_secondary_factory({ db_struct }: { db_struct: db_struct }): 
         },
         write: {
           async saveNewUser({ newUser }) {
-            const userDocument = user_record2userDocument(newUser)
+            const userDocument = userRecord2userDocument(newUser)
             const savedUser = await db_struct.iam.coll.user
               .save(userDocument, { overwriteMode: 'conflict', returnNew: true })
               .catch(() => null)
@@ -52,7 +52,7 @@ export function iam_secondary_factory({ db_struct }: { db_struct: db_struct }): 
               )
               .catch(() => null)
             return deactivatedUser?.old
-              ? [true, { deactivatedUser: userDocument2user_record(deactivatedUser.old) }]
+              ? [true, { deactivatedUser: userDocument2userRecord(deactivatedUser.old) }]
               : [false, _void]
           },
           async setUserPassword({ newPasswordHash, userId }) {
@@ -103,7 +103,7 @@ export function iam_secondary_factory({ db_struct }: { db_struct: db_struct }): 
                 `,
             )
             const userDocs = await userDocs_cursor.all()
-            return { users: userDocs.map(userDocument2user_record) }
+            return { users: userDocs.map(userDocument2userRecord) }
           },
           activeUsersNotLoggedInFor(_) {
             throw new Error('Not implemented')

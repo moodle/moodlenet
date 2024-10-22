@@ -10,16 +10,14 @@ import useQueryParams from '../../../../ui/lib/nextjs/queryParams'
 import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import Searchbox from '../../../../ui/atoms/Searchbox/Searchbox'
-import { user_record, user_role } from '@moodle/module/iam'
-
-type edit_user_role_fn = (_: { userId: string; role: user_role; action: 'set' | 'unset' }) => Promise<user_role[]>
+import { userRecord, user_role } from '@moodle/module/iam'
+import { editUserRole } from './users.server'
 
 export type UsersProps = {
   users: UserRow[]
-  editUserRole: edit_user_role_fn
 }
 
-export function UsersClient({ users, editUserRole }: UsersProps) {
+export function UsersClient({ users }: UsersProps) {
   const { t } = useTranslation()
   const { setQueryParams } = useQueryParams()
 
@@ -53,7 +51,7 @@ export function UsersClient({ users, editUserRole }: UsersProps) {
           </thead>
           <tbody>
             {users.map(user => (
-              <Row user={user} editUserRole={editUserRole} key={user.id} />
+              <Row user={user} key={user.id} />
             ))}
           </tbody>
         </table>
@@ -62,13 +60,12 @@ export function UsersClient({ users, editUserRole }: UsersProps) {
   )
 }
 
-export type UserRow = Pick<user_record, 'id' | 'contacts' | 'displayName' | 'roles'>
+export type UserRow = Pick<userRecord, 'id' | 'contacts' | 'displayName' | 'roles'>
 type RowProps = {
   user: UserRow
-  editUserRole: edit_user_role_fn
 }
 
-function Row({ user, editUserRole }: RowProps) {
+function Row({ user }: RowProps) {
   const { t } = useTranslation()
   const profileHref = sitepaths['user-profile'][user.id]!()
   const [roles, setRoles] = useState(user.roles)
@@ -82,7 +79,7 @@ function Row({ user, editUserRole }: RowProps) {
         userId: user.id,
       }).then(setRoles)
     },
-    [editUserRole, roles, user.id],
+    [roles, user.id],
   )
   return (
     <tr>
@@ -100,7 +97,11 @@ function Row({ user, editUserRole }: RowProps) {
         <abbr onClick={() => toggleRole('admin')} className={`admin ${isAdmin ? 'on' : 'off'}`} title={t('Admin')}>
           {isAdmin ? <ManageAccounts /> : <ManageAccountsOutlined />}
         </abbr>
-        <abbr onClick={() => toggleRole('publisher')} className={`publisher ${isPublisher ? 'on' : 'off'}`} title={t('Publisher')}>
+        <abbr
+          onClick={() => toggleRole('publisher')}
+          className={`publisher ${isPublisher ? 'on' : 'off'}`}
+          title={t('Publisher')}
+        >
           {isPublisher ? <HowToReg /> : <HowToRegOutlined />}
         </abbr>
       </td>

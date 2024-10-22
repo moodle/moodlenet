@@ -18,7 +18,7 @@ import type {
   signupForm,
   user_deactivation_reason,
   user_id,
-  user_record,
+  userRecord,
   user_role,
   userSession,
 } from './types'
@@ -43,7 +43,7 @@ export default interface IamDomain {
           role: user_role
           action: 'set' | 'unset'
         }): Promise<ok_ko<{ updatedRoles: user_role[] }, { userNotFound: unknown }>>
-        searchUsers(_: { textSearch: string }): Promise<{ users: user_record[] }>
+        searchUsers(_: { textSearch: string }): Promise<{ users: userRecord[] }>
         deactivateUser(_: {
           userId: user_id
           reason: string
@@ -97,7 +97,7 @@ export default interface IamDomain {
     iam: {
       queue: unknown
       write: {
-        saveNewUser(_: { newUser: user_record }): Promise<ok_ko<void>>
+        saveNewUser(_: { newUser: userRecord }): Promise<ok_ko<void>>
         setUserPassword(_: { userId: user_id; newPasswordHash: string }): Promise<ok_ko<void>>
 
         deactivateUser(_: {
@@ -105,7 +105,7 @@ export default interface IamDomain {
           anonymize: boolean
           reason: user_deactivation_reason
           at?: date_time_string
-        }): Promise<ok_ko<{ deactivatedUser: user_record }>>
+        }): Promise<ok_ko<{ deactivatedUser: userRecord }>>
 
         setUserRoles(_: {
           userId: user_id
@@ -138,11 +138,11 @@ export default interface IamDomain {
         activeUsersNotLoggedInFor(_: {
           time: time_duration_string
           inactiveNotificationSent: boolean
-        }): Promise<{ inactiveUsers: user_record[] }>
+        }): Promise<{ inactiveUsers: userRecord[] }>
 
-        userBy(_: d_u<{ email: { email: email_address }; id: { userId: user_id } }, 'by'>): Promise<ok_ko<user_record>>
+        userBy(_: d_u<{ email: { email: email_address }; id: { userId: user_id } }, 'by'>): Promise<ok_ko<userRecord>>
 
-        usersByText(_: { text: string; includeDeactivated?: boolean }): Promise<{ users: user_record[] }>
+        usersByText(_: { text: string; includeDeactivated?: boolean }): Promise<{ users: userRecord[] }>
       }
       sync: {
         userDisplayname(_: { userId: user_id; displayName: string }): Promise<ok_ko<void>>

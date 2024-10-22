@@ -7,7 +7,7 @@ import {
 } from '../../iam/lib'
 import { usingTempFile2asset } from '../../storage/lib'
 import { accessUserHome } from '../lib'
-import { user_home_record } from '../types'
+import { userHomeRecord } from '../types'
 
 export const user_home_core: moduleCore<'userHome'> = {
   modName: 'userHome',
@@ -103,9 +103,9 @@ export const user_home_core: moduleCore<'userHome'> = {
               }
               const user_home_id = await generateNanoId()
               ctx.write.createUserHome({
-                userHome: _unchecked_brand<user_home_record>({
+                userHome: {
                   id: user_home_id,
-                  user: {
+                  iamUser: {
                     id: newUser.id,
                     roles: newUser.roles,
                   },
@@ -118,7 +118,7 @@ export const user_home_core: moduleCore<'userHome'> = {
                     avatar: null,
                     background: null,
                   },
-                }),
+                },
               })
             },
 
@@ -126,8 +126,8 @@ export const user_home_core: moduleCore<'userHome'> = {
               if (!done) {
                 return
               }
-              await ctx.sync.userExcerpt({
-                userExcerpt: { id: userId, roles: result.newRoles },
+              await ctx.sync.iamUserExcerpt({
+                iamUserExcerpt: { id: userId, roles: result.newRoles },
               })
             },
           },

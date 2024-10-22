@@ -1,10 +1,10 @@
 import { positive_integer, url_string } from '@moodle/lib-types'
 
-export type bloomCognitiveLevel = positive_integer
+export type bloom_cognitive_level = 1 | 2 | 3 | 4 | 5 | 6
 export type bloomCognitive = {
-  level: bloomCognitiveLevel
-  verb: string
-  learningOutcome: string
+  id: bloom_cognitive_level
+  desc: string
+  verbs: string[]
 }
 
 export type isced_field_id = string
@@ -12,3 +12,7 @@ export type iscedField = { desc: string; id: isced_field_id; subjectPath: [strin
 
 export type isced_level_id = positive_integer
 export type iscedLevel = { desc: string; id: isced_level_id }
+4
+
+export type ed_resource_type_id = string
+export type edResourceType = { desc: string; id: ed_resource_type_id }

@@ -8,7 +8,7 @@ import {
   createNewUserRecordData,
   generateSessionForUserData,
   generateSessionForUserId,
-  user_record2SessionUserData,
+  userRecord2SessionUserData,
   validateCurrentUserSession,
 } from '../lib'
 
@@ -168,23 +168,23 @@ export const iam_core: moduleCore<'iam'> = {
           return newUserCreated ? [true, { userId: newUser.id }] : [false, { reason: 'unknown' }]
         },
         async login({ loginForm }) {
-          const [found, user_record] = await ctx.mod.iam.query.userBy({
+          const [found, userRecord] = await ctx.mod.iam.query.userBy({
             by: 'email',
             email: loginForm.email,
           })
-          if (!(found && !user_record.deactivated)) {
+          if (!(found && !userRecord.deactivated)) {
             return [false, _void]
           }
           const [verified] = await ctx.mod.crypto.service.verifyPasswordHash({
             plainPassword: loginForm.password,
-            passwordHash: user_record.passwordHash,
+            passwordHash: userRecord.passwordHash,
           })
 
           if (!verified) {
             return [false, _void]
           }
 
-          const user = user_record2SessionUserData(user_record)
+          const user = userRecord2SessionUserData(userRecord)
           const session = await generateSessionForUserData({ ctx, user })
           return [
             true,
@@ -307,7 +307,7 @@ export const iam_core: moduleCore<'iam'> = {
           }
 
           const { validatedSignedTokenData } = validation
-          const [found, user_record] = await ctx.mod.iam.query.userBy({
+          const [found, userRecord] = await ctx.mod.iam.query.userBy({
             by: 'email',
             email: validatedSignedTokenData.email,
           })
@@ -319,7 +319,7 @@ export const iam_core: moduleCore<'iam'> = {
           })
           const [pwdChanged] = await ctx.write.setUserPassword({
             newPasswordHash: passwordHash,
-            userId: user_record.id,
+            userId: userRecord.id,
           })
           return pwdChanged ? [true, _void] : [false, { reason: 'unknown' }]
         },

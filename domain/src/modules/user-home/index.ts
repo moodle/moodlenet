@@ -4,10 +4,10 @@ import { useTempFileResult } from '../storage'
 import {
   profileImage,
   profileInfo,
-  user_excerpt,
+  iam_user_excerpt,
   user_home_access_object,
   user_home_id,
-  user_home_record,
+  userHomeRecord,
   UserHomePrimaryMsgSchemaConfigs,
 } from './types'
 export * from './types'
@@ -42,15 +42,15 @@ export default interface UserHomeDomain {
       queue: unknown
       service: unknown
       sync: {
-        userExcerpt(_: { userExcerpt: user_excerpt }): Promise<ok_ko<void>>
+        iamUserExcerpt(_: { iamUserExcerpt: iam_user_excerpt }): Promise<ok_ko<void>>
       }
       query: {
         getUserHome(_: {
           by: by_user_id_or_user_home_id
-        }): Promise<ok_ko<{ userHome: user_home_record }, { notFound: unknown }>>
+        }): Promise<ok_ko<{ userHome: userHomeRecord }, { notFound: unknown }>>
       }
       write: {
-        createUserHome(_: { userHome: user_home_record }): Promise<ok_ko<void>>
+        createUserHome(_: { userHome: userHomeRecord }): Promise<ok_ko<void>>
         updatePartialProfileInfo(_: {
           id: user_home_id
           partialProfileInfo: deep_partial<profileInfo>

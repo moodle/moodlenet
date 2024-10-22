@@ -116,6 +116,11 @@ export declare const positive_integer_brand: unique symbol
 export type positive_integer = branded<number, typeof positive_integer_brand>
 export const positive_integer_schema = number().int().positive().brand<typeof positive_integer_brand>()
 
+export declare const fraction_brand: unique symbol
+export type fraction = branded<number, typeof fraction_brand>
+export const fraction_schema = number().min(0).max(1).brand<typeof fraction_brand>()
+
+
 // // export const email_address_brand = Symbol('email_address_brand')
 // export type email_address = z.infer< typeof email_address_schema> // email format
 export declare const email_address_brand: unique symbol

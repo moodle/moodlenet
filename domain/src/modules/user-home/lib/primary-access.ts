@@ -16,7 +16,7 @@ export async function accessUserHome({
   const { userHome } = findResult
   const currentUserSessionInfo = await validate_currentUserSessionInfo({ ctx })
   const { profileInfo, id } = userHome
-  const isThisUserHomePublisher = userHome.user.roles.includes('publisher')
+  const isThisUserHomePublisher = userHome.iamUser.roles.includes('publisher')
   if (!currentUserSessionInfo.authenticated) {
     if (!isThisUserHomePublisher) {
       return { result: 'found', access: 'notAllowed' }
@@ -33,7 +33,7 @@ export async function accessUserHome({
     }
   }
 
-  const itsMe = currentUserSessionInfo.authenticated.user.id === userHome.user.id
+  const itsMe = currentUserSessionInfo.authenticated.user.id === userHome.iamUser.id
   const currentUserIsAdmin = currentUserSessionInfo.authenticated.isAdmin
 
   if (!(isThisUserHomePublisher || itsMe || currentUserIsAdmin)) {
@@ -59,7 +59,7 @@ export async function accessUserHome({
       sendMessage: !itsMe,
       editRoles: !itsMe && currentUserIsAdmin,
     },
-    user: itsMe || currentUserIsAdmin ? userHome.user : null,
+    user: itsMe || currentUserIsAdmin ? userHome.iamUser : null,
     flags: { followed: !itsMe },
   }
 

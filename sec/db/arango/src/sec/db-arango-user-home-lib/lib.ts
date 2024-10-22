@@ -17,9 +17,17 @@ export async function getUserHomeByUserId<T = userHomeDocument>({ db_struct, use
   return userHome ?? null
 }
 
-export async function updateUserHomeByUserId({ db_struct, userId, pUserHome }: { userId: user_id; db_struct: db_struct; pUserHome: deep_partial<userHomeDocument> }) {
+export async function updateUserHomeByUserId({
+  db_struct,
+  userId,
+  partialUserHome,
+}: {
+  userId: user_id
+  db_struct: db_struct
+  partialUserHome: deep_partial<userHomeDocument>
+}) {
   return getUserHomeByUserId({
-    apply: aql`UPDATE userHome WITH ${pUserHome} IN ${db_struct.data.coll.userHome}`,
+    apply: aql`UPDATE userHome WITH ${partialUserHome} IN ${db_struct.data.coll.userHome}`,
     db_struct,
     userId,
   })

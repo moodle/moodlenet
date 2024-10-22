@@ -1,10 +1,10 @@
 import { _unchecked_brand } from '@moodle/lib-types'
-import { user_record } from '@moodle/module/iam'
+import { userRecord } from '@moodle/module/iam'
 import { Document } from 'arangojs/documents'
 import { userDocument } from './types'
 
-export function userDocument2user_record(doc: userDocument): user_record {
-  return _unchecked_brand<user_record>({
+export function userDocument2userRecord(doc: userDocument): userRecord {
+  return {
     id: doc._key,
     createdAt: doc.createdAt,
     roles: doc.roles,
@@ -13,18 +13,18 @@ export function userDocument2user_record(doc: userDocument): user_record {
     deactivated: doc.deactivated,
     displayName: doc.displayName,
     passwordHash: doc.passwordHash,
-  })
+  }
 }
 
-export function user_record2userDocument(user_record: user_record): Omit<Document<userDocument>, '_id' | '_rev'> {
-  return _unchecked_brand<userDocument>({
-    _key: user_record.id,
-    createdAt: user_record.createdAt,
-    roles: user_record.roles,
-    activityStatus: user_record.activityStatus,
-    contacts: user_record.contacts,
-    deactivated: user_record.deactivated,
-    displayName: user_record.displayName,
-    passwordHash: user_record.passwordHash,
-  })
+export function userRecord2userDocument(userRecord: userRecord): Omit<Document<userDocument>, '_id' | '_rev'> {
+  return {
+    _key: userRecord.id,
+    createdAt: userRecord.createdAt,
+    roles: userRecord.roles,
+    activityStatus: userRecord.activityStatus,
+    contacts: userRecord.contacts,
+    deactivated: userRecord.deactivated,
+    displayName: userRecord.displayName,
+    passwordHash: userRecord.passwordHash,
+  }
 }

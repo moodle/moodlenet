@@ -1,7 +1,10 @@
 import { d_u__d } from '@moodle/lib-types'
-import { AuthenticatedUserSession, user_record, user_role, userSession, userSessionData } from '../types'
+import { AuthenticatedUserSession, userRecord, user_role, userSession, userSessionData } from '../types'
 
-export function hasUserSessionRole(userSession: userSession, role: user_role): userSession is d_u__d<userSession, 'type', 'authenticated'> {
+export function hasUserSessionRole(
+  userSession: userSession,
+  role: user_role,
+): userSession is d_u__d<userSession, 'type', 'authenticated'> {
   if (!isAuthenticatedUserSession(userSession)) {
     return false
   }
@@ -16,7 +19,9 @@ export function isAdminUserSession(userSession: userSession) {
 //
 
 // Authenticated Session
-export function isAuthenticatedUserSession(userSession: userSession): userSession is d_u__d<userSession, 'type', 'authenticated'> {
+export function isAuthenticatedUserSession(
+  userSession: userSession,
+): userSession is d_u__d<userSession, 'type', 'authenticated'> {
   return userSession.type === 'authenticated'
 }
 
@@ -26,12 +31,12 @@ export function isGuestUserSession(userSession: userSession): userSession is d_u
 }
 ;``
 //
-export function user_record2SessionUserData(user_record: Pick<user_record, keyof userSessionData>): userSessionData {
+export function userRecord2SessionUserData(userRecord: Pick<userRecord, keyof userSessionData>): userSessionData {
   return {
-    id: user_record.id,
-    displayName: user_record.displayName,
-    roles: user_record.roles,
-    contacts: user_record.contacts,
+    id: userRecord.id,
+    displayName: userRecord.displayName,
+    roles: userRecord.roles,
+    contacts: userRecord.contacts,
   }
 }
 
