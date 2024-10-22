@@ -57,8 +57,6 @@ export async function getUseProfileImageSchema() {
 export const adoptProfileImage = defaultSafeActionClient
   .schema(getUseProfileImageSchema)
   .action(async ({ parsedInput: useProfileImageForm }) => {
-    console.log('->', { useProfileImageForm })
-
     const [done, usingTempFile] =
       await primary.moodle.userProfile.editProfile.useTempImageAsProfileImage(useProfileImageForm)
     // const userProfileId = myUserProfileRes.accessObject.id

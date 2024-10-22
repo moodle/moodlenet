@@ -1,5 +1,6 @@
 import { _void } from '@moodle/lib-types'
 import { moduleCore } from '../../../types'
+import { assert_authorizeCurrentUserSessionWithRole } from '../../iam/lib'
 
 export const net_core: moduleCore<'net'> = {
   modName: 'net',
@@ -16,6 +17,7 @@ export const net_core: moduleCore<'net'> = {
 
       admin: {
         async updatePartialMoodleNetInfo({ partialInfo }) {
+          assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' })
           const [done] = await ctx.mod.env.service.updatePartialConfigs({
             mod: 'net',
             partialConfigs: { info: partialInfo },

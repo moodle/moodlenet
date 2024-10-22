@@ -37,11 +37,17 @@ export function user_profile_secondary_factory({ db_struct }: { db_struct: db_st
           },
         },
         write: {
-          async updatePartialProfileInfo({ partialProfileInfo, id }) {
+          async updatePartialProfileInfo({ partialProfileInfo, userProfileId }) {
             const updateResult = await db_struct.data.coll.userProfile
-              .update({ _key: id }, { profileInfo: partialProfileInfo }, { returnNew: true })
+              .update({ _key: userProfileId }, { info: partialProfileInfo }, { returnNew: true })
               .catch(() => null)
-            return updateResult?.new ? [true, { userProfileId: id, userId: updateResult.new.iamUser.id }] : [false, _void]
+            return updateResult?.new ? [true, _void] : [false, _void]
+          },
+          async updatePartialUserProfile({ userProfileId, partialUserProfile }) {
+            const updateResult = await db_struct.data.coll.userProfile
+              .update({ _key: userProfileId }, partialUserProfile, { returnNew: true })
+              .catch(() => null)
+            return updateResult?.new ? [true, _void] : [false, _void]
           },
         },
         queue: {

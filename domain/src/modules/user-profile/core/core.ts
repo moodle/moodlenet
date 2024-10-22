@@ -1,10 +1,7 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { _void, webSlug } from '@moodle/lib-types'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
-import {
-  assert_authorizeAuthenticatedCurrentUserSession,
-  validateCurrentUserAuthenticatedSessionHasRole,
-} from '../../iam/lib'
+import { validateCurrentUserAuthenticatedSessionHasRole } from '../../iam/lib'
 import { usingTempFile2asset } from '../../storage/lib'
 import { accessUserProfile } from '../lib'
 
@@ -21,11 +18,10 @@ export const user_profile_core: moduleCore<'userProfile'> = {
         },
       },
       editProfile: {
-        async useTempImageAsProfileImage({ as, tempId }) {
-          const { user } = await assert_authorizeAuthenticatedCurrentUserSession({ ctx })
+        async useTempImageAsProfileImage({ as, tempId, userProfileId }) {
           const userProfile = await accessUserProfile({
             ctx,
-            by: { idOf: 'user', userId: user.id },
+            by: { idOf: 'userProfile', userProfileId },
           })
           assertWithErrorXxx(
             userProfile.result === 'found' && userProfile.access === 'allowed' && userProfile.permissions.editProfile,
@@ -41,18 +37,15 @@ export const user_profile_core: moduleCore<'userProfile'> = {
           }
           return [true, result]
         },
-        async editProfileInfo({ userProfileId: userProfileId, profileInfo }) {
+        async editProfileInfo({ userProfileId, profileInfo }) {
           const userProfile = await accessUserProfile({ ctx, by: { idOf: 'userProfile', userProfileId: userProfileId } })
           if (userProfile.result === 'notFound') {
             return [false, { reason: 'notFound' }]
           }
           assertWithErrorXxx(userProfile.access === 'allowed' && userProfile.permissions.editProfile, 'Unauthorized')
           const [done] = await ctx.write.updatePartialProfileInfo({
-            id: userProfileId,
-            partialProfileInfo: {
-              ...profileInfo,
-              urlSafeName: profileInfo.displayName ? webSlug(profileInfo.displayName) : undefined,
-            },
+            userProfileId: userProfileId,
+            partialProfileInfo: profileInfo,
           })
           if (!done) {
             return [false, { reason: 'unknown' }]
@@ -86,8 +79,23 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               }
               const asset = usingTempFile2asset(usingTempFile)
               await ctx.write.updatePartialProfileInfo({
-                id,
+                userProfileId: id,
                 partialProfileInfo: as === 'avatar' ? { avatar: asset } : as === 'background' ? { background: asset } : {},
+              })
+            },
+            async updatePartialProfileInfo([
+              [done],
+              {
+                userProfileId,
+                partialProfileInfo: { displayName },
+              },
+            ]) {
+              if (!done || !displayName) {
+                return
+              }
+              await ctx.write.updatePartialUserProfile({
+                userProfileId,
+                partialUserProfile: { urlSafeProfileName: webSlug(displayName) },
               })
             },
           },
@@ -108,9 +116,9 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                     id: newUser.id,
                     roles: newUser.roles,
                   },
-                  profileInfo: {
+                  urlSafeProfileName: webSlug(newUser.displayName),
+                  info: {
                     displayName: newUser.displayName,
-                    urlSafeName: webSlug(newUser.displayName),
                     aboutMe: '',
                     location: '',
                     siteUrl: null,

@@ -8,6 +8,7 @@ export interface UserProfilePrimaryMsgSchemaConfigs {
   siteUrl: { max: number }
 }
 export type updateProfileInfoForm = z.infer<ReturnType<typeof getUserProfilePrimarySchemas>['updateProfileInfoSchema']>
+export type useProfileImageForm = z.infer<ReturnType<typeof getUserProfilePrimarySchemas>['useProfileImageSchema']>
 
 export function getUserProfilePrimarySchemas(profileInfo: UserProfilePrimaryMsgSchemaConfigs) {
   const profileImageSchema = union([literal('avatar'), literal('background')])

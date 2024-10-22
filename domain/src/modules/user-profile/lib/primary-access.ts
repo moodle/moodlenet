@@ -17,7 +17,7 @@ export async function accessUserProfile({
   }
   const { userProfile } = findResult
   const currentUserSessionInfo = await validate_currentUserSessionInfo({ ctx })
-  const { profileInfo, id } = userProfile
+  const { info: profileInfo, id } = userProfile
   const isThisUserProfilePublisher = userProfile.iamUser.roles.includes('publisher')
   if (!currentUserSessionInfo.authenticated) {
     if (!isThisUserProfilePublisher) {
@@ -31,6 +31,7 @@ export async function accessUserProfile({
         permissions: _all_user_profile_permissions_disallowed,
         user: null,
         flags: { followed: true },
+        urlSafeProfileName: userProfile.urlSafeProfileName,
       }
     }
   }
@@ -63,6 +64,7 @@ export async function accessUserProfile({
     },
     user: itsMe || currentUserIsAdmin ? userProfile.iamUser : null,
     flags: { followed: !itsMe },
+    urlSafeProfileName: userProfile.urlSafeProfileName,
   }
 
   async function getProfileInfoValidationConfigs() {

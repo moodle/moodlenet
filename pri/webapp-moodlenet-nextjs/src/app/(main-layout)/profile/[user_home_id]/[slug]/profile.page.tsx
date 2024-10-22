@@ -11,18 +11,18 @@ export default async function ProfilePage({
 }: {
   params: params<'userProfileId' | 'slug'>
 }) {
-  const [foundUserProfile, userProfile] = await primary.moodle.userProfile.userProfile.access({
+  const [foundUserProfile, userProfileResponse] = await primary.moodle.userProfile.userProfile.access({
     by: { idOf: 'userProfile', userProfileId },
   })
   if (!foundUserProfile) {
     return <Fallback />
   }
-  if (userProfile.accessObject.profileInfo.urlSafeName !== slug) {
-    redirect(sitepaths.profile[userProfile.accessObject.id]![userProfile.accessObject.profileInfo.urlSafeName]!())
+  if (userProfileResponse.accessObject.urlSafeProfileName !== slug) {
+    redirect(sitepaths.profile[userProfileResponse.accessObject.id]![userProfileResponse.accessObject.urlSafeProfileName]!())
   }
 
   const mainProfileCardDeps: mainProfileCardProps = {
-    userProfile: userProfile.accessObject,
+    userProfile: userProfileResponse.accessObject,
   }
 
   return <ProfileClient mainProfileCardDeps={mainProfileCardDeps} />

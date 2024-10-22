@@ -9,6 +9,7 @@ import {
   userProfileId,
   userProfileRecord,
   UserProfilePrimaryMsgSchemaConfigs,
+  useProfileImageForm,
 } from './types'
 export * from './types'
 
@@ -24,7 +25,7 @@ export default interface UserProfileDomain {
         moduleInfo(): Promise<{ schemaConfigs: UserProfilePrimaryMsgSchemaConfigs }>
       }
       editProfile: {
-        useTempImageAsProfileImage(_: { as: profileImage; tempId: string }): Promise<useTempFileResult>
+        useTempImageAsProfileImage(_: useProfileImageForm): Promise<useTempFileResult>
         editProfileInfo(_: {
           userProfileId: userProfileId
           profileInfo: deep_partial<profileInfo>
@@ -53,10 +54,14 @@ export default interface UserProfileDomain {
       }
       write: {
         updatePartialProfileInfo(_: {
-          id: userProfileId
+          userProfileId: userProfileId
           partialProfileInfo: deep_partial<profileInfo>
-        }): Promise<ok_ko<{ userProfileId: userProfileId; userId: userId }>>
+        }): Promise<ok_ko<void>>
         useTempImageInProfile(_: { as: profileImage; id: userProfileId; tempId: string }): Promise<useTempFileResult>
+        updatePartialUserProfile(_: {
+          userProfileId: userProfileId
+          partialUserProfile: Partial<userProfileRecord>
+        }): Promise<ok_ko<void>>
       }
     }
   }

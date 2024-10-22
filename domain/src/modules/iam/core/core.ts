@@ -385,18 +385,24 @@ export const iam_core: moduleCore<'iam'> = {
         userProfile: {
           write: {
             async updatePartialProfileInfo([
-              [done, res],
+              [done],
               {
+                userProfileId,
                 partialProfileInfo: { displayName },
               },
             ]) {
               if (!done || typeof displayName !== 'string') {
                 return
               }
-
+              const [found, response] = await ctx.mod.userProfile.query.getUserProfile({
+                by: { idOf: 'userProfile', userProfileId },
+              })
+              if (!found) {
+                return
+              }
               await ctx.sync.userDisplayname({
                 displayName,
-                userId: res.userId,
+                userId: response.userProfile.iamUser.id,
               })
             },
           },

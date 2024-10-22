@@ -11,7 +11,8 @@ export type userProfileId = string
 export type userProfileRecord = {
   id: userProfileId
   iamUser: iamUserExcerpt
-  profileInfo: profileInfo
+  info: profileInfo
+  urlSafeProfileName: string
   myDrafts: myDrafts
   eduInterestFields: userInterestFields
   moodlenet: moodlenetUserData
@@ -30,6 +31,7 @@ export type userProfilePermissions = flags<'follow' | 'editRoles' | 'sendMessage
 export type user_profile_access_object = {
   id: userProfileId
   profileInfo: profileInfo
+  urlSafeProfileName: string
   permissions: userProfilePermissions
   flags: flags<'followed'>
   user: _maybe<iamUserExcerpt>
