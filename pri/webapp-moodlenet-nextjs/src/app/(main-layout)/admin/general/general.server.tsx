@@ -5,7 +5,7 @@ import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import { priAccess } from '../../../../lib/server/session-access'
+import { primary } from '../../../../lib/server/session-access'
 import { provideAdminGeneralSchemas } from './general.common'
 
 export async function getAdminGeneralSchemas() {
@@ -21,10 +21,10 @@ export const saveGeneralInfoAction = defaultSafeActionClient
     const { moodleNetInfoSchema, orgInfoSchema } = await getAdminGeneralSchemas()
 
     const [[mnetDone], [orgDone]] = await Promise.all([
-      priAccess().net.admin.updatePartialMoodleNetInfo({
+      primary.moodle.net.admin.updatePartialMoodleNetInfo({
         partialInfo: moodleNetInfoSchema.parse(adminGeneralForm),
       }),
-      priAccess().org.admin.updatePartialOrgInfo({
+      primary.moodle.org.admin.updatePartialOrgInfo({
         partialInfo: orgInfoSchema.parse(adminGeneralForm),
       }),
     ])

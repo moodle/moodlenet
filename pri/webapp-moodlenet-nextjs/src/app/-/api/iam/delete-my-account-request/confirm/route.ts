@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 import { setAuthTokenCookie } from '../../../../../../lib/server/auth'
-import { priAccess } from '../../../../../../lib/server/session-access'
+import { primary } from '../../../../../../lib/server/session-access'
 
 export async function GET(req: NextRequest) {
   const { success, data: selfDeletionConfirmationToken } = signed_token_schema.safeParse(
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  const [ok, response] = await priAccess().iam.myAccount.confirmSelfDeletionRequest({
+  const [ok, response] = await primary.moodle.iam.myAccount.confirmSelfDeletionRequest({
     selfDeletionConfirmationToken,
     reason: '',
   })

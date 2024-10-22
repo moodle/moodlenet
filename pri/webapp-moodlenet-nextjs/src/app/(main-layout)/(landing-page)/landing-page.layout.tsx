@@ -1,4 +1,4 @@
-import { priAccess } from '../../../lib/server/session-access'
+import { primary } from '../../../lib/server/session-access'
 import { getSiteGeneralInfo } from '../../../lib/server/siteGeneralInfo'
 import { layoutPropsWithChildren, slotsMap } from '../../../lib/server/utils/slots'
 import defaultBackground from '../../../ui/lib/assets/img/default-landing-background.png'
@@ -7,13 +7,10 @@ import { LandingHeadSearchbox /* , LandingHeadShareButton  */ } from './landing-
 import './landing-page.style.scss'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
-  const [info, layouts] = await Promise.all([
-    getSiteGeneralInfo(),
-    priAccess().netWebappNextjs.webapp.layouts(),
-  ])
+  const [info, layouts] = await Promise.all([getSiteGeneralInfo(), primary.moodle.netWebappNextjs.webapp.layouts()])
 
   const { head, content } = slotsMap(props, layouts.pages.landing.slots)
-  const { userSession } = await priAccess().iam.session.getUserSession()
+  const { userSession } = await primary.moodle.iam.session.getUserSession()
 
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,
