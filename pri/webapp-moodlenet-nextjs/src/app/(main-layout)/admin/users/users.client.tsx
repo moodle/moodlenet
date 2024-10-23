@@ -10,7 +10,7 @@ import useQueryParams from '../../../../ui/lib/nextjs/queryParams'
 import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import Searchbox from '../../../../ui/atoms/Searchbox/Searchbox'
-import { userRecord, userRole } from '@moodle/module/user-account'
+import { userAccountRecord, userRole } from '@moodle/module/user-account'
 import { editUserRole } from './users.server'
 
 export type UsersProps = {
@@ -60,7 +60,7 @@ export function UsersClient({ users }: UsersProps) {
   )
 }
 
-export type UserRow = Pick<userRecord, 'id' | 'contacts' | 'displayName' | 'roles'>
+export type UserRow = Pick<userAccountRecord, 'id' | 'contacts' | 'displayName' | 'roles'>
 type RowProps = {
   user: UserRow
 }

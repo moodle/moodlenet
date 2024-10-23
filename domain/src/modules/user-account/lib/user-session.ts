@@ -1,5 +1,5 @@
 import { d_u__d } from '@moodle/lib-types'
-import { AuthenticatedUserSession, userRecord, userRole, userSession, userSessionData } from '../types'
+import { AuthenticatedUserSession, userAccountRecord, userRole, userSession, userSessionData } from '../types'
 
 export function hasUserSessionRole(
   userSession: userSession,
@@ -31,12 +31,14 @@ export function isGuestUserSession(userSession: userSession): userSession is d_u
 }
 ;``
 //
-export function userRecord2SessionUserData(userRecord: Pick<userRecord, keyof userSessionData>): userSessionData {
+export function userAccountRecord2SessionUserData(
+  userAccountRecord: Pick<userAccountRecord, keyof userSessionData>,
+): userSessionData {
   return {
-    id: userRecord.id,
-    displayName: userRecord.displayName,
-    roles: userRecord.roles,
-    contacts: userRecord.contacts,
+    id: userAccountRecord.id,
+    displayName: userAccountRecord.displayName,
+    roles: userAccountRecord.roles,
+    contacts: userAccountRecord.contacts,
   }
 }
 

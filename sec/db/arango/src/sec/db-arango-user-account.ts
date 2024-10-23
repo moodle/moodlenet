@@ -6,9 +6,9 @@ import { db_struct } from '../db-structure'
 import {
   getUserByEmail,
   getUserById,
-  userDocument,
-  userDocument2userRecord,
-  userRecord2userDocument,
+  userAccountDocument,
+  userAccountDocument2userAccountRecord,
+  userAccountRecord2userAccountDocument,
 } from './db-arango-user-account-lib'
 
 export function user_account_secondary_factory({ db_struct }: { db_struct: db_struct }): secondaryProvider {
@@ -25,9 +25,9 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
         },
         write: {
           async saveNewUser({ newUser }) {
-            const userDocument = userRecord2userDocument(newUser)
+            const userAccountDocument = userAccountRecord2userAccountDocument(newUser)
             const savedUser = await db_struct.userAccount.coll.user
-              .save(userDocument, { overwriteMode: 'conflict', returnNew: true })
+              .save(userAccountDocument, { overwriteMode: 'conflict', returnNew: true })
               .catch(() => null)
 
             return [!!savedUser?.new, _void]
@@ -58,7 +58,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
               )
               .catch(() => null)
             return deactivatedUser?.old
-              ? [true, { deactivatedUser: userDocument2userRecord(deactivatedUser.old) }]
+              ? [true, { deactivatedUser: userAccountDocument2userAccountRecord(deactivatedUser.old) }]
               : [false, _void]
           },
           async setUserPassword({ newPasswordHash, userId }) {
@@ -99,7 +99,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
                       SORT sim DESC`
               : aql``
             const deactivatedFilter = includeDeactivated ? aql`` : aql`FILTER NOT(user.deactivated)`
-            const userDocs_cursor = await db_struct.userAccount.db.query<userDocument>(
+            const userDocs_cursor = await db_struct.userAccount.db.query<userAccountDocument>(
               aql`
                 FOR user IN ${db_struct.userAccount.coll.user}
                 ${deactivatedFilter}
@@ -109,7 +109,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
                 `,
             )
             const userDocs = await userDocs_cursor.all()
-            return { users: userDocs.map(userDocument2userRecord) }
+            return { users: userDocs.map(userAccountDocument2userAccountRecord) }
           },
           activeUsersNotLoggedInFor(_) {
             throw new Error('Not implemented')

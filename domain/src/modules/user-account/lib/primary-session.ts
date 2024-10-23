@@ -2,7 +2,7 @@ import { ok_ko, signed_expire_token } from '@moodle/lib-types'
 import assert from 'assert'
 import { baseContext, ErrorXxx, primaryContext } from '../../../types'
 import { userId, userRole, userSession, userSessionData } from '../types'
-import { hasUserSessionRole, userRecord2SessionUserData, userSessionInfo } from './user-session'
+import { hasUserSessionRole, userAccountRecord2SessionUserData, userSessionInfo } from './user-session'
 
 // System Session
 export type sessionLibDep = {
@@ -92,13 +92,13 @@ export async function generateSessionForUserId({
   ctx: Pick<baseContext, 'mod'>
   userId: userId
 }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>> {
-  const [, userRecord] = await ctx.mod.userAccount.query.userBy({ by: 'id', userId })
-  if (!userRecord) {
+  const [, userAccountRecord] = await ctx.mod.userAccount.query.userBy({ by: 'id', userId })
+  if (!userAccountRecord) {
     return [false, { reason: 'userNotFound' }]
   }
   const userSessionToken = await generateSessionForUserData({
     ctx,
-    user: userRecord2SessionUserData(userRecord),
+    user: userAccountRecord2SessionUserData(userAccountRecord),
   })
   return [true, { userSessionToken }]
 }

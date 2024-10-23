@@ -18,7 +18,7 @@ import type {
   signupForm,
   userDeactivationReason,
   userId,
-  userRecord,
+  userAccountRecord,
   userRole,
   userSession,
 } from './types'
@@ -43,7 +43,7 @@ export default interface userAccountDomain {
           role: userRole
           action: 'set' | 'unset'
         }): Promise<ok_ko<{ updatedRoles: userRole[] }, { userNotFound: unknown }>>
-        searchUsers(_: { textSearch: string }): Promise<{ users: userRecord[] }>
+        searchUsers(_: { textSearch: string }): Promise<{ users: userAccountRecord[] }>
         deactivateUser(_: {
           userId: userId
           reason: string
@@ -97,7 +97,7 @@ export default interface userAccountDomain {
     userAccount: {
       queue: unknown
       write: {
-        saveNewUser(_: { newUser: userRecord }): Promise<ok_ko<void>>
+        saveNewUser(_: { newUser: userAccountRecord }): Promise<ok_ko<void>>
         setUserPassword(_: { userId: userId; newPasswordHash: string }): Promise<ok_ko<void>>
 
         deactivateUser(_: {
@@ -105,7 +105,7 @@ export default interface userAccountDomain {
           anonymize: boolean
           reason: userDeactivationReason
           at?: date_time_string
-        }): Promise<ok_ko<{ deactivatedUser: userRecord }>>
+        }): Promise<ok_ko<{ deactivatedUser: userAccountRecord }>>
 
         setUserRoles(_: {
           userId: userId
@@ -138,11 +138,11 @@ export default interface userAccountDomain {
         activeUsersNotLoggedInFor(_: {
           time: time_duration_string
           inactiveNotificationSent: boolean
-        }): Promise<{ inactiveUsers: userRecord[] }>
+        }): Promise<{ inactiveUsers: userAccountRecord[] }>
 
-        userBy(_: d_u<{ email: { email: email_address }; id: { userId: userId } }, 'by'>): Promise<ok_ko<userRecord>>
+        userBy(_: d_u<{ email: { email: email_address }; id: { userId: userId } }, 'by'>): Promise<ok_ko<userAccountRecord>>
 
-        usersByText(_: { text: string; includeDeactivated?: boolean }): Promise<{ users: userRecord[] }>
+        usersByText(_: { text: string; includeDeactivated?: boolean }): Promise<{ users: userAccountRecord[] }>
       }
       sync: {
         userDisplayname(_: { userId: userId; displayName: string }): Promise<ok_ko<void>>

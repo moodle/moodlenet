@@ -6,10 +6,10 @@ import { userModerations } from '../../net/types/moderation'
 export type userRole = 'admin' | 'publisher'
 
 export type userId = string
-export type userRecord = {
+export type userAccountRecord = {
   id: userId
   createdAt: date_time_string
-  //REVIEW: possibly replace `displayName` with a `user_profile_excerpt` type. (ATM userProfileRecord is created as a consequence of a new userRecord creation whereas `displayName` is provided during signup.)
+  //REVIEW: possibly replace `displayName` with a `user_profile_excerpt` type. (ATM userProfileRecord is created as a consequence of a new userAccountRecord creation whereas `displayName` is provided during signup.)
   displayName: string
   roles: userRole[]
   roleHistory: { at: date_time_string; by: userId; oldRoles: userRole[]; newRoles: userRole[] }[]

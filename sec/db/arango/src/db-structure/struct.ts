@@ -1,6 +1,6 @@
 import { modConfigName, ModConfigs } from '@moodle/domain'
 import { Database } from 'arangojs'
-import { userDocument } from '../sec/db-arango-user-account-lib/types'
+import { userAccountDocument } from '../sec/db-arango-user-account-lib/types'
 import { userProfileDocument } from '../sec/db-arango-user-profile-lib/types'
 import { database_connections } from './types'
 
@@ -10,7 +10,7 @@ export function getDbStruct(database_connections: database_connections) {
     retryOnConflict: 5,
   }
   const data_db = new Database({ ...baseConnectionConfig, ...database_connections.data })
-  const userAccount_db = new Database({ ...baseConnectionConfig, ...database_connections.userAccount })
+  const user_account_db = new Database({ ...baseConnectionConfig, ...database_connections.userAccount })
   const mng_db = new Database({ ...baseConnectionConfig, ...database_connections.mng })
   const sys_db = new Database({
     ...baseConnectionConfig,
@@ -35,9 +35,9 @@ export function getDbStruct(database_connections: database_connections) {
       },
     },
     userAccount: {
-      db: userAccount_db,
+      db: user_account_db,
       coll: {
-        user: userAccount_db.collection<userDocument>('user'),
+        user: user_account_db.collection<userAccountDocument>('user'),
       },
     },
   }

@@ -1,9 +1,9 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { date_time_string, email_address, non_negative_integer_schema } from '@moodle/lib-types'
 import { password_hash } from '../../crypto/types'
-import { userRecord, userRole } from '../types'
+import { userAccountRecord, userRole } from '../types'
 
-export interface CreateNewUserRecordDataArg {
+export interface CreateNewUserAccountRecordDataArg {
   displayName: string
   email: email_address
   passwordHash: password_hash
@@ -12,14 +12,14 @@ export interface CreateNewUserRecordDataArg {
   roles?: userRole[]
 }
 
-export async function createNewUserRecordData({
+export async function createNewUserAccountRecordData({
   displayName,
   email,
   passwordHash,
   roles = [],
   createdAt,
   lastLogin,
-}: CreateNewUserRecordDataArg): Promise<userRecord> {
+}: CreateNewUserAccountRecordDataArg): Promise<userAccountRecord> {
   const now = date_time_string('now')
   const id = await generateNanoId()
   return {

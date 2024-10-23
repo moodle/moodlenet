@@ -5,10 +5,10 @@ import { moduleCore } from '../../../types'
 import {
   assert_authorizeAuthenticatedCurrentUserSession,
   assert_authorizeCurrentUserSessionWithRole,
-  createNewUserRecordData,
+  createNewUserAccountRecordData,
   generateSessionForUserData,
   generateSessionForUserId,
-  userRecord2SessionUserData,
+  userAccountRecord2SessionUserData,
   validateCurrentUserSession,
 } from '../lib'
 
@@ -154,7 +154,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           }
 
           const now = date_time_string('now')
-          const newUser = await createNewUserRecordData({
+          const newUser = await createNewUserAccountRecordData({
             createdAt: now,
             roles: newlyCreatedUserRoles,
             displayName: validatedSignedTokenData.displayName,
@@ -168,23 +168,23 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           return newUserCreated ? [true, { userId: newUser.id }] : [false, { reason: 'unknown' }]
         },
         async login({ loginForm }) {
-          const [found, userRecord] = await ctx.mod.userAccount.query.userBy({
+          const [found, userAccountRecord] = await ctx.mod.userAccount.query.userBy({
             by: 'email',
             email: loginForm.email,
           })
-          if (!(found && !userRecord.deactivated)) {
+          if (!(found && !userAccountRecord.deactivated)) {
             return [false, _void]
           }
           const [verified] = await ctx.mod.crypto.service.verifyPasswordHash({
             plainPassword: loginForm.password,
-            passwordHash: userRecord.passwordHash,
+            passwordHash: userAccountRecord.passwordHash,
           })
 
           if (!verified) {
             return [false, _void]
           }
 
-          const user = userRecord2SessionUserData(userRecord)
+          const user = userAccountRecord2SessionUserData(userAccountRecord)
           const session = await generateSessionForUserData({ ctx, user })
           return [
             true,
@@ -307,7 +307,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           }
 
           const { validatedSignedTokenData } = validation
-          const [found, userRecord] = await ctx.mod.userAccount.query.userBy({
+          const [found, userAccountRecord] = await ctx.mod.userAccount.query.userBy({
             by: 'email',
             email: validatedSignedTokenData.email,
           })
@@ -319,7 +319,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           })
           const [pwdChanged] = await ctx.write.setUserPassword({
             newPasswordHash: passwordHash,
-            userId: userRecord.id,
+            userId: userAccountRecord.id,
           })
           return pwdChanged ? [true, _void] : [false, { reason: 'unknown' }]
         },
@@ -423,7 +423,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
       const { passwordHash } = await ctx.mod.crypto.service.hashPassword({
         plainPassword: __redacted__(await generateNanoId({ length: 20 })),
       })
-      const newUser = await createNewUserRecordData({
+      const newUser = await createNewUserAccountRecordData({
         displayName: 'Admin',
         email: sysAdminInfo.email,
         passwordHash,
