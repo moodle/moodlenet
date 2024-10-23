@@ -1,7 +1,7 @@
 import { fetchAllSchemaConfigs, makeAllPrimarySchemas } from '@moodle/domain/lib'
-import { priAccess } from './session-access'
+import { primary } from './session-access'
 
 export async function getAllPrimarySchemas() {
-  const allSchemaConfigs = await fetchAllSchemaConfigs({ primary: priAccess() })
+  const allSchemaConfigs = await fetchAllSchemaConfigs({ primary: primary.moodle })
   return makeAllPrimarySchemas(allSchemaConfigs)
 }

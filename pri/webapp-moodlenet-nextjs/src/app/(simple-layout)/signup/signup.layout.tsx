@@ -1,4 +1,4 @@
-import { priAccess } from '../../../lib/server/session-access'
+import { primary } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotItem, slotsMap } from '../../../lib/server/utils/slots'
 import { SignupCard, SignupCardProps } from './signup.client'
 import './signup.style.scss'
@@ -6,7 +6,7 @@ import './signup.style.scss'
 export default async function SignupLayout(props: layoutPropsWithChildren) {
   const {
     pages: { signup },
-  } = await priAccess().netWebappNextjs.webapp.layouts()
+  } = await primary.moodle.netWebappNextjs.webapp.layouts()
 
   const signupCardProps: SignupCardProps = {
     signupMethods: signup.methods.map(({ label, panel }) => ({

@@ -1,7 +1,6 @@
 import type { deep_partial, ok_ko } from '@moodle/lib-types'
 import { ModConfigs, sys_admin_info } from '../../types/mod-configs'
 import { appDeployments } from './types/app-deployments'
-export * from '../../lib/deployment'
 export * from './types'
 
 export default interface EnvDomain {

@@ -1,22 +1,8 @@
-import {
-  coreProvider,
-  coreProviderObject,
-  domainAccess,
-  domainLogger,
-  LogSeverity,
-  messageDispatcher,
-  secondaryProvider,
-} from '@moodle/domain'
-import { _any } from '@moodle/lib-types'
+import { domainAccess, LogSeverity, messageDispatcher } from '@moodle/domain'
+import { configuration } from '@moodle/domain/lib'
 
 export type configurator_deps = { domainAccess: domainAccess; loggerConfigs: loggerConfigs }
 export type configurator = (_: configurator_deps) => Promise<configuration>
-export type configuration = {
-  coreProviderObjects: coreProviderObject<_any>[]
-  secondaryProviders: secondaryProvider[]
-  start_background_processes: boolean
-  mainLogger: domainLogger
-}
 
 export type mainMessageDispatcherDeps = {
   domainAccess: domainAccess

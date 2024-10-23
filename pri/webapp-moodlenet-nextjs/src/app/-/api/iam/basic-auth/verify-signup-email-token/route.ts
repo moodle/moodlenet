@@ -3,19 +3,17 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 import { setAuthTokenCookie } from '../../../../../../lib/server/auth'
-import { priAccess } from '../../../../../../lib/server/session-access'
+import { primary } from '../../../../../../lib/server/session-access'
 
 export async function GET(req: NextRequest) {
-  const signupEmailVerificationToken = signed_token_schema.parse(
-    await req.nextUrl.searchParams.get('token'),
-  )
+  const signupEmailVerificationToken = signed_token_schema.parse(await req.nextUrl.searchParams.get('token'))
   if (!signupEmailVerificationToken) {
     return new Response(`missing required token`, {
       status: 400,
     })
   }
 
-  const [ok, response] = await priAccess().iam.access.createNewUserByEmailVerificationToken({
+  const [ok, response] = await primary.moodle.iam.access.createNewUserByEmailVerificationToken({
     signupEmailVerificationToken,
   })
   if (!ok) {
@@ -23,7 +21,7 @@ export async function GET(req: NextRequest) {
       status: 400,
     })
   }
-  const [done, session] = await await priAccess().iam.session.generateUserSessionToken({
+  const [done, session] = await primary.moodle.iam.session.generateUserSessionToken({
     userId: response.userId,
   })
   if (!done) {

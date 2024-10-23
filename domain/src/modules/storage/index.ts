@@ -2,7 +2,6 @@ import type { ok_ko, path } from '@moodle/lib-types'
 import { user_home_id } from '../user-home'
 import { uploaded_blob_meta } from './types/temp'
 import { uploadMaxSizeConfigs } from './types/configs'
-export * from './lib'
 export * from './types'
 
 export default interface StorageDomain {

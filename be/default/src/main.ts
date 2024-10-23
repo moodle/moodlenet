@@ -4,13 +4,10 @@ import { binder, configurator, mainMessageDispatcher } from './types.js'
 import { _maybe } from '@moodle/lib-types'
 dotenvExpand(dotenv.config())
 
-optimport<binder>(process.env.MOODLE_BINDER_MODULE, './default-binder.js').then(binder => {
+optimport<binder>(process.env.MOODLE_BINDER_MODULE, './simple-http-binder.js').then(binder => {
   binder({
     messageDispatcher: async ({ domainAccess }) => {
-      const configurator = await optimport<configurator>(
-        process.env.MOODLE_CONFIGURATOR_MODULE,
-        './default-configurator.js',
-      )
+      const configurator = await optimport<configurator>(process.env.MOODLE_CONFIGURATOR_MODULE, './default-configurator.js')
       const configuration = await configurator({
         domainAccess,
         loggerConfigs: { consoleLevel: 'debug' },
@@ -18,7 +15,7 @@ optimport<binder>(process.env.MOODLE_BINDER_MODULE, './default-binder.js').then(
 
       const messageDispatcher = await optimport<mainMessageDispatcher>(
         process.env.MOODLE_DISPATCHER_MODULE,
-        './default-message-dispatcher.js',
+        './feedbackloop-message-dispatcher.js',
       )
       return messageDispatcher({
         configuration,

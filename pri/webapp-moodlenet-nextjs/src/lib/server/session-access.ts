@@ -11,38 +11,67 @@ import { sitepaths } from '../common/utils/sitepaths'
 import { getAuthTokenCookie } from './auth'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
+import { _any, map } from '@moodle/lib-types'
+import { hasher } from 'node-object-hash'
 const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL
 
 const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
-export function priAccess(): MoodleDomain['primary'] {
-  return _domainAccess().primary
+export const primary = {
+  get moodle(): MoodleDomain['primary'] {
+    return _domainAccess().primary
+  },
 }
 
-const request_session_async_storage = new AsyncLocalStorage<MoodleDomain>()
-
+const request_session_async_storage = new AsyncLocalStorage<{ moodle_domain: MoodleDomain; cache: map<_any> }>()
 function _domainAccess(): MoodleDomain {
-  const _existing_currentStore = request_session_async_storage.getStore()
-  if (_existing_currentStore) {
-    return _existing_currentStore
+  const _existing_current_moodle_domain_store = request_session_async_storage.getStore()
+  if (_existing_current_moodle_domain_store) {
+    return _existing_current_moodle_domain_store.moodle_domain
   }
-
-  const primarySessionPromise = getPrimarySession()
-
   const trnspClient = http_bind.client()
-
+  const primarySessionPromise = getPrimarySession()
+  const cache = new Map<string, _any>()
+  const { hash } = hasher({
+    coerce: false,
+    alg: 'sha1',
+    enc: 'hex',
+    // NOTE : see, this kind of cache can become tricky because of sorting:
+    // it's good in general but for certain cases, it can be a problem
+    // maybe primary & _domainAccess could have a flag to disable
+    // moreover, cache should be enabled for query endpoints only
+    // but atm we have query|write channel discrimination in secondary only
+    sort: true,
+  })
   const moodle_domain = createMoodleDomainProxy({
     async ctrl({ domainMsg }) {
-      return trnspClient(
-        {
-          ...domainMsg,
-          primarySession: await primarySessionPromise,
-        },
-        requestTarget,
-      )
+      const domainMsgHash = hash(domainMsg)
+      // console.log(cache.has(domainMsgHash) ? `${domainMsgHash}**cache**  ` : '--fetch--  ', domainMsg.endpoint.join('.'))
+      if (!cache.has(domainMsgHash)) {
+        cache.set(
+          domainMsgHash,
+          new Promise((resolve, reject) => {
+            primarySessionPromise
+              .then(async primarySession =>
+                trnspClient(
+                  {
+                    ...domainMsg,
+                    primarySession,
+                  },
+                  requestTarget,
+                ),
+              )
+              .then(resolve, reject)
+          }),
+        )
+      }
+
+      return cache.get(domainMsgHash)
     },
   })
-  request_session_async_storage.enterWith(moodle_domain)
+
+  request_session_async_storage.enterWith({ moodle_domain, cache })
+
   return moodle_domain
   // FIXME:
   // The following block should refresh the session token before it expires
@@ -72,7 +101,7 @@ function _domainAccess(): MoodleDomain {
 }
 
 export async function getUserSession() {
-  const { userSession } = await priAccess().iam.session.getUserSession()
+  const { userSession } = await primary.moodle.iam.session.getUserSession()
   return userSession
 }
 

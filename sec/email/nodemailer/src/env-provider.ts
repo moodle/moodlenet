@@ -4,7 +4,7 @@ import { object, string } from 'zod'
 import { NodemailerSecEnv } from './types'
 
 export type env_keys = 'MOODLE_SMTP_URL' | 'MOODLE_SMTP_SENDER_NAME' | 'MOODLE_SMTP_SENDER_ADDRESS'
-export function provideEnv({
+export function provideNodemailerSecEnv({
   env,
   logWarn = console.warn,
 }: {

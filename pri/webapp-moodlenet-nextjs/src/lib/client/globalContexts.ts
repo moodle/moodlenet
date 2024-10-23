@@ -1,6 +1,7 @@
 import { AllSchemaConfigs } from '@moodle/domain'
 import { makeAllPrimarySchemas } from '@moodle/domain/lib'
-import { asset, getAssetUrl } from '@moodle/module/storage'
+import { asset } from '@moodle/module/storage'
+import { getAssetUrl } from '@moodle/module/storage/lib'
 import { appDeployments } from 'domain/src/modules/env'
 import { createContext, useContext, useMemo } from 'react'
 

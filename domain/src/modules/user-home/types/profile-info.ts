@@ -1,7 +1,8 @@
 import { _nullish, url_string } from '@moodle/lib-types'
 import { asset } from '../../storage'
 
-export interface ProfileInfo {
+export type profileInfo = {
+  urlSafeName: string
   displayName: string
   aboutMe: string
   location: string

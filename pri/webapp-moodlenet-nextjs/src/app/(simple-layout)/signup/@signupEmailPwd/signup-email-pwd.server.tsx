@@ -5,7 +5,7 @@ import { returnValidationErrors } from 'next-safe-action'
 import { redirect } from 'next/navigation'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import { priAccess } from '../../../../lib/server/session-access'
+import { primary } from '../../../../lib/server/session-access'
 import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
 
 export async function getSignupSchema() {
@@ -16,16 +16,12 @@ export async function getSignupSchema() {
 }
 
 export const signupAction = defaultSafeActionClient
-  .schema(
-    async (/* prevSchema https://next-safe-action.dev/docs/define-actions/extend-previous-schemas */) =>
-      getSignupSchema(),
-  )
+  .schema(async (/* prevSchema https://next-safe-action.dev/docs/define-actions/extend-previous-schemas */) =>
+    getSignupSchema(),)
   .action(async ({ parsedInput: signupForm }) => {
-    const redirectUrl = (await srvSiteUrls()).full['-'].api.iam['basic-auth'][
-      'verify-signup-email-token'
-    ]()
+    const redirectUrl = (await srvSiteUrls()).full['-'].api.iam['basic-auth']['verify-signup-email-token']()
 
-    const [done, resp] = await priAccess().iam.access.signupRequest({
+    const [done, resp] = await primary.moodle.iam.access.signupRequest({
       signupForm,
       redirectUrl,
     })

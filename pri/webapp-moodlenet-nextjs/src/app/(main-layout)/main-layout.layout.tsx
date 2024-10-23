@@ -17,15 +17,15 @@ import {
 
 import { filterOutFalsies } from '@moodle/lib-types'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
-import { priAccess } from '../../lib/server/session-access'
+import { primary } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
 import './main-layout.style.scss'
 import { userSessionInfo } from '@moodle/module/iam/lib'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const [{ userSession }, layouts] = await Promise.all([
-    priAccess().iam.session.getUserSession(),
-    priAccess().netWebappNextjs.webapp.layouts(),
+    primary.moodle.iam.session.getUserSession(),
+    primary.moodle.netWebappNextjs.webapp.layouts(),
   ])
   return (
     <div className={`main-layout`}>
@@ -43,53 +43,32 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const avatarUrl = null //user_session.user.avatarUrl
     const userHomeAccessObject =
       authenticated &&
-      (await priAccess()
-        .userHome.userHome.access({ by: { idOf: 'user', user_id: authenticated.user.id } })
+      (await primary.moodle.userHome.userHome
+        .access({ by: { idOf: 'user', user_id: authenticated.user.id } })
         .then(([userHomeFound, userHomeResult]) => {
           return userHomeFound && userHomeResult.accessObject
         }))
 
     const baseProfilePage =
-      userHomeAccessObject &&
-      sitepaths.profile[userHomeAccessObject.id]![userHomeAccessObject.profileInfo.displayName]!
+      userHomeAccessObject && sitepaths.profile[userHomeAccessObject.id]![userHomeAccessObject.profileInfo.urlSafeName]!
     const defaultRights = authenticated
-      ? await(async () => {
+      ? await (async () => {
           return [
             <AvatarMenu
               key="avatar-menu"
               avatarUrl={avatarUrl}
               menuItems={filterOutFalsies([
-                baseProfilePage && (
-                  <ProfileLink
-                    key="profile"
-                    avatarUrl={avatarUrl}
-                    profileHref={baseProfilePage()}
-                  />
-                ),
-                baseProfilePage && (
-                  <BookmarksLink key="bookmarks" bookmarksHref={baseProfilePage.bookmarks()} />
-                ),
-                baseProfilePage && (
-                  <FollowingLink key="following" followingHref={baseProfilePage.followers()} />
-                ),
-                baseProfilePage && (
-                  <UserSettingsLink
-                    key="user-settings"
-                    settingsHref={sitepaths.settings.general()}
-                  />
-                ),
-                authenticated.isAdmin && (
-                  <AdminSettingsLink key="admin-settings" adminHref={sitepaths.admin.general()} />
-                ),
+                baseProfilePage && <ProfileLink key="profile" avatarUrl={avatarUrl} profileHref={baseProfilePage()} />,
+                baseProfilePage && <BookmarksLink key="bookmarks" bookmarksHref={baseProfilePage.bookmarks()} />,
+                baseProfilePage && <FollowingLink key="following" followingHref={baseProfilePage.followers()} />,
+                baseProfilePage && <UserSettingsLink key="user-settings" settingsHref={sitepaths.settings.general()} />,
+                authenticated.isAdmin && <AdminSettingsLink key="admin-settings" adminHref={sitepaths.admin.general()} />,
                 <Logout key="logout" logout={logout} />,
               ])}
             />,
           ]
         })()
-      : [
-          <LoginHeaderButton key="login-header-button" />,
-          <SignupHeaderButton key="signup-header-button" />,
-        ]
+      : [<LoginHeaderButton key="login-header-button" />, <SignupHeaderButton key="signup-header-button" />]
 
     return {
       left: [...defaultLefts, ...left],

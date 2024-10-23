@@ -2,7 +2,6 @@ import type { time_duration_string } from '@moodle/lib-types'
 import { IamPrimaryMsgSchemaConfigs } from './primary-schemas'
 import type { user_role } from './user'
 
-export type v1_0 = { v: '1_0' }
 export interface Configs {
   iamPrimaryMsgSchemaConfigs: IamPrimaryMsgSchemaConfigs
   roles: {

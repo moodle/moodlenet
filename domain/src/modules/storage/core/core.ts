@@ -1,55 +1,49 @@
-import { coreBootstrap } from '../../../types'
+import { moduleCore } from '../../../types'
 
-export const storage_core: coreBootstrap<'storage'> = ({ domain, log }) => {
-  return {
-    modName: 'storage',
-    provider(coreCtx) {
-      return {
-        startBackgroundProcess() {
-          delStales()
-          function delStales() {
-            log('debug', 'deleteStaleTemp files')
-            coreCtx.write
-              .deleteStaleTemp()
-              .catch(e => log('warn', 'error deleteStaleTemp', e))
-              .then(() =>
-                coreCtx.mod.env.query.modConfigs({ mod: 'storage' }).catch(e => {
-                  log('alert', 'error query modConfigs, defaulting tempFileMaxRetentionSeconds to 10 minutes', e)
-                  return { configs: { tempFileMaxRetentionSeconds: 10 * 60 } }
-                }),
-              )
-              .then(({ configs: { tempFileMaxRetentionSeconds } }) => setTimeout(delStales, tempFileMaxRetentionSeconds * 1000))
-          }
+export const storage_core: moduleCore<'storage'> = {
+  modName: 'storage',
+  startBackgroundProcess(ctx) {
+    delStales()
+    function delStales() {
+      ctx.log('debug', 'deleteStaleTemp files')
+      ctx.write
+        .deleteStaleTemp()
+        .catch(e => ctx.log('warn', 'error deleteStaleTemp', e))
+        .then(() =>
+          ctx.mod.env.query.modConfigs({ mod: 'storage' }).catch(e => {
+            ctx.log('alert', 'error query modConfigs, defaulting tempFileMaxRetentionSeconds to 10 minutes', e)
+            return { configs: { tempFileMaxRetentionSeconds: 10 * 60 } }
+          }),
+        )
+        .then(({ configs: { tempFileMaxRetentionSeconds } }) => setTimeout(delStales, tempFileMaxRetentionSeconds * 1000))
+    }
+  },
+  primary(ctx) {
+    return {
+      session: {
+        async moduleInfo() {
+          const {
+            configs: { uploadMaxSize },
+          } = await ctx.mod.env.query.modConfigs({ mod: 'storage' })
+          return { uploadMaxSizeConfigs: uploadMaxSize }
         },
-        primary(priCtx) {
-          return {
-            session: {
-              async moduleInfo() {
-                const {
-                  configs: { uploadMaxSize },
-                } = await coreCtx.mod.env.query.modConfigs({ mod: 'storage' })
-                return { uploadMaxSizeConfigs: uploadMaxSize }
-              },
+      },
+    }
+  },
+  watch(ctx) {
+    return {
+      secondary: {
+        userHome: {
+          write: {
+            async createUserHome([[done], { userHome }]) {
+              if (!done) {
+                return
+              }
+              ctx.sync.createUserHome({ userHomeId: userHome.id })
             },
-          }
+          },
         },
-        watch(watchCtx) {
-          return {
-            secondary: {
-              userHome: {
-                write: {
-                  async createUserHome([[done], { userHome }]) {
-                    if (!done) {
-                      return
-                    }
-                    return watchCtx.sync.createUserHome({ userHomeId: userHome.id })
-                  },
-                },
-              },
-            },
-          }
-        },
-      }
-    },
-  }
+      },
+    }
+  },
 }

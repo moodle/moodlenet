@@ -21,12 +21,6 @@
     "strictNullChecks": true,
     "paths": {
       "@moodle/bindings-node": ["bindings/node/src/index.ts"],
-      "@moodle/core/iam": ["domain/src/modules/iam/core/index.ts"],
-      "@moodle/core/net": ["domain/src/modules/net/core/index.ts"],
-      "@moodle/core/net-webapp-nextjs": ["domain/src/modules/net-webapp-nextjs/core/index.ts"],
-      "@moodle/core/org": ["domain/src/modules/org/core/index.ts"],
-      "@moodle/core/storage": ["domain/src/modules/storage/core/index.ts"],
-      "@moodle/core/user-home": ["domain/src/modules/user-home/core/index.ts"],
       "@moodle/domain": ["domain/src/index.ts"],
       "@moodle/domain/lib": ["domain/src/lib/index.ts"],
       "@moodle/lib-email-templates/iam": ["lib/email-templates/src/moodle/iam/index.ts"],
@@ -35,24 +29,37 @@
       "@moodle/lib-jwt-jose": ["lib/jwt/jose/src/index.ts"],
       "@moodle/lib-local-fs-storage": ["lib/local-fs-storage/src/index.ts"],
       "@moodle/lib-types": ["lib/types/src/index.ts"],
+      //
       "@moodle/module/iam": ["domain/src/modules/iam/index.ts"],
       "@moodle/module/iam/lib": ["domain/src/modules/iam/lib/index.ts"],
+      "@moodle/module/iam/core": ["domain/src/modules/iam/core/index.ts"],
       "@moodle/module/iam/setup": ["domain/src/modules/iam/setup/index.ts"],
+      //
       "@moodle/module/net": ["domain/src/modules/net/index.ts"],
+      "@moodle/module/net/lib": ["domain/src/modules/net/lib/index.ts"],
+      "@moodle/module/net/core": ["domain/src/modules/net/core/index.ts"],
+      "@moodle/module/net/setup": ["domain/src/modules/net/setup/index.ts"],
+      //
       "@moodle/module/net-webapp-nextjs": ["domain/src/modules/net-webapp-nextjs/index.ts"],
       "@moodle/module/net-webapp-nextjs/lib": ["domain/src/modules/net-webapp-nextjs/lib/index.ts"],
+      "@moodle/module/net-webapp-nextjs/core": ["domain/src/modules/net-webapp-nextjs/core/index.ts"],
       "@moodle/module/net-webapp-nextjs/setup": ["domain/src/modules/net-webapp-nextjs/setup/index.ts"],
-      "@moodle/module/net/lib": ["domain/src/modules/net/lib/index.ts"],
-      "@moodle/module/net/setup": ["domain/src/modules/net/setup/index.ts"],
+      //
       "@moodle/module/org": ["domain/src/modules/org/index.ts"],
       "@moodle/module/org/lib": ["domain/src/modules/org/lib/index.ts"],
+      "@moodle/module/org/core": ["domain/src/modules/org/core/index.ts"],
       "@moodle/module/org/setup": ["domain/src/modules/org/setup/index.ts"],
+      //
       "@moodle/module/storage": ["domain/src/modules/storage/index.ts"],
       "@moodle/module/storage/lib": ["domain/src/modules/storage/lib/index.ts"],
+      "@moodle/module/storage/core": ["domain/src/modules/storage/core/index.ts"],
       "@moodle/module/storage/setup": ["domain/src/modules/storage/setup/index.ts"],
+      //
       "@moodle/module/user-home": ["domain/src/modules/user-home/index.ts"],
       "@moodle/module/user-home/lib": ["domain/src/modules/user-home/lib/index.ts"],
+      "@moodle/module/user-home/core": ["domain/src/modules/user-home/core/index.ts"],
       "@moodle/module/user-home/setup": ["domain/src/modules/user-home/setup/index.ts"],
+      //
       "@moodle/sec-crypto-default": ["sec/crypto/default/src/index.ts"],
       "@moodle/sec-db-arango": ["sec/db/arango/src/index.ts"],
       "@moodle/sec-db-arango/migrate": ["sec/db/arango/src/migrate.ts"],

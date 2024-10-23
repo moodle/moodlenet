@@ -1,6 +1,6 @@
-import sanitizeFilename from 'sanitize-filename'
-import { asset, uploaded_blob_meta, usingTempFile } from '../types'
 import { url_string } from '@moodle/lib-types'
+import sanitizeFilename from 'sanitize-filename'
+import { asset, usingTempFile } from '../types'
 
 // export function newFsFileRelativePath(filename: string, date = new Date()) {
 //   return [

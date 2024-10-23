@@ -1,4 +1,4 @@
 export * from './deployment'
 export * from './domain-proxy'
-export * from './message-dispatcher'
+export * from './domain-access-dispatcher'
 export * from './primary-schemas'

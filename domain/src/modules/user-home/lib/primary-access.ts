@@ -2,25 +2,27 @@ import { access_obj, d_u } from '@moodle/lib-types'
 import { by_user_id_or_user_home_id, user_home_access_object, user_home_permissions } from '..'
 import { sessionLibDep, validate_userSessionInfo } from '../../iam/lib'
 
+// REVIEW : consider put this access logic - as well as `access_obj` - in `iam` (a as access)
+// or consider renaming `iam` to `im` or something
 export async function accessUserHome({
-  coreCtx,
-  priCtx,
+  ctx,
   by,
 }: sessionLibDep & {
   by: by_user_id_or_user_home_id
 }): Promise<d_u<{ found: access_obj<user_home_access_object>; notFound: unknown }, 'result'>> {
-  const [found, findResult] = await coreCtx.mod.userHome.query.getUserHome({ by })
+  const [found, findResult] = await ctx.mod.userHome.query.getUserHome({ by })
 
   if (!found) {
     return { result: 'notFound' }
   }
   const { userHome } = findResult
-  const { authenticated } = await validate_userSessionInfo({ coreCtx, priCtx })
+  const currentUserSessionInfo = await validate_userSessionInfo({ ctx })
   const { profileInfo, id } = userHome
-  const isPublisher = userHome.user.roles.includes('publisher')
-
-  if (!authenticated) {
-    if (isPublisher) {
+  const isThisUserHomePublisher = userHome.user.roles.includes('publisher')
+  if (!currentUserSessionInfo.authenticated) {
+    if (!isThisUserHomePublisher) {
+      return { result: 'found', access: 'notAllowed' }
+    } else {
       return {
         id,
         result: 'found',
@@ -32,12 +34,15 @@ export async function accessUserHome({
         user: null,
         flags: { followed: true },
       }
-    } else {
-      return { result: 'found', access: 'notAllowed' }
     }
   }
 
-  const itsMe = authenticated.user.id === userHome.user.id
+  const itsMe = currentUserSessionInfo.authenticated.user.id === userHome.user.id
+  const currentUserIsAdmin = currentUserSessionInfo.authenticated.isAdmin
+
+  if (!(isThisUserHomePublisher || itsMe || currentUserIsAdmin)) {
+    return { result: 'found', access: 'notAllowed' }
+  }
 
   return {
     id,
@@ -58,14 +63,14 @@ export async function accessUserHome({
       follow: !itsMe,
       report: !itsMe,
       sendMessage: !itsMe,
-      editRoles: !itsMe && authenticated.isAdmin,
+      editRoles: !itsMe && currentUserIsAdmin,
     },
-    user: itsMe || authenticated.isAdmin ? userHome.user : null,
+    user: itsMe || currentUserIsAdmin ? userHome.user : null,
     flags: { followed: !itsMe },
   }
 
   async function getProfileInfoValidationConfigs() {
-    return (await coreCtx.mod.env.query.modConfigs({ mod: 'userHome' })).configs.profileInfoPrimaryMsgSchemaConfigs
+    return (await ctx.mod.env.query.modConfigs({ mod: 'userHome' })).configs.profileInfoPrimaryMsgSchemaConfigs
   }
 }
 

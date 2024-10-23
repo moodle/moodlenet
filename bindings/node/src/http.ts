@@ -88,7 +88,7 @@ export async function server({ messageDispatcher, port, basePath }: srv_cfg) {
       ...endpointless_domain_access,
       endpoint: req.url.replace(/^\//, '').split('/'),
     }
-    const reply = await messageDispatcher({ domainAccess })
+    const reply = await messageDispatcher({ domainAccess: domainAccess })
       .catch(e => {
         console.error(e)
         throw e
@@ -99,9 +99,7 @@ export async function server({ messageDispatcher, port, basePath }: srv_cfg) {
           return { details: e.errorXxx.details }
         } else {
           res.status(500)
-          return e instanceof Error
-            ? { name: e.name, message: e.message, stack: e.stack }
-            : { error: String(e) }
+          return e instanceof Error ? { name: e.name, message: e.message, stack: e.stack } : { error: String(e) }
         }
       })
     const replyStr = _serial(reply)

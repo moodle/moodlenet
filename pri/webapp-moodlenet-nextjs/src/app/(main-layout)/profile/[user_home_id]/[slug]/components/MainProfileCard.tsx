@@ -9,7 +9,7 @@ import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useCallback, useReducer, useRef } from 'react'
 import { useAllPrimarySchemas } from '../../../../../../lib/client/globalContexts'
-import { useFileUploader } from '../../../../../../lib/client/useFileUploader'
+import { useAssetUploader } from '../../../../../../lib/client/useAssetUploader'
 import { ApprovalButton } from '../../../../../../ui/atoms/ApproveButton/ApproveButton'
 import { FloatingMenu } from '../../../../../../ui/atoms/FloatingMenu/FloatingMenu'
 import { FollowButton } from '../../../../../../ui/atoms/FollowButton/FollowButton'
@@ -20,7 +20,9 @@ import { SecondaryButton } from '../../../../../../ui/atoms/SecondaryButton/Seco
 import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
 import { adoptProfileImage, updateProfileInfo } from '../profile.server'
 import './MainProfileCard.scss'
-import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
+// import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
+import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.png'
+import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
 
 export type mainProfileCardProps = {
   userHome: user_home_access_object
@@ -47,33 +49,32 @@ export function MainProfileCard({
   const submitFormBtnRef = useRef<HTMLButtonElement | null>(null)
 
   const [
-    displaySrcAvatar,
+    [displayAvatarSrc],
     chooseImageAvatar,
     submitAvatar,
     avatarChoosenFileError,
     // dirtyAvatar,
-  ] = useFileUploader({
-    asset: avatar ?? defaultProfileAvatarAsset,
-    async fileUploadedAction({ tempId }) {
+  ] = useAssetUploader({
+    assets: avatar,
+    async action({ tempIds: [tempId] }) {
       const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userHomeId: id })
-      if (!saveResult?.data) {
-        return { done: false, error: saveResult?.validationErrors?._errors }
-      }
 
-      return { done: true, newAsset: saveResult.data }
+      return saveResult?.data
+        ? { done: true, newAssets: [saveResult.data] }
+        : { done: false, error: saveResult?.validationErrors?._errors }
     },
     type: 'webImage',
   })
 
   const [
-    displaySrcBackground,
+    [displayBackgroundSrc],
     chooseImageBackground,
     submitBackground,
     backgroundChoosenFileError,
     // dirtyBackground,
-  ] = useFileUploader({
-    asset: background ?? defaultProfileBackgroundAsset,
-    async fileUploadedAction({ tempId }) {
+  ] = useAssetUploader({
+    assets: background,
+    async action({ tempIds: [tempId] }) {
       const saveResult = await adoptProfileImage({ as: 'background', tempId, userHomeId: id })
       if (!saveResult?.data) {
         return { done: false, error: saveResult?.validationErrors?._errors }
@@ -113,7 +114,7 @@ export function MainProfileCard({
             className={`background`}
             key="background"
             style={{
-              backgroundImage: 'url("' + displaySrcBackground + '")',
+              backgroundImage: 'url("' + (displayBackgroundSrc ?? defaultBackground.src) + '")',
             }}
           />
         </div>
@@ -133,7 +134,7 @@ export function MainProfileCard({
           <div
             className={`avatar`}
             style={{
-              backgroundImage: 'url("' + displaySrcAvatar + '")',
+              backgroundImage: 'url("' + (displayAvatarSrc ?? defaultAvatar.src) + '")',
               // pointerEvents: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'inherit',
               // cursor: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'pointer',
             }}
