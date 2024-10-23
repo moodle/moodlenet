@@ -1,4 +1,4 @@
-import { positive_integer, url_string } from '@moodle/lib-types'
+import { fraction, url_string } from '@moodle/lib-types'
 
 export type credits = {
   owner: { name: string; url: url_string }
@@ -21,5 +21,5 @@ export type licenseId = string
 export type license = {
   id: licenseId
   name: string
-  restrictiveness: positive_integer
+  restrictiveness: fraction
 }

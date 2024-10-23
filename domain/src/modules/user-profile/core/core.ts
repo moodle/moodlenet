@@ -1,8 +1,7 @@
-import { generateNanoId } from '@moodle/lib-id-gen'
-import { _void, date_time_string, integer, positive_integer, webSlug } from '@moodle/lib-types'
+import { _void, webSlug } from '@moodle/lib-types'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
-import { validateCurrentUserAuthenticatedSessionHasRole } from '../../user-account/lib'
 import { usingTempFile2asset } from '../../storage/lib'
+import { validateCurrentUserAuthenticatedSessionHasRole } from '../../user-account/lib'
 import { accessUserProfile } from '../lib'
 import { createNewUserProfileData } from './lib/new-user-profile'
 

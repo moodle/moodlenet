@@ -8,12 +8,12 @@ export type bloomCognitive = {
 }
 
 export type iscedFieldId = string
-export type iscedField = { desc: string; id: iscedFieldId; subjectPath: [string, string, string]; url: url_string }
+export type iscedField = { description: string; id: iscedFieldId; codePath: [string, string?, string?] }
 
-export type iscedLevelId = positive_integer
-export type iscedLevel = { desc: string; id: iscedLevelId }
+export type iscedLevelId = string
+export type iscedLevel = { description: string; id: iscedLevelId; codePath: [string, string?, string?] }
 
 export type eduResourceTypeId = string
-export type eduResourceType = { desc: string; id: eduResourceTypeId }
+export type eduResourceType = { description: string; id: eduResourceTypeId }
 
 
