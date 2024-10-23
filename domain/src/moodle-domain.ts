@@ -1,6 +1,6 @@
 import { intersection } from '@moodle/lib-types'
 import env from './modules/env'
-import iam from './modules/iam'
+import userAccount from './modules/user-account'
 import net from './modules/net'
 import netWebappNextjs from './modules/net-webapp-nextjs'
 import org from './modules/org'
@@ -10,7 +10,7 @@ import crypto from './modules/crypto'
 import userNotification from './modules/user-notification'
 
 export type MoodleDomain = intersection<
-  [{ version: '5.0' }, env, iam, net, netWebappNextjs, org, storage, userProfile, crypto, userNotification]
+  [{ version: '5.0' }, env, userAccount, net, netWebappNextjs, org, storage, userProfile, crypto, userNotification]
 >
 export type moodlePrimary = MoodleDomain['primary']
 export type moodleModuleName = keyof moodlePrimary & keyof moodleSecondary

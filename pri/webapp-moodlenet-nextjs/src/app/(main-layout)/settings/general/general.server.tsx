@@ -7,8 +7,8 @@ import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
 import { primary } from '../../../../lib/server/session-access'
 
 async function getChangePasswordSchema() {
-  const { iam } = await getAllPrimarySchemas()
-  return iam.changePasswordSchema /* .superRefine(({ currentPassword, newPassword }, ctx) => {
+  const { userAccount } = await getAllPrimarySchemas()
+  return userAccount.changePasswordSchema /* .superRefine(({ currentPassword, newPassword }, ctx) => {
     if (currentPassword.__redacted__ === newPassword.__redacted__) {
       ctx.addIssue({
         code: 'custom',
@@ -22,7 +22,7 @@ async function getChangePasswordSchema() {
 export const changePasswordAction = defaultSafeActionClient
   .schema(getChangePasswordSchema)
   .action(async ({ parsedInput: changePasswordForm }) => {
-    const [done, result] = await primary.moodle.iam.myAccount.changePassword(changePasswordForm)
+    const [done, result] = await primary.moodle.userAccount.myAccount.changePassword(changePasswordForm)
     if (!done) {
       returnValidationErrors(getChangePasswordSchema, {
         _errors:

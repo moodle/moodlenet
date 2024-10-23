@@ -2,7 +2,7 @@ import { moduleCore, secondaryAdapter, secondaryProvider, sys_admin_info } from 
 import { configuration, deploymentInfoFromUrlString } from '@moodle/domain/lib'
 import { getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
-import { iam_core } from '@moodle/module/iam/core'
+import { userAccount_core } from '@moodle/module/user-account/core'
 import { net_webapp_nextjs_core } from '@moodle/module/net-webapp-nextjs/core'
 import { net_core } from '@moodle/module/net/core'
 import { org_core } from '@moodle/module/org/core'
@@ -113,7 +113,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         // core modules
         net_core,
         org_core,
-        iam_core,
+        userAccount_core,
         net_webapp_nextjs_core,
         user_profile_core,
         storage_core,

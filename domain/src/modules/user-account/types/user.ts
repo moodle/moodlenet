@@ -28,7 +28,7 @@ export type userRecord = {
         reason: userDeactivationReason
         at: date_time_string
       }
-  //REVIEW: `moodlenet` also raises concerns on these data in iam, may need `im` and `account`? .
+  //REVIEW: `moodlenet` also raises concerns on these data in userAccount, may need `im` and `account`? .
   //REVIEW: or maybe there should be a `moodlenet user database`?
   //REVIEW: also notice we indeed have a `moodlenet` prop in userProfileRecord though....
   moodlenet: {

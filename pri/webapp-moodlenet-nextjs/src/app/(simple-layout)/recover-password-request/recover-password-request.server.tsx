@@ -9,7 +9,7 @@ export const recoverPasswordRequestAction = defaultSafeActionClient
   .schema(recoverPasswordRequestSchema)
   .action(async ({ parsedInput: { email } }) => {
     const redirectUrl = (await srvSiteUrls()).full['recover-password-request'].reset()
-    primary.moodle.iam.access.resetPasswordRequest({
+    primary.moodle.userAccount.access.resetPasswordRequest({
       declaredOwnEmail: email,
       redirectUrl,
     })

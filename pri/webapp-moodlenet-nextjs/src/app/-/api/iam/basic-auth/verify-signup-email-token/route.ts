@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  const [ok, response] = await primary.moodle.iam.access.createNewUserByEmailVerificationToken({
+  const [ok, response] = await primary.moodle.userAccount.access.createNewUserByEmailVerificationToken({
     signupEmailVerificationToken,
   })
   if (!ok) {
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
       status: 400,
     })
   }
-  const [done, session] = await primary.moodle.iam.session.generateUserSessionToken({
+  const [done, session] = await primary.moodle.userAccount.session.generateUserSessionToken({
     userId: response.userId,
   })
   if (!done) {

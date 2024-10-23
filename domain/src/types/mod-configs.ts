@@ -1,6 +1,6 @@
 // import * as env from '../../env'
 import { email_address } from '@moodle/lib-types'
-import * as iam from '../modules/iam'
+import * as userAccount from '../modules/user-account'
 import * as net from '../modules/net'
 import * as netWebappNextjs from '../modules/net-webapp-nextjs'
 import * as org from '../modules/org'
@@ -12,7 +12,7 @@ export type sys_admin_info = { email: email_address }
 export type modConfigName = keyof ModConfigs
 export interface ModConfigs {
   org: org.Configs
-  iam: iam.Configs
+  userAccount: userAccount.Configs
   net: net.Configs
   netWebappNextjs: netWebappNextjs.Configs
   userProfile: userProfile.Configs

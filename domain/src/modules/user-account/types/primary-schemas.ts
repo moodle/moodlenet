@@ -6,7 +6,7 @@ import {
 } from '@moodle/lib-types'
 import type { z } from 'zod'
 import { any, object, string, ZodString } from 'zod'
-export interface IamPrimaryMsgSchemaConfigs {
+export interface userAccountPrimaryMsgSchemaConfigs {
   user: {
     email: { max: number }
     password: { max: number; min: number }
@@ -16,34 +16,22 @@ export interface IamPrimaryMsgSchemaConfigs {
     selfDeletionRequestReason: { max: number }
   }
 }
-export type loginForm = z.infer<ReturnType<typeof getIamPrimarySchemas>['loginSchema']>
+export type loginForm = z.infer<ReturnType<typeof getuserAccountPrimarySchemas>['loginSchema']>
 
-export type signupForm = z.infer<ReturnType<typeof getIamPrimarySchemas>['signupSchema']>
+export type signupForm = z.infer<ReturnType<typeof getuserAccountPrimarySchemas>['signupSchema']>
 
-export type changePasswordForm = z.infer<
-  ReturnType<typeof getIamPrimarySchemas>['changePasswordSchema']
->
-export type resetPasswordForm = z.infer<
-  ReturnType<typeof getIamPrimarySchemas>['resetPasswordSchema']
->
+export type changePasswordForm = z.infer<ReturnType<typeof getuserAccountPrimarySchemas>['changePasswordSchema']>
+export type resetPasswordForm = z.infer<ReturnType<typeof getuserAccountPrimarySchemas>['resetPasswordSchema']>
 
-export function getIamPrimarySchemas({ user, myAccount }: IamPrimaryMsgSchemaConfigs) {
+export function getuserAccountPrimarySchemas({ user, myAccount }: userAccountPrimaryMsgSchemaConfigs) {
   const email = string().max(user.email.max).pipe(email_address_schema)
 
-  const password = string()
-    .trim()
-    .min(user.password.min)
-    .max(user.password.max)
-    .pipe(single_line_string_schema)
+  const password = string().trim().min(user.password.min).max(user.password.max).pipe(single_line_string_schema)
   const displayName = string()
     .trim()
     .min(user.displayName.min)
     .max(user.displayName.max)
-    .pipe(
-      user.displayName.regex
-        ? string().regex(new RegExp(...user.displayName.regex))
-        : (any() as unknown as ZodString),
-    )
+    .pipe(user.displayName.regex ? string().regex(new RegExp(...user.displayName.regex)) : (any() as unknown as ZodString))
     .pipe(single_line_string_schema)
 
   const redacted_password = __redacted_schema__(password)

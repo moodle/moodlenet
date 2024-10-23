@@ -1,7 +1,6 @@
-import { _unchecked_brand } from '@moodle/lib-types'
-import { userRecord } from '@moodle/module/iam'
-import { userDocument } from './types'
+import { userRecord } from '@moodle/module/user-account'
 import { id_to_key, key_to_id } from '../../lib/mapping'
+import { userDocument } from './types'
 
 export function userDocument2userRecord(doc: userDocument): userRecord {
   return key_to_id(doc)

@@ -7,7 +7,7 @@ import { primary } from '../../lib/server/session-access'
 
 export async function logout() {
   const { sessionToken } = getAuthTokenCookie()
-  sessionToken && primary.moodle.iam.access.logout({ sessionToken })
+  sessionToken && primary.moodle.userAccount.access.logout({ sessionToken })
   setAuthTokenCookie(null)
   revalidatePath('/')
   redirect('/')

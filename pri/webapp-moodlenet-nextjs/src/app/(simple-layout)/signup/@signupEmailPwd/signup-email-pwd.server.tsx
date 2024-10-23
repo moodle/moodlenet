@@ -10,7 +10,7 @@ import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
 
 export async function getSignupSchema() {
   const {
-    iam: { signupSchema },
+    userAccount: { signupSchema },
   } = await getAllPrimarySchemas()
   return signupSchema
 }
@@ -19,9 +19,9 @@ export const signupAction = defaultSafeActionClient
   .schema(async (/* prevSchema https://next-safe-action.dev/docs/define-actions/extend-previous-schemas */) =>
     getSignupSchema(),)
   .action(async ({ parsedInput: signupForm }) => {
-    const redirectUrl = (await srvSiteUrls()).full['-'].api.iam['basic-auth']['verify-signup-email-token']()
+    const redirectUrl = (await srvSiteUrls()).full['-'].api.userAccount['basic-auth']['verify-signup-email-token']()
 
-    const [done, resp] = await primary.moodle.iam.access.signupRequest({
+    const [done, resp] = await primary.moodle.userAccount.access.signupRequest({
       signupForm,
       redirectUrl,
     })

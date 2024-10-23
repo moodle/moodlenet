@@ -1,12 +1,12 @@
 import { UserProfilePrimaryMsgSchemaConfigs } from '@moodle/module/user-profile'
 import type { makeAllPrimarySchemas } from '../lib'
-import { IamPrimaryMsgSchemaConfigs } from '../modules/iam'
+import { userAccountPrimaryMsgSchemaConfigs } from '../modules/user-account'
 import { MoodleNetPrimaryMsgSchemaConfigs } from '../modules/net'
 import { OrgPrimaryMsgSchemaConfigs } from '../modules/org'
 import { uploadMaxSizeConfigs } from '../modules/storage'
 
 export type AllSchemaConfigs = {
-  iamSchemaConfigs: IamPrimaryMsgSchemaConfigs
+  userAccountSchemaConfigs: userAccountPrimaryMsgSchemaConfigs
   moodleNetSchemaConfigs: MoodleNetPrimaryMsgSchemaConfigs
   orgSchemaConfigs: OrgPrimaryMsgSchemaConfigs
   uploadMaxSizeConfigs: uploadMaxSizeConfigs

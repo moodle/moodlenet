@@ -3,14 +3,14 @@ import { Migration_Record } from '../types'
 
 export const VERSION = 'v0_2'
 export async function migrate({ db_struct }: { db_struct: db_struct }) {
-  await db_struct.iam.db.query(
+  await db_struct.userAccount.db.query(
     `
 FOR user in @@userCollection
   UPDATE user WITH {
     createdAt: user.activityStatus.lastLogin
   } IN @@userCollection`,
     {
-      '@userCollection': db_struct.iam.coll.user.name,
+      '@userCollection': db_struct.userAccount.coll.user.name,
     },
   )
   // bump_version
@@ -18,7 +18,7 @@ FOR user in @@userCollection
     previous: 'v0_1',
     current: VERSION,
     date: new Date().toISOString(),
-    meta: 'add iam#user.createdAt',
+    meta: 'add userAccount#user.createdAt',
   }
 
   return migrationDoc

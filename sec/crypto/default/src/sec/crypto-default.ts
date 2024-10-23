@@ -13,7 +13,7 @@ export function crypto_secondary_services_factory({
   argonOpts: ArgonPwdHashOpts
 }): secondaryProvider {
   return secondaryCtx => {
-    const iam_secondary_adapter: secondaryAdapter = {
+    const userAccount_secondary_adapter: secondaryAdapter = {
       crypto: {
         service: {
           async hashPassword({ plainPassword: { __redacted__: plainPassword } }) {
@@ -49,6 +49,6 @@ export function crypto_secondary_services_factory({
         },
       },
     }
-    return iam_secondary_adapter
+    return userAccount_secondary_adapter
   }
 }

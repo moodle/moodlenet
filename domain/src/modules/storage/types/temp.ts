@@ -1,5 +1,5 @@
 import { date_time_string, mimetype, ok_ko } from '@moodle/lib-types'
-import { userId } from '../../iam'
+import { userId } from '../../user-account'
 
 export * from './primary-schemas'
 

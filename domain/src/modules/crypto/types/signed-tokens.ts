@@ -1,9 +1,9 @@
 import { d_u } from '@moodle/lib-types'
-import { iamSignTokenData } from '../../iam'
+import { userAccountSignTokenData } from '../../user-account'
 
 export type signedToken = d_u<
   {
-    iam: d_u<iamSignTokenData, 'type'>
+    userAccount: d_u<userAccountSignTokenData, 'type'>
     __REMOVE_ME__: d_u<{ __TEST__: { __TEST__: Date }; __TEST2__: { __TEST2__: number } }, 'type'>
   },
   'module'

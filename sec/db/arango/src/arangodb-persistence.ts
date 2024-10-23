@@ -3,7 +3,7 @@ import { mergeSecondaryAdapters } from '@moodle/domain/lib'
 import { ArangoDbSecEnv, getDbStruct } from './db-structure'
 import {
   user_profile_secondary_factory,
-  iam_secondary_factory,
+  user_account_secondary_factory,
   net_secondary_factory,
   net_webapp_nextjs_secondary_factory,
   org_secondary_factory,
@@ -18,7 +18,7 @@ export function get_arango_persistence_factory({ database_connections }: ArangoD
     const secondaryAdapter = mergeSecondaryAdapters([
       net_secondary_factory({ db_struct })(secondaryCtx),
       org_secondary_factory({ db_struct })(secondaryCtx),
-      iam_secondary_factory({ db_struct })(secondaryCtx),
+      user_account_secondary_factory({ db_struct })(secondaryCtx),
       net_webapp_nextjs_secondary_factory({ db_struct })(secondaryCtx),
       user_profile_secondary_factory({ db_struct })(secondaryCtx),
       env_secondary_factory({ db_struct })(secondaryCtx),

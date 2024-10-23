@@ -13,8 +13,8 @@ import { primary } from '../../../../lib/server/session-access'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 
 export async function getLoginSchema() {
-  const { iam } = await getAllPrimarySchemas()
-  return iam.loginSchema
+  const { userAccount } = await getAllPrimarySchemas()
+  return userAccount.loginSchema
 }
 export const loginAction = defaultSafeActionClient.schema(getLoginSchema).action(async ({ parsedInput: loginForm }) => {
   // const inSiteRefererUrl = await getInSiteReferer()
@@ -24,7 +24,7 @@ export const loginAction = defaultSafeActionClient.schema(getLoginSchema).action
 
   const redirectUrl = redirectPathAfterLogin || sitepaths()
 
-  const [loginSuccess, loginResponse] = await primary.moodle.iam.access.login({
+  const [loginSuccess, loginResponse] = await primary.moodle.userAccount.access.login({
     loginForm,
   })
   if (!loginSuccess) {

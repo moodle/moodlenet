@@ -3,7 +3,7 @@ import { aql } from 'arangojs'
 import { AqlQuery } from 'arangojs/aql'
 import { db_struct } from '../../db-structure'
 import { userProfileDocument } from './types'
-import { userId } from '@moodle/module/iam'
+import { userId } from '@moodle/module/user-account'
 
 export async function getUserProfileByUserId<T = userProfileDocument>({
   db_struct,

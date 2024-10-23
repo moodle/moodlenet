@@ -9,11 +9,11 @@ import { signupAction } from './signup-email-pwd.server'
 
 export default function SignupPanel() {
   const { t } = useTranslation()
-  const { iam } = useAllPrimarySchemas()
+  const { userAccount } = useAllPrimarySchemas()
   const {
     form: { formState, register },
     handleSubmitWithAction,
-  } = useHookFormAction(signupAction, zodResolver(iam.signupSchema))
+  } = useHookFormAction(signupAction, zodResolver(userAccount.signupSchema))
 
   const additionalError = formState.errors.root?.message
   return (

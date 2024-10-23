@@ -1,6 +1,6 @@
 import { _void } from '@moodle/lib-types'
 import { moduleCore } from '../../../types'
-import { assert_authorizeCurrentUserSessionWithRole } from '../../iam/lib'
+import { assert_authorizeCurrentUserSessionWithRole } from '../../user-account/lib'
 
 export const net_core: moduleCore<'net'> = {
   modName: 'net',

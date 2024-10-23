@@ -10,7 +10,7 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
   const [info, layouts] = await Promise.all([getSiteGeneralInfo(), primary.moodle.netWebappNextjs.webapp.layouts()])
 
   const { head, content } = slotsMap(props, layouts.pages.landing.slots)
-  const { userSession } = await primary.moodle.iam.session.getUserSession()
+  const { userSession } = await primary.moodle.userAccount.session.getUserSession()
 
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,

@@ -1,7 +1,7 @@
 import { _maybe, flags } from '@moodle/lib-types'
 import { languageId, licenseId } from '../../content'
 import { iscedFieldId, iscedLevelId } from '../../edu'
-import { userId, userRole } from '../../iam'
+import { userId, userRole } from '../../user-account'
 import { profileInfo } from './profile-info'
 import { myDrafts } from './drafts'
 import { moodlenetUserData } from '../../net'
@@ -10,7 +10,7 @@ export type userProfileId = string
 
 export type userProfileRecord = {
   id: userProfileId
-  iamUser: iamUserExcerpt
+  userAccountUser: userAccountUserExcerpt
   info: profileInfo
   urlSafeProfileName: string
   myDrafts: myDrafts
@@ -18,7 +18,7 @@ export type userProfileRecord = {
   moodlenet: moodlenetUserData
 }
 
-export type iamUserExcerpt = { id: userId; roles: userRole[] }
+export type userAccountUserExcerpt = { id: userId; roles: userRole[] }
 
 export type userInterestFields = {
   iscedFields: iscedFieldId[]
@@ -34,5 +34,5 @@ export type user_profile_access_object = {
   urlSafeProfileName: string
   permissions: userProfilePermissions
   flags: flags<'followed'>
-  user: _maybe<iamUserExcerpt>
+  user: _maybe<userAccountUserExcerpt>
 }

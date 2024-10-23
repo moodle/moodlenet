@@ -3,31 +3,37 @@ import { _void } from '@moodle/lib-types'
 import { aql } from 'arangojs'
 import { createHash } from 'node:crypto'
 import { db_struct } from '../db-structure'
-import { userRecord2userDocument, userDocument2userRecord } from './db-arango-iam-lib/mappings'
-import { getUserByEmail, getUserById } from './db-arango-iam-lib/queries'
-import { userDocument } from './db-arango-iam-lib/types'
+import {
+  getUserByEmail,
+  getUserById,
+  userDocument,
+  userDocument2userRecord,
+  userRecord2userDocument,
+} from './db-arango-user-account-lib'
 
-export function iam_secondary_factory({ db_struct }: { db_struct: db_struct }): secondaryProvider {
+export function user_account_secondary_factory({ db_struct }: { db_struct: db_struct }): secondaryProvider {
   return secondaryCtx => {
     const secondaryAdapter: secondaryAdapter = {
-      iam: {
+      userAccount: {
         sync: {
           async userDisplayname({ displayName, userId }) {
-            const done = !!(await db_struct.iam.coll.user.update({ _key: userId }, { displayName }).catch(() => null))
+            const done = !!(await db_struct.userAccount.coll.user
+              .update({ _key: userId }, { displayName })
+              .catch(() => null))
             return [done, _void]
           },
         },
         write: {
           async saveNewUser({ newUser }) {
             const userDocument = userRecord2userDocument(newUser)
-            const savedUser = await db_struct.iam.coll.user
+            const savedUser = await db_struct.userAccount.coll.user
               .save(userDocument, { overwriteMode: 'conflict', returnNew: true })
               .catch(() => null)
 
             return [!!savedUser?.new, _void]
           },
           async deactivateUser({ anonymize, reason, userId, at = new Date().toISOString() }) {
-            const deactivatingUser = await db_struct.iam.coll.user.document({ _key: userId }, { graceful: true })
+            const deactivatingUser = await db_struct.userAccount.coll.user.document({ _key: userId }, { graceful: true })
             if (!deactivatingUser) return [false, _void]
 
             const anonymization = anonymize
@@ -41,7 +47,7 @@ export function iam_secondary_factory({ db_struct }: { db_struct: db_struct }): 
                 }
               : null
 
-            const deactivatedUser = await db_struct.iam.coll.user
+            const deactivatedUser = await db_struct.userAccount.coll.user
               .update(
                 { _key: userId },
                 {
@@ -57,7 +63,7 @@ export function iam_secondary_factory({ db_struct }: { db_struct: db_struct }): 
           },
           async setUserPassword({ newPasswordHash, userId }) {
             const {
-              iam: {
+              userAccount: {
                 coll: { user },
               },
             } = db_struct
@@ -72,7 +78,7 @@ export function iam_secondary_factory({ db_struct }: { db_struct: db_struct }): 
             return [!!updated, _void]
           },
           async setUserRoles({ userId, roles }) {
-            const updated = await db_struct.iam.coll.user
+            const updated = await db_struct.userAccount.coll.user
               .update({ _key: userId }, { roles }, { returnOld: true })
               .catch(() => null)
             return updated?.old ? [true, { newRoles: roles, oldRoles: updated.old.roles }] : [false, _void]
@@ -93,9 +99,9 @@ export function iam_secondary_factory({ db_struct }: { db_struct: db_struct }): 
                       SORT sim DESC`
               : aql``
             const deactivatedFilter = includeDeactivated ? aql`` : aql`FILTER NOT(user.deactivated)`
-            const userDocs_cursor = await db_struct.iam.db.query<userDocument>(
+            const userDocs_cursor = await db_struct.userAccount.db.query<userDocument>(
               aql`
-                FOR user IN ${db_struct.iam.coll.user}
+                FOR user IN ${db_struct.userAccount.coll.user}
                 ${deactivatedFilter}
                 ${textFilter}
                 LIMIT 50

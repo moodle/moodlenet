@@ -16,7 +16,7 @@ export async function validateCurrentUserSession({ ctx }: sessionLibDep) {
   }
   const [valid, validation] = await ctx.mod.crypto.service.validateSignedToken({
     token: ctx.session.token,
-    module: 'iam',
+    module: 'userAccount',
     type: 'userSession',
   })
   if (!valid) {
@@ -92,7 +92,7 @@ export async function generateSessionForUserId({
   ctx: Pick<baseContext, 'mod'>
   userId: userId
 }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>> {
-  const [, userRecord] = await ctx.mod.iam.query.userBy({ by: 'id', userId })
+  const [, userRecord] = await ctx.mod.userAccount.query.userBy({ by: 'id', userId })
   if (!userRecord) {
     return [false, { reason: 'userNotFound' }]
   }
@@ -112,10 +112,10 @@ export async function generateSessionForUserData({
 }): Promise<signed_expire_token> {
   const {
     configs: { tokenExpireTime },
-  } = await ctx.mod.env.query.modConfigs({ mod: 'iam' })
+  } = await ctx.mod.env.query.modConfigs({ mod: 'userAccount' })
   const session = await ctx.mod.crypto.service.signDataToken({
     data: {
-      module: 'iam',
+      module: 'userAccount',
       type: 'userSession',
       user,
     },

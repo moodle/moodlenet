@@ -14,14 +14,14 @@ import './general.style.scss'
 
 export function GeneralSettingsClient() {
   const { t } = useTranslation()
-  const { iam } = useAllPrimarySchemas()
+  const { userAccount } = useAllPrimarySchemas()
   const [snackbarList, setSnackbarList] = useState<ReactElement[]>([])
 
   const {
     form: { formState, register },
     resetFormAndAction,
     handleSubmitWithAction,
-  } = useHookFormAction(changePasswordAction, zodResolver(iam.changePasswordSchema), {
+  } = useHookFormAction(changePasswordAction, zodResolver(userAccount.changePasswordSchema), {
     actionProps: {
       onExecute() {
         setSnackbarList([])

@@ -1,7 +1,7 @@
 import { email_address, url_string } from '@moodle/lib-types'
 import { userId } from './user'
 
-export type iamUserNotifications = {
+export type userAccountUserNotifications = {
   // inactivityBeforeDeletion: {
   //   toUserId: userId
   //   loginUrl: url_string

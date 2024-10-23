@@ -12,7 +12,7 @@ import type {
 
 import type {
   changePasswordForm,
-  IamPrimaryMsgSchemaConfigs,
+  userAccountPrimaryMsgSchemaConfigs,
   loginForm,
   resetPasswordForm,
   signupForm,
@@ -25,16 +25,16 @@ import type {
 
 export * from './types'
 
-export default interface IamDomain {
-  event: { iam: unknown }
+export default interface userAccountDomain {
+  event: { userAccount: unknown }
   primary: {
-    iam: {
+    userAccount: {
       session: {
         getUserSession(): Promise<{ userSession: userSession }>
         generateUserSessionToken(_: {
           userId: userId
         }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>>
-        moduleInfo(): Promise<{ schemaConfigs: IamPrimaryMsgSchemaConfigs }>
+        moduleInfo(): Promise<{ schemaConfigs: userAccountPrimaryMsgSchemaConfigs }>
       }
 
       admin: {
@@ -94,7 +94,7 @@ export default interface IamDomain {
     }
   }
   secondary: {
-    iam: {
+    userAccount: {
       queue: unknown
       write: {
         saveNewUser(_: { newUser: userRecord }): Promise<ok_ko<void>>
@@ -122,17 +122,17 @@ export default interface IamDomain {
       //     passwordHash: string
       //   }): Promise<ok_ko<void>>
 
-      //   validateSignedToken<type extends iamSignTokenData['type']>(_: {
+      //   validateSignedToken<type extends userAccountSignTokenData['type']>(_: {
       //     token: signed_token
       //     type: type
       //   }): Promise<
       //     ok_ko<
-      //       { validatedSignedTokenData: d_u__d<iamSignTokenData, 'type', type> },
+      //       { validatedSignedTokenData: d_u__d<userAccountSignTokenData, 'type', type> },
       //       { invalid: unknown; validatedUnknownType: { data: unknown } }
       //     >
       //   >
-      //   //NOTE: implement decodeNoValidateSignedToken(_: { token: session_token }): Promise<ok_ko<{__NOT_VALIDATED_SESSION_TOKEN_DATA__:iamSignTokenData}>>
-      //   signDataToken(_: { data: iamSignTokenData; expiresIn: time_duration_string }): Promise<signed_expire_token>
+      //   //NOTE: implement decodeNoValidateSignedToken(_: { token: session_token }): Promise<ok_ko<{__NOT_VALIDATED_SESSION_TOKEN_DATA__:userAccountSignTokenData}>>
+      //   signDataToken(_: { data: userAccountSignTokenData; expiresIn: time_duration_string }): Promise<signed_expire_token>
       // }
       query: {
         activeUsersNotLoggedInFor(_: {

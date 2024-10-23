@@ -1,7 +1,7 @@
 import { http_bind } from '@moodle/bindings-node'
 import { MoodleDomain, primarySession } from '@moodle/domain'
 import {} from '@moodle/domain'
-import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/iam/lib'
+import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/user-account/lib'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
 import { redirect, RedirectType } from 'next/navigation'
@@ -81,12 +81,12 @@ function _domainAccess(): MoodleDomain {
   // [Error]: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
   //
   // if (userSession.sessionToken) {
-  //   const [valid, info] = iam.noValidationParseUserSessionToken(
+  //   const [valid, info] = userAccount.noValidationParseUserSessionToken(
   //     userSession.sessionToken,
   //   )
   //   if (valid && !info.expired && info.expires.inSecs < 5 * 60) {
   //     !! VALIDATE IT BEFORE REFRESHING !!
-  //     ap.mod.iam_lib.session
+  //     ap.mod.userAccount_lib.session
   //       .generateSession({ userId: info.userData.id })
   //       .then(([generated, session]) => {
   //         if (!generated) {
@@ -101,7 +101,7 @@ function _domainAccess(): MoodleDomain {
 }
 
 export async function getUserSession() {
-  const { userSession } = await primary.moodle.iam.session.getUserSession()
+  const { userSession } = await primary.moodle.userAccount.session.getUserSession()
   return userSession
 }
 

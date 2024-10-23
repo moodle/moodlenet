@@ -4,7 +4,7 @@ import {
   resetPasswordEmail,
   selfDeletionConfirmEmail,
   signupEmailConfirmationEmail,
-} from '@moodle/lib-email-templates/iam'
+} from '@moodle/lib-email-templates/user-account'
 import { EmailLayoutContentProps, layoutEmail } from '@moodle/lib-email-templates/org'
 import { _void, email_address, ok_ko } from '@moodle/lib-types'
 import { OrgInfo } from '@moodle/module/org'
@@ -60,7 +60,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
       orgInfo: OrgInfo
     }): Promise<ok_ko<{ props: EmailLayoutContentProps; receiverEmail: email_address }, { userNotFound: unknown }>> {
       const { name: siteName } = orgInfo
-      if (data.module === 'iam') {
+      if (data.module === 'userAccount') {
         if (data.type === 'signupWithEmailConfirmation') {
           return [
             true,
@@ -74,7 +74,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
             },
           ]
         }
-        const [found, user] = await ctx.mod.iam.query.userBy({ userId: data.toUserId, by: 'id' })
+        const [found, user] = await ctx.mod.userAccount.query.userBy({ userId: data.toUserId, by: 'id' })
         if (!found) {
           ctx.log('warn', `User not found for id ${data.toUserId}`)
           return [false, { reason: 'userNotFound' }]

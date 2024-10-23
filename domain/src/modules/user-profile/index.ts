@@ -1,10 +1,10 @@
 import type { d_u, deep_partial, ok_ko } from '@moodle/lib-types'
-import { userId } from '../iam'
+import { userId } from '../user-account'
 import { useTempFileResult } from '../storage'
 import {
   profileImage,
   profileInfo,
-  iamUserExcerpt,
+  userAccountUserExcerpt,
   user_profile_access_object,
   userProfileId,
   userProfileRecord,
@@ -45,7 +45,7 @@ export default interface UserProfileDomain {
       }
       service: unknown
       sync: {
-        iamUserExcerpt(_: { iamUserExcerpt: iamUserExcerpt }): Promise<ok_ko<void>>
+        userAccountUserExcerpt(_: { userAccountUserExcerpt: userAccountUserExcerpt }): Promise<ok_ko<void>>
       }
       query: {
         getUserProfile(_: {

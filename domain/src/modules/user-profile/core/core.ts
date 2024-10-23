@@ -1,7 +1,7 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { _void, webSlug } from '@moodle/lib-types'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
-import { validateCurrentUserAuthenticatedSessionHasRole } from '../../iam/lib'
+import { validateCurrentUserAuthenticatedSessionHasRole } from '../../user-account/lib'
 import { usingTempFile2asset } from '../../storage/lib'
 import { accessUserProfile } from '../lib'
 
@@ -100,9 +100,9 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             },
           },
         },
-        iam: {
+        userAccount: {
           write: {
-            //REVIEW - this iam should emit an event and catch it here  in userprofile
+            //REVIEW - this userAccount should emit an event and catch it here  in userprofile
             async saveNewUser([[created, resp], { newUser }]) {
               ctx.log('debug', 'user-profile watch saveNewUser', { created, resp, newUser })
               if (!created) {
@@ -112,7 +112,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               ctx.queue.createUserProfile({
                 userProfile: {
                   id: userProfileId,
-                  iamUser: {
+                  userAccountUser: {
                     id: newUser.id,
                     roles: newUser.roles,
                   },
@@ -133,8 +133,8 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               if (!done) {
                 return
               }
-              await ctx.sync.iamUserExcerpt({
-                iamUserExcerpt: { id: userId, roles: result.newRoles },
+              await ctx.sync.userAccountUserExcerpt({
+                userAccountUserExcerpt: { id: userId, roles: result.newRoles },
               })
             },
           },

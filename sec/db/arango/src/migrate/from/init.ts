@@ -1,8 +1,8 @@
-import { iam_default_configs } from '@moodle/module/iam/setup'
 import { net_webapp_nextjs_default_configs } from '@moodle/module/net-webapp-nextjs/setup'
 import { net_default_configs } from '@moodle/module/net/setup'
 import { org_default_configs } from '@moodle/module/org/setup'
 import { storage_default_configs } from '@moodle/module/storage/setup'
+import { userAccount_default_configs } from '@moodle/module/user-account/setup'
 import { user_profile_default_configs } from '@moodle/module/user-profile/setup'
 import { db_struct } from '../../db-structure'
 import { saveModConfigs } from '../../lib/modules'
@@ -14,15 +14,15 @@ export async function migrate({ db_struct }: { db_struct: db_struct }) {
   // create databases
 
   await db_struct.sys_db.createDatabase(db_struct.data.db.name)
-  await db_struct.sys_db.createDatabase(db_struct.iam.db.name)
+  await db_struct.sys_db.createDatabase(db_struct.userAccount.db.name)
 
   // create collections
   // mng
   await db_struct.mng.coll.module_configs.create({ cacheEnabled: true })
 
-  // iam
-  await db_struct.iam.coll.user.create(/* { computedValues: [removePropOnInsert('id')] } */)
-  db_struct.iam.coll.user.ensureIndex({
+  // userAccount
+  await db_struct.userAccount.coll.user.create(/* { computedValues: [removePropOnInsert('id')] } */)
+  db_struct.userAccount.coll.user.ensureIndex({
     name: 'userEmail',
     type: 'persistent',
     fields: ['contacts.email'],
@@ -34,8 +34,8 @@ export async function migrate({ db_struct }: { db_struct: db_struct }) {
   await Promise.all([
     saveModConfigs({
       db_struct,
-      configs: iam_default_configs,
-      moduleName: 'iam',
+      configs: userAccount_default_configs,
+      moduleName: 'userAccount',
     }),
     saveModConfigs({
       db_struct,

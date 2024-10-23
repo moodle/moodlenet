@@ -1,22 +1,23 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
 import { db_struct } from '../db-structure'
-import { getUserProfileByUserId, updateUserProfileByUserId } from './db-arango-user-profile-lib/lib'
 import {
+  getUserProfileByUserId,
+  updateUserProfileByUserId,
   user_profile_record2userProfileDocument,
   userProfileDocument2user_profile_record,
-} from './db-arango-user-profile-lib/mappings'
+} from './db-arango-user-profile-lib'
 
 export function user_profile_secondary_factory({ db_struct }: { db_struct: db_struct }): secondaryProvider {
   return secondaryCtx => {
     const secondaryAdapter: secondaryAdapter = {
       userProfile: {
         sync: {
-          async iamUserExcerpt({ iamUserExcerpt }) {
+          async userAccountUserExcerpt({ userAccountUserExcerpt }) {
             const userProfileDoc = await updateUserProfileByUserId({
-              userId: iamUserExcerpt.id,
+              userId: userAccountUserExcerpt.id,
               db_struct,
-              partialUserProfile: { iamUser: iamUserExcerpt },
+              partialUserProfile: { userAccountUser: userAccountUserExcerpt },
             })
             if (!userProfileDoc) {
               return [false, _void]

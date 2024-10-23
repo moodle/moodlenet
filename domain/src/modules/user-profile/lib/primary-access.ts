@@ -1,9 +1,9 @@
 import { access_obj, d_u } from '@moodle/lib-types'
 import { by_user_id_or_user_profile_id, user_profile_access_object, userProfilePermissions } from '..'
-import { sessionLibDep, validate_currentUserSessionInfo } from '../../iam/lib'
+import { sessionLibDep, validate_currentUserSessionInfo } from '../../user-account/lib'
 
-// REVIEW : consider put this access logic - as well as `access_obj` - in `iam` (a as access)
-// or consider renaming `iam` to `im` or something
+// REVIEW : consider put this access logic - as well as `access_obj` - in `userAccount` (a as access)
+// or consider renaming `userAccount` to `im` or something
 export async function accessUserProfile({
   ctx,
   by,
@@ -18,7 +18,7 @@ export async function accessUserProfile({
   const { userProfile } = findResult
   const currentUserSessionInfo = await validate_currentUserSessionInfo({ ctx })
   const { info: profileInfo, id } = userProfile
-  const isThisUserProfilePublisher = userProfile.iamUser.roles.includes('publisher')
+  const isThisUserProfilePublisher = userProfile.userAccountUser.roles.includes('publisher')
   if (!currentUserSessionInfo.authenticated) {
     if (!isThisUserProfilePublisher) {
       return { result: 'found', access: 'notAllowed' }
@@ -36,7 +36,7 @@ export async function accessUserProfile({
     }
   }
 
-  const itsMe = currentUserSessionInfo.authenticated.user.id === userProfile.iamUser.id
+  const itsMe = currentUserSessionInfo.authenticated.user.id === userProfile.userAccountUser.id
   const currentUserIsAdmin = currentUserSessionInfo.authenticated.isAdmin
 
   if (!(isThisUserProfilePublisher || itsMe || currentUserIsAdmin)) {
@@ -62,7 +62,7 @@ export async function accessUserProfile({
       sendMessage: !itsMe,
       editRoles: !itsMe && currentUserIsAdmin,
     },
-    user: itsMe || currentUserIsAdmin ? userProfile.iamUser : null,
+    user: itsMe || currentUserIsAdmin ? userProfile.userAccountUser : null,
     flags: { followed: !itsMe },
     urlSafeProfileName: userProfile.urlSafeProfileName,
   }

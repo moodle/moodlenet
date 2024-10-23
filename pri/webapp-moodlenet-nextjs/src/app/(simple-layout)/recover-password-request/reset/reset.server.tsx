@@ -7,13 +7,13 @@ import { primary } from '../../../../lib/server/session-access'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 
 export async function getResetMyPasswordSchema() {
-  const { iam } = await getAllPrimarySchemas()
-  return iam.resetPasswordSchema
+  const { userAccount } = await getAllPrimarySchemas()
+  return userAccount.resetPasswordSchema
 }
 export const resetMyPasswordAction = defaultSafeActionClient
   .schema(getResetMyPasswordSchema)
   .action(async ({ parsedInput: resetPasswordForm }) => {
-    const [ok, resp] = await primary.moodle.iam.myAccount.resetPassword({
+    const [ok, resp] = await primary.moodle.userAccount.myAccount.resetPassword({
       resetPasswordForm,
     })
     if (!ok) {

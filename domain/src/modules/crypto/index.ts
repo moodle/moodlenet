@@ -25,7 +25,7 @@ export default interface CryptoDomain {
             { invalid: unknown; validatedUnknownType: { data: unknown } }
           >
         >
-        //NOTE: implement decodeNoValidateSignedToken(_: { token: session_token }): Promise<ok_ko<{__NOT_VALIDATED_SESSION_TOKEN_DATA__:iamSignTokenData}>>
+        //NOTE: implement decodeNoValidateSignedToken(_: { token: session_token }): Promise<ok_ko<{__NOT_VALIDATED_SESSION_TOKEN_DATA__:userAccountSignTokenData}>>
         signDataToken<signedTokenType extends signedToken>(_: {
           data: signedTokenType
           expiresIn: time_duration_string

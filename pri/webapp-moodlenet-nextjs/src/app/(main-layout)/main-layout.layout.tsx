@@ -20,11 +20,11 @@ import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { primary } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
 import './main-layout.style.scss'
-import { userSessionInfo } from '@moodle/module/iam/lib'
+import { userSessionInfo } from '@moodle/module/user-account/lib'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const [{ userSession }, layouts] = await Promise.all([
-    primary.moodle.iam.session.getUserSession(),
+    primary.moodle.userAccount.session.getUserSession(),
     primary.moodle.netWebappNextjs.webapp.layouts(),
   ])
   return (

@@ -13,12 +13,12 @@ import { resetMyPasswordAction } from './reset.server'
 
 export function ResetPasswordClient({ resetPasswordToken }: { resetPasswordToken: signed_token }) {
   const { t } = useTranslation()
-  const { iam } = useAllPrimarySchemas()
+  const { userAccount } = useAllPrimarySchemas()
 
   const {
     form: { formState, register },
     handleSubmitWithAction,
-  } = useHookFormAction(resetMyPasswordAction, zodResolver(iam.resetPasswordSchema), {
+  } = useHookFormAction(resetMyPasswordAction, zodResolver(userAccount.resetPasswordSchema), {
     formProps: {
       values: {
         newPassword: __redacted__(''),

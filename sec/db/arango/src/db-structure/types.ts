@@ -11,5 +11,5 @@ export type db_connection = ArangoConnectionConfig
 export type database_connections = {
   mng: db_connection
   data: db_connection
-  iam: db_connection
+  userAccount: db_connection
 }

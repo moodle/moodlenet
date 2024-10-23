@@ -17,7 +17,7 @@ type spc<t> = sitePathConstructor<t>
 export type sitePaths<t extends string> = spc<t> & {
   '-': {
     api: {
-      iam: {
+      userAccount: {
         'basic-auth': {
           'verify-signup-email-token': spc<t>
         }

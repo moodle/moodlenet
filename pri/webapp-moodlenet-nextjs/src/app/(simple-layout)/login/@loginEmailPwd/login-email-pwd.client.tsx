@@ -12,11 +12,11 @@ import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 
 export default function LoginPanel() {
   const { t } = useTranslation()
-  const { iam } = useAllPrimarySchemas()
+  const { userAccount } = useAllPrimarySchemas()
   const {
     form: { formState, register },
     handleSubmitWithAction,
-  } = useHookFormAction(loginAction, zodResolver(iam.loginSchema))
+  } = useHookFormAction(loginAction, zodResolver(userAccount.loginSchema))
   const recoverPasswordHref = sitepaths['recover-password-request']()
 
   const loginErrorMsg = formState.errors.root?.message

@@ -1,6 +1,6 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { __redacted__, _void, date_time_string, url_string_schema } from '@moodle/lib-types'
-import { getIamPrimarySchemas, userRole } from '../'
+import { getuserAccountPrimarySchemas, userRole } from '..'
 import { moduleCore } from '../../../types'
 import {
   assert_authorizeAuthenticatedCurrentUserSession,
@@ -12,16 +12,16 @@ import {
   validateCurrentUserSession,
 } from '../lib'
 
-export const iam_core: moduleCore<'iam'> = {
-  modName: 'iam',
+export const userAccount_core: moduleCore<'userAccount'> = {
+  modName: 'userAccount',
   primary(ctx) {
     return {
       session: {
         async moduleInfo() {
           const {
-            configs: { iamPrimaryMsgSchemaConfigs },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'iam' })
-          return { schemaConfigs: iamPrimaryMsgSchemaConfigs }
+            configs: { userAccountPrimaryMsgSchemaConfigs },
+          } = await ctx.mod.env.query.modConfigs({ mod: 'userAccount' })
+          return { schemaConfigs: userAccountPrimaryMsgSchemaConfigs }
         },
         async getUserSession() {
           const userSession = await validateCurrentUserSession({ ctx })
@@ -39,7 +39,7 @@ export const iam_core: moduleCore<'iam'> = {
             ctx,
             role: 'admin',
           })
-          const [found, user] = await ctx.mod.iam.query.userBy({ by: 'id', userId })
+          const [found, user] = await ctx.mod.userAccount.query.userBy({ by: 'id', userId })
           if (!found) {
             return [false, { reason: 'userNotFound' }]
           }
@@ -63,7 +63,7 @@ export const iam_core: moduleCore<'iam'> = {
 
         async searchUsers({ textSearch }) {
           await assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' })
-          const { users } = await ctx.mod.iam.query.usersByText({
+          const { users } = await ctx.mod.userAccount.query.usersByText({
             text: textSearch,
           })
           return { users }
@@ -93,13 +93,13 @@ export const iam_core: moduleCore<'iam'> = {
         async signupRequest({ signupForm, redirectUrl }) {
           const schemas = await fetchPrimarySchemas()
           const { displayName, email, password } = schemas.signupSchema.parse(signupForm)
-          const [found] = await ctx.mod.iam.query.userBy({ by: 'email', email })
+          const [found] = await ctx.mod.userAccount.query.userBy({ by: 'email', email })
           if (found) {
             return [false, { reason: 'userWithSameEmailExists' }]
           }
           const {
             configs: { tokenExpireTime },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'iam' })
+          } = await ctx.mod.env.query.modConfigs({ mod: 'userAccount' })
 
           const { passwordHash } = await ctx.mod.crypto.service.hashPassword({
             plainPassword: password,
@@ -108,7 +108,7 @@ export const iam_core: moduleCore<'iam'> = {
           const confirmEmailSession = await ctx.mod.crypto.service.signDataToken({
             expiresIn: tokenExpireTime.signupEmailVerification,
             data: {
-              module: 'iam',
+              module: 'userAccount',
               type: 'signupRequestEmailVerification',
               redirectUrl,
               displayName,
@@ -118,7 +118,7 @@ export const iam_core: moduleCore<'iam'> = {
           })
           ctx.mod.userNotification.service.enqueueNotificationToUser({
             data: {
-              module: 'iam',
+              module: 'userAccount',
               type: 'signupWithEmailConfirmation',
               activateAccountUrl: url_string_schema.parse(`${redirectUrl}?token=${confirmEmailSession.token}`),
               signupEmail: signupForm.email,
@@ -133,10 +133,10 @@ export const iam_core: moduleCore<'iam'> = {
             configs: {
               roles: { newlyCreatedUserRoles },
             },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'iam' })
+          } = await ctx.mod.env.query.modConfigs({ mod: 'userAccount' })
           const [verified, validation] = await ctx.mod.crypto.service.validateSignedToken({
             token: signupEmailVerificationToken,
-            module: 'iam',
+            module: 'userAccount',
             type: 'signupRequestEmailVerification',
           })
 
@@ -144,7 +144,7 @@ export const iam_core: moduleCore<'iam'> = {
             return [false, { reason: 'invalidToken' }]
           }
           const { validatedSignedTokenData } = validation
-          const [, foundSameEmailUser] = await ctx.mod.iam.query.userBy({
+          const [, foundSameEmailUser] = await ctx.mod.userAccount.query.userBy({
             by: 'email',
             email: validatedSignedTokenData.email,
           })
@@ -168,7 +168,7 @@ export const iam_core: moduleCore<'iam'> = {
           return newUserCreated ? [true, { userId: newUser.id }] : [false, { reason: 'unknown' }]
         },
         async login({ loginForm }) {
-          const [found, userRecord] = await ctx.mod.iam.query.userBy({
+          const [found, userRecord] = await ctx.mod.userAccount.query.userBy({
             by: 'email',
             email: loginForm.email,
           })
@@ -200,9 +200,9 @@ export const iam_core: moduleCore<'iam'> = {
         async resetPasswordRequest({ declaredOwnEmail, redirectUrl }) {
           const {
             configs: { tokenExpireTime: userSelfDeletion },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'iam' })
+          } = await ctx.mod.env.query.modConfigs({ mod: 'userAccount' })
 
-          const [, user] = await ctx.mod.iam.query.userBy({
+          const [, user] = await ctx.mod.userAccount.query.userBy({
             by: 'email',
             email: declaredOwnEmail,
           })
@@ -213,7 +213,7 @@ export const iam_core: moduleCore<'iam'> = {
           const resetPasswordConfirmationSession = await ctx.mod.crypto.service.signDataToken({
             expiresIn: userSelfDeletion.resetPasswordRequest,
             data: {
-              module: 'iam',
+              module: 'userAccount',
               type: 'resetPasswordRequest',
               redirectUrl,
               email: user.contacts.email,
@@ -222,7 +222,7 @@ export const iam_core: moduleCore<'iam'> = {
 
           ctx.mod.userNotification.service.enqueueNotificationToUser({
             data: {
-              module: 'iam',
+              module: 'userAccount',
               type: 'resetPasswordRequest',
               resetPasswordUrl: url_string_schema.parse(`${redirectUrl}?token=${resetPasswordConfirmationSession.token}`),
               toUserId: user.id,
@@ -242,12 +242,12 @@ export const iam_core: moduleCore<'iam'> = {
           const authenticated_session = await assert_authorizeAuthenticatedCurrentUserSession({ ctx })
           const {
             configs: { tokenExpireTime: userSelfDeletion },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'iam' })
+          } = await ctx.mod.env.query.modConfigs({ mod: 'userAccount' })
 
           const selfDeletionConfirmationSession = await ctx.mod.crypto.service.signDataToken({
             expiresIn: userSelfDeletion.userSelfDeletionRequest,
             data: {
-              module: 'iam',
+              module: 'userAccount',
               type: 'selfDeletionRequestConfirm',
               redirectUrl,
               userId: authenticated_session.user.id,
@@ -256,7 +256,7 @@ export const iam_core: moduleCore<'iam'> = {
 
           ctx.mod.userNotification.service.enqueueNotificationToUser({
             data: {
-              module: 'iam',
+              module: 'userAccount',
               type: 'deleteAccountRequest',
               deleteAccountUrl: url_string_schema.parse(`${redirectUrl}?token=${selfDeletionConfirmationSession.token}`),
               toUserId: authenticated_session.user.id,
@@ -268,7 +268,7 @@ export const iam_core: moduleCore<'iam'> = {
         async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
           const [verified, validation] = await ctx.mod.crypto.service.validateSignedToken({
             token: selfDeletionConfirmationToken,
-            module: 'iam',
+            module: 'userAccount',
             type: 'selfDeletionRequestConfirm',
           })
 
@@ -277,7 +277,7 @@ export const iam_core: moduleCore<'iam'> = {
           }
           const { validatedSignedTokenData } = validation
 
-          const [user] = await ctx.mod.iam.query.userBy({
+          const [user] = await ctx.mod.userAccount.query.userBy({
             by: 'id',
             userId: validatedSignedTokenData.userId,
           })
@@ -298,7 +298,7 @@ export const iam_core: moduleCore<'iam'> = {
         async resetPassword({ resetPasswordForm: { newPassword, token } }) {
           const [verified, validation] = await ctx.mod.crypto.service.validateSignedToken({
             token,
-            module: 'iam',
+            module: 'userAccount',
             type: 'resetPasswordRequest',
           })
 
@@ -307,7 +307,7 @@ export const iam_core: moduleCore<'iam'> = {
           }
 
           const { validatedSignedTokenData } = validation
-          const [found, userRecord] = await ctx.mod.iam.query.userBy({
+          const [found, userRecord] = await ctx.mod.userAccount.query.userBy({
             by: 'email',
             email: validatedSignedTokenData.email,
           })
@@ -329,7 +329,7 @@ export const iam_core: moduleCore<'iam'> = {
             ctx,
           })
 
-          const [, user] = await ctx.mod.iam.query.userBy({
+          const [, user] = await ctx.mod.userAccount.query.userBy({
             by: 'id',
             userId: authenticated_session.user.id,
           })
@@ -361,15 +361,15 @@ export const iam_core: moduleCore<'iam'> = {
     }
     async function fetchPrimarySchemas() {
       const {
-        configs: { iamPrimaryMsgSchemaConfigs },
-      } = await ctx.mod.env.query.modConfigs({ mod: 'iam' })
-      return getIamPrimarySchemas(iamPrimaryMsgSchemaConfigs)
+        configs: { userAccountPrimaryMsgSchemaConfigs },
+      } = await ctx.mod.env.query.modConfigs({ mod: 'userAccount' })
+      return getuserAccountPrimarySchemas(userAccountPrimaryMsgSchemaConfigs)
     }
   },
   watch(ctx) {
     return {
       secondary: {
-        iam: {
+        userAccount: {
           write: {
             async setUserPassword([[done], { userId }]) {
               //FIXME: put quite all notification sends as reaction to some atomic event (just like in the case of password change here)
@@ -377,7 +377,7 @@ export const iam_core: moduleCore<'iam'> = {
                 return
               }
               ctx.mod.userNotification.service.enqueueNotificationToUser({
-                data: { module: 'iam', type: 'passwordChanged', toUserId: userId },
+                data: { module: 'userAccount', type: 'passwordChanged', toUserId: userId },
               })
             },
           },
@@ -402,7 +402,7 @@ export const iam_core: moduleCore<'iam'> = {
               }
               await ctx.sync.userDisplayname({
                 displayName,
-                userId: response.userProfile.iamUser.id,
+                userId: response.userProfile.userAccountUser.id,
               })
             },
           },
@@ -411,10 +411,10 @@ export const iam_core: moduleCore<'iam'> = {
     }
   },
   async startBackgroundProcess(ctx) {
-    ctx.log('debug', 'Starting background process IAM')
+    ctx.log('debug', 'Starting background process userAccount')
 
     const sysAdminInfo = await ctx.mod.env.query.getSysAdminInfo()
-    const [found] = await ctx.mod.iam.query.userBy({
+    const [found] = await ctx.mod.userAccount.query.userBy({
       by: 'email',
       email: sysAdminInfo.email,
     })
@@ -434,4 +434,3 @@ export const iam_core: moduleCore<'iam'> = {
     }
   },
 }
-
