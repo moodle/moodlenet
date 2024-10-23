@@ -16,7 +16,7 @@ export type local_asset_meta = {
   mimetype: mimetype
   hash: fileHashes
   uploaded: {
-    at: date_time_string
+    date: date_time_string
     primarySessionId: string
   }
 }

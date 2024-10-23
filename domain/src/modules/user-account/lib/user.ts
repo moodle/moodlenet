@@ -7,7 +7,7 @@ export interface CreateNewUserAccountRecordDataArg {
   displayName: string
   email: email_address
   passwordHash: password_hash
-  createdAt?: date_time_string
+  creationDate?: date_time_string
   lastLogin?: date_time_string
   roles?: userRole[]
 }
@@ -17,14 +17,14 @@ export async function createNewUserAccountRecordData({
   email,
   passwordHash,
   roles = [],
-  createdAt,
+  creationDate,
   lastLogin,
 }: CreateNewUserAccountRecordDataArg): Promise<userAccountRecord> {
   const now = date_time_string('now')
   const id = await generateNanoId()
   return {
     id,
-    createdAt: createdAt ?? now,
+    creationDate: creationDate ?? now,
     roles: roles,
     displayName,
     contacts: {

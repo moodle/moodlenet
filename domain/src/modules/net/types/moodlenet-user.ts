@@ -3,7 +3,7 @@ import { draft_id } from '../../user-profile/types/drafts'
 import { publishedContentType, published_content_id, userContributionType, user_contribution_id } from './content'
 import { userModerations } from './moderation'
 
-export type moodlenetUserData = {
+export type moodlenetUserProfileData = {
   preferences: {
     useMyInterestsAsDefaultFilters?: boolean
   }
@@ -23,7 +23,7 @@ export type moodlenetUserData = {
 export type myFeaturedContent<ctype extends publishedContentType> = {
   type: ctype
   id: published_content_id
-  at: date_time_string
+  date: date_time_string
 }
 
 export type myPublishedContribution = {
@@ -33,7 +33,7 @@ export type myPublishedContribution = {
 } & d_u<
   {
     published: unknown
-    unpublished: { at: date_time_string }
+    unpublished: { date: date_time_string }
   },
   'status'
 >

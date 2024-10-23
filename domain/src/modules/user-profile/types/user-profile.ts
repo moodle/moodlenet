@@ -4,7 +4,7 @@ import { iscedFieldId, iscedLevelId } from '../../edu'
 import { userAccountId, userRole } from '../../user-account'
 import { profileInfo } from './profile-info'
 import { myDrafts } from './drafts'
-import { moodlenetUserData } from '../../net'
+import { moodlenetUserProfileData } from '../../net'
 
 export type userProfileId = string
 
@@ -15,7 +15,7 @@ export type userProfileRecord = {
   urlSafeProfileName: string
   myDrafts: myDrafts
   eduInterestFields: userInterestFields
-  moodlenet: moodlenetUserData
+  moodlenet: moodlenetUserProfileData
 }
 
 export type userAccountUserExcerpt = { id: userAccountId; roles: userRole[] }

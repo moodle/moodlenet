@@ -14,7 +14,7 @@ export type uploaded_blob_meta = {
   mimetype: mimetype
   hash: fileHashes
   uploaded: {
-    at: date_time_string
+    date: date_time_string
     byUserAccountId: userAccountId
     primarySessionId: string
   }

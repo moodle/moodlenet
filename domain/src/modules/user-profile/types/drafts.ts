@@ -20,8 +20,8 @@ type draft<dataType extends eduResourceData | eduResourceCollectionData, meta = 
   data: dataType
   meta: meta
   created: date_time_string
-  lastUpdatedAt: date_time_string
-  // updates: { at: date_time_string; diff: jsonDiff }[]
+  lastUpdateDate: date_time_string
+  // updates: { date: date_time_string; diff: jsonDiff }[]
 }
 
 export type eduResourceDraftId = string

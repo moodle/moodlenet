@@ -155,7 +155,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
 
           const now = date_time_string('now')
           const newUser = await createNewUserAccountRecordData({
-            createdAt: now,
+            creationDate: now,
             roles: newlyCreatedUserRoles,
             displayName: validatedSignedTokenData.displayName,
             email: validatedSignedTokenData.email,

@@ -7,7 +7,7 @@ export type assetTextExtraction = {
     weight: textExtractionWeight
     body: string
   }[]
-  extractedAt: string
+  extractionDate: string
   extractor: string
   extractionMethod: string
 }
@@ -18,12 +18,12 @@ export type assetTextExtractionStatus = d_u<
       result: assetTextExtraction
     }
     requested: {
-      at: date_time_string
+      date: date_time_string
     } & d_u<
       {
         enqueued: unknown
         ongoing: {
-          startedAt: date_time_string
+          startDate: date_time_string
         }
       },
       'extraction'

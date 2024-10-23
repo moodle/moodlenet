@@ -40,7 +40,7 @@ export function usingTempFile2asset({ path, uploaded_blob_meta }: usingTempFile)
     type: 'local',
     path,
     hash: uploaded_blob_meta.hash,
-    uploaded: { at: uploaded_blob_meta.uploaded.at, primarySessionId: uploaded_blob_meta.uploaded.primarySessionId },
+    uploaded: { date: uploaded_blob_meta.uploaded.date, primarySessionId: uploaded_blob_meta.uploaded.primarySessionId },
     mimetype: uploaded_blob_meta.mimetype,
     name: uploaded_blob_meta.name,
     size: uploaded_blob_meta.size,

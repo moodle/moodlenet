@@ -8,11 +8,11 @@ export type userRole = 'admin' | 'publisher'
 export type userAccountId = string
 export type userAccountRecord = {
   id: userAccountId
-  createdAt: date_time_string
+  creationDate: date_time_string
   //REVIEW: possibly replace `displayName` with a `user_profile_excerpt` type. (ATM userProfileRecord is created as a consequence of a new userAccountRecord creation whereas `displayName` is provided during signup.)
   displayName: string
   roles: userRole[]
-  roleHistory: { at: date_time_string; by: userAccountId; oldRoles: userRole[]; newRoles: userRole[] }[]
+  roleHistory: { date: date_time_string; by: userAccountId; oldRoles: userRole[]; newRoles: userRole[] }[]
   contacts: {
     email: email_address
   }
@@ -26,7 +26,7 @@ export type userAccountRecord = {
     | {
         anonymized: boolean
         reason: userDeactivationReason
-        at: date_time_string
+        date: date_time_string
       }
   moodlenet: {
     moderation: userModerations

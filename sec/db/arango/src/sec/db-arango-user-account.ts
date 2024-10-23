@@ -32,7 +32,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
 
             return [!!savedUser?.new, _void]
           },
-          async deactivateUser({ anonymize, reason, userAccountId, at = new Date().toISOString() }) {
+          async deactivateUser({ anonymize, reason, userAccountId, useDeactivationDate: date = new Date().toISOString() }) {
             const deactivatingUser = await db_struct.userAccount.coll.user.document(
               { _key: userAccountId },
               { graceful: true },
@@ -44,7 +44,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
                   displayName: '',
                   roles: [],
                   contacts: {
-                    email: createHash('md5').update(`${deactivatingUser.contacts.email}|${at}`).digest('base64'),
+                    email: createHash('md5').update(`${deactivatingUser.contacts.email}|${date}`).digest('base64'),
                   },
                   passwordHash: '',
                 }
@@ -54,7 +54,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
               .update(
                 { _key: userAccountId },
                 {
-                  deactivated: { anonymized: anonymize, at, reason },
+                  deactivated: { anonymized: anonymize, date, reason },
                   ...anonymization,
                 },
                 { returnOld: true },

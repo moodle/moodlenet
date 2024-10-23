@@ -124,7 +124,7 @@ const router = express
         uploaded: {
           primarySessionId: req.moodlePrimarySession.id,
           byUserAccountId: userSession.user.id,
-          at: date_time_string('now'),
+          date: date_time_string('now'),
         },
         original: {
           name: req.file.originalname,

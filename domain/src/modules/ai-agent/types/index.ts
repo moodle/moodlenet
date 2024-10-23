@@ -7,12 +7,12 @@ export type aiAgentResourceSuggestionStatus = {
 }
 
 type requestedGenerationStatus = {
-  at: date_time_string
+  date: date_time_string
 } & d_u<
   {
     enqueued: unknown
     ongoing: {
-      startedAt: date_time_string
+      startDate: date_time_string
     }
   },
   'request'

@@ -30,10 +30,10 @@ export type publishedContent<dataType extends userContributionData, meta = _null
   meta: meta
   dataRevision: positive_integer
   created: date_time_string
-  lastUpdatedAt: date_time_string
+  lastUpdateDate: date_time_string
   firstPublished: date_time_string
-  lastPublishedAt: date_time_string
-  // dataUpdates: { at: date_time_string; diff: jsonDiff }[]
+  lastPublishDate: date_time_string
+  // dataUpdates: { date: date_time_string; diff: jsonDiff }[]
   points: {
     popularity: non_negative_integer
   }
