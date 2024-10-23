@@ -1,4 +1,4 @@
-import { deep_partial, ok_ko } from '@moodle/lib-types'
+import { deep_partial_props, ok_ko } from '@moodle/lib-types'
 import { OrgInfo, OrgPrimaryMsgSchemaConfigs } from './types'
 
 export * from './types'
@@ -11,7 +11,7 @@ export default interface OrgDomain {
         moduleInfo(): Promise<{ info: OrgInfo; schemaConfigs: OrgPrimaryMsgSchemaConfigs }>
       }
       admin: {
-        updatePartialOrgInfo(_: { partialInfo: deep_partial<OrgInfo> }): Promise<ok_ko<void>>
+        updatePartialOrgInfo(_: { partialInfo: deep_partial_props<OrgInfo> }): Promise<ok_ko<void>>
       }
     }
   }

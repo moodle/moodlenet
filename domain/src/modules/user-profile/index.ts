@@ -1,15 +1,15 @@
-import type { d_u, deep_partial, ok_ko } from '@moodle/lib-types'
-import { userAccountId } from '../user-account'
+import type { d_u, deep_partial_props, ok_ko } from '@moodle/lib-types'
 import { useTempFileResult } from '../storage'
+import { userAccountId } from '../user-account'
 import {
+  UserProfilePrimaryMsgSchemaConfigs,
   profileImage,
   profileInfo,
+  useProfileImageForm,
   userAccountUserExcerpt,
   userProfileAccessObject,
   userProfileId,
   userProfileRecord,
-  UserProfilePrimaryMsgSchemaConfigs,
-  useProfileImageForm,
 } from './types'
 export * from './types'
 
@@ -28,7 +28,7 @@ export default interface UserProfileDomain {
         useTempImageAsProfileImage(_: useProfileImageForm): Promise<useTempFileResult>
         editProfileInfo(_: {
           userProfileId: userProfileId
-          profileInfo: deep_partial<profileInfo>
+          profileInfo: deep_partial_props<profileInfo>
         }): Promise<ok_ko<void, { notFound: unknown; unknown: unknown }>>
       }
       userProfile: {
@@ -51,12 +51,12 @@ export default interface UserProfileDomain {
       write: {
         updatePartialProfileInfo(_: {
           userProfileId: userProfileId
-          partialProfileInfo: deep_partial<profileInfo>
+          partialProfileInfo: deep_partial_props<profileInfo>
         }): Promise<ok_ko<void>>
         useTempImageInProfile(_: { as: profileImage; id: userProfileId; tempId: string }): Promise<useTempFileResult>
         updatePartialUserProfile(_: {
           userProfileId: userProfileId
-          partialUserProfile: Partial<userProfileRecord>
+          partialUserProfile: deep_partial_props<userProfileRecord>
         }): Promise<ok_ko<void>>
       }
     }

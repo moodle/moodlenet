@@ -1,5 +1,5 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { _void, webSlug } from '@moodle/lib-types'
+import { _void, date_time_string, integer, positive_integer, webSlug } from '@moodle/lib-types'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
 import { validateCurrentUserAuthenticatedSessionHasRole } from '../../user-account/lib'
 import { usingTempFile2asset } from '../../storage/lib'
@@ -21,7 +21,8 @@ export const user_profile_core: moduleCore<'userProfile'> = {
         async useTempImageAsProfileImage({ as, tempId, userProfileId }) {
           const userProfile = await accessUserProfile({
             ctx,
-            by: 'userProfileId', userProfileId
+            by: 'userProfileId',
+            userProfileId,
           })
           assertWithErrorXxx(
             userProfile.result === 'found' && userProfile.access === 'allowed' && userProfile.permissions.editProfile,
@@ -55,7 +56,10 @@ export const user_profile_core: moduleCore<'userProfile'> = {
       },
       userProfile: {
         async access(get) {
-          if (get.by === 'userAccountId' && !(await validateCurrentUserAuthenticatedSessionHasRole({ ctx, role: 'admin' }))) {
+          if (
+            get.by === 'userAccountId' &&
+            !(await validateCurrentUserAuthenticatedSessionHasRole({ ctx, role: 'admin' }))
+          ) {
             return [false, { reason: 'notFound' }]
           }
           const userProfileResult = await accessUserProfile({ ctx, ...get })
@@ -95,7 +99,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               }
               await ctx.write.updatePartialUserProfile({
                 userProfileId,
-                partialUserProfile: { urlSafeProfileName: webSlug(displayName) },
+                partialUserProfile: { appData: { urlSafeProfileName: webSlug(displayName) } },
               })
             },
           },
@@ -116,7 +120,23 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                     id: newUser.id,
                     roles: newUser.roles,
                   },
-                  urlSafeProfileName: webSlug(newUser.displayName),
+                  appData: {
+                    urlSafeProfileName: webSlug(newUser.displayName),
+                    moodlenet: {
+                      featuredContent: { bookmarked: [], following: [], liked: [] },
+                      points: { amount: 0 as positive_integer },
+                      preferences: { useMyInterestsAsDefaultFilters: true },
+                      published: { contributions: [] },
+                      suggestedContent: {
+                        listsCreationDate: date_time_string('now'),
+                        userProfiles: [],
+                        eduResourceCollections: [],
+                        eduResources: [],
+                      },
+                    },
+                  },
+                  eduInterestFields: { iscedFields: [], iscedLevels: [], languages: [], licenses: [] },
+                  myDrafts: { eduResourceCollections: [], eduResources: [] },
                   info: {
                     displayName: newUser.displayName,
                     aboutMe: '',

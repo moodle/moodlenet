@@ -3,7 +3,7 @@ import { draft_id } from '../../user-profile/types/drafts'
 import { publishedContentType, published_content_id, userContributionType, user_contribution_id } from './content'
 import { userModerations } from './moderation'
 
-export type moodlenetUserProfileData = {
+export type userProfileMoodlenetData = {
   preferences: {
     useMyInterestsAsDefaultFilters?: boolean
   }
@@ -12,14 +12,22 @@ export type moodlenetUserProfileData = {
     following: myFeaturedContent<'user-profile' | 'isced-field' | 'edu-resource-collection'>[]
     liked: myFeaturedContent<'edu-resource'>[]
   }
+  suggestedContent: userProfileSuggestions
   published: {
     contributions: myPublishedContribution[]
   }
   points: {
     amount: positive_integer
   }
-  userModerationStatus: userModerations
 }
+
+export type userProfileSuggestions = {
+  listsCreationDate: date_time_string
+  userProfiles: myFeaturedContent<'user-profile'>[]
+  eduResourceCollections: myFeaturedContent<'edu-resource-collection'>[]
+  eduResources: myFeaturedContent<'edu-resource'>[]
+}
+
 export type myFeaturedContent<ctype extends publishedContentType> = {
   type: ctype
   id: published_content_id

@@ -1,9 +1,9 @@
-import { deep_partial } from '@moodle/lib-types'
+import { deep_partial_props } from '@moodle/lib-types'
+import { userAccountId } from '@moodle/module/user-account'
 import { aql } from 'arangojs'
 import { AqlQuery } from 'arangojs/aql'
 import { db_struct } from '../../db-structure'
 import { userProfileDocument } from './types'
-import { userAccountId } from '@moodle/module/user-account'
 
 export async function getUserProfileByUserAccountId<T = userProfileDocument>({
   db_struct,
@@ -32,7 +32,7 @@ export async function updateUserProfileByUserAccountId({
 }: {
   userAccountId: userAccountId
   db_struct: db_struct
-  partialUserProfile: deep_partial<userProfileDocument>
+  partialUserProfile: deep_partial_props<userProfileDocument>
 }) {
   return getUserProfileByUserAccountId({
     apply: aql`UPDATE userProfile WITH ${partialUserProfile} IN ${db_struct.data.coll.userProfile}`,

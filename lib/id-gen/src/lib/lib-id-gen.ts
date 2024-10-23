@@ -1,6 +1,6 @@
 import * as ulidx from 'ulidx'
 import { customAlphabet } from 'nanoid'
-import { d_u } from '@moodle/lib-types'
+import { d_u, date_time_string } from '@moodle/lib-types'
 
 export type id_type = d_u<
   {
@@ -12,7 +12,7 @@ export type id_type = d_u<
 
 const globalMonoUlid = ulidx.monotonicFactory()
 export async function generateUlid(cfg?: { onDate?: Date | number | string }) {
-  const date = new Date(cfg?.onDate ?? Date.now())
+  const date = new Date(cfg?.onDate ?? date_time_string('now'))
   return globalMonoUlid(date.valueOf())
 }
 

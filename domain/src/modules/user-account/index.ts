@@ -104,7 +104,7 @@ export default interface userAccountDomain {
           userAccountId: userAccountId
           anonymize: boolean
           reason: userDeactivationReason
-          useDeactivationDate?: date_time_string
+          overrideDeactivationDate?: date_time_string
         }): Promise<ok_ko<{ deactivatedUser: userAccountRecord }>>
 
         setUserRoles(_: {

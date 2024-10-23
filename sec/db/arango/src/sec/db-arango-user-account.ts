@@ -1,5 +1,5 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
-import { _void } from '@moodle/lib-types'
+import { _void, date_time_string } from '@moodle/lib-types'
 import { aql } from 'arangojs'
 import { createHash } from 'node:crypto'
 import { db_struct } from '../db-structure'
@@ -32,7 +32,12 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
 
             return [!!savedUser?.new, _void]
           },
-          async deactivateUser({ anonymize, reason, userAccountId, useDeactivationDate: date = new Date().toISOString() }) {
+          async deactivateUser({
+            anonymize,
+            reason,
+            userAccountId,
+            overrideDeactivationDate: date = date_time_string('now'),
+          }) {
             const deactivatingUser = await db_struct.userAccount.coll.user.document(
               { _key: userAccountId },
               { graceful: true },

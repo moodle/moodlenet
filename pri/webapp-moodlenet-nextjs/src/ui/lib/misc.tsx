@@ -1,4 +1,4 @@
-import { _any } from '@moodle/lib-types'
+import { _any, date_time_string } from '@moodle/lib-types'
 import assert from 'assert'
 import defaultsDeep from 'lodash-es/defaultsDeep'
 import type { ReactElement } from 'react'
@@ -31,8 +31,7 @@ export const elementFullyInViewPort = (
   )
 }
 
-export const isEllipsisActive = (e: HTMLElement) =>
-  e.offsetWidth < e.scrollWidth || e.offsetHeight < e.scrollHeight
+export const isEllipsisActive = (e: HTMLElement) => e.offsetWidth < e.scrollWidth || e.offsetHeight < e.scrollHeight
 
 export const range = (size: number, startAt = 0) => {
   return [...Array(size).keys()].map(i => i + startAt)
@@ -55,11 +54,10 @@ export const randomIntFromInterval = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-export const fileExceedsMaxUploadSize = (size: number, max: number | null) =>
-  max === null ? false : size > max
+export const fileExceedsMaxUploadSize = (size: number, max: number | null) => (max === null ? false : size > max)
 
 export const getYearList = (startYear: number): string[] => {
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date(date_time_string('now')).getFullYear()
   const years = []
   while (startYear <= currentYear) {
     years.push((startYear++).toString())
@@ -141,9 +139,7 @@ export const adjustColor = (color: string, amount: number) => {
     '#' +
     color
       .replace(/^#/, '')
-      .replace(/../g, color =>
-        ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2),
-      )
+      .replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2))
   )
 }
 
@@ -351,14 +347,10 @@ export const getGrayScale = (color: HslType) => {
   const desaturatedColor = changeSaturation(color, 10)
   const grayScaleSet = {} as _any
   for (let i = 14; i > 0; i--) {
-    grayScaleSet[`--color-light-gray-${i}`] = hslToHex(
-      changeLightness(desaturatedColor, 54 + ratio * i),
-    )
+    grayScaleSet[`--color-light-gray-${i}`] = hslToHex(changeLightness(desaturatedColor, 54 + ratio * i))
   }
   for (let i = 1; i < 14; i++) {
-    grayScaleSet[`--color-dark-gray-${i}`] = hslToHex(
-      changeLightness(desaturatedColor, 46 - ratio * i),
-    )
+    grayScaleSet[`--color-dark-gray-${i}`] = hslToHex(changeLightness(desaturatedColor, 46 - ratio * i))
   }
   return grayScaleSet
 }

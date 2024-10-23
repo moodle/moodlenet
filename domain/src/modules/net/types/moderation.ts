@@ -18,3 +18,6 @@ export type userModerations = {
     amount: non_negative_integer
   }
 }
+export type userAccountMoodlenetData = {
+  moderation: userModerations
+}

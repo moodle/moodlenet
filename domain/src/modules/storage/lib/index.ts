@@ -2,7 +2,7 @@ import { url_string } from '@moodle/lib-types'
 import sanitizeFilename from 'sanitize-filename'
 import { asset, usingTempFile } from '../types'
 
-// export function newFsFileRelativePath(filename: string, date = new Date()) {
+// export function newFsFileRelativePath(filename: string, date = date_time_string('now')) {
 //   return [
 //     String(date.getFullYear()),
 //     String(date.getMonth() + 1).padStart(2, '0'),

@@ -26,6 +26,7 @@ export async function createNewUserAccountRecordData({
     id,
     creationDate: creationDate ?? now,
     roles: roles,
+    roleHistory: [],
     displayName,
     contacts: {
       email,
@@ -35,8 +36,10 @@ export async function createNewUserAccountRecordData({
       lastLogin: lastLogin ?? now,
     },
     deactivated: false,
-    moodlenet: {
-      moderation: { reports: { amount: non_negative_integer_schema.parse(0), items: [] } },
+    appData: {
+      moodlenet: {
+        moderation: { reports: { amount: non_negative_integer_schema.parse(0), items: [] } },
+      },
     },
   }
 }

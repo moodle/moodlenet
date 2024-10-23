@@ -7,6 +7,7 @@ import { user_profile_default_configs } from '@moodle/module/user-profile/setup'
 import { db_struct } from '../../db-structure'
 import { saveModConfigs } from '../../lib/modules'
 import { Migration_Record } from '../types'
+import { date_time_string } from '@moodle/lib-types'
 // import { removePropOnInsert } from '../lib/id'
 
 export const VERSION = 'v0_1'
@@ -67,7 +68,7 @@ export async function migrate({ db_struct }: { db_struct: db_struct }) {
   const migrationDoc: Migration_Record = {
     previous: 'null',
     current: VERSION,
-    date: new Date().toISOString(),
+    date: date_time_string('now'),
     meta: 'initialization',
   }
 

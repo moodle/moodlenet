@@ -1,3 +1,4 @@
+import { date_time_string } from '@moodle/lib-types'
 import { db_struct } from '../../db-structure'
 import { Migration_Record } from '../types'
 
@@ -9,7 +10,7 @@ export async function migrate({ db_struct }: { db_struct: db_struct }) {
   const migrationDoc: Migration_Record = {
     previous: 'v0_2',
     current: VERSION,
-    date: new Date().toISOString(),
+    date: date_time_string('now'),
     meta: 'created userProfile collection & configs + index on userAccountId',
   }
 

@@ -1,4 +1,4 @@
-import { deep_partial, ok_ko } from '@moodle/lib-types'
+import { deep_partial_props, ok_ko } from '@moodle/lib-types'
 import { MoodleNetInfo, MoodleNetPrimaryMsgSchemaConfigs } from './types'
 export * from './types'
 
@@ -13,9 +13,7 @@ export default interface NetDomain {
         }>
       }
       admin: {
-        updatePartialMoodleNetInfo(_: {
-          partialInfo: deep_partial<MoodleNetInfo>
-        }): Promise<ok_ko<void>>
+        updatePartialMoodleNetInfo(_: { partialInfo: deep_partial_props<MoodleNetInfo> }): Promise<ok_ko<void>>
       }
     }
   }

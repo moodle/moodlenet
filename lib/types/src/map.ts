@@ -58,12 +58,11 @@ export type d_t_u<
 // discr_map<nmap, p> extends infer m ? m[keyof m] : never
 
 export type deep_partial<t> = {
-  [P in keyof t]?: t[P] extends (_: _any) => _any
-    ? t[P]
-    : t[P] extends object
-      ? deep_partial<t[P]>
-      : t[P]
+  [P in keyof t]?: t[P] extends (_: _any) => _any ? t[P] : t[P] extends object ? deep_partial<t[P]> : t[P]
 }
 
-export type deep_required<t> = DeepComplete<t>
+export type deep_partial_props<t> = {
+  [P in keyof t]?: t[P] extends _any[] | ((_: _any) => _any) ? t[P] : t[P] extends object ? deep_partial_props<t[P]> : t[P]
+}
 
+// export type deep_required<t> = DeepComplete<t>

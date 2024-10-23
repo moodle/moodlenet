@@ -31,7 +31,7 @@ export async function accessUserProfile({
         permissions: _all_user_profile_permissions_disallowed,
         user: null,
         flags: { followed: true },
-        urlSafeProfileName: userProfile.urlSafeProfileName,
+        urlSafeProfileName: userProfile.appData.urlSafeProfileName,
       }
     }
   }
@@ -64,7 +64,7 @@ export async function accessUserProfile({
     },
     user: itsMe || currentUserIsAdmin ? userProfile.userAccountUser : null,
     flags: { followed: !itsMe },
-    urlSafeProfileName: userProfile.urlSafeProfileName,
+    urlSafeProfileName: userProfile.appData.urlSafeProfileName,
   }
 
   async function getProfileInfoValidationConfigs() {
