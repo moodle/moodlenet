@@ -13,8 +13,9 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
     fields: ['contacts.email'],
     unique: true,
   })
-
   // data
   // --------------
-  //  await dbStruct.data.coll.xxx.create({})
+  await dbStruct.data.coll.xxx.create({})
+  ----------- more collections ---------------
+  ----------- more indexes ---------------
 }
