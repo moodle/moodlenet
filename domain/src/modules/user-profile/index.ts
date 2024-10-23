@@ -5,7 +5,7 @@ import {
   profileImage,
   profileInfo,
   userAccountUserExcerpt,
-  user_profile_access_object,
+  userProfileAccessObject,
   userProfileId,
   userProfileRecord,
   UserProfilePrimaryMsgSchemaConfigs,
@@ -32,7 +32,7 @@ export default interface UserProfileDomain {
         }): Promise<ok_ko<void, { notFound: unknown; unknown: unknown }>>
       }
       userProfile: {
-        access(_: get_user_profile_by): Promise<ok_ko<{ accessObject: user_profile_access_object }, { notFound: unknown }>>
+        access(_: get_user_profile_by): Promise<ok_ko<{ accessObject: userProfileAccessObject }, { notFound: unknown }>>
       }
     }
   }

@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { user_profile_access_object } from '@moodle/module/user-profile'
+import { userProfileAccessObject } from '@moodle/module/user-profile'
 import Edit from '@mui/icons-material/Edit'
 import Flag from '@mui/icons-material/Flag'
 import Save from '@mui/icons-material/Save'
@@ -25,7 +25,7 @@ import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.pn
 import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
 
 export type mainProfileCardProps = {
-  userProfile: user_profile_access_object
+  userProfile: userProfileAccessObject
 }
 
 export function MainProfileCard({ userProfile: { permissions, profileInfo, flags, id, user } }: mainProfileCardProps) {

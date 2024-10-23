@@ -28,7 +28,7 @@ export type userInterestFields = {
 }
 export type userProfilePermissions = flags<'follow' | 'editRoles' | 'sendMessage' | 'report' | 'editProfile'>
 
-export type user_profile_access_object = {
+export type userProfileAccessObject = {
   id: userProfileId
   profileInfo: profileInfo
   urlSafeProfileName: string
