@@ -1,7 +1,6 @@
-import { d_u, date_time_string, positive_integer } from '@moodle/lib-types'
+import { d_u, date_time_string, non_negative_integer } from '@moodle/lib-types'
 import { draft_id } from '../../user-profile/types/drafts'
 import { publishedContentType, published_content_id, userContributionType, user_contribution_id } from './content'
-import { userModerations } from './moderation'
 
 export type userProfileMoodlenetData = {
   preferences: {
@@ -17,7 +16,7 @@ export type userProfileMoodlenetData = {
     contributions: myPublishedContribution[]
   }
   points: {
-    amount: positive_integer
+    amount: non_negative_integer
   }
 }
 

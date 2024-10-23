@@ -1,1 +1,1 @@
-export * from './configs'
+export * from './nextjs-setup-configs'

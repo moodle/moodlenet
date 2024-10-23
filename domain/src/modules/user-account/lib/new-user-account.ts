@@ -1,6 +1,7 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { date_time_string, email_address, non_negative_integer_schema } from '@moodle/lib-types'
+import { date_time_string, email_address } from '@moodle/lib-types'
 import { password_hash } from '../../crypto/types'
+import { newUserAccountMoodlenetData } from '../../net/core/lib/new-user'
 import { userAccountRecord, userRole } from '../types'
 
 export interface CreateNewUserAccountRecordDataArg {
@@ -37,9 +38,7 @@ export async function createNewUserAccountRecordData({
     },
     deactivated: false,
     appData: {
-      moodlenet: {
-        moderation: { reports: { amount: non_negative_integer_schema.parse(0), items: [] } },
-      },
+      moodlenet: await newUserAccountMoodlenetData(),
     },
   }
 }

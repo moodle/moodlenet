@@ -1,1 +1,1 @@
-export * from './configs'
+export * from './user-profile-setup-configs'

@@ -4,6 +4,7 @@ import { assertWithErrorXxx, moduleCore } from '../../../types'
 import { validateCurrentUserAuthenticatedSessionHasRole } from '../../user-account/lib'
 import { usingTempFile2asset } from '../../storage/lib'
 import { accessUserProfile } from '../lib'
+import { createNewUserProfileData } from './lib/new-user-profile'
 
 export const user_profile_core: moduleCore<'userProfile'> = {
   modName: 'userProfile',
@@ -112,41 +113,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               if (!created) {
                 return
               }
-              const userProfileId = await generateNanoId()
-              ctx.queue.createUserProfile({
-                userProfile: {
-                  id: userProfileId,
-                  userAccountUser: {
-                    id: newUser.id,
-                    roles: newUser.roles,
-                  },
-                  appData: {
-                    urlSafeProfileName: webSlug(newUser.displayName),
-                    moodlenet: {
-                      featuredContent: { bookmarked: [], following: [], liked: [] },
-                      points: { amount: 0 as positive_integer },
-                      preferences: { useMyInterestsAsDefaultFilters: true },
-                      published: { contributions: [] },
-                      suggestedContent: {
-                        listsCreationDate: date_time_string('now'),
-                        userProfiles: [],
-                        eduResourceCollections: [],
-                        eduResources: [],
-                      },
-                    },
-                  },
-                  eduInterestFields: { iscedFields: [], iscedLevels: [], languages: [], licenses: [] },
-                  myDrafts: { eduResourceCollections: [], eduResources: [] },
-                  info: {
-                    displayName: newUser.displayName,
-                    aboutMe: '',
-                    location: '',
-                    siteUrl: null,
-                    avatar: null,
-                    background: null,
-                  },
-                },
-              })
+              ctx.queue.createUserProfile({ userProfile: await createNewUserProfileData({ newUser, ctx }) })
             },
 
             async setUserRoles([[done, result], { userAccountId }]) {
