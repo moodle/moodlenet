@@ -1,16 +1,16 @@
 import { access_obj, d_u } from '@moodle/lib-types'
-import { by_user_id_or_user_profile_id, user_profile_access_object, userProfilePermissions } from '..'
+import { get_user_profile_by, user_profile_access_object, userProfilePermissions } from '..'
 import { sessionLibDep, validate_currentUserSessionInfo } from '../../user-account/lib'
 
 // REVIEW : consider put this access logic - as well as `access_obj` - in `userAccount` (a as access)
 // or consider renaming `userAccount` to `im` or something
 export async function accessUserProfile({
   ctx,
-  by,
-}: sessionLibDep & {
-  by: by_user_id_or_user_profile_id
-}): Promise<d_u<{ found: access_obj<user_profile_access_object>; notFound: unknown }, 'result'>> {
-  const [found, findResult] = await ctx.mod.userProfile.query.getUserProfile({ by })
+  ...by
+}: sessionLibDep & get_user_profile_by): Promise<
+  d_u<{ found: access_obj<user_profile_access_object>; notFound: unknown }, 'result'>
+> {
+  const [found, findResult] = await ctx.mod.userProfile.query.getUserProfile(by)
 
   if (!found) {
     return { result: 'notFound' }

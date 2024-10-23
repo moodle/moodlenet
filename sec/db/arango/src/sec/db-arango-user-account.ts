@@ -16,9 +16,9 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
     const secondaryAdapter: secondaryAdapter = {
       userAccount: {
         sync: {
-          async userDisplayname({ displayName, userId }) {
+          async userDisplayname({ displayName, userAccountId }) {
             const done = !!(await db_struct.userAccount.coll.user
-              .update({ _key: userId }, { displayName })
+              .update({ _key: userAccountId }, { displayName })
               .catch(() => null))
             return [done, _void]
           },
@@ -32,8 +32,11 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
 
             return [!!savedUser?.new, _void]
           },
-          async deactivateUser({ anonymize, reason, userId, at = new Date().toISOString() }) {
-            const deactivatingUser = await db_struct.userAccount.coll.user.document({ _key: userId }, { graceful: true })
+          async deactivateUser({ anonymize, reason, userAccountId, at = new Date().toISOString() }) {
+            const deactivatingUser = await db_struct.userAccount.coll.user.document(
+              { _key: userAccountId },
+              { graceful: true },
+            )
             if (!deactivatingUser) return [false, _void]
 
             const anonymization = anonymize
@@ -49,7 +52,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
 
             const deactivatedUser = await db_struct.userAccount.coll.user
               .update(
-                { _key: userId },
+                { _key: userAccountId },
                 {
                   deactivated: { anonymized: anonymize, at, reason },
                   ...anonymization,
@@ -61,7 +64,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
               ? [true, { deactivatedUser: userAccountDocument2userAccountRecord(deactivatedUser.old) }]
               : [false, _void]
           },
-          async setUserPassword({ newPasswordHash, userId }) {
+          async setUserPassword({ newPasswordHash, userAccountId }) {
             const {
               userAccount: {
                 coll: { user },
@@ -69,7 +72,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
             } = db_struct
             const updated = await user
               .update(
-                { _key: userId },
+                { _key: userAccountId },
                 {
                   passwordHash: newPasswordHash,
                 },
@@ -77,9 +80,9 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
               .catch(() => null)
             return [!!updated, _void]
           },
-          async setUserRoles({ userId, roles }) {
+          async setUserRoles({ userAccountId, roles }) {
             const updated = await db_struct.userAccount.coll.user
-              .update({ _key: userId }, { roles }, { returnOld: true })
+              .update({ _key: userAccountId }, { roles }, { returnOld: true })
               .catch(() => null)
             return updated?.old ? [true, { newRoles: roles, oldRoles: updated.old.roles }] : [false, _void]
           },
@@ -88,7 +91,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
           async userBy(q) {
             return q.by === 'email'
               ? getUserByEmail({ email: q.email, db_struct })
-              : getUserById({ userId: q.userId, db_struct })
+              : getUserById({ userAccountId: q.userAccountId, db_struct })
           },
 
           async usersByText({ text, includeDeactivated }) {

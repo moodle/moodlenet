@@ -1,6 +1,6 @@
 import { _void, email_address, ok_ko } from '@moodle/lib-types'
 import { Document } from 'arangojs/documents'
-import { userId, userAccountRecord } from 'domain/src/modules/user-account'
+import { userAccountId, userAccountRecord } from 'domain/src/modules/user-account'
 import { db_struct } from '../../db-structure'
 import { userAccountDocument2userAccountRecord } from './mappings'
 import { userAccountDocument } from './types'
@@ -20,12 +20,12 @@ export async function getUserByEmail({
   return foundUser ? [true, userAccountDocument2userAccountRecord(foundUser)] : [false, _void]
 }
 export async function getUserById({
-  userId,
+  userAccountId,
   db_struct,
 }: {
   db_struct: db_struct
-  userId: userId
+  userAccountId: userAccountId
 }): Promise<ok_ko<userAccountRecord>> {
-  const foundUser = await db_struct.userAccount.coll.user.document({ _key: userId }, { graceful: true })
+  const foundUser = await db_struct.userAccount.coll.user.document({ _key: userAccountId }, { graceful: true })
   return foundUser ? [true, userAccountDocument2userAccountRecord(foundUser)] : [false, _void]
 }

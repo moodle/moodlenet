@@ -21,7 +21,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
         async useTempImageAsProfileImage({ as, tempId, userProfileId }) {
           const userProfile = await accessUserProfile({
             ctx,
-            by: { idOf: 'userProfile', userProfileId },
+            by: 'userProfileId', userProfileId
           })
           assertWithErrorXxx(
             userProfile.result === 'found' && userProfile.access === 'allowed' && userProfile.permissions.editProfile,
@@ -38,7 +38,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
           return [true, result]
         },
         async editProfileInfo({ userProfileId, profileInfo }) {
-          const userProfile = await accessUserProfile({ ctx, by: { idOf: 'userProfile', userProfileId: userProfileId } })
+          const userProfile = await accessUserProfile({ ctx, by: 'userProfileId', userProfileId: userProfileId })
           if (userProfile.result === 'notFound') {
             return [false, { reason: 'notFound' }]
           }
@@ -54,11 +54,11 @@ export const user_profile_core: moduleCore<'userProfile'> = {
         },
       },
       userProfile: {
-        async access({ by }) {
-          if (by.idOf === 'user' && !(await validateCurrentUserAuthenticatedSessionHasRole({ ctx, role: 'admin' }))) {
+        async access(get) {
+          if (get.by === 'userAccountId' && !(await validateCurrentUserAuthenticatedSessionHasRole({ ctx, role: 'admin' }))) {
             return [false, { reason: 'notFound' }]
           }
-          const userProfileResult = await accessUserProfile({ ctx, by })
+          const userProfileResult = await accessUserProfile({ ctx, ...get })
 
           if (userProfileResult.result === 'notFound' || userProfileResult.access === 'notAllowed') {
             return [false, { reason: 'notFound' }]
@@ -129,12 +129,12 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               })
             },
 
-            async setUserRoles([[done, result], { userId }]) {
+            async setUserRoles([[done, result], { userAccountId }]) {
               if (!done) {
                 return
               }
               await ctx.sync.userAccountUserExcerpt({
-                userAccountUserExcerpt: { id: userId, roles: result.newRoles },
+                userAccountUserExcerpt: { id: userAccountId, roles: result.newRoles },
               })
             },
           },

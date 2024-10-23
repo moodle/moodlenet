@@ -123,7 +123,7 @@ const router = express
         size: req.file.size,
         uploaded: {
           primarySessionId: req.moodlePrimarySession.id,
-          byUserId: userSession.user.id,
+          byUserAccountId: userSession.user.id,
           at: date_time_string('now'),
         },
         original: {

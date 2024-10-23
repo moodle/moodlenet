@@ -7,7 +7,7 @@ import {
   assert_authorizeCurrentUserSessionWithRole,
   createNewUserAccountRecordData,
   generateSessionForUserData,
-  generateSessionForUserId,
+  generateSessionForUserAccountId,
   userAccountRecord2SessionUserData,
   validateCurrentUserSession,
 } from '../lib'
@@ -27,19 +27,19 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           const userSession = await validateCurrentUserSession({ ctx })
           return { userSession }
         },
-        async generateUserSessionToken({ userId }) {
-          return generateSessionForUserId({ ctx, userId })
+        async generateUserSessionToken({ userAccountId }) {
+          return generateSessionForUserAccountId({ ctx, userAccountId })
         },
       },
 
       //get admin(){ check () return { ... } }
       admin: {
-        async editUserRoles({ userId, role, action }) {
+        async editUserRoles({ userAccountId, role, action }) {
           const admin_user_session = await assert_authorizeCurrentUserSessionWithRole({
             ctx,
             role: 'admin',
           })
-          const [found, user] = await ctx.mod.userAccount.query.userBy({ by: 'id', userId })
+          const [found, user] = await ctx.mod.userAccount.query.userBy({ by: 'id', userAccountId })
           if (!found) {
             return [false, { reason: 'userNotFound' }]
           }
@@ -51,9 +51,9 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           ).sort()
 
           const [done] = await ctx.write.setUserRoles({
-            userId,
+            userAccountId,
             roles: new_roles,
-            adminUserId: admin_user_session.user.id,
+            adminUserAccountId: admin_user_session.user.id,
           })
           if (!done) {
             return [false, { reason: 'userNotFound' }]
@@ -69,16 +69,16 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           return { users }
         },
 
-        async deactivateUser({ userId, anonymize, reason }) {
+        async deactivateUser({ userAccountId, anonymize, reason }) {
           const admin_user_session = await assert_authorizeCurrentUserSessionWithRole({
             ctx,
             role: 'admin',
           })
           const [done] = await ctx.write.deactivateUser({
-            userId,
+            userAccountId,
             reason: {
               type: 'adminRequest',
-              adminUserId: admin_user_session.user.id,
+              adminUserAccountId: admin_user_session.user.id,
               reason,
             },
             anonymize,
@@ -150,7 +150,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           })
 
           if (foundSameEmailUser) {
-            return [true, { userId: foundSameEmailUser.id }]
+            return [true, { userAccountId: foundSameEmailUser.id }]
           }
 
           const now = date_time_string('now')
@@ -165,7 +165,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           const [newUserCreated] = await ctx.write.saveNewUser({
             newUser,
           })
-          return newUserCreated ? [true, { userId: newUser.id }] : [false, { reason: 'unknown' }]
+          return newUserCreated ? [true, { userAccountId: newUser.id }] : [false, { reason: 'unknown' }]
         },
         async login({ loginForm }) {
           const [found, userAccountRecord] = await ctx.mod.userAccount.query.userBy({
@@ -225,7 +225,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               module: 'userAccount',
               type: 'resetPasswordRequest',
               resetPasswordUrl: url_string_schema.parse(`${redirectUrl}?token=${resetPasswordConfirmationSession.token}`),
-              toUserId: user.id,
+              toUserAccountId: user.id,
             },
           })
           return
@@ -250,7 +250,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               module: 'userAccount',
               type: 'selfDeletionRequestConfirm',
               redirectUrl,
-              userId: authenticated_session.user.id,
+              userAccountId: authenticated_session.user.id,
             },
           })
 
@@ -259,7 +259,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               module: 'userAccount',
               type: 'deleteAccountRequest',
               deleteAccountUrl: url_string_schema.parse(`${redirectUrl}?token=${selfDeletionConfirmationSession.token}`),
-              toUserId: authenticated_session.user.id,
+              toUserAccountId: authenticated_session.user.id,
             },
           })
           return
@@ -279,7 +279,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
 
           const [user] = await ctx.mod.userAccount.query.userBy({
             by: 'id',
-            userId: validatedSignedTokenData.userId,
+            userAccountId: validatedSignedTokenData.userAccountId,
           })
           if (!user) {
             return [false, { reason: 'unknownUser' }]
@@ -291,7 +291,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               type: 'userSelfDeletionRequest',
               reason,
             },
-            userId: validatedSignedTokenData.userId,
+            userAccountId: validatedSignedTokenData.userAccountId,
           })
           return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
         },
@@ -319,7 +319,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           })
           const [pwdChanged] = await ctx.write.setUserPassword({
             newPasswordHash: passwordHash,
-            userId: userAccountRecord.id,
+            userAccountId: userAccountRecord.id,
           })
           return pwdChanged ? [true, _void] : [false, { reason: 'unknown' }]
         },
@@ -331,7 +331,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
 
           const [, user] = await ctx.mod.userAccount.query.userBy({
             by: 'id',
-            userId: authenticated_session.user.id,
+            userAccountId: authenticated_session.user.id,
           })
           if (!user) {
             return [false, { reason: 'unknown' }]
@@ -348,7 +348,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           })
           const [done] = await ctx.write.setUserPassword({
             newPasswordHash: passwordHash,
-            userId: authenticated_session.user.id,
+            userAccountId: authenticated_session.user.id,
           })
 
           if (!done) {
@@ -371,13 +371,13 @@ export const userAccount_core: moduleCore<'userAccount'> = {
       secondary: {
         userAccount: {
           write: {
-            async setUserPassword([[done], { userId }]) {
+            async setUserPassword([[done], { userAccountId }]) {
               //FIXME: put quite all notification sends as reaction to some atomic event (just like in the case of password change here)
               if (!done) {
                 return
               }
               ctx.mod.userNotification.service.enqueueNotificationToUser({
-                data: { module: 'userAccount', type: 'passwordChanged', toUserId: userId },
+                data: { module: 'userAccount', type: 'passwordChanged', toUserAccountId: userAccountId },
               })
             },
           },
@@ -395,14 +395,15 @@ export const userAccount_core: moduleCore<'userAccount'> = {
                 return
               }
               const [found, response] = await ctx.mod.userProfile.query.getUserProfile({
-                by: { idOf: 'userProfile', userProfileId },
+                by: 'userProfileId',
+                userProfileId,
               })
               if (!found) {
                 return
               }
               await ctx.sync.userDisplayname({
                 displayName,
-                userId: response.userProfile.userAccountUser.id,
+                userAccountId: response.userProfile.userAccountUser.id,
               })
             },
           },

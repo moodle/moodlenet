@@ -1,6 +1,6 @@
 import type { time_duration_string } from '@moodle/lib-types'
 import { userAccountPrimaryMsgSchemaConfigs } from './primary-schemas'
-import type { userRole } from './user'
+import type { userRole } from './user-account-record'
 
 export interface Configs {
   userAccountPrimaryMsgSchemaConfigs: userAccountPrimaryMsgSchemaConfigs

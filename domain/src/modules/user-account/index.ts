@@ -17,7 +17,7 @@ import type {
   resetPasswordForm,
   signupForm,
   userDeactivationReason,
-  userId,
+  userAccountId,
   userAccountRecord,
   userRole,
   userSession,
@@ -32,20 +32,20 @@ export default interface userAccountDomain {
       session: {
         getUserSession(): Promise<{ userSession: userSession }>
         generateUserSessionToken(_: {
-          userId: userId
+          userAccountId: userAccountId
         }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>>
         moduleInfo(): Promise<{ schemaConfigs: userAccountPrimaryMsgSchemaConfigs }>
       }
 
       admin: {
         editUserRoles(_: {
-          userId: userId
+          userAccountId: userAccountId
           role: userRole
           action: 'set' | 'unset'
         }): Promise<ok_ko<{ updatedRoles: userRole[] }, { userNotFound: unknown }>>
         searchUsers(_: { textSearch: string }): Promise<{ users: userAccountRecord[] }>
         deactivateUser(_: {
-          userId: userId
+          userAccountId: userAccountId
           reason: string
           anonymize: boolean
         }): Promise<ok_ko<void, { userNotFound: unknown }>>
@@ -59,7 +59,7 @@ export default interface userAccountDomain {
 
         createNewUserByEmailVerificationToken(_: { signupEmailVerificationToken: signed_token }): Promise<
           ok_ko<
-            { userId: userId },
+            { userAccountId: userAccountId },
             {
               /* userWithThisEmailExists: unknown; */ invalidToken: unknown
               unknown: unknown
@@ -98,19 +98,19 @@ export default interface userAccountDomain {
       queue: unknown
       write: {
         saveNewUser(_: { newUser: userAccountRecord }): Promise<ok_ko<void>>
-        setUserPassword(_: { userId: userId; newPasswordHash: string }): Promise<ok_ko<void>>
+        setUserPassword(_: { userAccountId: userAccountId; newPasswordHash: string }): Promise<ok_ko<void>>
 
         deactivateUser(_: {
-          userId: userId
+          userAccountId: userAccountId
           anonymize: boolean
           reason: userDeactivationReason
           at?: date_time_string
         }): Promise<ok_ko<{ deactivatedUser: userAccountRecord }>>
 
         setUserRoles(_: {
-          userId: userId
+          userAccountId: userAccountId
           roles: userRole[]
-          adminUserId: userId
+          adminUserAccountId: userAccountId
         }): Promise<ok_ko<{ newRoles: userRole[]; oldRoles: userRole[] }>>
       }
       service: unknown
@@ -140,12 +140,14 @@ export default interface userAccountDomain {
           inactiveNotificationSent: boolean
         }): Promise<{ inactiveUsers: userAccountRecord[] }>
 
-        userBy(_: d_u<{ email: { email: email_address }; id: { userId: userId } }, 'by'>): Promise<ok_ko<userAccountRecord>>
+        userBy(
+          _: d_u<{ email: { email: email_address }; id: { userAccountId: userAccountId } }, 'by'>,
+        ): Promise<ok_ko<userAccountRecord>>
 
         usersByText(_: { text: string; includeDeactivated?: boolean }): Promise<{ users: userAccountRecord[] }>
       }
       sync: {
-        userDisplayname(_: { userId: userId; displayName: string }): Promise<ok_ko<void>>
+        userDisplayname(_: { userAccountId: userAccountId; displayName: string }): Promise<ok_ko<void>>
       }
     }
   }

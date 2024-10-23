@@ -1,5 +1,5 @@
 import type { d_u, deep_partial, ok_ko } from '@moodle/lib-types'
-import { userId } from '../user-account'
+import { userAccountId } from '../user-account'
 import { useTempFileResult } from '../storage'
 import {
   profileImage,
@@ -13,9 +13,9 @@ import {
 } from './types'
 export * from './types'
 
-export type by_user_id_or_user_profile_id = d_u<
-  { userProfile: { userProfileId: userProfileId }; user: { userId: userId } },
-  'idOf'
+export type get_user_profile_by = d_u<
+  { userProfileId: { userProfileId: userProfileId }; userAccountId: { userAccountId: userAccountId } },
+  'by'
 >
 export default interface UserProfileDomain {
   event: { userProfile: unknown }
@@ -32,9 +32,7 @@ export default interface UserProfileDomain {
         }): Promise<ok_ko<void, { notFound: unknown; unknown: unknown }>>
       }
       userProfile: {
-        access(_: {
-          by: by_user_id_or_user_profile_id
-        }): Promise<ok_ko<{ accessObject: user_profile_access_object }, { notFound: unknown }>>
+        access(_: get_user_profile_by): Promise<ok_ko<{ accessObject: user_profile_access_object }, { notFound: unknown }>>
       }
     }
   }
@@ -48,9 +46,7 @@ export default interface UserProfileDomain {
         userAccountUserExcerpt(_: { userAccountUserExcerpt: userAccountUserExcerpt }): Promise<ok_ko<void>>
       }
       query: {
-        getUserProfile(_: {
-          by: by_user_id_or_user_profile_id
-        }): Promise<ok_ko<{ userProfile: userProfileRecord }, { notFound: unknown }>>
+        getUserProfile(_: get_user_profile_by): Promise<ok_ko<{ userProfile: userProfileRecord }, { notFound: unknown }>>
       }
       write: {
         updatePartialProfileInfo(_: {

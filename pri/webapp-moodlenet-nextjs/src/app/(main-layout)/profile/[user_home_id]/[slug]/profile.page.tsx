@@ -12,7 +12,8 @@ export default async function ProfilePage({
   params: params<'userProfileId' | 'slug'>
 }) {
   const [foundUserProfile, userProfileResponse] = await primary.moodle.userProfile.userProfile.access({
-    by: { idOf: 'userProfile', userProfileId },
+    by: 'userProfileId',
+    userProfileId,
   })
   if (!foundUserProfile) {
     return <Fallback />

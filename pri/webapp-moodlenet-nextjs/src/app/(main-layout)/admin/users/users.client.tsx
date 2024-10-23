@@ -76,7 +76,7 @@ function Row({ user }: RowProps) {
       editUserRole({
         role,
         action: roles.includes(role) ? 'unset' : 'set',
-        userId: user.id,
+        userAccountId: user.id,
       }).then(setRoles)
     },
     [roles, user.id],

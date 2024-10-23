@@ -2,8 +2,8 @@ import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
 import { db_struct } from '../db-structure'
 import {
-  getUserProfileByUserId,
-  updateUserProfileByUserId,
+  getUserProfileByUserAccountId,
+  updateUserProfileByUserAccountId,
   user_profile_record2userProfileDocument,
   userProfileDocument2user_profile_record,
 } from './db-arango-user-profile-lib'
@@ -14,8 +14,8 @@ export function user_profile_secondary_factory({ db_struct }: { db_struct: db_st
       userProfile: {
         sync: {
           async userAccountUserExcerpt({ userAccountUserExcerpt }) {
-            const userProfileDoc = await updateUserProfileByUserId({
-              userId: userAccountUserExcerpt.id,
+            const userProfileDoc = await updateUserProfileByUserAccountId({
+              userAccountId: userAccountUserExcerpt.id,
               db_struct,
               partialUserProfile: { userAccountUser: userAccountUserExcerpt },
             })
@@ -26,11 +26,11 @@ export function user_profile_secondary_factory({ db_struct }: { db_struct: db_st
           },
         },
         query: {
-          async getUserProfile({ by }) {
+          async getUserProfile(get) {
             const userProfileDoc =
-              by.idOf === 'userProfile'
-                ? await db_struct.data.coll.userProfile.document({ _key: by.userProfileId }).catch(() => null)
-                : await getUserProfileByUserId({ db_struct, userId: by.userId })
+              get.by === 'userProfileId'
+                ? await db_struct.data.coll.userProfile.document({ _key: get.userProfileId }).catch(() => null)
+                : await getUserProfileByUserAccountId({ db_struct, userAccountId: get.userAccountId })
             if (!userProfileDoc) {
               return [false, { reason: 'notFound' }]
             }

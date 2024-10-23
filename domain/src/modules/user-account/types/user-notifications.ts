@@ -1,24 +1,24 @@
 import { email_address, url_string } from '@moodle/lib-types'
-import { userId } from './user'
+import { userAccountId } from './user-account-record'
 
 export type userAccountUserNotifications = {
   // inactivityBeforeDeletion: {
-  //   toUserId: userId
+  //   toUserAccountId: userAccountId
   //   loginUrl: url_string
   //   daysBeforeDeletion: number
   // }
 
   passwordChanged: {
-    toUserId: userId
+    toUserAccountId: userAccountId
   }
 
   resetPasswordRequest: {
-    toUserId: userId
+    toUserAccountId: userAccountId
     resetPasswordUrl: url_string
   }
 
   deleteAccountRequest: {
-    toUserId: userId
+    toUserAccountId: userAccountId
     deleteAccountUrl: url_string
   }
 

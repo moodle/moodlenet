@@ -1,5 +1,5 @@
 import type { d_u } from '@moodle/lib-types'
-import { userAccountRecord } from './user'
+import { userAccountRecord } from './user-account-record'
 
 export type userSession = d_u<UserSessionTypes, 'type'>
 

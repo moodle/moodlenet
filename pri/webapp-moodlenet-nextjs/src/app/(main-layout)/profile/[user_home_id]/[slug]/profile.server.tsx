@@ -42,7 +42,8 @@ export const updateProfileInfo = defaultSafeActionClient
 
 async function fetchCanEditProfile({ userProfileId }: { userProfileId: userProfileId }) {
   const [readUserProfileDone, userProfileRes] = await primary.moodle.userProfile.userProfile.access({
-    by: { idOf: 'userProfile', userProfileId },
+    by: 'userProfileId',
+    userProfileId,
   })
   return readUserProfileDone && userProfileRes.accessObject.permissions.editProfile
 }

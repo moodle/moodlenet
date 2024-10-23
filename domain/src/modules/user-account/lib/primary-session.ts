@@ -1,7 +1,7 @@
 import { ok_ko, signed_expire_token } from '@moodle/lib-types'
 import assert from 'assert'
 import { baseContext, ErrorXxx, primaryContext } from '../../../types'
-import { userId, userRole, userSession, userSessionData } from '../types'
+import { userAccountId, userRole, userSession, userSessionData } from '../types'
 import { hasUserSessionRole, userAccountRecord2SessionUserData, userSessionInfo } from './user-session'
 
 // System Session
@@ -85,14 +85,14 @@ export async function assert_authorizeAuthenticatedCurrentUserSession(dep: sessi
 
 // GENERATE SESSION TOKEN
 
-export async function generateSessionForUserId({
+export async function generateSessionForUserAccountId({
   ctx,
-  userId,
+  userAccountId,
 }: {
   ctx: Pick<baseContext, 'mod'>
-  userId: userId
+  userAccountId: userAccountId
 }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>> {
-  const [, userAccountRecord] = await ctx.mod.userAccount.query.userBy({ by: 'id', userId })
+  const [, userAccountRecord] = await ctx.mod.userAccount.query.userBy({ by: 'id', userAccountId })
   if (!userAccountRecord) {
     return [false, { reason: 'userNotFound' }]
   }

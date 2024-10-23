@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     })
   }
   const [done, session] = await primary.moodle.userAccount.session.generateUserSessionToken({
-    userId: response.userId,
+    userAccountId: response.userAccountId,
   })
   if (!done) {
     return new Response(`error generating session token. reason: ${session.reason}`, {

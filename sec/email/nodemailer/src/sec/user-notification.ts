@@ -74,9 +74,9 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
             },
           ]
         }
-        const [found, user] = await ctx.mod.userAccount.query.userBy({ userId: data.toUserId, by: 'id' })
+        const [found, user] = await ctx.mod.userAccount.query.userBy({ userAccountId: data.toUserAccountId, by: 'id' })
         if (!found) {
-          ctx.log('warn', `User not found for id ${data.toUserId}`)
+          ctx.log('warn', `User not found for id ${data.toUserAccountId}`)
           return [false, { reason: 'userNotFound' }]
         }
         const receiverEmail = user.contacts.email
