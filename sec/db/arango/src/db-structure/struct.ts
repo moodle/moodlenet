@@ -1,30 +1,37 @@
 import { modConfigName, ModConfigs } from '@moodle/domain'
 import { Database } from 'arangojs'
-import { userAccountDocument } from '../sec/db-arango-user-account-lib/types'
-import { userProfileDocument } from '../sec/db-arango-user-profile-lib/types'
-import { database_connections } from './types'
+import { userAccountDocument } from '../sec/user-account-db/user-account-types'
+import { userProfileDocument } from '../sec/user-profile-db/user-profile-types'
+import { databaseConnections } from './types'
+import {
+  eduBloomCognitiveDocument,
+  eduIscedFieldDocument,
+  eduIscedLevelDocument,
+  eduResourceTypeDocument,
+} from '../sec/edu-db'
+import { contentLanguageDocument, contentLicenseDocument } from '../sec/content-db'
 
-export function getDbStruct(database_connections: database_connections) {
+export function getDbStruct(databaseConnections: databaseConnections) {
   const baseConnectionConfig = {
     keepalive: true,
     retryOnConflict: 5,
   }
-  const data_db = new Database({ ...baseConnectionConfig, ...database_connections.data })
-  const user_account_db = new Database({ ...baseConnectionConfig, ...database_connections.userAccount })
-  const mng_db = new Database({ ...baseConnectionConfig, ...database_connections.mng })
+  const data_db = new Database({ ...baseConnectionConfig, ...databaseConnections.data })
+  const user_account_db = new Database({ ...baseConnectionConfig, ...databaseConnections.userAccount })
+  const mng_db = new Database({ ...baseConnectionConfig, ...databaseConnections.modules })
   const sys_db = new Database({
     ...baseConnectionConfig,
-    ...database_connections.mng,
+    ...databaseConnections.modules,
     databaseName: '_system',
   })
 
   return {
-    connections: database_connections,
+    connections: databaseConnections,
     sys_db,
-    mng: {
+    modules: {
       db: mng_db,
       coll: {
-        module_configs: mng_db.collection<ModConfigs[modConfigName]>('module_configs'),
+        moduleConfigs: mng_db.collection<ModConfigs[modConfigName]>('moduleConfigs'),
         migrations: mng_db.collection('migrations'),
       },
     },
@@ -32,6 +39,12 @@ export function getDbStruct(database_connections: database_connections) {
       db: data_db,
       coll: {
         userProfile: data_db.collection<userProfileDocument>('userProfile'),
+        eduIscedField: data_db.collection<eduIscedFieldDocument>('eduIscedField'),
+        eduIscedLevel: data_db.collection<eduIscedLevelDocument>('eduIscedLevel'),
+        eduBloomCognitive: data_db.collection<eduBloomCognitiveDocument>('eduBloomCognitive'),
+        eduResourceType: data_db.collection<eduResourceTypeDocument>('eduResourceType'),
+        contentLanguage: data_db.collection<contentLanguageDocument>('contentLanguage'),
+        contentLicense: data_db.collection<contentLicenseDocument>('contentLicense'),
       },
     },
     userAccount: {

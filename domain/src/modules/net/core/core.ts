@@ -9,7 +9,7 @@ export const net_core: moduleCore<'net'> = {
       session: {
         async moduleInfo() {
           const {
-            configs: { info, moodleNetPrimaryMsgSchemaConfigs },
+            configs: { info, moodlenetPrimaryMsgSchemaConfigs: moodleNetPrimaryMsgSchemaConfigs },
           } = await ctx.mod.env.query.modConfigs({ mod: 'net' })
           return { info, schemaConfigs: moodleNetPrimaryMsgSchemaConfigs }
         },

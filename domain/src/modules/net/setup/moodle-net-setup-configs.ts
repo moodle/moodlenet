@@ -1,12 +1,12 @@
 import { non_negative_integer_schema, positive_integer_schema } from '@moodle/lib-types'
-import { Configs } from '../types'
+import { configs } from '../types'
 
-export const net_default_configs: Configs = {
+export const net_default_configs: configs = {
   info: {
     title: 'Search for resources, subjects, collections or people',
     subtitle: 'Find, share and curate open educational resources',
   },
-  moodleNetPrimaryMsgSchemaConfigs: {
+  moodlenetPrimaryMsgSchemaConfigs: {
     info: {
       subtitle: { max: 200, min: 3 },
       title: { max: 100, min: 3 },
@@ -73,5 +73,12 @@ export const net_default_configs: Configs = {
       { lessThanPoints: positive_integer_schema.parse(100000), title: 'Versatile canopy' },
       { title: 'Dazzling biome' },
     ],
+  },
+  disabledCategories: {
+    eduIscedFields: { id: [] },
+    eduIscedLevels: { id: [] },
+    eduResourceTypes: { id: [] },
+    contentLanguages: { id: [] },
+    contentLicenses: { id: [] },
   },
 }

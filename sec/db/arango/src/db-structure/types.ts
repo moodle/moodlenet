@@ -1,15 +1,15 @@
 import { Config as ArangoConnectionConfig } from 'arangojs/connection'
 import type { getDbStruct } from './struct'
-export type db_struct = ReturnType<typeof getDbStruct>
+export type dbStruct = ReturnType<typeof getDbStruct>
 
 export interface ArangoDbSecEnv {
-  database_connections: database_connections
+  database_connections: databaseConnections
 }
 
-export type db_connection = ArangoConnectionConfig
+export type dbConnection = ArangoConnectionConfig
 
-export type database_connections = {
-  mng: db_connection
-  data: db_connection
-  userAccount: db_connection
+export type databaseConnections = {
+  modules: dbConnection
+  data: dbConnection
+  userAccount: dbConnection
 }

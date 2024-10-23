@@ -1,7 +1,7 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
-import { db_struct } from '../db-structure'
+import { dbStruct } from '../db-structure'
 
-export function org_secondary_factory({ db_struct }: { db_struct: db_struct }): secondaryProvider {
+export function org_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
   return secondaryCtx => {
     const secondaryAdapter: secondaryAdapter = {
       org: {},

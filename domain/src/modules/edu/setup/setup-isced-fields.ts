@@ -1,10 +1,10 @@
-import { iscedField } from '../types'
+import { eduIscedFieldRecord } from '../types'
 /* tslint:disable */
 /* eslint-disable */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck: because is raw data and it's massive, it will slowdown ts
 // @ts-ignore: because is raw data and it's massive, it will slowdown ts
-export const iscedFields: iscedField[] = [
+export const iscedFields: eduIscedFieldRecord[] = [
   {
     id: 'F1015',
     codePath: ['F10', '1', '5'],

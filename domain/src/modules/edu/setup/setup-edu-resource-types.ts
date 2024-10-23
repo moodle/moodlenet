@@ -1,6 +1,6 @@
-import { eduResourceType } from '../types'
+import { eduResourceTypeRecord } from '../types'
 
-export const eduResourceTypes: eduResourceType[] = [
+export const eduResourceTypes: eduResourceTypeRecord[] = [
   {
     id: 'assessment',
     description: 'Assessment',

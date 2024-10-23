@@ -2,22 +2,22 @@ import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { _void, date_time_string } from '@moodle/lib-types'
 import { aql } from 'arangojs'
 import { createHash } from 'node:crypto'
-import { db_struct } from '../db-structure'
+import { dbStruct } from '../db-structure'
 import {
   getUserByEmail,
   getUserById,
   userAccountDocument,
   userAccountDocument2userAccountRecord,
   userAccountRecord2userAccountDocument,
-} from './db-arango-user-account-lib'
+} from './user-account-db'
 
-export function user_account_secondary_factory({ db_struct }: { db_struct: db_struct }): secondaryProvider {
+export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
   return secondaryCtx => {
     const secondaryAdapter: secondaryAdapter = {
       userAccount: {
         sync: {
           async userDisplayname({ displayName, userAccountId }) {
-            const done = !!(await db_struct.userAccount.coll.user
+            const done = !!(await dbStruct.userAccount.coll.user
               .update({ _key: userAccountId }, { displayName })
               .catch(() => null))
             return [done, _void]
@@ -26,7 +26,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
         write: {
           async saveNewUser({ newUser }) {
             const userAccountDocument = userAccountRecord2userAccountDocument(newUser)
-            const savedUser = await db_struct.userAccount.coll.user
+            const savedUser = await dbStruct.userAccount.coll.user
               .save(userAccountDocument, { overwriteMode: 'conflict', returnNew: true })
               .catch(() => null)
 
@@ -38,7 +38,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
             userAccountId,
             overrideDeactivationDate: date = date_time_string('now'),
           }) {
-            const deactivatingUser = await db_struct.userAccount.coll.user.document(
+            const deactivatingUser = await dbStruct.userAccount.coll.user.document(
               { _key: userAccountId },
               { graceful: true },
             )
@@ -55,7 +55,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
                 }
               : null
 
-            const deactivatedUser = await db_struct.userAccount.coll.user
+            const deactivatedUser = await dbStruct.userAccount.coll.user
               .update(
                 { _key: userAccountId },
                 {
@@ -74,7 +74,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
               userAccount: {
                 coll: { user },
               },
-            } = db_struct
+            } = dbStruct
             const updated = await user
               .update(
                 { _key: userAccountId },
@@ -86,7 +86,7 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
             return [!!updated, _void]
           },
           async setUserRoles({ userAccountId, roles }) {
-            const updated = await db_struct.userAccount.coll.user
+            const updated = await dbStruct.userAccount.coll.user
               .update({ _key: userAccountId }, { roles }, { returnOld: true })
               .catch(() => null)
             return updated?.old ? [true, { newRoles: roles, oldRoles: updated.old.roles }] : [false, _void]
@@ -95,8 +95,8 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
         query: {
           async userBy(q) {
             return q.by === 'email'
-              ? getUserByEmail({ email: q.email, db_struct })
-              : getUserById({ userAccountId: q.userAccountId, db_struct })
+              ? getUserByEmail({ email: q.email, dbStruct })
+              : getUserById({ userAccountId: q.userAccountId, dbStruct })
           },
 
           async usersByText({ text, includeDeactivated }) {
@@ -107,9 +107,9 @@ export function user_account_secondary_factory({ db_struct }: { db_struct: db_st
                       SORT sim DESC`
               : aql``
             const deactivatedFilter = includeDeactivated ? aql`` : aql`FILTER NOT(user.deactivated)`
-            const userDocs_cursor = await db_struct.userAccount.db.query<userAccountDocument>(
+            const userDocs_cursor = await dbStruct.userAccount.db.query<userAccountDocument>(
               aql`
-                FOR user IN ${db_struct.userAccount.coll.user}
+                FOR user IN ${dbStruct.userAccount.coll.user}
                 ${deactivatedFilter}
                 ${textFilter}
                 LIMIT 50

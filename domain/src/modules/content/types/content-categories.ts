@@ -1,14 +1,14 @@
 import { fraction, url_string } from '@moodle/lib-types'
 
-export type credits = {
+export type contentCredits = {
   owner: { name: string; url: url_string }
   provider?: { name: string; url: url_string }
 }
-export type external_content = { url: url_string; credits?: credits }
+export type external_content = { url: url_string; credits?: contentCredits }
 
-export type languageId = string
-export type language = {
-  id: languageId
+export type contentLanguageId = string
+export type contentLanguageRecord = {
+  id: contentLanguageId
   part2b: string | null
   part2t: string | null
   part1: string | null
@@ -17,9 +17,9 @@ export type language = {
   name: string
 }
 
-export type licenseId = string
-export type license = {
-  id: licenseId
+export type contentLicenseId = string
+export type contentLicenseRecord = {
+  id: contentLicenseId
   name: string
   restrictiveness: fraction
 }

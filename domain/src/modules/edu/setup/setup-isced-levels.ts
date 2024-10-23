@@ -1,11 +1,11 @@
-import { iscedLevel } from '../types'
+import { eduIscedLevelRecord } from '../types'
 /* tslint:disable */
 /* eslint-disable */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck: because is raw data and it's massive, it will slowdown ts
 // @ts-ignore: because is raw data and it's massive, it will slowdown ts
 
-export const iscedLevels: iscedLevel[] = [
+export const iscedLevels: eduIscedLevelRecord[] = [
   {
     id: 'ED661',
     codePath: ['6', '6', '1'],

@@ -10,19 +10,23 @@ import {
   storage_secondary_factory,
 } from './sec'
 import { env_secondary_factory } from './sec/env-arango-db'
+import { edu_secondary_factory } from './sec/db-arango-edu'
+import { content_secondary_factory } from './sec/db-arango-content'
 export type { ArangoDbSecEnv } from './db-structure'
 
-export function get_arango_persistence_factory({ database_connections }: ArangoDbSecEnv): secondaryProvider {
-  const db_struct = getDbStruct(database_connections)
-  return secondaryCtx => {
+export function get_arango_persistence_factory(env: ArangoDbSecEnv): secondaryProvider {
+  const dbStruct = getDbStruct(env.database_connections)
+  return secondaryContext => {
     const secondaryAdapter = mergeSecondaryAdapters([
-      net_secondary_factory({ db_struct })(secondaryCtx),
-      org_secondary_factory({ db_struct })(secondaryCtx),
-      user_account_secondary_factory({ db_struct })(secondaryCtx),
-      net_webapp_nextjs_secondary_factory({ db_struct })(secondaryCtx),
-      user_profile_secondary_factory({ db_struct })(secondaryCtx),
-      env_secondary_factory({ db_struct })(secondaryCtx),
-      storage_secondary_factory({ db_struct })(secondaryCtx),
+      net_secondary_factory({ dbStruct })(secondaryContext),
+      org_secondary_factory({ dbStruct })(secondaryContext),
+      user_account_secondary_factory({ dbStruct })(secondaryContext),
+      net_webapp_nextjs_secondary_factory({ dbStruct })(secondaryContext),
+      user_profile_secondary_factory({ dbStruct })(secondaryContext),
+      env_secondary_factory({ dbStruct })(secondaryContext),
+      storage_secondary_factory({ dbStruct })(secondaryContext),
+      edu_secondary_factory({ dbStruct })(secondaryContext),
+      content_secondary_factory({ dbStruct })(secondaryContext),
     ])
     return secondaryAdapter
   }

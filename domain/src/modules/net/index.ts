@@ -1,5 +1,5 @@
 import { deep_partial_props, ok_ko } from '@moodle/lib-types'
-import { MoodleNetInfo, MoodleNetPrimaryMsgSchemaConfigs } from './types'
+import { moodlenetInfo, MoodleNetPrimaryMsgSchemaConfigs } from './types'
 export * from './types'
 
 export default interface NetDomain {
@@ -8,12 +8,12 @@ export default interface NetDomain {
     net: {
       session: {
         moduleInfo(): Promise<{
-          info: MoodleNetInfo
+          info: moodlenetInfo
           schemaConfigs: MoodleNetPrimaryMsgSchemaConfigs
         }>
       }
       admin: {
-        updatePartialMoodleNetInfo(_: { partialInfo: deep_partial_props<MoodleNetInfo> }): Promise<ok_ko<void>>
+        updatePartialMoodleNetInfo(_: { partialInfo: deep_partial_props<moodlenetInfo> }): Promise<ok_ko<void>>
       }
     }
   }

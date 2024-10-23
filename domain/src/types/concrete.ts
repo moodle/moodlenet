@@ -1,11 +1,5 @@
 import { any_function, deep_partial, path } from '@moodle/lib-types'
-import {
-  MoodleDomain,
-  moodleEvent,
-  moodleModuleName,
-  moodlePrimary,
-  moodleSecondary,
-} from '../moodle-domain'
+import { MoodleDomain, moodleEvent, moodleModuleName, moodlePrimary, moodleSecondary } from '../moodle-domain'
 import { primarySession } from './access-session'
 import { Logger } from './log'
 

@@ -1,6 +1,6 @@
 import { _maybe, flags } from '@moodle/lib-types'
-import { languageId, licenseId } from '../../content'
-import { iscedFieldId, iscedLevelId } from '../../edu'
+import { contentLanguageId, contentLicenseId } from '../../content'
+import { eduIscedFieldId, eduIscedLevelId } from '../../edu'
 import { userAccountId, userRole } from '../../user-account'
 import { profileInfo } from './profile-info'
 import { myDrafts } from './drafts'
@@ -23,10 +23,10 @@ export type userProfileRecord = {
 export type userAccountUserExcerpt = { id: userAccountId; roles: userRole[] }
 
 export type userInterestFields = {
-  iscedFields: iscedFieldId[]
-  iscedLevels: iscedLevelId[]
-  languages: languageId[]
-  licenses: licenseId[]
+  iscedFields: eduIscedFieldId[]
+  iscedLevels: eduIscedLevelId[]
+  languages: contentLanguageId[]
+  licenses: contentLicenseId[]
 }
 export type userProfilePermissions = flags<'follow' | 'editRoles' | 'sendMessage' | 'report' | 'editProfile'>
 

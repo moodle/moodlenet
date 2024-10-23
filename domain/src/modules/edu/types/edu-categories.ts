@@ -1,19 +1,15 @@
-import { positive_integer, url_string } from '@moodle/lib-types'
-
-export type bloomCognitiveLevel = 1 | 2 | 3 | 4 | 5 | 6
-export type bloomCognitive = {
-  id: bloomCognitiveLevel
-  desc: string
+export type eduBloomCognitiveLevel = '1' | '2' | '3' | '4' | '5' | '6'
+export type eduBloomCognitiveRecord = {
+  id: eduBloomCognitiveLevel
+  description: string
   verbs: string[]
 }
 
-export type iscedFieldId = string
-export type iscedField = { description: string; id: iscedFieldId; codePath: [string, string?, string?] }
+export type eduIscedFieldId = string
+export type eduIscedFieldRecord = { description: string; id: eduIscedFieldId; codePath: [string, string?, string?] }
 
-export type iscedLevelId = string
-export type iscedLevel = { description: string; id: iscedLevelId; codePath: [string, string?, string?] }
+export type eduIscedLevelId = string
+export type eduIscedLevelRecord = { description: string; id: eduIscedLevelId; codePath: [string, string?, string?] }
 
 export type eduResourceTypeId = string
-export type eduResourceType = { description: string; id: eduResourceTypeId }
-
-
+export type eduResourceTypeRecord = { description: string; id: eduResourceTypeId }

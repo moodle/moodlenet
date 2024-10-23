@@ -2,6 +2,9 @@ import { ReactElement } from 'react'
 import _slugify from 'slugify'
 import { BRAND, intersection, number, object, string, ZodSchema } from 'zod'
 import { _any, d_u } from './map'
+
+export type promise_or_value<t> = t | Promise<t>
+
 export type path = string[]
 
 export type jsonDiff = unknown

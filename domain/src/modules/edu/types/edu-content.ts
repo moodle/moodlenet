@@ -1,7 +1,7 @@
 import { _nullish, date_time_string, positive_integer } from '@moodle/lib-types'
-import { languageId, licenseId } from '../../content'
+import { contentLanguageId, contentLicenseId } from '../../content'
 import { asset } from '../../storage'
-import { bloomCognitiveLevel, eduResourceTypeId, iscedFieldId, iscedLevelId } from './edu-categories'
+import { eduBloomCognitiveLevel, eduResourceTypeId, eduIscedFieldId, eduIscedLevelId } from './edu-categories'
 
 export type eduResourceId = string
 export type eduResourceData = {
@@ -10,17 +10,17 @@ export type eduResourceData = {
   image: _nullish | asset
   title: string
   description: string
-  iscedField: _nullish | iscedFieldId
-  iscedLevel: _nullish | iscedLevelId
+  iscedField: _nullish | eduIscedFieldId
+  iscedLevel: _nullish | eduIscedLevelId
   bloomLearningOutcomes: bloomLearningOutcome[]
   type: _nullish | eduResourceTypeId
-  language: _nullish | languageId
-  license: _nullish | licenseId
+  language: _nullish | contentLanguageId
+  license: _nullish | contentLicenseId
   publicationDate: _nullish | { month: positive_integer; year: positive_integer }
 }
 
 export type bloomLearningOutcome = {
-  level: bloomCognitiveLevel
+  level: eduBloomCognitiveLevel
   verb: string
   learningOutcome: string
 }

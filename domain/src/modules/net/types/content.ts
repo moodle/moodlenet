@@ -1,6 +1,6 @@
 import { _nullish, date_time_string, non_negative_integer, positive_integer } from '@moodle/lib-types'
 import { assetTextExtraction } from '../../asset-text-extraction'
-import { iscedFieldId } from '../../edu'
+import { eduIscedFieldId } from '../../edu'
 import {
   eduResourceCollectionId,
   eduResourceId,
@@ -9,7 +9,7 @@ import {
 } from '../../edu/types/edu-content'
 import { userProfileId } from '../../user-profile'
 
-export type published_content_id = user_contribution_id | userProfileId | iscedFieldId
+export type published_content_id = user_contribution_id | userProfileId | eduIscedFieldId
 export type publishedContentType = userContributionType | 'user-profile' | 'isced-field'
 export type userContributionType = 'edu-resource' | 'edu-resource-collection'
 

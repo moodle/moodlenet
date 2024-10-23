@@ -13,7 +13,7 @@ export type modConfigName = keyof ModConfigs
 export interface ModConfigs {
   org: org.Configs
   userAccount: userAccount.Configs
-  net: net.Configs
+  net: net.configs
   netWebappNextjs: netWebappNextjs.Configs
   userProfile: userProfile.Configs
   storage: storage.Configs

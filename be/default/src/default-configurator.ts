@@ -140,7 +140,10 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
       ]
 
       let do_start_background_processes = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
-      migrateArangoDB(arango_db_env).then(() => {
+      migrateArangoDB({
+        databaseConnections: arango_db_env.database_connections,
+        log: loggerProvider({ domain: domainName, contextLayer: 'secondary', id: 'migration', endpoint: ['sec-arangodb'] }),
+      }).then(() => {
         const configuration: configuration = {
           moduleCores,
           secondaryProviders,
