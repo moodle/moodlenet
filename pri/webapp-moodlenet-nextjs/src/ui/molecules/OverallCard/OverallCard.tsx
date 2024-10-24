@@ -22,22 +22,11 @@ export type OverallCardProps = {
   showIcons?: boolean
 }
 
-export const OverallCard: FC<OverallCardProps> = ({
-  items,
-  hideBorderWhenSmall,
-  showIcons,
-  noCard,
-}) => {
-  const getValueString = (value: string | number) =>
-    typeof value === 'number' ? value.toLocaleString() : value
+export const OverallCard: FC<OverallCardProps> = ({ items, hideBorderWhenSmall, showIcons, noCard }) => {
+  const getValueString = (value: string | number) => (typeof value === 'number' ? value.toLocaleString() : value)
 
   return !items || items.length === 0 ? null : (
-    <Card
-      className="overall-card"
-      key="overall-card"
-      hideBorderWhenSmall={hideBorderWhenSmall}
-      noCard={noCard}
-    >
+    <Card className="overall-card" key="overall-card" hideBorderWhenSmall={hideBorderWhenSmall} noCard={noCard}>
       <div className="overall-container">
         {items && items.length > 0 && showIcons
           ? items?.map(({ name, Icon, value, className }) => {
