@@ -118,7 +118,7 @@ export function MainProfileCard({
             }}
           />
         </div>
-        <form className={`avatar-container`} key="avatar-container">
+        <div className={`avatar-container`} key="avatar-container">
           {!permissions.editProfile
             ? null
             : isEditing && [
@@ -139,7 +139,7 @@ export function MainProfileCard({
               // cursor: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'pointer',
             }}
           ></div>
-        </form>
+        </div>
         <div className="top-items" key="top-items">
           <div className="edit-save" key="edit-save">
             {!permissions.editProfile ? null : isEditing ? (
@@ -205,91 +205,89 @@ export function MainProfileCard({
             error={isEditing && formState.errors.aboutMe?.message}
           />
         </form>
-        <div className="main-profile-card-footer">
-          {itsMe ? null : (
-            <>
-              <FollowButton
-                following={flags.following}
-                toggleFollow={() => {
+        {itsMe ? null : (
+          <div className="main-profile-card-footer">
+            <FollowButton
+              following={flags.following}
+              toggleFollow={() => {
+                // FIXME
+
+                alert('FollowButton')
+              }}
+              disabled={!permissions.follow}
+              key="follow-button"
+            />
+
+            {permissions.editRoles && (
+              <ApprovalButton
+                isApproved={isPublisher}
+                toggleIsApproved={() => {
                   // FIXME
 
-                  alert('FollowButton')
+                  alert('ApprovalButton')
                 }}
-                disabled={!permissions.follow}
-                key="follow-button"
+                key={'approval-button'}
               />
+            )}
+            <SecondaryButton
+              color="grey"
+              className={`message`}
+              disabled={!permissions.sendMessage}
+              onClick={() => {
+                // FIXME
+                alert('open message modal')
+              }}
+              abbr={!permissions.sendMessage ? 'Login or signup to send messages' : 'Send a message'}
+            >
+              Message
+            </SecondaryButton>
+            <FloatingMenu
+              key="more-button-menu"
+              menuContent={[
+                {
+                  Element: (
+                    <div key="share-button" tabIndex={0} onClick={() => alert('share')}>
+                      <Share />
+                      Share
+                    </div>
+                  ),
+                },
+                {
+                  Element: (
+                    <abbr
+                      className={`report-button ${permissions.report ? '' : 'disabled'}`}
+                      key="report"
+                      tabIndex={0}
+                      title={!permissions.report ? 'Login or signup to report' : undefined}
+                      onClick={
+                        permissions.report
+                          ? () => {
+                              // FIXME
+                              alert('open-report-modal')
+                            }
+                          : undefined
+                      }
+                    >
+                      <Flag />
+                      Report
+                    </abbr>
+                  ),
+                },
+              ]}
+              hoverElement={
+                <>
+                  <SecondaryButton color="grey" className={`more small`} abbr="More actions">
+                    <div className="three-dots">...</div>
+                  </SecondaryButton>
 
-              {permissions.editRoles && (
-                <ApprovalButton
-                  isApproved={isPublisher}
-                  toggleIsApproved={() => {
-                    // FIXME
-
-                    alert('ApprovalButton')
-                  }}
-                  key={'approval-button'}
-                />
-              )}
-              <SecondaryButton
-                color="grey"
-                className={`message`}
-                disabled={!permissions.sendMessage}
-                onClick={() => {
-                  // FIXME
-                  alert('open message modal')
-                }}
-                abbr={!permissions.sendMessage ? 'Login or signup to send messages' : 'Send a message'}
-              >
-                Message
-              </SecondaryButton>
-              <FloatingMenu
-                key="more-button-menu"
-                menuContent={[
-                  {
-                    Element: (
-                      <div key="share-button" tabIndex={0} onClick={() => alert('share')}>
-                        <Share />
-                        Share
-                      </div>
-                    ),
-                  },
-                  {
-                    Element: (
-                      <abbr
-                        className={`report-button ${permissions.report ? '' : 'disabled'}`}
-                        key="report"
-                        tabIndex={0}
-                        title={!permissions.report ? 'Login or signup to report' : undefined}
-                        onClick={
-                          permissions.report
-                            ? () => {
-                                // FIXME
-                                alert('open-report-modal')
-                              }
-                            : undefined
-                        }
-                      >
-                        <Flag />
-                        Report
-                      </abbr>
-                    ),
-                  },
-                ]}
-                hoverElement={
-                  <>
-                    <SecondaryButton color="grey" className={`more small`} abbr="More actions">
-                      <div className="three-dots">...</div>
-                    </SecondaryButton>
-
-                    <SecondaryButton color="grey" className={`more big`} abbr="More actions">
-                      <div className="text">More</div>
-                    </SecondaryButton>
-                  </>
-                }
-              />
-            </>
-          )}
-        </div>
+                  <SecondaryButton color="grey" className={`more big`} abbr="More actions">
+                    <div className="text">More</div>
+                  </SecondaryButton>
+                </>
+              }
+            />
+          </div>
+        )}
       </div>
     </div>
   )

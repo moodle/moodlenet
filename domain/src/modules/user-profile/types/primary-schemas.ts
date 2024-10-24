@@ -24,7 +24,7 @@ export function getUserProfilePrimarySchemas(profileInfo: UserProfilePrimaryMsgS
         : (any() as unknown as ZodString),
     )
     .pipe(single_line_string_schema)
-  const aboutMe = string().trim().max(profileInfo.aboutMe.max).optional().pipe(single_line_string_schema)
+  const aboutMe = string().trim().max(profileInfo.aboutMe.max).optional()
   const location = string().trim().max(profileInfo.location.max).optional().pipe(single_line_string_schema)
   const siteUrl = url_string_schema.nullish()
 

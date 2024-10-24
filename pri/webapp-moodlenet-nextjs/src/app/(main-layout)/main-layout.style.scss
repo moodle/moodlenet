@@ -26,7 +26,7 @@ body {
   min-height: 100vh;
   background-color: #f6f5f4;
 
-  @media (max-width: 500px) {
+  @media (max-width: 450px) {
     background-color: white;
   }
 
@@ -114,7 +114,7 @@ body {
     }
 
     @media screen and (max-width: 675px) and (min-width: 450px) {
-      padding: 60px 25px 0;
+      padding: 80px 25px 0;
     }
   }
 

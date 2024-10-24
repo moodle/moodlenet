@@ -40,7 +40,7 @@ export default async function ProfilePage({
     mainProfileCardProps,
     userProgressCardProps,
     stats: {
-      followersCount: 666,
+      followersCount: moodlenetData.stats.followersCount,
       followingCount: featuredContent.filter(({ featureType }) => featureType === 'follow').length,
       publishedResourcesCount: moodlenetData.published.contributions.filter(({ status }) => status === 'published').length,
     },

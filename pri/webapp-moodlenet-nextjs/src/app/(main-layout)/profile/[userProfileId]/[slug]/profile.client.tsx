@@ -22,10 +22,54 @@ export default function ProfileClient({ mainProfileCardProps, userProgressCardPr
         <MainProfileCard {...mainProfileCardProps} />
       </div>
       <div className="resources">
-        <Card>resources</Card>
+        <Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+          <Card>resources</Card>
+        </Card>
       </div>
       <div className="collections">
-        <Card>collections</Card>
+        <Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+          <Card>collections</Card>
+        </Card>
       </div>
       <div className="overall">
         <OverallCard
