@@ -7,7 +7,7 @@ export type configs = {
   info: moodlenetInfo
   moodlenetPrimaryMsgSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs
   pointSystem: pointSystem
-  disabledCategories: publishedCategories
+  publishedCategories: publishedCategories
 }
 
 export type publishedCategories = {

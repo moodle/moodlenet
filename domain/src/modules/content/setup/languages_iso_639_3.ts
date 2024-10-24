@@ -4,7 +4,7 @@ import { contentLanguageRecord } from '../types'
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck: because is raw data and it's massive, it will slowdown ts
 // @ts-ignore: because is raw data and it's massive, it will slowdown ts
-export const languages_iso_639_3: contentLanguageRecord[] = [
+export const contentLanguages_iso_639_3_Setup: contentLanguageRecord[] = [
   { id: `aaa`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Ghotuo` },
   { id: `aab`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Alumu-Tesu` },
   { id: `aac`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Ari` },

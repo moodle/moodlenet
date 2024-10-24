@@ -40,6 +40,11 @@
       "@moodle/module/edu/core": ["domain/src/modules/edu/core/index.ts"],
       "@moodle/module/edu/setup": ["domain/src/modules/edu/setup/index.ts"],
       //
+      "@moodle/module/content": ["domain/src/modules/content/index.ts"],
+      "@moodle/module/content/lib": ["domain/src/modules/content/lib/index.ts"],
+      "@moodle/module/content/core": ["domain/src/modules/content/core/index.ts"],
+      "@moodle/module/content/setup": ["domain/src/modules/content/setup/index.ts"],
+      //
       "@moodle/module/ai-agent": ["domain/src/modules/ai-agent/index.ts"],
       "@moodle/module/ai-agent/lib": ["domain/src/modules/ai-agent/lib/index.ts"],
       "@moodle/module/ai-agent/core": ["domain/src/modules/ai-agent/core/index.ts"],

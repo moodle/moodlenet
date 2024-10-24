@@ -1,5 +1,7 @@
 import { non_negative_integer_schema, positive_integer_schema } from '@moodle/lib-types'
 import { configs } from '../types'
+import { eduIscedFieldsSetup, eduIscedLevelsSetup, eduResourceTypesSetup } from '../../edu/setup'
+import { contentLanguages_iso_639_3_Setup, contentLicensesSetup } from '../../content/setup'
 
 export const net_default_configs: configs = {
   info: {
@@ -74,11 +76,11 @@ export const net_default_configs: configs = {
       { title: 'Dazzling biome' },
     ],
   },
-  disabledCategories: {
-    eduIscedFields: { id: [] },
-    eduIscedLevels: { id: [] },
-    eduResourceTypes: { id: [] },
-    contentLanguages: { id: [] },
-    contentLicenses: { id: [] },
+  publishedCategories: {
+    eduIscedFields: { id: eduIscedFieldsSetup.filter(({ codePath }) => codePath.length === 3).map(({ id }) => id) },
+    eduIscedLevels: { id: eduIscedLevelsSetup.map(({ id }) => id) },
+    eduResourceTypes: { id: eduResourceTypesSetup.map(({ id }) => id) },
+    contentLanguages: { id: contentLanguages_iso_639_3_Setup.filter(({ part1 }) => !!part1).map(({ id }) => id) },
+    contentLicenses: { id: contentLicensesSetup.map(({ id }) => id) },
   },
 }

@@ -6,10 +6,12 @@ export type eduBloomCognitiveRecord = {
 }
 
 export type eduIscedFieldId = string
-export type eduIscedFieldRecord = { description: string; id: eduIscedFieldId; codePath: [string, string?, string?] }
+export type eduIscedFieldRecord = { description: string; id: eduIscedFieldId; codePath: eduIscedFieldPath }
+type eduIscedFieldPath = [string] | [string, string] | [string, string, string]
 
 export type eduIscedLevelId = string
-export type eduIscedLevelRecord = { description: string; id: eduIscedLevelId; codePath: [string, string?, string?] }
+export type eduIscedLevelRecord = { description: string; id: eduIscedLevelId; codePath: eduIscedLevelPath }
+type eduIscedLevelPath = [string] | [string, string] | [string, string, string]
 
 export type eduResourceTypeId = string
 export type eduResourceTypeRecord = { description: string; id: eduResourceTypeId }

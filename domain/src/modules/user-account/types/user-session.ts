@@ -10,7 +10,7 @@ interface UserSessionTypes {
 
 export type GuestUserSession = unknown
 
-export type userSessionData = Pick<userAccountRecord, 'id' | 'roles' | 'displayName' | 'contacts'>
+export type userSessionData = Pick<userAccountRecord, 'id' | 'roles' | 'contacts'>
 
 export interface AuthenticatedUserSession {
   user: userSessionData

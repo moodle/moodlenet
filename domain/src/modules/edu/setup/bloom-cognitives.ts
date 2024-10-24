@@ -1,6 +1,6 @@
 import { eduBloomCognitiveRecord } from '..'
 
-export const bloomCognitives: eduBloomCognitiveRecord[] = [
+export const eduBloomCognitivesSetup: eduBloomCognitiveRecord[] = [
   {
     id: '1',
     description: 'Knowledge',

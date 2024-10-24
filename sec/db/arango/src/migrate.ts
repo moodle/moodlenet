@@ -2,7 +2,7 @@ import { Logger } from '@moodle/domain'
 import { databaseConnections, dbStruct, getDbStruct } from './db-structure'
 import * as migrations from './migrate/from'
 
-const TARGET_V = 'v0_3'
+const TARGET_V = 'v0_1'
 
 export async function migrateArangoDB({
   log,

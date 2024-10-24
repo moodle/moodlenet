@@ -36,7 +36,6 @@ export function userAccountRecord2SessionUserData(
 ): userSessionData {
   return {
     id: userAccountRecord.id,
-    displayName: userAccountRecord.displayName,
     roles: userAccountRecord.roles,
     contacts: userAccountRecord.contacts,
   }

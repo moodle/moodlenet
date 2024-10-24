@@ -15,7 +15,14 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   })
   // data
   // --------------
-  await dbStruct.data.coll.xxx.create({})
-  ----------- more collections ---------------
-  ----------- more indexes ---------------
+  await dbStruct.data.coll.contentLanguage.create({ cacheEnabled: true })
+  await dbStruct.data.coll.contentLicense.create({ cacheEnabled: true })
+  await dbStruct.data.coll.eduBloomCognitive.create({ cacheEnabled: true })
+  await dbStruct.data.coll.eduIscedField.create({ cacheEnabled: true })
+  await dbStruct.data.coll.eduIscedLevel.create({ cacheEnabled: true })
+  await dbStruct.data.coll.eduResourceType.create({ cacheEnabled: true })
+  await dbStruct.data.coll.userProfile.create({})
+  await dbStruct.data.coll.userProfile.ensureIndex({ type: 'persistent', fields: ['userAccountUser.id'] })
+
 }
+

@@ -1,7 +1,7 @@
 import { fraction_schema } from '@moodle/lib-types'
 import { contentLicenseRecord } from '../types'
 
-export const licenses: contentLicenseRecord[] = [
+export const contentLicensesSetup: contentLicenseRecord[] = [
   { id: 'cc-0', name: 'Public domain', restrictiveness: fraction_schema.parse(0.01) },
   { id: 'cc-by', name: 'Attribution', restrictiveness: fraction_schema.parse(0.1) },
   { id: 'cc-by-sa', name: 'Attribution + ShareAlike', restrictiveness: fraction_schema.parse(0.2) },
