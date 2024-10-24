@@ -73,8 +73,8 @@ export function actionsAndPointsObtained(pointSystem: pointSystem): { action: st
 export function getLevelDetails(pointSystem: pointSystem): UserLevelDetails[] {
   return pointSystem.pointBadgeSteps.map<UserLevelDetails>((step, index, arr) => {
     return {
-      minPoints: index === 0 ? 0 : arr[index - 1]!.lessThanPoints,
-      maxPoints: step.lessThanPoints,
+      minPoints: index === 0 ? 0 : (arr[index - 1]!.lessThanPoints ?? Infinity),
+      maxPoints: step.lessThanPoints ?? Infinity,
       avatar: userLevelAvatarSrcs[index]!,
       title: step.title,
       level: index + 1,

@@ -67,7 +67,6 @@ export function useAssetUploader({
     inputRef.current = inputElement
     document.body.append(inputElement)
     return () => {
-      // remove it from the body
       inputRef.current = null
       document.body.removeChild(inputElement)
     }
