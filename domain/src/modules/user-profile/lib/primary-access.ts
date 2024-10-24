@@ -25,12 +25,13 @@ export async function accessUserProfile({
     } else {
       return {
         id,
+        itsMe: false,
         result: 'found',
         access: 'allowed',
         profileInfo,
         permissions: _all_user_profile_permissions_disallowed,
         user: null,
-        flags: { followed: true },
+        flags: { following: true },
         urlSafeProfileName: userProfile.appData.urlSafeProfileName,
       }
     }
@@ -45,31 +46,22 @@ export async function accessUserProfile({
 
   return {
     id,
+    itsMe,
     result: 'found',
     access: 'allowed',
     profileInfo,
     permissions: {
-      ...(itsMe
-        ? {
-            editProfile: true,
-            validationConfigs: await getProfileInfoValidationConfigs(),
-          }
-        : {
-            editProfile: false,
-          }),
+      editProfile: itsMe,
       follow: !itsMe,
       report: !itsMe,
       sendMessage: !itsMe,
       editRoles: !itsMe && currentUserIsAdmin,
     },
     user: itsMe || currentUserIsAdmin ? userProfile.userAccountUser : null,
-    flags: { followed: !itsMe },
+    flags: { following: !itsMe },
     urlSafeProfileName: userProfile.appData.urlSafeProfileName,
   }
 
-  async function getProfileInfoValidationConfigs() {
-    return (await ctx.mod.env.query.modConfigs({ mod: 'userProfile' })).configs.profileInfoPrimaryMsgSchemaConfigs
-  }
 }
 
 const _all_user_profile_permissions_disallowed: userProfilePermissions = {

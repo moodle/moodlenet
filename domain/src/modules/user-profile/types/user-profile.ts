@@ -32,9 +32,10 @@ export type userProfilePermissions = flags<'follow' | 'editRoles' | 'sendMessage
 
 export type userProfileAccessObject = {
   id: userProfileId
+  itsMe: boolean
   profileInfo: profileInfo
   permissions: userProfilePermissions
-  flags: flags<'followed'>
+  flags: flags<'following'>
   user: _maybe<userAccountUserExcerpt>
   // REVIEW: instead of `urlSafeProfileName` there could be a appData: { moodlenet: { homepage: url_string } }
   urlSafeProfileName: string

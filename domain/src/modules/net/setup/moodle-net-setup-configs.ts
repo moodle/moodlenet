@@ -58,7 +58,7 @@ export const net_default_configs: configs = {
       },
       follow: {
         followerProfile: { points: non_negative_integer_schema.parse(5) },
-        followedProfile: { points: non_negative_integer_schema.parse(5) },
+        followingProfile: { points: non_negative_integer_schema.parse(5) },
         entityCreatorProfile: { points: non_negative_integer_schema.parse(5) },
         entity: { popularity: non_negative_integer_schema.parse(1) },
       },

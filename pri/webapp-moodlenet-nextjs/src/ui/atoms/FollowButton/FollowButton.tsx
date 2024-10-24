@@ -1,21 +1,21 @@
 import PermIdentity from '@mui/icons-material/PermIdentity'
 import Person from '@mui/icons-material/Person'
 
-import { flags } from '@moodle/lib-types'
 import { PrimaryButton } from '../PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../SecondaryButton/SecondaryButton'
 import { TertiaryButton } from '../TertiaryButton/TertiaryButton'
 import './FollowButton.scss'
 
 export type FollowButtonProps = {
-  followed: boolean
-  toggleFollow?: undefined | (() => void)
+  following: boolean
+  disabled: boolean
+  toggleFollow(): void
 }
 
-export function FollowButton({ followed, toggleFollow }: FollowButtonProps) {
-  return followed ? (
+export function FollowButton({ following, toggleFollow, disabled }: FollowButtonProps) {
+  return following ? (
     <SecondaryButton
-      disabled={!!toggleFollow}
+      disabled={!disabled}
       onClick={toggleFollow}
       className="following-button"
       key="follow-button"
@@ -24,30 +24,21 @@ export function FollowButton({ followed, toggleFollow }: FollowButtonProps) {
       Following
     </SecondaryButton>
   ) : (
-    <PrimaryButton
-      disabled={!!toggleFollow}
-      onClick={toggleFollow}
-      key="follow-button"
-      className="follow-button"
-    >
+    <PrimaryButton disabled={!disabled} onClick={toggleFollow} key="follow-button" className="follow-button">
       Follow
     </PrimaryButton>
   )
 }
 export type SmallFollowButtonProps = FollowButtonProps & { numFollowers: number }
-export function SmallFollowButton({
-  numFollowers,
-  followed,
-  toggleFollow,
-}: SmallFollowButtonProps) {
+export function SmallFollowButton({ numFollowers, following, toggleFollow, disabled }: SmallFollowButtonProps) {
   return (
     <TertiaryButton
-      className={`small-follow-button ${followed ? 'followed' : ''} `}
-      disabled={!!toggleFollow}
+      className={`small-follow-button ${following ? 'following' : ''} `}
+      disabled={!disabled}
       onClick={toggleFollow}
       key="followers-button"
     >
-      {followed ? <Person /> : <PermIdentity />}
+      {following ? <Person /> : <PermIdentity />}
       <span>{numFollowers}</span>
     </TertiaryButton>
   )

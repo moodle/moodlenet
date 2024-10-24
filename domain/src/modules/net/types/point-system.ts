@@ -81,7 +81,7 @@ export type pointSystem = {
       followerProfile: {
         points: non_negative_integer
       }
-      followedProfile: {
+      followingProfile: {
         points: non_negative_integer
       }
       entityCreatorProfile: {
