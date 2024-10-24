@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { sitepaths } from '../../../../../lib/common/utils/sitepaths'
-import { primary } from '../../../../../lib/server/session-access'
+import { access } from '../../../../../lib/server/session-access'
 import { params } from '../../../../../lib/server/types'
 import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'
 import { mainProfileCardProps } from './pageComponents/MainProfileCard/MainProfileCard'
@@ -12,7 +12,7 @@ export default async function ProfilePage({
 }: {
   params: params<'userProfileId' | 'slug'>
 }) {
-  const [foundUserProfile, userProfileResponse] = await primary.moodle.userProfile.userProfile.access({
+  const [foundUserProfile, userProfileResponse] = await access.primary.userProfile.userProfile.access({
     by: 'userProfileId',
     userProfileId,
   })
@@ -26,7 +26,7 @@ export default async function ProfilePage({
       ]!(),
     )
   }
-  const { pointSystem } = await primary.moodle.net.session.moduleInfo()
+  const { pointSystem } = await access.primary.moodlenet.session.moduleInfo()
   const moodlenetData = userProfileResponse.accessObject.appData.moodlenet
   const userProgressCardProps: userProgressCardProps = {
     points: moodlenetData.points.amount,

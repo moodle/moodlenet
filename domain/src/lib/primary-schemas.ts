@@ -1,5 +1,5 @@
 import { MoodleDomain } from '..'
-import { getMoodleNetPrimarySchemas } from '../modules/env'
+import { getMoodlenetPrimarySchemas } from '../modules/env'
 import { getuserAccountPrimarySchemas } from '../modules/user-account'
 import { getOrgPrimarySchemas } from '../modules/org'
 import { getUserProfilePrimarySchemas } from '../modules/user-profile'
@@ -7,36 +7,36 @@ import { AllSchemaConfigs } from '../types'
 
 export function makeAllPrimarySchemas({
   userAccountSchemaConfigs,
-  moodleNetSchemaConfigs,
+  moodlenetSchemaConfigs,
   orgSchemaConfigs,
   uploadMaxSizeConfigs,
   userProfileSchemaConfigs,
 }: AllSchemaConfigs) {
   const userAccount = getuserAccountPrimarySchemas(userAccountSchemaConfigs)
-  const moodleNet = getMoodleNetPrimarySchemas(moodleNetSchemaConfigs)
+  const moodlenet = getMoodlenetPrimarySchemas(moodlenetSchemaConfigs)
   const org = getOrgPrimarySchemas(orgSchemaConfigs)
   const userProfile = getUserProfilePrimarySchemas(userProfileSchemaConfigs)
-  return { userAccount, moodleNet, org, userProfile, uploadMaxSizeConfigs }
+  return { userAccount, moodlenet, org, userProfile, uploadMaxSizeConfigs }
 }
 
 export async function fetchAllSchemaConfigs({ primary }: { primary: MoodleDomain['primary'] }): Promise<AllSchemaConfigs> {
   const [
     userAccountSchemaConfigs,
     userProfileSchemaConfigs,
-    moodleNetSchemaConfigs,
+    moodlenetSchemaConfigs,
     orgSchemaConfigs,
     uploadMaxSizeConfigs,
   ] = await Promise.all([
     primary.userAccount.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
     primary.userProfile.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
-    primary.net.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
+    primary.moodlenet.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
     primary.org.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
     primary.storage.session.moduleInfo().then(({ uploadMaxSizeConfigs }) => uploadMaxSizeConfigs),
   ])
   return {
     userAccountSchemaConfigs,
     userProfileSchemaConfigs,
-    moodleNetSchemaConfigs,
+    moodlenetSchemaConfigs,
     orgSchemaConfigs,
     uploadMaxSizeConfigs,
   }

@@ -1,6 +1,6 @@
 import { Configs } from '../types'
 
-export const net_webapp_nextjs_default_configs: Configs = {
+export const moodlenet_nextjs_default_configs: Configs = {
   layouts: {
     roots: {
       main: {

@@ -5,7 +5,7 @@ import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import { primary } from '../../../../lib/server/session-access'
+import { access } from '../../../../lib/server/session-access'
 import { provideAdminGeneralSchemas } from './general.common'
 
 export async function getAdminGeneralSchemas() {
@@ -18,18 +18,18 @@ async function getGeneralSchema() {
 export const saveGeneralInfoAction = defaultSafeActionClient
   .schema(getGeneralSchema)
   .action(async ({ parsedInput: adminGeneralForm }) => {
-    const { moodleNetInfoSchema, orgInfoSchema } = await getAdminGeneralSchemas()
+    const { moodlenetInfoSchema, orgInfoSchema } = await getAdminGeneralSchemas()
 
-    const [[mnetDone], [orgDone]] = await Promise.all([
-      primary.moodle.net.admin.updatePartialMoodleNetInfo({
-        partialInfo: moodleNetInfoSchema.parse(adminGeneralForm),
+    const [[mmoodlenetDone], [orgDone]] = await Promise.all([
+      access.primary.moodlenet.admin.updatePartialMoodlenetInfo({
+        partialInfo: moodlenetInfoSchema.parse(adminGeneralForm),
       }),
-      primary.moodle.org.admin.updatePartialOrgInfo({
+      access.primary.org.admin.updatePartialOrgInfo({
         partialInfo: orgInfoSchema.parse(adminGeneralForm),
       }),
     ])
     revalidatePath('/')
-    if (mnetDone && orgDone) {
+    if (mmoodlenetDone && orgDone) {
       return
     }
     returnValidationErrors(getGeneralSchema, {

@@ -9,7 +9,7 @@ import QueryString from 'qs'
 import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { setAuthTokenCookie } from '../../../../lib/server/auth'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import { primary } from '../../../../lib/server/session-access'
+import { access } from '../../../../lib/server/session-access'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 
 export async function getLoginSchema() {
@@ -24,7 +24,7 @@ export const loginAction = defaultSafeActionClient.schema(getLoginSchema).action
 
   const redirectUrl = redirectPathAfterLogin || sitepaths()
 
-  const [loginSuccess, loginResponse] = await primary.moodle.userAccount.access.login({
+  const [loginSuccess, loginResponse] = await access.primary.userAccount.access.login({
     loginForm,
   })
   if (!loginSuccess) {

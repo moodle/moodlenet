@@ -18,14 +18,14 @@ import {
 import { filterOutFalsies } from '@moodle/lib-types'
 import { userSessionInfo } from '@moodle/module/user-account/lib'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
-import { primary } from '../../lib/server/session-access'
+import { access } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
 import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const [{ userSession }, layouts] = await Promise.all([
-    primary.moodle.userAccount.session.getUserSession(),
-    primary.moodle.netWebappNextjs.webapp.layouts(),
+    access.primary.userAccount.session.getUserSession(),
+    access.primary.moodlenetNextjs.webapp.layouts(),
   ])
   return (
     <div className={`main-layout`}>
@@ -41,7 +41,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
     const { authenticated } = userSessionInfo(userSession)
     const userProfileAccessObject = authenticated
-      ? await primary.moodle.userProfile.userProfile
+      ? await access.primary.userProfile.userProfile
           .access({ by: 'userAccountId', userAccountId: authenticated.user.id })
           .then(([userProfileFound, userProfileResult]) => {
             return userProfileFound ? userProfileResult.accessObject : null

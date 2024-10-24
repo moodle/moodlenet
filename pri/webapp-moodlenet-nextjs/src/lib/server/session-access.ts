@@ -1,6 +1,5 @@
 import { http_bind } from '@moodle/bindings-node'
 import { MoodleDomain, primarySession } from '@moodle/domain'
-import {} from '@moodle/domain'
 import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/user-account/lib'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
@@ -17,8 +16,8 @@ const MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_NEXTJS_PRI
 
 const requestTarget = MOODLE_NET_NEXTJS_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
-export const primary = {
-  get moodle(): MoodleDomain['primary'] {
+export const access = {
+  get primary(): MoodleDomain['primary'] {
     return _domainAccess().primary
   },
 }
@@ -101,7 +100,7 @@ function _domainAccess(): MoodleDomain {
 }
 
 export async function getUserSession() {
-  const { userSession } = await primary.moodle.userAccount.session.getUserSession()
+  const { userSession } = await access.primary.userAccount.session.getUserSession()
   return userSession
 }
 

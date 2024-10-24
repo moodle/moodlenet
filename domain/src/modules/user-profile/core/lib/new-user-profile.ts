@@ -1,7 +1,7 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { webSlug } from '@moodle/lib-types'
 import { baseContext } from '../../../../types'
-import { newUserProfileMoodlenetData } from '../../../net/core/lib/new-user'
+import { newUserProfileMoodlenetData } from '../../../moodlenet/core/lib/new-user'
 import { userAccountRecord } from '../../../user-account'
 import { userProfileRecord } from '../../types'
 

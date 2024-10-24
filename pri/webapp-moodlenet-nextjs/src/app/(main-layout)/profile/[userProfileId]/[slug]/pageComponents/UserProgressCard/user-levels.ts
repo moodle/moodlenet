@@ -1,4 +1,4 @@
-import { pointSystem } from 'domain/src/modules/net/types/point-system'
+import { pointSystem } from 'domain/src/modules/moodlenet/types/point-system'
 import level1Avatar from './userLevelAvatar/level-1.png'
 import level10Avatar from './userLevelAvatar/level-10.png'
 import level2Avatar from './userLevelAvatar/level-2.png'

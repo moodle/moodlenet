@@ -1,4 +1,4 @@
-import { primary } from '../../../lib/server/session-access'
+import { access } from '../../../lib/server/session-access'
 import { layoutPropsWithChildren, slotItem } from '../../../lib/server/utils/slots'
 import { LoginCard, LoginCardProps } from './login.client'
 import './login.style.scss'
@@ -6,7 +6,7 @@ import './login.style.scss'
 export default async function LoginLayout(props: layoutPropsWithChildren) {
   const {
     pages: { login },
-  } = await primary.moodle.netWebappNextjs.webapp.layouts()
+  } = await access.primary.moodlenetNextjs.webapp.layouts()
 
   const loginCardProps: LoginCardProps = {
     loginMethods: login.methods.map(({ label, panel }) => ({

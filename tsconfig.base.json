@@ -55,15 +55,15 @@
       "@moodle/module/asset-text-extraction/core": ["domain/src/modules/asset-text-extraction/core/index.ts"],
       "@moodle/module/asset-text-extraction/setup": ["domain/src/modules/asset-text-extraction/setup/index.ts"],
       //
-      "@moodle/module/net": ["domain/src/modules/net/index.ts"],
-      "@moodle/module/net/lib": ["domain/src/modules/net/lib/index.ts"],
-      "@moodle/module/net/core": ["domain/src/modules/net/core/index.ts"],
-      "@moodle/module/net/setup": ["domain/src/modules/net/setup/index.ts"],
+      "@moodle/module/moodlenet": ["domain/src/modules/moodlenet/index.ts"],
+      "@moodle/module/moodlenet/lib": ["domain/src/modules/moodlenet/lib/index.ts"],
+      "@moodle/module/moodlenet/core": ["domain/src/modules/moodlenet/core/index.ts"],
+      "@moodle/module/moodlenet/setup": ["domain/src/modules/moodlenet/setup/index.ts"],
       //
-      "@moodle/module/net-webapp-nextjs": ["domain/src/modules/net-webapp-nextjs/index.ts"],
-      "@moodle/module/net-webapp-nextjs/lib": ["domain/src/modules/net-webapp-nextjs/lib/index.ts"],
-      "@moodle/module/net-webapp-nextjs/core": ["domain/src/modules/net-webapp-nextjs/core/index.ts"],
-      "@moodle/module/net-webapp-nextjs/setup": ["domain/src/modules/net-webapp-nextjs/setup/index.ts"],
+      "@moodle/module/moodlenet-nextjs": ["domain/src/modules/moodlenet-nextjs/index.ts"],
+      "@moodle/module/moodlenet-nextjs/lib": ["domain/src/modules/moodlenet-nextjs/lib/index.ts"],
+      "@moodle/module/moodlenet-nextjs/core": ["domain/src/modules/moodlenet-nextjs/core/index.ts"],
+      "@moodle/module/moodlenet-nextjs/setup": ["domain/src/modules/moodlenet-nextjs/setup/index.ts"],
       //
       "@moodle/module/org": ["domain/src/modules/org/index.ts"],
       "@moodle/module/org/lib": ["domain/src/modules/org/lib/index.ts"],

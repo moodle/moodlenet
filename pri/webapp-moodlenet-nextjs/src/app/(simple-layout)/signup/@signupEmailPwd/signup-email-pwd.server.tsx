@@ -5,7 +5,7 @@ import { returnValidationErrors } from 'next-safe-action'
 import { redirect } from 'next/navigation'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import { primary } from '../../../../lib/server/session-access'
+import { access } from '../../../../lib/server/session-access'
 import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
 
 export async function getSignupSchema() {
@@ -21,7 +21,7 @@ export const signupAction = defaultSafeActionClient
   .action(async ({ parsedInput: signupForm }) => {
     const redirectUrl = (await srvSiteUrls()).full['-'].api.userAccount['basic-auth']['verify-signup-email-token']()
 
-    const [done, resp] = await primary.moodle.userAccount.access.signupRequest({
+    const [done, resp] = await access.primary.userAccount.access.signupRequest({
       signupForm,
       redirectUrl,
     })

@@ -1,7 +1,7 @@
 import { date_time_string, non_negative_integer } from '@moodle/lib-types'
 import { userAccountId } from '../../user-account'
 
-export type reportType = string //TODO: type:desc map in net Configs?
+export type reportType = string //TODO: type:desc map in moodlenet Configs?
 export type reportAbuseForm = {
   type: reportType
   comment: string | undefined

@@ -63,8 +63,8 @@ export function RecoverPasswordRequestClient() {
               {/* <MailOutline className="icon" /> */}
               <div className="subtitle">
                 <Trans>
-                  If the email you provided corresponds to a MoodleNet user, you&apos;ll receive an
-                  email with a change password link
+                  If the email you provided corresponds to a Moodlenet user, you&apos;ll receive an email with a change
+                  password link
                 </Trans>
               </div>
             </div>

@@ -15,7 +15,7 @@ export async function newUserProfileMoodlenetData({ ctx }: { ctx: baseContext })
     configs: {
       pointSystem: { welcomePoints },
     },
-  } = await ctx.mod.env.query.modConfigs({ mod: 'net' })
+  } = await ctx.mod.env.query.modConfigs({ mod: 'moodlenet' })
   const userProfileMoodlenetData: userProfileMoodlenetData = {
     featuredContent: [],
     points: { amount: welcomePoints },

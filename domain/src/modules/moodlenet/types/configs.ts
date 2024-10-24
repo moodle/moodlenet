@@ -1,7 +1,7 @@
 import { contentLanguageId, contentLicenseId } from '../../content'
 import { eduIscedFieldId, eduIscedLevelId, eduResourceTypeId } from '../../edu'
 import { pointSystem } from './point-system'
-import { MoodleNetPrimaryMsgSchemaConfigs as moodlenetPrimaryMsgSchemaConfigs } from './primary-schemas'
+import { MoodlenetPrimaryMsgSchemaConfigs as moodlenetPrimaryMsgSchemaConfigs } from './primary-schemas'
 
 export type configs = {
   info: moodlenetInfo

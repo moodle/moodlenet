@@ -1,5 +1,5 @@
-import { net_webapp_nextjs_default_configs } from '@moodle/module/net-webapp-nextjs/setup'
-import { net_default_configs } from '@moodle/module/net/setup'
+import { moodlenet_nextjs_default_configs } from '@moodle/module/moodlenet-nextjs/setup'
+import { moodlenet_default_configs } from '@moodle/module/moodlenet/setup'
 import { org_default_configs } from '@moodle/module/org/setup'
 import { storage_default_configs } from '@moodle/module/storage/setup'
 import { userAccount_default_configs } from '@moodle/module/user-account/setup'
@@ -16,13 +16,13 @@ export async function insertModConfigs({ dbStruct }: { dbStruct: dbStruct }) {
   })
   await saveModConfigs({
     dbStruct,
-    configs: net_default_configs,
-    moduleName: 'net',
+    configs: moodlenet_default_configs,
+    moduleName: 'moodlenet',
   })
   await saveModConfigs({
     dbStruct,
-    configs: net_webapp_nextjs_default_configs,
-    moduleName: 'netWebappNextjs',
+    configs: moodlenet_nextjs_default_configs,
+    moduleName: 'moodlenetNextjs',
   })
   await saveModConfigs({
     dbStruct,

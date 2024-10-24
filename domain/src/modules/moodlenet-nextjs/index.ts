@@ -1,17 +1,17 @@
 import type { Layouts } from './types'
 export * from './types'
 
-export default interface NetWebappNextjsDomain {
-  event: { netWebappNextjs: unknown }
+export default interface MoodlenetNextjsDomain {
+  event: { moodlenetNextjs: unknown }
   primary: {
-    netWebappNextjs: {
+    moodlenetNextjs: {
       webapp: {
         layouts(): Promise<Layouts>
       }
     }
   }
   secondary: {
-    netWebappNextjs: {
+    moodlenetNextjs: {
       queue: unknown
       query: unknown
       service: unknown

@@ -1,4 +1,4 @@
-import { primary } from '../../../lib/server/session-access'
+import { access } from '../../../lib/server/session-access'
 import { getSiteGeneralInfo } from '../../../lib/server/siteGeneralInfo'
 import { layoutPropsWithChildren, slotsMap } from '../../../lib/server/utils/slots'
 import defaultBackground from '../../../ui/lib/assets/img/default-landing-background.png'
@@ -7,10 +7,10 @@ import { LandingHeadSearchbox /* , LandingHeadShareButton  */ } from './landing-
 import './landing-page.style.scss'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
-  const [info, layouts] = await Promise.all([getSiteGeneralInfo(), primary.moodle.netWebappNextjs.webapp.layouts()])
+  const [info, layouts] = await Promise.all([getSiteGeneralInfo(), access.primary.moodlenetNextjs.webapp.layouts()])
 
   const { head, content } = slotsMap(props, layouts.pages.landing.slots)
-  const { userSession } = await primary.moodle.userAccount.session.getUserSession()
+  const { userSession } = await access.primary.userAccount.session.getUserSession()
 
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,
@@ -20,8 +20,8 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
     <div className="landing">
       <div className="landing-header" style={headerStyle}>
         <div className="landing-title">
-          <div className="title">{info.net.title}</div>
-          <div className="subtitle">{info.net.subtitle}</div>
+          <div className="title">{info.moodlenet.title}</div>
+          <div className="subtitle">{info.moodlenet.subtitle}</div>
         </div>
         <LandingHeadSearchbox />
         {head}

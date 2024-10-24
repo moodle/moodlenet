@@ -1,11 +1,11 @@
 'use server'
 
 import { userAccountId, userRole } from '@moodle/module/user-account'
-import { primary } from '../../../../lib/server/session-access'
+import { access } from '../../../../lib/server/session-access'
 import { UserRow } from './users.client'
 
 export async function searchUsers({ textSearch }: { textSearch: string }) {
-  const { users } = await primary.moodle.userAccount.admin.searchUsers({ textSearch })
+  const { users } = await access.primary.userAccount.admin.searchUsers({ textSearch })
   const userRows = users.map<UserRow>(user => {
     return {
       id: user.id,
@@ -25,6 +25,6 @@ export async function editUserRole({
   role: userRole
   action: 'set' | 'unset'
 }) {
-  const [done, result] = await primary.moodle.userAccount.admin.editUserRoles({ userAccountId, role, action })
+  const [done, result] = await access.primary.userAccount.admin.editUserRoles({ userAccountId, role, action })
   return done ? result.updatedRoles : []
 }

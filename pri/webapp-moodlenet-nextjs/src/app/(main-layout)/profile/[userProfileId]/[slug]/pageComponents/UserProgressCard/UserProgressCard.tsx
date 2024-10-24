@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 // import { Href, Link } from '../../../../elements/link'
 import InfoOutlined from '@mui/icons-material/InfoOutlined'
-import { pointSystem } from 'domain/src/modules/net/types/point-system'
+import { pointSystem } from 'domain/src/modules/moodlenet/types/point-system'
 import { Card } from '../../../../../../../ui/atoms/Card/Card'
 import { Modal } from '../../../../../../../ui/atoms/Modal/Modal'
 import LeafIcon from '../../../../../../../ui/lib/assets/icons/leaf.svg'

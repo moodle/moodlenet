@@ -1,5 +1,5 @@
-export * from './db-arango-net'
-export * from './db-arango-net-webapp-nextjs'
+export * from './db-arango-moodlenet'
+export * from './db-arango-moodlenet-nextjs'
 export * from './db-arango-org'
 export * from './db-arango-storage'
 export * from './db-arango-user-account'

@@ -4,7 +4,7 @@ import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import { primary } from '../../../../lib/server/session-access'
+import { access } from '../../../../lib/server/session-access'
 
 async function getChangePasswordSchema() {
   const { userAccount } = await getAllPrimarySchemas()
@@ -22,7 +22,7 @@ async function getChangePasswordSchema() {
 export const changePasswordAction = defaultSafeActionClient
   .schema(getChangePasswordSchema)
   .action(async ({ parsedInput: changePasswordForm }) => {
-    const [done, result] = await primary.moodle.userAccount.myAccount.changePassword(changePasswordForm)
+    const [done, result] = await access.primary.userAccount.myAccount.changePassword(changePasswordForm)
     if (!done) {
       returnValidationErrors(getChangePasswordSchema, {
         _errors:

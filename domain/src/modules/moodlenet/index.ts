@@ -1,27 +1,27 @@
 import { deep_partial_props, ok_ko } from '@moodle/lib-types'
-import { moodlenetInfo, MoodleNetPrimaryMsgSchemaConfigs, publishedCategories } from './types'
+import { moodlenetInfo, MoodlenetPrimaryMsgSchemaConfigs, publishedCategories } from './types'
 import { pointSystem } from './types/point-system'
 export * from './types'
 
-export default interface NetDomain {
-  event: { net: unknown }
+export default interface MoodlenetDomain {
+  event: { moodlenet: unknown }
   primary: {
-    net: {
+    moodlenet: {
       session: {
         moduleInfo(): Promise<{
           info: moodlenetInfo
-          schemaConfigs: MoodleNetPrimaryMsgSchemaConfigs
+          schemaConfigs: MoodlenetPrimaryMsgSchemaConfigs
           pointSystem: pointSystem
           publishedCategories: publishedCategories
         }>
       }
       admin: {
-        updatePartialMoodleNetInfo(_: { partialInfo: deep_partial_props<moodlenetInfo> }): Promise<ok_ko<void>>
+        updatePartialMoodlenetInfo(_: { partialInfo: deep_partial_props<moodlenetInfo> }): Promise<ok_ko<void>>
       }
     }
   }
   secondary: {
-    net: {
+    moodlenet: {
       queue: unknown
       service: unknown
       query: unknown

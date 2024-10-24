@@ -1,9 +1,9 @@
-import { primary } from './session-access'
+import { access } from './session-access'
 
 export async function getSiteGeneralInfo() {
-  const [{ info: net }, { info: org }] = await Promise.all([
-    primary.moodle.net.session.moduleInfo(),
-    primary.moodle.org.session.moduleInfo(),
+  const [{ info: moodlenet }, { info: org }] = await Promise.all([
+    access.primary.moodlenet.session.moduleInfo(),
+    access.primary.org.session.moduleInfo(),
   ])
-  return { net, org }
+  return { moodlenet, org }
 }

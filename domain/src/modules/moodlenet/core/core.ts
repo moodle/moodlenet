@@ -2,8 +2,8 @@ import { _void } from '@moodle/lib-types'
 import { moduleCore } from '../../../types'
 import { assert_authorizeCurrentUserSessionWithRole } from '../../user-account/lib'
 
-export const net_core: moduleCore<'net'> = {
-  modName: 'net',
+export const moodlenet_core: moduleCore<'moodlenet'> = {
+  modName: 'moodlenet',
   primary(ctx) {
     return {
       session: {
@@ -13,12 +13,12 @@ export const net_core: moduleCore<'net'> = {
               info,
               pointSystem,
               publishedCategories,
-              moodlenetPrimaryMsgSchemaConfigs: moodleNetPrimaryMsgSchemaConfigs,
+              moodlenetPrimaryMsgSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs,
             },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'net' })
+          } = await ctx.mod.env.query.modConfigs({ mod: 'moodlenet' })
           return {
             info,
-            schemaConfigs: moodleNetPrimaryMsgSchemaConfigs,
+            schemaConfigs: moodlenetPrimaryMsgSchemaConfigs,
             pointSystem,
             publishedCategories,
           }
@@ -26,10 +26,10 @@ export const net_core: moduleCore<'net'> = {
       },
 
       admin: {
-        async updatePartialMoodleNetInfo({ partialInfo }) {
+        async updatePartialMoodlenetInfo({ partialInfo }) {
           assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' })
           const [done] = await ctx.mod.env.service.updatePartialConfigs({
-            mod: 'net',
+            mod: 'moodlenet',
             partialConfigs: { info: partialInfo },
           })
           return [done, _void]

@@ -1,7 +1,7 @@
 import { _maybe, _nullish, date_time_string, flags, non_negative_integer } from '@moodle/lib-types'
 import { contentLanguageId, contentLicenseId } from '../../content'
 import { eduIscedFieldId, eduIscedLevelId } from '../../edu'
-import { featuredContent, myPublishedContribution, suggestedContent, userProfileMoodlenetData } from '../../net'
+import { featuredContent, myPublishedContribution, suggestedContent, userProfileMoodlenetData } from '../../moodlenet'
 import { userAccountRecord } from '../../user-account'
 import { myDrafts } from './drafts'
 import { profileInfo } from './profile-info'
