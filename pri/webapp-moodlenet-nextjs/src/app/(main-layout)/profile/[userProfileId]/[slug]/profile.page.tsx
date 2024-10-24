@@ -3,7 +3,7 @@ import { sitepaths } from '../../../../../lib/common/utils/sitepaths'
 import { primary } from '../../../../../lib/server/session-access'
 import { params } from '../../../../../lib/server/types'
 import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'
-import { mainProfileCardProps } from './components/MainProfileCard'
+import { mainProfileCardProps } from './pageComponents/MainProfileCard/MainProfileCard'
 import ProfileClient from './profile.client'
 
 export default async function ProfilePage({
@@ -26,5 +26,5 @@ export default async function ProfilePage({
     userProfile: userProfileResponse.accessObject,
   }
 
-  return <ProfileClient mainProfileCardDeps={mainProfileCardDeps} />
+  return <ProfileClient mainProfileCardProps={mainProfileCardDeps} />
 }

@@ -8,21 +8,21 @@ import Save from '@mui/icons-material/Save'
 import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useCallback, useReducer, useRef } from 'react'
-import { useAllPrimarySchemas } from '../../../../../../lib/client/globalContexts'
-import { useAssetUploader } from '../../../../../../lib/client/useAssetUploader'
-import { ApprovalButton } from '../../../../../../ui/atoms/ApproveButton/ApproveButton'
-import { FloatingMenu } from '../../../../../../ui/atoms/FloatingMenu/FloatingMenu'
-import { FollowButton } from '../../../../../../ui/atoms/FollowButton/FollowButton'
-import InputTextField from '../../../../../../ui/atoms/InputTextField/InputTextField'
-import { PrimaryButton } from '../../../../../../ui/atoms/PrimaryButton/PrimaryButton'
-import { RoundButton } from '../../../../../../ui/atoms/RoundButton/RoundButton'
-import { SecondaryButton } from '../../../../../../ui/atoms/SecondaryButton/SecondaryButton'
-import { Snackbar } from '../../../../../../ui/atoms/Snackbar/Snackbar'
-import { adoptProfileImage, updateProfileInfo } from '../profile.server'
+import { useAllPrimarySchemas } from '../../../../../../../lib/client/globalContexts'
+import { useAssetUploader } from '../../../../../../../lib/client/useAssetUploader'
+import { ApprovalButton } from '../../../../../../../ui/atoms/ApproveButton/ApproveButton'
+import { FloatingMenu } from '../../../../../../../ui/atoms/FloatingMenu/FloatingMenu'
+import { FollowButton } from '../../../../../../../ui/atoms/FollowButton/FollowButton'
+import InputTextField from '../../../../../../../ui/atoms/InputTextField/InputTextField'
+import { PrimaryButton } from '../../../../../../../ui/atoms/PrimaryButton/PrimaryButton'
+import { RoundButton } from '../../../../../../../ui/atoms/RoundButton/RoundButton'
+import { SecondaryButton } from '../../../../../../../ui/atoms/SecondaryButton/SecondaryButton'
+import { Snackbar } from '../../../../../../../ui/atoms/Snackbar/Snackbar'
+import { adoptProfileImage, updateProfileInfo } from '../../profile.server'
 import './MainProfileCard.scss'
 // import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
-import defaultAvatar from '../../../../../../ui/lib/assets/img/default-avatar.png'
-import defaultBackground from '../../../../../../ui/lib/assets/img/default-landing-background.png'
+import defaultAvatar from '../../../../../../../ui/lib/assets/img/default-avatar.png'
+import defaultBackground from '../../../../../../../ui/lib/assets/img/default-landing-background.png'
 
 export type mainProfileCardProps = {
   userProfile: userProfileAccessObject
@@ -294,4 +294,3 @@ export function MainProfileCard({
     </div>
   )
 }
-

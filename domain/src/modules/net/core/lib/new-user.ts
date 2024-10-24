@@ -17,16 +17,15 @@ export async function newUserProfileMoodlenetData({ ctx }: { ctx: baseContext })
     },
   } = await ctx.mod.env.query.modConfigs({ mod: 'net' })
   const userProfileMoodlenetData: userProfileMoodlenetData = {
-    featuredContent: { bookmarked: [], following: [], liked: [] },
+    featuredContent: [],
     points: { amount: welcomePoints },
     preferences: { useMyInterestsAsDefaultFilters: true },
     published: { contributions: [] },
     suggestedContent: {
-      listsCreationDate: date_time_string('now'),
-      userProfiles: [],
-      eduResourceCollections: [],
-      eduResources: [],
+      listCreationDate: date_time_string('now'),
+      list: [],
     },
+    stats: { followersCount: non_negative_integer_schema.parse(0) },
   }
   return userProfileMoodlenetData
 }

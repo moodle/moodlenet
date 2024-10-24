@@ -3,17 +3,16 @@
   width: 100%;
   height: 100%;
   gap: 15px 35px;
-  @media (max-width: 450px) {
+  // @media screen and (max-width: 450px) {
+  // }
+  @media screen and (max-width: 499px){
     box-shadow: none;
     border-radius: 0;
-    margin-top: 0;
-  }
-  @media screen and (max-width: 499px){
     grid-auto-columns: 1fr;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
     grid-template-areas:
-      "main-profile-card"
+      "main-card"
       "resources"
       "collections"
       "overall"
@@ -24,7 +23,7 @@
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr;
     grid-template-areas:
-      "main-profile-card main-profile-card"
+      "main-card main-card"
       "resources resources"
       "collections collections"
       "points overall";
@@ -34,14 +33,14 @@
     grid-template-columns: 1fr 0.5fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
     grid-template-areas:
-      "main-profile-card points"
-      "main-profile-card points"
-      "main-profile-card overall"
-      "main-profile-card collections"
+      "main-card points"
+      "main-card points"
+      "main-card overall"
+      "main-card collections"
       "resources collections";
   }
 }
-.main-profile-card { grid-area: main-profile-card; }
+.main-card { grid-area: main-card; }
 .points { grid-area: points; }
 .overall { grid-area: overall; }
 .resources { grid-area: resources; }

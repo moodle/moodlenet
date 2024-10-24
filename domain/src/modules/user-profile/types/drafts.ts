@@ -5,20 +5,20 @@ import { eduResourceCollectionData, eduResourceData } from '../../edu/types/edu-
 
 export type myDrafts = {
   eduResources: draft<
-    eduResourceData,
-    {
-      assetTextExtractionStatus: assetTextExtractionStatus
-      aiAgentSuggestion: aiAgentResourceSuggestionStatus
+    eduResourceData & {
+      meta: {
+        assetTextExtractionStatus: assetTextExtractionStatus
+        aiAgentSuggestion: aiAgentResourceSuggestionStatus
+      }
     }
   >[]
   eduResourceCollections: draft<eduResourceCollectionData>[]
 }
 
-export type draft_id = eduResourceDraftId | eduResourceCollectionDraftId
-type draft<dataType extends eduResourceData | eduResourceCollectionData, meta = undefined> = {
-  id: draft_id
+export type draftId = eduResourceDraftId | eduResourceCollectionDraftId
+type draft<dataType extends eduResourceData | eduResourceCollectionData> = {
+  draftId: draftId
   data: dataType
-  meta: meta
   created: date_time_string
   lastUpdateDate: date_time_string
   // updates: { date: date_time_string; diff: jsonDiff }[]

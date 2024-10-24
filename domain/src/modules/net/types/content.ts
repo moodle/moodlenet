@@ -9,11 +9,11 @@ import {
 } from '../../edu/types/edu-content'
 import { userProfileId } from '../../user-profile'
 
-export type published_content_id = user_contribution_id | userProfileId | eduIscedFieldId
-export type publishedContentType = userContributionType | 'user-profile' | 'isced-field'
+export type publicContentId = userContributionId | userProfileId | eduIscedFieldId
+export type publicContentType = userContributionType | 'user-profile' | 'isced-field'
 export type userContributionType = 'edu-resource' | 'edu-resource-collection'
 
-export type user_contribution_id = eduResourceId | eduResourceCollectionId
+export type userContributionId = eduResourceId | eduResourceCollectionId
 
 export type userContributionData = eduResourceData | eduResourceCollectionData
 
@@ -25,7 +25,7 @@ export type publishedEduResource = publishedContent<
 export type publishedEduResourceCollection = publishedContent<eduResourceCollectionData>
 
 export type publishedContent<dataType extends userContributionData, meta = _nullish> = {
-  id: user_contribution_id
+  id: userContributionId
   data: dataType
   meta: meta
   dataRevision: positive_integer
