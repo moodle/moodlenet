@@ -16,7 +16,7 @@ export async function getUserProfileByUserAccountId({
 }) {
   const cursor = await dbStruct.data.db.query(aql<userProfileDocument>`
     FOR userProfile in ${dbStruct.data.coll.userProfile}
-    FILTER userProfile.user.id == ${userAccountId}
+    FILTER userProfile.userAccountUser.id == ${userAccountId}
     LIMIT 1
     ${apply}
     RETURN userProfile

@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import './HeaderLogo.scss'
 import { asset } from '@moodle/module/storage'
-import { useAsset } from '../../../../lib/client/globalContexts'
+import { useAssetUrl } from '../../../../lib/client/globalContexts'
 
 export interface HeaderLogoProps {
   logo: asset
@@ -11,8 +11,8 @@ export interface HeaderLogoProps {
 }
 
 export default function HeaderLogo({ logo, smallLogo, landingPath }: HeaderLogoProps) {
-  const [logoUrl] = useAsset(logo)
-  const [smallLogoUrl] = useAsset(smallLogo)
+  const [logoUrl] = useAssetUrl(logo)
+  const [smallLogoUrl] = useAssetUrl(smallLogo)
   return (
     <Link href={landingPath} style={{ textDecoration: 'none' }}>
       <div className="header-title">

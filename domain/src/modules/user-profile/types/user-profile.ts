@@ -1,7 +1,7 @@
 import { _maybe, flags } from '@moodle/lib-types'
 import { contentLanguageId, contentLicenseId } from '../../content'
 import { eduIscedFieldId, eduIscedLevelId } from '../../edu'
-import { userAccountId, userRole } from '../../user-account'
+import { userAccountRecord } from '../../user-account'
 import { profileInfo } from './profile-info'
 import { myDrafts } from './drafts'
 import { userProfileMoodlenetData } from '../../net'
@@ -20,7 +20,7 @@ export type userProfileRecord = {
   }
 }
 
-export type userAccountUserExcerpt = { id: userAccountId; roles: userRole[] }
+export type userAccountUserExcerpt = Pick<userAccountRecord, 'roles' | 'id'>
 
 export type userInterestFields = {
   iscedFields: eduIscedFieldId[]

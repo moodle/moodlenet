@@ -1,5 +1,5 @@
 'use client'
-import { _falsy } from '@moodle/lib-types'
+import { _nullish } from '@moodle/lib-types'
 import { Bookmarks, DisplaySettings, ExitToApp, Settings } from '@mui/icons-material'
 import Person from '@mui/icons-material/Person'
 import { t } from 'i18next'
@@ -11,8 +11,10 @@ import { PrimaryButton } from '../../ui/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../ui/atoms/Searchbox/Searchbox'
 import { TertiaryButton } from '../../ui/atoms/TertiaryButton/TertiaryButton'
 import ArrowsIcon from '../../ui/lib/assets/icons/arrows.svg'
-import defaultAvatar from '../../ui/lib/assets/img/default-avatar.png'
 import { Href, clientSlotItem } from '../../lib/common/types'
+import { asset } from '@moodle/module/storage'
+import { useAssetUrl } from '../../lib/client/globalContexts'
+import defaultAvatar from '../../ui/lib/assets/img/default-avatar.png'
 
 export function LoginHeaderButton() {
   return (
@@ -51,10 +53,11 @@ export function HeaderSearchbox() {
 }
 
 export type ProfileLinkProps = {
+  avatar: asset | _nullish
   profileHref: Href
-  avatarUrl: string | _falsy
 }
-export function ProfileLink({ profileHref, avatarUrl }: ProfileLinkProps) {
+export function ProfileLink({ profileHref, avatar }: ProfileLinkProps) {
+  const [avatarUrl] = useAssetUrl(avatar, defaultAvatar.src)
   return (
     <Link href={profileHref} className="avatar">
       <div
@@ -121,11 +124,13 @@ export function FollowingLink({ followingHref }: FollowingLinkProps) {
 }
 
 export type AvatarMenuProps = {
-  avatarUrl: string | _falsy
+  avatar: asset | _nullish
   menuItems: clientSlotItem[]
 }
 
-export function AvatarMenu({ menuItems, avatarUrl }: AvatarMenuProps) {
+export function AvatarMenu({ menuItems, avatar }: AvatarMenuProps) {
+  const [avatarUrl] = useAssetUrl(avatar, defaultAvatar.src)
+
   const avatarStyle = {
     backgroundImage: `url(${avatarUrl ?? defaultAvatar.src})`,
     backgroundSize: 'cover',

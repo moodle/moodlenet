@@ -1,4 +1,4 @@
-import { url_string } from '@moodle/lib-types'
+import { url_path_string, url_string } from '@moodle/lib-types'
 import sanitizeFilename from 'sanitize-filename'
 import { asset, usingTempFile } from '../types'
 
@@ -32,7 +32,7 @@ export function getRndPrefixedSanitizedFileName(originalFilename: string, prefix
   return `${rnd}_${getSanitizedFileName(originalFilename)}`
 }
 export function getAssetUrl(asset: asset, filestoreHttpHref: url_string) {
-  return asset.type === 'external' ? asset.url : `${filestoreHttpHref}/${asset.path}/${asset.name}`
+  return asset.type === 'external' ? asset.url : (`${filestoreHttpHref}/${asset.path}/${asset.name}` as url_path_string)
 }
 
 export function usingTempFile2asset({ path, uploaded_blob_meta }: usingTempFile) {

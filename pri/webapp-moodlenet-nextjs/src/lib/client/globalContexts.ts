@@ -1,5 +1,6 @@
 import { AllSchemaConfigs } from '@moodle/domain'
 import { makeAllPrimarySchemas } from '@moodle/domain/lib'
+import { _nullish, url_path_string } from '@moodle/lib-types'
 import { asset } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
 import { appDeployments } from 'domain/src/modules/env'
@@ -27,10 +28,10 @@ export function useAllPrimarySchemas() {
   return primarySchemas
 }
 
-export function useAsset(asset: asset) {
+export function useAssetUrl(asset: asset | _nullish, defaultUrl?: string) {
   const { filestoreHttp } = useDeployments()
   return useMemo(() => {
-    const url = getAssetUrl(asset, filestoreHttp.href)
+    const url = asset ? getAssetUrl(asset, filestoreHttp.href) : (defaultUrl as url_path_string)
     return [url] as const
-  }, [asset, filestoreHttp.href])
+  }, [asset, filestoreHttp.href, defaultUrl])
 }

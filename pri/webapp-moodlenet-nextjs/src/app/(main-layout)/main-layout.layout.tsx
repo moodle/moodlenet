@@ -16,11 +16,11 @@ import {
 } from './main-layout.client'
 
 import { filterOutFalsies } from '@moodle/lib-types'
+import { userSessionInfo } from '@moodle/module/user-account/lib'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { primary } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
 import './main-layout.style.scss'
-import { userSessionInfo } from '@moodle/module/user-account/lib'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const [{ userSession }, layouts] = await Promise.all([
@@ -40,15 +40,14 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
     const { authenticated } = userSessionInfo(userSession)
-    const avatarUrl = null //user_session.user.avatarUrl
-    const userProfileAccessObject =
-      authenticated &&
-      (await primary.moodle.userProfile.userProfile
-        .access({ by: 'userAccountId', userAccountId: authenticated.user.id })
-        .then(([userProfileFound, userProfileResult]) => {
-          return userProfileFound && userProfileResult.accessObject
-        }))
-
+    const userProfileAccessObject = authenticated
+      ? await primary.moodle.userProfile.userProfile
+          .access({ by: 'userAccountId', userAccountId: authenticated.user.id })
+          .then(([userProfileFound, userProfileResult]) => {
+            return userProfileFound ? userProfileResult.accessObject : null
+          })
+      : null
+    const avatarAsset = userProfileAccessObject?.profileInfo.avatar
     const baseProfilePage =
       userProfileAccessObject && sitepaths.profile[userProfileAccessObject.id]![userProfileAccessObject.urlSafeProfileName]!
     const defaultRights = authenticated
@@ -56,9 +55,9 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
           return [
             <AvatarMenu
               key="avatar-menu"
-              avatarUrl={avatarUrl}
+              avatar={avatarAsset}
               menuItems={filterOutFalsies([
-                baseProfilePage && <ProfileLink key="profile" avatarUrl={avatarUrl} profileHref={baseProfilePage()} />,
+                baseProfilePage && <ProfileLink key="profile" avatar={avatarAsset} profileHref={baseProfilePage()} />,
                 baseProfilePage && <BookmarksLink key="bookmarks" bookmarksHref={baseProfilePage.bookmarks()} />,
                 baseProfilePage && <FollowingLink key="following" followingHref={baseProfilePage.followers()} />,
                 baseProfilePage && <UserSettingsLink key="user-settings" settingsHref={sitepaths.settings.general()} />,
