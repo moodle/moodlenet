@@ -27,16 +27,23 @@ export default async function ProfilePage({
     )
   }
   const { pointSystem } = await primary.moodle.net.session.moduleInfo()
+  const moodlenetData = userProfileResponse.accessObject.appData.moodlenet
   const userProgressCardProps: userProgressCardProps = {
-    points: userProfileResponse.accessObject.appData.moodlenet.points.amount,
+    points: moodlenetData.points.amount,
     pointSystem,
   }
   const mainProfileCardProps: mainProfileCardProps = {
     userProfile: userProfileResponse.accessObject,
   }
+  const featuredContent = moodlenetData.featuredContent
   const profileClientProps: ProfileClientProps = {
     mainProfileCardProps,
     userProgressCardProps,
+    stats: {
+      followersCount: 666,
+      followingCount: featuredContent.filter(({ featureType }) => featureType === 'follow').length,
+      publishedResourcesCount: moodlenetData.published.contributions.filter(({ status }) => status === 'published').length,
+    },
   }
 
   return <ProfileClient {...profileClientProps} />

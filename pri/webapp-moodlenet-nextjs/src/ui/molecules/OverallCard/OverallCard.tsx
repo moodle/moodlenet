@@ -1,10 +1,6 @@
-// import { t, Trans } from '@lingui/macro'
-import { Card } from '@moodlenet/component-library'
-// import { Card } from '@moodlenet/react-app'
-import type { ComponentType, FC } from 'react'
-import type { Href } from '../../../../../common/lib.mjs'
-import { Link } from '../../elements/link'
-// import { Href, Link } from '../../../../elements/link'
+import Link from 'next/link'
+import type { ComponentType } from 'react'
+import { Card } from '../../atoms/Card/Card'
 import './OverallCard.scss'
 
 export type OverallCardItem = {
@@ -12,7 +8,7 @@ export type OverallCardItem = {
   name: string
   value: string | number
   className?: string
-  href?: Href
+  href?: string
 }
 
 export type OverallCardProps = {
@@ -22,9 +18,7 @@ export type OverallCardProps = {
   showIcons?: boolean
 }
 
-export const OverallCard: FC<OverallCardProps> = ({ items, hideBorderWhenSmall, showIcons, noCard }) => {
-  const getValueString = (value: string | number) => (typeof value === 'number' ? value.toLocaleString() : value)
-
+export function OverallCard({ items, hideBorderWhenSmall, showIcons, noCard }: OverallCardProps) {
   return !items || items.length === 0 ? null : (
     <Card className="overall-card" key="overall-card" hideBorderWhenSmall={hideBorderWhenSmall} noCard={noCard}>
       <div className="overall-container">
@@ -56,7 +50,6 @@ export const OverallCard: FC<OverallCardProps> = ({ items, hideBorderWhenSmall, 
     </Card>
   )
 }
-
-OverallCard.defaultProps = {
-  showIcons: false,
+function getValueString(value: string | number) {
+  return typeof value === 'number' ? value.toLocaleString() : value
 }

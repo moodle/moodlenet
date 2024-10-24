@@ -28,11 +28,13 @@ export type suggestedContent = {
   publicContentId: publicContentId
 }
 
-export type featuredContent = {
-  type: publicContentType
-  publicContentId: publicContentId
-  date: date_time_string
-} & d_u<{ unpublished: unknown; published: unknown }, 'status'>
+export type featureType = 'like' | 'follow' | 'bookmark'
+  export type featuredContent = {
+    featureType: featureType
+    contentType: publicContentType
+    publicContentId: publicContentId
+    date: date_time_string
+  } & d_u<{ unpublished: unknown; published: unknown }, 'status'>
 
 export type myPublishedContribution = {
   type: userContributionType
