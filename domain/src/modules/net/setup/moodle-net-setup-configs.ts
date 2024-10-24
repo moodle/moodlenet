@@ -73,7 +73,7 @@ export const net_default_configs: configs = {
       { lessThanPoints: positive_integer_schema.parse(15000), title: 'Sky reacher' },
       { lessThanPoints: positive_integer_schema.parse(50000), title: 'Firmly grounded' },
       { lessThanPoints: positive_integer_schema.parse(100000), title: 'Versatile canopy' },
-      { title: 'Dazzling biome' },
+      { lessThanPoints: positive_integer_schema.parse(1000000), title: 'Dazzling biome' },
     ],
   },
   publishedCategories: {

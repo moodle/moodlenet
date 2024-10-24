@@ -1,27 +1,22 @@
 // import { t, Trans } from '@lingui/macro'
-import { Card, Modal } from '@moodlenet/component-library'
 // import { Card } from '@moodlenet/react-app'
-import { useEffect, useRef, useState, type FC } from 'react'
+import { useEffect, useRef, useState } from 'react'
 // import { Href, Link } from '../../../../elements/link'
-import { InfoOutlined } from '@mui/icons-material'
-import {
-  actionsAndPointsObtained,
-  getUserLevelDetails,
-  userLevels,
-} from '../../../../gamification/user-levels.mjs'
-import { ReactComponent as LeafIcon } from '../../../assets/icons/leaf.svg'
+import InfoOutlined from '@mui/icons-material/InfoOutlined'
+import { pointSystem } from 'domain/src/modules/net/types/point-system'
+import { Card } from '../../../../../../../ui/atoms/Card/Card'
+import { Modal } from '../../../../../../../ui/atoms/Modal/Modal'
+import LeafIcon from '../../../../../../../ui/lib/assets/icons/leaf.svg'
+import { actionsAndPointsObtained, getLevelDetails, getUserLevelDetails } from './user-levels'
 import './UserProgressCard.scss'
 
-export type UserProgressCardProps = {
+export type userProgressCardProps = {
   points: number
-  // oldPoints: number
+  pointSystem: pointSystem
 }
 
-export const UserProgressCard: FC<UserProgressCardProps> = ({
-  points,
-  // oldPoints,
-}) => {
-  const { level, title, minPoints, maxPoints, avatar } = getUserLevelDetails(points)
+export function UserProgressCard({ points, pointSystem }: userProgressCardProps) {
+  const { level, title, minPoints, maxPoints, avatar } = getUserLevelDetails(pointSystem, points)
 
   const progressBarWidth = ((points - minPoints) / (maxPoints - minPoints)) * 100
 
@@ -73,12 +68,12 @@ export const UserProgressCard: FC<UserProgressCardProps> = ({
       <div className="levels">
         <div className="title">Levels</div>
         <div className="rows">
-          {userLevels.map((level, index) => (
+          {getLevelDetails(pointSystem).map((level, index) => (
             <div className="row" key={index}>
               <div className={`level`}>Level {level.level}</div>
               <div className="points">
                 <span className="min">{level.minPoints.toLocaleString()}</span>
-                <LeafIcon />
+                <img src={LeafIcon.src} />
               </div>
               <div className={`level-avatar level-${level.level}`}>
                 <img className="avatar" src={level.avatar} alt="level avatar" />
@@ -90,7 +85,7 @@ export const UserProgressCard: FC<UserProgressCardProps> = ({
       <div className="leaves">
         <div className="title">Leaves</div>
         <div className="rows">
-          {actionsAndPointsObtained.map((action, index) => (
+          {actionsAndPointsObtained(pointSystem).map((action, index) => (
             <div className="row" key={index}>
               <abbr className={`action`} title={action.abbr ?? ''}>
                 {' '}
@@ -98,7 +93,7 @@ export const UserProgressCard: FC<UserProgressCardProps> = ({
               </abbr>
               <div className="points">
                 <span className="points">{action.points.toLocaleString()}</span>
-                <LeafIcon />
+                <img src={LeafIcon.src} />
               </div>
             </div>
           ))}
@@ -134,12 +129,10 @@ export const UserProgressCard: FC<UserProgressCardProps> = ({
               <span className="current">{points.toLocaleString()}</span>
               <LeafIcon />
             </div>
-            <div className="max">{level < 10 ? (maxPoints + 1).toLocaleString() : '\u221E'}</div>
+            <div className="max">{level < 10 ? maxPoints.toLocaleString() : '\u221E'}</div>
           </div>
         </div>
       </Card>
     </>
   )
 }
-
-UserProgressCard.defaultProps = {}

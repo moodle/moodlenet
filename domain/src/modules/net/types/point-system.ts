@@ -97,9 +97,6 @@ type pointBadgeStep = {
   title: string
   lessThanPoints: positive_integer
 }
-type higherBadgeStep = {
-  title: string
-}
 
 export type pointBadgeSteps = [
   pointBadgeStep,
@@ -111,5 +108,5 @@ export type pointBadgeSteps = [
   pointBadgeStep,
   pointBadgeStep,
   pointBadgeStep,
-  higherBadgeStep,
+  pointBadgeStep,
 ]

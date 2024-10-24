@@ -4,7 +4,8 @@ import { primary } from '../../../../../lib/server/session-access'
 import { params } from '../../../../../lib/server/types'
 import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'
 import { mainProfileCardProps } from './pageComponents/MainProfileCard/MainProfileCard'
-import ProfileClient from './profile.client'
+import ProfileClient, { ProfileClientProps } from './profile.client'
+import { userProgressCardProps } from './pageComponents/UserProgressCard/UserProgressCard'
 
 export default async function ProfilePage({
   params: { userProfileId, slug },
@@ -18,13 +19,25 @@ export default async function ProfilePage({
   if (!foundUserProfile) {
     return <Fallback />
   }
-  if (userProfileResponse.accessObject.urlSafeProfileName !== slug) {
-    redirect(sitepaths.profile[userProfileResponse.accessObject.id]![userProfileResponse.accessObject.urlSafeProfileName]!())
+  if (userProfileResponse.accessObject.appData.urlSafeProfileName !== slug) {
+    redirect(
+      sitepaths.profile[userProfileResponse.accessObject.id]![
+        userProfileResponse.accessObject.appData.urlSafeProfileName
+      ]!(),
+    )
   }
-
-  const mainProfileCardDeps: mainProfileCardProps = {
+  const { pointSystem } = await primary.moodle.net.session.moduleInfo()
+  const userProgressCardProps: userProgressCardProps = {
+    points: userProfileResponse.accessObject.appData.moodlenet.points.amount,
+    pointSystem,
+  }
+  const mainProfileCardProps: mainProfileCardProps = {
     userProfile: userProfileResponse.accessObject,
   }
+  const profileClientProps: ProfileClientProps = {
+    mainProfileCardProps,
+    userProgressCardProps,
+  }
 
-  return <ProfileClient mainProfileCardProps={mainProfileCardDeps} />
+  return <ProfileClient {...profileClientProps} />
 }

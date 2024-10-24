@@ -18,9 +18,9 @@ export async function accessUserProfile({
   const { userProfile } = findResult
   const currentUserSessionInfo = await validate_currentUserSessionInfo({ ctx })
   const { info: profileInfo, id } = userProfile
-  const isThisUserProfilePublisher = userProfile.userAccountUser.roles.includes('publisher')
+  const is_this_user_profile_publisher = userProfile.userAccountUser.roles.includes('publisher')
   if (!currentUserSessionInfo.authenticated) {
-    if (!isThisUserProfilePublisher) {
+    if (!is_this_user_profile_publisher) {
       return { result: 'found', access: 'notAllowed' }
     } else {
       return {
@@ -32,34 +32,64 @@ export async function accessUserProfile({
         permissions: _all_user_profile_permissions_disallowed,
         user: null,
         flags: { following: true },
-        urlSafeProfileName: userProfile.appData.urlSafeProfileName,
+        appData: {
+          urlSafeProfileName: userProfile.appData.urlSafeProfileName,
+          moodlenet: {
+            featuredContent: userProfile.appData.moodlenet.featuredContent,
+            points: userProfile.appData.moodlenet.points,
+            preferences: null,
+            published: {
+              contributions: userProfile.appData.moodlenet.published.contributions,
+            },
+            stats: {
+              followersCount: userProfile.appData.moodlenet.stats.followersCount,
+            },
+            suggestedContent: null,
+          },
+        },
       }
     }
   }
 
-  const itsMe = currentUserSessionInfo.authenticated.user.id === userProfile.userAccountUser.id
-  const currentUserIsAdmin = currentUserSessionInfo.authenticated.isAdmin
+  const its_me = currentUserSessionInfo.authenticated.user.id === userProfile.userAccountUser.id
+  const current_user_is_admin = currentUserSessionInfo.authenticated.isAdmin
 
-  if (!(isThisUserProfilePublisher || itsMe || currentUserIsAdmin)) {
+  const its_me_or_admin = its_me || current_user_is_admin
+
+  if (!(is_this_user_profile_publisher || its_me_or_admin)) {
     return { result: 'found', access: 'notAllowed' }
   }
 
   return {
     id,
-    itsMe,
+    itsMe: its_me,
     result: 'found',
     access: 'allowed',
     profileInfo,
     permissions: {
-      editProfile: itsMe,
-      follow: !itsMe,
-      report: !itsMe,
-      sendMessage: !itsMe,
-      editRoles: !itsMe && currentUserIsAdmin,
+      editProfile: its_me,
+      follow: !its_me,
+      report: !its_me,
+      sendMessage: !its_me,
+      editRoles: !its_me && current_user_is_admin,
     },
-    user: itsMe || currentUserIsAdmin ? userProfile.userAccountUser : null,
-    flags: { following: !itsMe },
-    urlSafeProfileName: userProfile.appData.urlSafeProfileName,
+    user: its_me_or_admin ? userProfile.userAccountUser : null,
+    flags: { following: !its_me },
+    appData: {
+      urlSafeProfileName: userProfile.appData.urlSafeProfileName,
+      moodlenet: {
+        featuredContent: userProfile.appData.moodlenet.featuredContent,
+        points: userProfile.appData.moodlenet.points,
+        preferences: its_me ? userProfile.appData.moodlenet.preferences : null,
+        published: {
+          contributions: userProfile.appData.moodlenet.published.contributions,
+        },
+        stats: {
+          followersCount: userProfile.appData.moodlenet.stats.followersCount,
+        },
+        suggestedContent: its_me ? userProfile.appData.moodlenet.suggestedContent : null,
+      },
+    },
   }
 
 }

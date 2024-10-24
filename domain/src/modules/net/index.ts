@@ -1,5 +1,6 @@
 import { deep_partial_props, ok_ko } from '@moodle/lib-types'
-import { moodlenetInfo, MoodleNetPrimaryMsgSchemaConfigs } from './types'
+import { moodlenetInfo, MoodleNetPrimaryMsgSchemaConfigs, publishedCategories } from './types'
+import { pointSystem } from './types/point-system'
 export * from './types'
 
 export default interface NetDomain {
@@ -10,6 +11,8 @@ export default interface NetDomain {
         moduleInfo(): Promise<{
           info: moodlenetInfo
           schemaConfigs: MoodleNetPrimaryMsgSchemaConfigs
+          pointSystem: pointSystem
+          publishedCategories: publishedCategories
         }>
       }
       admin: {

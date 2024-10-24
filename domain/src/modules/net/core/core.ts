@@ -9,9 +9,19 @@ export const net_core: moduleCore<'net'> = {
       session: {
         async moduleInfo() {
           const {
-            configs: { info, moodlenetPrimaryMsgSchemaConfigs: moodleNetPrimaryMsgSchemaConfigs },
+            configs: {
+              info,
+              pointSystem,
+              publishedCategories,
+              moodlenetPrimaryMsgSchemaConfigs: moodleNetPrimaryMsgSchemaConfigs,
+            },
           } = await ctx.mod.env.query.modConfigs({ mod: 'net' })
-          return { info, schemaConfigs: moodleNetPrimaryMsgSchemaConfigs }
+          return {
+            info,
+            schemaConfigs: moodleNetPrimaryMsgSchemaConfigs,
+            pointSystem,
+            publishedCategories,
+          }
         },
       },
 

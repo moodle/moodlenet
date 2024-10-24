@@ -1,10 +1,10 @@
-import { _maybe, flags } from '@moodle/lib-types'
+import { _maybe, _nullish, date_time_string, flags, non_negative_integer } from '@moodle/lib-types'
 import { contentLanguageId, contentLicenseId } from '../../content'
 import { eduIscedFieldId, eduIscedLevelId } from '../../edu'
+import { featuredContent, myPublishedContribution, suggestedContent, userProfileMoodlenetData } from '../../net'
 import { userAccountRecord } from '../../user-account'
-import { profileInfo } from './profile-info'
 import { myDrafts } from './drafts'
-import { userProfileMoodlenetData } from '../../net'
+import { profileInfo } from './profile-info'
 
 export type userProfileId = string
 
@@ -38,5 +38,31 @@ export type userProfileAccessObject = {
   flags: flags<'following'>
   user: _maybe<userAccountUserExcerpt>
   // REVIEW: instead of `urlSafeProfileName` there could be a appData: { moodlenet: { homepage: url_string } }
-  urlSafeProfileName: string
+  appData: {
+    urlSafeProfileName: string
+    moodlenet: {
+      preferences:
+        | _nullish
+        | {
+            useMyInterestsAsDefaultFilters: boolean
+          }
+      featuredContent: featuredContent[]
+      suggestedContent:
+        | _nullish
+        | {
+            listCreationDate: date_time_string
+            list: suggestedContent[]
+          }
+      published: {
+        contributions: myPublishedContribution[]
+      }
+      points: {
+        // recalculatedDate: date_time_string
+        amount: non_negative_integer
+      }
+      stats: {
+        followersCount: non_negative_integer
+      }
+    }
+  }
 }

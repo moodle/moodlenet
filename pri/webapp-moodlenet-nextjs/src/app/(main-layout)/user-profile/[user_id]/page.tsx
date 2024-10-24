@@ -12,5 +12,7 @@ export default async function UserProfilePage({ params: { userAccountId } }: { p
   if (!found) {
     return <Fallback />
   }
-  redirect(sitepaths.profile[userProfileResponse.accessObject.id]![userProfileResponse.accessObject.urlSafeProfileName]!())
+  redirect(
+    sitepaths.profile[userProfileResponse.accessObject.id]![userProfileResponse.accessObject.appData.urlSafeProfileName]!(),
+  )
 }

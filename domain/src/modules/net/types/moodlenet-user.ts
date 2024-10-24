@@ -4,7 +4,7 @@ import { publicContentType, publicContentId, userContributionType, userContribut
 
 export type userProfileMoodlenetData = {
   preferences: {
-    useMyInterestsAsDefaultFilters?: boolean
+    useMyInterestsAsDefaultFilters: boolean
   }
   featuredContent: featuredContent[]
   suggestedContent: {
@@ -23,18 +23,18 @@ export type userProfileMoodlenetData = {
   }
 }
 
-type suggestedContent = {
+export type suggestedContent = {
   type: publicContentType
   publicContentId: publicContentId
 }
 
-type featuredContent = {
+export type featuredContent = {
   type: publicContentType
   publicContentId: publicContentId
   date: date_time_string
 } & d_u<{ unpublished: unknown; published: unknown }, 'status'>
 
-type myPublishedContribution = {
+export type myPublishedContribution = {
   type: userContributionType
   myDraftId: draftId
   userContributionId: userContributionId

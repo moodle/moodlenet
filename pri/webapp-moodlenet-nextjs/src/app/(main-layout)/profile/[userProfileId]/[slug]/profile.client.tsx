@@ -2,12 +2,14 @@
 
 import { Card } from '../../../../../ui/atoms/Card/Card'
 import { MainProfileCard, mainProfileCardProps } from './pageComponents/MainProfileCard/MainProfileCard'
+import { UserProgressCard, userProgressCardProps } from './pageComponents/UserProgressCard/UserProgressCard'
 
 export interface ProfileClientProps {
   mainProfileCardProps: mainProfileCardProps
+  userProgressCardProps: userProgressCardProps
 }
 
-export default function ProfileClient({ mainProfileCardProps }: ProfileClientProps) {
+export default function ProfileClient({ mainProfileCardProps, userProgressCardProps }: ProfileClientProps) {
   return (
     <div className="profile-page">
       <div className="main-card">
@@ -23,7 +25,7 @@ export default function ProfileClient({ mainProfileCardProps }: ProfileClientPro
         <Card>overall</Card>
       </div>
       <div className="points">
-        <Card>points</Card>
+        <UserProgressCard {...userProgressCardProps} />
       </div>
     </div>
   )
