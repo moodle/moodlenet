@@ -57,9 +57,42 @@ const xport = async (phase, context) => {
         use: ['@svgr/webpack'],
       },
     )
-
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
     fileLoaderRule.exclude = /\.svg$/i
+
+    //https://github.com/vercel/next.js/discussions/52690#discussioncomment-8235460
+    // wpConfig.module.rules.push({
+    //   test: /\.svg$/,
+    //   use: ['@svgr/webpack', 'url-loader'],
+    // });
+
+    // from v4
+    // wpConfig.module.rules.push({
+    //   test: /\.svg$/,
+    //   use: [
+    //     {
+    //       loader: require.resolve('@svgr/webpack'),
+    //       options: {
+    //         prettier: false,
+    //         svgo: false,
+    //         svgoConfig: {
+    //           plugins: [{ removeViewBox: false }],
+    //         },
+    //         titleProp: true,
+    //         ref: true,
+    //       },
+    //     },
+    //     {
+    //       loader: require.resolve('file-loader'),
+    //       options: {
+    //         name: 'static/media/[name].[hash].[ext]',
+    //       },
+    //     },
+    //   ],
+    //   issuer: {
+    //     and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
+    //   },
+    // },)
 
     return webpack?.(wpConfig, options)
   }

@@ -1,18 +1,21 @@
-import { Card } from '@moodlenet/component-library'
-import type { FC } from 'react'
-
-import { Link } from '@moodlenet/react-app/ui'
-import type { LeaderBoardContributor } from '../../../../../common/types.mjs'
-import { getUserLevelDetails } from '../../../../gamification/user-levels.mjs'
-import { ReactComponent as LeafIcon } from '../../../assets/icons/leaf.svg'
-import defaultAvatar from '../../../assets/img/default-avatar.svg'
+'use client'
+import { contributorInfo } from 'domain/src/modules/moodlenet/types/contributor'
+import { pointSystem } from 'domain/src/modules/moodlenet/types/point-system'
+import Link from 'next/link'
+import { useAssetUrl } from '../../../../lib/client/globalContexts'
+import { getUserLevelDetails } from '../../../../lib/client/user-levels/lib'
+import { sitepaths } from '../../../../lib/common/utils/sitepaths'
+import { Card } from '../../../../ui/atoms/Card/Card'
+import LeafIcon from '../../../../ui/lib/assets/icons/leaf.svg'
+import defaultAvatar from '../../../../ui/lib/assets/img/default-avatar.svg'
 import './Leaderboard.scss'
 
-export type LeaderboardProps = {
-  contributors: LeaderBoardContributor[]
+export type leaderboardProps = {
+  leaderContributors: contributorInfo[]
+  pointSystem: pointSystem
 }
 
-export const Leaderboard: FC<LeaderboardProps> = ({ contributors }) => {
+export function Leaderboard({ leaderContributors, pointSystem }: leaderboardProps) {
   return (
     <div className="leaderboard-container">
       <div className="leaderboard-header">
@@ -20,45 +23,52 @@ export const Leaderboard: FC<LeaderboardProps> = ({ contributors }) => {
         <div className="subtitle">Exceptional contributors leading the way</div>
       </div>
       <Card className="leaderboard">
-        {contributors.map((contributor, index) => {
-          const { avatar, level } = getUserLevelDetails(contributor.points)
-          return (
-            <div key={index} className="contributor">
-              <div className="contributor-head">
-                <div className="rank">
-                  {index < 3 ? (
-                    <div className={`medal rank-${index + 1}`}>
-                      <LeafIcon />
-                    </div>
-                  ) : (
-                    index + 1
-                  )}
-                </div>
-                <Link className="avatar" href={contributor.profileHref}>
-                  <img
-                    className="profile-avatar"
-                    src={contributor.avatarUrl || defaultAvatar}
-                    alt="avatar"
-                  />
-                  <div className={`level-avatar-container level-${level}`}>
-                    <img className="level-avatar" src={avatar} alt="level avatar" />
-                  </div>
-                </Link>
-                <Link className="name" href={contributor.profileHref}>
-                  {contributor.displayName}
-                </Link>
-              </div>
-              <div className="score">
-                {contributor.points.toLocaleString()}
-                <LeafIcon />
-              </div>
-              {/*  <div className="subject">{contributor.subject}</div> */}
-            </div>
-          )
-        })}
+        {leaderContributors.map((contributor, index) => (
+          <LeaderRow key={index} {...{ contributor, pointSystem, position: index + 1 }} />
+        ))}
       </Card>
     </div>
   )
 }
-
-Leaderboard.defaultProps = {}
+function LeaderRow({
+  contributor,
+  position,
+  pointSystem,
+}: {
+  contributor: contributorInfo
+  position: number
+  pointSystem: pointSystem
+}) {
+  const profileUrl = sitepaths.profile[contributor.profileId]![contributor.urlSafeProfileName]!()
+  const { pointAvatar, level } = getUserLevelDetails(pointSystem, contributor.points)
+  const [avatarUrl] = useAssetUrl(contributor.avatar, defaultAvatar.src)
+  return (
+    <div key={position} className="contributor">
+      <div className="contributor-head">
+        <div className="rank">
+          {position < 4 ? (
+            <div className={`medal rank-${position}`}>
+              <LeafIcon />
+            </div>
+          ) : (
+            position
+          )}
+        </div>
+        <Link className="avatar" href={profileUrl}>
+          <img className="profile-avatar" src={avatarUrl} alt="avatar" />
+          <div className={`level-avatar-container level-${level}`}>
+            <img className="level-avatar" src={pointAvatar} alt="level avatar" />
+          </div>
+        </Link>
+        <Link className="name" href={profileUrl}>
+          {contributor.displayName}
+        </Link>
+      </div>
+      <div className="score">
+        {contributor.points.toLocaleString()}
+        <LeafIcon />
+      </div>
+      {/*  <div className="subject">{contributor.subject}</div> */}
+    </div>
+  )
+}

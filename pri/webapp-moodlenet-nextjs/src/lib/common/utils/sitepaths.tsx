@@ -1,4 +1,5 @@
 import { _maybe, createPathProxy, map, url_path_string } from '@moodle/lib-types'
+import { userProfileAccessObject } from '@moodle/module/user-profile'
 import QueryString from 'qs'
 
 export function createSitepaths<path_type extends string = url_path_string>(baseUrl = '/') {
@@ -70,3 +71,4 @@ export type sitePaths<t extends string> = spc<t> & {
     }
   }
 }
+

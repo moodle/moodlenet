@@ -7,7 +7,11 @@ import { pointSystem } from 'domain/src/modules/moodlenet/types/point-system'
 import { Card } from '../../../../../../../ui/atoms/Card/Card'
 import { Modal } from '../../../../../../../ui/atoms/Modal/Modal'
 import LeafIcon from '../../../../../../../ui/lib/assets/icons/leaf.svg'
-import { actionsAndPointsObtained, getLevelDetails, getUserLevelDetails } from './user-levels'
+import {
+  actionsAndPointsObtained,
+  getLevelDetails,
+  getUserLevelDetails,
+} from '../../../../../../../lib/client/user-levels/lib'
 import './UserProgressCard.scss'
 
 export type userProgressCardProps = {
@@ -16,7 +20,7 @@ export type userProgressCardProps = {
 }
 
 export function UserProgressCard({ points, pointSystem }: userProgressCardProps) {
-  const { level, title, minPoints, maxPoints, avatar } = getUserLevelDetails(pointSystem, points)
+  const { level, title, minPoints, maxPoints, pointAvatar: avatar } = getUserLevelDetails(pointSystem, points)
 
   const progressBarWidth = ((points - minPoints) / (maxPoints - minPoints)) * 100
 
@@ -76,7 +80,7 @@ export function UserProgressCard({ points, pointSystem }: userProgressCardProps)
                 <img src={LeafIcon.src} />
               </div>
               <div className={`level-avatar level-${level.level}`}>
-                <img className="avatar" src={level.avatar} alt="level avatar" />
+                <img className="avatar" src={level.pointAvatar} alt="level avatar" />
               </div>
             </div>
           ))}

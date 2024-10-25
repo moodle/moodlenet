@@ -1,5 +1,6 @@
 import { deep_partial_props, ok_ko } from '@moodle/lib-types'
 import { moodlenetInfo, MoodlenetPrimaryMsgSchemaConfigs, publishedCategories } from './types'
+import { contributorInfo } from './types/contributor'
 import { pointSystem } from './types/point-system'
 export * from './types'
 
@@ -15,16 +16,29 @@ export default interface MoodlenetDomain {
           publishedCategories: publishedCategories
         }>
       }
+      contributor: {
+        getLeaders({ amount }: { amount?: number }): Promise<{ leaderContributors: contributorInfo[] }>
+      }
       admin: {
-        updatePartialMoodlenetInfo(_: { partialInfo: deep_partial_props<moodlenetInfo> }): Promise<ok_ko<void>>
+        updatePartialMoodlenetInfo({ partialInfo }: { partialInfo: deep_partial_props<moodlenetInfo> }): Promise<ok_ko<void>>
       }
     }
   }
   secondary: {
     moodlenet: {
-      queue: unknown
+      query: {
+        contributors({
+          limit,
+          skip,
+          sort,
+        }: {
+          limit?: number
+          skip?: number
+          sort?: [by: 'points', dir?: 'ASC' | 'DESC']
+        }): Promise<{ contributors: contributorInfo[] }>
+      }
       service: unknown
-      query: unknown
+      queue: unknown
       write: unknown
       sync: unknown
     }

@@ -24,7 +24,15 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
           }
         },
       },
-
+      contributor: {
+        async getLeaders({ amount }) {
+          const { contributors } = await ctx.mod.moodlenet.query.contributors({
+            limit: amount,
+            sort: ['points', 'DESC'],
+          })
+          return { leaderContributors: contributors }
+        },
+      },
       admin: {
         async updatePartialMoodlenetInfo({ partialInfo }) {
           assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' })

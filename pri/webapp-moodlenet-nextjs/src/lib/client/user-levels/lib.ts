@@ -1,14 +1,14 @@
 import { pointSystem } from 'domain/src/modules/moodlenet/types/point-system'
-import level1Avatar from './userLevelAvatar/level-1.png'
-import level10Avatar from './userLevelAvatar/level-10.png'
-import level2Avatar from './userLevelAvatar/level-2.png'
-import level3Avatar from './userLevelAvatar/level-3.png'
-import level4Avatar from './userLevelAvatar/level-4.png'
-import level5Avatar from './userLevelAvatar/level-5.png'
-import level6Avatar from './userLevelAvatar/level-6.png'
-import level7Avatar from './userLevelAvatar/level-7.png'
-import level8Avatar from './userLevelAvatar/level-8.png'
-import level9Avatar from './userLevelAvatar/level-9.png'
+import level1Avatar from './avatar/level-1.png'
+import level10Avatar from './avatar/level-10.png'
+import level2Avatar from './avatar/level-2.png'
+import level3Avatar from './avatar/level-3.png'
+import level4Avatar from './avatar/level-4.png'
+import level5Avatar from './avatar/level-5.png'
+import level6Avatar from './avatar/level-6.png'
+import level7Avatar from './avatar/level-7.png'
+import level8Avatar from './avatar/level-8.png'
+import level9Avatar from './avatar/level-9.png'
 
 export const userLevelAvatarSrcs = [
   level1Avatar.src,
@@ -75,7 +75,7 @@ export function getLevelDetails(pointSystem: pointSystem): UserLevelDetails[] {
     return {
       minPoints: index === 0 ? 0 : (arr[index - 1]!.lessThanPoints ?? Infinity),
       maxPoints: step.lessThanPoints ?? Infinity,
-      avatar: userLevelAvatarSrcs[index]!,
+      pointAvatar: userLevelAvatarSrcs[index]!,
       title: step.title,
       level: index + 1,
     }
@@ -95,7 +95,7 @@ export function getUserLevelDetails(pointSystem: pointSystem, points: number): U
 export type UserLevelDetails = {
   minPoints: number
   maxPoints: number
-  avatar: string
+  pointAvatar: string
   title: string
   level: number
 }

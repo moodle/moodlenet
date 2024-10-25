@@ -5,17 +5,18 @@ import defaultBackground from '../../../ui/lib/assets/img/default-landing-backgr
 // import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
 import { LandingHeadSearchbox /* , LandingHeadShareButton  */ } from './landing-page.client'
 import './landing-page.style.scss'
+import { Leaderboard } from './Leaderboard/Leaderboard'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
   const [info, layouts] = await Promise.all([getSiteGeneralInfo(), access.primary.moodlenetNextjs.webapp.layouts()])
-
   const { head, content } = slotsMap(props, layouts.pages.landing.slots)
-  const { userSession } = await access.primary.userAccount.session.getUserSession()
-
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,
     backgroundSize: 'cover',
   }
+  const { pointSystem } = await access.primary.moodlenet.session.moduleInfo()
+  const { leaderContributors } = await access.primary.moodlenet.contributor.getLeaders({ amount: 20 })
+
   return (
     <div className="landing">
       <div className="landing-header" style={headerStyle}>
@@ -29,7 +30,7 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
       {/* <LandingResourceList {...props} />
 <LandingCollectionList {...props} />
 <LandingProfileList {...props} /> */}
-      <Leaderboard {...props} />
+      <Leaderboard {...{ leaderContributors, pointSystem }} />
       {content}
     </div>
   )

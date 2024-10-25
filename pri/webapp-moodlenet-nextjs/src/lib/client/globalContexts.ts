@@ -4,7 +4,7 @@ import { _nullish, url_path_string } from '@moodle/lib-types'
 import { asset } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
 import { appDeployments } from 'domain/src/modules/env'
-import { createContext, useContext, useMemo } from 'react'
+import { createContext, ReactElement, useContext, useMemo } from 'react'
 
 export const GlobalCtx = createContext<GlobalCtx>(null as any)
 export type GlobalCtx = {
@@ -28,10 +28,10 @@ export function useAllPrimarySchemas() {
   return primarySchemas
 }
 
-export function useAssetUrl(asset: asset | _nullish, defaultUrl?: string) {
+export function useAssetUrl(asset: asset | _nullish, defaultTo?: string) {
   const { filestoreHttp } = useDeployments()
   return useMemo(() => {
-    const url = asset ? getAssetUrl(asset, filestoreHttp.href) : (defaultUrl as url_path_string)
+    const url = asset ? getAssetUrl(asset, filestoreHttp.href) : (defaultTo as url_path_string | undefined)
     return [url] as const
-  }, [asset, filestoreHttp.href, defaultUrl])
+  }, [asset, filestoreHttp.href, defaultTo])
 }

@@ -71,21 +71,21 @@
             &.rank-1 {
               background: linear-gradient(140deg, #feea66 50%, #ffd900 50%);
               box-shadow: 0 0 0 5px #ffc800;
-              > svg > g > path {
+              > svg > path {
                 fill: #ff9600;
               }
             }
             &.rank-2 {
               background: linear-gradient(140deg, #d6e4ef 50%, #c2d1dd 50%);
               box-shadow: 0 0 0 5px #aac1d4;
-              > svg > g > path {
+              > svg > path {
                 fill: #849fb5;
               }
             }
             &.rank-3 {
               background: linear-gradient(140deg, #f7be8b 50%, #e5ae7c 50%);
               box-shadow: 0 0 0 5px #d7975d;
-              > svg > g > path {
+              > svg > path {
                 fill: #cd7900;
               }
             }
