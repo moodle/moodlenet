@@ -35,8 +35,8 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    "../../pri/moodlenet-react-app/.next/types/**/*.ts",
-    "../../dist/pri/moodlenet-react-app/.next/types/**/*.ts",
+    "../../pri/moodlenet-nextjs-react-app/.next/types/**/*.ts",
+    "../../dist/pri/moodlenet-nextjs-react-app/.next/types/**/*.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],

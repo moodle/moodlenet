@@ -8,8 +8,8 @@
   },
   "javascript.updateImportsOnFileMove.enabled": "prompt",
   "todo-tree.filtering.excludeGlobs": [
-    "**/pri/moodlenet-react-app/zz__legacy/*/**",
-    "**/pri/moodlenet-react-app/ui-cmps/*/**",
+    "**/pri/moodlenet-nextjs-react-app/zz__legacy/*/**",
+    "**/pri/moodlenet-nextjs-react-app/ui-cmps/*/**",
     "**/node_modules/*/**"
   ],
   // -TODO-TREE

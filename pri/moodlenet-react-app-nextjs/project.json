@@ -1,9 +1,0 @@
-{
-  "name": "moodlenet-react-app",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "pri/moodlenet-react-app",
-  "projectType": "application",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project moodlenet-react-app --web",
-  "targets": {}
-}
