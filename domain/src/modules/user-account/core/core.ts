@@ -403,7 +403,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               }
               await ctx.sync.userDisplayname({
                 displayName,
-                userAccountId: response.userProfileRecord.userAccountUser.id,
+                userAccountId: response.userProfileRecord.userAccount.id,
               })
             },
           },

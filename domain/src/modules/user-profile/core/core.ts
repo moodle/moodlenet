@@ -140,8 +140,8 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               if (!done) {
                 return
               }
-              await ctx.sync.userAccountUserExcerpt({
-                userAccountUserExcerpt: { id: userAccountId, roles: result.newRoles },
+              await ctx.sync.userAccountExcerpt({
+                userAccountExcerpt: { id: userAccountId, roles: result.newRoles },
               })
             },
           },

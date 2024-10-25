@@ -22,7 +22,7 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   await dbStruct.data.coll.eduIscedLevel.create({ cacheEnabled: true })
   await dbStruct.data.coll.eduResourceType.create({ cacheEnabled: true })
   await dbStruct.data.coll.userProfile.create({})
-  await dbStruct.data.coll.userProfile.ensureIndex({ type: 'persistent', fields: ['userAccountUser.id'] })
+  await dbStruct.data.coll.userProfile.ensureIndex({ type: 'persistent', fields: ['userAccount.id'] })
 
 }
 

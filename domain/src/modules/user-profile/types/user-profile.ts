@@ -10,19 +10,19 @@ export type userProfileId = string
 
 export type userProfileRecord = {
   id: userProfileId
-  userAccountUser: userAccountUserExcerpt
+  userAccount: userAccountExcerpt
   info: profileInfo
   myDrafts: myDrafts
-  eduInterestFields: userInterestFields
+  eduInterestFields: eduInterestFields
   appData: {
     urlSafeProfileName: string
     moodlenet: userProfileMoodlenetData
   }
 }
 
-export type userAccountUserExcerpt = Pick<userAccountRecord, 'roles' | 'id'>
+export type userAccountExcerpt = Pick<userAccountRecord, 'roles' | 'id'>
 
-export type userInterestFields = {
+export type eduInterestFields = {
   iscedFields: eduIscedFieldId[]
   iscedLevels: eduIscedLevelId[]
   languages: contentLanguageId[]
@@ -36,8 +36,7 @@ export type userProfileAccessObject = {
   profileInfo: profileInfo
   permissions: userProfilePermissions
   flags: flags<'following'>
-  user: _maybe<userAccountUserExcerpt>
-  // REVIEW: instead of `urlSafeProfileName` there could be a appData: { moodlenet: { homepage: url_string } }
+  user: _maybe<userAccountExcerpt>
   appData: {
     urlSafeProfileName: string
     moodlenet: {

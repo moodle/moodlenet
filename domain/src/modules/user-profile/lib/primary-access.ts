@@ -18,7 +18,7 @@ export async function accessUserProfile({
   const { userProfileRecord: userProfile } = findResult
   const currentUserSessionInfo = await validate_currentUserSessionInfo({ ctx })
   const { info: profileInfo, id } = userProfile
-  const is_this_user_profile_contributor = userProfile.userAccountUser.roles.includes('contributor')
+  const is_this_user_profile_contributor = userProfile.userAccount.roles.includes('contributor')
   if (!currentUserSessionInfo.authenticated) {
     if (!is_this_user_profile_contributor) {
       return { result: 'found', access: 'notAllowed' }
@@ -51,7 +51,7 @@ export async function accessUserProfile({
     }
   }
 
-  const its_me = currentUserSessionInfo.authenticated.user.id === userProfile.userAccountUser.id
+  const its_me = currentUserSessionInfo.authenticated.user.id === userProfile.userAccount.id
   const current_user_is_admin = currentUserSessionInfo.authenticated.isAdmin
 
   const its_me_or_admin = its_me || current_user_is_admin
@@ -73,7 +73,7 @@ export async function accessUserProfile({
       sendMessage: !its_me,
       editRoles: !its_me && current_user_is_admin,
     },
-    user: its_me_or_admin ? userProfile.userAccountUser : null,
+    user: its_me_or_admin ? userProfile.userAccount : null,
     flags: { following: !its_me },
     appData: {
       urlSafeProfileName: userProfile.appData.urlSafeProfileName,

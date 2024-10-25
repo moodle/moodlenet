@@ -13,11 +13,11 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
     const secondaryAdapter: secondaryAdapter = {
       userProfile: {
         sync: {
-          async userAccountUserExcerpt({ userAccountUserExcerpt }) {
+          async userAccountExcerpt({ userAccountExcerpt }) {
             const userProfileDoc = await updateUserProfileByUserAccountId({
-              userAccountId: userAccountUserExcerpt.id,
+              userAccountId: userAccountExcerpt.id,
               dbStruct,
-              partialUserProfile: { userAccountUser: userAccountUserExcerpt },
+              partialUserProfile: { userAccount: userAccountExcerpt },
             })
             if (!userProfileDoc) {
               return [false, _void]

@@ -15,7 +15,7 @@ export async function createNewUserProfileData({
   const userProfileId = await generateNanoId()
   const userProfileRecord: userProfileRecord = {
     id: userProfileId,
-    userAccountUser: {
+    userAccount: {
       id: newUser.id,
       roles: newUser.roles,
     },

@@ -6,7 +6,7 @@ import {
   profileImage,
   profileInfo,
   useProfileImageForm,
-  userAccountUserExcerpt,
+  userAccountExcerpt,
   userProfileAccessObject,
   userProfileId,
   userProfileRecord,
@@ -46,7 +46,7 @@ export default interface UserProfileDomain {
       }
       service: unknown
       sync: {
-        userAccountUserExcerpt(_: { userAccountUserExcerpt: userAccountUserExcerpt }): Promise<ok_ko<void>>
+        userAccountExcerpt(_: { userAccountExcerpt: userAccountExcerpt }): Promise<ok_ko<void>>
       }
       query: {
         getUserProfile(
