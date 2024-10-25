@@ -2,7 +2,7 @@
 import { email_address } from '@moodle/lib-types'
 import * as userAccount from '../modules/user-account'
 import * as moodlenet from '../modules/moodlenet'
-import * as moodlenetNextjs from '../modules/moodlenet-react-app'
+import * as moodlenetReactApp from '../modules/moodlenet-react-app'
 import * as org from '../modules/org'
 import * as storage from '../modules/storage'
 import * as userProfile from '../modules/user-profile'
@@ -14,7 +14,7 @@ export interface ModConfigs {
   org: org.Configs
   userAccount: userAccount.Configs
   moodlenet: moodlenet.configs
-  moodlenetNextjs: moodlenetNextjs.Configs
+  moodlenetReactApp: moodlenetReactApp.Configs
   userProfile: userProfile.Configs
   storage: storage.Configs
   // env: env.Configs

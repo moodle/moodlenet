@@ -1,4 +1,4 @@
-import { moodlenet_nextjs_default_configs } from '@moodle/module/moodlenet-react-app/setup'
+import { moodlenet_react_app_default_configs } from '@moodle/module/moodlenet-react-app/setup'
 import { moodlenet_default_configs } from '@moodle/module/moodlenet/setup'
 import { org_default_configs } from '@moodle/module/org/setup'
 import { storage_default_configs } from '@moodle/module/storage/setup'
@@ -21,8 +21,8 @@ export async function insertModConfigs({ dbStruct }: { dbStruct: dbStruct }) {
   })
   await saveModConfigs({
     dbStruct,
-    configs: moodlenet_nextjs_default_configs,
-    moduleName: 'moodlenetNextjs',
+    configs: moodlenet_react_app_default_configs,
+    moduleName: 'moodlenetReactApp',
   })
   await saveModConfigs({
     dbStruct,

@@ -3,7 +3,7 @@ import { configuration, deploymentInfoFromUrlString } from '@moodle/domain/lib'
 import { getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { userAccount_core } from '@moodle/module/user-account/core'
-import { moodlenet_nextjs_core } from '@moodle/module/moodlenet-react-app/core'
+import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
 import { moodlenet_core } from '@moodle/module/moodlenet/core'
 import { org_core } from '@moodle/module/org/core'
 import { storage_core } from '@moodle/module/storage/core'
@@ -114,7 +114,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         moodlenet_core,
         org_core,
         userAccount_core,
-        moodlenet_nextjs_core,
+        moodlenet_react_app_core,
         user_profile_core,
         storage_core,
         {

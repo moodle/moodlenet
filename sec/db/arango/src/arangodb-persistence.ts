@@ -5,7 +5,7 @@ import {
   user_profile_secondary_factory,
   user_account_secondary_factory,
   moodlenet_secondary_factory,
-  moodlenet_nextjs_secondary_factory,
+  moodlenet_react_app_secondary_factory,
   org_secondary_factory,
   storage_secondary_factory,
 } from './sec'
@@ -21,7 +21,7 @@ export function get_arango_persistence_factory(env: ArangoDbSecEnv): secondaryPr
       moodlenet_secondary_factory({ dbStruct })(secondaryContext),
       org_secondary_factory({ dbStruct })(secondaryContext),
       user_account_secondary_factory({ dbStruct })(secondaryContext),
-      moodlenet_nextjs_secondary_factory({ dbStruct })(secondaryContext),
+      moodlenet_react_app_secondary_factory({ dbStruct })(secondaryContext),
       user_profile_secondary_factory({ dbStruct })(secondaryContext),
       env_secondary_factory({ dbStruct })(secondaryContext),
       storage_secondary_factory({ dbStruct })(secondaryContext),
