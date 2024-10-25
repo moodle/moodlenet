@@ -49,6 +49,7 @@ export function provideDomainAccessDispatcher({
   feedbackDispatcher,
 }: domainAccessDispatcherProviderDeps): messageDispatcher {
   return async ({ domainAccess: current_domainAccess }) => {
+    // console.dir(current_domainAccess.endpoint)
     const [currentDomainAccessLayer, currentDomainAccessModuleName] = current_domainAccess.endpoint as [
       domainLayer | undefined,
       moodleModuleName | undefined,

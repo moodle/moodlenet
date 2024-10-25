@@ -10,7 +10,6 @@ import { ReactComponent as LeafIcon } from '../../../../ui/lib/assets/icons/leaf
 import defaultAvatar from '../../../../ui/lib/assets/img/default-avatar.svg'
 import './Leaderboard.scss'
 
-console.dir({ LeafIcon }, { depth: 10, colors: true, showHidden: true, getters: true })
 export type leaderboardProps = {
   leaderContributors: contributorInfo[]
   pointSystem: pointSystem
