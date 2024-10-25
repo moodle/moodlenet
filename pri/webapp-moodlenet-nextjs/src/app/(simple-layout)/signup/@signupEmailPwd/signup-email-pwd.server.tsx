@@ -9,10 +9,8 @@ import { access } from '../../../../lib/server/session-access'
 import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
 
 export async function getSignupSchema() {
-  const {
-    userAccount: { signupSchema },
-  } = await getAllPrimarySchemas()
-  return signupSchema
+  const allSchemas = await getAllPrimarySchemas()
+  return allSchemas.userAccount.signupSchema
 }
 
 export const signupAction = defaultSafeActionClient

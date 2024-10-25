@@ -5,10 +5,11 @@ import defaultBackground from '../../../ui/lib/assets/img/default-landing-backgr
 // import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
 import { LandingHeadSearchbox /* , LandingHeadShareButton  */ } from './landing-page.client'
 import './landing-page.style.scss'
-import LandingProfileList from './LandingProfileList/LandingProfileList'
-import { Leaderboard } from './Leaderboard/Leaderboard'
+import { LandingProfileList, landingProfileListProps } from './LandingProfileList/LandingProfileList'
+import { Leaderboard, leaderboardProps } from './Leaderboard/Leaderboard'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
+  const suggestedContent = await access.primary.moodlenet.content.getSuggestedContent()
   const [info, layouts] = await Promise.all([getSiteGeneralInfo(), access.primary.moodlenetNextjs.webapp.layouts()])
   const { head, content } = slotsMap(props, layouts.pages.landing.slots)
   const headerStyle = {
@@ -17,6 +18,13 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
   }
   const { pointSystem } = await access.primary.moodlenet.session.moduleInfo()
   const { leaderContributors } = await access.primary.moodlenet.contributor.getLeaders({ amount: 20 })
+
+  const leaderboardProps: leaderboardProps = { leaderContributors, pointSystem }
+
+  const landingProfileListProps: landingProfileListProps = {
+    profilesPropsList: [],
+    areCurrentUserSuggestions: false,
+  }
 
   return (
     <div className="landing">
@@ -30,8 +38,8 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
       </div>
       {/* <LandingResourceList {...props} />
 <LandingCollectionList {...props} />*/}
-      <LandingProfileList {...props} />
-      <Leaderboard {...{ leaderContributors, pointSystem }} />
+      <LandingProfileList {...landingProfileListProps} />
+      <Leaderboard {...leaderboardProps} />
       {content}
     </div>
   )

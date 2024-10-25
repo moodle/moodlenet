@@ -1,7 +1,11 @@
 import { _void, webSlug } from '@moodle/lib-types'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
 import { usingTempFile2asset } from '../../storage/lib'
-import { validateCurrentUserAuthenticatedSessionHasRole } from '../../user-account/lib'
+import {
+  userSessionInfo,
+  validateCurrentUserAuthenticatedSessionHasRole,
+  validateCurrentUserSession,
+} from '../../user-account/lib'
 import { accessUserProfile } from '../lib'
 import { createNewUserProfileData } from './lib/new-user-profile'
 
@@ -54,8 +58,8 @@ export const user_profile_core: moduleCore<'userProfile'> = {
           return [done, _void]
         },
       },
-      userProfile: {
-        async access(get) {
+      access: {
+        async byId(get) {
           if (
             get.by === 'userAccountId' &&
             !(await validateCurrentUserAuthenticatedSessionHasRole({ ctx, role: 'admin' }))
@@ -68,6 +72,23 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             return [false, { reason: 'notFound' }]
           }
           return [true, { accessObject: userProfileResult }]
+        },
+      },
+      me: {
+        async getMyProfile() {
+          const userSession = await validateCurrentUserSession({ ctx })
+          const sessionInfo = userSessionInfo(userSession)
+          if (!sessionInfo.authenticated) {
+            return [false, { reason: 'unauthenticated' }]
+          }
+          const userAccountId = sessionInfo.authenticated.user.id
+          const [found, result] = await ctx.mod.userProfile.query.getUserProfile({ by: 'userAccountId', userAccountId })
+          if (!found) {
+            const errMsg = `couldn't find userProfile for userAccountId: ${userAccountId}, despite has authenticated sessionInfo`
+            ctx.log('critical', errMsg, sessionInfo)
+            throw new Error(errMsg)
+          }
+          return [true, { userProfileRecord: result.userProfileRecord }]
         },
       },
     }
@@ -112,7 +133,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               if (!created) {
                 return
               }
-              ctx.queue.createUserProfile({ userProfile: await createNewUserProfileData({ newUser, ctx }) })
+              ctx.queue.createUserProfile({ userProfileRecord: await createNewUserProfileData({ newUser, ctx }) })
             },
 
             async setUserRoles([[done, result], { userAccountId }]) {

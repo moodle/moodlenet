@@ -12,7 +12,7 @@ export default async function ProfilePage({
 }: {
   params: params<'userProfileId' | 'slug'>
 }) {
-  const [foundUserProfile, userProfileResponse] = await access.primary.userProfile.userProfile.access({
+  const [foundUserProfile, userProfileResponse] = await access.primary.userProfile.access.byId({
     by: 'userProfileId',
     userProfileId,
   })

@@ -11,19 +11,15 @@ export async function newUserAccountMoodlenetData(): Promise<userAccountMoodlene
 }
 
 export async function newUserProfileMoodlenetData({ ctx }: { ctx: baseContext }): Promise<userProfileMoodlenetData> {
-  const {
-    configs: {
-      pointSystem: { welcomePoints },
-    },
-  } = await ctx.mod.env.query.modConfigs({ mod: 'moodlenet' })
+  const { configs } = await ctx.mod.env.query.modConfigs({ mod: 'moodlenet' })
   const userProfileMoodlenetData: userProfileMoodlenetData = {
     featuredContent: [],
-    points: { amount: welcomePoints },
+    points: { amount: configs.pointSystem.welcomePoints },
     preferences: { useMyInterestsAsDefaultFilters: true },
     published: { contributions: [] },
     suggestedContent: {
       listCreationDate: date_time_string('now'),
-      list: [],
+      list: [], // TODO: create list immediately?
     },
     stats: { followersCount: non_negative_integer_schema.parse(0) },
   }

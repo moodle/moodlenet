@@ -1,14 +1,13 @@
 'use server'
 
+import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
+import { usingTempFile2asset } from '@moodle/module/storage/lib'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { sitepaths } from '../../../../../lib/common/utils/sitepaths'
 import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
 import { access } from '../../../../../lib/server/session-access'
-import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
-import { userProfileId } from '@moodle/module/user-profile'
-import { usingTempFile2asset } from '@moodle/module/storage/lib'
 
 export async function getProfileInfoSchema() {
   const {
@@ -20,13 +19,6 @@ export async function getProfileInfoSchema() {
 export const updateProfileInfo = defaultSafeActionClient
   .schema(getProfileInfoSchema)
   .action(async ({ parsedInput: profileInfo }) => {
-    const canEditProfile = await fetchCanEditProfile({ userProfileId: profileInfo.userProfileId })
-    if (!canEditProfile) {
-      returnValidationErrors(getProfileInfoSchema, {
-        _errors: [t(`cannot edit this profile info`)],
-      })
-    }
-
     const [editDone, editResult] = await access.primary.userProfile.editProfile.editProfileInfo({
       userProfileId: profileInfo.userProfileId,
       profileInfo: profileInfo,
@@ -40,13 +32,6 @@ export const updateProfileInfo = defaultSafeActionClient
     })
   })
 
-async function fetchCanEditProfile({ userProfileId }: { userProfileId: userProfileId }) {
-  const [readUserProfileDone, userProfileRes] = await access.primary.userProfile.userProfile.access({
-    by: 'userProfileId',
-    userProfileId,
-  })
-  return readUserProfileDone && userProfileRes.accessObject.permissions.editProfile
-}
 
 export async function getUseProfileImageSchema() {
   const {

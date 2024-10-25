@@ -24,6 +24,15 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
           }
         },
       },
+      content: {
+        async getSuggestedContent() {
+          const [foundMyProfile, result] = await ctx.forward.userProfile.me.getMyProfile()
+          if (!foundMyProfile) {
+            return { suggestions: [] }
+          }
+          return { suggestions: result.userProfileRecord.appData.moodlenet.suggestedContent.list }
+        },
+      },
       contributor: {
         async getLeaders({ amount }) {
           const { contributors } = await ctx.mod.moodlenet.query.contributors({

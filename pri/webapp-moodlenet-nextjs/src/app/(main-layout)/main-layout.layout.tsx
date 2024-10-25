@@ -41,8 +41,8 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
     const { authenticated } = userSessionInfo(userSession)
     const userProfileAccessObject = authenticated
-      ? await access.primary.userProfile.userProfile
-          .access({ by: 'userAccountId', userAccountId: authenticated.user.id })
+      ? await access.primary.userProfile.access
+          .byId({ by: 'userAccountId', userAccountId: authenticated.user.id })
           .then(([userProfileFound, userProfileResult]) => {
             return userProfileFound ? userProfileResult.accessObject : null
           })

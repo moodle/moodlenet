@@ -34,7 +34,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             if (!userProfileDoc) {
               return [false, { reason: 'notFound' }]
             }
-            return [true, { userProfile: userProfileDocument2userProfileRecord(userProfileDoc) }]
+            return [true, { userProfileRecord: userProfileDocument2userProfileRecord(userProfileDoc) }]
           },
         },
         write: {
@@ -52,7 +52,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
           },
         },
         queue: {
-          async createUserProfile({ userProfile }) {
+          async createUserProfile({ userProfileRecord: userProfile }) {
             const result = await dbStruct.data.coll.userProfile
               .save(userProfileRecord2userProfileDocument(userProfile))
               .catch(() => null)

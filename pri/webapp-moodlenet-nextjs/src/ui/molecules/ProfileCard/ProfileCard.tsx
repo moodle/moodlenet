@@ -1,124 +1,100 @@
-import type { AddonItem } from '@moodlenet/component-library'
-import { Card } from '@moodlenet/component-library'
-import type { OverallCardProps } from '@moodlenet/react-app/ui'
-import { Link, OverallCard, withProxy } from '@moodlenet/react-app/ui'
-import type { ProfileCardData } from '../../../../../common/profile/type.mjs'
-import type { ProfileAccess, ProfileActions, ProfileState } from '../../../../../common/types.mjs'
-import { getUserLevelDetails } from '../../../../gamification/user-levels.mjs'
-import defaultAvatar from '../../../assets/img/default-avatar.svg'
-import defaultBackground from '../../../assets/img/default-background.svg'
+import { userProfileAccessObject } from '@moodle/module/user-profile'
+import FilterNone from '@mui/icons-material/FilterNone'
+import Grade from '@mui/icons-material/Grade'
+import PermIdentity from '@mui/icons-material/PermIdentity'
+import { pointSystem } from 'domain/src/modules/moodlenet/types/point-system'
+import Link from 'next/link'
+import { useAssetUrl } from '../../../lib/client/globalContexts'
+import { getUserLevelDetails } from '../../../lib/client/user-levels/lib'
+import { sitepaths } from '../../../lib/common/utils/sitepaths'
+import defaultAvatar from '../../../ui/lib/assets/img/default-avatar.svg'
+import defaultBackground from '../../../ui/lib/assets/img/default-background.svg'
+import { Card } from '../../atoms/Card/Card'
 import { FollowButton } from '../../atoms/FollowButton/FollowButton'
+import { OverallCard } from '../OverallCard/OverallCard'
 import './ProfileCard.scss'
 
-export type ProfileCardProps = {
-  mainColumnItems: (AddonItem | null)[]
-  bottomTouchColumnItems: (AddonItem | null)[]
-  overallCardProps: Pick<OverallCardProps, 'items'>
-
-  data: ProfileCardData
-  state: ProfileState
-  actions: ProfileActions
-  access: ProfileAccess
+export type profileCardProps = {
+  userProfile: userProfileAccessObject
+  pointSystem: pointSystem
+  stats: { followersCount: number; followingCount: number; publishedResourcesCount: number }
 }
 
-export const ProfileCard = withProxy<ProfileCardProps>(
-  ({
-    mainColumnItems,
-    bottomTouchColumnItems,
-    overallCardProps,
+export function ProfileCard({ pointSystem, userProfile, stats }: profileCardProps) {
+  const { avatar, background, displayName } = userProfile.profileInfo
 
-    data,
-    state,
-    actions,
-    access,
-  }) => {
-    const {
-      userId,
-      backgroundUrl,
-      avatarUrl,
-      displayName,
-      profileHref,
-      points,
-      // organizationName,
-    } = data
-    // const { followed } = state
-    // const { toggleFollow } = actions
-    const { isCreator, canFollow, isAuthenticated } = access
+  const permissions = userProfile.permissions
+  const flags = userProfile.flags
 
-    const { toggleFollow } = actions
-    const {
-      followed,
-      // isPublisher
-    } = state
+  const { pointAvatar, level, title } = getUserLevelDetails(pointSystem, userProfile.appData.moodlenet.points.amount)
+  const profileHomeHref = sitepaths.profile[userProfile.id]![userProfile.appData.urlSafeProfileName]!()
+  const [backgroundUrl] = useAssetUrl(background)
+  const [avatarUrl] = useAssetUrl(avatar)
 
-    const header = (
-      <div className="profile-card-header" key="header">
-        <div className="title-header">
-          <abbr className="title" title={displayName}>
-            {displayName}
-          </abbr>
-        </div>
-        {/* <abbr className="subtitle" title={organizationName}>
-      {organizationName}
-    </abbr> */}
-      </div>
-    )
-
-    const overallCard = (
-      <OverallCard noCard={true} showIcons={true} {...overallCardProps} key="overall-card" />
-    )
-
-    const followButton = (
-      <FollowButton
-        canFollow={canFollow}
-        followed={followed}
-        isAuthenticated={isAuthenticated}
-        isCreator={isCreator}
-        toggleFollow={toggleFollow}
-        key="follow-button"
-      />
-    )
-
-    const updatedMainColumnItems = [header, overallCard, ...(mainColumnItems ?? [])].filter(
-      (item): item is AddonItem | JSX.Element => !!item,
-    )
-
-    const updatedBottomTouchColumnItems = [followButton, ...(bottomTouchColumnItems ?? [])].filter(
-      (item): item is AddonItem | JSX.Element => !!item,
-    )
-
-    const { avatar, level, title } = getUserLevelDetails(points)
-    const levelAvatar = (
-      <abbr className={`level-avatar level-${level}`} title={`Level ${level} - ${title}`}>
-        <img className="avatar" src={avatar} alt="level avatar" />
-      </abbr>
-    )
-
-    return (
-      <Card
-        className={`profile-card 
+  return (
+    <Card
+      className={`profile-card
       ${/* isPublisher ? 'approved' : '' */ ''}
       `}
-        hover={true}
-        key={userId}
-      >
-        <Link className="profile-card-content" href={profileHref}>
-          <div className="images">
-            <img className="background" src={backgroundUrl || defaultBackground} alt="Background" />
-            <div className="avatar">
-              {levelAvatar}
-              <img src={avatarUrl || defaultAvatar} alt="Avatar" />
-            </div>
+      hover={true}
+    >
+      <Link className="profile-card-content" href={profileHomeHref}>
+        <div className="images">
+          <img className="background" src={backgroundUrl || defaultBackground} alt="Background" />
+          <div className="avatar">
+            <abbr className={`level-avatar level-${level}`} title={`Level ${level} - ${title}`}>
+              <img className="avatar" src={pointAvatar} alt="level avatar" />
+            </abbr>
+            <img src={avatarUrl || defaultAvatar} alt="Avatar" />
           </div>
-          <div className="info">
-            {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-          </div>
-        </Link>
-        <div className="bottom-touch">
-          {updatedBottomTouchColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
         </div>
-      </Card>
-    )
-  },
-  'ProfileCard',
-)
+        <div className="info">
+          <div className="profile-card-header" key="header">
+            <div className="title-header">
+              <abbr className="title" title={displayName}>
+                {displayName}
+              </abbr>
+            </div>
+            {/* <abbr className="subtitle" title={organizationName}>
+      {organizationName}
+    </abbr> */}
+          </div>
+          <OverallCard
+            items={[
+              {
+                Icon: PermIdentity,
+                name: 'Followers',
+                className: 'followers',
+                value: stats.followersCount,
+                // href: followers,
+              },
+              {
+                Icon: Grade,
+                name: 'Following',
+                className: 'following',
+                value: stats.followingCount,
+                // href: following
+              },
+              {
+                Icon: FilterNone,
+                name: 'Resources',
+                className: 'resources',
+                value: stats.publishedResourcesCount,
+              },
+            ]}
+          />
+        </div>
+      </Link>
+      <div className="bottom-touch">
+        <FollowButton
+          disabled={!permissions.follow}
+          following={flags.following}
+          toggleFollow={() =>
+            // FIXME
+            alert('toggleFollow')
+          }
+        />
+      </div>
+    </Card>
+  )
+}

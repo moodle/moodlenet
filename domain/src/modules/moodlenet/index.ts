@@ -1,5 +1,5 @@
 import { deep_partial_props, ok_ko } from '@moodle/lib-types'
-import { moodlenetInfo, MoodlenetPrimaryMsgSchemaConfigs, publishedCategories } from './types'
+import { moodlenetInfo, MoodlenetPrimaryMsgSchemaConfigs, publishedCategories, suggestedContent } from './types'
 import { contributorInfo } from './types/contributor'
 import { pointSystem } from './types/point-system'
 export * from './types'
@@ -21,6 +21,9 @@ export default interface MoodlenetDomain {
       }
       admin: {
         updatePartialMoodlenetInfo({ partialInfo }: { partialInfo: deep_partial_props<moodlenetInfo> }): Promise<ok_ko<void>>
+      }
+      content: {
+        getSuggestedContent(): Promise<{ suggestions: unknown /* suggestedContent[] */ }>
       }
     }
   }

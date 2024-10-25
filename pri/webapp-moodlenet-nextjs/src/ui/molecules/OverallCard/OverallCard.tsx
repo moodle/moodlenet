@@ -3,7 +3,7 @@ import type { ComponentType } from 'react'
 import { Card } from '../../atoms/Card/Card'
 import './OverallCard.scss'
 
-export type OverallCardItem = {
+export type overallCardItem = {
   Icon: ComponentType
   name: string
   value: string | number
@@ -11,14 +11,14 @@ export type OverallCardItem = {
   href?: string
 }
 
-export type OverallCardProps = {
-  items: OverallCardItem[]
+export type overallCardProps = {
+  items: overallCardItem[]
   hideBorderWhenSmall?: boolean
   noCard?: boolean
   showIcons?: boolean
 }
 
-export function OverallCard({ items, hideBorderWhenSmall, showIcons, noCard }: OverallCardProps) {
+export function OverallCard({ items, hideBorderWhenSmall, showIcons, noCard }: overallCardProps) {
   return !items || items.length === 0 ? null : (
     <Card className="overall-card" key="overall-card" hideBorderWhenSmall={hideBorderWhenSmall} noCard={noCard}>
       <div className="overall-container">

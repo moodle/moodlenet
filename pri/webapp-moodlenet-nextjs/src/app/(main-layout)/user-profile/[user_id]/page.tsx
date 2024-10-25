@@ -5,7 +5,7 @@ import { params } from '../../../../lib/server/types'
 import { Fallback } from '../../../../ui/pages/Fallback/Fallback'
 
 export default async function UserProfilePage({ params: { userAccountId } }: { params: params<'userAccountId'> }) {
-  const [found, userProfileResponse] = await access.primary.userProfile.userProfile.access({
+  const [found, userProfileResponse] = await access.primary.userProfile.access.byId({
     by: 'userAccountId',
     userAccountId,
   })

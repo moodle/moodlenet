@@ -31,22 +31,27 @@ export default interface UserProfileDomain {
           profileInfo: deep_partial_props<profileInfo>
         }): Promise<ok_ko<void, { notFound: unknown; unknown: unknown }>>
       }
-      userProfile: {
-        access(_: get_user_profile_by): Promise<ok_ko<{ accessObject: userProfileAccessObject }, { notFound: unknown }>>
+      access: {
+        byId(_: get_user_profile_by): Promise<ok_ko<{ accessObject: userProfileAccessObject }, { notFound: unknown }>>
+      }
+      me: {
+        getMyProfile(): Promise<ok_ko<{ userProfileRecord: userProfileRecord }, { unauthenticated: unknown }>>
       }
     }
   }
   secondary: {
     userProfile: {
       queue: {
-        createUserProfile(_: { userProfile: userProfileRecord }): Promise<ok_ko<void>>
+        createUserProfile(_: { userProfileRecord: userProfileRecord }): Promise<ok_ko<void>>
       }
       service: unknown
       sync: {
         userAccountUserExcerpt(_: { userAccountUserExcerpt: userAccountUserExcerpt }): Promise<ok_ko<void>>
       }
       query: {
-        getUserProfile(_: get_user_profile_by): Promise<ok_ko<{ userProfile: userProfileRecord }, { notFound: unknown }>>
+        getUserProfile(
+          _: get_user_profile_by,
+        ): Promise<ok_ko<{ userProfileRecord: userProfileRecord }, { notFound: unknown }>>
       }
       write: {
         updatePartialProfileInfo(_: {

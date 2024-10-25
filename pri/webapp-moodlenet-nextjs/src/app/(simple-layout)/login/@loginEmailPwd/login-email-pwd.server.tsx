@@ -13,8 +13,8 @@ import { access } from '../../../../lib/server/session-access'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 
 export async function getLoginSchema() {
-  const { userAccount } = await getAllPrimarySchemas()
-  return userAccount.loginSchema
+  const allSchemas = await getAllPrimarySchemas()
+  return allSchemas.userAccount.loginSchema
 }
 export const loginAction = defaultSafeActionClient.schema(getLoginSchema).action(async ({ parsedInput: loginForm }) => {
   // const inSiteRefererUrl = await getInSiteReferer()

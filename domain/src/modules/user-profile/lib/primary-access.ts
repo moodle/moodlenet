@@ -15,7 +15,7 @@ export async function accessUserProfile({
   if (!found) {
     return { result: 'notFound' }
   }
-  const { userProfile } = findResult
+  const { userProfileRecord: userProfile } = findResult
   const currentUserSessionInfo = await validate_currentUserSessionInfo({ ctx })
   const { info: profileInfo, id } = userProfile
   const is_this_user_profile_publisher = userProfile.userAccountUser.roles.includes('publisher')
