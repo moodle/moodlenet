@@ -2,7 +2,7 @@
 import { email_address } from '@moodle/lib-types'
 import * as userAccount from '../modules/user-account'
 import * as moodlenet from '../modules/moodlenet'
-import * as moodlenetNextjs from '../modules/moodlenet-nextjs'
+import * as moodlenetNextjs from '../modules/moodlenet-react-app'
 import * as org from '../modules/org'
 import * as storage from '../modules/storage'
 import * as userProfile from '../modules/user-profile'

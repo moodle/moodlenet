@@ -1,4 +1,4 @@
-import { moodlenet_nextjs_default_configs } from '@moodle/module/moodlenet-nextjs/setup'
+import { moodlenet_nextjs_default_configs } from '@moodle/module/moodlenet-react-app/setup'
 import { moodlenet_default_configs } from '@moodle/module/moodlenet/setup'
 import { org_default_configs } from '@moodle/module/org/setup'
 import { storage_default_configs } from '@moodle/module/storage/setup'

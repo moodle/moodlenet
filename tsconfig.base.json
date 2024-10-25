@@ -60,10 +60,10 @@
       "@moodle/module/moodlenet/core": ["domain/src/modules/moodlenet/core/index.ts"],
       "@moodle/module/moodlenet/setup": ["domain/src/modules/moodlenet/setup/index.ts"],
       //
-      "@moodle/module/moodlenet-nextjs": ["domain/src/modules/moodlenet-nextjs/index.ts"],
-      "@moodle/module/moodlenet-nextjs/lib": ["domain/src/modules/moodlenet-nextjs/lib/index.ts"],
-      "@moodle/module/moodlenet-nextjs/core": ["domain/src/modules/moodlenet-nextjs/core/index.ts"],
-      "@moodle/module/moodlenet-nextjs/setup": ["domain/src/modules/moodlenet-nextjs/setup/index.ts"],
+      "@moodle/module/moodlenet-react-app": ["domain/src/modules/moodlenet-react-app/index.ts"],
+      "@moodle/module/moodlenet-react-app/lib": ["domain/src/modules/moodlenet-react-app/lib/index.ts"],
+      "@moodle/module/moodlenet-react-app/core": ["domain/src/modules/moodlenet-react-app/core/index.ts"],
+      "@moodle/module/moodlenet-react-app/setup": ["domain/src/modules/moodlenet-react-app/setup/index.ts"],
       //
       "@moodle/module/org": ["domain/src/modules/org/index.ts"],
       "@moodle/module/org/lib": ["domain/src/modules/org/lib/index.ts"],
