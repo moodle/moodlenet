@@ -1,13 +1,13 @@
 import { date_time_string } from '@moodle/lib-types'
 import { aiAgentResourceSuggestionStatus } from '../../ai-agent'
-import { assetTextExtractionStatus } from '../../asset-text-extraction'
+import { textExtractionStatus } from '../../asset-text-extraction'
 import { eduResourceCollectionData, eduResourceData } from '../../edu/types/edu-content'
 
 export type myDrafts = {
   eduResources: draft<
     eduResourceData & {
-      meta: {
-        assetTextExtractionStatus: assetTextExtractionStatus
+      assetProcess: {
+        textExtractionStatus: textExtractionStatus
         aiAgentSuggestion: aiAgentResourceSuggestionStatus
       }
     }

@@ -1,5 +1,5 @@
 import { _nullish, date_time_string, non_negative_integer, positive_integer } from '@moodle/lib-types'
-import { assetTextExtraction } from '../../asset-text-extraction'
+import { textExtractionResult } from '../../asset-text-extraction'
 import { eduIscedFieldId } from '../../edu'
 import {
   eduResourceCollectionId,
@@ -19,7 +19,7 @@ export type userContributionData = eduResourceData | eduResourceCollectionData
 
 export type publishedEduResource = publishedContent<
   eduResourceData,
-  { downloadCount: non_negative_integer; assetTextExtraction: assetTextExtraction }
+  { downloadCount: non_negative_integer; assetTextExtraction: textExtractionResult }
 >
 
 export type publishedEduResourceCollection = publishedContent<eduResourceCollectionData>
