@@ -15,7 +15,7 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@next/next/no-html-link-for-pages": ["error", "pri/webapp-moodlenet-nextjs/pages"]
+        "@next/next/no-html-link-for-pages": ["error", "pri/moodlenet-webapp-nextjs/pages"]
       }
     },
     {
