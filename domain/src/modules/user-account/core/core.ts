@@ -47,7 +47,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           const new_roles_set = new Set(user.roles)
           new_roles_set[action === 'set' ? 'add' : 'delete'](role)
           const new_roles = (
-            new_roles_set.has('admin') ? (['admin', 'publisher'] satisfies userRole[]) : Array.from(new_roles_set)
+            new_roles_set.has('admin') ? (['admin', 'contributor'] satisfies userRole[]) : Array.from(new_roles_set)
           ).sort()
 
           const [done] = await ctx.write.setUserRoles({
@@ -428,7 +428,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
         displayName: 'Admin',
         email: sysAdminInfo.email,
         passwordHash,
-        roles: ['admin', 'publisher'],
+        roles: ['admin', 'contributor'],
       })
 
       await ctx.write.saveNewUser({ newUser })

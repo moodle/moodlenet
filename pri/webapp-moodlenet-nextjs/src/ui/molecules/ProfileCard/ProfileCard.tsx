@@ -34,7 +34,7 @@ export function ProfileCard({ pointSystem, userProfile, stats }: profileCardProp
   return (
     <Card
       className={`profile-card
-      ${/* isPublisher ? 'approved' : '' */ ''}
+      ${/* isContributor ? 'approved' : '' */ ''}
       `}
       hover={true}
     >

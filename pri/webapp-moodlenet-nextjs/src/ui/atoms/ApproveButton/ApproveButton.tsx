@@ -22,31 +22,22 @@ export function ApprovalButton({ isApproved, toggleIsApproved }: ApprovalButtonP
 
 export type ApprovalInfoProps = {
   isWaitingApproval: boolean
-  isPublisher: boolean
+  isContributor: boolean
   isElegibleForApproval: boolean
   isCreator: boolean
 }
 
 export type ApprovalBadgeProps = {
-  isPublisher: boolean
+  isContributor: boolean
   isEditing: boolean
   canEdit: boolean
   showAccountApprovedSuccessAlert: boolean
 }
 
-export function ApprovalBadge({
-  isPublisher,
-  canEdit,
-  isEditing,
-  showAccountApprovedSuccessAlert,
-}: ApprovalBadgeProps) {
-  return !isEditing && canEdit && isPublisher ? (
+export function ApprovalBadge({ isContributor, canEdit, isEditing, showAccountApprovedSuccessAlert }: ApprovalBadgeProps) {
+  return !isEditing && canEdit && isContributor ? (
     <abbr className={`approved-badge`} title={`Approved, your published content is visible to all`}>
-      <ApprovedIcon
-        className={`approved-icon ${
-          showAccountApprovedSuccessAlert ? 'zooom-in-enter-animation' : ''
-        }`}
-      />
+      <ApprovedIcon className={`approved-icon ${showAccountApprovedSuccessAlert ? 'zooom-in-enter-animation' : ''}`} />
     </abbr>
   ) : null
 }

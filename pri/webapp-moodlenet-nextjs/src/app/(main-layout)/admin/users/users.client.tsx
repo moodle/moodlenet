@@ -70,7 +70,7 @@ function Row({ user }: RowProps) {
   const profileHref = sitepaths['user-profile'][user.id]!()
   const [roles, setRoles] = useState(user.roles)
   const isAdmin = roles.includes('admin')
-  const isPublisher = roles.includes('publisher')
+  const isContributor = roles.includes('contributor')
   const toggleRole = useCallback(
     (role: userRole) => {
       editUserRole({
@@ -98,11 +98,11 @@ function Row({ user }: RowProps) {
           {isAdmin ? <ManageAccounts /> : <ManageAccountsOutlined />}
         </abbr>
         <abbr
-          onClick={() => toggleRole('publisher')}
-          className={`publisher ${isPublisher ? 'on' : 'off'}`}
-          title={t('Publisher')}
+          onClick={() => toggleRole('contributor')}
+          className={`contributor ${isContributor ? 'on' : 'off'}`}
+          title={t('Contributor')}
         >
-          {isPublisher ? <HowToReg /> : <HowToRegOutlined />}
+          {isContributor ? <HowToReg /> : <HowToRegOutlined />}
         </abbr>
       </td>
     </tr>

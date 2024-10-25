@@ -67,7 +67,7 @@ export type pointSystem = {
       welcome: {
         points: non_negative_integer
       }
-      publisher: {
+      contributor: {
         points: non_negative_integer
       }
       interestsSet: {

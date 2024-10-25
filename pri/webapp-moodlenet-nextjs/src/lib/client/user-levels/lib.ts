@@ -66,7 +66,7 @@ export function actionsAndPointsObtained(pointSystem: pointSystem): { action: st
       points: pointSystem.curation.bookmark.toTargetEntityCreator.points,
     },
     { action: 'Bookmark a contribution or user', points: pointSystem.curation.bookmark.toActor.points },
-    { action: 'Become a publisher', points: pointSystem.engagement.profile.publisher.points },
+    { action: 'Become a contributor', points: pointSystem.engagement.profile.contributor.points },
   ]
 }
 

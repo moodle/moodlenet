@@ -52,7 +52,7 @@ export const moodlenet_default_configs: configs = {
       // },
       profile: {
         welcome: { points: non_negative_integer_schema.parse(5) },
-        publisher: { points: non_negative_integer_schema.parse(10) },
+        contributor: { points: non_negative_integer_schema.parse(10) },
         interestsSet: { points: non_negative_integer_schema.parse(5) },
         perMetaDataField: { points: non_negative_integer_schema.parse(1) },
       },

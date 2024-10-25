@@ -31,7 +31,7 @@ export type mainProfileCardProps = {
 export function MainProfileCard({
   userProfile: { permissions, profileInfo, flags, id, user, itsMe },
 }: mainProfileCardProps) {
-  const isPublisher = !!user?.roles.includes('publisher')
+  const isContributor = !!user?.roles.includes('contributor')
   const schemas = useAllPrimarySchemas()
   const [isEditing, toggleIsEditing] = useReducer(isEditing => permissions.editProfile && !isEditing, false)
   const {
@@ -220,7 +220,7 @@ export function MainProfileCard({
 
             {permissions.editRoles && (
               <ApprovalButton
-                isApproved={isPublisher}
+                isApproved={isContributor}
                 toggleIsApproved={() => {
                   // FIXME
 

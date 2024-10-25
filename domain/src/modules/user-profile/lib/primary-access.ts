@@ -18,9 +18,9 @@ export async function accessUserProfile({
   const { userProfileRecord: userProfile } = findResult
   const currentUserSessionInfo = await validate_currentUserSessionInfo({ ctx })
   const { info: profileInfo, id } = userProfile
-  const is_this_user_profile_publisher = userProfile.userAccountUser.roles.includes('publisher')
+  const is_this_user_profile_contributor = userProfile.userAccountUser.roles.includes('contributor')
   if (!currentUserSessionInfo.authenticated) {
-    if (!is_this_user_profile_publisher) {
+    if (!is_this_user_profile_contributor) {
       return { result: 'found', access: 'notAllowed' }
     } else {
       return {
@@ -56,7 +56,7 @@ export async function accessUserProfile({
 
   const its_me_or_admin = its_me || current_user_is_admin
 
-  if (!(is_this_user_profile_publisher || its_me_or_admin)) {
+  if (!(is_this_user_profile_contributor || its_me_or_admin)) {
     return { result: 'found', access: 'notAllowed' }
   }
 

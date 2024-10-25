@@ -10,9 +10,9 @@ export function hasUserSessionRole(
   }
   return userSession.user.roles.includes(role)
 }
-export function isPublisherUserSession(userSession: userSession) {
-  return hasUserSessionRole(userSession, 'publisher')
-}
+// export function isContributorUserSession(userSession: userSession) {
+//   return hasUserSessionRole(userSession, 'contributor')
+// }
 export function isAdminUserSession(userSession: userSession) {
   return hasUserSessionRole(userSession, 'admin')
 }
@@ -46,7 +46,7 @@ export function userSessionInfo(userSession: userSession): {
     | false
     | (AuthenticatedUserSession & {
         isAdmin: boolean
-        isPublisher: boolean
+        // isContributor: boolean
       })
 } {
   if (userSession.type === 'guest') {
@@ -56,7 +56,7 @@ export function userSessionInfo(userSession: userSession): {
     authenticated: {
       ...userSession,
       isAdmin: isAdminUserSession(userSession),
-      isPublisher: isPublisherUserSession(userSession),
+      // isContributor: isContributorUserSession(userSession),
     },
   }
 }
