@@ -5,6 +5,7 @@ import defaultBackground from '../../../ui/lib/assets/img/default-landing-backgr
 // import { LandingHeadSearchbox, LandingHeadShareButton } from './landing-page.client'
 import { LandingHeadSearchbox /* , LandingHeadShareButton  */ } from './landing-page.client'
 import './landing-page.style.scss'
+import LandingProfileList from './LandingProfileList/LandingProfileList'
 import { Leaderboard } from './Leaderboard/Leaderboard'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
@@ -28,8 +29,8 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
         {head}
       </div>
       {/* <LandingResourceList {...props} />
-<LandingCollectionList {...props} />
-<LandingProfileList {...props} /> */}
+<LandingCollectionList {...props} />*/}
+      <LandingProfileList {...props} />
       <Leaderboard {...{ leaderContributors, pointSystem }} />
       {content}
     </div>
