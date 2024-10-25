@@ -1,6 +1,7 @@
 'use client'
 // import { ReactComponent as SearchIcon } from '../../assets/icons/search.svg'
-import SearchIconSVG from '../../lib/assets/icons/search.svg'
+// import SearchIconSVG from '../../lib/assets/icons/search.svg'
+import { ReactComponent as SearchIcon } from '../../lib/assets/icons/search.svg'
 // import Image from 'next/image'
 import { DetailedHTMLProps, InputHTMLAttributes, PropsWithChildren, ReactNode, useRef } from 'react'
 import { PrimaryButton, PrimaryButtonProps } from '../../atoms/PrimaryButton/PrimaryButton'
@@ -42,7 +43,6 @@ export default function Searchbox({
         onKeyDown={
           !inputProps.disabled
             ? e => {
-
                 triggerOnEnter && isEnterKeyEv(e) && triggerSearch()
                 inputProps.onKeyDown?.(e)
               }
@@ -53,10 +53,10 @@ export default function Searchbox({
       {triggerBtn && <TriggerButton {...(triggerBtn === true ? {} : triggerBtn)} />}
     </div>
   )
-  function SearchIcon() {
-    return <SearchIconSVG />
-    // return <Image src={SearchIconSVG} alt={t('Search')} />
-  }
+  // function SearchIcon() {
+  //   return <SearchIconSVG />
+  //   // return <Image src={SearchIconSVG} alt={t('Search')} />
+  // }
   function triggerSearch() {
     search(inputRef.current?.value ?? '??')
   }

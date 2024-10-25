@@ -6,10 +6,11 @@ import { useAssetUrl } from '../../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../../lib/client/user-levels/lib'
 import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { Card } from '../../../../ui/atoms/Card/Card'
-import LeafIcon from '../../../../ui/lib/assets/icons/leaf.svg'
+import { ReactComponent as LeafIcon } from '../../../../ui/lib/assets/icons/leaf.svg'
 import defaultAvatar from '../../../../ui/lib/assets/img/default-avatar.svg'
 import './Leaderboard.scss'
 
+console.dir({ LeafIcon }, { depth: 10, colors: true, showHidden: true, getters: true })
 export type leaderboardProps = {
   leaderContributors: contributorInfo[]
   pointSystem: pointSystem
@@ -41,7 +42,7 @@ function LeaderRow({
 }) {
   const profileUrl = sitepaths.profile[contributor.profileId]![contributor.urlSafeProfileName]!()
   const { pointAvatar, level } = getUserLevelDetails(pointSystem, contributor.points)
-  const [avatarUrl] = useAssetUrl(contributor.avatar, defaultAvatar.src)
+  const [avatarUrl] = useAssetUrl(contributor.avatar, defaultAvatar)
   return (
     <div key={position} className="contributor">
       <div className="contributor-head">

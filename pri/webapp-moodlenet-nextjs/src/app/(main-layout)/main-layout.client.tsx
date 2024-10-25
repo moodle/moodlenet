@@ -10,12 +10,12 @@ import { FloatingMenu, FloatingMenuContentItem } from '../../ui/atoms/FloatingMe
 import { PrimaryButton } from '../../ui/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../ui/atoms/Searchbox/Searchbox'
 import { TertiaryButton } from '../../ui/atoms/TertiaryButton/TertiaryButton'
-import ArrowsIcon from '../../ui/lib/assets/icons/arrows.svg'
+import { ReactComponent as ArrowsIcon } from '../../ui/lib/assets/icons/arrows.svg'
+// import ArrowsIcon from '../../ui/lib/assets/icons/arrows.svg'
 import { Href, clientSlotItem } from '../../lib/common/types'
 import { asset } from '@moodle/module/storage'
 import { useAssetUrl } from '../../lib/client/globalContexts'
-import defaultAvatar from '../../ui/lib/assets/img/default-avatar.png'
-
+import defaultAvatar from '../../ui/lib/assets/img/default-avatar.svg'
 export function LoginHeaderButton() {
   return (
     <Link href={sitepaths.login()} className="login-button access-button">
@@ -44,7 +44,7 @@ export function HeaderSearchbox() {
     <Searchbox
       {...{
         placeholder: t('Search for open educational content'),
-        search: console.error,
+        search: () => alert('search'),
         boxSize: 'small',
         triggerBtn: true,
       }}
@@ -57,12 +57,13 @@ export type ProfileLinkProps = {
   profileHref: Href
 }
 export function ProfileLink({ profileHref, avatar }: ProfileLinkProps) {
-  const [avatarUrl] = useAssetUrl(avatar, defaultAvatar.src)
+  const [avatarUrl] = useAssetUrl(avatar, defaultAvatar)
+
   return (
     <Link href={profileHref} className="avatar">
       <div
         style={{
-          backgroundImage: `url(${avatarUrl ?? defaultAvatar.src})`,
+          backgroundImage: `url(${avatarUrl})`,
           backgroundSize: 'cover',
           borderRadius: '50%',
           height: '28px',
@@ -129,10 +130,10 @@ export type AvatarMenuProps = {
 }
 
 export function AvatarMenu({ menuItems, avatar }: AvatarMenuProps) {
-  const [avatarUrl] = useAssetUrl(avatar, defaultAvatar.src)
+  const [avatarUrl] = useAssetUrl(avatar, defaultAvatar)
 
   const avatarStyle = {
-    backgroundImage: `url(${avatarUrl ?? defaultAvatar.src})`,
+    backgroundImage: `url(${avatarUrl})`,
     backgroundSize: 'cover',
   }
   const menuItemsElement = menuItems.map<FloatingMenuContentItem>(Element => ({

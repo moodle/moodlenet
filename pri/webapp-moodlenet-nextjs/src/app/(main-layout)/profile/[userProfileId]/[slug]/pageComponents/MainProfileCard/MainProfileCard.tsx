@@ -21,8 +21,8 @@ import { Snackbar } from '../../../../../../../ui/atoms/Snackbar/Snackbar'
 import { adoptProfileImage, updateProfileInfo } from '../../profile.server'
 import './MainProfileCard.scss'
 // import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
-import defaultAvatar from '../../../../../../../ui/lib/assets/img/default-avatar.png'
-import defaultBackground from '../../../../../../../ui/lib/assets/img/default-landing-background.png'
+import defaultAvatar from '../../../../../../../ui/lib/assets/img/default-avatar.svg'
+import defaultBackground from '../../../../../../../ui/lib/assets/img/default-background.svg'
 
 export type mainProfileCardProps = {
   userProfile: userProfileAccessObject
@@ -114,7 +114,7 @@ export function MainProfileCard({
             className={`background`}
             key="background"
             style={{
-              backgroundImage: 'url("' + (displayBackgroundSrc ?? defaultBackground.src) + '")',
+              backgroundImage: 'url("' + (displayBackgroundSrc ?? defaultBackground) + '")',
             }}
           />
         </div>
@@ -134,7 +134,7 @@ export function MainProfileCard({
           <div
             className={`avatar`}
             style={{
-              backgroundImage: 'url("' + (displayAvatarSrc ?? defaultAvatar.src) + '")',
+              backgroundImage: 'url("' + (displayAvatarSrc ?? defaultAvatar) + '")',
               // pointerEvents: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'inherit',
               // cursor: avatarForm.isSubmitting || !avatarForm.values.image ? 'auto' : 'pointer',
             }}

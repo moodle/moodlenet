@@ -6,7 +6,7 @@ import InfoOutlined from '@mui/icons-material/InfoOutlined'
 import { pointSystem } from 'domain/src/modules/moodlenet/types/point-system'
 import { Card } from '../../../../../../../ui/atoms/Card/Card'
 import { Modal } from '../../../../../../../ui/atoms/Modal/Modal'
-import LeafIcon from '../../../../../../../ui/lib/assets/icons/leaf.svg'
+import { ReactComponent as LeafIcon } from '../../../../../../../ui/lib/assets/icons/leaf.svg'
 import {
   actionsAndPointsObtained,
   getLevelDetails,

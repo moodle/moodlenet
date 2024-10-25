@@ -42,23 +42,23 @@ const xport = async (phase, context) => {
 
     // @ts-expect-error Parameter 'name' implicitly has an 'any' type.ts(7006)
     const fileLoaderRule = wpConfig.module.rules.find(rule => rule.test?.test?.('.svg'))
-    wpConfig.module.rules.push(
-      // Reapply the existing rule, but only for svg imports ending in ?url
-      {
-        ...fileLoaderRule,
-        test: /\.svg$/i,
-        resourceQuery: /url/, // *.svg?url
-      },
-      // Convert all other *.svg imports to React components
-      {
-        test: /\.svg$/i,
-        issuer: fileLoaderRule.issuer,
-        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
-        use: ['@svgr/webpack'],
-      },
-    )
-    // Modify the file loader rule to ignore *.svg, since we have it handled now.
-    fileLoaderRule.exclude = /\.svg$/i
+    // wpConfig.module.rules.push(
+    //   // Reapply the existing rule, but only for svg imports ending in ?url
+    //   {
+    //     ...fileLoaderRule,
+    //     test: /\.svg$/i,
+    //     resourceQuery: /url/, // *.svg?url
+    //   },
+    //   // Convert all other *.svg imports to React components
+    //   {
+    //     test: /\.svg$/i,
+    //     issuer: fileLoaderRule.issuer,
+    //     resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+    //     use: ['@svgr/webpack'],
+    //   },
+    // )
+    // // Modify the file loader rule to ignore *.svg, since we have it handled now.
+    // fileLoaderRule.exclude = /\.svg$/i
 
     //https://github.com/vercel/next.js/discussions/52690#discussioncomment-8235460
     // wpConfig.module.rules.push({
@@ -67,32 +67,32 @@ const xport = async (phase, context) => {
     // });
 
     // from v4
-    // wpConfig.module.rules.push({
-    //   test: /\.svg$/,
-    //   use: [
-    //     {
-    //       loader: require.resolve('@svgr/webpack'),
-    //       options: {
-    //         prettier: false,
-    //         svgo: false,
-    //         svgoConfig: {
-    //           plugins: [{ removeViewBox: false }],
-    //         },
-    //         titleProp: true,
-    //         ref: true,
-    //       },
-    //     },
-    //     {
-    //       loader: require.resolve('file-loader'),
-    //       options: {
-    //         name: 'static/media/[name].[hash].[ext]',
-    //       },
-    //     },
-    //   ],
-    //   issuer: {
-    //     and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
-    //   },
-    // },)
+    wpConfig.module.rules.push({
+      test: /\.svg$/,
+      use: [
+        {
+          loader: require.resolve('@svgr/webpack'),
+          options: {
+            prettier: false,
+            svgo: false,
+            svgoConfig: {
+              plugins: [{ removeViewBox: false }],
+            },
+            titleProp: true,
+            ref: true,
+          },
+        },
+        {
+          loader: require.resolve('file-loader'),
+          options: {
+            name: 'static/media/[name].[hash].[ext]',
+          },
+        },
+      ],
+      issuer: {
+        and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
+      },
+    },)
 
     return webpack?.(wpConfig, options)
   }
