@@ -26,7 +26,10 @@ export default async function LandingPageLayout(props: layoutPropsWithChildren) 
         <LandingHeadSearchbox />
         {head}
       </div>
-      <pre>{JSON.stringify(userSession, null, 2)}</pre>
+      {/* <LandingResourceList {...props} />
+<LandingCollectionList {...props} />
+<LandingProfileList {...props} /> */}
+      <Leaderboard {...props} />
       {content}
     </div>
   )
