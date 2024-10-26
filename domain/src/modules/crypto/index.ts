@@ -3,10 +3,9 @@ import { plain_password, signedToken, signedTokenOf, signedTokenType } from './t
 
 export default interface CryptoDomain {
   event: { crypto: unknown }
+  service: { crypto: unknown }
   primary: {
-    crypto: {
-      service?: unknown
-    }
+    crypto: unknown
   }
   secondary: {
     crypto: {

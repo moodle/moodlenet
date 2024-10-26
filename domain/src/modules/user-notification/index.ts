@@ -2,10 +2,9 @@ import { ok_ko } from '@moodle/lib-types'
 import { userNotification } from './types'
 export default interface UserNotificationDomain {
   event: { userNotification: unknown }
+  service: { userNotification: unknown }
   primary: {
-    userNotification: {
-      service?: unknown
-    }
+    userNotification: unknown
   }
   secondary: {
     userNotification: {

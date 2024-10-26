@@ -19,9 +19,9 @@ export type get_user_profile_by = d_u<
 >
 export default interface UserProfileDomain {
   event: { userProfile: unknown }
+  service: { userProfile: unknown }
   primary: {
     userProfile: {
-      service?: unknown
       session: {
         moduleInfo(): Promise<{ schemaConfigs: UserProfilePrimaryMsgSchemaConfigs }>
       }

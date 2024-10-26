@@ -5,9 +5,9 @@ export * from './types'
 
 export default interface OrgDomain {
   event: { org: unknown }
+  service: { org: unknown }
   primary: {
     org: {
-      service?: unknown
       session: {
         moduleInfo(): Promise<{ info: OrgInfo; schemaConfigs: OrgPrimaryMsgSchemaConfigs }>
       }

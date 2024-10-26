@@ -1,5 +1,5 @@
 import { http_bind } from '@moodle/bindings-node'
-import { moodlePrimary, moodleSessionPrimary, primarySession } from '@moodle/domain'
+import { moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { fsDirectories, generateFileHashes, getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
@@ -29,7 +29,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     export interface Request {
-      moodleSessionPrimary: moodleSessionPrimary
+      moodlePrimary: moodlePrimary
       moodlePrimarySession: primarySession
       moodleDirs: fsDirectories
     }
@@ -60,7 +60,7 @@ app.use(cookieParser()).use(async (req, _res, next) => {
   // const domainInfo = await ap.primary.env.domain.info()
   // console.log({ domainInfo, dirs: req.dirs })
   req.moodlePrimarySession = primarySession
-  req.moodleSessionPrimary = ap.primary
+  req.moodlePrimary = ap.primary
   next()
 })
 
@@ -94,11 +94,12 @@ const router = express
     if (req.params.type !== 'file' && req.params.type !== 'webImage') {
       res.status(404).end()
     }
-    const { userSession } = await req.moodleSessionPrimary.userAccount.session.getUserSession()
+    const { userSession } = await req.moodlePrimary.userAccount.session.getUserSession()
+
     if (userSession.type !== 'authenticated') {
       return res.status(401).send('UNAUTHORIZED')
     }
-    const { uploadMaxSizeConfigs } = await req.moodleSessionPrimary.storage.session.moduleInfo()
+    const { uploadMaxSizeConfigs } = await req.moodlePrimary.storage.session.moduleInfo()
     const fileSizeLimit = req.params.type === 'file' ? uploadMaxSizeConfigs.max : uploadMaxSizeConfigs.webImage
     const multerOptions: multer.Options = {
       limits: {

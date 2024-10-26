@@ -10,8 +10,8 @@ export type domainMsg = {
 }
 export type domainAccess = domainMsg & {
   primarySession?: primarySession
-  ctx_track?: ctxTrack
-  from?: path
+  callerContext?: ctxTrack
+  originEndpoint?: path
 }
 
 export type domainEndpoint = path

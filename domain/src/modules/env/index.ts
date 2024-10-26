@@ -5,9 +5,9 @@ export * from './types'
 
 export default interface EnvDomain {
   event: { env: unknown }
+  service: { env: unknown }
   primary: {
     env: {
-      service?: unknown
       domain: {
         info(): Promise<{ name: string }>
       }

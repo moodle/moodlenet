@@ -6,9 +6,9 @@ export * from './types'
 
 export default interface StorageDomain {
   event: { storage: unknown }
+  service: { storage: unknown }
   primary: {
     storage: {
-      service?: unknown
       session: {
         moduleInfo(): Promise<{ uploadMaxSizeConfigs: uploadMaxSizeConfigs }>
       }

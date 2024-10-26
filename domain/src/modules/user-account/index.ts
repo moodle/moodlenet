@@ -27,9 +27,11 @@ export * from './types'
 
 export default interface userAccountDomain {
   event: { userAccount: unknown }
+  service: {
+    userAccount: unknown
+  }
   primary: {
     userAccount: {
-      service?: unknown
       session: {
         getUserSession(): Promise<{ userSession: userSession }>
         generateUserSessionToken(_: {
@@ -71,7 +73,7 @@ export default interface userAccountDomain {
             authenticatedUser: d_u__d<userSession, 'type', 'authenticated'>
           }>
         >
-        logout(_: { sessionToken: signed_token }): Promise<void>
+        invalidateSessionToken(_: { sessionToken: signed_token }): Promise<void>
 
         resetPasswordRequest(_: { redirectUrl: url_string; declaredOwnEmail: email_address }): Promise<void>
       }

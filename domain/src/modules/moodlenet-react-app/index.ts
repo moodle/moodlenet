@@ -3,9 +3,9 @@ export * from './types'
 
 export default interface MoodlenetReactAppDomain {
   event: { moodlenetReactApp: unknown }
+  service: { moodlenetReactApp: unknown }
   primary: {
     moodlenetReactApp: {
-      service?: unknown
       webapp: {
         layouts(): Promise<Layouts>
       }

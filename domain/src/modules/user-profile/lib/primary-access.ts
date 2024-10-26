@@ -15,34 +15,34 @@ export async function accessUserProfile({
   if (!found) {
     return { result: 'notFound' }
   }
-  const { userProfileRecord: userProfile } = findResult
+  const { userProfileRecord } = findResult
   const currentUserSessionInfo = await validate_currentUserSessionInfo({ ctx })
-  const { info: profileInfo, id } = userProfile
-  const is_this_user_profile_contributor = userProfile.userAccount.roles.includes('contributor')
+
+  const is_this_user_profile_contributor = userProfileRecord.userAccount.roles.includes('contributor')
   if (!currentUserSessionInfo.authenticated) {
     if (!is_this_user_profile_contributor) {
       return { result: 'found', access: 'notAllowed' }
     } else {
       return {
-        id,
+        id: userProfileRecord.id,
         itsMe: false,
         result: 'found',
         access: 'allowed',
-        profileInfo,
+        profileInfo: userProfileRecord.info,
         permissions: _all_user_profile_permissions_disallowed,
         user: null,
         flags: { following: true },
         appData: {
-          urlSafeProfileName: userProfile.appData.urlSafeProfileName,
+          urlSafeProfileName: userProfileRecord.appData.urlSafeProfileName,
           moodlenet: {
-            featuredContent: userProfile.appData.moodlenet.featuredContent,
-            points: userProfile.appData.moodlenet.points,
+            featuredContent: userProfileRecord.appData.moodlenet.featuredContent,
+            points: userProfileRecord.appData.moodlenet.points,
             preferences: null,
             published: {
-              contributions: userProfile.appData.moodlenet.published.contributions,
+              contributions: userProfileRecord.appData.moodlenet.published.contributions,
             },
             stats: {
-              followersCount: userProfile.appData.moodlenet.stats.followersCount,
+              followersCount: userProfileRecord.appData.moodlenet.stats.followersCount,
             },
             suggestedContent: null,
           },
@@ -51,7 +51,7 @@ export async function accessUserProfile({
     }
   }
 
-  const its_me = currentUserSessionInfo.authenticated.user.id === userProfile.userAccount.id
+  const its_me = currentUserSessionInfo.authenticated.user.id === userProfileRecord.userAccount.id
   const current_user_is_admin = currentUserSessionInfo.authenticated.isAdmin
 
   const its_me_or_admin = its_me || current_user_is_admin
@@ -61,11 +61,11 @@ export async function accessUserProfile({
   }
 
   return {
-    id,
+    id: userProfileRecord.id,
     itsMe: its_me,
     result: 'found',
     access: 'allowed',
-    profileInfo,
+    profileInfo: userProfileRecord.info,
     permissions: {
       editProfile: its_me,
       follow: !its_me,
@@ -73,21 +73,21 @@ export async function accessUserProfile({
       sendMessage: !its_me,
       editRoles: !its_me && current_user_is_admin,
     },
-    user: its_me_or_admin ? userProfile.userAccount : null,
+    user: its_me_or_admin ? userProfileRecord.userAccount : null,
     flags: { following: !its_me },
     appData: {
-      urlSafeProfileName: userProfile.appData.urlSafeProfileName,
+      urlSafeProfileName: userProfileRecord.appData.urlSafeProfileName,
       moodlenet: {
-        featuredContent: userProfile.appData.moodlenet.featuredContent,
-        points: userProfile.appData.moodlenet.points,
-        preferences: its_me ? userProfile.appData.moodlenet.preferences : null,
+        featuredContent: userProfileRecord.appData.moodlenet.featuredContent,
+        points: userProfileRecord.appData.moodlenet.points,
+        preferences: its_me ? userProfileRecord.appData.moodlenet.preferences : null,
         published: {
-          contributions: userProfile.appData.moodlenet.published.contributions,
+          contributions: userProfileRecord.appData.moodlenet.published.contributions,
         },
         stats: {
-          followersCount: userProfile.appData.moodlenet.stats.followersCount,
+          followersCount: userProfileRecord.appData.moodlenet.stats.followersCount,
         },
-        suggestedContent: its_me ? userProfile.appData.moodlenet.suggestedContent : null,
+        suggestedContent: its_me ? userProfileRecord.appData.moodlenet.suggestedContent : null,
       },
     },
   }

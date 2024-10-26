@@ -20,7 +20,7 @@ export type loggerContext = {
   contextLayer: domainLayer
   endpoint?: domainEndpoint
 } & Pick<baseContext, 'domain' | 'id'> &
-  Pick<domainAccess, 'ctx_track' | 'from'>
+  Pick<domainAccess, 'callerContext' | 'originEndpoint'>
 
 export type loggerProvider = (_: loggerContext) => Logger
 export type Logger = (level: LogSeverity, ..._: _any[]) => void

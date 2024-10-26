@@ -22,6 +22,7 @@ import {
   secondaryContext,
   secondaryProvider,
   watchContext,
+  Logger,
 } from '../types'
 import { createMoodleDomainProxy } from './domain-proxy'
 export type configuration = {
@@ -98,10 +99,32 @@ export function provideDomainAccessDispatcher({
             : {}
         }),
       )
-      const primaryResult = await dispatchDomainMsg({ primary: domainPrimary }, current_domainAccess)
+      const primaryResult = await dispatchDomainMsg(
+        { primary: domainPrimary },
+        current_domainAccess,
+        currentDomainAccessContext.log,
+      )
       triggerWatchers({ result: primaryResult })
 
       return primaryResult
+    } else if (currentDomainAccessLayer === 'service') {
+      const domainService = mergePrimaryImplementations(
+        moduleCores.map(({ modName, service }) => {
+          return modName === currentDomainAccessModuleName
+            ? {
+                [modName]: service(currentDomainAccessContext),
+              }
+            : {}
+        }),
+      )
+      const serviceResult = await dispatchDomainMsg(
+        { service: domainService },
+        current_domainAccess,
+        currentDomainAccessContext.log,
+      )
+      triggerWatchers({ result: serviceResult })
+
+      return serviceResult
     } else if (currentDomainAccessLayer === 'event') {
       Promise.allSettled(
         moduleCores.map(async ({ modName, event }) => {
@@ -110,7 +133,9 @@ export function provideDomainAccessDispatcher({
           }
           const eventAccessContext = await generateAccessContext('event', modName as moodleModuleName, current_domainAccess)
           const eventListener = event(eventAccessContext)
-          return dispatchDomainMsg({ event: eventListener }, current_domainAccess, { graceful: true })
+          return dispatchDomainMsg({ event: eventListener }, current_domainAccess, eventAccessContext.log, {
+            graceful: true,
+          })
         }),
       ).catch(error => log('critical', { domainAccess: current_domainAccess }, error))
     } else if (currentDomainAccessLayer === 'secondary') {
@@ -118,7 +143,7 @@ export function provideDomainAccessDispatcher({
         secondaryProviders.map(provideSecondary => provideSecondary(currentDomainAccessContext)),
       )
 
-      const secondaryResult = await dispatchDomainMsg({ secondary }, current_domainAccess)
+      const secondaryResult = await dispatchDomainMsg({ secondary }, current_domainAccess, currentDomainAccessContext.log)
       triggerWatchers({ result: secondaryResult })
       return secondaryResult
     } else {
@@ -129,10 +154,10 @@ export function provideDomainAccessDispatcher({
     async function dispatchDomainMsg(
       impl: _any, // primaryImpl | secondaryAdapter | eventImpl | watchImpl
       domainMsg: domainMsg,
+      logMessage: Logger,
       opts?: { graceful?: boolean },
     ) {
       // mainLogger('debug', `dispatchMsg`, domainMsg.endpoint, domainMsg.payload)
-
       const endpoint = domainMsg.endpoint.reduce((currProp, currPathSegment) => currProp?.[currPathSegment], impl)
 
       if (typeof endpoint !== 'function') {
@@ -145,6 +170,7 @@ export function provideDomainAccessDispatcher({
       `
         throw TypeError(err_msg)
       }
+      logMessage //('debug', ':)')
       return endpoint(domainMsg.payload)
     }
     function triggerWatchers({ result }: { result: _any }) {
@@ -162,6 +188,7 @@ export function provideDomainAccessDispatcher({
               ...current_domainAccess,
               payload: [result, current_domainAccess.payload],
             },
+            watchContext.log,
             { graceful: true },
           )
         }),
@@ -187,19 +214,27 @@ export function provideDomainAccessDispatcher({
           domainAccess: {
             endpoint,
             payload,
-            ctx_track,
-            from: current_domainAccess?.endpoint,
+            callerContext: ctx_track,
+            originEndpoint: current_domainAccess?.endpoint,
             primarySession: current_domainAccess?.primarySession,
           },
         })
       },
     })
 
-    const track = current_domainAccess?.ctx_track
-    const from = current_domainAccess?.from
+    const callerContext = current_domainAccess?.callerContext
+    const originEndpoint = current_domainAccess?.originEndpoint
     const endpoint = current_domainAccess?.endpoint
     const primarySessionId = current_domainAccess?.primarySession?.id
-    const log = loggerProvider({ domain, id, from, ctx_track: track, contextLayer, endpoint, primarySessionId })
+    const log = loggerProvider({
+      domain,
+      id,
+      originEndpoint,
+      callerContext,
+      contextLayer,
+      endpoint,
+      primarySessionId,
+    })
     const accessContext: backgroundContext<modName> &
       primaryContext<modName> &
       eventContext<modName> &
@@ -207,8 +242,8 @@ export function provideDomainAccessDispatcher({
       secondaryContext = {
       domain,
       id,
-      track,
-      from,
+      track: callerContext,
+      from: originEndpoint,
       session: current_domainAccess?.primarySession as primarySession, // HACK : could be undefined - but this is a one-fit-all-context ;)
       emit: moodleDomainProxy.event,
       forward: moodleDomainProxy.primary,

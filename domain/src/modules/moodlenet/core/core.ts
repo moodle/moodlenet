@@ -4,6 +4,9 @@ import { assert_authorizeCurrentUserSessionWithRole } from '../../user-account/l
 
 export const moodlenet_core: moduleCore<'moodlenet'> = {
   modName: 'moodlenet',
+  service() {
+    return
+  },
   primary(ctx) {
     return {
       session: {

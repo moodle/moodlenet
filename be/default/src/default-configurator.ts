@@ -119,6 +119,9 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         storage_core,
         {
           modName: 'env',
+          service() {
+            return
+          },
           primary(ctx) {
             return {
               domain: {

@@ -14,6 +14,9 @@ import {
 
 export const userAccount_core: moduleCore<'userAccount'> = {
   modName: 'userAccount',
+  service() {
+    return
+  },
   primary(ctx) {
     return {
       session: {
@@ -230,7 +233,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           })
           return
         },
-        async logout(/* {sessionToken} */) {
+        async invalidateSessionToken(/* {sessionToken} */) {
           // TODO implement session_token invalidation
           //! -------------------------------------
           return

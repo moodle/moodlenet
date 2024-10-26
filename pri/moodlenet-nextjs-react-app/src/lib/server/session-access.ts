@@ -1,5 +1,5 @@
 import { http_bind } from '@moodle/bindings-node'
-import { MoodleDomain, moodlePrimary, moodleSessionPrimary, primarySession } from '@moodle/domain'
+import { MoodleDomain, moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { _any, map } from '@moodle/lib-types'
@@ -17,7 +17,7 @@ const MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_REACT_A
 const requestTarget = MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
 export const access = {
-  get primary(): moodleSessionPrimary {
+  get primary(): moodlePrimary {
     return _domainAccess().primary
   },
 }
@@ -99,13 +99,8 @@ function _domainAccess(): MoodleDomain {
   return moodle_domain
 }
 
-export async function getUserSession() {
-  const { userSession } = await access.primary.userAccount.session.getUserSession()
-  return userSession
-}
-
 export async function getAuthenticatedUserSessionOrRedirectToLogin() {
-  const maybe_authenticatedUserSession = await getUserSession()
+  const { userSession: maybe_authenticatedUserSession } = await access.primary.userAccount.session.getUserSession()
   if (isAuthenticatedUserSession(maybe_authenticatedUserSession)) {
     return maybe_authenticatedUserSession
   }

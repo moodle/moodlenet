@@ -1,6 +1,6 @@
 'use client'
 import { Trans } from 'react-i18next'
-import HatLogo from '../../lib/assets/icons/hat-moodle.svg'
+import { ReactComponent as HatLogo } from '../../lib/assets/icons/hat-moodle.svg'
 import './Fallback.scss'
 
 export function Fallback() {

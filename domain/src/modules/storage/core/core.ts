@@ -2,6 +2,9 @@ import { moduleCore } from '../../../types'
 
 export const storage_core: moduleCore<'storage'> = {
   modName: 'storage',
+  service() {
+    return
+  },
   startBackgroundProcess(ctx) {
     delStales()
     function delStales() {

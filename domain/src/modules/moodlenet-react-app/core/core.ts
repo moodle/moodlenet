@@ -2,6 +2,9 @@ import { moduleCore } from '../../../types'
 
 export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
   modName: 'moodlenetReactApp',
+  service() {
+    return
+  },
   primary(ctx) {
     return {
       webapp: {
