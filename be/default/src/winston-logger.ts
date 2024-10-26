@@ -46,7 +46,7 @@ export function createDefaultDomainLoggerProvider({ loggerConfigs }: { loggerCon
   const loggerProvider: loggerProvider = loggerContext => {
     const childLogger = winstonLogger.child(loggerContext)
     return (level, ...args) => {
-      const message = args.map((arg: unknown) => inspect(arg, { colors: true, depth: 8 })).join('\n')
+      const message = args.map((arg: unknown) => inspect(arg, { colors: true, depth: 8, })).join('\n')
       childLogger.log(level, message)
     }
   }

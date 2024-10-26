@@ -13,9 +13,9 @@ export default interface CryptoDomain {
       sync?: unknown
       query?: unknown
       service: {
-        hashPassword(_: { plainPassword: __redacted__<plain_password> }): Promise<{ passwordHash: string }>
+        hashPassword(_: { plainPassword: plain_password }): Promise<{ passwordHash: string }>
 
-        verifyPasswordHash(_: { plainPassword: __redacted__<plain_password>; passwordHash: string }): Promise<ok_ko<void>>
+        verifyPasswordHash(_: { plainPassword: plain_password; passwordHash: string }): Promise<ok_ko<void>>
 
         validateSignedToken<stt extends signedTokenType>(
           _: stt & {

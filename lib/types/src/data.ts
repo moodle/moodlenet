@@ -36,8 +36,12 @@ export type branded<type, b extends symbol /*  | string */> = BRAND<b> & type ex
 
 // redacted logging
 export const __redacted__key = '__redacted__'
-export function logRedact(obj: _any) {
+export function __redact_stringify__(obj: _any) {
   return JSON.stringify(obj, (key, value) => (key === __redacted__key ? '###__redacted__###' : value), 2)
+}
+
+export function __redact__(data: _any): _any {
+  return JSON.parse(__redact_stringify__(data))
 }
 export function __redacted__<t>(data: t): __redacted__<t> {
   return _unchecked_brand<__redacted__<t>>({ [__redacted__key]: data })

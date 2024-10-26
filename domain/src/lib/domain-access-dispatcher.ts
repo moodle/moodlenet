@@ -1,5 +1,5 @@
 import { generateUlid } from '@moodle/lib-id-gen'
-import { _any } from '@moodle/lib-types'
+import { __redact__, _any } from '@moodle/lib-types'
 import { merge } from 'lodash'
 import { inspect } from 'util'
 import {
@@ -170,7 +170,7 @@ export function provideDomainAccessDispatcher({
       `
         throw TypeError(err_msg)
       }
-      logMessage //('debug', ':)')
+      logMessage //('debug', ':)', domainMsg.payload ?? null)
       return endpoint(domainMsg.payload)
     }
     function triggerWatchers({ result }: { result: _any }) {
@@ -226,15 +226,16 @@ export function provideDomainAccessDispatcher({
     const originEndpoint = current_domainAccess?.originEndpoint
     const endpoint = current_domainAccess?.endpoint
     const primarySessionId = current_domainAccess?.primarySession?.id
-    const log = loggerProvider({
-      domain,
-      id,
-      originEndpoint,
-      callerContext,
-      contextLayer,
-      endpoint,
-      primarySessionId,
-    })
+    const log: Logger = (level, ...args) =>
+      loggerProvider({
+        domain,
+        id,
+        originEndpoint,
+        callerContext,
+        contextLayer,
+        endpoint,
+        primarySessionId,
+      })(level, ...args.map(__redact__))
     const accessContext: backgroundContext<modName> &
       primaryContext<modName> &
       eventContext<modName> &
