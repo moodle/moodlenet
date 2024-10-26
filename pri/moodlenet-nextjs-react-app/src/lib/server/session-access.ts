@@ -1,5 +1,5 @@
 import { http_bind } from '@moodle/bindings-node'
-import { MoodleDomain, primarySession } from '@moodle/domain'
+import { MoodleDomain, moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { _any, map } from '@moodle/lib-types'
@@ -17,7 +17,7 @@ const MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_REACT_A
 const requestTarget = MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
 export const access = {
-  get primary(): MoodleDomain['primary'] {
+  get primary(): moodlePrimary {
     return _domainAccess().primary
   },
 }

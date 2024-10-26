@@ -2,7 +2,7 @@ import { generateUlid } from '@moodle/lib-id-gen'
 import { _any } from '@moodle/lib-types'
 import { merge } from 'lodash'
 import { inspect } from 'util'
-import { moodleModuleName } from '../moodle-domain'
+import { moodleModuleName, moodleSecondary, moodlePrimary } from '../moodle-domain'
 import {
   backgroundContext,
   moduleCore,
@@ -13,7 +13,7 @@ import {
   eventContext,
   loggerProvider,
   messageDispatcher,
-  primary,
+  modPrimary,
   primaryContext,
   primarySession,
   secondaryAdapter,
@@ -33,10 +33,10 @@ export type domainAccessDispatcherProviderDeps = configuration & {
   feedbackDispatcher: messageDispatcher
 }
 
-export function mergeSecondaryAdapters(adapters: secondaryAdapter[]): secondaryAdapter {
+export function mergeSecondaryAdapters(adapters: secondaryAdapter[]): moodleSecondary {
   return merge({}, ...adapters)
 }
-export function mergePrimaryImplementations(primaryImpls: primary<_any>[]): primary<_any> {
+export function mergePrimaryImplementations(primaryImpls: modPrimary<_any>[]): moodlePrimary {
   return merge({}, ...primaryImpls)
 }
 

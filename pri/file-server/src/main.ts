@@ -1,13 +1,8 @@
 import { http_bind } from '@moodle/bindings-node'
-import { MoodleDomain, primarySession } from '@moodle/domain'
+import { moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
-import {
-  fsDirectories,
-  generateFileHashes,
-  getFsDirectories,
-  MOODLE_DEFAULT_HOME_DIR,
-} from '@moodle/lib-local-fs-storage'
+import { fsDirectories, generateFileHashes, getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
 import { uploaded_blob_meta } from '@moodle/module/storage'
 import { getSanitizedFileName } from '@moodle/module/storage/lib'
@@ -23,7 +18,10 @@ const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
 
 const MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL = process.env.MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL
-const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(process.cwd(), process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
+const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(
+  process.cwd(),
+  process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR,
+)
 
 const requestTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
@@ -31,7 +29,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     export interface Request {
-      moodlePrimary: MoodleDomain['primary']
+      moodleSessionPrimary: moodlePrimary
       moodlePrimarySession: primarySession
       moodleDirs: fsDirectories
     }
@@ -62,7 +60,7 @@ app.use(cookieParser()).use(async (req, _res, next) => {
   // const domainInfo = await ap.primary.env.domain.info()
   // console.log({ domainInfo, dirs: req.dirs })
   req.moodlePrimarySession = primarySession
-  req.moodlePrimary = ap.primary
+  req.moodleSessionPrimary = ap.primary
   next()
 })
 
@@ -96,11 +94,11 @@ const router = express
     if (req.params.type !== 'file' && req.params.type !== 'webImage') {
       res.status(404).end()
     }
-    const { userSession } = await req.moodlePrimary.userAccount.session.getUserSession()
+    const { userSession } = await req.moodleSessionPrimary.userAccount.session.getUserSession()
     if (userSession.type !== 'authenticated') {
       return res.status(401).send('UNAUTHORIZED')
     }
-    const { uploadMaxSizeConfigs } = await req.moodlePrimary.storage.session.moduleInfo()
+    const { uploadMaxSizeConfigs } = await req.moodleSessionPrimary.storage.session.moduleInfo()
     const fileSizeLimit = req.params.type === 'file' ? uploadMaxSizeConfigs.max : uploadMaxSizeConfigs.webImage
     const multerOptions: multer.Options = {
       limits: {

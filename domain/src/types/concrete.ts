@@ -1,5 +1,5 @@
 import { any_function, deep_partial, path } from '@moodle/lib-types'
-import { MoodleDomain, moodleEvent, moodleModuleName, moodlePrimary, moodleSecondary } from '../moodle-domain'
+import { MoodleDomain, moodleEvent, moodleModuleName, moodleSecondary, moodlePrimary } from '../moodle-domain'
 import { primarySession } from './access-session'
 import { Logger } from './log'
 
@@ -64,13 +64,13 @@ export type secondaryAdapter = deep_partial<moodleSecondary>
 
 export type moduleCore<mod extends moodleModuleName = never> = {
   modName: mod
-  primary: (primaryContext: primaryContext<mod>) => primary<mod>[mod]
+  primary: (primaryContext: primaryContext<mod>) => modPrimary<mod>[mod]
   event?: (eventContext: eventContext<mod>) => eventListener
   watch?: (watchContext: watchContext<mod>) => watcher
   startBackgroundProcess?: (bgContext: backgroundContext<mod>) => void | Promise<void>
 }
 
-export type primary<mod extends moodleModuleName = never> = {
+export type modPrimary<mod extends moodleModuleName = never> = {
   [_ in mod]: moodlePrimary[mod]
 }
 export type eventListener = deep_partial<moodleEvent>

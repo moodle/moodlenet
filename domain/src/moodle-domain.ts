@@ -12,6 +12,7 @@ import userNotification from './modules/user-notification'
 export type MoodleDomain = intersection<
   [{ version: '5.0' }, env, userAccount, moodlenet, moodlenetReactApp, org, storage, userProfile, crypto, userNotification]
 >
+
 export type moodlePrimary = MoodleDomain['primary']
 export type moodleModuleName = keyof moodlePrimary & keyof moodleSecondary
 export type moodleSecondary = MoodleDomain['secondary']

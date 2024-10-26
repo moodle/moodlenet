@@ -8,11 +8,7 @@ export default interface UserNotificationDomain {
       queue: unknown
       write: unknown
       sync: unknown
-      query: {
-        qqqenqueueNotificationToUser<userNotificationType extends userNotification>(_: {
-          data: userNotificationType
-        }): Promise<ok_ko<void, { userNotFound: unknown }>>
-      }
+      query: unknown
       service: {
         enqueueNotificationToUser<userNotificationType extends userNotification>(_: {
           data: userNotificationType

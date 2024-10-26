@@ -1,7 +1,7 @@
-import { MoodleDomain } from '..'
+import { moodlePrimary } from '..'
 import { getMoodlenetPrimarySchemas } from '../modules/env'
-import { getuserAccountPrimarySchemas } from '../modules/user-account'
 import { getOrgPrimarySchemas } from '../modules/org'
+import { getuserAccountPrimarySchemas } from '../modules/user-account'
 import { getUserProfilePrimarySchemas } from '../modules/user-profile'
 import { AllSchemaConfigs } from '../types'
 
@@ -19,7 +19,7 @@ export function makeAllPrimarySchemas({
   return { userAccount, moodlenet, org, userProfile, uploadMaxSizeConfigs }
 }
 
-export async function fetchAllSchemaConfigs({ primary }: { primary: MoodleDomain['primary'] }): Promise<AllSchemaConfigs> {
+export async function fetchAllSchemaConfigs({ primary }: { primary: moodlePrimary }): Promise<AllSchemaConfigs> {
   const [
     userAccountSchemaConfigs,
     userProfileSchemaConfigs,
@@ -42,7 +42,7 @@ export async function fetchAllSchemaConfigs({ primary }: { primary: MoodleDomain
   }
 }
 
-export async function fetchAllPrimarySchemas({ primary }: { primary: MoodleDomain['primary'] }) {
+export async function fetchAllPrimarySchemas({ primary }: { primary: moodlePrimary }) {
   const allSchemaConfigs = await fetchAllSchemaConfigs({ primary })
   return makeAllPrimarySchemas(allSchemaConfigs)
 }
