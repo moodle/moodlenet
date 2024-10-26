@@ -58,7 +58,12 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
     }: {
       data: userNotification
       orgInfo: OrgInfo
-    }): Promise<ok_ko<{ props: EmailLayoutContentProps; receiverEmail: email_address }, { userNotFound: unknown }>> {
+    }): Promise<
+      ok_ko<
+        { props: EmailLayoutContentProps; receiverEmail: email_address },
+        { userNotFound: unknown; unknownNotification: unknown }
+      >
+    > {
       const { name: siteName } = orgInfo
       if (data.module === 'userAccount') {
         if (data.type === 'signupWithEmailConfirmation') {
@@ -94,7 +99,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
           return [true, { receiverEmail, props: resetPasswordEmail({ resetPasswordUrl: data.resetPasswordUrl, siteName }) }]
         }
       }
-      throw new TypeError(`unknown data module|type ${data.module}|${data.type}`)
+      return [false, { reason: 'unknownNotification' }]
     }
   }
 }

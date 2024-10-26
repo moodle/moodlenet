@@ -13,7 +13,7 @@ export type MoodleDomain = intersection<
   [{ version: '5.0' }, env, userAccount, moodlenet, moodlenetReactApp, org, storage, userProfile, crypto, userNotification]
 >
 
+export type moodleModuleName = keyof moodlePrimary & keyof moodleSecondary & keyof moodleEvent
 export type moodlePrimary = MoodleDomain['primary']
-export type moodleModuleName = keyof moodlePrimary & keyof moodleSecondary
 export type moodleSecondary = MoodleDomain['secondary']
 export type moodleEvent = MoodleDomain['event']

@@ -12,7 +12,7 @@ export default interface UserNotificationDomain {
       service: {
         enqueueNotificationToUser<userNotificationType extends userNotification>(_: {
           data: userNotificationType
-        }): Promise<ok_ko<void, { userNotFound: unknown }>>
+        }): Promise<ok_ko<void, { userNotFound: unknown; unknownNotification: unknown }>>
       }
     }
   }
