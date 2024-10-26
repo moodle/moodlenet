@@ -10,7 +10,7 @@ export async function accessUserProfile({
 }: sessionLibDep & get_user_profile_by): Promise<
   d_u<{ found: access_obj<userProfileAccessObject>; notFound: unknown }, 'result'>
 > {
-  const [found, findResult] = await ctx.mod.userProfile.query.getUserProfile(by)
+  const [found, findResult] = await ctx.mod.secondary.userProfile.query.getUserProfile(by)
 
   if (!found) {
     return { result: 'notFound' }

@@ -14,7 +14,7 @@ export async function validateCurrentUserSession({ ctx }: sessionLibDep) {
   if (!ctx.session.token) {
     return guest_session
   }
-  const [valid, validation] = await ctx.mod.crypto.service.validateSignedToken({
+  const [valid, validation] = await ctx.mod.secondary.crypto.service.validateSignedToken({
     token: ctx.session.token,
     module: 'userAccount',
     type: 'userSession',
@@ -92,7 +92,7 @@ export async function generateSessionForUserAccountId({
   ctx: Pick<baseContext, 'mod'>
   userAccountId: userAccountId
 }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>> {
-  const [, userAccountRecord] = await ctx.mod.userAccount.query.userBy({ by: 'id', userAccountId })
+  const [, userAccountRecord] = await ctx.mod.secondary.userAccount.query.userBy({ by: 'id', userAccountId })
   if (!userAccountRecord) {
     return [false, { reason: 'userNotFound' }]
   }
@@ -112,8 +112,8 @@ export async function generateSessionForUserData({
 }): Promise<signed_expire_token> {
   const {
     configs: { tokenExpireTime },
-  } = await ctx.mod.env.query.modConfigs({ mod: 'userAccount' })
-  const session = await ctx.mod.crypto.service.signDataToken({
+  } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userAccount' })
+  const session = await ctx.mod.secondary.crypto.service.signDataToken({
     data: {
       module: 'userAccount',
       type: 'userSession',

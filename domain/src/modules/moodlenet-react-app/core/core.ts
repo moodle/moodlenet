@@ -8,7 +8,7 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
         async layouts() {
           const {
             configs: { layouts },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'moodlenetReactApp' })
+          } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenetReactApp' })
           return layouts
         },
       },

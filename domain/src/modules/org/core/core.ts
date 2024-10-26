@@ -8,13 +8,13 @@ export const org_core: moduleCore<'org'> = {
         async moduleInfo() {
           const {
             configs: { info, orgPrimaryMsgSchemaConfigs },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'org' })
+          } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'org' })
           return { info, schemaConfigs: orgPrimaryMsgSchemaConfigs }
         },
       },
       admin: {
         async updatePartialOrgInfo({ partialInfo }) {
-          return ctx.mod.env.service.updatePartialConfigs({
+          return ctx.mod.secondary.env.service.updatePartialConfigs({
             mod: 'org',
             partialConfigs: { info: partialInfo },
           })

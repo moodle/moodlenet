@@ -1,13 +1,17 @@
 import { ok_ko } from '@moodle/lib-types'
 import { userNotification } from './types'
 export default interface UserNotificationDomain {
-  event: unknown
-  primary: unknown
+  event: { userNotification: unknown }
+  primary: {
+    userNotification: {
+      service?: unknown
+    }
+  }
   secondary: {
     userNotification: {
-      write: unknown
-      sync: unknown
-      query: unknown
+      write?: unknown
+      sync?: unknown
+      query?: unknown
       service: {
         enqueueNotificationToUser<userNotificationType extends userNotification>(_: {
           data: userNotificationType

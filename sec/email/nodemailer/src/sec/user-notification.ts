@@ -49,7 +49,10 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
         {
           configs: { info: orgInfo },
         },
-      ] = await Promise.all([ctx.mod.env.query.deployments(), ctx.mod.env.query.modConfigs({ mod: 'org' })])
+      ] = await Promise.all([
+        ctx.mod.secondary.env.query.deployments(),
+        ctx.mod.secondary.env.query.modConfigs({ mod: 'org' }),
+      ])
       return { filestoreHttp, orgInfo }
     }
     async function getEmailLayoutProps({
@@ -79,7 +82,10 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
             },
           ]
         }
-        const [found, user] = await ctx.mod.userAccount.query.userBy({ userAccountId: data.toUserAccountId, by: 'id' })
+        const [found, user] = await ctx.mod.secondary.userAccount.query.userBy({
+          userAccountId: data.toUserAccountId,
+          by: 'id',
+        })
         if (!found) {
           ctx.log('warn', `User not found for id ${data.toUserAccountId}`)
           return [false, { reason: 'userNotFound' }]

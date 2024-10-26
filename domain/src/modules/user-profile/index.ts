@@ -21,6 +21,7 @@ export default interface UserProfileDomain {
   event: { userProfile: unknown }
   primary: {
     userProfile: {
+      service?: unknown
       session: {
         moduleInfo(): Promise<{ schemaConfigs: UserProfilePrimaryMsgSchemaConfigs }>
       }
@@ -41,7 +42,7 @@ export default interface UserProfileDomain {
   }
   secondary: {
     userProfile: {
-      service: unknown
+      service?: unknown
       sync: {
         userAccountExcerpt(_: { userAccountExcerpt: userAccountExcerpt }): Promise<ok_ko<void>>
       }

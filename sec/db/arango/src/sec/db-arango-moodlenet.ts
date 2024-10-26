@@ -27,9 +27,9 @@ export function moodlenet_secondary_factory({ dbStruct }: { dbStruct: dbStruct }
             return { contributors }
           },
         },
-        // service: secondaryCtx.mod.env.service,
-        // queue: secondaryCtx.mod.env.queue,
-        // write: secondaryCtx.mod.env.write,
+        // service: secondaryCtx.mod.secondary.env.service,
+        // queue: secondaryCtx.mod.secondary.env.queue,
+        // write: secondaryCtx.mod.secondary.env.write,
         // sync: secondaryCtx.mod.env
       },
     }

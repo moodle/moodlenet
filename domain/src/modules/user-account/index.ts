@@ -29,6 +29,7 @@ export default interface userAccountDomain {
   event: { userAccount: unknown }
   primary: {
     userAccount: {
+      service?: unknown
       session: {
         getUserSession(): Promise<{ userSession: userSession }>
         generateUserSessionToken(_: {
@@ -56,13 +57,12 @@ export default interface userAccountDomain {
           redirectUrl: url_string
         }): Promise<ok_ko<void, { userWithSameEmailExists: unknown }>>
 
-        createNewUserByEmailVerificationToken(_: { signupEmailVerificationToken: signed_token }): Promise<
+        createNewUserByEmailVerificationToken(_: {
+          signupEmailVerificationToken: signed_token
+        }): Promise<
           ok_ko<
             { userAccountId: userAccountId },
-            {
-              /* userWithThisEmailExists: unknown; */ invalidToken: unknown
-              unknown: unknown
-            }
+            { unknown: unknown; invalidToken: unknown /* userWithThisEmailExists: unknown; */ }
           >
         >
         login(_: { loginForm: loginForm }): Promise<
@@ -111,7 +111,7 @@ export default interface userAccountDomain {
           adminUserAccountId: userAccountId
         }): Promise<ok_ko<{ newRoles: userRole[]; oldRoles: userRole[] }>>
       }
-      service: unknown
+      service?: unknown
       // service: {
       //   hashPassword(_: { plainPassword: __redacted__<plain_password> }): Promise<{ passwordHash: string }>
 

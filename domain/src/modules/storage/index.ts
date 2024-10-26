@@ -8,6 +8,7 @@ export default interface StorageDomain {
   event: { storage: unknown }
   primary: {
     storage: {
+      service?: unknown
       session: {
         moduleInfo(): Promise<{ uploadMaxSizeConfigs: uploadMaxSizeConfigs }>
       }
@@ -15,7 +16,7 @@ export default interface StorageDomain {
   }
   secondary: {
     storage: {
-      service: unknown
+      service?: unknown
       sync: {
         createUserProfile(_: { userProfileId: userProfileId }): Promise<ok_ko<void>>
       }

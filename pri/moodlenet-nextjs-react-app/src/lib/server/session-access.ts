@@ -85,7 +85,7 @@ function _domainAccess(): MoodleDomain {
   //   )
   //   if (valid && !info.expired && info.expires.inSecs < 5 * 60) {
   //     !! VALIDATE IT BEFORE REFRESHING !!
-  //     ap.mod.userAccount_lib.session
+  //     ap.mod.secondary.userAccount_lib.session
   //       .generateSession({ userAccountId: info.userData.id })
   //       .then(([generated, session]) => {
   //         if (!generated) {

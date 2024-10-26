@@ -5,6 +5,7 @@ export default interface MoodlenetReactAppDomain {
   event: { moodlenetReactApp: unknown }
   primary: {
     moodlenetReactApp: {
+      service?: unknown
       webapp: {
         layouts(): Promise<Layouts>
       }
@@ -12,10 +13,10 @@ export default interface MoodlenetReactAppDomain {
   }
   secondary: {
     moodlenetReactApp: {
-      query: unknown
-      service: unknown
-      write: unknown
-      sync: unknown
+      query?: unknown
+      service?: unknown
+      write?: unknown
+      sync?: unknown
     }
   }
 }

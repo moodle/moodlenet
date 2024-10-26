@@ -2,13 +2,17 @@ import { __redacted__, ok_ko, signed_expire_token, signed_token, time_duration_s
 import { plain_password, signedToken, signedTokenOf, signedTokenType } from './types'
 
 export default interface CryptoDomain {
-  event: unknown
-  primary: unknown
+  event: { crypto: unknown }
+  primary: {
+    crypto: {
+      service?: unknown
+    }
+  }
   secondary: {
     crypto: {
-      write: unknown
-      sync: unknown
-      query: unknown
+      write?: unknown
+      sync?: unknown
+      query?: unknown
       service: {
         hashPassword(_: { plainPassword: __redacted__<plain_password> }): Promise<{ passwordHash: string }>
 

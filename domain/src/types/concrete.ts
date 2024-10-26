@@ -22,7 +22,12 @@ export type domainLayer = 'primary' | 'secondary' | 'background' | 'watch' | 'ev
 // }
 
 export type contextModuleAccess = {
-  [modName in keyof moodleSecondary]: Pick<moodleSecondary[modName], 'query' | 'service'>
+  secondary: {
+    [modName in keyof moodleSecondary]: Pick<moodleSecondary[modName], 'query' | 'service'>
+  }
+  primary: {
+    [modName in keyof moodlePrimary]: Pick<moodlePrimary[modName], 'service'>
+  }
 }
 
 export type ctxTrack = {
@@ -48,7 +53,7 @@ type coreContext<mod extends moodleModuleName = never> = baseContext & {
 export type backgroundContext<mod extends moodleModuleName = never> = coreContext<mod>
 
 export type primaryContext<mod extends moodleModuleName = never> = coreContext<mod> & {
-  forward: moodlePrimary
+  forward: moodleSessionPrimary
   session: primarySession
 } // & p_track<'primary'>
 

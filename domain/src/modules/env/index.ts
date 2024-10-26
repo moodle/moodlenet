@@ -7,6 +7,7 @@ export default interface EnvDomain {
   event: { env: unknown }
   primary: {
     env: {
+      service?: unknown
       domain: {
         info(): Promise<{ name: string }>
       }
@@ -17,8 +18,8 @@ export default interface EnvDomain {
   }
   secondary: {
     env: {
-      write: unknown
-      sync: unknown
+      write?: unknown
+      sync?: unknown
       query: {
         deployments(): Promise<appDeployments>
         getSysAdminInfo(): Promise<sys_admin_info>

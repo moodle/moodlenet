@@ -212,7 +212,7 @@ export function provideDomainAccessDispatcher({
       session: current_domainAccess?.primarySession as primarySession, // HACK : could be undefined - but this is a one-fit-all-context ;)
       emit: moodleDomainProxy.event,
       forward: moodleDomainProxy.primary,
-      mod: moodleDomainProxy.secondary,
+      mod: moodleDomainProxy,
       write: moodleDomainProxy.secondary[moduleName].write,
       sync: moodleDomainProxy.secondary[moduleName].sync,
       log,

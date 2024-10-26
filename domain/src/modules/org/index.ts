@@ -7,6 +7,7 @@ export default interface OrgDomain {
   event: { org: unknown }
   primary: {
     org: {
+      service?: unknown
       session: {
         moduleInfo(): Promise<{ info: OrgInfo; schemaConfigs: OrgPrimaryMsgSchemaConfigs }>
       }
@@ -20,9 +21,9 @@ export default interface OrgDomain {
       query: {
         moduleInfo(): Promise<{ info: OrgInfo; schemaConfigs: OrgPrimaryMsgSchemaConfigs }>
       }
-      service: unknown
-      write: unknown
-      sync: unknown
+      service?: unknown
+      write?: unknown
+      sync?: unknown
     }
   }
 }

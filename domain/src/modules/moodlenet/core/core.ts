@@ -15,7 +15,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
               publishedCategories,
               moodlenetPrimaryMsgSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs,
             },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'moodlenet' })
+          } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
           return {
             info,
             schemaConfigs: moodlenetPrimaryMsgSchemaConfigs,
@@ -35,7 +35,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
       },
       contributor: {
         async getLeaders({ amount }) {
-          const { contributors } = await ctx.mod.moodlenet.query.contributors({
+          const { contributors } = await ctx.mod.secondary.moodlenet.query.contributors({
             limit: amount,
             sort: ['points', 'DESC'],
           })
@@ -45,7 +45,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
       admin: {
         async updatePartialMoodlenetInfo({ partialInfo }) {
           assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' })
-          const [done] = await ctx.mod.env.service.updatePartialConfigs({
+          const [done] = await ctx.mod.secondary.env.service.updatePartialConfigs({
             mod: 'moodlenet',
             partialConfigs: { info: partialInfo },
           })

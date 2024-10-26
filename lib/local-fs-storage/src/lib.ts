@@ -199,7 +199,7 @@ export async function resizeTempImage({
   }
   const {
     configs: { webImageResizes },
-  } = await secondaryContext.mod.env.query.modConfigs({ mod: 'storage' })
+  } = await secondaryContext.mod.secondary.env.query.modConfigs({ mod: 'storage' })
   const resizeTo = webImageResizes[size]
   original_temp_file.temp_paths.file
 

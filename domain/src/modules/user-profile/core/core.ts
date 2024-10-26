@@ -18,7 +18,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
         async moduleInfo() {
           const {
             configs: { profileInfoPrimaryMsgSchemaConfigs },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'userProfile' })
+          } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userProfile' })
           return { schemaConfigs: profileInfoPrimaryMsgSchemaConfigs }
         },
       },
@@ -83,7 +83,10 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             return [false, { reason: 'unauthenticated' }]
           }
           const userAccountId = sessionInfo.authenticated.user.id
-          const [found, result] = await ctx.mod.userProfile.query.getUserProfile({ by: 'userAccountId', userAccountId })
+          const [found, result] = await ctx.mod.secondary.userProfile.query.getUserProfile({
+            by: 'userAccountId',
+            userAccountId,
+          })
           if (!found) {
             const errMsg = `couldn't find userProfile for userAccountId: ${userAccountId}, despite has authenticated sessionInfo`
             ctx.log('critical', errMsg, sessionInfo)

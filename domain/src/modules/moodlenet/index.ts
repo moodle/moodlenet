@@ -8,6 +8,7 @@ export default interface MoodlenetDomain {
   event: { moodlenet: unknown }
   primary: {
     moodlenet: {
+      service?: unknown
       session: {
         moduleInfo(): Promise<{
           info: moodlenetInfo
@@ -40,9 +41,9 @@ export default interface MoodlenetDomain {
           sort?: [by: 'points', dir?: 'ASC' | 'DESC']
         }): Promise<{ contributors: contributorInfo[] }>
       }
-      service: unknown
-      write: unknown
-      sync: unknown
+      service?: unknown
+      write?: unknown
+      sync?: unknown
     }
   }
 }

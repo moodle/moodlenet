@@ -76,7 +76,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
           async deleteStaleTemp() {
             const {
               configs: { tempFileMaxRetentionSeconds },
-            } = await ctx.mod.env.query.modConfigs({ mod: 'storage' })
+            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
             const tempFileMaxRetentionMilliseconds = tempFileMaxRetentionSeconds * 1000
             const { temp } = fsDirs
             const temp_dirs_or_whatever = await readdir(temp)

@@ -10,7 +10,7 @@ export const storage_core: moduleCore<'storage'> = {
         .deleteStaleTemp()
         .catch(e => ctx.log('warn', 'error deleteStaleTemp', e))
         .then(() =>
-          ctx.mod.env.query.modConfigs({ mod: 'storage' }).catch(e => {
+          ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' }).catch(e => {
             ctx.log('alert', 'error query modConfigs, defaulting tempFileMaxRetentionSeconds to 10 minutes', e)
             return { configs: { tempFileMaxRetentionSeconds: 10 * 60 } }
           }),
@@ -24,7 +24,7 @@ export const storage_core: moduleCore<'storage'> = {
         async moduleInfo() {
           const {
             configs: { uploadMaxSize },
-          } = await ctx.mod.env.query.modConfigs({ mod: 'storage' })
+          } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
           return { uploadMaxSizeConfigs: uploadMaxSize }
         },
       },

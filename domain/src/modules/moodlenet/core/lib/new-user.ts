@@ -11,7 +11,7 @@ export async function newUserAccountMoodlenetData(): Promise<userAccountMoodlene
 }
 
 export async function newUserProfileMoodlenetData({ ctx }: { ctx: baseContext }): Promise<userProfileMoodlenetData> {
-  const { configs } = await ctx.mod.env.query.modConfigs({ mod: 'moodlenet' })
+  const { configs } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
   const userProfileMoodlenetData: userProfileMoodlenetData = {
     featuredContent: [],
     points: { amount: configs.pointSystem.welcomePoints },
