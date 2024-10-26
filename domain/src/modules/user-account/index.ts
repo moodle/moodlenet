@@ -36,7 +36,6 @@ export default interface userAccountDomain {
         }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>>
         moduleInfo(): Promise<{ schemaConfigs: userAccountPrimaryMsgSchemaConfigs }>
       }
-
       admin: {
         editUserRoles(_: {
           userAccountId: userAccountId

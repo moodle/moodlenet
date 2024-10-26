@@ -1,8 +1,16 @@
 import { any_function, deep_partial, path } from '@moodle/lib-types'
-import { MoodleDomain, moodleEvent, moodleModuleName, moodleSecondary, moodlePrimary } from '../moodle-domain'
+import { MoodleDomain } from '../moodle-domain'
 import { primarySession } from './access-session'
 import { Logger } from './log'
 
+export type moodleModuleName = keyof moodlePrimary & keyof moodleSecondary & keyof moodleEvent
+export type moodlePrimary = MoodleDomain['primary']
+export type moodleSecondary = MoodleDomain['secondary']
+export type moodleEvent = MoodleDomain['event']
+
+export type moodleSessionPrimary = {
+  [modName in keyof moodlePrimary]: Omit<moodlePrimary[modName], 'service'>
+}
 type ctxId = string
 export type domainLayer = 'primary' | 'secondary' | 'background' | 'watch' | 'event'
 

@@ -2,8 +2,10 @@ import { generateUlid } from '@moodle/lib-id-gen'
 import { _any } from '@moodle/lib-types'
 import { merge } from 'lodash'
 import { inspect } from 'util'
-import { moodleModuleName, moodleSecondary, moodlePrimary } from '../moodle-domain'
 import {
+  moodleModuleName,
+  moodleSecondary,
+  moodlePrimary,
   backgroundContext,
   moduleCore,
   ctxTrack,

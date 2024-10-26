@@ -1,5 +1,5 @@
 import { http_bind } from '@moodle/bindings-node'
-import { moodlePrimary, primarySession } from '@moodle/domain'
+import { moodlePrimary, moodleSessionPrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { fsDirectories, generateFileHashes, getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
@@ -29,7 +29,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     export interface Request {
-      moodleSessionPrimary: moodlePrimary
+      moodleSessionPrimary: moodleSessionPrimary
       moodlePrimarySession: primarySession
       moodleDirs: fsDirectories
     }
