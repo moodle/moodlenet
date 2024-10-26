@@ -6,7 +6,6 @@ export default interface CryptoDomain {
   primary: unknown
   secondary: {
     crypto: {
-      queue: unknown
       write: unknown
       sync: unknown
       query: unknown

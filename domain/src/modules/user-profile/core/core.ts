@@ -12,6 +12,7 @@ import { createNewUserProfileData } from './lib/new-user-profile'
 export const user_profile_core: moduleCore<'userProfile'> = {
   modName: 'userProfile',
   primary(ctx) {
+    ctx.from
     return {
       session: {
         async moduleInfo() {
@@ -133,7 +134,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               if (!created) {
                 return
               }
-              ctx.queue.createUserProfile({ userProfileRecord: await createNewUserProfileData({ newUser, ctx }) })
+              ctx.write.createUserProfile({ userProfileRecord: await createNewUserProfileData({ newUser, ctx }) })
             },
 
             async setUserRoles([[done, result], { userAccountId }]) {

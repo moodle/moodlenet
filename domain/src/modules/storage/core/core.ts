@@ -34,7 +34,7 @@ export const storage_core: moduleCore<'storage'> = {
     return {
       secondary: {
         userProfile: {
-          queue: {
+          write: {
             async createUserProfile([[done], { userProfileRecord: userProfile }]) {
               if (!done) {
                 return

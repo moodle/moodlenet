@@ -12,7 +12,6 @@ export default interface MoodlenetReactAppDomain {
   }
   secondary: {
     moodlenetReactApp: {
-      queue: unknown
       query: unknown
       service: unknown
       write: unknown

@@ -50,8 +50,6 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               .catch(() => null)
             return updateResult?.new ? [true, _void] : [false, _void]
           },
-        },
-        queue: {
           async createUserProfile({ userProfileRecord: userProfile }) {
             const result = await dbStruct.data.coll.userProfile
               .save(userProfileRecord2userProfileDocument(userProfile))

@@ -94,7 +94,6 @@ export default interface userAccountDomain {
   }
   secondary: {
     userAccount: {
-      queue: unknown
       write: {
         saveNewUser(_: { newUser: userAccountRecord }): Promise<ok_ko<void>>
         setUserPassword(_: { userAccountId: userAccountId; newPasswordHash: string }): Promise<ok_ko<void>>

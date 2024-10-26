@@ -27,6 +27,7 @@ export type contextModuleAccess = {
 
 export type ctxTrack = {
   layer: domainLayer
+  module: moodleModuleName
   ctxId: ctxId
 }
 export type baseContext = {
@@ -42,7 +43,6 @@ export type modSecondary<mod extends moodleModuleName = never> = Pick<moodleSeco
 export type modEmitter<mod extends moodleModuleName = never> = Pick<moodleEvent, mod>[mod]
 type coreContext<mod extends moodleModuleName = never> = baseContext & {
   write: modSecondary<mod>['write']
-  queue: modSecondary<mod>['queue'] // NOTE: maybe remove it ? e.g.: for enqueuing notification send in "userNotification" I had to use "service" because it should be reachable by any module
   emit: modEmitter<mod>
 }
 export type backgroundContext<mod extends moodleModuleName = never> = coreContext<mod>

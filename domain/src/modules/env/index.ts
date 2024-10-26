@@ -17,7 +17,6 @@ export default interface EnvDomain {
   }
   secondary: {
     env: {
-      queue: unknown
       write: unknown
       sync: unknown
       query: {

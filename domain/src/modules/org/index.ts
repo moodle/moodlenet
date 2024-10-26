@@ -17,7 +17,6 @@ export default interface OrgDomain {
   }
   secondary: {
     org: {
-      queue: unknown
       query: {
         moduleInfo(): Promise<{ info: OrgInfo; schemaConfigs: OrgPrimaryMsgSchemaConfigs }>
       }

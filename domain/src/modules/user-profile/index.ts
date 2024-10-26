@@ -41,9 +41,6 @@ export default interface UserProfileDomain {
   }
   secondary: {
     userProfile: {
-      queue: {
-        createUserProfile(_: { userProfileRecord: userProfileRecord }): Promise<ok_ko<void>>
-      }
       service: unknown
       sync: {
         userAccountExcerpt(_: { userAccountExcerpt: userAccountExcerpt }): Promise<ok_ko<void>>
@@ -54,6 +51,7 @@ export default interface UserProfileDomain {
         ): Promise<ok_ko<{ userProfileRecord: userProfileRecord }, { notFound: unknown }>>
       }
       write: {
+        createUserProfile(_: { userProfileRecord: userProfileRecord }): Promise<ok_ko<void>>
         updatePartialProfileInfo(_: {
           userProfileId: userProfileId
           partialProfileInfo: deep_partial_props<profileInfo>

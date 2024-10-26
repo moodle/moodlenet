@@ -15,7 +15,6 @@ export default interface StorageDomain {
   }
   secondary: {
     storage: {
-      queue: unknown
       service: unknown
       sync: {
         createUserProfile(_: { userProfileId: userProfileId }): Promise<ok_ko<void>>

@@ -41,7 +41,6 @@ export default interface MoodlenetDomain {
         }): Promise<{ contributors: contributorInfo[] }>
       }
       service: unknown
-      queue: unknown
       write: unknown
       sync: unknown
     }

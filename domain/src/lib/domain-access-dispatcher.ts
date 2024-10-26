@@ -180,6 +180,7 @@ export function provideDomainAccessDispatcher({
       ctrl({ domainMsg: { endpoint, payload } }) {
         const ctx_track: ctxTrack = {
           ctxId: id,
+          module: moduleName,
           layer: contextLayer,
         }
         return feedbackDispatcher({
@@ -213,7 +214,6 @@ export function provideDomainAccessDispatcher({
       forward: moodleDomainProxy.primary,
       mod: moodleDomainProxy.secondary,
       write: moodleDomainProxy.secondary[moduleName].write,
-      queue: moodleDomainProxy.secondary[moduleName].queue,
       sync: moodleDomainProxy.secondary[moduleName].sync,
       log,
     }

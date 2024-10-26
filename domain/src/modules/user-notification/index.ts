@@ -5,7 +5,6 @@ export default interface UserNotificationDomain {
   primary: unknown
   secondary: {
     userNotification: {
-      queue: unknown
       write: unknown
       sync: unknown
       query: unknown
