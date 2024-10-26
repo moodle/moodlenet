@@ -18,7 +18,7 @@ export const moodlenet_react_app_default_configs: Configs = {
         methods: [
           {
             label: ['html', 'Email and password'],
-            panel: ['slot', 'login-email-pwd'],
+            panel: ['plugin', 'login-email-pwd'],
           },
         ],
       },
@@ -26,7 +26,7 @@ export const moodlenet_react_app_default_configs: Configs = {
         methods: [
           {
             label: ['html', 'Email and password'],
-            panel: ['slot', 'signup-email-pwd'],
+            panel: ['plugin', 'signup-email-pwd'],
           },
         ],
         slots: {

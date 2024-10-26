@@ -25,7 +25,7 @@ export function slotItem(
   //_default: ReactElement = <>{`SHOULD NEVER HAPPEN: NO SLOT ITEM for [${item}]`}</>,
 ) {
   switch (type) {
-    case 'slot':
+    case 'plugin':
       return (() => {
         const camelCaseSlotName = item.replace(/-([a-z])/g, g => (g[1] ? g[1].toUpperCase() : ''))
         const slot = props[camelCaseSlotName]
