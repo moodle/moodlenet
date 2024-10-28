@@ -9,7 +9,7 @@ export const moodlenet_default_configs: configs = {
     subtitle: 'Find, share and curate open educational resources',
   },
   moodlenetPrimaryMsgSchemaConfigs: {
-    info: {
+    siteInfo: {
       subtitle: { max: 200, min: 3 },
       title: { max: 100, min: 3 },
     },
@@ -77,10 +77,10 @@ export const moodlenet_default_configs: configs = {
     ],
   },
   publishedCategories: {
-    eduIscedFields: { id: eduIscedFieldsSetup.filter(({ codePath }) => codePath.length === 3).map(({ id }) => id) },
-    eduIscedLevels: { id: eduIscedLevelsSetup.map(({ id }) => id) },
-    eduResourceTypes: { id: eduResourceTypesSetup.map(({ id }) => id) },
-    contentLanguages: { id: contentLanguages_iso_639_3_Setup.filter(({ part1 }) => !!part1).map(({ id }) => id) },
-    contentLicenses: { id: contentLicensesSetup.map(({ id }) => id) },
+    eduIscedFields: { id: eduIscedFieldsSetup.filter(({ codePath }) => codePath.length === 3).map(({ code: id }) => id) },
+    eduIscedLevels: { id: eduIscedLevelsSetup.map(({ code: id }) => id) },
+    eduResourceTypes: { id: eduResourceTypesSetup.map(({ code: id }) => id) },
+    contentLanguages: { id: contentLanguages_iso_639_3_Setup.filter(({ part1 }) => !!part1).map(({ code: id }) => id) },
+    contentLicenses: { id: contentLicensesSetup.map(({ code: id }) => id) },
   },
 }

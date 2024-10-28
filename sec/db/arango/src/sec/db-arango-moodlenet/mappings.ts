@@ -1,4 +1,4 @@
-import { contributorInfo } from 'domain/src/modules/moodlenet/types/contributor'
+import { contributorInfo } from 'domain/src/modules/moodlenet/types/moodlenet-contributor'
 import { userProfileDocument, userProfileDocument2userProfileRecord } from '../user-profile-db'
 
 export function userProfileDocument2ContributorInfo(userProfileDocument: userProfileDocument): contributorInfo {

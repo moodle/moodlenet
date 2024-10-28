@@ -1,6 +1,5 @@
 import type { d_u, date_time_string, email_address, time_duration_string } from '@moodle/lib-types'
 import { password_hash } from '../../crypto/types'
-import { userAccountMoodlenetData, userModerations } from '../../moodlenet/types/moderation'
 
 // NOTE: roles will eventually be per-subsystem . e.g. export type userRole = 'moodle.net.admin' | 'moodle.net.contributor'
 export type userRole = 'admin' | 'contributor'
@@ -29,9 +28,6 @@ export type userAccountRecord = {
         reason: userDeactivationReason
         date: date_time_string
       }
-  appData: {
-    moodlenet: userAccountMoodlenetData
-  }
 }
 
 export type userDeactivationReason = d_u<

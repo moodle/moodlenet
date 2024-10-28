@@ -7,7 +7,7 @@ import { eduIscedLevelRecord } from '../types'
 
 export const eduIscedLevelsSetup = _eduIscedLevelsSetup().map<eduIscedLevelRecord>(record => ({
   ...record,
-  id: record.codePath.join(''),
+  code: record.codePath.join(''),
 }))
 
 function _eduIscedLevelsSetup(): Omit<eduIscedLevelRecord, 'id'>[] {

@@ -2,87 +2,87 @@ import { eduResourceTypeRecord } from '../types'
 
 export const eduResourceTypesSetup: eduResourceTypeRecord[] = [
   {
-    id: 'assessment',
+    code: 'assessment',
     description: 'Assessment',
   },
   {
-    id: 'concept-map',
+    code: 'concept-map',
     description: 'Concept map',
   },
   {
-    id: 'course',
+    code: 'course',
     description: 'Course',
   },
   {
-    id: 'curriculum',
+    code: 'curriculum',
     description: 'Curriculum',
   },
   {
-    id: 'data-set',
+    code: 'data-set',
     description: 'Data set',
   },
   {
-    id: 'experiment',
+    code: 'experiment',
     description: 'Experiment',
   },
   {
-    id: 'game',
+    code: 'game',
     description: 'Game',
   },
   {
-    id: 'glossary',
+    code: 'glossary',
     description: 'Glossary',
   },
   {
-    id: 'graph',
+    code: 'graph',
     description: 'Graph',
   },
   {
-    id: 'guides-and-tutorials',
+    code: 'guides-and-tutorials',
     description: 'Guides and Tutorials',
   },
   {
-    id: 'interactive-learning-object',
+    code: 'interactive-learning-object',
     description: 'Interactive learning object',
   },
   {
-    id: 'map',
+    code: 'map',
     description: 'Map',
   },
   {
-    id: 'online-courses-site',
+    code: 'online-courses-site',
     description: 'Online courses site',
   },
   {
-    id: 'project',
+    code: 'project',
     description: 'Project',
   },
   {
-    id: 'questionnaire',
+    code: 'questionnaire',
     description: 'Questionnaire',
   },
   {
-    id: 'reading',
+    code: 'reading',
     description: 'Reading',
   },
   {
-    id: 'references',
+    code: 'references',
     description: 'References',
   },
   {
-    id: 'report',
+    code: 'report',
     description: 'Report',
   },
   {
-    id: 'repository',
+    code: 'repository',
     description: 'Repository',
   },
   {
-    id: 'simulation',
+    code: 'simulation',
     description: 'Simulation',
   },
   {
-    id: 'unit-of-study',
+    code: 'unit-of-study',
     description: 'Unit of study',
   },
 ]

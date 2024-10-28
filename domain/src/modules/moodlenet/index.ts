@@ -1,6 +1,6 @@
 import { deep_partial_props, ok_ko } from '@moodle/lib-types'
-import { moodlenetInfo, MoodlenetPrimaryMsgSchemaConfigs, publishedCategories } from './types'
-import { contributorInfo } from './types/contributor'
+import { moodlenetInfo, MoodlenetPrimaryMsgSchemaConfigs } from './types'
+import { accessMoodlenetContributor, moodlenetContributorId, moodlenetUserRecord } from './types/moodlenet-contributor'
 import { pointSystem } from './types/point-system'
 export * from './types'
 
@@ -14,11 +14,15 @@ export default interface MoodlenetDomain {
           info: moodlenetInfo
           schemaConfigs: MoodlenetPrimaryMsgSchemaConfigs
           pointSystem: pointSystem
-          publishedCategories: publishedCategories
         }>
       }
       contributor: {
-        getLeaders({ amount }: { amount?: number }): Promise<{ leaderContributors: contributorInfo[] }>
+        getLeaders({ amount }: { amount?: number }): Promise<{ leaderContributors: accessMoodlenetContributor[] }>
+        getById({
+          moodlenetContributorId,
+        }: {
+          moodlenetContributorId: moodlenetContributorId
+        }): Promise<ok_ko<{ accessMoodlenetContributor: accessMoodlenetContributor }, { notAccessible: unknown }>>
       }
       admin: {
         updatePartialMoodlenetInfo({ partialInfo }: { partialInfo: deep_partial_props<moodlenetInfo> }): Promise<ok_ko<void>>
@@ -39,7 +43,7 @@ export default interface MoodlenetDomain {
           limit?: number
           skip?: number
           sort?: [by: 'points', dir?: 'ASC' | 'DESC']
-        }): Promise<{ contributors: contributorInfo[] }>
+        }): Promise<{ moodlenetContributorRecord: moodlenetUserRecord[] }>
       }
       service?: unknown
       write?: unknown

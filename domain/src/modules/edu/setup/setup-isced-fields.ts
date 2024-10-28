@@ -5,7 +5,10 @@ import { eduIscedFieldRecord } from '../types'
 // @ts-nocheck: because is raw data and it's massive, it will slowdown ts
 // @ts-ignore: because is raw data and it's massive, it will slowdown ts
 
-export const eduIscedFieldsSetup = _eduIscedFieldsSetup().map<eduIscedFieldRecord>((record) => ({...record, id: record.codePath.join('')}))
+export const eduIscedFieldsSetup = _eduIscedFieldsSetup().map<eduIscedFieldRecord>(record => ({
+  ...record,
+  code: record.codePath.join(''),
+}))
 
 function _eduIscedFieldsSetup(): Omit<eduIscedFieldRecord, 'id'>[] {return  [
   {

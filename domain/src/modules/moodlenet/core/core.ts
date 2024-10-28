@@ -12,18 +12,12 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
       session: {
         async moduleInfo() {
           const {
-            configs: {
-              info,
-              pointSystem,
-              publishedCategories,
-              moodlenetPrimaryMsgSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs,
-            },
+            configs: { info, pointSystem, moodlenetPrimaryMsgSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs },
           } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
           return {
             info,
             schemaConfigs: moodlenetPrimaryMsgSchemaConfigs,
             pointSystem,
-            publishedCategories,
           }
         },
       },
@@ -38,7 +32,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
       },
       contributor: {
         async getLeaders({ amount }) {
-          const { contributors } = await ctx.mod.secondary.moodlenet.query.contributors({
+          const { moodlenetContributorRecord } = await ctx.mod.secondary.moodlenet.query.contributors({
             limit: amount,
             sort: ['points', 'DESC'],
           })
