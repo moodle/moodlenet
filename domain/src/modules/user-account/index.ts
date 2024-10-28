@@ -1,6 +1,5 @@
 import type {
   d_u,
-  d_u__d,
   date_time_string,
   email_address,
   ok_ko,
@@ -12,13 +11,13 @@ import type {
 
 import type {
   changePasswordForm,
-  userAccountPrimaryMsgSchemaConfigs,
   loginForm,
   resetPasswordForm,
   signupForm,
-  userDeactivationReason,
   userAccountId,
+  userAccountPrimaryMsgSchemaConfigs,
   userAccountRecord,
+  userDeactivationReason,
   userRole,
   userSession,
 } from './types'
@@ -28,17 +27,14 @@ export * from './types'
 export default interface userAccountDomain {
   event: { userAccount: unknown }
   service: {
-    userAccount: unknown
+    userAccount: {
+      generateUserSessionToken(_: {
+        userAccountId: userAccountId
+      }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown; profileNotFound: unknown }>>
+    }
   }
   primary: {
     userAccount: {
-      session: {
-        getUserSession(): Promise<{ userSession: userSession }>
-        generateUserSessionToken(_: {
-          userAccountId: userAccountId
-        }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>>
-        moduleInfo(): Promise<{ schemaConfigs: userAccountPrimaryMsgSchemaConfigs }>
-      }
       admin: {
         editUserRoles(_: {
           userAccountId: userAccountId
@@ -53,11 +49,15 @@ export default interface userAccountDomain {
         }): Promise<ok_ko<void, { userNotFound: unknown }>>
       }
 
-      access: {
-        signupRequest(_: {
-          signupForm: signupForm
-          redirectUrl: url_string
-        }): Promise<ok_ko<void, { userWithSameEmailExists: unknown }>>
+      signedTokenAccess: {
+        confirmSelfDeletionRequest(_: {
+          selfDeletionConfirmationToken: signed_token
+          reason: string
+        }): Promise<ok_ko<void, { invalidToken: unknown; unknownUser: unknown; unknown: unknown }>>
+
+        resetPassword(_: {
+          resetPasswordForm: resetPasswordForm
+        }): Promise<ok_ko<void, { invalidToken: unknown; userNotFound: unknown; unknown: unknown }>>
 
         createNewUserByEmailVerificationToken(_: {
           signupEmailVerificationToken: signed_token
@@ -67,28 +67,34 @@ export default interface userAccountDomain {
             { unknown: unknown; invalidToken: unknown /* userWithThisEmailExists: unknown; */ }
           >
         >
+      }
+
+      anyUser: {
+        getUserSession(): Promise<{ userSession: userSession }>
+        moduleInfo(): Promise<{ schemaConfigs: userAccountPrimaryMsgSchemaConfigs }>
+      }
+
+      unauthenticated: {
+        signupRequest(_: {
+          signupForm: signupForm
+          redirectUrl: url_string
+        }): Promise<ok_ko<void, { userWithSameEmailExists: unknown }>>
+
         login(_: { loginForm: loginForm }): Promise<
           ok_ko<{
-            session: signed_expire_token
-            authenticatedUser: d_u__d<userSession, 'type', 'authenticated'>
+            sessionToken: signed_expire_token
           }>
         >
-        invalidateSessionToken(_: { sessionToken: signed_token }): Promise<void>
 
         resetPasswordRequest(_: { redirectUrl: url_string; declaredOwnEmail: email_address }): Promise<void>
       }
 
-      myAccount: {
+      authenticated: {
+        invalidateSession(): Promise<void>
+
+        get(): Promise<userAccountRecord>
+
         selfDeletionRequest(_: { redirectUrl: url_string }): Promise<void>
-
-        confirmSelfDeletionRequest(_: {
-          selfDeletionConfirmationToken: signed_token
-          reason: string
-        }): Promise<ok_ko<void, { invalidToken: unknown; unknownUser: unknown; unknown: unknown }>>
-
-        resetPassword(_: {
-          resetPasswordForm: resetPasswordForm
-        }): Promise<ok_ko<void, { invalidToken: unknown; userNotFound: unknown; unknown: unknown }>>
 
         changePassword(_: changePasswordForm): Promise<ok_ko<void, { wrongCurrentPassword: unknown; unknown: unknown }>>
       }

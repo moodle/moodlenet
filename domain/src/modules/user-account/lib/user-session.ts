@@ -1,5 +1,14 @@
 import { d_u__d } from '@moodle/lib-types'
-import { AuthenticatedUserSession, userAccountRecord, userRole, userSession, userSessionData } from '../types'
+import {
+  AuthenticatedUserSession,
+  profileSessionData,
+  userAccountRecord,
+  userRole,
+  userSession,
+  userSessionData,
+  userSessionInfo,
+} from '../types'
+import { userProfileRecord } from '../../user-profile'
 
 export function hasUserSessionRole(
   userSession: userSession,
@@ -29,26 +38,9 @@ export function isAuthenticatedUserSession(
 export function isGuestUserSession(userSession: userSession): userSession is d_u__d<userSession, 'type', 'guest'> {
   return userSession.type === 'guest'
 }
-;``
-//
-export function userAccountRecord2SessionUserData(
-  userAccountRecord: Pick<userAccountRecord, keyof userSessionData>,
-): userSessionData {
-  return {
-    id: userAccountRecord.id,
-    roles: userAccountRecord.roles,
-    contacts: userAccountRecord.contacts,
-  }
-}
 
-export function userSessionInfo(userSession: userSession): {
-  authenticated:
-    | false
-    | (AuthenticatedUserSession & {
-        isAdmin: boolean
-        // isContributor: boolean
-      })
-} {
+
+export function userSessionInfo(userSession: userSession): userSessionInfo {
   if (userSession.type === 'guest') {
     return { authenticated: false }
   }

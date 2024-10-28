@@ -1,7 +1,11 @@
-import { deep_partial_props, ok_ko } from '@moodle/lib-types'
-import { moodlenetInfo, MoodlenetPrimaryMsgSchemaConfigs } from './types'
-import { accessMoodlenetContributor, moodlenetContributorId, moodlenetUserRecord } from './types/moodlenet-contributor'
-import { pointSystem } from './types/point-system'
+import { deep_partial_props, found_access_obj, ok_ko } from '@moodle/lib-types'
+import { currentMoodlenetSessionData, moodlenetInfo, moodlenetPrimaryMsgSchemaConfigs, pointSystem } from './types'
+import {
+  moodlenetContributorAccessObject,
+  moodlenetContributorId,
+  moodlenetContributorMinimalInfo,
+  moodlenetContributorRecord,
+} from './types/moodlenet-contributor'
 export * from './types'
 
 export default interface MoodlenetDomain {
@@ -12,42 +16,48 @@ export default interface MoodlenetDomain {
       session: {
         moduleInfo(): Promise<{
           info: moodlenetInfo
-          schemaConfigs: MoodlenetPrimaryMsgSchemaConfigs
+          schemaConfigs: moodlenetPrimaryMsgSchemaConfigs
           pointSystem: pointSystem
         }>
+        getMySessionUserRecords(): Promise<currentMoodlenetSessionData>
       }
       contributor: {
-        getLeaders({ amount }: { amount?: number }): Promise<{ leaderContributors: accessMoodlenetContributor[] }>
+        getLeaders({ amount }: { amount?: number }): Promise<{ leaderContributors: moodlenetContributorMinimalInfo[] }>
         getById({
           moodlenetContributorId,
         }: {
           moodlenetContributorId: moodlenetContributorId
-        }): Promise<ok_ko<{ accessMoodlenetContributor: accessMoodlenetContributor }, { notAccessible: unknown }>>
+        }): Promise<found_access_obj<moodlenetContributorAccessObject>>
       }
       admin: {
         updatePartialMoodlenetInfo({ partialInfo }: { partialInfo: deep_partial_props<moodlenetInfo> }): Promise<ok_ko<void>>
-      }
-      content: {
-        getSuggestedContent(): Promise<{ suggestions: unknown /* suggestedContent[] */ }>
       }
     }
   }
   secondary: {
     moodlenet: {
+      write: {
+        createMoodlenetContributor(moodlenetContributorRecord: moodlenetContributorRecord): Promise<void>
+      }
       query: {
         contributors({
-          limit,
-          skip,
+          range,
           sort,
+          //filters
         }: {
-          limit?: number
-          skip?: number
+          range: [limit: number, skip?: number]
           sort?: [by: 'points', dir?: 'ASC' | 'DESC']
-        }): Promise<{ moodlenetContributorRecord: moodlenetUserRecord[] }>
+          //filters?: queryContributorFilter[]
+        }): Promise<{ moodlenetContributorRecords: moodlenetContributorRecord[] }>
+        contributorById({
+          id,
+        }: {
+          id: moodlenetContributorId
+        }): Promise<ok_ko<{ moodlenetContributorRecord: moodlenetContributorRecord }, { notFound: unknown }>>
       }
       service?: unknown
-      write?: unknown
       sync?: unknown
     }
   }
 }
+//type queryContributorFilter = d_u<{ access: { levels: moodlenetContributorAccess['level'][] } }, 'type'>

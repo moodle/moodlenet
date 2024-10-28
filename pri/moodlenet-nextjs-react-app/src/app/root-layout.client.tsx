@@ -1,13 +1,13 @@
 'use client'
 
+import { webappGlobalCtx } from '@moodle/module/moodlenet-react-app'
 import { PropsWithChildren } from 'react'
 import { GlobalCtx } from '../lib/client/globalContexts'
 
-export type GlobalProviderDeps = Pick<GlobalCtx, keyof GlobalCtx>
 
-export function GlobalProvider({
+export function GlobalContextProvider({
   children,
-  ctxDeps,
-}: PropsWithChildren<{ ctxDeps: GlobalProviderDeps }>) {
-  return <GlobalCtx.Provider value={{ ...ctxDeps }}>{children}</GlobalCtx.Provider>
+  webappGlobalCtx,
+}: PropsWithChildren<{ webappGlobalCtx: webappGlobalCtx }>) {
+  return <GlobalCtx.Provider value={webappGlobalCtx}>{children}</GlobalCtx.Provider>
 }

@@ -1,4 +1,4 @@
-import type { Layouts } from './types'
+import type { Layouts, webappGlobalCtx } from './types'
 export * from './types'
 
 export default interface MoodlenetReactAppDomain {
@@ -6,8 +6,9 @@ export default interface MoodlenetReactAppDomain {
   service: { moodlenetReactApp: unknown }
   primary: {
     moodlenetReactApp: {
-      webapp: {
+      session: {
         layouts(): Promise<Layouts>
+        getWebappGlobalCtx(): Promise<webappGlobalCtx>
       }
     }
   }

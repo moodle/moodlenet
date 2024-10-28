@@ -13,7 +13,6 @@ export type useProfileImageForm = z.infer<ReturnType<typeof getUserProfilePrimar
 export function getUserProfilePrimarySchemas(profileInfo: UserProfilePrimaryMsgSchemaConfigs) {
   const profileImageSchema = union([literal('avatar'), literal('background')])
 
-  const userProfileId = string().min(6)
   const displayName = string()
     .trim()
     .min(profileInfo.displayName.min)
@@ -31,11 +30,9 @@ export function getUserProfilePrimarySchemas(profileInfo: UserProfilePrimaryMsgS
   const useProfileImageSchema = object({
     as: profileImageSchema,
     tempId: string(),
-    userProfileId: string(),
   })
 
   const updateProfileInfoSchema = object({
-    userProfileId,
     displayName,
     aboutMe,
     location,

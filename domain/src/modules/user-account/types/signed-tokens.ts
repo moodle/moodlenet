@@ -1,6 +1,6 @@
 import type { email_address, url_string } from '@moodle/lib-types'
 import { userAccountId } from './user-account-record'
-import { userSessionData } from './user-session'
+import { profileSessionData, userSessionData } from './user-session'
 
 export type userAccountSignTokenData = {
   selfDeletionRequestConfirm: {
@@ -19,5 +19,6 @@ export type userAccountSignTokenData = {
   }
   userSession: {
     user: userSessionData
+    profile: profileSessionData
   }
 }

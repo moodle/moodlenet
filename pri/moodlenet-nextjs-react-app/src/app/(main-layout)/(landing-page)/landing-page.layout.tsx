@@ -10,7 +10,7 @@ import { Leaderboard, leaderboardProps } from './Leaderboard/Leaderboard'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
   const suggestedContent = await access.primary.moodlenet.content.getSuggestedContent()
-  const [info, layouts] = await Promise.all([getSiteGeneralInfo(), access.primary.moodlenetReactApp.webapp.layouts()])
+  const [info, layouts] = await Promise.all([getSiteGeneralInfo(), access.primary.moodlenetReactApp.session.layouts()])
   const { head, content } = slotsMap(props, layouts.pages.landing.slots)
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,

@@ -19,7 +19,7 @@ export const signupAction = defaultSafeActionClient
   .action(async ({ parsedInput: signupForm }) => {
     const redirectUrl = (await srvSiteUrls()).full['-'].api.userAccount['basic-auth']['verify-signup-email-token']()
 
-    const [done, resp] = await access.primary.userAccount.access.signupRequest({
+    const [done, resp] = await access.primary.userAccount.unauthenticated.signupRequest({
       signupForm,
       redirectUrl,
     })

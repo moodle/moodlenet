@@ -6,13 +6,20 @@ export type userRole = 'admin' | 'contributor'
 
 export type userAccountId = string
 
+type roleHistoryItem = {
+  date: date_time_string
+  by: userAccountId
+  oldRoles: userRole[]
+  newRoles: userRole[]
+}
+
 export type userAccountRecord = {
   id: userAccountId
   creationDate: date_time_string
   //REVIEW: possibly replace `displayName` with a `user_profile_excerpt` type. (ATM userProfileRecord is created as a consequence of a new userAccountRecord creation whereas `displayName` is provided during signup.)
   displayName: string
   roles: userRole[]
-  roleHistory: { date: date_time_string; by: userAccountId; oldRoles: userRole[]; newRoles: userRole[] }[]
+  roleHistory: roleHistoryItem[]
   contacts: {
     email: email_address
   }

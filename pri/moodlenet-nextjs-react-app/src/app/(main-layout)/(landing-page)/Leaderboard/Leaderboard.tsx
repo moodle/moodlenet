@@ -1,6 +1,5 @@
 'use client'
-import { contributorInfo } from 'domain/src/modules/moodlenet/types/contributor'
-import { pointSystem } from 'domain/src/modules/moodlenet/types/point-system'
+import { moodlenetContributorMinimalInfo, pointSystem } from '@moodle/module/moodlenet'
 import Link from 'next/link'
 import { useAssetUrl } from '../../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../../lib/client/user-levels/lib'
@@ -11,7 +10,7 @@ import defaultAvatar from '../../../../ui/lib/assets/img/default-avatar.svg'
 import './Leaderboard.scss'
 
 export type leaderboardProps = {
-  leaderContributors: contributorInfo[]
+  leaderContributors: moodlenetContributorMinimalInfo[]
   pointSystem: pointSystem
 }
 
@@ -35,11 +34,11 @@ function LeaderRow({
   position,
   pointSystem,
 }: {
-  contributor: contributorInfo
+  contributor: moodlenetContributorMinimalInfo
   position: number
   pointSystem: pointSystem
 }) {
-  const profileUrl = sitepaths.profile[contributor.profileId]![contributor.urlSafeProfileName]!()
+  const profileUrl = sitepaths.profile[contributor.id]![contributor.slug]!()
   const { pointAvatar, level } = getUserLevelDetails(pointSystem, contributor.points)
   const [avatarUrl] = useAssetUrl(contributor.avatar, defaultAvatar)
   return (

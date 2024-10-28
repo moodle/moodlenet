@@ -24,13 +24,13 @@ export const loginAction = defaultSafeActionClient.schema(getLoginSchema).action
 
   const redirectUrl = redirectPathAfterLogin || sitepaths()
 
-  const [loginSuccess, loginResponse] = await access.primary.userAccount.access.login({
+  const [loginSuccess, loginResponse] = await access.primary.userAccount.unauthenticated.login({
     loginForm,
   })
   if (!loginSuccess) {
     returnValidationErrors(getLoginSchema, { _errors: [t('Incorrect email or password')] })
   }
-  setAuthTokenCookie(loginResponse.session)
+  setAuthTokenCookie(loginResponse.sessionToken)
   revalidatePath('/', 'layout')
   redirect(redirectUrl)
 })

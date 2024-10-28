@@ -23,7 +23,6 @@ export type bloomLearningOutcome = {
   learningOutcome: string
 }
 
-export type eduResourceCollectionId = string
 export type eduResourceCollectionData = {
   title: string
   description: string

@@ -76,11 +76,4 @@ export const moodlenet_default_configs: configs = {
       { title: 'Dazzling biome' },
     ],
   },
-  publishedCategories: {
-    eduIscedFields: { id: eduIscedFieldsSetup.filter(({ codePath }) => codePath.length === 3).map(({ code: id }) => id) },
-    eduIscedLevels: { id: eduIscedLevelsSetup.map(({ code: id }) => id) },
-    eduResourceTypes: { id: eduResourceTypesSetup.map(({ code: id }) => id) },
-    contentLanguages: { id: contentLanguages_iso_639_3_Setup.filter(({ part1 }) => !!part1).map(({ code: id }) => id) },
-    contentLicenses: { id: contentLicensesSetup.map(({ code: id }) => id) },
-  },
 }

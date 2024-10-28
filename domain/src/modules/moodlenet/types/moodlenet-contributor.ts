@@ -1,24 +1,64 @@
-import { _nullish, date_time_string, flags, non_negative_integer, url_string } from '@moodle/lib-types'
+import { _nullish, d_u, date_time_string, flags, non_negative_integer } from '@moodle/lib-types'
 import { eduIscedFieldCode } from '../../edu'
 import { asset } from '../../storage'
-import { userAccountId } from '../../user-account'
+import { profileInfo, userProfileId } from '../../user-profile'
 import { moodlenetPublicEduResourceCollectionId, moodlenetPublicEduResourceId } from './moodlenet-public-contributions'
 
 export type moodlenetContributorId = string
-type moodlenetContributorProfile = {
-  info: {
-    displayName: string
-    aboutMe: string
-    location: string
-    siteUrl: _nullish | url_string
-    background: _nullish | asset
-    avatar: _nullish | asset
+type moodlenetContributorProfileExcerpt = {
+  id: userProfileId
+  info: Pick<profileInfo, 'aboutMe' | 'background' | 'avatar' | 'displayName' | 'location' | 'siteUrl'>
+}
+
+type linkedContent = {
+  likes: {
+    eduResources: featuredContentRef<{
+      id: moodlenetPublicEduResourceId
+    }>[]
+  }
+  following: {
+    eduResourceCollections: featuredContentRef<{
+      id: moodlenetPublicEduResourceCollectionId
+    }>[]
+    moodlenetContributors: featuredContentRef<{
+      id: moodlenetContributorId
+    }>[]
+    iscedFields: featuredContentRef<{
+      code: eduIscedFieldCode
+    }>[]
+  }
+  bookmarked: {
+    eduResourceCollections: featuredContentRef<{
+      id: moodlenetPublicEduResourceCollectionId
+    }>[]
+    eduResources: featuredContentRef<{
+      id: moodlenetPublicEduResourceId
+    }>[]
   }
 }
 
+type moodlenetContributions = {
+  eduResourcesCollections: publicContributionRef<{
+    id: moodlenetPublicEduResourceCollectionId
+  }>[]
+  eduResources: publicContributionRef<{
+    id: moodlenetPublicEduResourceId
+  }>[]
+}
+
+export type moodlenetContributorAccess = d_u<
+  {
+    public: unknown
+    protected: unknown
+  },
+  'level'
+>
+
 export type moodlenetContributorRecord = {
   id: moodlenetContributorId
-  profile: moodlenetContributorProfile
+  access: moodlenetContributorAccess
+  userProfile: moodlenetContributorProfileExcerpt
+  slug: string
   preferences: {
     useMyInterestsAsDefaultFilters: boolean
   }
@@ -28,23 +68,14 @@ export type moodlenetContributorRecord = {
       eduResourceCollections: suggestedContentRef<{ id: moodlenetPublicEduResourceCollectionId }>[]
       eduResources: suggestedContentRef<{ id: moodlenetPublicEduResourceId }>[]
       moodlenetContributors: suggestedContentRef<{ id: moodlenetContributorId }>[]
-    }[]
+    }
   }
-  contributions: {
-    eduResourcesCollections: publicContributionRef<{ id: moodlenetPublicEduResourceCollectionId }>[]
-    eduResources: publicContributionRef<{ id: moodlenetPublicEduResourceId }>[]
-  }
-  linkedContent: {
-    eduResourceCollections: featuredContentRef<{ id: moodlenetPublicEduResourceCollectionId }>[]
-    eduResources: featuredContentRef<{ id: moodlenetPublicEduResourceId }>[]
-    moodlenetContributors: featuredContentRef<{ id: moodlenetContributorId }>[]
-    iscedFields: featuredContentRef<{ code: eduIscedFieldCode }>[]
-  }
+  contributions: moodlenetContributions
+  linkedContent: linkedContent
   stats: {
     // recalculatedDate: date_time_string
     points: non_negative_integer
   }
-  moderations: userModerations
 }
 type publicContributionRef<refData> = refData
 
@@ -55,31 +86,23 @@ type featuredContentRef<refData> = refData & {
 }
 type permissionsOnMoodlenetContributor = flags<'follow' | 'sendMessage' | 'report' | 'editProfileInfo'>
 
-export type accessMoodlenetContributor = {
+export type moodlenetContributorMinimalInfo = {
+  id: moodlenetContributorId
+  slug: string
+  displayName: string
+  avatar: _nullish | asset
+  points: non_negative_integer
+}
+
+export type moodlenetContributorAccessObject = {
   moodlenetContributorId: moodlenetContributorId
-  profile: moodlenetContributorProfile
+  profileInfo: moodlenetContributorProfileExcerpt['info']
   itsMe: boolean
+  contributions: moodlenetContributions
+  linkedContent: Pick<linkedContent, 'following' | 'likes'>
   permissions: permissionsOnMoodlenetContributor
   stats: {
     points: non_negative_integer
-    followersCount: non_negative_integer
-  }
-}
-
-type reportType = string //TODO: type:desc map in moodlenet Configs?
-type reportAbuseForm = {
-  type: reportType
-  comment: string | undefined
-}
-type reportAbuseItem = {
-  date: date_time_string
-  reporter: userAccountId
-  reason: reportAbuseForm
-}
-
-type userModerations = {
-  reports: {
-    items: reportAbuseItem[]
-    amount: non_negative_integer
+    // followersCount: non_negative_integer
   }
 }

@@ -27,7 +27,7 @@ export async function fetchAllSchemaConfigs({ primary }: { primary: moodlePrimar
     orgSchemaConfigs,
     uploadMaxSizeConfigs,
   ] = await Promise.all([
-    primary.userAccount.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
+    primary.userAccount.anyUser.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
     primary.userProfile.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
     primary.moodlenet.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
     primary.org.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),

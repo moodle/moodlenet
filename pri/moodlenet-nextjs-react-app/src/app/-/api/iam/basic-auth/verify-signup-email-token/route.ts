@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  const [ok, response] = await access.primary.userAccount.access.createNewUserByEmailVerificationToken({
+  const [ok, response] = await access.primary.userAccount.unauthenticated.createNewUserByEmailVerificationToken({
     signupEmailVerificationToken,
   })
   if (!ok) {

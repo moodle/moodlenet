@@ -1,5 +1,5 @@
 import { pointSystem } from './point-system'
-import { MoodlenetPrimaryMsgSchemaConfigs as moodlenetPrimaryMsgSchemaConfigs } from './primary-schemas'
+import { moodlenetPrimaryMsgSchemaConfigs as moodlenetPrimaryMsgSchemaConfigs } from './primary-schemas'
 
 export type configs = {
   info: moodlenetInfo

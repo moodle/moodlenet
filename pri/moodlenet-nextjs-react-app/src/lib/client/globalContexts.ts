@@ -1,16 +1,11 @@
-import { AllSchemaConfigs } from '@moodle/domain'
 import { makeAllPrimarySchemas } from '@moodle/domain/lib'
 import { _nullish, url_path_string } from '@moodle/lib-types'
+import { webappGlobalCtx } from '@moodle/module/moodlenet-react-app'
 import { asset } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
-import { appDeployments } from 'domain/src/modules/env'
-import { createContext, ReactElement, useContext, useMemo } from 'react'
+import { createContext, useContext, useMemo } from 'react'
 
-export const GlobalCtx = createContext<GlobalCtx>(null as any)
-export type GlobalCtx = {
-  deployments: appDeployments
-  allSchemaConfigs: AllSchemaConfigs
-}
+export const GlobalCtx = createContext<webappGlobalCtx>(null as any)
 
 function useGlobalCtx() {
   return useContext(GlobalCtx)
