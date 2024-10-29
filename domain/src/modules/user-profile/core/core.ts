@@ -1,12 +1,12 @@
-import { _void, webSlug } from '@moodle/lib-types'
+import { _void } from '@moodle/lib-types'
+import { omit } from 'lodash'
+import { userProfilePrimary } from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
 import { usingTempFile2asset } from '../../storage/lib'
 import {
-  userSessionInfo,
-  validateCurrentUserAuthenticatedSessionHasRole,
-  validateCurrentUserSession,
+  assert_authorizeAuthenticatedCurrentUserSession,
+  assert_authorizeCurrentUserSessionWithRole,
 } from '../../user-account/lib'
-import { accessUserProfile } from '../lib'
 import { createNewUserProfileData } from './lib/new-user-profile'
 
 export const user_profile_core: moduleCore<'userProfile'> = {
@@ -15,88 +15,82 @@ export const user_profile_core: moduleCore<'userProfile'> = {
     return
   },
   primary(ctx) {
-    ctx.from
     return {
-      session: {
-        async moduleInfo() {
-          const {
-            configs: { profileInfoPrimaryMsgSchemaConfigs },
-          } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userProfile' })
-          return { schemaConfigs: profileInfoPrimaryMsgSchemaConfigs }
-        },
+      async session() {
+        return {
+          async moduleInfo() {
+            const {
+              configs: { profileInfoPrimaryMsgSchemaConfigs },
+            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userProfile' })
+            return { schemaConfigs: profileInfoPrimaryMsgSchemaConfigs }
+          },
+        }
       },
-      editProfile: {
-        async useTempImageAsProfileImage({ as, tempId, userProfileId }) {
-          const userProfile = await accessUserProfile({
-            ctx,
-            by: 'userProfileId',
-            userProfileId,
-          })
-          assertWithErrorXxx(
-            userProfile.result === 'found' && userProfile.access === 'allowed' && userProfile.permissions.editProfile,
-            'Unauthorized',
-          )
-          const [done, result] = await ctx.write.useTempImageInProfile({
-            as,
-            id: userProfile.id,
-            tempId,
-          })
-          if (!done) {
-            return [false, result]
-          }
-          return [true, result]
-        },
-        async editProfileInfo({ userProfileId, profileInfo }) {
-          const userProfile = await accessUserProfile({ ctx, by: 'userProfileId', userProfileId: userProfileId })
-          if (userProfile.result === 'notFound') {
-            return [false, { reason: 'notFound' }]
-          }
-          assertWithErrorXxx(userProfile.access === 'allowed' && userProfile.permissions.editProfile, 'Unauthorized')
-          const [done] = await ctx.write.updatePartialProfileInfo({
-            userProfileId: userProfileId,
-            partialProfileInfo: profileInfo,
-          })
-          if (!done) {
-            return [false, { reason: 'unknown' }]
-          }
-          return [done, _void]
-        },
+      async authenticated() {
+        const authenticatedUserSession = await assert_authorizeAuthenticatedCurrentUserSession({ ctx }).then(
+          async authenticatedUser => {
+            const userProfileId = authenticatedUser.profile.id
+            const [found, userProfileResult] = await ctx.mod.secondary.userProfile.query.getUserProfile({
+              by: 'userProfileId',
+              userProfileId,
+            })
+            assertWithErrorXxx(found, 'Not Found', 'authenticated userProfileRecord not found')
+            return userProfileResult
+          },
+        )
+        const userProfileId = authenticatedUserSession.userProfileRecord.id
+        const primaries: userProfilePrimary['authenticated'] = {
+          async getMyUserRecords() {
+            const { userProfileRecord } = authenticatedUserSession
+            const userAccontRecord = await ctx.forward.userAccount.authenticated.getMyUserAccountRecord()
+            return {
+              userProfileRecord: omit(userProfileRecord, 'userAccount'),
+              userAccountRecord: omit(userAccontRecord, 'displayName'),
+            }
+          },
+          async useTempImageAsProfileImage({ as, tempId }) {
+            const { userProfileRecord } = authenticatedUserSession
+            const [done, result] = await ctx.write.useTempImageInProfile({
+              as,
+              id: userProfileRecord.id,
+              tempId,
+            })
+            if (!done) {
+              return [[false, result], { userProfileId }]
+            }
+            return [[true, result], { userProfileId }]
+          },
+          async editProfileInfo({ profileInfo }) {
+            const { userProfileRecord } = authenticatedUserSession
+            const [done] = await ctx.write.updatePartialProfileInfo({
+              userProfileId: userProfileRecord.id,
+              partialProfileInfo: profileInfo,
+            })
+            if (!done) {
+              return [false, { reason: 'unknown' }]
+            }
+            return [done, { userProfileId }]
+          },
+        }
+        return primaries
       },
-      access: {
-        async byId(get) {
-          if (
-            get.by === 'userAccountId' &&
-            !(await validateCurrentUserAuthenticatedSessionHasRole({ ctx, role: 'admin' }))
-          ) {
-            return [false, { reason: 'notFound' }]
-          }
-          const userProfileResult = await accessUserProfile({ ctx, ...get })
+      async admin() {
+        const adminUserSession = await assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' }).then(
+          async authenticatedAdminUser => {
+            return authenticatedAdminUser
+          },
+        )
 
-          if (userProfileResult.result === 'notFound' || userProfileResult.access === 'notAllowed') {
-            return [false, { reason: 'notFound' }]
-          }
-          return [true, { accessObject: userProfileResult }]
-        },
-      },
-      me: {
-        async getMyProfile() {
-          const userSession = await validateCurrentUserSession({ ctx })
-          const sessionInfo = userSessionInfo(userSession)
-          if (!sessionInfo.authenticated) {
-            return [false, { reason: 'unauthenticated' }]
-          }
-          const userAccountId = sessionInfo.authenticated.user.id
-          const [found, result] = await ctx.mod.secondary.userProfile.query.getUserProfile({
-            by: 'userAccountId',
-            userAccountId,
-          })
-          if (!found) {
-            const errMsg = `couldn't find userProfile for userAccountId: ${userAccountId}, despite has authenticated sessionInfo`
-            ctx.log('critical', errMsg, sessionInfo)
-            throw new Error(errMsg)
-          }
-          return [true, { userProfileRecord: result.userProfileRecord }]
-        },
+        return {
+          async byId(get) {
+            const [found, userProfileResult] = await ctx.mod.secondary.userProfile.query.getUserProfile({ ...get })
+
+            if (!found) {
+              return [false, { reason: 'notFound' }]
+            }
+            return [true, { userProfileRecord: userProfileResult.userProfileRecord }]
+          },
+        }
       },
     }
   },
@@ -115,21 +109,21 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 partialProfileInfo: as === 'avatar' ? { avatar: asset } : as === 'background' ? { background: asset } : {},
               })
             },
-            async updatePartialProfileInfo([
-              [done],
-              {
-                userProfileId,
-                partialProfileInfo: { displayName },
-              },
-            ]) {
-              if (!done || !displayName) {
-                return
-              }
-              await ctx.write.updatePartialUserProfile({
-                userProfileId,
-                partialUserProfile: { appData: { urlSafeProfileName: webSlug(displayName) } },
-              })
-            },
+            // async updatePartialProfileInfo([
+            //   [done],
+            //   {
+            //     userProfileId,
+            //     partialProfileInfo: { displayName },
+            //   },
+            // ]) {
+            //   if (!done || !displayName) {
+            //     return
+            //   }
+            //   await ctx.write.updatePartialUserProfile({
+            //     userProfileId,
+            //     partialUserProfile: { appData: { urlSafeProfileName: webSlug(displayName) } },
+            //   })
+            // },
           },
         },
         userAccount: {
@@ -140,7 +134,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               if (!created) {
                 return
               }
-              ctx.write.createUserProfile({ userProfileRecord: await createNewUserProfileData({ newUser, ctx }) })
+              ctx.write.createUserProfile({ userProfileRecord: await createNewUserProfileData({ newUser }) })
             },
 
             async setUserRoles([[done, result], { userAccountId }]) {

@@ -94,7 +94,7 @@ const router = express
     if (req.params.type !== 'file' && req.params.type !== 'webImage') {
       res.status(404).end()
     }
-    const { userSession } = await req.moodlePrimary.userAccount.session.getUserSession()
+    const { userSession } = await req.moodlePrimary.userAccount.anyUser.getUserSession()
 
     if (userSession.type !== 'authenticated') {
       return res.status(401).send('UNAUTHORIZED')

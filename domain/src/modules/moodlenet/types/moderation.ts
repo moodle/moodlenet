@@ -1,23 +1,22 @@
 import { date_time_string, non_negative_integer } from '@moodle/lib-types'
-import { userAccountId } from '../../user-account'
+import { userProfileId } from '../../user-profile'
+import { moodlenetContributorId } from './moodlenet-contributor'
 
-export type reportType = string //TODO: type:desc map in moodlenet Configs?
-export type reportAbuseForm = {
+type reportType = string //TODO: type:desc map in moodlenet Configs?
+type reportAbuseForm = {
   type: reportType
   comment: string | undefined
 }
-export type reportAbuseItem = {
+type reportAbuseItem = {
   date: date_time_string
-  reporter: userAccountId
+  reporterUserProfileId: userProfileId
   reason: reportAbuseForm
 }
 
-export type userModerations = {
+export type moodlenetContributorModerations = {
+  moodlenetContributorId: moodlenetContributorId
   reports: {
     items: reportAbuseItem[]
     amount: non_negative_integer
   }
-}
-export type userAccountMoodlenetData = {
-  moderation: userModerations
 }

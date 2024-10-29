@@ -12,7 +12,7 @@ import Searchbox from '../../ui/atoms/Searchbox/Searchbox'
 import { TertiaryButton } from '../../ui/atoms/TertiaryButton/TertiaryButton'
 import { ReactComponent as ArrowsIcon } from '../../ui/lib/assets/icons/arrows.svg'
 // import ArrowsIcon from '../../ui/lib/assets/icons/arrows.svg'
-import { Href, clientSlotItem } from '../../lib/common/types'
+import { clientSlotItem } from '../../lib/common/types'
 import { asset } from '@moodle/module/storage'
 import { useAssetUrl } from '../../lib/client/globalContexts'
 import defaultAvatar from '../../ui/lib/assets/img/default-avatar.svg'
@@ -54,7 +54,7 @@ export function HeaderSearchbox() {
 
 export type ProfileLinkProps = {
   avatar: asset | _nullish
-  profileHref: Href
+  profileHref: string
 }
 export function ProfileLink({ profileHref, avatar }: ProfileLinkProps) {
   const [avatarUrl] = useAssetUrl(avatar, defaultAvatar)
@@ -84,7 +84,7 @@ export function Logout({ logout }: LogoutProps) {
   )
 }
 
-export type UserSettingsLinkProps = { settingsHref: Href }
+export type UserSettingsLinkProps = { settingsHref: string }
 export function UserSettingsLink({ settingsHref }: UserSettingsLinkProps) {
   return (
     <Link href={settingsHref}>
@@ -94,7 +94,7 @@ export function UserSettingsLink({ settingsHref }: UserSettingsLinkProps) {
   )
 }
 
-export type AdminSettingsLinkProps = { adminHref: Href }
+export type AdminSettingsLinkProps = { adminHref: string }
 export function AdminSettingsLink({ adminHref }: AdminSettingsLinkProps) {
   return (
     <Link href={adminHref}>
@@ -104,7 +104,7 @@ export function AdminSettingsLink({ adminHref }: AdminSettingsLinkProps) {
   )
 }
 
-export type BookmarksLinkProps = { bookmarksHref: Href }
+export type BookmarksLinkProps = { bookmarksHref: string }
 export function BookmarksLink({ bookmarksHref }: BookmarksLinkProps) {
   return (
     <Link href={bookmarksHref}>
@@ -114,7 +114,7 @@ export function BookmarksLink({ bookmarksHref }: BookmarksLinkProps) {
   )
 }
 
-export type FollowingLinkProps = { followingHref: Href }
+export type FollowingLinkProps = { followingHref: string }
 export function FollowingLink({ followingHref }: FollowingLinkProps) {
   return (
     <Link href={followingHref}>

@@ -1,10 +1,9 @@
-import { userProfileAccessObject } from '@moodle/module/user-profile'
 import FilterNone from '@mui/icons-material/FilterNone'
 import Grade from '@mui/icons-material/Grade'
 import PermIdentity from '@mui/icons-material/PermIdentity'
-import { pointSystem } from 'domain/src/modules/moodlenet/types/point-system'
+import { moodlenetContributorInfo } from 'domain/src/modules/moodlenet-react-app/types/webapp/contributor'
 import Link from 'next/link'
-import { useAssetUrl } from '../../../lib/client/globalContexts'
+import { useAssetUrl, useMyLinkedContent, usePointSystem } from '../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../lib/client/user-levels/lib'
 import { sitepaths } from '../../../lib/common/utils/sitepaths'
 import defaultAvatar from '../../../ui/lib/assets/img/default-avatar.svg'
@@ -14,20 +13,15 @@ import { FollowButton } from '../../atoms/FollowButton/FollowButton'
 import { OverallCard } from '../OverallCard/OverallCard'
 import './ProfileCard.scss'
 
-export type profileCardProps = {
-  userProfile: userProfileAccessObject
-  pointSystem: pointSystem
-  stats: { followersCount: number; followingCount: number; publishedResourcesCount: number }
-}
+export function ProfileCard({ moodlenetContributorAccessObject, stats }: moodlenetContributorInfo) {
+  const { pointSystem } = usePointSystem()
+  const { pointAvatar, level, title } = getUserLevelDetails(pointSystem, moodlenetContributorAccessObject.stats.points)
+  const { avatar, background, displayName } = moodlenetContributorAccessObject.profileInfo
 
-export function ProfileCard({ pointSystem, userProfile, stats }: profileCardProps) {
-  const { avatar, background, displayName } = userProfile.profileInfo
+  const permissions = moodlenetContributorAccessObject.permissions
 
-  const permissions = userProfile.permissions
-  const flags = userProfile.flags
-
-  const { pointAvatar, level, title } = getUserLevelDetails(pointSystem, userProfile.appData.moodlenet.points.amount)
-  const profileHomeHref = sitepaths.profile[userProfile.id]![userProfile.appData.urlSafeProfileName]!()
+  const [following] = useMyLinkedContent('follow', 'moodlenetContributors', moodlenetContributorAccessObject.id)
+  const profileHomeHref = sitepaths.profile[moodlenetContributorAccessObject.id]![moodlenetContributorAccessObject.slug]!()
   const [backgroundUrl] = useAssetUrl(background)
   const [avatarUrl] = useAssetUrl(avatar)
 
@@ -88,7 +82,7 @@ export function ProfileCard({ pointSystem, userProfile, stats }: profileCardProp
       <div className="bottom-touch">
         <FollowButton
           disabled={!permissions.follow}
-          following={flags.following}
+          following={following}
           toggleFollow={() =>
             // FIXME
             alert('toggleFollow')

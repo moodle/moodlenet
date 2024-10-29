@@ -1,14 +1,14 @@
-import { UserProfilePrimaryMsgSchemaConfigs } from '@moodle/module/user-profile'
 import type { makeAllPrimarySchemas } from '../lib'
-import { userAccountPrimaryMsgSchemaConfigs } from '../modules/user-account'
-import { MoodlenetPrimaryMsgSchemaConfigs } from '../modules/moodlenet'
-import { OrgPrimaryMsgSchemaConfigs } from '../modules/org'
+import { moodlenetPrimaryMsgSchemaConfigs } from '../modules/moodlenet'
+import { orgPrimaryMsgSchemaConfigs } from '../modules/org'
 import { uploadMaxSizeConfigs } from '../modules/storage'
+import { userAccountPrimaryMsgSchemaConfigs } from '../modules/user-account'
+import { UserProfilePrimaryMsgSchemaConfigs } from '../modules/user-profile'
 
 export type AllSchemaConfigs = {
   userAccountSchemaConfigs: userAccountPrimaryMsgSchemaConfigs
-  moodlenetSchemaConfigs: MoodlenetPrimaryMsgSchemaConfigs
-  orgSchemaConfigs: OrgPrimaryMsgSchemaConfigs
+  moodlenetSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs
+  orgSchemaConfigs: orgPrimaryMsgSchemaConfigs
   uploadMaxSizeConfigs: uploadMaxSizeConfigs
   userProfileSchemaConfigs: UserProfilePrimaryMsgSchemaConfigs
 }

@@ -1,5 +1,11 @@
 import { _maybe, createPathProxy, map, url_path_string } from '@moodle/lib-types'
-import { userProfileAccessObject } from '@moodle/module/user-profile'
+import { eduIscedFieldCode } from '@moodle/module/edu'
+import {
+  moodlenetContributorId,
+  moodlenetPublicEduResourceCollectionId,
+  moodlenetPublicEduResourceId,
+} from '@moodle/module/moodlenet'
+import { userAccountId } from '@moodle/module/user-account'
 import QueryString from 'qs'
 
 export function createSitepaths<path_type extends string = url_path_string>(baseUrl = '/') {
@@ -44,7 +50,7 @@ export type sitePaths<t extends string> = spc<t> & {
     moderation: spc<t>
   }
   'profile': {
-    [id: string]: spc<t> & {
+    [moodlenetContributorId: moodlenetContributorId]: spc<t> & {
       [slug: string]: spc<t> & {
         bookmarks: spc<t>
         followers: spc<t>
@@ -52,23 +58,22 @@ export type sitePaths<t extends string> = spc<t> & {
       }
     }
   }
-  'user-profile': {
-    [id: string]: spc<t>
+  'user-account-profile': {
+    [userAccountId: userAccountId]: spc<t>
   }
   'resource': {
-    [id: string]: spc<t> & {
+    [moodlenetPublicEduResourceId: moodlenetPublicEduResourceId]: spc<t> & {
       [slug: string]: spc<t>
     }
   }
   'collection': {
-    [id: string]: spc<t> & {
+    [moodlenetPublicEduResourceCollectionId: moodlenetPublicEduResourceCollectionId]: spc<t> & {
       [slug: string]: spc<t>
     }
   }
   'subject': spc<t> & {
-    [id: string]: {
+    [eduIscedFieldCode: eduIscedFieldCode]: {
       [slug: string]: spc<t>
     }
   }
 }
-

@@ -1,13 +1,12 @@
 import type { d_u, deep_partial_props, ok_ko } from '@moodle/lib-types'
 import { useTempFileResult } from '../storage'
-import { userAccountId } from '../user-account'
+import { userAccountId, userAccountRecord } from '../user-account'
 import {
   UserProfilePrimaryMsgSchemaConfigs,
   profileImage,
   profileInfo,
   useProfileImageForm,
   userAccountExcerpt,
-  userProfileAccessObject,
   userProfileId,
   userProfileRecord,
 } from './types'
@@ -17,28 +16,49 @@ export type get_user_profile_by = d_u<
   { userProfileId: { userProfileId: userProfileId }; userAccountId: { userAccountId: userAccountId } },
   'by'
 >
+export type userProfilePrimary = {
+  session: {
+    moduleInfo(): Promise<{
+      schemaConfigs: UserProfilePrimaryMsgSchemaConfigs
+    }>
+  }
+  authenticated: {
+    useTempImageAsProfileImage(
+      _: useProfileImageForm,
+    ): Promise<[useTempFileResult: useTempFileResult, { userProfileId: userProfileId }]>
+    editProfileInfo(_: { profileInfo: deep_partial_props<profileInfo> }): Promise<
+      ok_ko<
+        { userProfileId: userProfileId },
+        {
+          notFound: unknown
+          unknown: unknown
+        }
+      >
+    >
+    getMyUserRecords(): Promise<{
+      userProfileRecord: Omit<userProfileRecord, 'userAccount'>
+      userAccountRecord: Omit<userAccountRecord, 'displayName'>
+    }>
+  }
+  admin: {
+    byId(_: get_user_profile_by): Promise<
+      ok_ko<
+        {
+          userProfileRecord: userProfileRecord
+        },
+        {
+          notFound: unknown
+        }
+      >
+    >
+  }
+}
+
 export default interface UserProfileDomain {
   event: { userProfile: unknown }
   service: { userProfile: unknown }
   primary: {
-    userProfile: {
-      session: {
-        moduleInfo(): Promise<{ schemaConfigs: UserProfilePrimaryMsgSchemaConfigs }>
-      }
-      editProfile: {
-        useTempImageAsProfileImage(_: useProfileImageForm): Promise<useTempFileResult>
-        editProfileInfo(_: {
-          userProfileId: userProfileId
-          profileInfo: deep_partial_props<profileInfo>
-        }): Promise<ok_ko<void, { notFound: unknown; unknown: unknown }>>
-      }
-      access: {
-        byId(_: get_user_profile_by): Promise<ok_ko<{ accessObject: userProfileAccessObject }, { notFound: unknown }>>
-      }
-      me: {
-        getMyProfile(): Promise<ok_ko<{ userProfileRecord: userProfileRecord }, { unauthenticated: unknown }>>
-      }
-    }
+    userProfile: userProfilePrimary
   }
   secondary: {
     userProfile: {

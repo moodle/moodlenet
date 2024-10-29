@@ -1,10 +1,22 @@
-import { _maybe, _nullish, date_time_string, flags, non_negative_integer } from '@moodle/lib-types'
-import { contentLanguageId, contentLicenseId } from '../../content'
-import { eduIscedFieldId, eduIscedLevelId } from '../../edu'
-import { featuredContent, myPublishedContribution, suggestedContent, userProfileMoodlenetData } from '../../moodlenet'
+import { _nullish, d_u, date_time_string, url_string } from '@moodle/lib-types'
+import { aiAgentResourceSuggestionStatus } from '../../ai-agent'
+import { textExtractionStatus } from '../../asset-text-extraction'
+import { contentLanguageCode, contentLicenseCode } from '../../content'
+import { eduIscedFieldCode, eduIscedLevelCode } from '../../edu'
+import { eduResourceCollectionData, eduResourceData } from '../../edu/types/edu-content'
+import { moodlenetPublicEduResourceId } from '../../moodlenet/types/moodlenet-public-contributions'
+import { asset } from '../../storage'
 import { userAccountRecord } from '../../user-account'
-import { myDrafts } from './drafts'
-import { profileInfo } from './profile-info'
+
+export type profileInfo = {
+  displayName: string
+  aboutMe: string
+  location: string
+  siteUrl: _nullish | url_string
+  background: _nullish | asset
+  avatar: _nullish | asset
+}
+export type profileImage = 'avatar' | 'background'
 
 export type userProfileId = string
 
@@ -14,54 +26,49 @@ export type userProfileRecord = {
   info: profileInfo
   myDrafts: myDrafts
   eduInterestFields: eduInterestFields
-  appData: {
-    urlSafeProfileName: string
-    moodlenet: userProfileMoodlenetData
-  }
 }
 
-export type userAccountExcerpt = Pick<userAccountRecord, 'roles' | 'id'>
+export type userAccountExcerpt = Pick<userAccountRecord, 'roles' | 'id'> //REVIEW remove roles ?
 
-export type eduInterestFields = {
-  iscedFields: eduIscedFieldId[]
-  iscedLevels: eduIscedLevelId[]
-  languages: contentLanguageId[]
-  licenses: contentLicenseId[]
+type eduInterestFields = {
+  iscedFields: eduIscedFieldCode[]
+  iscedLevels: eduIscedLevelCode[]
+  languages: contentLanguageCode[]
+  licenses: contentLicenseCode[]
 }
-export type userProfilePermissions = flags<'follow' | 'editRoles' | 'sendMessage' | 'report' | 'editProfile'>
 
-export type userProfileAccessObject = {
-  id: userProfileId
-  itsMe: boolean
-  profileInfo: profileInfo
-  permissions: userProfilePermissions
-  flags: flags<'following'>
-  user: _maybe<userAccountExcerpt>
-  appData: {
-    urlSafeProfileName: string
-    moodlenet: {
-      preferences:
-        | _nullish
-        | {
-            useMyInterestsAsDefaultFilters: boolean
-          }
-      featuredContent: featuredContent[]
-      suggestedContent:
-        | _nullish
-        | {
-            listCreationDate: date_time_string
-            list: suggestedContent[]
-          }
-      published: {
-        contributions: myPublishedContribution[]
-      }
-      points: {
-        // recalculatedDate: date_time_string
-        amount: non_negative_integer
-      }
-      stats: {
-        followersCount: non_negative_integer
+type myDrafts = {
+  eduResources: draft<
+    eduResourceData & {
+      assetProcess: {
+        textExtractionStatus: textExtractionStatus
+        aiAgentSuggestion: aiAgentResourceSuggestionStatus
       }
     }
-  }
+  >[]
+  eduResourceCollections: draft<
+    eduResourceCollectionData & {
+      items: draftEduResourceCollectionEduResourceRef[]
+    }
+  >[]
 }
+
+type draftEduResourceCollectionEduResourceRef = d_u<
+  {
+    myDraft: { draftId: draftId }
+    publishedOnMoodlenet: { moodlenetPublicEduResourceId: moodlenetPublicEduResourceId }
+  },
+  'type'
+>
+
+export type draftId = eduResourceDraftId | eduResourceCollectionDraftId
+type draft<dataType extends eduResourceData | eduResourceCollectionData> = {
+  draftId: draftId
+  data: dataType
+  created: date_time_string
+  lastUpdateDate: date_time_string
+  // updates: { date: date_time_string; diff: jsonDiff }[]
+}
+
+type eduResourceDraftId = string
+type eduResourceCollectionDraftId = string

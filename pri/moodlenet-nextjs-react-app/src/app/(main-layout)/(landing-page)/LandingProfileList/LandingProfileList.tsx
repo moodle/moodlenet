@@ -1,19 +1,21 @@
 'use client'
+import { landingPageProps } from 'domain/src/modules/moodlenet-react-app/types/webapp/pageProps/landing'
+import { useMySession } from '../../../../lib/client/globalContexts'
 import { ListCard } from '../../../../ui/molecules/ListCard/ListCard'
-import { ProfileCard, profileCardProps } from '../../../../ui/molecules/ProfileCard/ProfileCard'
+import { ProfileCard } from '../../../../ui/molecules/ProfileCard/ProfileCard'
 import './LandingProfileList.scss'
 
 export type landingProfileListProps = {
-  profilesPropsList: profileCardProps[]
-  areCurrentUserSuggestions: boolean
+  suggestedContributorList: landingPageProps['suggestedContent']['contributors']
 }
 
-export function LandingProfileList({ profilesPropsList, areCurrentUserSuggestions }: landingProfileListProps) {
+export function LandingProfileList({ suggestedContributorList: profilesPropsList }: landingProfileListProps) {
+  const areCurrentUserSuggestions = useMySession().session.type === 'authenticated'
   return (
     <ListCard
       className={`landing-profile-list`}
       content={profilesPropsList.map(props => ({
-        key: props.userProfile.id,
+        key: props.moodlenetContributorAccessObject.id,
         el: <ProfileCard {...props} />,
       }))}
       header={

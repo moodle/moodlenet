@@ -23,34 +23,25 @@ import { logout } from '../actions/access'
 import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
-  const [{ userSession }, layouts] = await Promise.all([
-    access.primary.userAccount.session.getUserSession(),
-    access.primary.moodlenetReactApp.webapp.layouts(),
-  ])
+  const { mainLayout, session } = await access.primary.moodlenetReactApp.props.mainLayout()
   return (
     <div className={`main-layout`}>
-      <MainHeader slots={await headerSlots()} />
+      <MainHeader slots={await prepareHeaderSlots()} />
       <div className="content">{props.children}</div>
-      <Footer slots={footerSlots()} />
+      <Footer slots={prepareFooterSlots()} />
     </div>
   )
 
-  async function headerSlots(): Promise<MainHeaderProps['slots']> {
-    const { center, left, right } = slotsMap(props, layouts.roots.main.header.slots)
+  async function prepareHeaderSlots(): Promise<MainHeaderProps['slots']> {
+    const { center, left, right } = mainLayout.header.slots
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
-    const { authenticated } = userSessionInfo(userSession)
-    const userProfileAccessObject = authenticated
-      ? await access.primary.userProfile.access
-          .byId({ by: 'userAccountId', userAccountId: authenticated.user.id })
-          .then(([userProfileFound, userProfileResult]) => {
-            return userProfileFound ? userProfileResult.accessObject : null
-          })
+    const authenticated = session.type === 'authenticated'
+
+    const avatarAsset = authenticated ? session.userProfileRecord.info.avatar : null
+    const baseProfilePage = authenticated
+      ? sitepaths.profile[session.moodlenetContributorRecord.id]![session.moodlenetContributorRecord.slug]!
       : null
-    const avatarAsset = userProfileAccessObject?.profileInfo.avatar
-    const baseProfilePage =
-      userProfileAccessObject &&
-      sitepaths.profile[userProfileAccessObject.id]![userProfileAccessObject.appData.urlSafeProfileName]!
     const defaultRights = authenticated
       ? await (async () => {
           return [
@@ -62,7 +53,9 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
                 baseProfilePage && <BookmarksLink key="bookmarks" bookmarksHref={baseProfilePage.bookmarks()} />,
                 baseProfilePage && <FollowingLink key="following" followingHref={baseProfilePage.followers()} />,
                 baseProfilePage && <UserSettingsLink key="user-settings" settingsHref={sitepaths.settings.general()} />,
-                authenticated.isAdmin && <AdminSettingsLink key="admin-settings" adminHref={sitepaths.admin.general()} />,
+                authenticated && session.is.admin && (
+                  <AdminSettingsLink key="admin-settings" adminHref={sitepaths.admin.general()} />
+                ),
                 <Logout key="logout" logout={logout} />,
               ])}
             />,
@@ -77,8 +70,8 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     }
   }
 
-  function footerSlots(): FooterProps['slots'] {
-    const { center, left, right, bottom } = slotsMap(props, layouts.roots.main.footer.slots)
+  function prepareFooterSlots(): FooterProps['slots'] {
+    const { center, left, right, bottom } = mainLayout.footer.slots
     return {
       left: [...left],
       center: [...center],

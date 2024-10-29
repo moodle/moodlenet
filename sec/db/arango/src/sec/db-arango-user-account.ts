@@ -3,13 +3,9 @@ import { _void, date_time_string } from '@moodle/lib-types'
 import { aql } from 'arangojs'
 import { createHash } from 'node:crypto'
 import { dbStruct } from '../db-structure'
-import {
-  getUserByEmail,
-  getUserById,
-  userAccountDocument,
-  userAccountDocument2userAccountRecord,
-  userAccountRecord2userAccountDocument,
-} from './user-account-db'
+import { getUserByEmail, getUserById } from './user-account-db'
+import { restore_maybe_record, RESTORE_RECORD_AQL, save_id_to_key } from '../lib/key-id-mapping'
+import { userAccountRecord } from '@moodle/module/user-account'
 
 export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
   return secondaryCtx => {
@@ -17,7 +13,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
       userAccount: {
         sync: {
           async userDisplayname({ displayName, userAccountId }) {
-            const done = !!(await dbStruct.userAccount.coll.user
+            const done = !!(await dbStruct.userAccount.coll.userAccount
               .update({ _key: userAccountId }, { displayName })
               .catch(() => null))
             return [done, _void]
@@ -25,9 +21,8 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
         },
         write: {
           async saveNewUser({ newUser }) {
-            const userAccountDocument = userAccountRecord2userAccountDocument(newUser)
-            const savedUser = await dbStruct.userAccount.coll.user
-              .save(userAccountDocument, { overwriteMode: 'conflict', returnNew: true })
+            const savedUser = await dbStruct.userAccount.coll.userAccount
+              .save(save_id_to_key(newUser), { overwriteMode: 'conflict', returnNew: true })
               .catch(() => null)
 
             return [!!savedUser?.new, _void]
@@ -38,7 +33,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             userAccountId,
             overrideDeactivationDate: date = date_time_string('now'),
           }) {
-            const deactivatingUser = await dbStruct.userAccount.coll.user.document(
+            const deactivatingUser = await dbStruct.userAccount.coll.userAccount.document(
               { _key: userAccountId },
               { graceful: true },
             )
@@ -55,7 +50,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 }
               : null
 
-            const deactivatedUser = await dbStruct.userAccount.coll.user
+            const deactivatedUserAccountRecord = await dbStruct.userAccount.coll.userAccount
               .update(
                 { _key: userAccountId },
                 {
@@ -64,15 +59,17 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 },
                 { returnOld: true },
               )
+              .then(({ old }) => old)
+              .then(restore_maybe_record)
               .catch(() => null)
-            return deactivatedUser?.old
-              ? [true, { deactivatedUser: userAccountDocument2userAccountRecord(deactivatedUser.old) }]
-              : [false, _void]
+
+            return deactivatedUserAccountRecord ? [true, { deactivatedUserAccountRecord }] : [false, _void]
           },
+
           async setUserPassword({ newPasswordHash, userAccountId }) {
             const {
               userAccount: {
-                coll: { user },
+                coll: { userAccount: user },
               },
             } = dbStruct
             const updated = await user
@@ -82,14 +79,18 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                   passwordHash: newPasswordHash,
                 },
               )
+              .then(({ old }) => old)
+              .then(restore_maybe_record)
               .catch(() => null)
             return [!!updated, _void]
           },
           async setUserRoles({ userAccountId, roles }) {
-            const updated = await dbStruct.userAccount.coll.user
+            const updated = await dbStruct.userAccount.coll.userAccount
               .update({ _key: userAccountId }, { roles }, { returnOld: true })
+              .then(({ old }) => old)
+              .then(restore_maybe_record)
               .catch(() => null)
-            return updated?.old ? [true, { newRoles: roles, oldRoles: updated.old.roles }] : [false, _void]
+            return updated ? [true, { newRoles: roles, oldRoles: updated.roles }] : [false, _void]
           },
         },
         query: {
@@ -107,17 +108,17 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                       SORT sim DESC`
               : aql``
             const deactivatedFilter = includeDeactivated ? aql`` : aql`FILTER NOT(user.deactivated)`
-            const userDocs_cursor = await dbStruct.userAccount.db.query<userAccountDocument>(
+            const userDocs_cursor = await dbStruct.userAccount.db.query<userAccountRecord>(
               aql`
-                FOR user IN ${dbStruct.userAccount.coll.user}
+                FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount}
                 ${deactivatedFilter}
                 ${textFilter}
                 LIMIT 50
-                RETURN user
+                RETURN ${RESTORE_RECORD_AQL('userAccountDoc')}
                 `,
             )
-            const userDocs = await userDocs_cursor.all()
-            return { users: userDocs.map(userAccountDocument2userAccountRecord) }
+            const userAccountRecords = await userDocs_cursor.all()
+            return { userAccountRecords }
           },
           activeUsersNotLoggedInFor(_) {
             throw new Error('Not implemented')

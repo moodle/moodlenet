@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  const [ok, response] = await access.primary.userAccount.access.createNewUserByEmailVerificationToken({
+  const [ok, response] = await access.primary.userAccount.signedTokenAccess.createNewUserByEmailVerificationToken({
     signupEmailVerificationToken,
   })
   if (!ok) {
@@ -21,15 +21,8 @@ export async function GET(req: NextRequest) {
       status: 400,
     })
   }
-  const [done, session] = await access.primary.userAccount.session.generateUserSessionToken({
-    userAccountId: response.userAccountId,
-  })
-  if (!done) {
-    return new Response(`error generating session token. reason: ${session.reason}`, {
-      status: 400,
-    })
-  }
-  setAuthTokenCookie(session.userSessionToken)
+
+  setAuthTokenCookie(response.userSessionToken)
   revalidatePath('/', 'layout')
   redirect('/')
 }

@@ -1,12 +1,8 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
 import { dbStruct } from '../db-structure'
-import {
-  getUserProfileByUserAccountId,
-  updateUserProfileByUserAccountId,
-  userProfileRecord2userProfileDocument,
-  userProfileDocument2userProfileRecord,
-} from './user-profile-db'
+import { getUserProfileByUserAccountId, updateUserProfileByUserAccountId } from './user-profile-db'
+import { restore_record, save_id_to_key } from '../lib/key-id-mapping'
 
 export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
   return secondaryCtx => {
@@ -27,35 +23,42 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
         },
         query: {
           async getUserProfile(get) {
-            const userProfileDoc =
+            const userProfileRecord =
               get.by === 'userProfileId'
-                ? await dbStruct.data.coll.userProfile.document({ _key: get.userProfileId }).catch(() => null)
+                ? await dbStruct.userAccount.coll.userProfile
+                    .document({ _key: get.userProfileId })
+                    .then(restore_record)
+                    .catch(() => null)
                 : await getUserProfileByUserAccountId({ dbStruct, userAccountId: get.userAccountId })
-            if (!userProfileDoc) {
+            if (!userProfileRecord) {
               return [false, { reason: 'notFound' }]
             }
-            return [true, { userProfileRecord: userProfileDocument2userProfileRecord(userProfileDoc) }]
+            return [true, { userProfileRecord }]
           },
         },
         write: {
           async updatePartialProfileInfo({ partialProfileInfo, userProfileId }) {
-            const updateResult = await dbStruct.data.coll.userProfile
+            const updateResult = await dbStruct.userAccount.coll.userProfile
               .update({ _key: userProfileId }, { info: partialProfileInfo }, { returnNew: true })
               .catch(() => null)
-            return updateResult?.new ? [true, _void] : [false, _void]
+            const updateDone = !!updateResult?.new
+            return [updateDone, _void]
           },
           async updatePartialUserProfile({ userProfileId, partialUserProfile }) {
-            const updateResult = await dbStruct.data.coll.userProfile
+            const updateResult = await dbStruct.userAccount.coll.userProfile
               .update({ _key: userProfileId }, partialUserProfile, { returnNew: true })
               .catch(() => null)
-            return updateResult?.new ? [true, _void] : [false, _void]
+            const updateDone = !!updateResult?.new
+            return [updateDone, _void]
           },
-          async createUserProfile({ userProfileRecord: userProfile }) {
-            const result = await dbStruct.data.coll.userProfile
-              .save(userProfileRecord2userProfileDocument(userProfile))
+          async createUserProfile({ userProfileRecord }) {
+            const result = await dbStruct.userAccount.coll.userProfile
+              .save(save_id_to_key(userProfileRecord))
               .catch(() => null)
 
-            return [!!result, _void]
+            const saveDone = !!result
+
+            return [saveDone, _void]
           },
         },
       },

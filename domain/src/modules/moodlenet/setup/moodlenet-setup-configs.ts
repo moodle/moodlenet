@@ -4,12 +4,12 @@ import { eduIscedFieldsSetup, eduIscedLevelsSetup, eduResourceTypesSetup } from 
 import { contentLanguages_iso_639_3_Setup, contentLicensesSetup } from '../../content/setup'
 
 export const moodlenet_default_configs: configs = {
-  info: {
+  siteInfo: {
     title: 'Search for resources, subjects, collections or people',
     subtitle: 'Find, share and curate open educational resources',
   },
   moodlenetPrimaryMsgSchemaConfigs: {
-    info: {
+    siteInfo: {
       subtitle: { max: 200, min: 3 },
       title: { max: 100, min: 3 },
     },
@@ -75,12 +75,5 @@ export const moodlenet_default_configs: configs = {
       { lessThanPoints: positive_integer_schema.parse(100000), title: 'Versatile canopy' },
       { title: 'Dazzling biome' },
     ],
-  },
-  publishedCategories: {
-    eduIscedFields: { id: eduIscedFieldsSetup.filter(({ codePath }) => codePath.length === 3).map(({ id }) => id) },
-    eduIscedLevels: { id: eduIscedLevelsSetup.map(({ id }) => id) },
-    eduResourceTypes: { id: eduResourceTypesSetup.map(({ id }) => id) },
-    contentLanguages: { id: contentLanguages_iso_639_3_Setup.filter(({ part1 }) => !!part1).map(({ id }) => id) },
-    contentLicenses: { id: contentLicensesSetup.map(({ id }) => id) },
   },
 }

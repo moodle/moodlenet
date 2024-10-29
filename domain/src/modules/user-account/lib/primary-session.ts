@@ -1,8 +1,8 @@
 import { ok_ko, signed_expire_token } from '@moodle/lib-types'
 import assert from 'assert'
 import { baseContext, ErrorXxx, primaryContext } from '../../../types'
-import { userAccountId, userRole, userSession, userSessionData } from '../types'
-import { hasUserSessionRole, userAccountRecord2SessionUserData, userSessionInfo } from './user-session'
+import { profileSessionData, userAccountId, userRole, userSession, userSessionData } from '../types'
+import { hasUserSessionRole, userSessionInfo } from './user-session'
 
 // System Session
 export type sessionLibDep = {
@@ -27,6 +27,7 @@ export async function validateCurrentUserSession({ ctx }: sessionLibDep) {
   const userSession: userSession = {
     type: 'authenticated',
     user: validatedSignedTokenData.user,
+    profile: validatedSignedTokenData.profile,
   }
   return userSession
 }
@@ -91,35 +92,53 @@ export async function generateSessionForUserAccountId({
 }: {
   ctx: Pick<baseContext, 'mod'>
   userAccountId: userAccountId
-}): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown }>> {
+}): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown; profileNotFound: unknown }>> {
   const [, userAccountRecord] = await ctx.mod.secondary.userAccount.query.userBy({ by: 'id', userAccountId })
   if (!userAccountRecord) {
     return [false, { reason: 'userNotFound' }]
   }
-  const userSessionToken = await generateSessionForUserData({
+  const [userProfilefound, userProfileResult] = await ctx.mod.secondary.userProfile.query.getUserProfile({
+    by: 'userAccountId',
+    userAccountId: userAccountRecord.id,
+  })
+  if (!userProfilefound) {
+    throw [false, { reason: 'profileNotFound' }]
+  }
+  const userSessionToken = await generateSessionTokenForUserAndProfileData({
     ctx,
-    user: userAccountRecord2SessionUserData(userAccountRecord),
+    user: {
+      id: userAccountRecord.id,
+      roles: userAccountRecord.roles,
+      contacts: userAccountRecord.contacts,
+    },
+    profile: {
+      id: userProfileResult.userProfileRecord.id,
+    },
   })
   return [true, { userSessionToken }]
 }
 
-export async function generateSessionForUserData({
+async function generateSessionTokenForUserAndProfileData({
   ctx,
   user,
+  profile,
 }: {
   ctx: Pick<baseContext, 'mod'>
   user: userSessionData
+  profile: profileSessionData
 }): Promise<signed_expire_token> {
   const {
     configs: { tokenExpireTime },
   } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userAccount' })
-  const session = await ctx.mod.secondary.crypto.service.signDataToken({
+
+  const sessionToken = await ctx.mod.secondary.crypto.service.signDataToken({
     data: {
       module: 'userAccount',
       type: 'userSession',
       user,
+      profile,
     },
     expiresIn: tokenExpireTime.userSession,
   })
-  return session
+  return sessionToken
 }

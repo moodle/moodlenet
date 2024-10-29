@@ -158,7 +158,18 @@ export function provideDomainAccessDispatcher({
       opts?: { graceful?: boolean },
     ) {
       // mainLogger('debug', `dispatchMsg`, domainMsg.endpoint, domainMsg.payload)
-      const endpoint = domainMsg.endpoint.reduce((currProp, currPathSegment) => currProp?.[currPathSegment], impl)
+      // const endpoint = domainMsg.endpoint.reduce((currProp, currPathSegment) => currProp?.[currPathSegment], impl)
+      const endpoint = await(async () => {
+        const [layer, moduleName, channelName, endpointName] = domainMsg.endpoint
+        const channelProp = impl[layer!]?.[moduleName!]?.[channelName!]
+        if (!channelProp) {
+          return
+        }
+        if (layer === 'primary') {
+          return (await channelProp())?.[endpointName!]
+        }
+        return channelProp?.[endpointName!]
+      })()
 
       if (typeof endpoint !== 'function') {
         if (opts?.graceful) {

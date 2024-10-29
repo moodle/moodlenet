@@ -5,13 +5,23 @@ export type eduBloomCognitiveRecord = {
   verbs: string[]
 }
 
-export type eduIscedFieldId = string
-export type eduIscedFieldRecord = { description: string; id: eduIscedFieldId; codePath: eduIscedFieldPath }
+export type eduIscedFieldCode = string
+export type eduIscedFieldRecord = {
+  id: eduIscedFieldCode
+  enabled: boolean
+  description: string
+  codePath: eduIscedFieldPath
+}
 type eduIscedFieldPath = [string] | [string, string] | [string, string, string]
 
-export type eduIscedLevelId = string
-export type eduIscedLevelRecord = { description: string; id: eduIscedLevelId; codePath: eduIscedLevelPath }
+export type eduIscedLevelCode = string
+export type eduIscedLevelRecord = {
+  id: eduIscedLevelCode
+  enabled: boolean
+  description: string
+  codePath: eduIscedLevelPath
+}
 type eduIscedLevelPath = [string] | [string, string] | [string, string, string]
 
-export type eduResourceTypeId = string
-export type eduResourceTypeRecord = { description: string; id: eduResourceTypeId }
+export type eduResourceTypeCode = string
+export type eduResourceTypeRecord = { enabled: boolean; description: string; id: eduResourceTypeCode }
