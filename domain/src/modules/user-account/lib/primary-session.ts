@@ -2,7 +2,7 @@ import { ok_ko, signed_expire_token } from '@moodle/lib-types'
 import assert from 'assert'
 import { baseContext, ErrorXxx, primaryContext } from '../../../types'
 import { profileSessionData, userAccountId, userRole, userSession, userSessionData } from '../types'
-import { hasUserSessionRole, userSessionInfo } from './user-session'
+import { hasUserSessionRole, getUserSessionInfo } from './user-session'
 
 // System Session
 export type sessionLibDep = {
@@ -37,7 +37,7 @@ const guest_session: userSession = {
 
 export async function validate_currentUserSessionInfo({ ctx }: sessionLibDep) {
   const userSession = await validateCurrentUserSession({ ctx })
-  return userSessionInfo(userSession)
+  return getUserSessionInfo(userSession)
 }
 
 // Authenticated Session

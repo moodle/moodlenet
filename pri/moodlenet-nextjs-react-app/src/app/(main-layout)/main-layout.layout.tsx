@@ -1,5 +1,5 @@
 import { LayoutHeaderLogo } from '../../app/_common/header-logo.server'
-import { layoutPropsWithChildren, slotsMap } from '../../lib/server/utils/slots'
+import { layoutPropsWithChildren } from '../../lib/server/utils/slots'
 import { Footer, FooterProps } from '../../ui/organisms/Footer/Footer'
 import { MainHeader, MainHeaderProps } from '../../ui/organisms/Header/MainHeader/MainHeader'
 import {
@@ -16,7 +16,6 @@ import {
 } from './main-layout.client'
 
 import { filterOutFalsies } from '@moodle/lib-types'
-import { userSessionInfo } from '@moodle/module/user-account/lib'
 import { sitepaths } from '../../lib/common/utils/sitepaths'
 import { access } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
