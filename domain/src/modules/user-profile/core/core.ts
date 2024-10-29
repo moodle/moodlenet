@@ -1,4 +1,3 @@
-import { _void } from '@moodle/lib-types'
 import { omit } from 'lodash'
 import { userProfilePrimary } from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
@@ -75,7 +74,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
         return primaries
       },
       async admin() {
-        const adminUserSession = await assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' }).then(
+        /* const adminUserSession =  */ await assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' }).then(
           async authenticatedAdminUser => {
             return authenticatedAdminUser
           },

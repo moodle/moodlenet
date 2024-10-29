@@ -4,7 +4,6 @@ import assert from 'assert'
 import { omit } from 'lodash'
 import { moduleCore } from '../../../types'
 import { assert_authorizeCurrentUserSessionWithRole, validate_currentUserSessionInfo } from '../../user-account/lib'
-import { accessMoodlenetContributor } from './lib/primary-access'
 
 export const moodlenet_core: moduleCore<'moodlenet'> = {
   modName: 'moodlenet',
