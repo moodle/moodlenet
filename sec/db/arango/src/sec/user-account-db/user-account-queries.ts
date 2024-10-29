@@ -1,6 +1,6 @@
 import { _void, email_address, ok_ko } from '@moodle/lib-types'
 import { Document } from 'arangojs/documents'
-import { userAccountId, userAccountRecord } from 'domain/src/modules/user-account'
+import { userAccountId, userAccountRecord } from '@moodle/module/user-account'
 import { dbStruct } from '../../db-structure'
 import { restore_maybe_record, RESTORE_RECORD_AQL } from '../../lib/key-id-mapping'
 

@@ -1,5 +1,5 @@
 'use client'
-import { landingPageProps } from 'domain/src/modules/moodlenet-react-app/types/webapp/pageProps/landing'
+import { landingPageProps } from '@moodle/module/moodlenet-react-app'
 import { useMySession } from '../../../../lib/client/globalContexts'
 import { ListCard } from '../../../../ui/molecules/ListCard/ListCard'
 import { ProfileCard } from '../../../../ui/molecules/ProfileCard/ProfileCard'

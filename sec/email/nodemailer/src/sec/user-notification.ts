@@ -8,7 +8,7 @@ import {
 import { EmailLayoutContentProps, layoutEmail } from '@moodle/lib-email-templates/org'
 import { _void, email_address, ok_ko } from '@moodle/lib-types'
 import { OrgInfo } from '@moodle/module/org'
-import { userNotification } from 'domain/src/modules/user-notification/types'
+import { userNotification } from '@moodle/module/user-notification'
 import { send } from '../lib'
 import { NodemailerSecEnv } from '../types'
 

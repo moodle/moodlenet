@@ -1,7 +1,7 @@
 import FilterNone from '@mui/icons-material/FilterNone'
 import Grade from '@mui/icons-material/Grade'
 import PermIdentity from '@mui/icons-material/PermIdentity'
-import { moodlenetContributorInfo } from 'domain/src/modules/moodlenet-react-app/types/webapp/contributor'
+import { moodlenetContributorInfo } from '@moodle/module/moodlenet-react-app'
 import Link from 'next/link'
 import { useAssetUrl, useMyLinkedContent, usePointSystem } from '../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../lib/client/user-levels/lib'

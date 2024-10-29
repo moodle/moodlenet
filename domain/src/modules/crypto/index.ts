@@ -1,5 +1,6 @@
 import { __redacted__, ok_ko, signed_expire_token, signed_token, time_duration_string } from '@moodle/lib-types'
 import { plain_password, signedToken, signedTokenOf, signedTokenType } from './types'
+export * from './types'
 
 export default interface CryptoDomain {
   event: { crypto: unknown }
