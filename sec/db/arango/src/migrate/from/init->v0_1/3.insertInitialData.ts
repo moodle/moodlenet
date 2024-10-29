@@ -6,15 +6,14 @@ import {
   eduResourceTypesSetup,
 } from '@moodle/module/edu/setup'
 import { dbStruct } from '../../../db-structure'
-import { contentLanguageRecord2contentLanguageDocument, contentLicenseRecord2contentLicenseDocument } from '../../../sec/content-db'
-import { eduBloomCognitiveRecord2eduBloomCognitiveDocument, eduIscedFieldRecord2eduIscedFieldDocument, eduIscedLevelRecord2eduIscedLevelDocument, eduResourceTypeRecord2eduResourceTypeDocument } from '../../../sec/edu-db'
+import { save_id_to_key } from '../../../lib/key-id-mapping'
 // import { removePropOnInsert } from '../lib/id'
 
 export async function insertInitialData({ dbStruct }: { dbStruct: dbStruct }) {
-  await dbStruct.data.coll.contentLanguage.saveAll(contentLanguages_iso_639_3_Setup.map(contentLanguageRecord2contentLanguageDocument))
-  await dbStruct.data.coll.contentLicense.saveAll(contentLicensesSetup.map(contentLicenseRecord2contentLicenseDocument))
-  await dbStruct.data.coll.eduBloomCognitive.saveAll(eduBloomCognitivesSetup.map(eduBloomCognitiveRecord2eduBloomCognitiveDocument))
-  await dbStruct.data.coll.eduIscedField.saveAll(eduIscedFieldsSetup.map(eduIscedFieldRecord2eduIscedFieldDocument))
-  await dbStruct.data.coll.eduIscedLevel.saveAll(eduIscedLevelsSetup.map(eduIscedLevelRecord2eduIscedLevelDocument))
-  await dbStruct.data.coll.eduResourceType.saveAll(eduResourceTypesSetup.map(eduResourceTypeRecord2eduResourceTypeDocument))
+  await dbStruct.moodlenet.coll.contentLanguage.saveAll(contentLanguages_iso_639_3_Setup.map(save_id_to_key))
+  await dbStruct.moodlenet.coll.contentLicense.saveAll(contentLicensesSetup.map(save_id_to_key))
+  await dbStruct.moodlenet.coll.eduBloomCognitive.saveAll(eduBloomCognitivesSetup.map(save_id_to_key))
+  await dbStruct.moodlenet.coll.eduIscedField.saveAll(eduIscedFieldsSetup.map(save_id_to_key))
+  await dbStruct.moodlenet.coll.eduIscedLevel.saveAll(eduIscedLevelsSetup.map(save_id_to_key))
+  await dbStruct.moodlenet.coll.eduResourceType.saveAll(eduResourceTypesSetup.map(save_id_to_key))
 }

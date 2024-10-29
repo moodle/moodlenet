@@ -52,9 +52,9 @@ export function provideArangoDbSecEnv({ env }: { env: map<unknown, env_keys> }):
         ...baseArangoDbConnection,
         databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_modules`,
       },
-      data: {
+      moodlenet: {
         ...baseArangoDbConnection,
-        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_data`,
+        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_moodlenet`,
       },
       userAccount: {
         ...baseArangoDbConnection,

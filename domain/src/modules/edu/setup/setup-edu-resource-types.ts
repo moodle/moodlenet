@@ -4,87 +4,87 @@ export const eduResourceTypesSetup = eduResourceTypes().map<eduResourceTypeRecor
 function eduResourceTypes(): Omit<eduResourceTypeRecord, 'enabled'>[] {
   return [
     {
-      code: 'assessment',
+      id: 'assessment',
       description: 'Assessment',
     },
     {
-      code: 'concept-map',
+      id: 'concept-map',
       description: 'Concept map',
     },
     {
-      code: 'course',
+      id: 'course',
       description: 'Course',
     },
     {
-      code: 'curriculum',
+      id: 'curriculum',
       description: 'Curriculum',
     },
     {
-      code: 'data-set',
+      id: 'data-set',
       description: 'Data set',
     },
     {
-      code: 'experiment',
+      id: 'experiment',
       description: 'Experiment',
     },
     {
-      code: 'game',
+      id: 'game',
       description: 'Game',
     },
     {
-      code: 'glossary',
+      id: 'glossary',
       description: 'Glossary',
     },
     {
-      code: 'graph',
+      id: 'graph',
       description: 'Graph',
     },
     {
-      code: 'guides-and-tutorials',
+      id: 'guides-and-tutorials',
       description: 'Guides and Tutorials',
     },
     {
-      code: 'interactive-learning-object',
+      id: 'interactive-learning-object',
       description: 'Interactive learning object',
     },
     {
-      code: 'map',
+      id: 'map',
       description: 'Map',
     },
     {
-      code: 'online-courses-site',
+      id: 'online-courses-site',
       description: 'Online courses site',
     },
     {
-      code: 'project',
+      id: 'project',
       description: 'Project',
     },
     {
-      code: 'questionnaire',
+      id: 'questionnaire',
       description: 'Questionnaire',
     },
     {
-      code: 'reading',
+      id: 'reading',
       description: 'Reading',
     },
     {
-      code: 'references',
+      id: 'references',
       description: 'References',
     },
     {
-      code: 'report',
+      id: 'report',
       description: 'Report',
     },
     {
-      code: 'repository',
+      id: 'repository',
       description: 'Repository',
     },
     {
-      code: 'simulation',
+      id: 'simulation',
       description: 'Simulation',
     },
     {
-      code: 'unit-of-study',
+      id: 'unit-of-study',
       description: 'Unit of study',
     },
   ]

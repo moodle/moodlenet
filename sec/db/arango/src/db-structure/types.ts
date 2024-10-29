@@ -10,6 +10,6 @@ export type dbConnection = ArangoConnectionConfig
 
 export type databaseConnections = {
   modules: dbConnection
-  data: dbConnection
+  moodlenet: dbConnection
   userAccount: dbConnection
 }

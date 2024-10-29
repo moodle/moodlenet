@@ -113,7 +113,7 @@ export default interface userAccountDomain {
           anonymize: boolean
           reason: userDeactivationReason
           overrideDeactivationDate?: date_time_string
-        }): Promise<ok_ko<{ deactivatedUser: userAccountRecord }>>
+        }): Promise<ok_ko<{ deactivatedUserAccountRecord: userAccountRecord }>>
 
         setUserRoles(_: {
           userAccountId: userAccountId
@@ -152,7 +152,7 @@ export default interface userAccountDomain {
           _: d_u<{ email: { email: email_address }; id: { userAccountId: userAccountId } }, 'by'>,
         ): Promise<ok_ko<userAccountRecord>>
 
-        usersByText(_: { text: string; includeDeactivated?: boolean }): Promise<{ users: userAccountRecord[] }>
+        usersByText(_: { text: string; includeDeactivated?: boolean }): Promise<{ userAccountRecords: userAccountRecord[] }>
       }
       sync: {
         userDisplayname(_: { userAccountId: userAccountId; displayName: string }): Promise<ok_ko<void>>

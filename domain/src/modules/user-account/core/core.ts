@@ -70,7 +70,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           },
 
           async searchUsers({ textSearch }) {
-            const { users } = await ctx.mod.secondary.userAccount.query.usersByText({
+            const { userAccountRecords: users } = await ctx.mod.secondary.userAccount.query.usersByText({
               text: textSearch,
             })
             return { users }

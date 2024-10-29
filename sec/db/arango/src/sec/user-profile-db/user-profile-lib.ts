@@ -3,7 +3,8 @@ import { userAccountId } from '@moodle/module/user-account'
 import { aql } from 'arangojs'
 import { AqlQuery } from 'arangojs/aql'
 import { dbStruct } from '../../db-structure'
-import { userProfileDocument } from './user-profile-types'
+import { userProfileRecord } from '@moodle/module/user-profile'
+import { RESTORE_RECORD_AQL } from '../../lib/key-id-mapping'
 
 export async function getUserProfileByUserAccountId({
   dbStruct,
@@ -14,12 +15,12 @@ export async function getUserProfileByUserAccountId({
   userAccountId: userAccountId
   apply?: AqlQuery
 }) {
-  const cursor = await dbStruct.data.db.query(aql<userProfileDocument>`
-    FOR userProfile in ${dbStruct.data.coll.userProfile}
+  const cursor = await dbStruct.moodlenet.db.query(aql<userProfileRecord>`
+    FOR userProfile in ${dbStruct.userAccount.coll.userProfile}
     FILTER userProfile.userAccount.id == ${userAccountId}
     LIMIT 1
     ${apply}
-    RETURN userProfile
+    RETURN ${RESTORE_RECORD_AQL('userProfile')}
     `)
   const [userProfile] = await cursor.all()
   return userProfile ?? null
@@ -32,10 +33,10 @@ export async function updateUserProfileByUserAccountId({
 }: {
   userAccountId: userAccountId
   dbStruct: dbStruct
-  partialUserProfile: deep_partial_props<userProfileDocument>
+  partialUserProfile: deep_partial_props<userProfileRecord>
 }) {
   return getUserProfileByUserAccountId({
-    apply: aql`UPDATE userProfile WITH ${partialUserProfile} IN ${dbStruct.data.coll.userProfile}`,
+    apply: aql`UPDATE userProfile WITH ${partialUserProfile} IN ${dbStruct.userAccount.coll.userProfile}`,
     dbStruct,
     userAccountId,
   })
