@@ -30,6 +30,11 @@
       "@moodle/lib-local-fs-storage": ["lib/local-fs-storage/src/index.ts"],
       "@moodle/lib-types": ["lib/types/src/index.ts"],
       //
+      "@moodle/module/crypto": ["domain/src/modules/crypto/index.ts"],
+      // "@moodle/module/crypto/lib": ["domain/src/modules/crypto/lib/index.ts"],
+      // "@moodle/module/crypto/core": ["domain/src/modules/crypto/core/index.ts"],
+      // "@moodle/module/crypto/setup": ["domain/src/modules/crypto/setup/index.ts"],
+      //
       "@moodle/module/user-account": ["domain/src/modules/user-account/index.ts"],
       "@moodle/module/user-account/lib": ["domain/src/modules/user-account/lib/index.ts"],
       "@moodle/module/user-account/core": ["domain/src/modules/user-account/core/index.ts"],
