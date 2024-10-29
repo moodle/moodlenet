@@ -1,8 +1,7 @@
 import { signed_token_schema } from '@moodle/lib-types'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
-import { setAuthTokenCookie } from '../../../../../../lib/server/auth'
+import { sitepaths } from '../../../../../../lib/common/utils/sitepaths'
 import { access } from '../../../../../../lib/server/session-access'
 
 export async function GET(req: NextRequest) {
@@ -22,7 +21,5 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  setAuthTokenCookie(response.userSessionToken)
-  revalidatePath('/', 'layout')
-  redirect('/')
+  redirect(sitepaths.login())
 }

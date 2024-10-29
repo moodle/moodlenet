@@ -40,7 +40,14 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
             const moodlenetConfigs = await ctx.forward.moodlenet.session.moduleInfo()
             const { filestoreHttp } = await ctx.forward.env.application.deployments()
             const allSchemaConfigs = await fetchAllSchemaConfigs({ primary: ctx.forward })
-            const session = await ctx.forward.moodlenetReactApp.session.data()
+            const session = await ctx.forward.moodlenetReactApp.session.data().catch<moodlenetReactAppSessionData>(() => ({
+              type: 'guest',
+              is: {
+                admin: false,
+                contributor: false,
+                authenticated: false,
+              },
+            }))
             return {
               webappGlobalCtx: {
                 allSchemaConfigs,

@@ -11,6 +11,7 @@ import {
 } from './types'
 export * from './types'
 
+
 export default interface MoodlenetDomain {
   event: { moodlenet: unknown }
   service: { moodlenet: unknown }
@@ -46,7 +47,11 @@ export default interface MoodlenetDomain {
   secondary: {
     moodlenet: {
       write: {
-        createMoodlenetContributor(moodlenetContributorRecord: moodlenetContributorRecord): Promise<void>
+        createMoodlenetContributor(_: { moodlenetContributorRecord: moodlenetContributorRecord }): Promise<void>
+        updatePartialMoodlenetContributor(_: {
+          select: moodlenetContributorIdSelect
+          partialMoodlenetContributorRecord: deep_partial_props<moodlenetContributorRecord>
+        }): Promise<void>
       }
       query: {
         contributors({
@@ -59,14 +64,7 @@ export default interface MoodlenetDomain {
           //filters?: queryContributorFilter[]
         }): Promise<{ moodlenetContributorRecords: moodlenetContributorRecord[] }>
         contributor(
-          by: d_u<
-            {
-              userProfileId: { userProfileId: userProfileId }
-              userAccountId: { userAccountId: userAccountId }
-              moodlenetContributorId: { moodlenetContributorId: moodlenetContributorId }
-            },
-            'by'
-          >,
+          by: moodlenetContributorIdSelect,
         ): Promise<ok_ko<{ moodlenetContributorRecord: moodlenetContributorRecord }, { notFound: unknown }>>
       }
       service?: unknown
@@ -75,3 +73,18 @@ export default interface MoodlenetDomain {
   }
 }
 //type queryContributorFilter = d_u<{ access: { levels: moodlenetContributorAccess['level'][] } }, 'type'>
+
+export type moodlenetContributorIdSelect = d_u<
+  {
+    userProfileId: {
+      userProfileId: userProfileId
+    }
+    userAccountId: {
+      userAccountId: userAccountId
+    }
+    moodlenetContributorId: {
+      moodlenetContributorId: moodlenetContributorId
+    }
+  },
+  'by'
+>

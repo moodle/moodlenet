@@ -1,8 +1,8 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
 import { dbStruct } from '../db-structure'
-import { getUserProfileByUserAccountId, updateUserProfileByUserAccountId } from './user-profile-db'
-import { restore_record, save_id_to_key } from '../lib/key-id-mapping'
+import { save_id_to_key } from '../lib/key-id-mapping'
+import { getUserProfileById, updateUserProfileById } from './user-profile-db'
 
 export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
   return secondaryCtx => {
@@ -10,8 +10,8 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
       userProfile: {
         sync: {
           async userAccountExcerpt({ userAccountExcerpt }) {
-            const userProfileDoc = await updateUserProfileByUserAccountId({
-              userAccountId: userAccountExcerpt.id,
+            const userProfileDoc = await updateUserProfileById({
+              select: { by: 'userAccountId', userAccountId: userAccountExcerpt.id },
               dbStruct,
               partialUserProfile: { userAccount: userAccountExcerpt },
             })
@@ -22,14 +22,8 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
           },
         },
         query: {
-          async getUserProfile(get) {
-            const userProfileRecord =
-              get.by === 'userProfileId'
-                ? await dbStruct.userAccount.coll.userProfile
-                    .document({ _key: get.userProfileId })
-                    .then(restore_record)
-                    .catch(() => null)
-                : await getUserProfileByUserAccountId({ dbStruct, userAccountId: get.userAccountId })
+          async getUserProfile(select) {
+            const userProfileRecord = await getUserProfileById({ dbStruct, select })
             if (!userProfileRecord) {
               return [false, { reason: 'notFound' }]
             }
@@ -44,13 +38,6 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             const updateDone = !!updateResult?.new
             return [updateDone, _void]
           },
-          async updatePartialUserProfile({ userProfileId, partialUserProfile }) {
-            const updateResult = await dbStruct.userAccount.coll.userProfile
-              .update({ _key: userProfileId }, partialUserProfile, { returnNew: true })
-              .catch(() => null)
-            const updateDone = !!updateResult?.new
-            return [updateDone, _void]
-          },
           async createUserProfile({ userProfileRecord }) {
             const result = await dbStruct.userAccount.coll.userProfile
               .save(save_id_to_key(userProfileRecord))
@@ -60,6 +47,13 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
 
             return [saveDone, _void]
           },
+          /*  async updatePartialUserProfile({ userProfileId, partialUserProfile }) {
+            const updateResult = await dbStruct.userAccount.coll.userProfile
+              .update({ _key: userProfileId }, partialUserProfile, { returnNew: true })
+              .catch(() => null)
+            const updateDone = !!updateResult?.new
+            return [updateDone, _void]
+          }, */
         },
       },
     }

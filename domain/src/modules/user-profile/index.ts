@@ -12,7 +12,7 @@ import {
 } from './types'
 export * from './types'
 
-export type get_user_profile_by = d_u<
+export type userProfileIdSelect = d_u<
   { userProfileId: { userProfileId: userProfileId }; userAccountId: { userAccountId: userAccountId } },
   'by'
 >
@@ -41,7 +41,7 @@ export type userProfilePrimary = {
     }>
   }
   admin: {
-    byId(_: get_user_profile_by): Promise<
+    byId(_: userProfileIdSelect): Promise<
       ok_ko<
         {
           userProfileRecord: userProfileRecord
@@ -68,7 +68,7 @@ export default interface UserProfileDomain {
       }
       query: {
         getUserProfile(
-          _: get_user_profile_by,
+          _: userProfileIdSelect,
         ): Promise<ok_ko<{ userProfileRecord: userProfileRecord }, { notFound: unknown }>>
       }
       write: {
@@ -78,10 +78,10 @@ export default interface UserProfileDomain {
           partialProfileInfo: deep_partial_props<profileInfo>
         }): Promise<ok_ko<void>>
         useTempImageInProfile(_: { as: profileImage; id: userProfileId; tempId: string }): Promise<useTempFileResult>
-        updatePartialUserProfile(_: {
+        /*  updatePartialUserProfile(_: {
           userProfileId: userProfileId
           partialUserProfile: deep_partial_props<userProfileRecord>
-        }): Promise<ok_ko<void>>
+        }): Promise<ok_ko<void>> */
       }
     }
   }

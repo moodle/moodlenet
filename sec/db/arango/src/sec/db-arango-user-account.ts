@@ -1,11 +1,11 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { _void, date_time_string } from '@moodle/lib-types'
+import { userAccountRecord } from '@moodle/module/user-account'
 import { aql } from 'arangojs'
 import { createHash } from 'node:crypto'
 import { dbStruct } from '../db-structure'
+import { restore_maybe_record, save_id_to_key } from '../lib/key-id-mapping'
 import { getUserByEmail, getUserById } from './user-account-db'
-import { restore_maybe_record, RESTORE_RECORD_AQL, save_id_to_key } from '../lib/key-id-mapping'
-import { userAccountRecord } from '@moodle/module/user-account'
 
 export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
   return secondaryCtx => {
@@ -79,8 +79,6 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                   passwordHash: newPasswordHash,
                 },
               )
-              .then(({ old }) => old)
-              .then(restore_maybe_record)
               .catch(() => null)
             return [!!updated, _void]
           },
@@ -103,18 +101,18 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
           async usersByText({ text, includeDeactivated }) {
             const lowerCaseText = text.toLowerCase()
             const textFilter = text
-              ? aql`LET sim = NGRAM_SIMILARITY(LOWER(user.displayName),${lowerCaseText},2) + NGRAM_SIMILARITY(LOWER(user.contacts.email),${lowerCaseText},2)
+              ? aql`LET sim = NGRAM_SIMILARITY(LOWER(userAccountDoc.displayName),${lowerCaseText},2) + NGRAM_SIMILARITY(LOWER(userAccountDoc.contacts.email),${lowerCaseText},2)
                       FILTER sim > 0.5
                       SORT sim DESC`
               : aql``
-            const deactivatedFilter = includeDeactivated ? aql`` : aql`FILTER NOT(user.deactivated)`
+            const deactivatedFilter = includeDeactivated ? aql`` : aql`FILTER NOT(userAccountDoc.deactivated)`
             const userDocs_cursor = await dbStruct.userAccount.db.query<userAccountRecord>(
               aql`
                 FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount}
                 ${deactivatedFilter}
                 ${textFilter}
                 LIMIT 50
-                RETURN ${RESTORE_RECORD_AQL('userAccountDoc')}
+                RETURN MOODLE::RESTORE_RECORD(userAccountDoc)
                 `,
             )
             const userAccountRecords = await userDocs_cursor.all()

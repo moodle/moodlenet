@@ -1,43 +1,46 @@
 import { deep_partial_props } from '@moodle/lib-types'
-import { userAccountId } from '@moodle/module/user-account'
+import { userProfileIdSelect, userProfileRecord } from '@moodle/module/user-profile'
 import { aql } from 'arangojs'
 import { AqlQuery } from 'arangojs/aql'
 import { dbStruct } from '../../db-structure'
-import { userProfileRecord } from '@moodle/module/user-profile'
-import { RESTORE_RECORD_AQL } from '../../lib/key-id-mapping'
 
-export async function getUserProfileByUserAccountId({
+export async function getUserProfileById({
   dbStruct,
-  userAccountId,
+  select,
   apply = aql``,
 }: {
   dbStruct: dbStruct
-  userAccountId: userAccountId
+  select: userProfileIdSelect
   apply?: AqlQuery
 }) {
+  const filter_id =
+    select.by === 'userProfileId'
+      ? aql`userProfileDoc._key == ${select.userProfileId}`
+      : aql`userProfileDoc.userAccount.id == ${select.userAccountId}`
+
   const cursor = await dbStruct.moodlenet.db.query(aql<userProfileRecord>`
-    FOR userProfile in ${dbStruct.userAccount.coll.userProfile}
-    FILTER userProfile.userAccount.id == ${userAccountId}
+    FOR userProfileDoc in ${dbStruct.userAccount.coll.userProfile}
+    FILTER ${filter_id}
     LIMIT 1
     ${apply}
-    RETURN ${RESTORE_RECORD_AQL('userProfile')}
+    RETURN MOODLE::RESTORE_RECORD(userProfileDoc)
     `)
   const [userProfile] = await cursor.all()
   return userProfile ?? null
 }
 
-export async function updateUserProfileByUserAccountId({
+export async function updateUserProfileById({
   dbStruct,
-  userAccountId,
+  select,
   partialUserProfile,
 }: {
-  userAccountId: userAccountId
+  select: userProfileIdSelect
   dbStruct: dbStruct
   partialUserProfile: deep_partial_props<userProfileRecord>
 }) {
-  return getUserProfileByUserAccountId({
-    apply: aql`UPDATE userProfile WITH ${partialUserProfile} IN ${dbStruct.userAccount.coll.userProfile}`,
+  return getUserProfileById({
+    apply: aql`UPDATE userProfileDoc WITH ${partialUserProfile} IN ${dbStruct.userAccount.coll.userProfile}`,
     dbStruct,
-    userAccountId,
+    select,
   })
 }

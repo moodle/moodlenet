@@ -3,6 +3,7 @@ import { layoutPropsWithChildren, slotsMap } from '../../../lib/server/utils/slo
 import { LandingPageHeader } from './landing-page.client'
 import { LandingProfileList } from './LandingProfileList/LandingProfileList'
 import { Leaderboard } from './Leaderboard/Leaderboard'
+import './landing-page.style.scss'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
   const landingPageLayoutProps = await access.primary.moodlenetReactApp.props.landingLayout()

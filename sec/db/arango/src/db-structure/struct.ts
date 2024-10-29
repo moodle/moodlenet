@@ -48,7 +48,7 @@ export function getDbStruct(databaseConnections: databaseConnections) {
       db: user_account_db,
       coll: {
         userProfile: moodlenet_db.collection<record_doc<userProfileRecord>>('userProfile'),
-        userAccount: user_account_db.collection<record_doc<userAccountRecord>>('user'),
+        userAccount: user_account_db.collection<record_doc<userAccountRecord>>('userAccount'),
       },
     },
   }

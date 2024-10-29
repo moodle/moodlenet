@@ -2,8 +2,8 @@ import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { moodlenetContributorRecord } from '@moodle/module/moodlenet'
 import { aql } from 'arangojs'
 import { dbStruct } from '../db-structure'
-import { restore_maybe_record, RESTORE_RECORD_AQL } from '../lib/key-id-mapping'
-import { getUserProfileByUserAccountId } from './user-profile-db'
+import { save_id_to_key } from '../lib/key-id-mapping'
+import { getMoodlenetContributor, updateMoodlenetContributor } from './moodlenet-db'
 
 export function moodlenet_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
   return secondaryCtx => {
@@ -11,29 +11,7 @@ export function moodlenet_secondary_factory({ dbStruct }: { dbStruct: dbStruct }
       moodlenet: {
         query: {
           async contributor(select) {
-            const moodlenetContributorRecord = await (async () => {
-              if (select.by === 'moodlenetContributorId') {
-                return dbStruct.moodlenet.coll.contributor
-                  .document({ _key: select.moodlenetContributorId })
-                  .then(restore_maybe_record)
-              } else {
-                const userProfileRecordId = await (
-                  select.by === 'userAccountId'
-                    ? getUserProfileByUserAccountId({ dbStruct, userAccountId: select.userAccountId })
-                    : dbStruct.userAccount.coll.userProfile
-                        .document({ _key: select.userProfileId })
-                        .then(restore_maybe_record)
-                ).then(userProfileRecord => userProfileRecord?.id)
-                const cursor = await dbStruct.moodlenet.db.query(aql<moodlenetContributorRecord>`
-                  FOR moodlenetContributorDoc IN ${dbStruct.moodlenet.coll.contributor}
-                  FILTER moodlenetContributorDoc.userProfile.id == ${userProfileRecordId}
-                  LIMIT 1
-                  return ${RESTORE_RECORD_AQL('moodlenetContributorDoc')}
-                `)
-                const [m_moodlenetContributorRecord] = await cursor.all()
-                return m_moodlenetContributorRecord
-              }
-            })()
+            const moodlenetContributorRecord = await getMoodlenetContributor({ dbStruct, select })
             return moodlenetContributorRecord ? [true, { moodlenetContributorRecord }] : [false, { reason: 'notFound' }]
           },
           async contributors({ range: [limit, skip = 0], sort = [] }) {
@@ -46,10 +24,23 @@ export function moodlenet_secondary_factory({ dbStruct }: { dbStruct: dbStruct }
                 FOR moodlenetContributorDoc IN ${dbStruct.moodlenet.coll.contributor}
                 ${aqlSort}
                 LIMIT ${skip},${limit}
-                return ${RESTORE_RECORD_AQL('moodlenetContributorDoc')}
+                return MOODLE::RESTORE_RECORD(moodlenetContributorDoc)
               `)
             const moodlenetContributorRecords = await cursor.all()
             return { moodlenetContributorRecords }
+          },
+        },
+        write: {
+          async createMoodlenetContributor({ moodlenetContributorRecord }) {
+            dbStruct.moodlenet.coll.contributor.save(save_id_to_key(moodlenetContributorRecord)).catch(() => null)
+            return
+          },
+          async updatePartialMoodlenetContributor({ partialMoodlenetContributorRecord, select }) {
+            await updateMoodlenetContributor({
+              dbStruct,
+              select,
+              partialMoodlenetContributorRecord,
+            })
           },
         },
         // service: secondaryCtx.mod.secondary.env.service,

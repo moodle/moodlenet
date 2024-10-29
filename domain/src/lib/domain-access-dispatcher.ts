@@ -181,8 +181,9 @@ export function provideDomainAccessDispatcher({
       `
         throw TypeError(err_msg)
       }
-      logMessage //('debug', ':)', domainMsg.payload ?? null)
-      return endpoint(domainMsg.payload)
+      const endpointResponse = await endpoint(domainMsg.payload)
+      logMessage //('debug', ':)', { payload: domainMsg.payload ?? null, response: endpointResponse })
+      return endpointResponse
     }
     function triggerWatchers({ result }: { result: _any }) {
       return Promise.allSettled(

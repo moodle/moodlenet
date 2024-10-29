@@ -30,6 +30,6 @@ export function restore_record<doc extends record_doc<_any>>(
   }
 }
 
-export function RESTORE_RECORD_AQL(varName: string) {
-  return aql`(MERGE({ id:${varName}._key}, UNSET(${varName}, "_id", "_rev", "_key")))`
-}
+// export function RESTORE_RECORD_AQL(varName: string) {
+//   return aql`MERGE( { id: ${varName}._key }, UNSET( ${varName}, "_id", "_rev", "_key" ) )`
+// }

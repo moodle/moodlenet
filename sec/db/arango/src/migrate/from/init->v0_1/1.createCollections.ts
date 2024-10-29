@@ -22,10 +22,10 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
 
   await dbStruct.moodlenet.coll.contentLanguage.create({ cacheEnabled: true })
   await dbStruct.moodlenet.coll.contentLicense.create({ cacheEnabled: true })
+  await dbStruct.moodlenet.coll.contributor.create({ cacheEnabled: true })
   await dbStruct.moodlenet.coll.eduBloomCognitive.create({ cacheEnabled: true })
   await dbStruct.moodlenet.coll.eduIscedField.create({ cacheEnabled: true })
   await dbStruct.moodlenet.coll.eduIscedLevel.create({ cacheEnabled: true })
-  await dbStruct.moodlenet.coll.eduResourceType.create({ cacheEnabled: true })
   await dbStruct.moodlenet.coll.eduResourceType.create({ cacheEnabled: true })
 }
 

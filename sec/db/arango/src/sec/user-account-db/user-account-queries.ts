@@ -1,8 +1,8 @@
 import { _void, email_address, ok_ko } from '@moodle/lib-types'
-import { Document } from 'arangojs/documents'
 import { userAccountId, userAccountRecord } from '@moodle/module/user-account'
+import { aql } from 'arangojs'
 import { dbStruct } from '../../db-structure'
-import { restore_maybe_record, RESTORE_RECORD_AQL } from '../../lib/key-id-mapping'
+import { restore_maybe_record } from '../../lib/key-id-mapping'
 
 export async function getUserByEmail({
   email,
@@ -12,13 +12,13 @@ export async function getUserByEmail({
   email: email_address
 }): Promise<ok_ko<userAccountRecord>> {
   const cursor = await dbStruct.userAccount.db.query<userAccountRecord>(
-    `FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount.name}
-      FILTER userAccountDoc.contacts.email == @email
+    aql`FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount}
+      FILTER userAccountDoc.contacts.email == ${email}
       LIMIT 1
-      RETURN ${RESTORE_RECORD_AQL('userAccountDoc')}`,
-    { email },
+      RETURN MOODLE::RESTORE_RECORD(userAccountDoc)`,
   )
-  const foundUser = await cursor.next()
+  const [foundUser] = await cursor.all()
+
   return foundUser ? [true, foundUser] : [false, _void]
 }
 export async function getUserById({

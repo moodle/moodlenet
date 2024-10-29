@@ -63,7 +63,7 @@ export default interface userAccountDomain {
           signupEmailVerificationToken: signed_token
         }): Promise<
           ok_ko<
-            { userAccountId: userAccountId; userSessionToken: signed_expire_token },
+            { userAccountId: userAccountId },
             { unknown: unknown; invalidToken: unknown; userWithThisEmailExists: unknown }
           >
         >

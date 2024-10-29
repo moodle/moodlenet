@@ -88,6 +88,20 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
       secondary: {
         userProfile: {
           write: {
+            async updatePartialProfileInfo([[done], payload]) {
+              if (!done) {
+                return
+              }
+              await ctx.write.updatePartialMoodlenetContributor({
+                select: { by: 'userProfileId', userProfileId: payload.userProfileId },
+                partialMoodlenetContributorRecord: {
+                  userProfile: {
+                    info: payload.partialProfileInfo,
+                  },
+                  slug: payload.partialProfileInfo.displayName ? webSlug(payload.partialProfileInfo.displayName) : undefined,
+                },
+              })
+            },
             async createUserProfile([[created], payload]) {
               if (!created) {
                 return
@@ -96,28 +110,30 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
               const id = await generateNanoId()
               const { configs } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
               await ctx.write.createMoodlenetContributor({
-                id,
-                access: { level: userProfileRecord.userAccount.roles.includes('contributor') ? 'public' : 'protected' },
-                contributions: { eduResources: [], eduResourcesCollections: [] },
-                slug: webSlug(userProfileRecord.info.displayName),
-                linkedContent: {
-                  bookmark: { eduResourceCollections: [], eduResources: [] },
-                  follow: { eduResourceCollections: [], moodlenetContributors: [], iscedFields: [] },
-                  like: { eduResources: [] },
-                },
-                preferences: { useMyInterestsAsDefaultFilters: false },
-                stats: { points: configs.pointSystem.welcomePoints },
-                suggestedContent: {
-                  listCreationDate: date_time_string('now'),
-                  lists: {
-                    eduResourceCollections: [],
-                    eduResources: [],
-                    moodlenetContributors: [],
+                moodlenetContributorRecord: {
+                  id,
+                  access: { level: userProfileRecord.userAccount.roles.includes('contributor') ? 'public' : 'protected' },
+                  contributions: { eduResources: [], eduResourcesCollections: [] },
+                  slug: webSlug(userProfileRecord.info.displayName),
+                  linkedContent: {
+                    bookmark: { eduResourceCollections: [], eduResources: [] },
+                    follow: { eduResourceCollections: [], moodlenetContributors: [], iscedFields: [] },
+                    like: { eduResources: [] },
                   },
-                },
-                userProfile: {
-                  id: userProfileRecord.id,
-                  info: userProfileRecord.info,
+                  preferences: { useMyInterestsAsDefaultFilters: false },
+                  stats: { points: configs.pointSystem.welcomePoints },
+                  suggestedContent: {
+                    listCreationDate: date_time_string('now'),
+                    lists: {
+                      eduResourceCollections: [],
+                      eduResources: [],
+                      moodlenetContributors: [],
+                    },
+                  },
+                  userProfile: {
+                    id: userProfileRecord.id,
+                    info: userProfileRecord.info,
+                  },
                 },
               })
             },

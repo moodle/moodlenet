@@ -135,15 +135,8 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             if (!newUserCreated) {
               return [false, { reason: 'unknown' }]
             }
-            const [userSessionTokenCreated, userSessionTokenResult] = await generateSessionForUserAccountId({
-              ctx,
-              userAccountId: newUser.id,
-            })
-            if (!userSessionTokenCreated) {
-              return [false, { reason: 'unknown' }]
-            }
 
-            return [true, { userAccountId: newUser.id, userSessionToken: userSessionTokenResult.userSessionToken }]
+            return [true, { userAccountId: newUser.id }]
           },
           async resetPassword({ resetPasswordForm: { newPassword, token } }) {
             const [verified, validation] = await ctx.mod.secondary.crypto.service.validateSignedToken({
@@ -437,8 +430,9 @@ export const userAccount_core: moduleCore<'userAccount'> = {
   },
   async startBackgroundProcess(ctx) {
     ctx.log('debug', 'Starting background process userAccount')
-
     const sysAdminInfo = await ctx.mod.secondary.env.query.getSysAdminInfo()
+    ctx.log('debug', `Checking if sysAdmin user exists: `, { sysAdminInfo })
+
     const [found] = await ctx.mod.secondary.userAccount.query.userBy({
       by: 'email',
       email: sysAdminInfo.email,
