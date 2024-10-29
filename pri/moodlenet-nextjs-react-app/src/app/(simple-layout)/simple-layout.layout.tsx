@@ -9,7 +9,7 @@ import MinimalisticHeader from '../../ui/organisms/Header/Minimalistic/Minimalis
 import './simple-layout.style.scss'
 
 export default async function SimpleLayoutLayout(props: layoutPropsWithChildren) {
-  const layouts = await access.primary.moodlenetReactApp.session.layouts()
+  const { simpleLayout } = await access.primary.moodlenetReactApp.props.simpleLayout()
   return (
     <div className={`simple-layout`}>
       <MinimalisticHeader slots={headerSlots()} />
@@ -19,7 +19,7 @@ export default async function SimpleLayoutLayout(props: layoutPropsWithChildren)
   )
 
   function headerSlots(): MainHeaderProps['slots'] {
-    const { center, left, right } = slotsMap(props, layouts.roots.simple.header.slots)
+    const { center, left, right } = slotsMap(props, simpleLayout.header.slots)
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters: ReactNode[] = []
     const defaultRights: ReactNode[] = []
@@ -32,7 +32,7 @@ export default async function SimpleLayoutLayout(props: layoutPropsWithChildren)
   }
 
   function footerSlots(): FooterProps['slots'] {
-    const { center, left, right, bottom } = slotsMap(props, layouts.roots.simple.footer.slots)
+    const { center, left, right, bottom } = slotsMap(props, simpleLayout.footer.slots)
     return {
       left: [...left],
       center: [...center],

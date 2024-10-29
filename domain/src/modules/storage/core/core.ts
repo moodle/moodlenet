@@ -23,13 +23,15 @@ export const storage_core: moduleCore<'storage'> = {
   },
   primary(ctx) {
     return {
-      session: {
-        async moduleInfo() {
-          const {
-            configs: { uploadMaxSize },
-          } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
-          return { uploadMaxSizeConfigs: uploadMaxSize }
-        },
+      async session() {
+        return {
+          async moduleInfo() {
+            const {
+              configs: { uploadMaxSize },
+            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
+            return { uploadMaxSizeConfigs: uploadMaxSize }
+          },
+        }
       },
     }
   },

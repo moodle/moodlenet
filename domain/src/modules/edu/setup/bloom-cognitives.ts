@@ -2,7 +2,7 @@ import { eduBloomCognitiveRecord } from '..'
 
 export const eduBloomCognitivesSetup: eduBloomCognitiveRecord[] = [
   {
-    level: '1',
+    id: '1',
     description: 'Knowledge',
     verbs: [
       'Define',
@@ -22,7 +22,7 @@ export const eduBloomCognitivesSetup: eduBloomCognitiveRecord[] = [
     ],
   },
   {
-    level: '2',
+    id: '2',
     description: 'Comprehension',
     verbs: [
       'Classify',
@@ -50,7 +50,7 @@ export const eduBloomCognitivesSetup: eduBloomCognitiveRecord[] = [
     ],
   },
   {
-    level: '3',
+    id: '3',
     description: 'Application',
     verbs: [
       'Apply',
@@ -80,7 +80,7 @@ export const eduBloomCognitivesSetup: eduBloomCognitiveRecord[] = [
     ],
   },
   {
-    level: '4',
+    id: '4',
     description: 'Analysis',
     verbs: [
       'Analyze',
@@ -113,7 +113,7 @@ export const eduBloomCognitivesSetup: eduBloomCognitiveRecord[] = [
     ],
   },
   {
-    level: '5',
+    id: '5',
     description: 'Synthesis',
     verbs: [
       'Arrange',
@@ -151,7 +151,7 @@ export const eduBloomCognitivesSetup: eduBloomCognitiveRecord[] = [
     ],
   },
   {
-    level: '6',
+    id: '6',
     description: 'Evaluation',
     verbs: [
       'Appraise',

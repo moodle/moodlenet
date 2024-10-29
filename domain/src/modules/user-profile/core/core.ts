@@ -16,47 +16,52 @@ export const user_profile_core: moduleCore<'userProfile'> = {
   },
   primary(ctx) {
     return {
-      session: {
-        async moduleInfo() {
-          const {
-            configs: { profileInfoPrimaryMsgSchemaConfigs },
-          } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userProfile' })
-          return { schemaConfigs: profileInfoPrimaryMsgSchemaConfigs }
-        },
+      async session() {
+        return {
+          async moduleInfo() {
+            const {
+              configs: { profileInfoPrimaryMsgSchemaConfigs },
+            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userProfile' })
+            return { schemaConfigs: profileInfoPrimaryMsgSchemaConfigs }
+          },
+        }
       },
-      get me() {
-        const accessCheckP = assert_authorizeAuthenticatedCurrentUserSession({ ctx }).then(async authenticatedUser => {
-          const userProfileId = authenticatedUser.profile.id
-          const [found, userProfileResult] = await ctx.mod.secondary.userProfile.query.getUserProfile({
-            by: 'userProfileId',
-            userProfileId,
-          })
-          assertWithErrorXxx(found, 'Not Found', 'authenticated userProfileRecord not found')
-          return userProfileResult
-        })
-        const primaries: userProfilePrimary['me'] = {
+      async authenticated() {
+        const authenticatedUserSession = await assert_authorizeAuthenticatedCurrentUserSession({ ctx }).then(
+          async authenticatedUser => {
+            const userProfileId = authenticatedUser.profile.id
+            const [found, userProfileResult] = await ctx.mod.secondary.userProfile.query.getUserProfile({
+              by: 'userProfileId',
+              userProfileId,
+            })
+            assertWithErrorXxx(found, 'Not Found', 'authenticated userProfileRecord not found')
+            return userProfileResult
+          },
+        )
+        const userProfileId = authenticatedUserSession.userProfileRecord.id
+        const primaries: userProfilePrimary['authenticated'] = {
           async getMyUserRecords() {
-            const { userProfileRecord } = await accessCheckP
-            const userAccontRecord = await ctx.forward.userAccount.authenticated.get()
+            const { userProfileRecord } = authenticatedUserSession
+            const userAccontRecord = await ctx.forward.userAccount.authenticated.getMyUserAccountRecord()
             return {
               userProfileRecord: omit(userProfileRecord, 'userAccount'),
               userAccountRecord: omit(userAccontRecord, 'displayName'),
             }
           },
           async useTempImageAsProfileImage({ as, tempId }) {
-            const { userProfileRecord } = await accessCheckP
+            const { userProfileRecord } = authenticatedUserSession
             const [done, result] = await ctx.write.useTempImageInProfile({
               as,
               id: userProfileRecord.id,
               tempId,
             })
             if (!done) {
-              return [false, result]
+              return [[false, result], { userProfileId }]
             }
-            return [true, result]
+            return [[true, result], { userProfileId }]
           },
           async editProfileInfo({ profileInfo }) {
-            const { userProfileRecord } = await accessCheckP
+            const { userProfileRecord } = authenticatedUserSession
             const [done] = await ctx.write.updatePartialProfileInfo({
               userProfileId: userProfileRecord.id,
               partialProfileInfo: profileInfo,
@@ -64,21 +69,20 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             if (!done) {
               return [false, { reason: 'unknown' }]
             }
-            return [done, _void]
+            return [done, { userProfileId }]
           },
         }
         return primaries
       },
-      get admin() {
-        const accessCheckP = assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' }).then(
+      async admin() {
+        const adminUserSession = await assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' }).then(
           async authenticatedAdminUser => {
             return authenticatedAdminUser
           },
         )
 
-        const adminPrimary: userProfilePrimary['admin'] = {
+        return {
           async byId(get) {
-            await accessCheckP
             const [found, userProfileResult] = await ctx.mod.secondary.userProfile.query.getUserProfile({ ...get })
 
             if (!found) {
@@ -87,7 +91,6 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             return [true, { userProfileRecord: userProfileResult.userProfileRecord }]
           },
         }
-        return adminPrimary
       },
     }
   },

@@ -1,25 +1,27 @@
 'use client'
 
-import PermIdentity from '@mui/icons-material/PermIdentity'
-import Grade from '@mui/icons-material/Grade'
 import FilterNone from '@mui/icons-material/FilterNone'
+import Grade from '@mui/icons-material/Grade'
+import PermIdentity from '@mui/icons-material/PermIdentity'
 
+import { moodlenetContributorAccessObject } from '@moodle/module/moodlenet'
+import { profilePageProps } from '@moodle/module/moodlenet-react-app'
 import { Card } from '../../../../../ui/atoms/Card/Card'
 import { OverallCard } from '../../../../../ui/molecules/OverallCard/OverallCard'
-import { MainProfileCard, mainProfileCardProps } from './pageComponents/MainProfileCard/MainProfileCard'
+import { MainProfileCard } from './pageComponents/MainProfileCard/MainProfileCard'
 import { UserProgressCard, userProgressCardProps } from './pageComponents/UserProgressCard/UserProgressCard'
 
 export interface ProfileClientProps {
-  mainProfileCardProps: mainProfileCardProps
+  moodlenetContributorAccessObject: moodlenetContributorAccessObject
   userProgressCardProps: userProgressCardProps
   stats: { followersCount: number; followingCount: number; publishedResourcesCount: number }
 }
 
-export default function ProfileClient({ mainProfileCardProps, userProgressCardProps, stats }: ProfileClientProps) {
+export default function ProfileClient({ moodlenetContributorAccessObject, stats }: profilePageProps) {
   return (
     <div className="profile-page">
       <div className="main-card">
-        <MainProfileCard {...mainProfileCardProps} />
+        <MainProfileCard {...{ moodlenetContributorAccessObject }} />
       </div>
       <div className="resources">
         <Card>
@@ -98,7 +100,7 @@ export default function ProfileClient({ mainProfileCardProps, userProgressCardPr
         />
       </div>
       <div className="points">
-        <UserProgressCard {...userProgressCardProps} />
+        <UserProgressCard points={moodlenetContributorAccessObject.stats.points} />
       </div>
     </div>
   )

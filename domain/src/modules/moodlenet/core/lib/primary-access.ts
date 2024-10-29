@@ -12,7 +12,10 @@ export async function accessMoodlenetContributor({
   ctx,
   id,
 }: sessionLibDep & { id: moodlenetContributorId }): Promise<found_access_obj<moodlenetContributorAccessObject>> {
-  const [found, findResult] = await ctx.mod.secondary.moodlenet.query.contributorById({ id })
+  const [found, findResult] = await ctx.mod.secondary.moodlenet.query.contributor({
+    by: 'moodlenetContributorId',
+    moodlenetContributorId: id,
+  })
 
   if (!found) {
     return { result: 'notFound' }
@@ -42,7 +45,8 @@ export function getMoodlenetContributorAccessObject({
     return {
       access: 'allowed',
       itsMe: its_me,
-      moodlenetContributorId: moodlenetContributorRecord.id,
+      slug: moodlenetContributorRecord.slug,
+      id: moodlenetContributorRecord.id,
       profileInfo: moodlenetContributorRecord.userProfile.info,
       permissions: {
         editProfileInfo: its_me,
@@ -51,7 +55,7 @@ export function getMoodlenetContributorAccessObject({
         sendMessage: !its_me,
       },
       contributions: moodlenetContributorRecord.contributions,
-      linkedContent: pick(moodlenetContributorRecord.linkedContent, ['following', 'likes']),
+      linkedContent: moodlenetContributorRecord.linkedContent,
       stats: {
         points: moodlenetContributorRecord.stats.points,
       },

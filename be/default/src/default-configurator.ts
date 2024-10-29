@@ -124,18 +124,22 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
           },
           primary(ctx) {
             return {
-              domain: {
-                async info() {
-                  return { name: domainName }
-                },
+              async domain() {
+                return {
+                  async info() {
+                    return { name: domainName }
+                  },
+                }
               },
-              application: {
-                async deployments() {
-                  return {
-                    moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
-                    filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
-                  }
-                },
+              async application() {
+                return {
+                  async deployments() {
+                    return {
+                      moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
+                      filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
+                    }
+                  },
+                }
               },
             }
           },

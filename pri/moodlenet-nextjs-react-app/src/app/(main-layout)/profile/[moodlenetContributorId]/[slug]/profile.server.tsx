@@ -19,19 +19,17 @@ export async function getProfileInfoSchema() {
 export const updateProfileInfo = defaultSafeActionClient
   .schema(getProfileInfoSchema)
   .action(async ({ parsedInput: profileInfo }) => {
-    const [editDone, editResult] = await access.primary.userProfile.editProfile.editProfileInfo({
-      userProfileId: profileInfo.userProfileId,
-      profileInfo: profileInfo,
+    const [editDone, editResult] = await access.primary.userProfile.authenticated.editProfileInfo({
+      profileInfo,
     })
     if (editDone) {
-      revalidatePath(sitepaths.profile[profileInfo.userProfileId]!())
+      revalidatePath(sitepaths.profile[editResult.userProfileId]!())
       return
     }
     returnValidationErrors(getProfileInfoSchema, {
       _errors: [t(`something went wrong while saving profile info`) + ` : ${editResult.reason}`],
     })
   })
-
 
 export async function getUseProfileImageSchema() {
   const {
@@ -43,17 +41,15 @@ export async function getUseProfileImageSchema() {
 export const adoptProfileImage = defaultSafeActionClient
   .schema(getUseProfileImageSchema)
   .action(async ({ parsedInput: useProfileImageForm }) => {
-    const [done, usingTempFile] =
-      await access.primary.userProfile.editProfile.useTempImageAsProfileImage(useProfileImageForm)
-    // const userProfileId = myUserProfileRes.accessObject.id
+    const [[done, result], { userProfileId }] =
+      await access.primary.userProfile.authenticated.useTempImageAsProfileImage(useProfileImageForm)
     if (!done) {
       returnValidationErrors(getProfileInfoSchema, {
-        _errors: [t(`something went wrong while saving ${useProfileImageForm.as}`) + ` : ${usingTempFile.reason}`],
+        _errors: [t(`something went wrong while saving ${useProfileImageForm.as}`) + ` : ${result.reason}`],
       })
     }
 
-    revalidatePath(sitepaths.profile[useProfileImageForm.userProfileId]!())
+    revalidatePath(sitepaths.profile[userProfileId]!())
 
-    return usingTempFile2asset(usingTempFile)
+    return usingTempFile2asset(result)
   })
-

@@ -4,7 +4,7 @@ import { eduIscedFieldsSetup, eduIscedLevelsSetup, eduResourceTypesSetup } from 
 import { contentLanguages_iso_639_3_Setup, contentLicensesSetup } from '../../content/setup'
 
 export const moodlenet_default_configs: configs = {
-  info: {
+  siteInfo: {
     title: 'Search for resources, subjects, collections or people',
     subtitle: 'Find, share and curate open educational resources',
   },

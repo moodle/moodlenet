@@ -4,12 +4,10 @@ import { LoginCard, LoginCardProps } from './login.client'
 import './login.style.scss'
 
 export default async function LoginLayout(props: layoutPropsWithChildren) {
-  const {
-    pages: { login },
-  } = await access.primary.moodlenetReactApp.session.layouts()
+  const { loginPageLayout } = await access.primary.moodlenetReactApp.props.loginPage()
 
   const loginCardProps: LoginCardProps = {
-    loginMethods: login.methods.map(({ label, panel }) => ({
+    loginMethods: loginPageLayout.methods.map(({ label, panel }) => ({
       key: `${panel}#${label}`,
       label: slotItem(props, label),
       panel: slotItem(props, panel),

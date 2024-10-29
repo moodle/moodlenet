@@ -1,4 +1,5 @@
-import { moodlenetContributorMinimalInfo, moodlenetContributorRecord } from '../../types'
+import { moodlenetContributorRecord } from '../../moodlenet/types'
+import { moodlenetContributorMinimalInfo } from '../types'
 
 export function mapContributorToMinimalInfo(
   moodlenetContributorRecord: moodlenetContributorRecord,

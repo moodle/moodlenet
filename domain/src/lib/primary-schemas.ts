@@ -5,6 +5,8 @@ import { getuserAccountPrimarySchemas } from '../modules/user-account'
 import { getUserProfilePrimarySchemas } from '../modules/user-profile'
 import { AllSchemaConfigs } from '../types'
 
+
+//FIXME: move all this stuff in moodlenet-react-app ! for the moment it's used there, and it makes sense cause that is (and should be) the only know-all place (as well as other apps, but eventually they will t=do their own)
 export function makeAllPrimarySchemas({
   userAccountSchemaConfigs,
   moodlenetSchemaConfigs,

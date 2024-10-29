@@ -13,7 +13,7 @@ export async function getResetMyPasswordSchema() {
 export const resetMyPasswordAction = defaultSafeActionClient
   .schema(getResetMyPasswordSchema)
   .action(async ({ parsedInput: resetPasswordForm }) => {
-    const [ok, resp] = await access.primary.userAccount.myAccount.resetPassword({
+    const [ok, resp] = await access.primary.userAccount.signedTokenAccess.resetPassword({
       resetPasswordForm,
     })
     if (!ok) {

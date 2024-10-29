@@ -22,7 +22,7 @@ async function getChangePasswordSchema() {
 export const changePasswordAction = defaultSafeActionClient
   .schema(getChangePasswordSchema)
   .action(async ({ parsedInput: changePasswordForm }) => {
-    const [done, result] = await access.primary.userAccount.myAccount.changePassword(changePasswordForm)
+    const [done, result] = await access.primary.userAccount.authenticated.changePassword(changePasswordForm)
     if (!done) {
       returnValidationErrors(getChangePasswordSchema, {
         _errors:

@@ -5,7 +5,7 @@ import './root-layout.scss'
 import { access } from '../lib/server/session-access'
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const webappGlobalCtx = await access.primary.moodlenetReactApp.session.getWebappGlobalCtx()
+  const { webappGlobalCtx } = await access.primary.moodlenetReactApp.props.rootLayout()
   return (
     <html lang="en">
       <body>

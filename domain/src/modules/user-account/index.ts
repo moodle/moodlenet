@@ -40,13 +40,13 @@ export default interface userAccountDomain {
           userAccountId: userAccountId
           role: userRole
           action: 'set' | 'unset'
-        }): Promise<ok_ko<{ updatedRoles: userRole[] }, { userNotFound: unknown }>>
+        }): Promise<ok_ko<{ updatedRoles: userRole[]; adminUserAccountId: userAccountId }, { userNotFound: unknown }>>
         searchUsers(_: { textSearch: string }): Promise<{ users: userAccountRecord[] }>
         deactivateUser(_: {
           userAccountId: userAccountId
           reason: string
           anonymize: boolean
-        }): Promise<ok_ko<void, { userNotFound: unknown }>>
+        }): Promise<ok_ko<{ adminUserAccountId: userAccountId }, { userNotFound: unknown }>>
       }
 
       signedTokenAccess: {
@@ -63,8 +63,8 @@ export default interface userAccountDomain {
           signupEmailVerificationToken: signed_token
         }): Promise<
           ok_ko<
-            { userAccountId: userAccountId },
-            { unknown: unknown; invalidToken: unknown /* userWithThisEmailExists: unknown; */ }
+            { userAccountId: userAccountId; userSessionToken: signed_expire_token },
+            { unknown: unknown; invalidToken: unknown; userWithThisEmailExists: unknown }
           >
         >
       }
@@ -90,13 +90,15 @@ export default interface userAccountDomain {
       }
 
       authenticated: {
-        invalidateSession(): Promise<void>
+        invalidateSession(): Promise<{ userAccountId: userAccountId }>
 
-        get(): Promise<userAccountRecord>
+        getMyUserAccountRecord(): Promise<userAccountRecord>
 
-        selfDeletionRequest(_: { redirectUrl: url_string }): Promise<void>
+        selfDeletionRequest(_: { redirectUrl: url_string }): Promise<{ userAccountId: userAccountId }>
 
-        changePassword(_: changePasswordForm): Promise<ok_ko<void, { wrongCurrentPassword: unknown; unknown: unknown }>>
+        changePassword(
+          _: changePasswordForm,
+        ): Promise<ok_ko<{ userAccountId: userAccountId }, { wrongCurrentPassword: unknown; unknown: unknown }>>
       }
     }
   }

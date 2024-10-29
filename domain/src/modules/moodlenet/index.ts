@@ -1,11 +1,14 @@
-import { deep_partial_props, found_access_obj, ok_ko } from '@moodle/lib-types'
-import { currentMoodlenetSessionData, moodlenetInfo, moodlenetPrimaryMsgSchemaConfigs, pointSystem } from './types'
+import { d_u, deep_partial_props, ok_ko } from '@moodle/lib-types'
+import { userAccountId } from '../user-account'
+import { userProfileId } from '../user-profile'
 import {
-  moodlenetContributorAccessObject,
+  currentMoodlenetSessionData,
   moodlenetContributorId,
-  moodlenetContributorMinimalInfo,
   moodlenetContributorRecord,
-} from './types/moodlenet-contributor'
+  moodlenetPrimaryMsgSchemaConfigs,
+  moodlenetSiteInfo,
+  pointSystem,
+} from './types'
 export * from './types'
 
 export default interface MoodlenetDomain {
@@ -15,22 +18,28 @@ export default interface MoodlenetDomain {
     moodlenet: {
       session: {
         moduleInfo(): Promise<{
-          info: moodlenetInfo
+          info: moodlenetSiteInfo
           schemaConfigs: moodlenetPrimaryMsgSchemaConfigs
           pointSystem: pointSystem
         }>
         getMySessionUserRecords(): Promise<currentMoodlenetSessionData>
       }
-      contributor: {
-        getLeaders({ amount }: { amount?: number }): Promise<{ leaderContributors: moodlenetContributorMinimalInfo[] }>
-        getById({
-          moodlenetContributorId,
-        }: {
-          moodlenetContributorId: moodlenetContributorId
-        }): Promise<found_access_obj<moodlenetContributorAccessObject>>
-      }
       admin: {
-        updatePartialMoodlenetInfo({ partialInfo }: { partialInfo: deep_partial_props<moodlenetInfo> }): Promise<ok_ko<void>>
+        updatePartialMoodlenetInfo({
+          partialInfo,
+        }: {
+          partialInfo: deep_partial_props<moodlenetSiteInfo>
+        }): Promise<ok_ko<void>>
+        contributor(
+          by: d_u<
+            {
+              userProfileId: { userProfileId: userProfileId }
+              userAccountId: { userAccountId: userAccountId }
+              moodlenetContributorId: { moodlenetContributorId: moodlenetContributorId }
+            },
+            'by'
+          >,
+        ): Promise<ok_ko<{ moodlenetContributorRecord: moodlenetContributorRecord }, { notFound: unknown }>>
       }
     }
   }
@@ -49,11 +58,16 @@ export default interface MoodlenetDomain {
           sort?: [by: 'points', dir?: 'ASC' | 'DESC']
           //filters?: queryContributorFilter[]
         }): Promise<{ moodlenetContributorRecords: moodlenetContributorRecord[] }>
-        contributorById({
-          id,
-        }: {
-          id: moodlenetContributorId
-        }): Promise<ok_ko<{ moodlenetContributorRecord: moodlenetContributorRecord }, { notFound: unknown }>>
+        contributor(
+          by: d_u<
+            {
+              userProfileId: { userProfileId: userProfileId }
+              userAccountId: { userAccountId: userAccountId }
+              moodlenetContributorId: { moodlenetContributorId: moodlenetContributorId }
+            },
+            'by'
+          >,
+        ): Promise<ok_ko<{ moodlenetContributorRecord: moodlenetContributorRecord }, { notFound: unknown }>>
       }
       service?: unknown
       sync?: unknown

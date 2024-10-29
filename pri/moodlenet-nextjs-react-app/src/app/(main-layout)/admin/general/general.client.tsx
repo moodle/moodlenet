@@ -1,15 +1,15 @@
 'use client'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { moodlenetInfoForm } from '@moodle/module/moodlenet'
+import { orgInfoForm } from '@moodle/module/org'
+import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'react-i18next'
+import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
-import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { provideAdminGeneralSchemas, MakeAdminGeneralSchemaDeps } from './general.common'
+import { provideAdminGeneralSchemas } from './general.common'
 import { saveGeneralInfoAction } from './general.server'
-import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
-import { orgInfoForm } from '@moodle/module/org'
-import { moodlenetInfoForm } from '@moodle/module/moodlenet'
 
 export type GeneralFormValues = Pick<
   orgInfoForm & moodlenetInfoForm,

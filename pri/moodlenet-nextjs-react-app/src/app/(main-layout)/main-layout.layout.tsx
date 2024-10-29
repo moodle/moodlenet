@@ -23,20 +23,17 @@ import { logout } from '../actions/access'
 import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
-  const [{ session }, layouts] = await Promise.all([
-    access.primary.moodlenetReactApp.session.getWebappGlobalCtx(),
-    access.primary.moodlenetReactApp.session.layouts(),
-  ])
+  const { mainLayout, session } = await access.primary.moodlenetReactApp.props.mainLayout()
   return (
     <div className={`main-layout`}>
-      <MainHeader slots={await headerSlots()} />
+      <MainHeader slots={await prepareHeaderSlots()} />
       <div className="content">{props.children}</div>
-      <Footer slots={footerSlots()} />
+      <Footer slots={prepareFooterSlots()} />
     </div>
   )
 
-  async function headerSlots(): Promise<MainHeaderProps['slots']> {
-    const { center, left, right } = slotsMap(props, layouts.roots.main.header.slots)
+  async function prepareHeaderSlots(): Promise<MainHeaderProps['slots']> {
+    const { center, left, right } = mainLayout.header.slots
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
     const authenticated = session.type === 'authenticated'
@@ -46,7 +43,7 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
       ? sitepaths.profile[session.moodlenetContributorRecord.id]![session.moodlenetContributorRecord.slug]!
       : null
     const defaultRights = authenticated
-      ? await(async () => {
+      ? await (async () => {
           return [
             <AvatarMenu
               key="avatar-menu"
@@ -73,8 +70,8 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     }
   }
 
-  function footerSlots(): FooterProps['slots'] {
-    const { center, left, right, bottom } = slotsMap(props, layouts.roots.main.footer.slots)
+  function prepareFooterSlots(): FooterProps['slots'] {
+    const { center, left, right, bottom } = mainLayout.footer.slots
     return {
       left: [...left],
       center: [...center],

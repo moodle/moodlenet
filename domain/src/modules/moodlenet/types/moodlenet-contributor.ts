@@ -1,8 +1,5 @@
 import { _nullish, d_u, date_time_string, flags, non_negative_integer } from '@moodle/lib-types'
-import { eduIscedFieldCode } from '../../edu'
-import { asset } from '../../storage'
 import { profileInfo, userProfileId } from '../../user-profile'
-import { moodlenetPublicEduResourceCollectionId, moodlenetPublicEduResourceId } from './moodlenet-public-contributions'
 
 export type moodlenetContributorId = string
 type moodlenetContributorProfileExcerpt = {
@@ -10,40 +7,24 @@ type moodlenetContributorProfileExcerpt = {
   info: Pick<profileInfo, 'aboutMe' | 'background' | 'avatar' | 'displayName' | 'location' | 'siteUrl'>
 }
 
-type linkedContent = {
-  likes: {
-    eduResources: featuredContentRef<{
-      id: moodlenetPublicEduResourceId
-    }>[]
+export type linkedContent = {
+  like: {
+    eduResources: featuredContentRef[]
   }
-  following: {
-    eduResourceCollections: featuredContentRef<{
-      id: moodlenetPublicEduResourceCollectionId
-    }>[]
-    moodlenetContributors: featuredContentRef<{
-      id: moodlenetContributorId
-    }>[]
-    iscedFields: featuredContentRef<{
-      code: eduIscedFieldCode
-    }>[]
+  follow: {
+    eduResourceCollections: featuredContentRef[]
+    moodlenetContributors: featuredContentRef[]
+    iscedFields: featuredContentRef[]
   }
-  bookmarked: {
-    eduResourceCollections: featuredContentRef<{
-      id: moodlenetPublicEduResourceCollectionId
-    }>[]
-    eduResources: featuredContentRef<{
-      id: moodlenetPublicEduResourceId
-    }>[]
+  bookmark: {
+    eduResourceCollections: featuredContentRef[]
+    eduResources: featuredContentRef[]
   }
 }
 
 type moodlenetContributions = {
-  eduResourcesCollections: publicContributionRef<{
-    id: moodlenetPublicEduResourceCollectionId
-  }>[]
-  eduResources: publicContributionRef<{
-    id: moodlenetPublicEduResourceId
-  }>[]
+  eduResourcesCollections: publicContributionRef[]
+  eduResources: publicContributionRef[]
 }
 
 export type moodlenetContributorAccess = d_u<
@@ -65,9 +46,9 @@ export type moodlenetContributorRecord = {
   suggestedContent: {
     listCreationDate: date_time_string
     lists: {
-      eduResourceCollections: suggestedContentRef<{ id: moodlenetPublicEduResourceCollectionId }>[]
-      eduResources: suggestedContentRef<{ id: moodlenetPublicEduResourceId }>[]
-      moodlenetContributors: suggestedContentRef<{ id: moodlenetContributorId }>[]
+      eduResourceCollections: suggestedContentRef[]
+      eduResources: suggestedContentRef[]
+      moodlenetContributors: suggestedContentRef[]
     }
   }
   contributions: moodlenetContributions
@@ -77,29 +58,23 @@ export type moodlenetContributorRecord = {
     points: non_negative_integer
   }
 }
-type publicContributionRef<refData> = refData
+type publicContributionRef<refData = unknown> = refData & { id: string }
 
-type suggestedContentRef<refData> = refData
-type featuredContentRef<refData> = refData & {
+type suggestedContentRef<refData = unknown> = refData & { id: string }
+type featuredContentRef<refData = unknown> = refData & {
+  id: string
   sinceDate: date_time_string
   removingDate: _nullish | date_time_string
 }
 type permissionsOnMoodlenetContributor = flags<'follow' | 'sendMessage' | 'report' | 'editProfileInfo'>
 
-export type moodlenetContributorMinimalInfo = {
+export type moodlenetContributorAccessObject = {
   id: moodlenetContributorId
   slug: string
-  displayName: string
-  avatar: _nullish | asset
-  points: non_negative_integer
-}
-
-export type moodlenetContributorAccessObject = {
-  moodlenetContributorId: moodlenetContributorId
   profileInfo: moodlenetContributorProfileExcerpt['info']
   itsMe: boolean
   contributions: moodlenetContributions
-  linkedContent: Pick<linkedContent, 'following' | 'likes'>
+  linkedContent: linkedContent
   permissions: permissionsOnMoodlenetContributor
   stats: {
     points: non_negative_integer

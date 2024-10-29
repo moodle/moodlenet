@@ -1,16 +1,14 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { userProfileAccessObject } from '@moodle/module/user-profile'
 import Edit from '@mui/icons-material/Edit'
 import Flag from '@mui/icons-material/Flag'
 import Save from '@mui/icons-material/Save'
 import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useCallback, useReducer, useRef } from 'react'
-import { useAllPrimarySchemas } from '../../../../../../../lib/client/globalContexts'
+import { useAllPrimarySchemas, useMyLinkedContent, useMySession } from '../../../../../../../lib/client/globalContexts'
 import { useAssetUploader } from '../../../../../../../lib/client/useAssetUploader'
-import { ApprovalButton } from '../../../../../../../ui/atoms/ApproveButton/ApproveButton'
 import { FloatingMenu } from '../../../../../../../ui/atoms/FloatingMenu/FloatingMenu'
 import { FollowButton } from '../../../../../../../ui/atoms/FollowButton/FollowButton'
 import InputTextField from '../../../../../../../ui/atoms/InputTextField/InputTextField'
@@ -21,24 +19,27 @@ import { Snackbar } from '../../../../../../../ui/atoms/Snackbar/Snackbar'
 import { adoptProfileImage, updateProfileInfo } from '../../profile.server'
 import './MainProfileCard.scss'
 // import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
+import { moodlenetContributorAccessObject } from '@moodle/module/moodlenet'
 import defaultAvatar from '../../../../../../../ui/lib/assets/img/default-avatar.svg'
 import defaultBackground from '../../../../../../../ui/lib/assets/img/default-background.svg'
 
 export type mainProfileCardProps = {
-  userProfile: userProfileAccessObject
+  moodlenetContributorAccessObject: moodlenetContributorAccessObject
 }
 
-export function MainProfileCard({
-  userProfile: { permissions, profileInfo, flags, id, user, itsMe },
-}: mainProfileCardProps) {
-  const isContributor = !!user?.roles.includes('contributor')
+export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfileCardProps) {
+  const { permissions, profileInfo, itsMe } = moodlenetContributorAccessObject
+  const { session } = useMySession()
+
+  const [following] = useMyLinkedContent('follow', 'moodlenetContributors', moodlenetContributorAccessObject.id)
+
   const schemas = useAllPrimarySchemas()
-  const [isEditing, toggleIsEditing] = useReducer(isEditing => permissions.editProfile && !isEditing, false)
+  const [isEditing, toggleIsEditing] = useReducer(isEditing => permissions.editProfileInfo && !isEditing, false)
   const {
     form: { formState, register, reset },
     handleSubmitWithAction: submitForm,
   } = useHookFormAction(updateProfileInfo, zodResolver(schemas.userProfile.updateProfileInfoSchema), {
-    formProps: { defaultValues: { ...profileInfo, userProfileId: id } },
+    formProps: { defaultValues: { ...profileInfo } },
     actionProps: {
       onSuccess({ input }) {
         reset(input)
@@ -57,7 +58,7 @@ export function MainProfileCard({
   ] = useAssetUploader({
     assets: profileInfo.avatar,
     async action({ tempIds: [tempId] }) {
-      const saveResult = await adoptProfileImage({ as: 'avatar', tempId, userProfileId: id })
+      const saveResult = await adoptProfileImage({ as: 'avatar', tempId })
 
       return saveResult?.data
         ? { done: true, newAssets: [saveResult.data] }
@@ -75,7 +76,7 @@ export function MainProfileCard({
   ] = useAssetUploader({
     assets: profileInfo.background,
     async action({ tempIds: [tempId] }) {
-      const saveResult = await adoptProfileImage({ as: 'background', tempId, userProfileId: id })
+      const saveResult = await adoptProfileImage({ as: 'background', tempId })
       if (!saveResult?.data) {
         return { done: false, error: saveResult?.validationErrors?._errors }
       }
@@ -98,7 +99,7 @@ export function MainProfileCard({
     <div className="main-profile-card" key="profile-card">
       <div className="main-column">
         <div className={`background-container`} key="background-container">
-          {!permissions.editProfile
+          {!permissions.editProfileInfo
             ? null
             : isEditing && [
                 <RoundButton
@@ -119,7 +120,7 @@ export function MainProfileCard({
           />
         </div>
         <div className={`avatar-container`} key="avatar-container">
-          {!permissions.editProfile
+          {!permissions.editProfileInfo
             ? null
             : isEditing && [
                 <RoundButton
@@ -142,7 +143,7 @@ export function MainProfileCard({
         </div>
         <div className="top-items" key="top-items">
           <div className="edit-save" key="edit-save">
-            {!permissions.editProfile ? null : isEditing ? (
+            {!permissions.editProfileInfo ? null : isEditing ? (
               <PrimaryButton color="green" onClick={submitAll} key="save-button">
                 <Save />
               </PrimaryButton>
@@ -208,7 +209,7 @@ export function MainProfileCard({
         {itsMe ? null : (
           <div className="main-profile-card-footer">
             <FollowButton
-              following={flags.following}
+              following={following}
               toggleFollow={() => {
                 // FIXME
 
@@ -218,17 +219,6 @@ export function MainProfileCard({
               key="follow-button"
             />
 
-            {permissions.editRoles && (
-              <ApprovalButton
-                isApproved={isContributor}
-                toggleIsApproved={() => {
-                  // FIXME
-
-                  alert('ApprovalButton')
-                }}
-                key={'approval-button'}
-              />
-            )}
             <SecondaryButton
               color="grey"
               className={`message`}

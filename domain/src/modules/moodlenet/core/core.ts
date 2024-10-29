@@ -4,7 +4,6 @@ import assert from 'assert'
 import { omit } from 'lodash'
 import { moduleCore } from '../../../types'
 import { assert_authorizeCurrentUserSessionWithRole, validate_currentUserSessionInfo } from '../../user-account/lib'
-import { mapContributorToMinimalInfo } from './lib/contributor'
 import { accessMoodlenetContributor } from './lib/primary-access'
 
 export const moodlenet_core: moduleCore<'moodlenet'> = {
@@ -14,59 +13,73 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
   },
   primary(ctx) {
     return {
-      session: {
-        async getMySessionUserRecords() {
-          const currentSessionInfo = await validate_currentUserSessionInfo({ ctx })
-          if (!currentSessionInfo.authenticated) {
-            return { type: 'guest' }
-          }
+      async session() {
+        return {
+          async getMySessionUserRecords() {
+            const currentSessionInfo = await validate_currentUserSessionInfo({ ctx })
+            if (!currentSessionInfo.authenticated) {
+              return { type: 'guest' }
+            }
 
-          const { userAccountRecord, userProfileRecord } = await ctx.forward.userProfile.me.getMyUserRecords()
-          const [foundContributorRecord, contributorRecordResult] = await ctx.mod.secondary.moodlenet.query.contributorById({
-            id: userProfileRecord.id,
-          })
-          assert(foundContributorRecord, 'Contributor not found for authenticated user')
-          return {
-            type: 'authenticated',
-            userProfileRecord: omit(userProfileRecord, 'userAccount'),
-            userAccountRecord: omit(userAccountRecord, 'displayName'),
-            moodlenetContributorRecord: omit(contributorRecordResult.moodlenetContributorRecord, 'userProfile'),
-          }
-        },
-        async moduleInfo() {
-          const {
-            configs: { info, pointSystem, moodlenetPrimaryMsgSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs },
-          } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
-          return {
-            info,
-            schemaConfigs: moodlenetPrimaryMsgSchemaConfigs,
-            pointSystem,
-          }
-        },
+            const { userAccountRecord, userProfileRecord } = await ctx.forward.userProfile.authenticated.getMyUserRecords()
+            const [foundContributorRecord, contributorRecordResult] = await ctx.mod.secondary.moodlenet.query.contributor({
+              by: 'userProfileId',
+              userProfileId: userProfileRecord.id,
+            })
+            assert(
+              foundContributorRecord,
+              `moodlenetContributorRecord not found for authenticated userAccountRecord#${userAccountRecord.id}`,
+            )
+            return {
+              type: 'authenticated',
+              userProfileRecord: omit(userProfileRecord, 'userAccount'),
+              userAccountRecord: omit(userAccountRecord, 'displayName'),
+              moodlenetContributorRecord: omit(contributorRecordResult.moodlenetContributorRecord, 'userProfile'),
+            }
+          },
+          async moduleInfo() {
+            const {
+              configs: { siteInfo: info, pointSystem, moodlenetPrimaryMsgSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs },
+            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
+            return {
+              info,
+              schemaConfigs: moodlenetPrimaryMsgSchemaConfigs,
+              pointSystem,
+            }
+          },
+        }
       },
-      contributor: {
-        async getLeaders({ amount = 20 }) {
-          const { moodlenetContributorRecords } = await ctx.mod.secondary.moodlenet.query.contributors({
-            range: [amount],
-            sort: ['points', 'DESC'],
-            // filters: [{ type: 'access', levels: ['public'] } default],
-          })
-          return { leaderContributors: moodlenetContributorRecords.map(mapContributorToMinimalInfo) }
-        },
-        async getById({ moodlenetContributorId }) {
-          const moodlenetContributorAccessObject = await accessMoodlenetContributor({ ctx, id: moodlenetContributorId })
-          return moodlenetContributorAccessObject
-        },
-      },
-      admin: {
-        async updatePartialMoodlenetInfo({ partialInfo }) {
-          assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' })
-          const [done] = await ctx.mod.secondary.env.service.updatePartialConfigs({
-            mod: 'moodlenet',
-            partialConfigs: { info: partialInfo },
-          })
-          return [done, _void]
-        },
+      // async contributor() {
+      //   return {
+      //     async getLeaders({ amount = 20 }) {
+      //       const { moodlenetContributorRecords } = await ctx.mod.secondary.moodlenet.query.contributors({
+      //         range: [amount],
+      //         sort: ['points', 'DESC'],
+      //         // filters: [{ type: 'access', levels: ['public'] } default],
+      //       })
+      //       return { leaderContributors: moodlenetContributorRecords.map(mapContributorToMinimalInfo) }
+      //     },
+      //     async getById({ moodlenetContributorId }) {
+      //       const moodlenetContributorAccessObject = await accessMoodlenetContributor({ ctx, id: moodlenetContributorId })
+      //       return moodlenetContributorAccessObject
+      //     },
+      //   }
+      // },
+      async admin() {
+        return {
+          async updatePartialMoodlenetInfo({ partialInfo }) {
+            assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' })
+            const [done] = await ctx.mod.secondary.env.service.updatePartialConfigs({
+              mod: 'moodlenet',
+              partialConfigs: { siteInfo: partialInfo },
+            })
+            return [done, _void]
+          },
+          async contributor(by) {
+            const result = await ctx.mod.secondary.moodlenet.query.contributor(by)
+            return result
+          },
+        }
       },
     }
   },
@@ -88,9 +101,9 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
                 contributions: { eduResources: [], eduResourcesCollections: [] },
                 slug: webSlug(userProfileRecord.info.displayName),
                 linkedContent: {
-                  bookmarked: { eduResourceCollections: [], eduResources: [] },
-                  following: { eduResourceCollections: [], moodlenetContributors: [], iscedFields: [] },
-                  likes: { eduResources: [] },
+                  bookmark: { eduResourceCollections: [], eduResources: [] },
+                  follow: { eduResourceCollections: [], moodlenetContributors: [], iscedFields: [] },
+                  like: { eduResources: [] },
                 },
                 preferences: { useMyInterestsAsDefaultFilters: false },
                 stats: { points: configs.pointSystem.welcomePoints },

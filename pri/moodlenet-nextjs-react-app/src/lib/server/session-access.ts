@@ -100,7 +100,7 @@ function _domainAccess(): MoodleDomain {
 }
 
 export async function getAuthenticatedUserSessionOrRedirectToLogin() {
-  const { userSession: maybe_authenticatedUserSession } = await access.primary.userAccount.session.getUserSession()
+  const { userSession: maybe_authenticatedUserSession } = await access.primary.userAccount.anyUser.getUserSession()
   if (isAuthenticatedUserSession(maybe_authenticatedUserSession)) {
     return maybe_authenticatedUserSession
   }

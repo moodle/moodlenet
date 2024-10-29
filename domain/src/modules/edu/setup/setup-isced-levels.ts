@@ -7,11 +7,11 @@ import { eduIscedLevelRecord } from '../types'
 
 export const eduIscedLevelsSetup = _eduIscedLevelsSetup().map<eduIscedLevelRecord>(record => ({
   ...record,
-  code: record.codePath.join(''),
+  id: record.codePath.join(''),
   enabled: true,
 }))
 
-function _eduIscedLevelsSetup(): Omit<eduIscedLevelRecord, 'code' | 'enabled'>[] {
+function _eduIscedLevelsSetup(): Omit<eduIscedLevelRecord, 'id' | 'enabled'>[] {
   return [
     {
       codePath: ['6', '6', '1'],

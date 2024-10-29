@@ -36,7 +36,7 @@ export type baseContext = {
   id: ctxId
   domain: string
   log: Logger
-  mod: contextModuleAccess
+  mod: contextModuleAccess //FIXME: access to other-modules secondary should not be available in primaryContext
   track?: ctxTrack
   from?: path
 }
@@ -76,7 +76,9 @@ export type secondaryAdapter = deep_partial<moodleSecondary>
 
 export type moduleCore<mod extends moodleModuleName = never> = {
   modName: mod
-  primary: (primaryContext: primaryContext<mod>) => modPrimary<mod>[mod]
+  primary(primaryContext: primaryContext<mod>): {
+    [channel in keyof modPrimary<mod>[mod]]: () => Promise<modPrimary<mod>[mod][channel]>
+  }
   service: (serviceContext: serviceContext<mod>) => modService<mod>[mod]
   event?: (eventContext: eventContext<mod>) => eventListener
   watch?: (watchContext: watchContext<mod>) => watcher

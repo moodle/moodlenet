@@ -22,11 +22,13 @@ export type userProfilePrimary = {
       schemaConfigs: UserProfilePrimaryMsgSchemaConfigs
     }>
   }
-  me: {
-    useTempImageAsProfileImage(_: useProfileImageForm): Promise<useTempFileResult>
+  authenticated: {
+    useTempImageAsProfileImage(
+      _: useProfileImageForm,
+    ): Promise<[useTempFileResult: useTempFileResult, { userProfileId: userProfileId }]>
     editProfileInfo(_: { profileInfo: deep_partial_props<profileInfo> }): Promise<
       ok_ko<
-        void,
+        { userProfileId: userProfileId },
         {
           notFound: unknown
           unknown: unknown

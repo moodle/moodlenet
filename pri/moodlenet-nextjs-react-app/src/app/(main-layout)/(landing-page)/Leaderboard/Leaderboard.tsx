@@ -1,7 +1,7 @@
 'use client'
-import { moodlenetContributorMinimalInfo, pointSystem } from '@moodle/module/moodlenet'
+import { moodlenetContributorMinimalInfo } from '@moodle/module/moodlenet-react-app'
 import Link from 'next/link'
-import { useAssetUrl } from '../../../../lib/client/globalContexts'
+import { useAssetUrl, usePointSystem } from '../../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../../lib/client/user-levels/lib'
 import { sitepaths } from '../../../../lib/common/utils/sitepaths'
 import { Card } from '../../../../ui/atoms/Card/Card'
@@ -11,10 +11,9 @@ import './Leaderboard.scss'
 
 export type leaderboardProps = {
   leaderContributors: moodlenetContributorMinimalInfo[]
-  pointSystem: pointSystem
 }
 
-export function Leaderboard({ leaderContributors, pointSystem }: leaderboardProps) {
+export function Leaderboard({ leaderContributors }: leaderboardProps) {
   return (
     <div className="leaderboard-container">
       <div className="leaderboard-header">
@@ -23,21 +22,14 @@ export function Leaderboard({ leaderContributors, pointSystem }: leaderboardProp
       </div>
       <Card className="leaderboard">
         {leaderContributors.map((contributor, index) => (
-          <LeaderRow key={index} {...{ contributor, pointSystem, position: index + 1 }} />
+          <LeaderRow key={index} {...{ contributor, position: index + 1 }} />
         ))}
       </Card>
     </div>
   )
 }
-function LeaderRow({
-  contributor,
-  position,
-  pointSystem,
-}: {
-  contributor: moodlenetContributorMinimalInfo
-  position: number
-  pointSystem: pointSystem
-}) {
+function LeaderRow({ contributor, position }: { contributor: moodlenetContributorMinimalInfo; position: number }) {
+  const { pointSystem } = usePointSystem()
   const profileUrl = sitepaths.profile[contributor.id]![contributor.slug]!()
   const { pointAvatar, level } = getUserLevelDetails(pointSystem, contributor.points)
   const [avatarUrl] = useAssetUrl(contributor.avatar, defaultAvatar)
