@@ -1,6 +1,6 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { moodlenetInfoForm } from '@moodle/module/moodlenet'
+import { siteInfoForm } from '@moodle/module/moodlenet'
 import { orgInfoForm } from '@moodle/module/org'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'react-i18next'
@@ -12,7 +12,7 @@ import { provideAdminGeneralSchemas } from './general.common'
 import { saveGeneralInfoAction } from './general.server'
 
 export type GeneralFormValues = Pick<
-  orgInfoForm & moodlenetInfoForm,
+  orgInfoForm & siteInfoForm,
   'name' | 'copyright' | 'title' | 'physicalAddress' | 'subtitle' | 'websiteUrl'
 >
 

@@ -1,7 +1,5 @@
 import { non_negative_integer_schema, positive_integer_schema } from '@moodle/lib-types'
 import { configs } from '../types'
-import { eduIscedFieldsSetup, eduIscedLevelsSetup, eduResourceTypesSetup } from '../../edu/setup'
-import { contentLanguages_iso_639_3_Setup, contentLicensesSetup } from '../../content/setup'
 
 export const moodlenet_default_configs: configs = {
   siteInfo: {

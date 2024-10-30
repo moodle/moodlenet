@@ -7,24 +7,30 @@ export type moodlenetPrimaryMsgSchemaConfigs = {
     subtitle: { max: number; min: number }
   }
 }
-export type moodlenetInfoForm = z.infer<ReturnType<typeof getMoodlenetPrimarySchemas>['updateMoodlenetInfoSchema']>
+export type siteInfoForm = z.infer<ReturnType<typeof getMoodlenetPrimarySchemas>['updateSiteInfoSchema']>
 
 export function getMoodlenetPrimarySchemas({ siteInfo }: moodlenetPrimaryMsgSchemaConfigs) {
-  const title = string().trim().min(siteInfo.title.min).max(siteInfo.title.max).pipe(single_line_string_schema)
-  const subtitle = string().trim().min(siteInfo.subtitle.min).max(siteInfo.subtitle.max).pipe(single_line_string_schema)
+  const siteInfoTitle = string().trim().min(siteInfo.title.min).max(siteInfo.title.max).pipe(single_line_string_schema)
+  const siteInfoSubtitle = string()
+    .trim()
+    .min(siteInfo.subtitle.min)
+    .max(siteInfo.subtitle.max)
+    .pipe(single_line_string_schema)
 
-  const updateMoodlenetInfoSchema = object({
-    title,
-    subtitle,
+  // const siteInfoTitle = string().trim().min(siteInfo.title.min).max(siteInfo.title.max).pipe(single_line_string_schema)
+
+  const updateSiteInfoSchema = object({
+    title: siteInfoTitle,
+    subtitle: siteInfoSubtitle,
   })
 
   return {
     raw: {
       info: {
-        title,
-        subtitle,
+        title: siteInfoTitle,
+        subtitle: siteInfoSubtitle,
       },
     },
-    updateMoodlenetInfoSchema,
+    updateSiteInfoSchema,
   }
 }
