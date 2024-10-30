@@ -7,5 +7,5 @@ export type landingPageProps = {
 export type suggestedContent = {
   contributors: moodlenetContributorInfo[]
   // eduResources: eduResourceAccessObject[]
-  // eduResourceCollections: eduResourceCollectionAccessObject[]
+  // eduCollections: eduCollectionAccessObject[]
 }

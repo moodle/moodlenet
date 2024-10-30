@@ -4,7 +4,8 @@ import { profileInfo, userProfileId } from '../../user-profile'
 export type moodlenetContributorId = string
 type moodlenetContributorProfileExcerpt = {
   id: userProfileId
-  info: Pick<profileInfo, 'aboutMe' | 'background' | 'avatar' | 'displayName' | 'location' | 'siteUrl'>
+  info: profileInfo
+  // info: Pick<profileInfo, 'aboutMe' | 'background' | 'avatar' | 'displayName' | 'location' | 'siteUrl'>
 }
 
 export type linkedContent = {
@@ -12,12 +13,12 @@ export type linkedContent = {
     eduResources: featuredContentRef[]
   }
   follow: {
-    eduResourceCollections: featuredContentRef[]
+    eduCollections: featuredContentRef[]
     moodlenetContributors: featuredContentRef[]
     iscedFields: featuredContentRef[]
   }
   bookmark: {
-    eduResourceCollections: featuredContentRef[]
+    eduCollections: featuredContentRef[]
     eduResources: featuredContentRef[]
   }
 }
@@ -46,7 +47,7 @@ export type moodlenetContributorRecord = {
   suggestedContent: {
     listCreationDate: date_time_string
     lists: {
-      eduResourceCollections: suggestedContentRef[]
+      eduCollections: suggestedContentRef[]
       eduResources: suggestedContentRef[]
       moodlenetContributors: suggestedContentRef[]
     }

@@ -31,7 +31,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
           },
         },
         write: {
-          async updatePartialProfileInfo({ partialProfileInfo, userProfileId }) {
+          async updatePartialProfileInfo({ partialProfileInfo: partialProfileInfo, userProfileId }) {
             const updateResult = await dbStruct.userAccount.coll.userProfile
               .update({ _key: userProfileId }, { info: partialProfileInfo }, { returnNew: true })
               .catch(() => null)

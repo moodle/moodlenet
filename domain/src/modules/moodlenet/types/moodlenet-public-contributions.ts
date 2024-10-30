@@ -1,6 +1,6 @@
 import { date_time_string, non_negative_integer } from '@moodle/lib-types'
 import { textExtractionResult } from '../../asset-text-extraction'
-import { eduResourceCollectionData, eduResourceData } from '../../edu/types/edu-content'
+import { eduCollectionData, eduResourceData } from '../../edu/types/edu-content'
 import { moodlenetContributorId } from './moodlenet-contributor'
 
 export type moodlenetPublicEduResourceId = string
@@ -12,10 +12,10 @@ export type moodlenetPublicEduResourceRecord = moodlenetPublicContentRecord<
   }
 >
 
-export type moodlenetPublicEduResourceCollectionId = string
-export type moodlenetPublicEduResourceCollectionRecord = moodlenetPublicContentRecord<
-  eduResourceCollectionData & {
-    id: moodlenetPublicEduResourceCollectionId
+export type moodlenetPublicEduCollectionId = string
+export type moodlenetPublicEduCollectionRecord = moodlenetPublicContentRecord<
+  eduCollectionData & {
+    id: moodlenetPublicEduCollectionId
   }
 >
 

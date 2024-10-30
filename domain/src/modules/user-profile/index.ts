@@ -3,20 +3,23 @@ import { useTempFileResult } from '../storage'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {
   UserProfilePrimaryMsgSchemaConfigs,
+  draftId,
+  eduCollectionDraft,
   profileImage,
   profileInfo,
+  profileInfoMeta,
   useProfileImageForm,
   userAccountExcerpt,
   userProfileId,
   userProfileRecord,
 } from './types'
+import { eduCollectionMetaForm } from '../edu'
 export * from './types'
 
 export type userProfileIdSelect = d_u<
   { userProfileId: { userProfileId: userProfileId }; userAccountId: { userAccountId: userAccountId } },
   'by'
 >
-
 
 export default interface UserProfileDomain {
   event: { userProfile: unknown }
@@ -32,7 +35,7 @@ export default interface UserProfileDomain {
         useTempImageAsProfileImage(
           _: useProfileImageForm,
         ): Promise<[useTempFileResult: useTempFileResult, { userProfileId: userProfileId }]>
-        editProfileInfo(_: { profileInfo: deep_partial_props<profileInfo> }): Promise<
+        editProfileInfoMeta(_: { partialProfileInfoMeta: deep_partial_props<profileInfoMeta> }): Promise<
           ok_ko<
             { userProfileId: userProfileId },
             {
@@ -45,6 +48,11 @@ export default interface UserProfileDomain {
           userProfileRecord: Omit<userProfileRecord, 'userAccount'>
           userAccountRecord: Omit<userAccountRecord, 'displayName'>
         }>
+        createEduCollectionDraft(_: { eduCollectionForm: eduCollectionMetaForm }): Promise<unknown>
+        editEduCollectionDraft(_: {
+          eduCollectionDraftId: draftId
+          eduCollectionForm: eduCollectionMetaForm
+        }): Promise<unknown>
       }
       admin: {
         byId(_: userProfileIdSelect): Promise<
@@ -72,6 +80,11 @@ export default interface UserProfileDomain {
         ): Promise<ok_ko<{ userProfileRecord: userProfileRecord }, { notFound: unknown }>>
       }
       write: {
+        createEduCollectionDraft(_: { eduCollectionDraft: eduCollectionDraft }): Promise<unknown>
+        editEduCollectionDraft(_: {
+          eduCollectionDraftId: draftId
+          eduCollectionForm: eduCollectionMetaForm
+        }): Promise<unknown>
         createUserProfile(_: { userProfileRecord: userProfileRecord }): Promise<ok_ko<void>>
         updatePartialProfileInfo(_: {
           userProfileId: userProfileId

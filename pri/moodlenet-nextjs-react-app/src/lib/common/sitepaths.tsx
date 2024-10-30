@@ -2,7 +2,7 @@ import { _maybe, createPathProxy, map, url_path_string } from '@moodle/lib-types
 import { eduIscedFieldCode } from '@moodle/module/edu'
 import {
   moodlenetContributorId,
-  moodlenetPublicEduResourceCollectionId,
+  moodlenetPublicEduCollectionId,
   moodlenetPublicEduResourceId,
 } from '@moodle/module/moodlenet'
 import { userAccountId } from '@moodle/module/user-account'
@@ -67,7 +67,7 @@ export type sitePaths<t extends string> = spc<t> & {
     }
   }
   'collection': {
-    [moodlenetPublicEduResourceCollectionId: moodlenetPublicEduResourceCollectionId]: spc<t> & {
+    [moodlenetPublicEduCollectionId: moodlenetPublicEduCollectionId]: spc<t> & {
       [slug: string]: spc<t>
     }
   }

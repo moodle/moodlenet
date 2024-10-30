@@ -3,16 +3,18 @@ import { aiAgentResourceSuggestionStatus } from '../../ai-agent'
 import { textExtractionStatus } from '../../asset-text-extraction'
 import { contentLanguageCode, contentLicenseCode } from '../../content'
 import { eduIscedFieldCode, eduIscedLevelCode } from '../../edu'
-import { eduResourceCollectionData, eduResourceData } from '../../edu/types/edu-content'
+import { eduCollectionData, eduResourceData } from '../../edu/types/edu-content'
 import { moodlenetPublicEduResourceId } from '../../moodlenet/types/moodlenet-public-contributions'
 import { asset } from '../../storage'
 import { userAccountRecord } from '../../user-account'
 
-export type profileInfo = {
+export type profileInfoMeta = {
   displayName: string
   aboutMe: string
   location: string
   siteUrl: _nullish | url_string
+}
+export type profileInfo = profileInfoMeta & {
   background: _nullish | asset
   avatar: _nullish | asset
 }
@@ -37,23 +39,27 @@ type eduInterestFields = {
   licenses: contentLicenseCode[]
 }
 
+export type eduCollectionDraft = draft<
+  eduCollectionData & {
+    items: draftEduCollectionEduResourceRef[]
+  }
+>
+
+type eduResourceDraft = draft<
+  eduResourceData & {
+    assetProcess: {
+      textExtractionStatus: textExtractionStatus
+      aiAgentSuggestion: aiAgentResourceSuggestionStatus
+    }
+  }
+>
+
 type myDrafts = {
-  eduResources: draft<
-    eduResourceData & {
-      assetProcess: {
-        textExtractionStatus: textExtractionStatus
-        aiAgentSuggestion: aiAgentResourceSuggestionStatus
-      }
-    }
-  >[]
-  eduResourceCollections: draft<
-    eduResourceCollectionData & {
-      items: draftEduResourceCollectionEduResourceRef[]
-    }
-  >[]
+  eduResources: eduResourceDraft[]
+  eduCollections: eduCollectionDraft[]
 }
 
-type draftEduResourceCollectionEduResourceRef = d_u<
+type draftEduCollectionEduResourceRef = d_u<
   {
     myDraft: { draftId: draftId }
     publishedOnMoodlenet: { moodlenetPublicEduResourceId: moodlenetPublicEduResourceId }
@@ -61,8 +67,8 @@ type draftEduResourceCollectionEduResourceRef = d_u<
   'type'
 >
 
-export type draftId = eduResourceDraftId | eduResourceCollectionDraftId
-type draft<dataType extends eduResourceData | eduResourceCollectionData> = {
+export type draftId = eduResourceDraftId | eduCollectionDraftId
+type draft<dataType extends eduResourceData | eduCollectionData> = {
   draftId: draftId
   data: dataType
   created: date_time_string
@@ -71,4 +77,4 @@ type draft<dataType extends eduResourceData | eduResourceCollectionData> = {
 }
 
 type eduResourceDraftId = string
-type eduResourceCollectionDraftId = string
+type eduCollectionDraftId = string

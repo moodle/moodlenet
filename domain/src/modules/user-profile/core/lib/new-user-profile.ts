@@ -11,7 +11,7 @@ export async function createNewUserProfileData({ newUser }: { newUser: userAccou
       roles: newUser.roles,
     },
     eduInterestFields: { iscedFields: [], iscedLevels: [], languages: [], licenses: [] },
-    myDrafts: { eduResourceCollections: [], eduResources: [] },
+    myDrafts: { eduCollections: [], eduResources: [] },
     info: {
       displayName: newUser.displayName,
       aboutMe: '',

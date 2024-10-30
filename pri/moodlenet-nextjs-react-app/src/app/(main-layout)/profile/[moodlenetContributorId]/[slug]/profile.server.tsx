@@ -11,16 +11,16 @@ import { access } from '../../../../../lib/server/session-access'
 
 export async function getProfileInfoSchema() {
   const {
-    userProfile: { updateProfileInfoSchema },
+    userProfile: { updateProfileInfoMetaSchema },
   } = await fetchAllPrimarySchemas({ primary: access.primary })
-  return updateProfileInfoSchema
+  return updateProfileInfoMetaSchema
 }
 
-export const updateProfileInfo = defaultSafeActionClient
+export const updateProfileInfoMetaForm = defaultSafeActionClient
   .schema(getProfileInfoSchema)
-  .action(async ({ parsedInput: profileInfo }) => {
-    const [editDone, editResult] = await access.primary.userProfile.authenticated.editProfileInfo({
-      profileInfo,
+  .action(async ({ parsedInput: partialProfileInfoMeta }) => {
+    const [editDone, editResult] = await access.primary.userProfile.authenticated.editProfileInfoMeta({
+      partialProfileInfoMeta,
     })
     if (editDone) {
       revalidatePath(sitepaths.profile[editResult.userProfileId]!())

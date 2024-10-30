@@ -135,8 +135,8 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
                   contributions: { eduResources: [], eduResourcesCollections: [] },
                   slug: webSlug(userProfileRecord.info.displayName),
                   linkedContent: {
-                    bookmark: { eduResourceCollections: [], eduResources: [] },
-                    follow: { eduResourceCollections: [], moodlenetContributors: [], iscedFields: [] },
+                    bookmark: { eduCollections: [], eduResources: [] },
+                    follow: { eduCollections: [], moodlenetContributors: [], iscedFields: [] },
                     like: { eduResources: [] },
                   },
                   preferences: { useMyInterestsAsDefaultFilters: false },
@@ -144,7 +144,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
                   suggestedContent: {
                     listCreationDate: date_time_string('now'),
                     lists: {
-                      eduResourceCollections: [],
+                      eduCollections: [],
                       eduResources: [],
                       moodlenetContributors: [],
                     },

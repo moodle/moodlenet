@@ -23,7 +23,7 @@ export type bloomLearningOutcome = {
   learningOutcome: string
 }
 
-export type eduResourceCollectionData = {
+export type eduCollectionData = {
   title: string
   description: string
   image: _nullish | asset

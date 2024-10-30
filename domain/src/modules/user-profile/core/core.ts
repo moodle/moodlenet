@@ -40,6 +40,8 @@ export const user_profile_core: moduleCore<'userProfile'> = {
         )
         const userProfileId = authenticatedUserSession.userProfileRecord.id
         const primaries: userProfilePrimary['authenticated'] = {
+          async createEduCollectionDraft({ eduCollectionForm }) {},
+          async editEduCollectionDraft({ eduCollectionDraftId, eduCollectionForm }) {},
           async getMyUserRecords() {
             const { userProfileRecord } = authenticatedUserSession
             const userAccontRecord = await ctx.forward.userAccount.authenticated.getMyUserAccountRecord()
@@ -60,11 +62,11 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             }
             return [[true, result], { userProfileId }]
           },
-          async editProfileInfo({ profileInfo }) {
+          async editProfileInfoMeta({ partialProfileInfoMeta }) {
             const { userProfileRecord } = authenticatedUserSession
             const [done] = await ctx.write.updatePartialProfileInfo({
               userProfileId: userProfileRecord.id,
-              partialProfileInfo: profileInfo,
+              partialProfileInfo: partialProfileInfoMeta,
             })
             if (!done) {
               return [false, { reason: 'unknown' }]

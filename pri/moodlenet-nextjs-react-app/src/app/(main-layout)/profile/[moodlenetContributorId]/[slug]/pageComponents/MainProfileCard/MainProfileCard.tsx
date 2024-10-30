@@ -16,12 +16,13 @@ import { PrimaryButton } from '../../../../../../../ui/atoms/PrimaryButton/Prima
 import { RoundButton } from '../../../../../../../ui/atoms/RoundButton/RoundButton'
 import { SecondaryButton } from '../../../../../../../ui/atoms/SecondaryButton/SecondaryButton'
 import { Snackbar } from '../../../../../../../ui/atoms/Snackbar/Snackbar'
-import { adoptProfileImage, updateProfileInfo } from '../../profile.server'
+import { adoptProfileImage, updateProfileInfoMetaForm } from '../../profile.server'
 import './MainProfileCard.scss'
 // import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
 import { moodlenetContributorAccessObject } from '@moodle/module/moodlenet'
 import defaultAvatar from '../../../../../../../ui/lib/assets/img/default-avatar.svg'
 import defaultBackground from '../../../../../../../ui/lib/assets/img/default-background.svg'
+import { pick } from 'lodash'
 
 export type mainProfileCardProps = {
   moodlenetContributorAccessObject: moodlenetContributorAccessObject
@@ -29,7 +30,6 @@ export type mainProfileCardProps = {
 
 export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfileCardProps) {
   const { permissions, profileInfo, itsMe } = moodlenetContributorAccessObject
-  const { session } = useMySession()
 
   const [following] = useMyLinkedContent('follow', 'moodlenetContributors', moodlenetContributorAccessObject.id)
 
@@ -38,7 +38,7 @@ export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfil
   const {
     form: { formState, register, reset },
     handleSubmitWithAction: submitForm,
-  } = useHookFormAction(updateProfileInfo, zodResolver(schemas.userProfile.updateProfileInfoSchema), {
+  } = useHookFormAction(updateProfileInfoMetaForm, zodResolver(schemas.userProfile.updateProfileInfoMetaSchema), {
     formProps: { defaultValues: { ...profileInfo } },
     actionProps: {
       onSuccess({ input }) {
