@@ -51,7 +51,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             const { userProfileRecord } = authenticatedUserSession
             const [done, result] = await ctx.write.useTempImageInProfile({
               as,
-              id: userProfileRecord.id,
+              userProfileId: userProfileRecord.id,
               tempId,
             })
             if (!done) {
@@ -98,7 +98,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
       secondary: {
         userProfile: {
           write: {
-            async useTempImageInProfile([[done, usingTempFile], { id, as }]) {
+            async useTempImageInProfile([[done, usingTempFile], { userProfileId: id, as }]) {
               if (!done) {
                 return
               }

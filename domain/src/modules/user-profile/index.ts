@@ -77,7 +77,11 @@ export default interface UserProfileDomain {
           userProfileId: userProfileId
           partialProfileInfo: deep_partial_props<profileInfo>
         }): Promise<ok_ko<void>>
-        useTempImageInProfile(_: { as: profileImage; id: userProfileId; tempId: string }): Promise<useTempFileResult>
+        useTempImageInProfile(_: {
+          as: profileImage
+          userProfileId: userProfileId
+          tempId: string
+        }): Promise<useTempFileResult>
         /*  updatePartialUserProfile(_: {
           userProfileId: userProfileId
           partialUserProfile: deep_partial_props<userProfileRecord>
