@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { sitepaths } from '../../../../../lib/common/utils/sitepaths'
+import { sitepaths } from '../../../../../lib/common/sitepaths'
 import { access } from '../../../../../lib/server/session-access'
 import { params } from '../../../../../lib/server/types'
 import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'

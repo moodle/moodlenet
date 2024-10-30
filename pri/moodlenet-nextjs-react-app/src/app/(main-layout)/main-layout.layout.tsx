@@ -16,7 +16,7 @@ import {
 } from './main-layout.client'
 
 import { filterOutFalsies } from '@moodle/lib-types'
-import { sitepaths } from '../../lib/common/utils/sitepaths'
+import { sitepaths } from '../../lib/common/sitepaths'
 import { access } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
 import './main-layout.style.scss'

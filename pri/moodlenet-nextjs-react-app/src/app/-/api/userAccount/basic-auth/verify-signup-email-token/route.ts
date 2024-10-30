@@ -1,7 +1,7 @@
 import { signed_token_schema } from '@moodle/lib-types'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
-import { sitepaths } from '../../../../../../lib/common/utils/sitepaths'
+import { sitepaths } from '../../../../../../lib/common/sitepaths'
 import { access } from '../../../../../../lib/server/session-access'
 
 export async function GET(req: NextRequest) {

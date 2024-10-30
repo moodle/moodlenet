@@ -1,7 +1,7 @@
 import { getDeploymentInfoUrl } from '@moodle/domain/lib'
 import { url_string } from '@moodle/lib-types'
 import assert from 'assert'
-import { createSitepaths } from '../../common/utils/sitepaths'
+import { createSitepaths } from '../../common/sitepaths'
 import { access } from '../session-access'
 
 export async function srvSiteUrls() {

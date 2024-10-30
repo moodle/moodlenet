@@ -5,7 +5,7 @@ import { Trans } from 'next-i18next'
 import Link from 'next/link'
 import { useState, type CSSProperties } from 'react'
 import { clientSlotItem } from '../../../lib/common/types'
-import { sitepaths } from '../../../lib/common/utils/sitepaths'
+import { sitepaths } from '../../../lib/common/sitepaths'
 import { Card } from '../../../ui/atoms/Card/Card'
 
 export interface LoginMethod {

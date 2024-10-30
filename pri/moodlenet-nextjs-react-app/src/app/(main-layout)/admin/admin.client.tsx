@@ -3,7 +3,7 @@
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { sitepaths } from '../../../lib/common/utils/sitepaths'
+import { sitepaths } from '../../../lib/common/sitepaths'
 import { Card } from '../../../ui/atoms/Card/Card'
 
 export function AdminMenu() {

@@ -5,7 +5,7 @@ import { usingTempFile2asset } from '@moodle/module/storage/lib'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
-import { sitepaths } from '../../../../../lib/common/utils/sitepaths'
+import { sitepaths } from '../../../../../lib/common/sitepaths'
 import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
 import { access } from '../../../../../lib/server/session-access'
 

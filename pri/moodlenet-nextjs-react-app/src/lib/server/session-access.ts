@@ -10,7 +10,7 @@ import { redirect, RedirectType } from 'next/navigation'
 import { userAgent } from 'next/server'
 import { hasher } from 'node-object-hash'
 import assert from 'node:assert'
-import { sitepaths } from '../common/utils/sitepaths'
+import { sitepaths } from '../common/sitepaths'
 import { getAuthTokenCookie } from './auth'
 const MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL
 

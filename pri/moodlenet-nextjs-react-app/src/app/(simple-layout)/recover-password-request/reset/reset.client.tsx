@@ -5,7 +5,7 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { Trans, useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
-import { sitepaths } from '../../../../lib/common/utils/sitepaths'
+import { sitepaths } from '../../../../lib/common/sitepaths'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'

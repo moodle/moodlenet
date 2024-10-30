@@ -3,7 +3,7 @@ import { moodlenetContributorMinimalInfo } from '@moodle/module/moodlenet-react-
 import Link from 'next/link'
 import { useAssetUrl, usePointSystem } from '../../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../../lib/client/user-levels/lib'
-import { sitepaths } from '../../../../lib/common/utils/sitepaths'
+import { sitepaths } from '../../../../lib/common/sitepaths'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import { ReactComponent as LeafIcon } from '../../../../ui/lib/assets/icons/leaf.svg'
 import defaultAvatar from '../../../../ui/lib/assets/img/default-avatar.svg'
