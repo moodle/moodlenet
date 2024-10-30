@@ -5,6 +5,7 @@ import * as moodlenet from '../modules/moodlenet'
 import * as moodlenetReactApp from '../modules/moodlenet-react-app'
 import * as org from '../modules/org'
 import * as storage from '../modules/storage'
+import * as edu from '../modules/edu'
 import * as userProfile from '../modules/user-profile'
 
 export type sys_admin_info = { email: email_address }
@@ -17,5 +18,6 @@ export interface ModConfigs {
   moodlenetReactApp: moodlenetReactApp.Configs
   userProfile: userProfile.Configs
   storage: storage.Configs
+  edu: edu.configs
   // env: env.Configs
 }

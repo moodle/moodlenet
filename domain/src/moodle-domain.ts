@@ -8,7 +8,20 @@ import storage from './modules/storage'
 import userProfile from './modules/user-profile'
 import crypto from './modules/crypto'
 import userNotification from './modules/user-notification'
+import edu from './modules/edu'
 
 export type MoodleDomain = intersection<
-  [{ version: '5.0' }, env, userAccount, moodlenet, moodlenetReactApp, org, storage, userProfile, crypto, userNotification]
+  [
+    { version: '5.0' },
+    edu,
+    env,
+    userAccount,
+    moodlenet,
+    moodlenetReactApp,
+    org,
+    storage,
+    userProfile,
+    crypto,
+    userNotification,
+  ]
 >

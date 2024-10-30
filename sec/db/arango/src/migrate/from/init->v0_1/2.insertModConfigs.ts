@@ -6,6 +6,7 @@ import { userAccount_default_configs } from '@moodle/module/user-account/setup'
 import { user_profile_default_configs } from '@moodle/module/user-profile/setup'
 import { dbStruct } from '../../../db-structure'
 import { saveModConfigs } from '../../../lib/modules'
+import { edu_default_configs } from '@moodle/module/edu/setup'
 // import { removePropOnInsert } from '../lib/id'
 
 export async function insertModConfigs({ dbStruct }: { dbStruct: dbStruct }) {
@@ -38,5 +39,10 @@ export async function insertModConfigs({ dbStruct }: { dbStruct: dbStruct }) {
     dbStruct,
     configs: storage_default_configs,
     moduleName: 'storage',
+  })
+  await saveModConfigs({
+    dbStruct,
+    configs: edu_default_configs,
+    moduleName: 'edu',
   })
 }

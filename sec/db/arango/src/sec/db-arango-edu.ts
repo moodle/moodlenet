@@ -3,7 +3,9 @@ import { dbStruct } from '../db-structure'
 
 export function edu_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
   return secondaryCtx => {
-    const secondaryAdapter: secondaryAdapter = {}
+    const secondaryAdapter: secondaryAdapter = {
+      edu: {},
+    }
     return secondaryAdapter
   }
 }
