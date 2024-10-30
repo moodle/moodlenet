@@ -16,49 +16,49 @@ export type userProfileIdSelect = d_u<
   { userProfileId: { userProfileId: userProfileId }; userAccountId: { userAccountId: userAccountId } },
   'by'
 >
-export type userProfilePrimary = {
-  session: {
-    moduleInfo(): Promise<{
-      schemaConfigs: UserProfilePrimaryMsgSchemaConfigs
-    }>
-  }
-  authenticated: {
-    useTempImageAsProfileImage(
-      _: useProfileImageForm,
-    ): Promise<[useTempFileResult: useTempFileResult, { userProfileId: userProfileId }]>
-    editProfileInfo(_: { profileInfo: deep_partial_props<profileInfo> }): Promise<
-      ok_ko<
-        { userProfileId: userProfileId },
-        {
-          notFound: unknown
-          unknown: unknown
-        }
-      >
-    >
-    getMyUserRecords(): Promise<{
-      userProfileRecord: Omit<userProfileRecord, 'userAccount'>
-      userAccountRecord: Omit<userAccountRecord, 'displayName'>
-    }>
-  }
-  admin: {
-    byId(_: userProfileIdSelect): Promise<
-      ok_ko<
-        {
-          userProfileRecord: userProfileRecord
-        },
-        {
-          notFound: unknown
-        }
-      >
-    >
-  }
-}
+
 
 export default interface UserProfileDomain {
   event: { userProfile: unknown }
   service: { userProfile: unknown }
   primary: {
-    userProfile: userProfilePrimary
+    userProfile: {
+      session: {
+        moduleInfo(): Promise<{
+          schemaConfigs: UserProfilePrimaryMsgSchemaConfigs
+        }>
+      }
+      authenticated: {
+        useTempImageAsProfileImage(
+          _: useProfileImageForm,
+        ): Promise<[useTempFileResult: useTempFileResult, { userProfileId: userProfileId }]>
+        editProfileInfo(_: { profileInfo: deep_partial_props<profileInfo> }): Promise<
+          ok_ko<
+            { userProfileId: userProfileId },
+            {
+              notFound: unknown
+              unknown: unknown
+            }
+          >
+        >
+        getMyUserRecords(): Promise<{
+          userProfileRecord: Omit<userProfileRecord, 'userAccount'>
+          userAccountRecord: Omit<userAccountRecord, 'displayName'>
+        }>
+      }
+      admin: {
+        byId(_: userProfileIdSelect): Promise<
+          ok_ko<
+            {
+              userProfileRecord: userProfileRecord
+            },
+            {
+              notFound: unknown
+            }
+          >
+        >
+      }
+    }
   }
   secondary: {
     userProfile: {

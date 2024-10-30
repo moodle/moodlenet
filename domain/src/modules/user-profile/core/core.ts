@@ -1,5 +1,5 @@
 import { omit } from 'lodash'
-import { userProfilePrimary } from '..'
+import UserProfileDomain from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
 import { usingTempFile2asset } from '../../storage/lib'
 import {
@@ -8,6 +8,7 @@ import {
 } from '../../user-account/lib'
 import { createNewUserProfileData } from './lib/new-user-profile'
 
+type userProfilePrimary = UserProfileDomain['primary']['userProfile']
 export const user_profile_core: moduleCore<'userProfile'> = {
   modName: 'userProfile',
   service() {
