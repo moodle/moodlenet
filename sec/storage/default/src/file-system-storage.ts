@@ -22,7 +22,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
       userProfile: {
         write: {
           async useTempImageInProfile({ as, userProfileId, tempId }) {
-            ctx.log('debug', 'useImageInProfile', { as, id: userProfileId, tempId })
+            // ctx.log('debug', 'useImageInProfile', { as, id: userProfileId, tempId })
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const absolutePath = fs_file_paths.userProfile[userProfileId]!.profile[as]!()
             return use_temp_file_as_web_image({
