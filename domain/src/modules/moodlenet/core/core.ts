@@ -22,8 +22,11 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
 
             const { userAccountRecord, userProfileRecord } = await ctx.forward.userProfile.authenticated.getMyUserRecords()
             const [foundContributorRecord, contributorRecordResult] = await ctx.mod.secondary.moodlenet.query.contributor({
-              by: 'userProfileId',
-              userProfileId: userProfileRecord.id,
+              select: {
+                by: 'userProfileId',
+                userProfileId: userProfileRecord.id,
+              },
+              noAccessLevelFilter: true,
             })
             assert(
               foundContributorRecord,
@@ -74,8 +77,8 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
             })
             return [done, _void]
           },
-          async contributor(by) {
-            const result = await ctx.mod.secondary.moodlenet.query.contributor(by)
+          async contributor(select) {
+            const result = await ctx.mod.secondary.moodlenet.query.contributor({ select, noAccessLevelFilter: true })
             return result
           },
         }
@@ -85,6 +88,23 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
   watch(ctx) {
     return {
       secondary: {
+        userAccount: {
+          write: {
+            async setUserRoles([[done], { roles, userAccountId }]) {
+              if (!done) {
+                return
+              }
+              await ctx.write.updatePartialMoodlenetContributor({
+                select: { by: 'userAccountId', userAccountId },
+                partialMoodlenetContributorRecord: {
+                  access: {
+                    level: roles.includes('contributor') ? 'public' : 'protected',
+                  },
+                },
+              })
+            },
+          },
+        },
         userProfile: {
           write: {
             async updatePartialProfileInfo([[done], payload]) {

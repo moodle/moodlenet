@@ -1,5 +1,4 @@
 import { access_obj, found_access_obj } from '@moodle/lib-types'
-import { pick } from 'lodash'
 import { userSessionInfo } from '../../../user-account'
 import { sessionLibDep, validate_currentUserSessionInfo } from '../../../user-account/lib'
 import {
@@ -13,10 +12,13 @@ export async function accessMoodlenetContributor({
   id,
 }: sessionLibDep & { id: moodlenetContributorId }): Promise<found_access_obj<moodlenetContributorAccessObject>> {
   const [found, findResult] = await ctx.mod.secondary.moodlenet.query.contributor({
-    by: 'moodlenetContributorId',
-    moodlenetContributorId: id,
+    select: {
+      by: 'moodlenetContributorId',
+      moodlenetContributorId: id,
+    },
+    noAccessLevelFilter: true,
   })
-
+  console.log({ found, findResult })
   if (!found) {
     return { result: 'notFound' }
   }

@@ -63,9 +63,10 @@ export default interface MoodlenetDomain {
           sort?: [by: 'points', dir?: 'ASC' | 'DESC']
           //filters?: queryContributorFilter[]
         }): Promise<{ moodlenetContributorRecords: moodlenetContributorRecord[] }>
-        contributor(
-          by: moodlenetContributorIdSelect,
-        ): Promise<ok_ko<{ moodlenetContributorRecord: moodlenetContributorRecord }, { notFound: unknown }>>
+        contributor(_: {
+          select: moodlenetContributorIdSelect
+          noAccessLevelFilter: boolean /// REVIEW filtering in general for contributors
+        }): Promise<ok_ko<{ moodlenetContributorRecord: moodlenetContributorRecord }, { notFound: unknown }>>
       }
       service?: unknown
       sync?: unknown
