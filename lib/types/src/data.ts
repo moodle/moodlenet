@@ -13,9 +13,11 @@ export type intersection<types extends _any[]> = pretty<
   types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
 >
 
-export type pretty<t> = { [k in keyof t]: t[k] } // utility type to convert make more readable maps
+// export type pretty<t> = keyof t extends infer keyof_t ? { [k in keyof_t & keyof t]: t[k] } : never // this one prettify better, but loses optionals?: props 🤔
+export type pretty<t> = _<t>
+ type _<t> = { [k in keyof t]: t[k] } // utility type to convert make more readable maps
 
-export type _maybe<t> = t | _nullish
+ export type _maybe<t> = t | _nullish
 export type _nullish = undefined | null
 export type _falsy = false | _nullish
 // export const _void = void 0 as never // TOO DANGEROUS
@@ -133,7 +135,6 @@ export declare const fraction_brand: unique symbol
 export type fraction = branded<number, typeof fraction_brand>
 export const fraction_schema = number().min(0).max(1).brand<typeof fraction_brand>()
 
-
 // // export const email_address_brand = Symbol('email_address_brand')
 // export type email_address = z.infer< typeof email_address_schema> // email format
 export declare const email_address_brand: unique symbol
@@ -152,7 +153,19 @@ export function namedEmailAddressString(addr: email_address | named_email_addres
 }
 
 export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
-  return arr.filter((x): x is t => !!x)
+  return arr.filter(notFalsy)
+}
+
+export function notFalsy<t>(el: t | _falsy): el is t {
+  return el !== false && nutNullish(el)
+}
+
+export function filterOutNullishes<t>(arr: (t | _nullish)[]): t[] {
+  return arr.filter(nutNullish)
+}
+
+export function nutNullish<t>(el: t | _nullish): el is t {
+  return el !== null && el !== undefined
 }
 
 export type flags<names extends string> = Record<names, boolean>

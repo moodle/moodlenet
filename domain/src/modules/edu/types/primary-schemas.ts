@@ -7,7 +7,8 @@ export type eduPrimaryMsgSchemaConfigs = {
     description: { max: number }
   }
 }
-export type eduCollectionMetaForm = z.infer<ReturnType<typeof getEduPrimarySchemas>['eduCollectionMetaSchema']>
+export type eduCollectionMetaFormSchema = ReturnType<typeof getEduPrimarySchemas>['eduCollectionMetaSchema']
+export type eduCollectionMetaForm = z.infer<eduCollectionMetaFormSchema>
 
 export function getEduPrimarySchemas({ eduCollectionMeta }: eduPrimaryMsgSchemaConfigs) {
   const eduCollectionTitle = string().trim().max(eduCollectionMeta.title.max).pipe(single_line_string_schema)

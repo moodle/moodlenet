@@ -1,5 +1,5 @@
 import { omit } from 'lodash'
-import UserProfileDomain from '..'
+import UserProfileDomain, { eduCollectionDraft } from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
 import { usingTempFile2asset } from '../../storage/lib'
 import {
@@ -7,6 +7,8 @@ import {
   assert_authorizeCurrentUserSessionWithRole,
 } from '../../user-account/lib'
 import { createNewUserProfileData } from './lib/new-user-profile'
+import { _void, date_time_string } from '@moodle/lib-types'
+import { generateNanoId } from '@moodle/lib-id-gen'
 
 type userProfilePrimary = UserProfileDomain['primary']['userProfile']
 export const user_profile_core: moduleCore<'userProfile'> = {
@@ -40,8 +42,49 @@ export const user_profile_core: moduleCore<'userProfile'> = {
         )
         const userProfileId = authenticatedUserSession.userProfileRecord.id
         const primaries: userProfilePrimary['authenticated'] = {
-          async createEduCollectionDraft({ eduCollectionForm }) {},
-          async editEduCollectionDraft({ eduCollectionDraftId, eduCollectionForm }) {},
+          async createEduCollectionDraft({ eduCollectionMetaForm }) {
+            const eduCollectionDraftId = await generateNanoId()
+            const now = date_time_string('now')
+            const eduCollectionDraft: eduCollectionDraft = {
+              created: now,
+              lastUpdateDate: now,
+              data: {
+                description: eduCollectionMetaForm.description,
+                title: eduCollectionMetaForm.title,
+                items: [],
+                image: null,
+              },
+            }
+            const [done] = await ctx.write.createEduCollectionDraft({
+              userProfileId,
+              eduCollectionDraft,
+              eduCollectionDraftId,
+            })
+            if (!done) {
+              return [false, _void]
+            }
+
+            return [true, { eduCollectionDraftId }]
+          },
+          async editEduCollectionDraft({ eduCollectionDraftId, eduCollectionMetaForm }) {
+            const [done] = await ctx.write.updateEduCollectionDraft({
+              userProfileId,
+              eduCollectionDraftId,
+              partialEduCollectionDraft: {
+                lastUpdateDate: date_time_string('now'),
+                data: eduCollectionMetaForm,
+              },
+            })
+            return [done, _void]
+          },
+          async getEduCollectionDraft({ eduCollectionDraftId }) {
+            const response = await ctx.mod.secondary.userProfile.query.getEduCollectionDraft({
+              userProfileId,
+              eduCollectionDraftId,
+            })
+
+            return response
+          },
           async getMyUserRecords() {
             const { userProfileRecord } = authenticatedUserSession
             const userAccontRecord = await ctx.forward.userAccount.authenticated.getMyUserAccountRecord()
@@ -111,21 +154,6 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 partialProfileInfo: as === 'avatar' ? { avatar: asset } : as === 'background' ? { background: asset } : {},
               })
             },
-            // async updatePartialProfileInfo([
-            //   [done],
-            //   {
-            //     userProfileId,
-            //     partialProfileInfo: { displayName },
-            //   },
-            // ]) {
-            //   if (!done || !displayName) {
-            //     return
-            //   }
-            //   await ctx.write.updatePartialUserProfile({
-            //     userProfileId,
-            //     partialUserProfile: { appData: { urlSafeProfileName: webSlug(displayName) } },
-            //   })
-            // },
           },
         },
         userAccount: {

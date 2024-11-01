@@ -6,6 +6,7 @@ import {
   moodlenetPublicEduResourceId,
 } from '@moodle/module/moodlenet'
 import { userAccountId } from '@moodle/module/user-account'
+import { eduCollectionDraftId, eduResourceDraftId } from '@moodle/module/user-profile'
 import QueryString from 'qs'
 
 export function createSitepaths<path_type extends string = url_path_string>(baseUrl = '/') {
@@ -62,12 +63,12 @@ export type sitePaths<t extends string> = spc<t> & {
     [userAccountId: userAccountId]: spc<t>
   }
   'resource': {
-    [moodlenetPublicEduResourceId: moodlenetPublicEduResourceId]: spc<t> & {
+    [draftOrPublicId: eduResourceDraftId | moodlenetPublicEduResourceId]: spc<t> & {
       [slug: string]: spc<t>
     }
   }
   'collection': {
-    [moodlenetPublicEduCollectionId: moodlenetPublicEduCollectionId]: spc<t> & {
+    [draftOrPublicId: eduCollectionDraftId | moodlenetPublicEduCollectionId]: spc<t> & {
       [slug: string]: spc<t>
     }
   }

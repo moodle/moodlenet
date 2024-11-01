@@ -1,4 +1,5 @@
 import { DeepComplete } from './-deep-requires'
+import { _nullish, pretty } from './data'
 
 export type splitMap<T, right extends keyof T> = [Pick<T, right>, Omit<T, right>]
 
@@ -6,7 +7,7 @@ export type _any = any
 export type _any_k = keyof _any
 
 export type map<t = _any, k extends _any_k = _any_k> = Record<k, t>
- type m_map<t = _any, k extends _any_k = _any_k> = map<t, k> | void | undefined | null | unknown
+type m_map<t = _any, k extends _any_k = _any_k> = map<t, k> | void | undefined | null | unknown
 
 // discriminate maps
 export type d_m<nmap extends m_map, p extends _any_k> = discriminated_map<nmap, p>
@@ -15,16 +16,15 @@ export type discriminated_map<nmap extends m_map, p extends _any_k> = {
 }
 
 // discriminated unions
-export type discriminated_union<
-  nmap extends m_map,
-  p extends _any_k,
-  keys extends keyof nmap = keyof nmap,
-> = d_m<nmap, p>[keys]
-export type d_u<
-  nmap extends m_map,
-  p extends _any_k,
-  keys extends keyof nmap = keyof nmap,
-> = discriminated_union<nmap, p, keys>
+export type discriminated_union<nmap extends m_map, p extends _any_k, keys extends keyof nmap = keyof nmap> = d_m<
+  nmap,
+  p
+>[keys]
+export type d_u<nmap extends m_map, p extends _any_k, keys extends keyof nmap = keyof nmap> = discriminated_union<
+  nmap,
+  p,
+  keys
+>
 // >[keyof d_m<nmap, p>]
 
 // union discrimination
@@ -41,19 +41,11 @@ export type d_u__d<
 
 export type d_t_m<nmap extends m_map> = discriminated_tuple_map<nmap>
 export type discriminated_tuple_map<nmap extends m_map> = {
-  [name in keyof nmap]: nmap[name] extends never | void | undefined
-    ? readonly [name]
-    : readonly [name, nmap[name]]
+  [name in keyof nmap]: nmap[name] extends never | void | undefined ? readonly [name] : readonly [name, nmap[name]]
 }
 
-export type discriminated_tuple_union<
-  nmap extends m_map,
-  keys extends keyof nmap = keyof nmap,
-> = d_t_m<nmap>[keys]
-export type d_t_u<
-  nmap extends m_map,
-  keys extends keyof nmap = keyof nmap,
-> = discriminated_tuple_union<nmap, keys>
+export type discriminated_tuple_union<nmap extends m_map, keys extends keyof nmap = keyof nmap> = d_t_m<nmap>[keys]
+export type d_t_u<nmap extends m_map, keys extends keyof nmap = keyof nmap> = discriminated_tuple_union<nmap, keys>
 
 // discr_map<nmap, p> extends infer m ? m[keyof m] : never
 
@@ -66,3 +58,18 @@ export type deep_partial_props<t> = {
 }
 
 // export type deep_required<t> = DeepComplete<t>
+
+// type selection : like Pick. but keeps unpicked as optional nullish
+export type selection<
+  typemap extends map,
+  selection extends keyof typemap,
+  optionals extends keyof typemap = never,
+> = pretty<
+  {
+    [propName in selection]: typemap[propName]
+  } & {
+    [propName in optionals]: typemap[propName] | _nullish
+  } & {
+    [propName in Exclude<keyof typemap, optionals | selection>]?: _nullish
+  }
+>

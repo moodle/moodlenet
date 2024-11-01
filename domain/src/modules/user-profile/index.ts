@@ -1,10 +1,11 @@
 import type { d_u, deep_partial_props, ok_ko } from '@moodle/lib-types'
+import { eduCollectionMetaForm } from '../edu'
 import { useTempFileResult } from '../storage'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {
   UserProfilePrimaryMsgSchemaConfigs,
-  draftId,
   eduCollectionDraft,
+  eduCollectionDraftId,
   profileImage,
   profileInfo,
   profileInfoMeta,
@@ -13,7 +14,6 @@ import {
   userProfileId,
   userProfileRecord,
 } from './types'
-import { eduCollectionMetaForm } from '../edu'
 export * from './types'
 
 export type userProfileIdSelect = d_u<
@@ -48,11 +48,16 @@ export default interface UserProfileDomain {
           userProfileRecord: Omit<userProfileRecord, 'userAccount'>
           userAccountRecord: Omit<userAccountRecord, 'displayName'>
         }>
-        createEduCollectionDraft(_: { eduCollectionForm: eduCollectionMetaForm }): Promise<unknown>
+        createEduCollectionDraft(_: {
+          eduCollectionMetaForm: eduCollectionMetaForm
+        }): Promise<ok_ko<{ eduCollectionDraftId: eduCollectionDraftId }>>
         editEduCollectionDraft(_: {
-          eduCollectionDraftId: draftId
-          eduCollectionForm: eduCollectionMetaForm
-        }): Promise<unknown>
+          eduCollectionDraftId: eduCollectionDraftId
+          eduCollectionMetaForm: eduCollectionMetaForm
+        }): Promise<ok_ko<void>>
+        getEduCollectionDraft(_: {
+          eduCollectionDraftId: eduCollectionDraftId
+        }): Promise<ok_ko<eduCollectionDraft, { notFound: unknown }>>
       }
       admin: {
         byId(_: userProfileIdSelect): Promise<
@@ -78,13 +83,22 @@ export default interface UserProfileDomain {
         getUserProfile(
           _: userProfileIdSelect,
         ): Promise<ok_ko<{ userProfileRecord: userProfileRecord }, { notFound: unknown }>>
+        getEduCollectionDraft(_: {
+          userProfileId: userProfileId
+          eduCollectionDraftId: eduCollectionDraftId
+        }): Promise<ok_ko<eduCollectionDraft, { notFound: unknown }>>
       }
       write: {
-        createEduCollectionDraft(_: { eduCollectionDraft: eduCollectionDraft }): Promise<unknown>
-        editEduCollectionDraft(_: {
-          eduCollectionDraftId: draftId
-          eduCollectionForm: eduCollectionMetaForm
-        }): Promise<unknown>
+        createEduCollectionDraft(_: {
+          userProfileId: userProfileId
+          eduCollectionDraft: eduCollectionDraft
+          eduCollectionDraftId: eduCollectionDraftId
+        }): Promise<ok_ko<void>>
+        updateEduCollectionDraft(_: {
+          userProfileId: userProfileId
+          eduCollectionDraftId: eduCollectionDraftId
+          partialEduCollectionDraft: deep_partial_props<eduCollectionDraft>
+        }): Promise<ok_ko<void>>
         createUserProfile(_: { userProfileRecord: userProfileRecord }): Promise<ok_ko<void>>
         updatePartialProfileInfo(_: {
           userProfileId: userProfileId

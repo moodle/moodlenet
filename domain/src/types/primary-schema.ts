@@ -1,4 +1,5 @@
 import type { makeAllPrimarySchemas } from '../lib'
+import { eduPrimaryMsgSchemaConfigs } from '../modules/edu'
 import { moodlenetPrimaryMsgSchemaConfigs } from '../modules/moodlenet'
 import { orgPrimaryMsgSchemaConfigs } from '../modules/org'
 import { uploadMaxSizeConfigs } from '../modules/storage'
@@ -11,6 +12,7 @@ export type AllSchemaConfigs = {
   orgSchemaConfigs: orgPrimaryMsgSchemaConfigs
   uploadMaxSizeConfigs: uploadMaxSizeConfigs
   userProfileSchemaConfigs: UserProfilePrimaryMsgSchemaConfigs
+  eduSchemaConfigs: eduPrimaryMsgSchemaConfigs
 }
 
 export type AllPrimarySchemas = ReturnType<typeof makeAllPrimarySchemas>

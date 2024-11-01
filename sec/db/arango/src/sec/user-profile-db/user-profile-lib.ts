@@ -33,13 +33,17 @@ export async function updateUserProfileById({
   dbStruct,
   select,
   partialUserProfile,
+  preCondition = aql``,
 }: {
   select: userProfileIdSelect
   dbStruct: dbStruct
   partialUserProfile: deep_partial_props<userProfileRecord>
+  preCondition?: AqlQuery
 }) {
   return getUserProfileById({
-    apply: aql`UPDATE userProfileDoc WITH ${partialUserProfile} IN ${dbStruct.userAccount.coll.userProfile}`,
+    apply: aql`
+    ${preCondition}
+    UPDATE userProfileDoc WITH ${partialUserProfile} IN ${dbStruct.userAccount.coll.userProfile}`,
     dbStruct,
     select,
   })

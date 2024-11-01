@@ -3,8 +3,7 @@ import { contentLanguageCode, contentLicenseCode } from '../../content'
 import { asset } from '../../storage'
 import { eduBloomCognitiveLevel, eduIscedFieldCode, eduIscedLevelCode, eduResourceTypeCode } from './edu-categories'
 
-export type eduResourceData = {
-  asset: asset
+export type eduResourceMeta = {
   title: string
   description: string
   iscedField: _nullish | eduIscedFieldCode
@@ -14,6 +13,10 @@ export type eduResourceData = {
   language: _nullish | contentLanguageCode
   license: _nullish | contentLicenseCode
   publicationDate: _nullish | { month: positive_integer; year: positive_integer }
+}
+
+export type eduResourceData = eduResourceMeta & {
+  asset: asset
   image: _nullish | asset
 }
 
@@ -23,8 +26,10 @@ export type bloomLearningOutcome = {
   learningOutcome: string
 }
 
-export type eduCollectionData = {
+export type eduCollectionMeta = {
   title: string
   description: string
+}
+export type eduCollectionData = eduCollectionMeta & {
   image: _nullish | asset
 }

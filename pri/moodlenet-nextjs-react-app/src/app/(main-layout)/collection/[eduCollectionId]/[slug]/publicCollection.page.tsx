@@ -1,9 +1,15 @@
 // import CollectionClient from './collection.client'
 
-export default async function PublicCollectionPage() {
+import { params } from '../../../../../lib/server/types'
+
+export default async function PublicCollectionPage({
+  params: { eduCollectionId, slug },
+}: {
+  params: params<'eduCollectionId' | 'slug'>
+}) {
   return (
     <div>
-      <pre>CREATE COLLECTION</pre>
+      <pre>VIEW PUBLIC COLLECTION {JSON.stringify({ eduCollectionId, slug }, null, 2)}</pre>
     </div>
   )
   // const [foundEduCollection, collectionPageProps] = await access.primary.moodlenetReactApp.props.collectionPage({

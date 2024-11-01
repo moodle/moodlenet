@@ -6,6 +6,7 @@ import { userAccount_core } from '@moodle/module/user-account/core'
 import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
 import { moodlenet_core } from '@moodle/module/moodlenet/core'
 import { org_core } from '@moodle/module/org/core'
+import { edu_core } from '@moodle/module/edu/core'
 import { storage_core } from '@moodle/module/storage/core'
 import { user_profile_core } from '@moodle/module/user-profile/core'
 import { CryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
@@ -113,6 +114,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         // core modules
         moodlenet_core,
         org_core,
+        edu_core,
         userAccount_core,
         moodlenet_react_app_core,
         user_profile_core,

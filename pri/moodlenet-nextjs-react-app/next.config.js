@@ -108,7 +108,6 @@ const xport = async (phase, context) => {
       },
     },
   }
-
   // https://github.com/vercel/next.js/discussions/26420#discussioncomment-1415418 (https://github.com/vercel/next.js/discussions/50861)
   // config.transpilePackages = [
   //   ...(config.transpilePackages ?? []),

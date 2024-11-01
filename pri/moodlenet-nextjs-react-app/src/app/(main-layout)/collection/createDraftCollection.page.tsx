@@ -1,26 +1,16 @@
-import { params } from '../../../lib/server/types'
+import { getAuthenticatedUserSessionOrRedirectToLogin } from '../../../lib/server/session-access'
+import { CollectionPage, collectionPageProps } from '../../../ui/pages/Collection/Collection'
+import { saveNewEduCollectionDraft } from './eduCollection-actions.server'
 // import CollectionClient from './collection.client'
 
-export default async function CreateDraftCollectionPage({
-  params: { eduCollectionId, slug },
-}: {
-  params: params<'eduCollectionId' | 'slug'>
-}) {
-  return (
-    <div>
-      <pre>VIEW PUBLIC COLLECTION {JSON.stringify({ eduCollectionId, slug }, null, 2)}</pre>
-    </div>
-  )
-  // const [foundEduCollection, collectionPageProps] = await access.primary.moodlenetReactApp.props.collectionPage({
-  //   moodlenetEduCollectionId,
-  // })
-  // if (!foundEduCollection) {
-  //   return <Fallback />
-  // }
-  // const { moodlenetEduCollectionAccessObject } = collectionPageProps
-  // if (moodlenetEduCollectionAccessObject.slug !== slug) {
-  //   redirect(sitepaths.collection[moodlenetEduCollectionId]![moodlenetEduCollectionAccessObject.slug]!())
-  // }
-
-  // return <CollectionClient {...collectionPageProps} />
+export default async function CreateDraftCollectionPage() {
+  await getAuthenticatedUserSessionOrRedirectToLogin()
+  const collectionPageProps: collectionPageProps = {
+    activity: 'createDraft',
+    actions: {
+      saveNewDraft: saveNewEduCollectionDraft,
+    },
+    eduCollectionMeta: null,
+  }
+  return <CollectionPage {...collectionPageProps} />
 }

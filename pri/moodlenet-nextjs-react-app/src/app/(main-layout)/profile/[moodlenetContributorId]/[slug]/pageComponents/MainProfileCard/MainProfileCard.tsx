@@ -22,7 +22,6 @@ import './MainProfileCard.scss'
 import { moodlenetContributorAccessObject } from '@moodle/module/moodlenet'
 import defaultAvatar from '../../../../../../../ui/lib/assets/img/default-avatar.svg'
 import defaultBackground from '../../../../../../../ui/lib/assets/img/default-background.svg'
-import { pick } from 'lodash'
 
 export type mainProfileCardProps = {
   moodlenetContributorAccessObject: moodlenetContributorAccessObject

@@ -1,4 +1,4 @@
-import { _nullish, d_u, date_time_string, url_string } from '@moodle/lib-types'
+import { _nullish, d_u, date_time_string, map, url_string } from '@moodle/lib-types'
 import { aiAgentResourceSuggestionStatus } from '../../ai-agent'
 import { textExtractionStatus } from '../../asset-text-extraction'
 import { contentLanguageCode, contentLicenseCode } from '../../content'
@@ -55,26 +55,24 @@ type eduResourceDraft = draft<
 >
 
 type myDrafts = {
-  eduResources: eduResourceDraft[]
-  eduCollections: eduCollectionDraft[]
+  eduResources: map<eduResourceDraft, eduResourceDraftId>
+  eduCollections: map<eduCollectionDraft, eduCollectionDraftId>
 }
 
 type draftEduCollectionEduResourceRef = d_u<
   {
-    myDraft: { draftId: draftId }
+    myDraft: { eduResourceDraftId: eduResourceDraftId }
     publishedOnMoodlenet: { moodlenetPublicEduResourceId: moodlenetPublicEduResourceId }
   },
   'type'
 >
 
-export type draftId = eduResourceDraftId | eduCollectionDraftId
 type draft<dataType extends eduResourceData | eduCollectionData> = {
-  draftId: draftId
   data: dataType
   created: date_time_string
   lastUpdateDate: date_time_string
   // updates: { date: date_time_string; diff: jsonDiff }[]
 }
 
-type eduResourceDraftId = string
-type eduCollectionDraftId = string
+export type eduResourceDraftId = string
+export type eduCollectionDraftId = string

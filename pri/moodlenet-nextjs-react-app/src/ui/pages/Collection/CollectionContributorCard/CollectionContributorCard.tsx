@@ -1,14 +1,13 @@
-import { Card } from '@moodlenet/component-library'
-import type { Href } from '@moodlenet/react-app/common'
-import { Link } from '@moodlenet/react-app/ui'
+import Link from 'next/link'
 import type { FC } from 'react'
-import defaultAvatar from '../../../assets/img/default-avatar.svg'
+import { Card } from '../../../atoms/Card/Card'
+import defaultAvatar from '../../../lib/assets/img/default-avatar.svg'
 import './CollectionContributorCard.scss'
 
 export type CollectionContributorCardProps = {
   avatarUrl: string | null
   displayName: string
-  creatorProfileHref: Href
+  creatorProfileHref: string
 }
 
 export const CollectionContributorCard: FC<CollectionContributorCardProps> = ({
