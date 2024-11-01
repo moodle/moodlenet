@@ -48,13 +48,7 @@ export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfil
 
   const submitFormBtnRef = useRef<HTMLButtonElement | null>(null)
 
-  const [
-    [displayAvatarSrc],
-    chooseImageAvatar,
-    submitAvatar,
-    avatarChoosenFileError,
-    // dirtyAvatar,
-  ] = useAssetUploader({
+  const [[displayAvatarSrc], chooseImageAvatar, submitAvatar, avatarUploaderState, dropAvatarAttr] = useAssetUploader({
     assets: profileInfo.avatar,
     async action({ tempIds: [tempId] }) {
       const saveResult = await adoptProfileImage({ as: 'avatar', tempId })
@@ -66,24 +60,19 @@ export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfil
     type: 'webImage',
   })
 
-  const [
-    [displayBackgroundSrc],
-    chooseImageBackground,
-    submitBackground,
-    backgroundChoosenFileError,
-    // dirtyBackground,
-  ] = useAssetUploader({
-    assets: profileInfo.background,
-    async action({ tempIds: [tempId] }) {
-      const saveResult = await adoptProfileImage({ as: 'background', tempId })
-      if (!saveResult?.data) {
-        return { done: false, error: saveResult?.validationErrors?._errors }
-      }
+  const [[displayBackgroundSrc], chooseImageBackground, submitBackground, backgroundUploaderState, dropBackgroundAttrs] =
+    useAssetUploader({
+      assets: profileInfo.background,
+      async action({ tempIds: [tempId] }) {
+        const saveResult = await adoptProfileImage({ as: 'background', tempId })
+        if (!saveResult?.data) {
+          return { done: false, error: saveResult?.validationErrors?._errors }
+        }
 
-      return { done: true, newAsset: saveResult.data }
-    },
-    type: 'webImage',
-  })
+        return { done: true, newAsset: saveResult.data }
+      },
+      type: 'webImage',
+    })
 
   const submitAll = useCallback(() => {
     submitFormBtnRef.current?.click()
@@ -108,9 +97,12 @@ export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfil
                   onClick={chooseImageBackground}
                   key="edit-background-btn"
                 />,
-                backgroundChoosenFileError && <Snackbar key="edit-background-err">{backgroundChoosenFileError}</Snackbar>,
+                backgroundUploaderState.error && (
+                  <Snackbar key="edit-background-err">{backgroundUploaderState.error}</Snackbar>
+                ),
               ]}
           <div
+            {...(isEditing && dropBackgroundAttrs)}
             className={`background`}
             key="background"
             style={{
@@ -129,9 +121,10 @@ export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfil
                   onClick={chooseImageAvatar}
                   key="edit-avatar-btn"
                 />,
-                avatarChoosenFileError && <Snackbar key="edit-avatar-err">{avatarChoosenFileError}</Snackbar>,
+                avatarUploaderState.error && <Snackbar key="edit-avatar-err">{avatarUploaderState.error}</Snackbar>,
               ]}
           <div
+            {...(isEditing && dropAvatarAttr)}
             className={`avatar`}
             style={{
               backgroundImage: 'url("' + (displayAvatarSrc ?? defaultAvatar) + '")',

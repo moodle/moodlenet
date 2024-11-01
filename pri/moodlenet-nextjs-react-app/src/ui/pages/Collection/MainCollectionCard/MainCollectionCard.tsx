@@ -32,7 +32,7 @@ import { useMemo, useState } from 'react'
 // } from '../../../../common/types.mjs'
 // import { UploadImage } from '../UploadImage/UploadImage'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { notFalsy } from '@moodle/lib-types'
+import { isNotFalsy } from '@moodle/lib-types'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 import { Card } from '../../../atoms/Card/Card'
@@ -193,7 +193,7 @@ export function MainCollectionCard({
             </div>
           ),
         },
-    ].filter(notFalsy)
+    ].filter(isNotFalsy)
   }, [actions, activity, confirmDelete])
 
   const currentValues = getValues()

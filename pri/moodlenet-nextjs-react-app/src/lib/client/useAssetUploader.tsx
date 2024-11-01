@@ -1,7 +1,7 @@
-import { _nullish, d_u } from '@moodle/lib-types'
+import { _nullish, d_u, isNotNullish } from '@moodle/lib-types'
 import { asset } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { DOMAttributes, useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { humanFileSize } from '../../ui/lib/misc'
 import { useAllSchemaConfigs, useFileServerDeployment } from './globalContexts'
 
@@ -15,10 +15,10 @@ type handler = [
   activeSrcs: string[],
   openFileDialog: () => void,
   submit: () => void,
-  error: string | _nullish,
-  assets: asset[],
-  dirty: boolean,
+  state: fileUploaderState,
+  dropHandlers: Pick<DOMAttributes<HTMLElement>, 'onDrop' | 'onDragEnter' | 'onDragOver'>,
 ]
+
 export type actionResponse = { done: true; newAssets?: asset[] } | { done: false; error?: string | string[] | _nullish }
 export type fileUploadedAction = (_: { tempIds: [string, ...string[]] }) => Promise<actionResponse>
 export function useAssetUploader({
@@ -39,7 +39,7 @@ export function useAssetUploader({
   const filestoreHttp = useFileServerDeployment()
   const { uploadMaxSizeConfigs } = useAllSchemaConfigs()
   const maxSize = overrideMaxSize ?? (type === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max)
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const inputFileRef = useRef<HTMLInputElement | null>(null)
   const [state, dispatch] = useReducer(getFileUploaderReducer({ maxSize }), {
     type: 'idle',
     dirty: false,
@@ -56,7 +56,7 @@ export function useAssetUploader({
     inputElement.hidden = true
     inputElement.multiple = multiple
     inputElement.onchange = e => {
-      const fileList = inputRef.current?.files
+      const fileList = inputFileRef.current?.files
       if (!fileList?.length) {
         dispatch({ type: 'reset' })
         return
@@ -64,42 +64,42 @@ export function useAssetUploader({
       const files = Array.from(fileList) as [File, ...File[]]
       dispatch({ type: 'select', files })
     }
-    inputRef.current = inputElement
+    inputFileRef.current = inputElement
     document.body.append(inputElement)
     return () => {
-      inputRef.current = null
+      inputFileRef.current = null
       document.body.removeChild(inputElement)
     }
   }, [type, maxSize, multiple])
-  const openFileDialog = useCallback(() => inputRef.current?.click(), [])
 
-  // useEffect(() => {
-  //   if (state.type !== 'submitting' || !state.selection.files[0]) {
-  //     return
-  //   }
-  //   const uploadPromises = state.selection.files.map(
-  //     file =>
-  //       new Promise<{ tempId: string }>(resolve => {
-  //         const formData = new FormData()
-  //         formData.append(uploadTempFieldName, file)
+  const openFileDialog = useCallback(() => inputFileRef.current?.click(), [])
 
-  //         fetch(`${filestoreHttp.href}${uploadTempPath}/${type}`, {
-  //           body: formData,
-  //           method: uploadTempMethod,
-  //         })
-  //           .then(r => r.json())
-  //           .then(resolve)
-  //       }),
-  //   )
-  //   Promise.all(uploadPromises)
-  //     .then<actionResponse, actionResponse>(
-  //       uploadResponses => fileUploadedAction({ tempIds: uploadResponses.map(r => r.tempId) as [string, ...string[]] }),
-  //       err => ({ done: false, error: String(err) }),
-  //     )
-  //     .then(actionResponse => {
-  //       dispatch({ type: 'actionResponse', response: actionResponse })
-  //     })
-  // }, [fileUploadedAction, filestoreHttp.href, state, type])
+  const dropHandlers = useMemo<handler['4']>(() => {
+    return {
+      onDragEnter: onDragOverEnter,
+      onDragOver: onDragOverEnter,
+      onDrop,
+    }
+    function onDragOverEnter(e: React.DragEvent<HTMLElement>) {
+      e.preventDefault()
+    }
+    function onDrop(e: React.DragEvent<HTMLElement>) {
+      e.preventDefault()
+
+      const fileList = e.dataTransfer.items
+        ? Array.from(e.dataTransfer.items)
+            .map(item => item.getAsFile())
+            .filter(isNotNullish)
+        : Array.from(e.dataTransfer.files)
+
+      if (fileList.length === 0) {
+        dispatch({ type: 'reset' })
+        return
+      }
+      const files = Array.from(fileList) as [File, ...File[]]
+      dispatch({ type: 'select', files })
+    }
+  }, [])
 
   const [activeSrcs, setActiveSrcs] = useState<string[]>([])
   useEffect(() => {
@@ -151,8 +151,8 @@ export function useAssetUploader({
   }, [state, filestoreHttp.href, action, type])
 
   return useMemo<handler>(() => {
-    return [activeSrcs, openFileDialog, submit, state.error, state.assets, state.dirty]
-  }, [activeSrcs, openFileDialog, state.assets, state.dirty, state.error, submit])
+    return [activeSrcs, openFileDialog, submit, state, dropHandlers]
+  }, [activeSrcs, openFileDialog, state, submit, dropHandlers])
 }
 function getFileUploaderReducer({ maxSize }: { maxSize: number }) {
   return function fileUploaderReducer(prev: fileUploaderState, action: fileUploaderAction): fileUploaderState {
@@ -260,3 +260,33 @@ type stateSubmitting = {
   dirty: true
   selection: { files: [File, ...File[]] }
 }
+
+// old submit logic (replaced by submit callback)
+
+// useEffect(() => {
+//   if (state.type !== 'submitting' || !state.selection.files[0]) {
+//     return
+//   }
+//   const uploadPromises = state.selection.files.map(
+//     file =>
+//       new Promise<{ tempId: string }>(resolve => {
+//         const formData = new FormData()
+//         formData.append(uploadTempFieldName, file)
+
+//         fetch(`${filestoreHttp.href}${uploadTempPath}/${type}`, {
+//           body: formData,
+//           method: uploadTempMethod,
+//         })
+//           .then(r => r.json())
+//           .then(resolve)
+//       }),
+//   )
+//   Promise.all(uploadPromises)
+//     .then<actionResponse, actionResponse>(
+//       uploadResponses => fileUploadedAction({ tempIds: uploadResponses.map(r => r.tempId) as [string, ...string[]] }),
+//       err => ({ done: false, error: String(err) }),
+//     )
+//     .then(actionResponse => {
+//       dispatch({ type: 'actionResponse', response: actionResponse })
+//     })
+// }, [fileUploadedAction, filestoreHttp.href, state, type])

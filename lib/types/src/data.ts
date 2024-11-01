@@ -153,18 +153,18 @@ export function namedEmailAddressString(addr: email_address | named_email_addres
 }
 
 export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
-  return arr.filter(notFalsy)
+  return arr.filter(isNotFalsy)
 }
 
-export function notFalsy<t>(el: t | _falsy): el is t {
-  return el !== false && nutNullish(el)
+export function isNotFalsy<t>(el: t | _falsy): el is t {
+  return el !== false && isNotNullish(el)
 }
 
 export function filterOutNullishes<t>(arr: (t | _nullish)[]): t[] {
-  return arr.filter(nutNullish)
+  return arr.filter(isNotNullish)
 }
 
-export function nutNullish<t>(el: t | _nullish): el is t {
+export function isNotNullish<t>(el: t | _nullish): el is t {
   return el !== null && el !== undefined
 }
 
