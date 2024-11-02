@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
 import { access } from '../../../../lib/server/session-access'
-import { srvSiteUrls } from '../../../../lib/server/utils/site-urls.server'
+import { srvSiteRoutes } from '../../../../lib/server/utils/site-urls.server'
 
 export async function getSignupSchema() {
   const allSchemas = await getAllPrimarySchemas()
@@ -17,7 +17,7 @@ export const signupAction = defaultSafeActionClient
   .schema(async (/* prevSchema https://next-safe-action.dev/docs/define-actions/extend-previous-schemas */) =>
     getSignupSchema(),)
   .action(async ({ parsedInput: signupForm }) => {
-    const redirectUrl = (await srvSiteUrls()).full['-'].api.userAccount['basic-auth']['verify-signup-email-token']()
+    const redirectUrl = (await srvSiteRoutes()).full('/-/api/userAccount/basic-auth/verify-signup-email-token')
 
     const [done, resp] = await access.primary.userAccount.unauthenticated.signupRequest({
       signupForm,

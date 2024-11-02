@@ -3,22 +3,21 @@
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { sitepaths } from '../../../lib/common/sitepaths'
+import { appRoute, appRoutes } from '../../../lib/common/appRoutes'
 import { Card } from '../../../ui/atoms/Card/Card'
 
 export function SettingsMenu() {
-
   const { t } = useTranslation()
 
   return (
     <Card role="navigation" className="menu">
-      <MenuItem pathname={sitepaths.settings.general()} title={t('General')} />
-      <MenuItem pathname={sitepaths.settings.advanced()} title={t('Advanced')} />
+      <MenuItem pathname={appRoutes('/settings/general')} title={t('General')} />
+      <MenuItem pathname={appRoutes('/settings/advanced')} title={t('Advanced')} />
     </Card>
   )
 }
 
-export function MenuItem({ pathname, title }: { pathname: string; title: string }) {
+export function MenuItem({ pathname, title }: { pathname: appRoute; title: string }) {
   const isCurrent = pathname === usePathname()
   return (
     <Link href={pathname}>

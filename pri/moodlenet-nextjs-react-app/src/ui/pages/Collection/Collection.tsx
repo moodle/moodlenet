@@ -9,6 +9,7 @@ import { SecondaryButton } from '../../atoms/SecondaryButton/SecondaryButton'
 import './Collection.scss'
 import { CollectionContributorCard } from './CollectionContributorCard/CollectionContributorCard'
 import { MainCollectionCard } from './MainCollectionCard/MainCollectionCard'
+import { appRoute } from '../../../lib/common/appRoutes'
 
 type saveEduCollectionMetaFn = HookSafeActionFn<unknown, eduCollectionMetaFormSchema, any, any, any, any>
 export type eduCollectionActions = {
@@ -142,7 +143,7 @@ export function CollectionPage(collectionPageProps: collectionPageProps) {
         </div>
         <div className="contributor-card">
           <CollectionContributorCard
-            {...{ avatarUrl: null, creatorProfileHref: '', displayName: 'ola' }}
+            {...{ avatarUrl: null, creatorProfileHref: '' as appRoute, displayName: 'ola' }}
             key="contributor-card"
           />
         </div>

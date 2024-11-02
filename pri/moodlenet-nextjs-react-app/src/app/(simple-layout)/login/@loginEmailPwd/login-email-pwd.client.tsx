@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'next-i18next'
 import Link from 'next/link'
-import { sitepaths } from '../../../../lib/common/sitepaths'
+import { appRoutes } from '../../../../lib/common/appRoutes'
 import InputTextField from '../../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../../ui/atoms/PrimaryButton/PrimaryButton'
 import { TertiaryButton } from '../../../../ui/atoms/TertiaryButton/TertiaryButton'
@@ -17,7 +17,7 @@ export default function LoginPanel() {
     form: { formState, register },
     handleSubmitWithAction,
   } = useHookFormAction(loginAction, zodResolver(userAccount.loginSchema))
-  const recoverPasswordHref = sitepaths['recover-password-request']()
+  const recoverPasswordHref = appRoutes('/recover-password-request')
 
   const loginErrorMsg = formState.errors.root?.message
   return (

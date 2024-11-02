@@ -10,7 +10,7 @@ import { redirect, RedirectType } from 'next/navigation'
 import { userAgent } from 'next/server'
 import { hasher } from 'node-object-hash'
 import assert from 'node:assert'
-import { sitepaths } from '../common/sitepaths'
+import { appRoute, appRoutes } from '../common/appRoutes'
 import { getAuthTokenCookie } from './auth'
 const MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL
 
@@ -105,9 +105,9 @@ export async function getAuthenticatedUserSessionOrRedirectToLogin() {
     return maybe_authenticatedUserSession
   }
 
-  const loginUrl = sitepaths.login({
-    query: {
-      redirect: headers().get('x-pathname') ?? sitepaths(),
+  const loginUrl = appRoutes('/login', {
+    q: {
+      redirect: (headers().get('x-pathname') as appRoute) ?? appRoutes('/'),
     },
   })
   redirect(loginUrl, RedirectType.replace)

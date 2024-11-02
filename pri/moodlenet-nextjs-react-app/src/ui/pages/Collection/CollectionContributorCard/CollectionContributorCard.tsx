@@ -3,11 +3,12 @@ import type { FC } from 'react'
 import { Card } from '../../../atoms/Card/Card'
 import defaultAvatar from '../../../lib/assets/img/default-avatar.svg'
 import './CollectionContributorCard.scss'
+import { appRoute } from '../../../../lib/common/appRoutes'
 
 export type CollectionContributorCardProps = {
   avatarUrl: string | null
   displayName: string
-  creatorProfileHref: string
+  creatorProfileHref: appRoute
 }
 
 export const CollectionContributorCard: FC<CollectionContributorCardProps> = ({

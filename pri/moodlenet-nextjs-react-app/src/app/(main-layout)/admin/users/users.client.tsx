@@ -7,7 +7,7 @@ import ManageAccountsOutlined from '@mui/icons-material/ManageAccountsOutlined'
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { sitepaths } from '../../../../lib/common/sitepaths'
+import { appRoutes } from '../../../../lib/common/appRoutes'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import Searchbox from '../../../../ui/atoms/Searchbox/Searchbox'
 import useQueryParams from '../../../../ui/lib/nextjs/queryParams'
@@ -67,7 +67,7 @@ type RowProps = {
 
 function Row({ user }: RowProps) {
   const { t } = useTranslation()
-  const profileHref = sitepaths['user-account-profile'][user.id]!()
+  const profileHref = appRoutes(`/user-account-profile/${user.id}`)
   const [roles, setRoles] = useState(user.roles)
   const isAdmin = roles.includes('admin')
   const isContributor = roles.includes('contributor')

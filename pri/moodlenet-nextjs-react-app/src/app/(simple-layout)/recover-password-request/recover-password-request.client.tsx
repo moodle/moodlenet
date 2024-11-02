@@ -4,7 +4,7 @@ import { CallMade as CallMadeIcon } from '@mui/icons-material'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'next-i18next'
 import Link from 'next/link'
-import { sitepaths } from '../../../lib/common/sitepaths'
+import { appRoutes } from '../../../lib/common/appRoutes'
 import { Card } from '../../../ui/atoms/Card/Card'
 import InputTextField from '../../../ui/atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../ui/atoms/PrimaryButton/PrimaryButton'
@@ -20,7 +20,7 @@ export function RecoverPasswordRequestClient() {
   })
   const { t } = useTranslation()
 
-  const loginHref = sitepaths.login()
+  const loginHref = appRoutes('/login')
 
   const requestSent = formState.isSubmitSuccessful
   return (

@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation'
-import { srvSiteUrls } from '../../../lib/server/utils/site-urls.server'
+import { srvSiteRoutes } from '../../../lib/server/utils/site-urls.server'
 
 export default async function BaseAdminPage() {
-  redirect((await srvSiteUrls()).site.admin.general())
+  const adminGeneralPath = (await srvSiteRoutes()).site('/admin/general')
+  console.log({ adminGeneralPath })
+  redirect(adminGeneralPath)
 }

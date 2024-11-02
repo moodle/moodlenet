@@ -2,13 +2,14 @@ import Link from 'next/link'
 import type { ComponentType } from 'react'
 import { Card } from '../../atoms/Card/Card'
 import './OverallCard.scss'
+import { appRoute } from '../../../lib/common/appRoutes'
 
 export type overallCardItem = {
   Icon: ComponentType
   name: string
   value: string | number
   className?: string
-  href?: string
+  href?: appRoute
 }
 
 export type overallCardProps = {

@@ -6,7 +6,7 @@ import { eduCollectionDraftId } from '@moodle/module/user-profile'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { redirect, RedirectType } from 'next/navigation'
-import { sitepaths } from '../../../lib/common/sitepaths'
+import { appRoutes } from '../../../lib/common/appRoutes'
 import { defaultSafeActionClient } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
 
@@ -26,7 +26,7 @@ export const saveNewEduCollectionDraft = defaultSafeActionClient
         _errors: [t(`something went wrong while saving collection meta`)],
       })
     }
-    redirect(sitepaths.collection[result.eduCollectionDraftId]!(), RedirectType.replace)
+    redirect(appRoutes(`/collection/${result.eduCollectionDraftId}`), RedirectType.replace)
   })
 
 export async function editEduCollectionDraftForId({ eduCollectionDraftId }: { eduCollectionDraftId: eduCollectionDraftId }) {

@@ -19,6 +19,7 @@
     "esModuleInterop": true,
     "strict": true,
     "strictNullChecks": true,
+    "incremental": true,
     "paths": {
       "@moodle/bindings-node": ["bindings/node/src/index.ts"],
       "@moodle/domain": ["domain/src/index.ts"],

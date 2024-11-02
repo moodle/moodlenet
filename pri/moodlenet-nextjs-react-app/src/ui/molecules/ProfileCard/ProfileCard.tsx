@@ -5,7 +5,7 @@ import { moodlenetContributorInfo } from '@moodle/module/moodlenet-react-app'
 import Link from 'next/link'
 import { useAssetUrl, useMyLinkedContent, usePointSystem } from '../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../lib/client/user-levels/lib'
-import { sitepaths } from '../../../lib/common/sitepaths'
+import { appRoutes } from '../../../lib/common/appRoutes'
 import defaultAvatar from '../../../ui/lib/assets/img/default-avatar.svg'
 import defaultBackground from '../../../ui/lib/assets/img/default-background.svg'
 import { Card } from '../../atoms/Card/Card'
@@ -21,7 +21,9 @@ export function ProfileCard({ moodlenetContributorAccessObject, stats }: moodlen
   const permissions = moodlenetContributorAccessObject.permissions
 
   const [following] = useMyLinkedContent('follow', 'moodlenetContributors', moodlenetContributorAccessObject.id)
-  const profileHomeHref = sitepaths.profile[moodlenetContributorAccessObject.id]![moodlenetContributorAccessObject.slug]!()
+  const profileHomeHref = appRoutes(
+    `/profile/${moodlenetContributorAccessObject.id}/${moodlenetContributorAccessObject.slug}`,
+  )
   const [backgroundUrl] = useAssetUrl(background)
   const [avatarUrl] = useAssetUrl(avatar)
 
