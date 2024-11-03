@@ -12,8 +12,12 @@ export function ClientComponent({
   const [btns, addBtn] = useReducer((state: ReactElement[], action: ReactElement) => [...state, action], [])
   return (
     <div style={{ paddingLeft: '10px' }}>
-      <button onClick={() => buttonAction(`SOME PARAM FROM CLIENT ${value}`).then(addBtn)}>click {value}</button>
+      <button onClick={() => buttonAction(`CLI VAL ${value}[${rnd()}]`).then(addBtn)}>click {value}</button>
       {btns}
     </div>
   )
+}
+
+function rnd() {
+  return `${Math.random()}`.substring(3, 7)
 }
