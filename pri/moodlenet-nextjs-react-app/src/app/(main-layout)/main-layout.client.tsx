@@ -5,7 +5,7 @@ import Person from '@mui/icons-material/Person'
 import { t } from 'i18next'
 import { Trans } from 'next-i18next'
 import Link from 'next/link'
-import { sitepaths } from '../../lib/common/sitepaths'
+import { appRoute, appRoutes } from '../../lib/common/appRoutes'
 import { FloatingMenu, FloatingMenuContentItem } from '../../ui/atoms/FloatingMenu/FloatingMenu'
 import { PrimaryButton } from '../../ui/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../ui/atoms/Searchbox/Searchbox'
@@ -16,9 +16,13 @@ import { clientSlotItem } from '../../lib/common/types'
 import { asset } from '@moodle/module/storage'
 import { useAssetUrl } from '../../lib/client/globalContexts'
 import defaultAvatar from '../../ui/lib/assets/img/default-avatar.svg'
-export function LoginHeaderButton() {
+
+export type LoginHeaderProps = {
+  loginRoute: appRoute
+}
+export function LoginHeaderButton({ loginRoute }: LoginHeaderProps) {
   return (
-    <Link href={sitepaths.login()} className="login-button access-button">
+    <Link href={loginRoute} className="login-button access-button">
       <PrimaryButton>
         <Trans>
           <span>Login</span>
@@ -29,9 +33,12 @@ export function LoginHeaderButton() {
   )
 }
 
-export function SignupHeaderButton() {
+export type SignupHeaderProps = {
+  signupRoute: appRoute
+}
+export function SignupHeaderButton({ signupRoute }: SignupHeaderProps) {
   return (
-    <Link href={sitepaths.signup()} className="signup-button access-button">
+    <Link href={signupRoute} className="signup-button access-button">
       <TertiaryButton /* style={{ backgroundColor: 'transparent', border: 'none' }} */>
         <Trans>Sign up</Trans>
       </TertiaryButton>
@@ -54,13 +61,13 @@ export function HeaderSearchbox() {
 
 export type ProfileLinkProps = {
   avatar: asset | _nullish
-  profileHref: string
+  profileRoute: appRoute
 }
-export function ProfileLink({ profileHref, avatar }: ProfileLinkProps) {
+export function ProfileLink({ profileRoute, avatar }: ProfileLinkProps) {
   const [avatarUrl] = useAssetUrl(avatar, defaultAvatar)
 
   return (
-    <Link href={profileHref} className="avatar">
+    <Link href={profileRoute} className="avatar">
       <div
         style={{
           backgroundImage: `url(${avatarUrl})`,
@@ -84,40 +91,40 @@ export function Logout({ logout }: LogoutProps) {
   )
 }
 
-export type UserSettingsLinkProps = { settingsHref: string }
-export function UserSettingsLink({ settingsHref }: UserSettingsLinkProps) {
+export type UserSettingsLinkProps = { settingsRoute: appRoute }
+export function UserSettingsLink({ settingsRoute }: UserSettingsLinkProps) {
   return (
-    <Link href={settingsHref}>
+    <Link href={settingsRoute}>
       <Settings />
       Settings
     </Link>
   )
 }
 
-export type AdminSettingsLinkProps = { adminHref: string }
-export function AdminSettingsLink({ adminHref }: AdminSettingsLinkProps) {
+export type AdminSettingsLinkProps = { adminRoute: appRoute }
+export function AdminSettingsLink({ adminRoute }: AdminSettingsLinkProps) {
   return (
-    <Link href={adminHref}>
+    <Link href={adminRoute}>
       <DisplaySettings />
       Admin
     </Link>
   )
 }
 
-export type BookmarksLinkProps = { bookmarksHref: string }
-export function BookmarksLink({ bookmarksHref }: BookmarksLinkProps) {
+export type BookmarksLinkProps = { bookmarksRoute: appRoute }
+export function BookmarksLink({ bookmarksRoute }: BookmarksLinkProps) {
   return (
-    <Link href={bookmarksHref}>
+    <Link href={bookmarksRoute}>
       <Bookmarks />
       Bookmarks
     </Link>
   )
 }
 
-export type FollowingLinkProps = { followingHref: string }
-export function FollowingLink({ followingHref }: FollowingLinkProps) {
+export type FollowingLinkProps = { followingRoute: appRoute }
+export function FollowingLink({ followingRoute }: FollowingLinkProps) {
   return (
-    <Link href={followingHref}>
+    <Link href={followingRoute}>
       <ArrowsIcon />
       Following
     </Link>

@@ -1,4 +1,5 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { appRoute } from '../../../lib/common/appRoutes'
 
 //CREDIT: https://github.com/vercel/next.js/discussions/47583#discussioncomment-6379219
 export default function useQueryParams<T>() {
@@ -14,7 +15,7 @@ export default function useQueryParams<T>() {
 
     const search = urlSearchParams.toString()
     const query = search ? `?${search}` : ''
-    router.push(`${pathname}${query}`)
+    router.push(`${pathname}${query}` as appRoute)
   }
 
   return { urlSearchParams, setQueryParams }

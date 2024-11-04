@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import QueryString from 'qs'
-import { sitepaths } from '../../../../lib/common/sitepaths'
+import { appRoutes } from '../../../../lib/common/appRoutes'
 import { setAuthTokenCookie } from '../../../../lib/server/auth'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
 import { access } from '../../../../lib/server/session-access'
@@ -22,7 +22,7 @@ export const loginAction = defaultSafeActionClient.schema(getLoginSchema).action
   const xSearchHeader = headers().get('x-search')
   const redirectPathAfterLogin = xSearchHeader ? String(QueryString.parse(xSearchHeader).redirect) : undefined
 
-  const redirectUrl = redirectPathAfterLogin || sitepaths()
+  const redirectUrl = redirectPathAfterLogin || appRoutes('/')
 
   const [loginSuccess, loginResponse] = await access.primary.userAccount.unauthenticated.login({
     loginForm,

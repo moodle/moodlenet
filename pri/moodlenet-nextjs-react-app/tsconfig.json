@@ -35,8 +35,9 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    "../../pri/moodlenet-nextjs-react-app/.next/types/**/*.ts",
-    "../../dist/pri/moodlenet-nextjs-react-app/.next/types/**/*.ts",
+    // much faster without belows, but they were auto-generated  🤔,
+    // "../../pri/moodlenet-nextjs-react-app/.next/types/**/*.ts",
+    // "../../dist/pri/moodlenet-nextjs-react-app/.next/types/**/*.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],

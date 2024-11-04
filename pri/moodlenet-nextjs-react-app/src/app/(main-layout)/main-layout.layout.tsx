@@ -16,7 +16,7 @@ import {
 } from './main-layout.client'
 
 import { filterOutFalsies } from '@moodle/lib-types'
-import { sitepaths } from '../../lib/common/sitepaths'
+import { appRoutes } from '../../lib/common/appRoutes'
 import { access } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
 import './main-layout.style.scss'
@@ -38,29 +38,33 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const authenticated = session.type === 'authenticated'
 
     const avatarAsset = authenticated ? session.userProfileRecord.info.avatar : null
-    const baseProfilePage = authenticated
-      ? sitepaths.profile[session.moodlenetContributorRecord.id]![session.moodlenetContributorRecord.slug]!
-      : null
     const defaultRights = authenticated
-      ? await (async () => {
+      ? await(async () => {
           return [
             <AvatarMenu
               key="avatar-menu"
               avatar={avatarAsset}
               menuItems={filterOutFalsies([
-                baseProfilePage && <ProfileLink key="profile" avatar={avatarAsset} profileHref={baseProfilePage()} />,
-                baseProfilePage && <BookmarksLink key="bookmarks" bookmarksHref={baseProfilePage.bookmarks()} />,
-                baseProfilePage && <FollowingLink key="following" followingHref={baseProfilePage.followers()} />,
-                baseProfilePage && <UserSettingsLink key="user-settings" settingsHref={sitepaths.settings.general()} />,
-                authenticated && session.is.admin && (
-                  <AdminSettingsLink key="admin-settings" adminHref={sitepaths.admin.general()} />
+                authenticated && (
+                  <ProfileLink
+                    key="profile"
+                    avatar={avatarAsset}
+                    profileRoute={`/profile/${session.moodlenetContributorRecord.id}/${session.moodlenetContributorRecord.slug}`}
+                  />
                 ),
+                authenticated && <BookmarksLink key="bookmarks" bookmarksRoute={'/'} />,
+                authenticated && <FollowingLink key="following" followingRoute={'/'} />,
+                authenticated && <UserSettingsLink key="user-settings" settingsRoute={'/settings'} />,
+                authenticated && session.is.admin && <AdminSettingsLink key="admin-settings" adminRoute={'/admin'} />,
                 <Logout key="logout" logout={logout} />,
               ])}
             />,
           ]
         })()
-      : [<LoginHeaderButton key="login-header-button" />, <SignupHeaderButton key="signup-header-button" />]
+      : [
+          <LoginHeaderButton loginRoute="/login" key="login-header-button" />,
+          <SignupHeaderButton signupRoute="/signup" key="signup-header-button" />,
+        ]
 
     return {
       left: [...defaultLefts, ...left],

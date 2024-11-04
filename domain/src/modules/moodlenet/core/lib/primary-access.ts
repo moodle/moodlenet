@@ -18,7 +18,6 @@ export async function accessMoodlenetContributor({
     },
     noAccessLevelFilter: true,
   })
-  console.log({ found, findResult })
   if (!found) {
     return { result: 'notFound' }
   }

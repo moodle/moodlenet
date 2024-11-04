@@ -5,7 +5,7 @@ import { usingTempFile2asset } from '@moodle/module/storage/lib'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
-import { sitepaths } from '../../../../../lib/common/sitepaths'
+import { appRoutes } from '../../../../../lib/common/appRoutes'
 import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
 import { access } from '../../../../../lib/server/session-access'
 
@@ -23,7 +23,7 @@ export const updateProfileInfoMetaForm = defaultSafeActionClient
       partialProfileInfoMeta,
     })
     if (editDone) {
-      revalidatePath(sitepaths.profile[editResult.userProfileId]!())
+      revalidatePath(appRoutes(`/profile/${editResult.userProfileId}/`))
       return
     }
     returnValidationErrors(getProfileInfoSchema, {
@@ -49,7 +49,7 @@ export const adoptProfileImage = defaultSafeActionClient
       })
     }
 
-    revalidatePath(sitepaths.profile[userProfileId]!())
+    revalidatePath(appRoutes(`/profile/${userProfileId}/`))
 
     return usingTempFile2asset(result)
   })

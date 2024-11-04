@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { sitepaths } from '../../../../lib/common/sitepaths'
+import { appRoutes } from '../../../../lib/common/appRoutes'
 import { access } from '../../../../lib/server/session-access'
 import { params } from '../../../../lib/server/types'
 import { Fallback } from '../../../../ui/pages/Fallback/Fallback'
@@ -13,5 +13,5 @@ export default async function UserProfilePage({ params: { userAccountId } }: { p
     return <Fallback />
   }
 
-  redirect(sitepaths.profile[result.moodlenetContributorRecord.id]![result.moodlenetContributorRecord.slug]!())
+  redirect(appRoutes(`/profile/${result.moodlenetContributorRecord.id}/${result.moodlenetContributorRecord.slug}`))
 }

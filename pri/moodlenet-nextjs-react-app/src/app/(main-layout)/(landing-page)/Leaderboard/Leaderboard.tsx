@@ -3,7 +3,7 @@ import { moodlenetContributorMinimalInfo } from '@moodle/module/moodlenet-react-
 import Link from 'next/link'
 import { useAssetUrl, usePointSystem } from '../../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../../lib/client/user-levels/lib'
-import { sitepaths } from '../../../../lib/common/sitepaths'
+import { appRoutes } from '../../../../lib/common/appRoutes'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import { ReactComponent as LeafIcon } from '../../../../ui/lib/assets/icons/leaf.svg'
 import defaultAvatar from '../../../../ui/lib/assets/img/default-avatar.svg'
@@ -30,7 +30,7 @@ export function Leaderboard({ leaderContributors }: leaderboardProps) {
 }
 function LeaderRow({ contributor, position }: { contributor: moodlenetContributorMinimalInfo; position: number }) {
   const { pointSystem } = usePointSystem()
-  const profileUrl = sitepaths.profile[contributor.id]![contributor.slug]!()
+  const profileUrl = appRoutes(`/profile/${contributor.id}/${contributor.slug}`)
   const { pointAvatar, level } = getUserLevelDetails(pointSystem, contributor.points)
   const [avatarUrl] = useAssetUrl(contributor.avatar, defaultAvatar)
   return (
@@ -45,7 +45,7 @@ function LeaderRow({ contributor, position }: { contributor: moodlenetContributo
             position
           )}
         </div>
-        <Link className="avatar" href={profileUrl}>
+        <Link className="avatar" href={`/profile/${contributor.id}/${contributor.slug}`}>
           <img className="profile-avatar" src={avatarUrl} alt="avatar" />
           <div className={`level-avatar-container level-${level}`}>
             <img className="level-avatar" src={pointAvatar} alt="level avatar" />

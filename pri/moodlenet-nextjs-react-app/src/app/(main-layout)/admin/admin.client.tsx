@@ -3,7 +3,7 @@
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { sitepaths } from '../../../lib/common/sitepaths'
+import { appRoute, appRoutes } from '../../../lib/common/appRoutes'
 import { Card } from '../../../ui/atoms/Card/Card'
 
 export function AdminMenu() {
@@ -11,15 +11,15 @@ export function AdminMenu() {
 
   return (
     <Card role="navigation" className="menu">
-      <MenuItem pathname={sitepaths.admin.general()} title={t('General')} />
-      <MenuItem pathname={'#' /* sitepaths.admin.appearance() */} title={t('Appearance')} />
-      <MenuItem pathname={sitepaths.admin.users()} title={t('Users')} />
-      <MenuItem pathname={'#' /* sitepaths.admin.moderation() */} title={t('Moderation')} />
+      <MenuItem pathname={appRoutes('/admin/general')} title={t('General')} />
+      <MenuItem pathname={'/' /* routes.admin.appearance() */} title={t('Appearance')} />
+      <MenuItem pathname={appRoutes('/admin/users')} title={t('Users')} />
+      <MenuItem pathname={'/' /* routes.admin.moderation() */} title={t('Moderation')} />
     </Card>
   )
 }
 
-export function MenuItem({ pathname, title }: { pathname: string; title: string }) {
+export function MenuItem({ pathname, title }: { pathname: appRoute; title: string }) {
   const isCurrent = pathname === usePathname()
   return (
     <Link href={pathname}>

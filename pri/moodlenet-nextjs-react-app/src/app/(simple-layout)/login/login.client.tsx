@@ -5,7 +5,7 @@ import { Trans } from 'next-i18next'
 import Link from 'next/link'
 import { useState, type CSSProperties } from 'react'
 import { clientSlotItem } from '../../../lib/common/types'
-import { sitepaths } from '../../../lib/common/sitepaths'
+import { appRoutes } from '../../../lib/common/appRoutes'
 import { Card } from '../../../ui/atoms/Card/Card'
 
 export interface LoginMethod {
@@ -63,7 +63,7 @@ export function LoginCard({ loginMethods }: LoginCardProps) {
         </div>
       </Card>
       <Card hover={true}>
-        <Link href={sitepaths.signup()}>
+        <Link href={appRoutes('/signup')}>
           <Trans>Sign up</Trans>
           <CallMadeIcon />
         </Link>

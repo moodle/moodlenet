@@ -20,7 +20,7 @@ export default async function PublicCollectionPage({
   // }
   // const { moodlenetEduCollectionAccessObject } = collectionPageProps
   // if (moodlenetEduCollectionAccessObject.slug !== slug) {
-  //   redirect(sitepaths.collection[moodlenetEduCollectionId]![moodlenetEduCollectionAccessObject.slug]!())
+  //   redirect(routes.collection[moodlenetEduCollectionId]![moodlenetEduCollectionAccessObject.slug]!())
   // }
 
   // return <CollectionClient {...collectionPageProps} />

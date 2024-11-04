@@ -1,7 +1,7 @@
 import { signed_token_schema } from '@moodle/lib-types'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
-import { sitepaths } from '../../../../../../lib/common/sitepaths'
+import { appRoutes } from '../../../../../../lib/common/appRoutes'
 import { access } from '../../../../../../lib/server/session-access'
 
 export async function GET(req: NextRequest) {
@@ -21,5 +21,5 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  redirect(sitepaths.login())
+  redirect(appRoutes('/login'))
 }

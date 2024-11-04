@@ -3,11 +3,12 @@ import Link from 'next/link'
 import './HeaderLogo.scss'
 import { asset } from '@moodle/module/storage'
 import { useAssetUrl } from '../../../../lib/client/globalContexts'
+import { appRoute } from '../../../../lib/common/appRoutes'
 
 export interface HeaderLogoProps {
   logo: asset
   smallLogo: asset
-  landingPath: string
+  landingPath: appRoute
 }
 
 export default function HeaderLogo({ logo, smallLogo, landingPath }: HeaderLogoProps) {

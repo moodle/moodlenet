@@ -1,21 +1,20 @@
 import { getDeploymentInfoUrl } from '@moodle/domain/lib'
 import { url_string } from '@moodle/lib-types'
 import assert from 'assert'
-import { createSitepaths } from '../../common/sitepaths'
+import { createRoutes } from '../../common/appRoutes'
 import { access } from '../session-access'
 
-export async function srvSiteUrls() {
+export async function srvSiteRoutes() {
   const { moodlenetWebapp } = await access.primary.env.application.deployments()
   assert(moodlenetWebapp, new Error('No deployment info for moodlenet !'))
   const baseUrl = getDeploymentInfoUrl(moodlenetWebapp)
 
   return {
     baseUrl,
-    full: createSitepaths<url_string>(baseUrl),
-    site: createSitepaths(moodlenetWebapp.basePath),
+    full: createRoutes<url_string>(baseUrl),
+    site: createRoutes(moodlenetWebapp.basePath.replace(/^\//, '')),
   }
 }
-
 
 //
 //-REVIEW improve check and argument typing
