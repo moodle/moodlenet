@@ -4,7 +4,7 @@ import FilterNone from '@mui/icons-material/FilterNone'
 import Grade from '@mui/icons-material/Grade'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 
-import { selection } from '@moodle/lib-types'
+import { _nullish, selection } from '@moodle/lib-types'
 import { moodlenetContributorId } from '@moodle/module/moodlenet'
 import { profileInfo, updateProfileInfoSchema, useProfileImageSchema } from '@moodle/module/user-profile'
 import { HookSafeActionFn } from 'next-safe-action/hooks'
@@ -33,6 +33,12 @@ export interface profilePageProps {
   itsMe: boolean
   contributorId: moodlenetContributorId
   stats: { points: number; followersCount: number; followingCount: number; publishedResourcesCount: number }
+  drafts:
+    | _nullish
+    | {
+        eduCollections: eduCollectionCardProps[] // { data: eduCollectionData; resourceAmount: number; route: appRoute }[]
+        // eduResources: eduResourceCardProps[] // { data: eduResourceData; route: appRoute }[]
+      }
 }
 
 export default function ProfilePage(profilePageProps: profilePageProps) {

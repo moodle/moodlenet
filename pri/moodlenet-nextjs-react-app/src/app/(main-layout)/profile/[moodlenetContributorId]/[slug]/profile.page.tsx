@@ -39,6 +39,12 @@ export default async function ProfilePage({
       report: permissions.report ? null : null,
       sendMessage: permissions.sendMessage ? null : null,
     },
+    drafts: itsMe
+      ? {
+          eduCollections: [],
+          eduResources: [],
+        }
+      : null,
   }
 
   return <ProfilePageClient {...profilePageProps} />
