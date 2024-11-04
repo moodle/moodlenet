@@ -6,10 +6,10 @@ import PermIdentity from '@mui/icons-material/PermIdentity'
 
 import { moodlenetContributorAccessObject } from '@moodle/module/moodlenet'
 import { profilePageProps } from '@moodle/module/moodlenet-react-app'
-import { Card } from '../../../../../ui/atoms/Card/Card'
-import { OverallCard } from '../../../../../ui/molecules/OverallCard/OverallCard'
-import { MainProfileCard } from './pageComponents/MainProfileCard/MainProfileCard'
-import { UserProgressCard, userProgressCardProps } from './pageComponents/UserProgressCard/UserProgressCard'
+import { Card } from '../../../../../../ui/atoms/Card/Card'
+import { OverallCard } from '../../../../../../ui/molecules/OverallCard/OverallCard'
+import { MainProfileCard } from './MainProfileCard/MainProfileCard'
+import { UserProgressCard, userProgressCardProps } from './UserProgressCard/UserProgressCard'
 
 export interface ProfileClientProps {
   moodlenetContributorAccessObject: moodlenetContributorAccessObject

@@ -3,7 +3,7 @@ import { appRoutes } from '../../../../../lib/common/appRoutes'
 import { access } from '../../../../../lib/server/session-access'
 import { params } from '../../../../../lib/server/types'
 import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'
-import ProfileClient from './profile.client'
+import ProfileClient from './ProfilePage/profile.client'
 
 export default async function ProfilePage({
   params: { moodlenetContributorId, slug },
