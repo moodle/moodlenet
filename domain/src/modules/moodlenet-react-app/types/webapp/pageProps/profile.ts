@@ -1,6 +1,6 @@
 import { moodlenetContributorAccessObject } from '../../../../moodlenet/types'
 
-export type profilePageProps = {
+export type profilePageData = {
   moodlenetContributorAccessObject: moodlenetContributorAccessObject
   stats: {
     followersCount: number

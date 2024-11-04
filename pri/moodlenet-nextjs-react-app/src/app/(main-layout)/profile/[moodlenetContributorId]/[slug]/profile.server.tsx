@@ -16,7 +16,7 @@ export async function getProfileInfoSchema() {
   return updateProfileInfoMetaSchema
 }
 
-export const updateProfileInfoMetaForm = defaultSafeActionClient
+export const updateMyProfileInfoMetaForm = defaultSafeActionClient
   .schema(getProfileInfoSchema)
   .action(async ({ parsedInput: partialProfileInfoMeta }) => {
     const [editDone, editResult] = await access.primary.userProfile.authenticated.editProfileInfoMeta({
@@ -38,7 +38,7 @@ export async function getUseProfileImageSchema() {
   return useProfileImageSchema
 }
 
-export const adoptProfileImage = defaultSafeActionClient
+export const adoptMyProfileImage = defaultSafeActionClient
   .schema(getUseProfileImageSchema)
   .action(async ({ parsedInput: useProfileImageForm }) => {
     const [[done, result], { userProfileId }] =

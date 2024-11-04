@@ -3,15 +3,11 @@
 import { useEffect, useRef, useState } from 'react'
 // import { Href, Link } from '../../../../elements/link'
 import InfoOutlined from '@mui/icons-material/InfoOutlined'
-import { usePointSystem } from '../../../../../../../lib/client/globalContexts'
-import {
-  actionsAndPointsObtained,
-  getLevelDetails,
-  getUserLevelDetails,
-} from '../../../../../../../lib/client/user-levels/lib'
-import { Card } from '../../../../../../../ui/atoms/Card/Card'
-import { Modal } from '../../../../../../../ui/atoms/Modal/Modal'
 import { ReactComponent as LeafIcon } from '../../../../../../../ui/lib/assets/icons/leaf.svg'
+import { usePointSystem } from '../../../../lib/client/globalContexts'
+import { actionsAndPointsObtained, getLevelDetails, getUserLevelDetails } from '../../../../lib/client/user-levels/lib'
+import { Card } from '../../../atoms/Card/Card'
+import { Modal } from '../../../atoms/Modal/Modal'
 import './UserProgressCard.scss'
 
 export type userProgressCardProps = {

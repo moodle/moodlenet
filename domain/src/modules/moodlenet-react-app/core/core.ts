@@ -1,7 +1,7 @@
 import { fetchAllSchemaConfigs } from '../../../lib'
 import { moduleCore } from '../../../types'
 import { accessMoodlenetContributor } from '../../moodlenet/core/lib/primary-access'
-import { moodlenetReactAppSessionData, profilePageProps } from '../types'
+import { moodlenetReactAppSessionData, profilePageData } from '../types'
 import { suggestedContent } from '../types/webapp/pageProps/landing'
 import { mapContributorToMinimalInfo } from './lib'
 
@@ -117,7 +117,7 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
               return [false, { reason: 'notFound' }]
             }
 
-            const profilePageProps: profilePageProps = {
+            const profilePageData: profilePageData = {
               moodlenetContributorAccessObject: foundMoodlenetContributorAccessObject,
               stats: {
                 followersCount: 66666,
@@ -125,7 +125,7 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
                 publishedResourcesCount: foundMoodlenetContributorAccessObject.contributions.eduResources.length,
               },
             }
-            return [true, profilePageProps]
+            return [true, profilePageData]
           },
         }
       },

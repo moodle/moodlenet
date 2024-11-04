@@ -32,7 +32,7 @@ import { useMemo, useState } from 'react'
 // } from '../../../../common/types.mjs'
 // import { UploadImage } from '../UploadImage/UploadImage'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { isNotFalsy } from '@moodle/lib-types'
+import { _void, isNotFalsy } from '@moodle/lib-types'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 import { Card } from '../../../atoms/Card/Card'
@@ -42,6 +42,7 @@ import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton'
 import { TertiaryButton } from '../../../atoms/TertiaryButton/TertiaryButton'
 import { collectionPageProps } from '../Collection'
 import './MainCollectionCard.scss'
+import { noop_action } from '../../../../lib/client/actions'
 
 export function MainCollectionCard({
   collectionPageProps: { activity, actions, eduCollectionMeta },
@@ -109,7 +110,7 @@ export function MainCollectionCard({
     form: { formState, register, reset, getValues },
     handleSubmitWithAction: submitForm,
   } = useHookFormAction(
-    activity === 'createDraft' ? actions.saveNewDraft : activity === 'editDraft' ? actions.editDraft : async () => ({}),
+    activity === 'createDraft' ? actions.saveNewDraft : activity === 'editDraft' ? actions.editDraft : noop_action,
     zodResolver(schemas.edu.eduCollectionMetaSchema),
     {
       formProps: { defaultValues: eduCollectionMeta ?? {} },

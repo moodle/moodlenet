@@ -3,7 +3,7 @@ import { moodlenetContributorId } from '../moodlenet/types'
 import type { Layouts, moodlenetReactAppSessionData, webappGlobalCtx } from './types'
 import { PageLayouts } from './types/layouts/page'
 import { RootLayouts } from './types/layouts/root'
-import { profilePageProps } from './types/webapp/pageProps'
+import { profilePageData } from './types/webapp/pageProps'
 import { landingPageProps } from './types/webapp/pageProps/landing'
 export * from './types'
 
@@ -33,7 +33,7 @@ export default interface MoodlenetReactAppDomain {
         }>
         profilePage(_: {
           moodlenetContributorId: moodlenetContributorId
-        }): Promise<ok_ko<profilePageProps, { notFound: unknown }>>
+        }): Promise<ok_ko<profilePageData, { notFound: unknown }>>
         landingLayout(): Promise<{
           landingPageLayout: PageLayouts['landing']
           landingPageProps: landingPageProps

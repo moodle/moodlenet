@@ -7,51 +7,50 @@ import Save from '@mui/icons-material/Save'
 import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useCallback, useReducer, useRef } from 'react'
-import { useAllPrimarySchemas, useMyLinkedContent, useMySession } from '../../../../../../../lib/client/globalContexts'
-import { useAssetUploader } from '../../../../../../../lib/client/useAssetUploader'
-import { FloatingMenu } from '../../../../../../../ui/atoms/FloatingMenu/FloatingMenu'
-import { FollowButton } from '../../../../../../../ui/atoms/FollowButton/FollowButton'
-import InputTextField from '../../../../../../../ui/atoms/InputTextField/InputTextField'
-import { PrimaryButton } from '../../../../../../../ui/atoms/PrimaryButton/PrimaryButton'
-import { RoundButton } from '../../../../../../../ui/atoms/RoundButton/RoundButton'
-import { SecondaryButton } from '../../../../../../../ui/atoms/SecondaryButton/SecondaryButton'
-import { Snackbar } from '../../../../../../../ui/atoms/Snackbar/Snackbar'
-import { adoptProfileImage, updateProfileInfoMetaForm } from '../../profile.server'
+import { adoptMyProfileImage } from '../../../../app/(main-layout)/profile/[moodlenetContributorId]/[slug]/profile.server'
+import { useAllPrimarySchemas, useMyLinkedContent } from '../../../../lib/client/globalContexts'
+import { useAssetUploader } from '../../../../lib/client/useAssetUploader'
+import { FloatingMenu } from '../../../atoms/FloatingMenu/FloatingMenu'
+import { FollowButton } from '../../../atoms/FollowButton/FollowButton'
+import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton'
+import { RoundButton } from '../../../atoms/RoundButton/RoundButton'
+import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton'
+import { Snackbar } from '../../../atoms/Snackbar/Snackbar'
 import './MainProfileCard.scss'
 // import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
-import { moodlenetContributorAccessObject } from '@moodle/module/moodlenet'
-import defaultAvatar from '../../../../../../../ui/lib/assets/img/default-avatar.svg'
-import defaultBackground from '../../../../../../../ui/lib/assets/img/default-background.svg'
+import { noop_action } from '../../../../lib/client/actions'
+import defaultAvatar from '../../../lib/assets/img/default-avatar.svg'
+import defaultBackground from '../../../lib/assets/img/default-background.svg'
+import { profilePageProps } from '../ProfilePage'
 
-export type mainProfileCardProps = {
-  moodlenetContributorAccessObject: moodlenetContributorAccessObject
-}
-
-export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfileCardProps) {
-  const { permissions, profileInfo, itsMe } = moodlenetContributorAccessObject
-
-  const [following] = useMyLinkedContent('follow', 'moodlenetContributors', moodlenetContributorAccessObject.id)
+export function MainProfileCard({ contributorId, itsMe, profileInfo, actions }: profilePageProps) {
+  const [following] = useMyLinkedContent('follow', 'moodlenetContributors', contributorId)
 
   const schemas = useAllPrimarySchemas()
-  const [isEditing, toggleIsEditing] = useReducer(isEditing => permissions.editProfileInfo && !isEditing, false)
+  const [isEditing, toggleIsEditing] = useReducer(isEditing => !!actions.updateMyProfileInfo && !isEditing, false)
   const {
     form: { formState, register, reset },
     handleSubmitWithAction: submitForm,
-  } = useHookFormAction(updateProfileInfoMetaForm, zodResolver(schemas.userProfile.updateProfileInfoMetaSchema), {
-    formProps: { defaultValues: { ...profileInfo } },
-    actionProps: {
-      onSuccess({ input }) {
-        reset(input)
+  } = useHookFormAction(
+    actions.updateMyProfileInfo ?? noop_action,
+    zodResolver(schemas.userProfile.updateProfileInfoMetaSchema),
+    {
+      formProps: { defaultValues: { ...profileInfo } },
+      actionProps: {
+        onSuccess({ input }) {
+          reset(input)
+        },
       },
     },
-  })
+  )
 
   const submitFormBtnRef = useRef<HTMLButtonElement | null>(null)
 
   const [[displayAvatarSrc], chooseImageAvatar, submitAvatar, avatarUploaderState, dropAvatarAttr] = useAssetUploader({
     assets: profileInfo.avatar,
     async action({ tempIds: [tempId] }) {
-      const saveResult = await adoptProfileImage({ as: 'avatar', tempId })
+      const saveResult = await adoptMyProfileImage({ as: 'avatar', tempId })
 
       return saveResult?.data
         ? { done: true, newAssets: [saveResult.data] }
@@ -64,7 +63,7 @@ export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfil
     useAssetUploader({
       assets: profileInfo.background,
       async action({ tempIds: [tempId] }) {
-        const saveResult = await adoptProfileImage({ as: 'background', tempId })
+        const saveResult = await actions.adoptMyProfileImage?.({ as: 'background', tempId })
         if (!saveResult?.data) {
           return { done: false, error: saveResult?.validationErrors?._errors }
         }
@@ -87,7 +86,7 @@ export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfil
     <div className="main-profile-card" key="profile-card">
       <div className="main-column">
         <div className={`background-container`} key="background-container">
-          {!permissions.editProfileInfo
+          {!actions.updateMyProfileInfo
             ? null
             : isEditing && [
                 <RoundButton
@@ -111,7 +110,7 @@ export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfil
           />
         </div>
         <div className={`avatar-container`} key="avatar-container">
-          {!permissions.editProfileInfo
+          {!actions.updateMyProfileInfo
             ? null
             : isEditing && [
                 <RoundButton
@@ -135,7 +134,7 @@ export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfil
         </div>
         <div className="top-items" key="top-items">
           <div className="edit-save" key="edit-save">
-            {!permissions.editProfileInfo ? null : isEditing ? (
+            {!actions.updateMyProfileInfo ? null : isEditing ? (
               <PrimaryButton color="green" onClick={submitAll} key="save-button">
                 <Save />
               </PrimaryButton>
@@ -207,19 +206,19 @@ export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfil
 
                 alert('FollowButton')
               }}
-              disabled={!permissions.follow}
+              disabled={!actions.follow}
               key="follow-button"
             />
 
             <SecondaryButton
               color="grey"
               className={`message`}
-              disabled={!permissions.sendMessage}
+              disabled={!actions.sendMessage}
               onClick={() => {
                 // FIXME
                 alert('open message modal')
               }}
-              abbr={!permissions.sendMessage ? 'Login or signup to send messages' : 'Send a message'}
+              abbr={!actions.sendMessage ? 'Login or signup to send messages' : 'Send a message'}
             >
               Message
             </SecondaryButton>
@@ -237,18 +236,14 @@ export function MainProfileCard({ moodlenetContributorAccessObject }: mainProfil
                 {
                   Element: (
                     <abbr
-                      className={`report-button ${permissions.report ? '' : 'disabled'}`}
+                      className={`report-button ${actions.report ? '' : 'disabled'}`}
                       key="report"
                       tabIndex={0}
-                      title={!permissions.report ? 'Login or signup to report' : undefined}
-                      onClick={
-                        permissions.report
-                          ? () => {
-                              // FIXME
-                              alert('open-report-modal')
-                            }
-                          : undefined
-                      }
+                      title={!actions.report ? 'Login or signup to report' : undefined}
+                      onClick={() => {
+                        // FIXME
+                        alert('open report modal')
+                      }}
                     >
                       <Flag />
                       Report
