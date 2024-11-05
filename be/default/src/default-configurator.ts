@@ -2,12 +2,13 @@ import { moduleCore, secondaryAdapter, secondaryProvider, sys_admin_info } from 
 import { configuration, deploymentInfoFromUrlString } from '@moodle/domain/lib'
 import { getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
-import { iam_core } from '@moodle/module/iam/core'
-import { net_webapp_nextjs_core } from '@moodle/module/net-webapp-nextjs/core'
-import { net_core } from '@moodle/module/net/core'
+import { userAccount_core } from '@moodle/module/user-account/core'
+import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
+import { moodlenet_core } from '@moodle/module/moodlenet/core'
 import { org_core } from '@moodle/module/org/core'
+import { edu_core } from '@moodle/module/edu/core'
 import { storage_core } from '@moodle/module/storage/core'
-import { user_home_core } from '@moodle/module/user-home/core'
+import { user_profile_core } from '@moodle/module/user-profile/core'
 import { CryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
 import { ArangoDbSecEnv, get_arango_persistence_factory, provideArangoDbSecEnv } from '@moodle/sec-db-arango'
 import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
@@ -111,28 +112,36 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
 
       const moduleCores: moduleCore<_any>[] = [
         // core modules
-        net_core,
+        moodlenet_core,
         org_core,
-        iam_core,
-        net_webapp_nextjs_core,
-        user_home_core,
+        edu_core,
+        userAccount_core,
+        moodlenet_react_app_core,
+        user_profile_core,
         storage_core,
         {
           modName: 'env',
+          service() {
+            return
+          },
           primary(ctx) {
             return {
-              domain: {
-                async info() {
-                  return { name: domainName }
-                },
+              async domain() {
+                return {
+                  async info() {
+                    return { name: domainName }
+                  },
+                }
               },
-              application: {
-                async deployments() {
-                  return {
-                    moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
-                    filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
-                  }
-                },
+              async application() {
+                return {
+                  async deployments() {
+                    return {
+                      moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
+                      filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
+                    }
+                  },
+                }
               },
             }
           },
@@ -140,7 +149,10 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
       ]
 
       let do_start_background_processes = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
-      migrateArangoDB(arango_db_env).then(() => {
+      migrateArangoDB({
+        databaseConnections: arango_db_env.database_connections,
+        log: loggerProvider({ domain: domainName, contextLayer: 'secondary', id: 'migration', endpoint: ['sec-arangodb'] }),
+      }).then(() => {
         const configuration: configuration = {
           moduleCores,
           secondaryProviders,

@@ -1,0 +1,46 @@
+.profile-page{
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-gap: 10px 20px;
+  @media screen and (max-width: 499px){
+    box-shadow: none;
+    border-radius: 0;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "main-card"
+      "resources"
+      "collections"
+      "overall"
+      "points";
+  }
+  @media screen and (min-width: 500px) and (max-width: 799px) {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "main-card    main-card"
+      "resources    resources"
+      "collections  collections"
+      "points       overall";
+  }
+  @media screen and (min-width: 800px) {
+    grid-template-columns: 5fr 2fr;
+    grid-template-areas:
+      "main-card   points"
+      "main-card   overall"
+      "main-card   collections"
+      "main-card   collections"
+      "main-card   collections"
+      "main-card   collections"
+      "main-card   collections"
+      "main-card   collections"
+      "main-card   collections"
+      "resources   collections"
+  }
+  .main-card { grid-area: main-card; }
+  .points { grid-area: points; }
+  .overall { grid-area: overall; }
+  .resources { grid-area: resources; }
+  .collections { grid-area: collections; }
+
+}
+

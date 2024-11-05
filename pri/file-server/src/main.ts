@@ -1,13 +1,8 @@
 import { http_bind } from '@moodle/bindings-node'
-import { MoodleDomain, primarySession } from '@moodle/domain'
+import { moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
-import {
-  fsDirectories,
-  generateFileHashes,
-  getFsDirectories,
-  MOODLE_DEFAULT_HOME_DIR,
-} from '@moodle/lib-local-fs-storage'
+import { fsDirectories, generateFileHashes, getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
 import { uploaded_blob_meta } from '@moodle/module/storage'
 import { getSanitizedFileName } from '@moodle/module/storage/lib'
@@ -23,7 +18,10 @@ const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
 
 const MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL = process.env.MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL
-const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(process.cwd(), process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
+const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(
+  process.cwd(),
+  process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR,
+)
 
 const requestTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
@@ -31,7 +29,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     export interface Request {
-      moodlePrimary: MoodleDomain['primary']
+      moodlePrimary: moodlePrimary
       moodlePrimarySession: primarySession
       moodleDirs: fsDirectories
     }
@@ -96,7 +94,8 @@ const router = express
     if (req.params.type !== 'file' && req.params.type !== 'webImage') {
       res.status(404).end()
     }
-    const { userSession } = await req.moodlePrimary.iam.session.getUserSession()
+    const { userSession } = await req.moodlePrimary.userAccount.anyUser.getUserSession()
+
     if (userSession.type !== 'authenticated') {
       return res.status(401).send('UNAUTHORIZED')
     }
@@ -123,8 +122,8 @@ const router = express
         size: req.file.size,
         uploaded: {
           primarySessionId: req.moodlePrimarySession.id,
-          byUserId: userSession.user.id,
-          at: date_time_string('now'),
+          byUserAccountId: userSession.user.id,
+          date: date_time_string('now'),
         },
         original: {
           name: req.file.originalname,
@@ -155,7 +154,7 @@ app.listen(PORT, () => {
 //
 //
 //
-// FIXME: all this stuff below taken and adapted from nextjs server code
+// FIXME: all this stuff below taken and adapted from react-app server code
 // SHAREDLIB
 // need to extract lib (cookies, access-session ... ) for all http primaries
 // check DEV-NOTES.md for more info

@@ -130,7 +130,7 @@ function expirations(
       : iso8601duration.toSeconds(iso8601duration.parse(duration))
 
   const toDate = new Date(new Date().getTime() + durationInSecs * 1000)
-  const toDateStr = date_time_string(new Date(new Date().getTime() + durationInSecs * 1000))
+  const toDateStr = date_time_string(toDate)
 
   return [toDate.getTime() / 1000, toDateStr, toDate]
 }

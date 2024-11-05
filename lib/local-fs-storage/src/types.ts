@@ -1,5 +1,5 @@
 import { map, path, url_path_string } from '@moodle/lib-types'
-import { profileImage } from '@moodle/module/user-home'
+import { profileImage } from '@moodle/module/user-profile'
 
 export type fsPathGetter = () => path
 export type fsUrlPathGetter = () => url_path_string
@@ -19,9 +19,17 @@ export type dir<_dir> = {
 export type file = (alias: string) => path
 // VOGLIO QUESTO FILESYSTEM STRUCTURE IN DOMAIN ?
 export type filesystem = {
-  userHome: {
-    [userHomeId in string]: {
+  userProfile: {
+    [userProfileId in string]: {
       profile: map<'image', profileImage>
+      drafts: {
+        eduResource: {
+          [eduResourceDraftId in string]: map<'image', 'image'>
+        }
+        eduCollection: {
+          [eduCollectionDraftId in string]: map<'image', 'image'>
+        }
+      }
     }
   }
 }

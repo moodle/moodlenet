@@ -1,11 +1,6 @@
 import { d_u, map } from './map'
 
-// REVIEW : consider put this access logic - as well as `accessUserHome` logic - in `iam` (a as access)
-// or consider renaming `iam` to `im` or something
-export type access_obj<allowed_result, not_allowed_result = unknown> = d_u<
-  { allowed: allowed_result; notAllowed: not_allowed_result },
-  'access'
->
+
 
 export type ok_ko<
   success_result,

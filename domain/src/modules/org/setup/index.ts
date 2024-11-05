@@ -1,1 +1,1 @@
-export * from './configs'
+export * from './org-setup-configs'

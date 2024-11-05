@@ -2,9 +2,14 @@
 
 ## TODO
 
+remove all ok_ko<void> ==> ok_ko
+
+FIXME: pri/moodlenet-nextjs-react-app/src/ui/lib/ContentBackupImages/index.tsx has moodle.net referral url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' this cannot apply for any other deployment !! 
+CHECK: tree-shaking for '@mui/icons-material' imports  https://mui.com/material-ui/guides/minimizing-bundle-size/#option-two-use-a-babel-plugin
+
 ### Next
 
-FIXME !!! [ ] nextjs app api routes under module namespace
+FIXME !!! [ ] react-app app api routes under module namespace
 [x] logger with current context ids
 [ ] admin user roles interface
 CHECK:[ ] define types as z.infer when zod schema defined (e.g. all def in types.data)
@@ -21,7 +26,7 @@ FIXME:[ ]  http primaries:
 ### Backlog
 
 CHECKOUT:[ ] zod provides many handy stuff, including discriminateed unions .. check if/how to use them
-[ ] nextjs docker image
+[ ] react-app docker image
 [ ] 3 phases version upgrade: 
   #1 migration by secs. prepare a consistent (usable) env for domain
   #2 processes perform module-specific operations
@@ -36,7 +41,7 @@ CHECKOUT:[ ] zod provides many handy stuff, including discriminateed unions .. c
 possible runtime errors using [method-shorthand-syntax](https://www.totaltypescript.com/method-shorthand-syntax-considered-harmful)
 deeply investigate on this behavior, that could actually be a feature for [interface declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) [see also](https://www.typescriptlang.org/docs/handbook/2/objects.html)
 
-### For nextjs middleware primary sesseion data gathering
+### For react-app middleware primary sesseion data gathering
 
 consider [this](https://www.npmjs.com/package/next-extra), it provides other utils too
 

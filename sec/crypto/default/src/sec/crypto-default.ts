@@ -2,7 +2,7 @@ import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { joseOpts, joseVerify, sign } from '@moodle/lib-jwt-jose'
 import { _void, signed_token_payload_data, SIGNED_TOKEN_PAYLOAD_PROP } from '@moodle/lib-types'
 import * as argon2 from 'argon2'
-import { signedToken } from 'domain/src/modules/crypto/types'
+import { signedToken } from '@moodle/module/crypto'
 import { ArgonPwdHashOpts } from '../types'
 
 export function crypto_secondary_services_factory({
@@ -13,7 +13,7 @@ export function crypto_secondary_services_factory({
   argonOpts: ArgonPwdHashOpts
 }): secondaryProvider {
   return secondaryCtx => {
-    const iam_secondary_adapter: secondaryAdapter = {
+    const userAccount_secondary_adapter: secondaryAdapter = {
       crypto: {
         service: {
           async hashPassword({ plainPassword: { __redacted__: plainPassword } }) {
@@ -49,6 +49,6 @@ export function crypto_secondary_services_factory({
         },
       },
     }
-    return iam_secondary_adapter
+    return userAccount_secondary_adapter
   }
 }

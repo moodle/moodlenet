@@ -1,29 +1,29 @@
-import { deep_partial, ok_ko } from '@moodle/lib-types'
-import { OrgInfo, OrgPrimaryMsgSchemaConfigs } from './types'
+import { deep_partial_props, ok_ko } from '@moodle/lib-types'
+import { OrgInfo, orgPrimaryMsgSchemaConfigs } from './types'
 
 export * from './types'
 
 export default interface OrgDomain {
   event: { org: unknown }
+  service: { org: unknown }
   primary: {
     org: {
       session: {
-        moduleInfo(): Promise<{ info: OrgInfo; schemaConfigs: OrgPrimaryMsgSchemaConfigs }>
+        moduleInfo(): Promise<{ info: OrgInfo; schemaConfigs: orgPrimaryMsgSchemaConfigs }>
       }
       admin: {
-        updatePartialOrgInfo(_: { partialInfo: deep_partial<OrgInfo> }): Promise<ok_ko<void>>
+        updatePartialOrgInfo(_: { partialInfo: deep_partial_props<OrgInfo> }): Promise<ok_ko<void>>
       }
     }
   }
   secondary: {
     org: {
-      queue: unknown
       query: {
-        moduleInfo(): Promise<{ info: OrgInfo; schemaConfigs: OrgPrimaryMsgSchemaConfigs }>
+        moduleInfo(): Promise<{ info: OrgInfo; schemaConfigs: orgPrimaryMsgSchemaConfigs }>
       }
-      service: unknown
-      write: unknown
-      sync: unknown
+      service?: unknown
+      write?: unknown
+      sync?: unknown
     }
   }
 }

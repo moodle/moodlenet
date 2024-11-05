@@ -1,0 +1,166 @@
+import { generateNanoId } from '@moodle/lib-id-gen'
+import { _void, date_time_string, non_negative_integer, webSlug } from '@moodle/lib-types'
+import assert from 'assert'
+import { omit } from 'lodash'
+import { moduleCore } from '../../../types'
+import { assert_authorizeCurrentUserSessionWithRole, validate_currentUserSessionInfo } from '../../user-account/lib'
+
+export const moodlenet_core: moduleCore<'moodlenet'> = {
+  modName: 'moodlenet',
+  service() {
+    return
+  },
+  primary(ctx) {
+    return {
+      async session() {
+        return {
+          async getMySessionUserRecords() {
+            const currentSessionInfo = await validate_currentUserSessionInfo({ ctx })
+            if (!currentSessionInfo.authenticated) {
+              return { type: 'guest' }
+            }
+
+            const { userAccountRecord, userProfileRecord } = await ctx.forward.userProfile.authenticated.getMyUserRecords()
+            const [foundContributorRecord, contributorRecordResult] = await ctx.mod.secondary.moodlenet.query.contributor({
+              select: {
+                by: 'userProfileId',
+                userProfileId: userProfileRecord.id,
+              },
+              noAccessLevelFilter: true,
+            })
+            assert(
+              foundContributorRecord,
+              `moodlenetContributorRecord not found for authenticated userAccountRecord#${userAccountRecord.id}`,
+            )
+            return {
+              type: 'authenticated',
+              userProfileRecord: omit(userProfileRecord, 'userAccount'),
+              userAccountRecord: omit(userAccountRecord, 'displayName'),
+              moodlenetContributorRecord: omit(contributorRecordResult.moodlenetContributorRecord, 'userProfile'),
+            }
+          },
+          async moduleInfo() {
+            const {
+              configs: { siteInfo: info, pointSystem, moodlenetPrimaryMsgSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs },
+            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
+            return {
+              info,
+              schemaConfigs: moodlenetPrimaryMsgSchemaConfigs,
+              pointSystem,
+            }
+          },
+        }
+      },
+      // async contributor() {
+      //   return {
+      //     async getLeaders({ amount = 20 }) {
+      //       const { moodlenetContributorRecords } = await ctx.mod.secondary.moodlenet.query.contributors({
+      //         range: [amount],
+      //         sort: ['points', 'DESC'],
+      //         // filters: [{ type: 'access', levels: ['public'] } default],
+      //       })
+      //       return { leaderContributors: moodlenetContributorRecords.map(mapContributorToMinimalInfo) }
+      //     },
+      //     async getById({ moodlenetContributorId }) {
+      //       const moodlenetContributorAccessObject = await accessMoodlenetContributor({ ctx, id: moodlenetContributorId })
+      //       return moodlenetContributorAccessObject
+      //     },
+      //   }
+      // },
+      async admin() {
+        return {
+          async updatePartialMoodlenetInfo({ partialInfo }) {
+            assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' })
+            const [done] = await ctx.mod.secondary.env.service.updatePartialConfigs({
+              mod: 'moodlenet',
+              partialConfigs: { siteInfo: partialInfo },
+            })
+            return [done, _void]
+          },
+          async contributor(select) {
+            const result = await ctx.mod.secondary.moodlenet.query.contributor({ select, noAccessLevelFilter: true })
+            return result
+          },
+        }
+      },
+    }
+  },
+  watch(ctx) {
+    return {
+      secondary: {
+        userAccount: {
+          write: {
+            async setUserRoles([[done], { roles, userAccountId }]) {
+              if (!done) {
+                return
+              }
+              await ctx.write.updatePartialMoodlenetContributor({
+                select: { by: 'userAccountId', userAccountId },
+                partialMoodlenetContributorRecord: {
+                  access: roles.includes('contributor') ? 'public' : 'protected',
+                },
+              })
+            },
+          },
+        },
+        userProfile: {
+          write: {
+            async updatePartialProfileInfo([[done], payload]) {
+              if (!done) {
+                return
+              }
+              await ctx.write.updatePartialMoodlenetContributor({
+                select: { by: 'userProfileId', userProfileId: payload.userProfileId },
+                partialMoodlenetContributorRecord: {
+                  userProfile: {
+                    info: payload.partialProfileInfo,
+                  },
+                },
+              })
+            },
+            async createUserProfile([[created], payload]) {
+              if (!created) {
+                return
+              }
+              const { userProfileRecord } = payload
+              const id = await generateNanoId()
+              const { configs } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
+              await ctx.write.createMoodlenetContributor({
+                moodlenetContributorRecord: {
+                  id,
+                  access: userProfileRecord.userAccount.roles.includes('contributor') ? 'public' : 'protected',
+                  contributions: { eduResources: [], eduResourcesCollections: [] },
+                  linkedContent: {
+                    bookmark: { eduCollections: [], eduResources: [] },
+                    follow: { eduCollections: [], moodlenetContributors: [], iscedFields: [] },
+                    like: { eduResources: [] },
+                  },
+                  preferences: { useMyInterestsAsDefaultFilters: false },
+                  stats: {
+                    points: configs.pointSystem.welcomePoints,
+                    followersCount: 0 as non_negative_integer,
+                    followingCount: 0 as non_negative_integer,
+                    publishedResourcesCount: 0 as non_negative_integer,
+                    recalculatedDate: date_time_string('now'),
+                  },
+                  suggestedContent: {
+                    listCreationDate: date_time_string('now'),
+                    lists: {
+                      eduCollections: [],
+                      eduResources: [],
+                      moodlenetContributors: [],
+                    },
+                  },
+                  userProfile: {
+                    id: userProfileRecord.id,
+                    info: userProfileRecord.info,
+                  },
+                },
+              })
+            },
+          },
+        },
+      },
+    }
+  },
+}

@@ -1,5 +1,6 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import {
+  deleteFile,
   deleteTemp,
   fs_storage_path_of,
   get_temp_file_paths,
@@ -19,12 +20,15 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
     const fsDirs = getFsDirectories({ domainName: ctx.domain, homeDir })
     const fs_file_paths = prefixed_domain_file_fs_paths(fsDirs.fsStorage)
     const secondaryAdapter: secondaryAdapter = {
-      userHome: {
+      userProfile: {
         write: {
-          async useTempImageInProfile({ as, id, tempId }) {
-            ctx.log('debug', 'useImageInProfile', { as, id, tempId })
+          async useTempImageInProfile({ as, userProfileId, tempId }) {
+            // ctx.log('debug', 'useImageInProfile', { as, id: userProfileId, tempId })
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const absolutePath = fs_file_paths.userHome[id]!.profile[as]!()
+            const absolutePath = fs_file_paths.userProfile[userProfileId]!.profile[as]!()
+            if (!tempId) {
+              return deleteFile({ absolutePath, fsDirs })
+            }
             return use_temp_file_as_web_image({
               fsDirs,
               secondaryContext: ctx,
@@ -33,14 +37,28 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
               size: as === 'avatar' ? 'medium' : 'large',
             })
           },
+          async useTempImageInDraft({ draftId, tempId, type, userProfileId }) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts[type][draftId]!()
+            if (!tempId) {
+              return deleteFile({ absolutePath, fsDirs })
+            }
+            return use_temp_file_as_web_image({
+              fsDirs,
+              secondaryContext: ctx,
+              absolutePath,
+              tempId,
+              size: 'large',
+            })
+          },
         },
       },
       storage: {
         sync: {
-          async createUserHome({ userHomeId }) {
+          async createUserProfile({ userProfileId }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const userHomePath = fs_file_paths.userHome[userHomeId]!()
-            await mkdir(userHomePath, { recursive: true })
+            const userProfilePath = fs_file_paths.userProfile[userProfileId]!()
+            await mkdir(userProfilePath, { recursive: true })
             return [true, _void]
           },
         },
@@ -76,7 +94,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
           async deleteStaleTemp() {
             const {
               configs: { tempFileMaxRetentionSeconds },
-            } = await ctx.mod.env.query.modConfigs({ mod: 'storage' })
+            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
             const tempFileMaxRetentionMilliseconds = tempFileMaxRetentionSeconds * 1000
             const { temp } = fsDirs
             const temp_dirs_or_whatever = await readdir(temp)

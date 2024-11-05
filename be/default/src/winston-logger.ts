@@ -46,7 +46,7 @@ export function createDefaultDomainLoggerProvider({ loggerConfigs }: { loggerCon
   const loggerProvider: loggerProvider = loggerContext => {
     const childLogger = winstonLogger.child(loggerContext)
     return (level, ...args) => {
-      const message = args.map((arg: unknown) => inspect(arg, { colors: true, depth: 8 })).join('\n')
+      const message = args.map((arg: unknown) => inspect(arg, { colors: true, depth: 8, })).join('\n')
       childLogger.log(level, message)
     }
   }
@@ -57,20 +57,24 @@ function ctxString({
   level,
   message,
   timestamp,
-  ctx_track,
   domain,
   id,
-  from,
-  endpoint,
-  primarySessionId,
   contextLayer,
+  //
+  originEndpoint,
+  callerContext,
+  primarySessionId,
+  endpoint,
 }: extended_loggerContext) {
-  const _from = from ? ` from: [${from.join('.')}]` : ``
-  const _ctx_track = ctx_track ? ` ctx_track: [${ctx_track.layer}#${ctx_track.ctxId}]` : ``
-  const _primarySessionId = primarySessionId ? ` priSessionId: [${primarySessionId}]` : ''
-  const _endpoint = endpoint ? `${(endpoint ?? []).join('.')}` : ''
-  return `
-${timestamp} [${level}] [${domain}:${_endpoint ?? contextLayer}#${id}]${_primarySessionId}${_from}${_ctx_track}:
+  const NOT_AVAILABLE_CHAR = '~'
+  return `${timestamp} [${level}]
+  domain            : ${domain}
+  context           : ${contextLayer} # ${id}
+  callerContext     : ${callerContext ? `${callerContext.layer}.${callerContext.module} # ${callerContext.ctxId}` : NOT_AVAILABLE_CHAR}
+  originEndpoint    : ${(originEndpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
+  endpoint          : ${(endpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
+  primarySessionId  : ${primarySessionId ?? NOT_AVAILABLE_CHAR}
+
 ${message}
 
 ---`

@@ -1,12 +1,12 @@
 import { secondaryContext } from '@moodle/domain'
-import { createPathProxy, ok_ko, path, url_path_string_schema } from '@moodle/lib-types'
-import { mkdir, readFile, rename, stat, writeFile } from 'fs/promises'
-import { join, relative, resolve, sep } from 'path'
+import { _void, createPathProxy, ok_ko, path, url_path_string_schema } from '@moodle/lib-types'
+import { mkdir, readdir, readFile, rename, stat, writeFile } from 'fs/promises'
+import { dirname, join, normalize, relative, resolve, sep } from 'path'
 import { rimraf } from 'rimraf'
 import sharp from 'sharp'
 import { filesystem, fs, fsDirectories, fsUrlPathGetter } from './types'
 
-import { fileHashes, uploaded_blob_meta, useTempFileResult, webImageSize } from '@moodle/module/storage'
+import { deleteFileResult, fileHashes, uploaded_blob_meta, useTempFileResult, webImageSize } from '@moodle/module/storage'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
 import { getSanitizedFileName } from '@moodle/module/storage/lib'
@@ -199,7 +199,7 @@ export async function resizeTempImage({
   }
   const {
     configs: { webImageResizes },
-  } = await secondaryContext.mod.env.query.modConfigs({ mod: 'storage' })
+  } = await secondaryContext.mod.secondary.env.query.modConfigs({ mod: 'storage' })
   const resizeTo = webImageResizes[size]
   original_temp_file.temp_paths.file
 
@@ -234,19 +234,26 @@ export async function resizeTempImage({
 
   return [true, { resizedTempId, resizedTempFilePaths }]
 }
-// export async function _delete_and_clean_upper_empty_dirs({ fs_path }: { fs_path: string }) {
-//   //TODO: ensure this check is enough to avoid climbing up too much !
-//   if (normalize(fsDirs.fsStorage).startsWith(normalize(fs_path))) {
-//     return
-//   }
-//   await rimraf(fs_path, { maxRetries: 2 }).catch(() => null)
-//   const parent_dir = dirname(fs_path)
-//   const parent_dir_files = await readdir(parent_dir).catch(() => [
-//     `placeholder in case of (unlikely) readdir error
-//       to prevent deleting this dir, as it's not ensured to be empy`,
-//   ])
-//   if (parent_dir_files.length > 0) {
-//     return
-//   }
-//   return _delete_and_clean_upper_empty_dirs({ fs_path: parent_dir })
-// }
+export async function deleteFile({
+  absolutePath,
+  fsDirs,
+}: {
+  absolutePath: string
+  fsDirs: fsDirectories
+}): Promise<deleteFileResult> {
+  //_and_clean_upper_empty_dirs
+  //TODO: ensure this check is enough to avoid climbing up too much !
+  if (normalize(fsDirs.fsStorage).startsWith(normalize(absolutePath))) {
+    return [true, _void]
+  }
+  await rimraf(absolutePath, { maxRetries: 2 }).catch(() => null)
+  const parent_dir = dirname(absolutePath)
+  const parent_dir_files = await readdir(parent_dir).catch(() => [
+    `placeholder in case of (unlikely) readdir error`,
+    `to prevent deleting this dir, as it's not ensured to be empy`,
+  ])
+  if (parent_dir_files.length > 0) {
+    return [true, _void]
+  }
+  return deleteFile({ absolutePath: parent_dir, fsDirs })
+}

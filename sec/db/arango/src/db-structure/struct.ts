@@ -1,43 +1,54 @@
 import { modConfigName, ModConfigs } from '@moodle/domain'
 import { Database } from 'arangojs'
-import { userDocument } from '../sec/db-arango-iam-lib/types'
-import { userHomeDocument } from '../sec/db-arango-user-home-lib/types'
-import { database_connections } from './types'
+import { databaseConnections } from './types'
+import { userProfileRecord } from '@moodle/module/user-profile'
+import { eduBloomCognitiveRecord, eduIscedFieldRecord, eduIscedLevelRecord, eduResourceTypeRecord } from '@moodle/module/edu'
+import { contentLanguageRecord, contentLicenseRecord } from '@moodle/module/content'
+import { userAccountRecord } from '@moodle/module/user-account'
+import { record_doc } from '../lib/key-id-mapping'
+import { moodlenetContributorRecord } from '@moodle/module/moodlenet'
 
-export function getDbStruct(database_connections: database_connections) {
+export function getDbStruct(databaseConnections: databaseConnections) {
   const baseConnectionConfig = {
     keepalive: true,
     retryOnConflict: 5,
   }
-  const data_db = new Database({ ...baseConnectionConfig, ...database_connections.data })
-  const iam_db = new Database({ ...baseConnectionConfig, ...database_connections.iam })
-  const mng_db = new Database({ ...baseConnectionConfig, ...database_connections.mng })
+  const moodlenet_db = new Database({ ...baseConnectionConfig, ...databaseConnections.moodlenet })
+  const user_account_db = new Database({ ...baseConnectionConfig, ...databaseConnections.userAccount })
+  const mng_db = new Database({ ...baseConnectionConfig, ...databaseConnections.modules })
   const sys_db = new Database({
     ...baseConnectionConfig,
-    ...database_connections.mng,
+    ...databaseConnections.modules,
     databaseName: '_system',
   })
 
   return {
-    connections: database_connections,
+    connections: databaseConnections,
     sys_db,
-    mng: {
+    modules: {
       db: mng_db,
       coll: {
-        module_configs: mng_db.collection<ModConfigs[modConfigName]>('module_configs'),
+        moduleConfigs: mng_db.collection<ModConfigs[modConfigName]>('moduleConfigs'),
         migrations: mng_db.collection('migrations'),
       },
     },
-    data: {
-      db: data_db,
+    moodlenet: {
+      db: moodlenet_db,
       coll: {
-        userHome: data_db.collection<userHomeDocument>('userHome'),
+        eduIscedField: moodlenet_db.collection<record_doc<eduIscedFieldRecord>>('eduIscedField'),
+        eduIscedLevel: moodlenet_db.collection<record_doc<eduIscedLevelRecord>>('eduIscedLevel'),
+        eduBloomCognitive: moodlenet_db.collection<record_doc<eduBloomCognitiveRecord>>('eduBloomCognitive'),
+        eduResourceType: moodlenet_db.collection<record_doc<eduResourceTypeRecord>>('eduResourceType'),
+        contentLanguage: moodlenet_db.collection<record_doc<contentLanguageRecord>>('contentLanguage'),
+        contentLicense: moodlenet_db.collection<record_doc<contentLicenseRecord>>('contentLicense'),
+        contributor: moodlenet_db.collection<record_doc<moodlenetContributorRecord>>('contributor'),
       },
     },
-    iam: {
-      db: iam_db,
+    userAccount: {
+      db: user_account_db,
       coll: {
-        user: iam_db.collection<userDocument>('user'),
+        userProfile: moodlenet_db.collection<record_doc<userProfileRecord>>('userProfile'),
+        userAccount: user_account_db.collection<record_doc<userAccountRecord>>('userAccount'),
       },
     },
   }
