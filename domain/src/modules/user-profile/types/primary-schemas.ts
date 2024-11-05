@@ -34,7 +34,7 @@ export function getUserProfilePrimarySchemas({ profileInfoMeta }: UserProfilePri
 
   const useProfileImageSchema = object({
     as: profileImageSchema,
-    tempId: string(),
+    tempId: string().nullish(),
   })
 
   const updateProfileInfoMetaSchema = object({

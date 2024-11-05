@@ -40,3 +40,5 @@ export type useTempFileResult = ok_ko<
     invalidFile: unknown
   }
 >
+
+export type deleteFileResult = ok_ko<void>

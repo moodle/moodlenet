@@ -1,7 +1,7 @@
 'use server'
 
 import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
-import { eduCollectionMetaForm } from '@moodle/module/edu'
+import { eduCollectionApplyImageForm, eduCollectionMetaForm } from '@moodle/module/edu'
 import { eduCollectionDraftId } from '@moodle/module/user-profile'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
@@ -11,10 +11,8 @@ import { defaultSafeActionClient } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
 
 export async function getEduCollectionMetaSchema() {
-  const {
-    edu: { eduCollectionMetaSchema },
-  } = await fetchAllPrimarySchemas({ primary: access.primary })
-  return eduCollectionMetaSchema
+  const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
+  return edu.eduCollectionMetaSchema
 }
 
 export const saveNewEduCollectionDraft = defaultSafeActionClient
@@ -47,6 +45,35 @@ export async function editEduCollectionDraftForId({ eduCollectionDraftId }: { ed
         }
       })
     return editEduCollectionDraftAction(eduCollectionMetaForm)
+  }
+}
+
+export async function getApplyEduCollectionDraftImageSchema() {
+  const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
+  return edu.applyImageSchema
+}
+export async function applyEduCollectionDraftImageForId({
+  eduCollectionDraftId,
+}: {
+  eduCollectionDraftId: eduCollectionDraftId
+}) {
+  return async function applyEduCollectionDraftImage(eduCollectionApplyImageForm: eduCollectionApplyImageForm) {
+    'use server'
+    const applyEduCollectionDraftImageAction = defaultSafeActionClient
+      .schema(getApplyEduCollectionDraftImageSchema)
+      .action(async ({ parsedInput: { tempId } }) => {
+        'use server'
+        const [done /* , result */] = await access.primary.userProfile.authenticated.applyEduCollectionDraftImage({
+          eduCollectionDraftId,
+          tempId,
+        })
+        if (!done) {
+          returnValidationErrors(getApplyEduCollectionDraftImageSchema, {
+            _errors: [t(`something went wrong while saving collection image`)],
+          })
+        }
+      })
+    return applyEduCollectionDraftImageAction(eduCollectionApplyImageForm)
   }
 }
 

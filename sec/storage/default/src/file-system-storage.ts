@@ -1,5 +1,6 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import {
+  deleteFile,
   deleteTemp,
   fs_storage_path_of,
   get_temp_file_paths,
@@ -25,12 +26,29 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
             // ctx.log('debug', 'useImageInProfile', { as, id: userProfileId, tempId })
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const absolutePath = fs_file_paths.userProfile[userProfileId]!.profile[as]!()
+            if (!tempId) {
+              return deleteFile({ absolutePath, fsDirs })
+            }
             return use_temp_file_as_web_image({
               fsDirs,
               secondaryContext: ctx,
               absolutePath,
               tempId,
               size: as === 'avatar' ? 'medium' : 'large',
+            })
+          },
+          async useTempImageInDraft({ draftId, tempId, type, userProfileId }) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts[type][draftId]!()
+            if (!tempId) {
+              return deleteFile({ absolutePath, fsDirs })
+            }
+            return use_temp_file_as_web_image({
+              fsDirs,
+              secondaryContext: ctx,
+              absolutePath,
+              tempId,
+              size: 'large',
             })
           },
         },

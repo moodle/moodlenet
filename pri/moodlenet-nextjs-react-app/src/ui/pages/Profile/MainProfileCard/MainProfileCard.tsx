@@ -7,7 +7,7 @@ import Save from '@mui/icons-material/Save'
 import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useCallback, useReducer, useRef } from 'react'
-import { adoptMyProfileImage } from '../../../../app/(main-layout)/profile/[moodlenetContributorId]/[slug]/profile.server'
+// import { adoptMyProfileImage } from '../../../../app/(main-layout)/profile/[moodlenetContributorId]/[slug]/profile.server'
 import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 import { useAssetUploader } from '../../../../lib/client/useAssetUploader'
 import { FloatingMenu } from '../../../atoms/FloatingMenu/FloatingMenu'
@@ -47,11 +47,11 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
 
   const [[displayAvatarSrc], chooseImageAvatar, submitAvatar, avatarUploaderState, dropAvatarAttr] = useAssetUploader({
     assets: profileInfo.avatar,
-    async action({ tempIds: [tempId] }) {
-      const saveResult = await adoptMyProfileImage({ as: 'avatar', tempId })
+    async action({ tempIds }) {
+      const saveResult = await actions.edit?.adoptMyProfileImage({ as: 'avatar', tempId: tempIds?.[0] })
 
       return saveResult?.data
-        ? { done: true, newAssets: [saveResult.data] }
+        ? { done: true, newAssets: saveResult.data }
         : { done: false, error: saveResult?.validationErrors?._errors }
     },
     type: 'webImage',
@@ -60,13 +60,13 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
   const [[displayBackgroundSrc], chooseImageBackground, submitBackground, backgroundUploaderState, dropBackgroundAttrs] =
     useAssetUploader({
       assets: profileInfo.background,
-      async action({ tempIds: [tempId] }) {
-        const saveResult = await actions.edit?.adoptMyProfileImage({ as: 'background', tempId })
+      async action({ tempIds }) {
+        const saveResult = await actions.edit?.adoptMyProfileImage({ as: 'background', tempId: tempIds?.[0] })
         if (!saveResult?.data) {
           return { done: false, error: saveResult?.validationErrors?._errors }
         }
 
-        return { done: true, newAsset: saveResult.data }
+        return { done: true, newAssets: saveResult.data }
       },
       type: 'webImage',
     })

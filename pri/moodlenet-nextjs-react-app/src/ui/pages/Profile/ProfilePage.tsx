@@ -4,7 +4,7 @@ import FilterNone from '@mui/icons-material/FilterNone'
 import Grade from '@mui/icons-material/Grade'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 
-import { selection } from '@moodle/lib-types'
+import { _any, selection } from '@moodle/lib-types'
 import { moodlenetContributorAccessObject } from '@moodle/module/moodlenet'
 import { updateProfileInfoSchema, useProfileImageSchema } from '@moodle/module/user-profile'
 import { HookSafeActionFn } from 'next-safe-action/hooks'
@@ -13,6 +13,9 @@ import { OverallCard } from '../../molecules/OverallCard/OverallCard'
 import { MainProfileCard } from './MainProfileCard/MainProfileCard'
 import { UserProgressCard } from './UserProgressCard/UserProgressCard'
 import { webappContributorAccessData } from '@moodle/module/moodlenet-react-app'
+import { ValidationErrors } from 'next-safe-action/.'
+import { asset } from '@moodle/module/storage'
+import { simpleHookSafeAction } from '../../../lib/common/types'
 
 type actionsOnContributor = {
   edit: {
@@ -23,8 +26,8 @@ type actionsOnContributor = {
   sendMessage(text: string): Promise<void>
   report(text: string): Promise<void>
 }
-type adoptMyProfileImageFn = HookSafeActionFn<unknown, useProfileImageSchema, any, any, any, any>
-type updateMyProfileInfoFn = HookSafeActionFn<unknown, updateProfileInfoSchema, any, any, any, any>
+type adoptMyProfileImageFn = simpleHookSafeAction<useProfileImageSchema, void | asset[]>
+type updateMyProfileInfoFn = simpleHookSafeAction<updateProfileInfoSchema, void>
 
 export type profilePageProps = webappContributorAccessData & {
   actions: selection<actionsOnContributor, never, 'edit' | 'follow' | 'sendMessage' | 'report'>

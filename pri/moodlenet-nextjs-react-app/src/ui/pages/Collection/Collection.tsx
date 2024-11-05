@@ -1,7 +1,7 @@
 'use client'
 
 import { _nullish, d_u, selection } from '@moodle/lib-types'
-import { eduCollectionApplyImageFormSchema, eduCollectionMeta, eduCollectionMetaFormSchema } from '@moodle/module/edu'
+import { eduCollectionApplyImageFormSchema, eduCollectionData, eduCollectionMetaFormSchema } from '@moodle/module/edu'
 import { HookSafeActionFn } from 'next-safe-action/hooks'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
@@ -12,9 +12,11 @@ import {
   collectionContributorCardProps,
 } from './CollectionContributorCard/CollectionContributorCard'
 import { MainCollectionCard } from './MainCollectionCard/MainCollectionCard'
+import { simpleHookSafeAction } from '../../../lib/common/types'
+import { asset } from '@moodle/module/storage'
 
-type saveEduCollectionMetaFn = HookSafeActionFn<unknown, eduCollectionMetaFormSchema, any, any, any, any>
-type applyImageForEduCollectionMetaFn = HookSafeActionFn<unknown, eduCollectionApplyImageFormSchema, any, any, any, any>
+type saveEduCollectionMetaFn = simpleHookSafeAction<eduCollectionMetaFormSchema, void>
+type applyImageForEduCollectionMetaFn = simpleHookSafeAction<eduCollectionApplyImageFormSchema, asset[]>
 export type eduCollectionActions = {
   publish(): Promise<unknown>
   saveNewDraft: saveEduCollectionMetaFn
@@ -32,17 +34,17 @@ export type eduCollectionActions = {
 export type collectionPageProps = d_u<
   {
     createDraft: {
-      eduCollectionMeta: _nullish | eduCollectionMeta
+      eduCollectionData: _nullish | eduCollectionData
       actions: selection<eduCollectionActions, 'saveNewDraft'>
       contributorCardProps: null
     }
     editDraft: {
-      eduCollectionMeta: eduCollectionMeta
+      eduCollectionData: eduCollectionData
       actions: selection<eduCollectionActions, 'editDraft' /*  | 'applyImage' */, 'publish'>
       contributorCardProps: null
     }
     viewPublished: {
-      eduCollectionMeta: eduCollectionMeta
+      eduCollectionData: eduCollectionData
       actions: selection<eduCollectionActions, never, 'unpublish'>
       contributorCardProps: collectionContributorCardProps
     }

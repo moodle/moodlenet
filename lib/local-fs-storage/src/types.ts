@@ -22,6 +22,14 @@ export type filesystem = {
   userProfile: {
     [userProfileId in string]: {
       profile: map<'image', profileImage>
+      drafts: {
+        eduResource: {
+          [eduResourceDraftId in string]: map<'image', 'image'>
+        }
+        eduCollection: {
+          [eduCollectionDraftId in string]: map<'image', 'image'>
+        }
+      }
     }
   }
 }

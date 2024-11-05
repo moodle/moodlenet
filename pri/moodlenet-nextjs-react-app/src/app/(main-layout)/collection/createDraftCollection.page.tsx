@@ -10,7 +10,7 @@ export default async function CreateDraftCollectionPage() {
     actions: {
       saveNewDraft: saveNewEduCollectionDraft,
     },
-    eduCollectionMeta: null,
+    eduCollectionData: null,
     contributorCardProps: null,
   }
   return <CollectionPage {...collectionPageProps} />

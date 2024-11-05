@@ -77,6 +77,17 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             })
             return [done, _void]
           },
+          async applyEduCollectionDraftImage({eduCollectionDraftId,tempId}) {
+            const { userProfileRecord } = authenticatedUserSession
+            const useImageResult = await ctx.write.useTempImageInDraft({
+              type:'eduCollection',
+              draftId:eduCollectionDraftId,
+              userProfileId: userProfileRecord.id,
+              tempId,
+            })
+            return [useImageResult, { userProfileId }]
+
+          },
           async getEduCollectionDraft({ eduCollectionDraftId }) {
             const response = await ctx.mod.secondary.userProfile.query.getEduCollectionDraft({
               userProfileId,
@@ -95,15 +106,12 @@ export const user_profile_core: moduleCore<'userProfile'> = {
           },
           async useTempImageAsProfileImage({ as, tempId }) {
             const { userProfileRecord } = authenticatedUserSession
-            const [done, result] = await ctx.write.useTempImageInProfile({
+            const use_or_delete_result = await ctx.write.useTempImageInProfile({
               as,
               userProfileId: userProfileRecord.id,
               tempId,
             })
-            if (!done) {
-              return [[false, result], { userProfileId }]
-            }
-            return [[true, result], { userProfileId }]
+            return [use_or_delete_result, { userProfileId }]
           },
           async editProfileInfoMeta({ partialProfileInfoMeta }) {
             const { userProfileRecord } = authenticatedUserSession
@@ -148,10 +156,24 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               if (!done) {
                 return
               }
-              const asset = usingTempFile2asset(usingTempFile)
+              const asset = usingTempFile ? usingTempFile2asset(usingTempFile) : null
               await ctx.write.updatePartialProfileInfo({
                 userProfileId: id,
                 partialProfileInfo: as === 'avatar' ? { avatar: asset } : as === 'background' ? { background: asset } : {},
+              })
+            },
+            async useTempImageInDraft([[done, usingTempFile], { userProfileId: id, draftId, type }]) {
+              if (!done) {
+                return
+              }
+              const asset = usingTempFile ? usingTempFile2asset(usingTempFile) : null
+              if (type === 'eduResource') {
+                throw 'not implemented refactor updateEduCollectionDraft => updateMyDraft (type:eduResource|eduCollection)'
+              }
+              await ctx.write.updateEduCollectionDraft({
+                userProfileId: id,
+                eduCollectionDraftId: draftId,
+                partialEduCollectionDraft: { data: { image: asset } },
               })
             },
           },

@@ -22,7 +22,7 @@ import Save from '@mui/icons-material/Save'
 import Share from '@mui/icons-material/Share'
 
 // import type { FC } from 'react'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 // import type {
 //   CollectionAccessProps,
 //   CollectionActions,
@@ -43,9 +43,11 @@ import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton'
 import { TertiaryButton } from '../../../atoms/TertiaryButton/TertiaryButton'
 import { collectionPageProps } from '../Collection'
 import './MainCollectionCard.scss'
+import { UploadImage } from '../../../organisms/UploadImage/UploadImage'
+import { useAssetUploader } from '../../../../lib/client/useAssetUploader'
 
 export function MainCollectionCard({
-  collectionPageProps: { activity, actions, eduCollectionMeta },
+  collectionPageProps: { activity, actions, eduCollectionData },
 }: {
   collectionPageProps: collectionPageProps
 }) {
@@ -108,12 +110,12 @@ export function MainCollectionCard({
   const schemas = useAllPrimarySchemas()
   const {
     form: { formState, register, reset, getValues },
-    handleSubmitWithAction: submitForm,
+    handleSubmitWithAction: submitFormMeta,
   } = useHookFormAction(
     activity === 'createDraft' ? actions.saveNewDraft : activity === 'editDraft' ? actions.editDraft.saveMeta : noop_action,
     zodResolver(schemas.edu.eduCollectionMetaSchema),
     {
-      formProps: { defaultValues: eduCollectionMeta ?? {} },
+      formProps: { defaultValues: eduCollectionData ?? {} },
       actionProps: {
         onSuccess({ input }) {
           reset(input)
@@ -121,6 +123,33 @@ export function MainCollectionCard({
       },
     },
   )
+  const imageAssetUploaderHandler = useAssetUploader({
+    assets: eduCollectionData?.image,
+    async action({ tempIds }) {
+      {
+        if (activity !== 'editDraft') {
+          return { done: true }
+        }
+        const saveResult = await actions.editDraft.applyImage({ tempId: tempIds?.[0] })
+        if (saveResult?.validationErrors) {
+          return { done: false, error: saveResult.validationErrors._errors }
+        }
+
+        return { done: true, newAsset: saveResult?.data }
+      }
+    },
+    type: 'webImage',
+  })
+  const [, , /* [imageUrl] */ /* openFileDialog */ submitImage, imageUploaderState /* dropHandlers, dispatch */] =
+    imageAssetUploaderHandler
+
+  const submitForm = useCallback(() => {
+    formState.isDirty && submitFormMeta()
+    imageUploaderState.dirty && submitImage()
+  }, [formState.isDirty, imageUploaderState.dirty, submitFormMeta, submitImage])
+
+  const isDirty = imageUploaderState.dirty || formState.isDirty
+  const isSubmitting = imageUploaderState.type === 'submitting' || formState.isSubmitting
 
   // const descriptionEditRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null)
   // const descriptionRef = useRef<HTMLDivElement>(null)
@@ -204,12 +233,13 @@ export function MainCollectionCard({
       {snackbars} */}
       {/* {searchImageComponent} */}
       <Card className="main-collection-card" hideBorderWhenSmall={true}>
-        {/* <UploadImage
-          displayOnly={(canEdit && !isEditing) || !canEdit}
-          imageForm={imageForm}
-          // backupImage={backupImage}
-          key="collection-uploader"
-        /> */}
+        {activity === 'editDraft' && (
+          <UploadImage
+            useAssetUploaderHandler={imageAssetUploaderHandler}
+            // backupImage={backupImage}
+            key="collection-uploader"
+          />
+        )}
 
         <div className="collection-header" key="collection-header">
           <div className="top-header-row" key="top-header-row">
@@ -237,7 +267,7 @@ export function MainCollectionCard({
               />
               {activity !== 'viewPublished' && (
                 <div className="edit-save">
-                  <PrimaryButton color="green" onClick={submitForm} disabled={!formState.isDirty || formState.isSubmitting}>
+                  <PrimaryButton color="green" onClick={submitForm} disabled={!isDirty || isSubmitting}>
                     <div className="label">
                       <Save />
                     </div>

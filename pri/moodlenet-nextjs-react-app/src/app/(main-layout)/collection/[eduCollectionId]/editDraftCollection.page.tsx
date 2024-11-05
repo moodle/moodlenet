@@ -4,7 +4,7 @@ import { access, getAuthenticatedUserSessionOrRedirectToLogin } from '../../../.
 import { params } from '../../../../lib/server/types'
 import { CollectionPage, collectionPageProps } from '../../../../ui/pages/Collection/Collection'
 import { Fallback } from '../../../../ui/pages/Fallback/Fallback'
-import { editEduCollectionDraftForId } from '../eduCollection-actions.server'
+import { applyEduCollectionDraftImageForId, editEduCollectionDraftForId } from '../eduCollection-actions.server'
 
 export default async function EditDraftCollectionPage({
   params: { eduCollectionId },
@@ -22,10 +22,14 @@ export default async function EditDraftCollectionPage({
     activity: 'editDraft',
     actions: {
       // applyImage: null,
-      editDraft: await editEduCollectionDraftForId({ eduCollectionDraftId: eduCollectionId }),
+      editDraft: {
+        saveMeta: await editEduCollectionDraftForId({ eduCollectionDraftId: eduCollectionId }),
+        applyImage: await applyEduCollectionDraftImageForId({ eduCollectionDraftId: eduCollectionId }),
+      },
+
       publish: null,
     },
-    eduCollectionMeta: myEduCollectionDraft.data,
+    eduCollectionData: myEduCollectionDraft.data,
     contributorCardProps: null,
   }
   return <CollectionPage {...collectionPageProps} />

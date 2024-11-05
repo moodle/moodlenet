@@ -23,7 +23,7 @@ export function getEduPrimarySchemas({ eduCollectionMeta }: eduPrimaryMsgSchemaC
   })
 
   const applyImageSchema = object({
-    tempId: string(),
+    tempId: string().nullish(),
   })
 
   return {

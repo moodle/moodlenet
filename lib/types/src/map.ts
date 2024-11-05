@@ -6,7 +6,7 @@ export type splitMap<T, right extends keyof T> = [Pick<T, right>, Omit<T, right>
 export type _any = any
 export type _any_k = keyof _any
 
-export type map<t = _any, k extends _any_k = _any_k> = Record<k, t>
+export type map<t = _any, k extends _any_k = _any_k> = pretty<Record<k, t>>
 type m_map<t = _any, k extends _any_k = _any_k> = map<t, k> | void | undefined | null | unknown
 
 // discriminate maps

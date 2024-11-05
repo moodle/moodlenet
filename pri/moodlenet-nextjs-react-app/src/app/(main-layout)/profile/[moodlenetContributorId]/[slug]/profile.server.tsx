@@ -45,11 +45,11 @@ export const adoptMyProfileImage = defaultSafeActionClient
       await access.primary.userProfile.authenticated.useTempImageAsProfileImage(useProfileImageForm)
     if (!done) {
       returnValidationErrors(getProfileInfoSchema, {
-        _errors: [t(`something went wrong while saving ${useProfileImageForm.as}`) + ` : ${result.reason}`],
+        _errors: [t(`something went wrong while saving ${useProfileImageForm.as}`) + ` : ${result?.reason}`],
       })
     }
 
     revalidatePath(appRoutes(`/profile/${userProfileId}/`))
 
-    return usingTempFile2asset(result)
+    // return usingTempFile2asset(result)
   })
