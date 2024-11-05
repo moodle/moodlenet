@@ -1,10 +1,11 @@
-import type { deep_partial, ok_ko } from '@moodle/lib-types'
+import type { deep_partial_props, ok_ko } from '@moodle/lib-types'
 import { ModConfigs, sys_admin_info } from '../../types/mod-configs'
 import { appDeployments } from './types/app-deployments'
 export * from './types'
 
 export default interface EnvDomain {
   event: { env: unknown }
+  service: { env: unknown }
   primary: {
     env: {
       domain: {
@@ -17,9 +18,8 @@ export default interface EnvDomain {
   }
   secondary: {
     env: {
-      queue: unknown
-      write: unknown
-      sync: unknown
+      write?: unknown
+      sync?: unknown
       query: {
         deployments(): Promise<appDeployments>
         getSysAdminInfo(): Promise<sys_admin_info>
@@ -32,7 +32,7 @@ export default interface EnvDomain {
       service: {
         updatePartialConfigs<mod extends keyof ModConfigs>(_: {
           mod: mod
-          partialConfigs: deep_partial<ModConfigs[mod]>
+          partialConfigs: deep_partial_props<ModConfigs[mod]>
         }): Promise<ok_ko<void>>
       }
     }

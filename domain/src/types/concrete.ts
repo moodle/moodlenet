@@ -1,16 +1,16 @@
 import { any_function, deep_partial, path } from '@moodle/lib-types'
-import {
-  MoodleDomain,
-  moodleEvent,
-  moodleModuleName,
-  moodlePrimary,
-  moodleSecondary,
-} from '../moodle-domain'
+import { MoodleDomain } from '../moodle-domain'
 import { primarySession } from './access-session'
 import { Logger } from './log'
 
-type ctx_id = string
-export type domainLayer = 'primary' | 'secondary' | 'background' | 'watch' | 'event'
+export type moodleModuleName = keyof moodlePrimary & keyof moodleSecondary & keyof moodleEvent & keyof moodleService
+export type moodlePrimary = MoodleDomain['primary']
+export type moodleService = MoodleDomain['service']
+export type moodleSecondary = MoodleDomain['secondary']
+export type moodleEvent = MoodleDomain['event']
+
+type ctxId = string
+export type domainLayer = 'primary' | 'service' | 'secondary' | 'background' | 'watch' | 'event'
 
 // type p_track<ctx_type extends context_types> = {
 //   track: { [req in ctx_type]?: ctx_id }
@@ -20,19 +20,24 @@ export type domainLayer = 'primary' | 'secondary' | 'background' | 'watch' | 'ev
 // }
 
 export type contextModuleAccess = {
-  [modName in keyof moodleSecondary]: Pick<moodleSecondary[modName], 'query' | 'service'>
+  secondary: {
+    [modName in keyof moodleSecondary]: Pick<moodleSecondary[modName], 'query' | 'service'> //FIX: remove service if service below enough
+  }
+  service: moodleService
 }
 
-export type ctx_track = {
+export type ctxTrack = {
   layer: domainLayer
-  ctxId: ctx_id
+  module: moodleModuleName
+  ctxId: ctxId
 }
+
 export type baseContext = {
-  id: ctx_id
+  id: ctxId
   domain: string
   log: Logger
-  mod: contextModuleAccess
-  track?: ctx_track
+  mod: contextModuleAccess //FIXME: access to other-modules secondary should not be available in primaryContext
+  track?: ctxTrack
   from?: path
 }
 
@@ -40,7 +45,6 @@ export type modSecondary<mod extends moodleModuleName = never> = Pick<moodleSeco
 export type modEmitter<mod extends moodleModuleName = never> = Pick<moodleEvent, mod>[mod]
 type coreContext<mod extends moodleModuleName = never> = baseContext & {
   write: modSecondary<mod>['write']
-  queue: modSecondary<mod>['queue'] // NOTE: maybe remove it ? e.g.: for enqueuing notification send in "userNotification" I had to use "service" because it should be reachable by any module
   emit: modEmitter<mod>
 }
 export type backgroundContext<mod extends moodleModuleName = never> = coreContext<mod>
@@ -49,6 +53,8 @@ export type primaryContext<mod extends moodleModuleName = never> = coreContext<m
   forward: moodlePrimary
   session: primarySession
 } // & p_track<'primary'>
+
+export type serviceContext<mod extends moodleModuleName = never> = coreContext<mod>
 
 export type eventContext<mod extends moodleModuleName = never> = coreContext<mod> // & track<'primary'> | track<'background'>
 
@@ -70,15 +76,23 @@ export type secondaryAdapter = deep_partial<moodleSecondary>
 
 export type moduleCore<mod extends moodleModuleName = never> = {
   modName: mod
-  primary: (primaryContext: primaryContext<mod>) => primary<mod>[mod]
+  primary(primaryContext: primaryContext<mod>): {
+    [channel in keyof modPrimary<mod>[mod]]: () => Promise<modPrimary<mod>[mod][channel]>
+  }
+  service: (serviceContext: serviceContext<mod>) => modService<mod>[mod]
   event?: (eventContext: eventContext<mod>) => eventListener
   watch?: (watchContext: watchContext<mod>) => watcher
   startBackgroundProcess?: (bgContext: backgroundContext<mod>) => void | Promise<void>
 }
 
-export type primary<mod extends moodleModuleName = never> = {
+export type modPrimary<mod extends moodleModuleName = never> = {
   [_ in mod]: moodlePrimary[mod]
 }
+
+export type modService<mod extends moodleModuleName = never> = {
+  [_ in mod]: moodleService[mod]
+}
+
 export type eventListener = deep_partial<moodleEvent>
 export type watcher = deep_partial<{
   secondary: layerWatcher<'secondary'>

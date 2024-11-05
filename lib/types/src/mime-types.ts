@@ -478,7 +478,7 @@ export const mimetypesmap = {
     'x-msmediaview',
     'x-msmetafile',
     'x-msmoney',
-    'x-mspublisher',
+    'x-mscontributor',
     'x-msschedule',
     'x-msterminal',
     'x-mswrite',

@@ -1,38 +1,47 @@
-import { ArangoDbSecEnv, db_struct, getDbStruct } from './db-structure'
+import { Logger } from '@moodle/domain'
+import { databaseConnections, dbStruct, getDbStruct } from './db-structure'
 import * as migrations from './migrate/from'
 
-const TARGET_V = 'v0_3'
+const TARGET_V = 'v0_1'
 
-export async function migrateArangoDB({ database_connections }: ArangoDbSecEnv): Promise<string> {
-  const db_struct = getDbStruct(database_connections)
-  const isInit = !(await db_struct.mng.db.exists())
+export async function migrateArangoDB({
+  log,
+  databaseConnections,
+}: {
+  databaseConnections: databaseConnections
+  log: Logger
+}): Promise<string> {
+  const dbStruct = getDbStruct(databaseConnections)
+  const isInit = !(await dbStruct.modules.db.exists())
 
   if (isInit) {
-    await db_struct.sys_db.createDatabase(db_struct.mng.db.name)
-    await db_struct.mng.coll.migrations.create()
+    await dbStruct.sys_db.createDatabase(dbStruct.modules.db.name)
+    await dbStruct.modules.coll.migrations.create()
   }
-  return upgrade({ db_struct }).then(async final_version => {
+  return upgrade({ dbStruct, log }).then(async final_version => {
     return final_version
   })
 }
 
-export async function upgrade({ db_struct }: { db_struct: db_struct }): Promise<string> {
+export async function upgrade({ dbStruct, log }: { dbStruct: dbStruct; log: Logger }): Promise<string> {
   const from_v: keyof typeof migrations | typeof TARGET_V =
-    (await db_struct.mng.coll.migrations.document('latest', { graceful: true }))?.current ?? 'init'
+    (await dbStruct.modules.coll.migrations.document('latest', { graceful: true }))?.current ?? 'init'
 
   if (from_v === TARGET_V) {
-    console.log(`current arangodb persistence version: [${TARGET_V}]`)
+    log('info', `current arangodb persistence version: [${TARGET_V}]`)
     return TARGET_V
   }
 
   const migrateMod = migrations[from_v]
   if (!migrateMod) {
-    throw new Error(`migration from [${from_v}] not found`)
+    const errorMessage = `migration from [${from_v}] not found`
+    log('emergency', errorMessage)
+    throw new Error(errorMessage)
   }
 
-  const migrationDoc = await migrateMod.migrate({ db_struct: db_struct })
+  const migrationDoc = await migrateMod.migrate({ dbStruct })
 
-  await db_struct.mng.coll.migrations.saveAll(
+  await dbStruct.modules.coll.migrations.saveAll(
     [
       {
         _key: `${migrationDoc.previous}::${migrationDoc.current}`,
@@ -46,6 +55,6 @@ export async function upgrade({ db_struct }: { db_struct: db_struct }): Promise<
     { overwriteMode: 'replace' },
   )
 
-  console.log(`migrated arangodb persistence from [${from_v}] to [${migrateMod.VERSION}]`)
-  return upgrade({ db_struct: db_struct })
+  log('info', `migrated arangodb persistence from [${from_v}] to [${migrateMod.VERSION}]`)
+  return upgrade({ dbStruct, log })
 }

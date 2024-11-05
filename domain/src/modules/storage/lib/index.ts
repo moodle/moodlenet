@@ -1,8 +1,8 @@
-import { url_string } from '@moodle/lib-types'
+import { url_path_string, url_string } from '@moodle/lib-types'
 import sanitizeFilename from 'sanitize-filename'
 import { asset, usingTempFile } from '../types'
 
-// export function newFsFileRelativePath(filename: string, date = new Date()) {
+// export function newFsFileRelativePath(filename: string, date = date_time_string('now')) {
 //   return [
 //     String(date.getFullYear()),
 //     String(date.getMonth() + 1).padStart(2, '0'),
@@ -32,7 +32,7 @@ export function getRndPrefixedSanitizedFileName(originalFilename: string, prefix
   return `${rnd}_${getSanitizedFileName(originalFilename)}`
 }
 export function getAssetUrl(asset: asset, filestoreHttpHref: url_string) {
-  return asset.type === 'external' ? asset.url : `${filestoreHttpHref}/${asset.path}/${asset.name}`
+  return asset.type === 'external' ? asset.url : (`${filestoreHttpHref}/${asset.path}/${asset.name}` as url_path_string)
 }
 
 export function usingTempFile2asset({ path, uploaded_blob_meta }: usingTempFile) {
@@ -40,7 +40,7 @@ export function usingTempFile2asset({ path, uploaded_blob_meta }: usingTempFile)
     type: 'local',
     path,
     hash: uploaded_blob_meta.hash,
-    uploaded: { at: uploaded_blob_meta.uploaded.at, primarySessionId: uploaded_blob_meta.uploaded.primarySessionId },
+    uploaded: { date: uploaded_blob_meta.uploaded.date, primarySessionId: uploaded_blob_meta.uploaded.primarySessionId },
     mimetype: uploaded_blob_meta.mimetype,
     name: uploaded_blob_meta.name,
     size: uploaded_blob_meta.size,

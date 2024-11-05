@@ -48,17 +48,17 @@ export function provideArangoDbSecEnv({ env }: { env: map<unknown, env_keys> }):
   }
   const arangoDbSecEnv: ArangoDbSecEnv = {
     database_connections: {
-      mng: {
+      modules: {
         ...baseArangoDbConnection,
-        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_mng`,
+        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_modules`,
       },
-      data: {
+      moodlenet: {
         ...baseArangoDbConnection,
-        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_data`,
+        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_moodlenet`,
       },
-      iam: {
+      userAccount: {
         ...baseArangoDbConnection,
-        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_iam`,
+        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_userAccount`,
       },
     },
   }

@@ -1,5 +1,5 @@
 import { date_time_string, mimetype, ok_ko } from '@moodle/lib-types'
-import { user_id } from '../../iam'
+import { userAccountId } from '../../user-account'
 
 export * from './primary-schemas'
 
@@ -14,8 +14,8 @@ export type uploaded_blob_meta = {
   mimetype: mimetype
   hash: fileHashes
   uploaded: {
-    at: date_time_string
-    byUserId: user_id
+    date: date_time_string
+    byUserAccountId: userAccountId
     primarySessionId: string
   }
   original: {
@@ -40,3 +40,5 @@ export type useTempFileResult = ok_ko<
     invalidFile: unknown
   }
 >
+
+export type deleteFileResult = ok_ko<void>

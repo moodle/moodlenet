@@ -1,18 +1,27 @@
 import { intersection } from '@moodle/lib-types'
 import env from './modules/env'
-import iam from './modules/iam'
-import net from './modules/net'
-import netWebappNextjs from './modules/net-webapp-nextjs'
+import userAccount from './modules/user-account'
+import moodlenet from './modules/moodlenet'
+import moodlenetReactApp from './modules/moodlenet-react-app'
 import org from './modules/org'
 import storage from './modules/storage'
-import userHome from './modules/user-home'
+import userProfile from './modules/user-profile'
 import crypto from './modules/crypto'
 import userNotification from './modules/user-notification'
+import edu from './modules/edu'
 
 export type MoodleDomain = intersection<
-  [{ version: '5.0' }, env, iam, net, netWebappNextjs, org, storage, userHome, crypto, userNotification]
+  [
+    { version: '5.0' },
+    edu,
+    env,
+    userAccount,
+    moodlenet,
+    moodlenetReactApp,
+    org,
+    storage,
+    userProfile,
+    crypto,
+    userNotification,
+  ]
 >
-export type moodlePrimary = MoodleDomain['primary']
-export type moodleModuleName = keyof moodlePrimary & keyof moodleSecondary
-export type moodleSecondary = MoodleDomain['secondary']
-export type moodleEvent = MoodleDomain['event']

@@ -1,31 +1,25 @@
 import { _any } from '@moodle/lib-types'
 import assert from 'assert'
-import { db_struct } from '../db-structure'
+import { dbStruct } from '../db-structure'
 import { ModConfigs, modConfigName } from '@moodle/domain'
 import { Document } from 'arangojs/documents'
 
-export async function getModConfigs<mod extends modConfigName>({
-  db_struct,
-  moduleName,
-}: {
-  db_struct: db_struct
-  moduleName: mod
-}) {
-  const configs = await db_struct.mng.coll.module_configs.document(moduleName)
+export async function getModConfigs<mod extends modConfigName>({ dbStruct, moduleName }: { dbStruct: dbStruct; moduleName: mod }) {
+  const configs = await dbStruct.modules.coll.moduleConfigs.document(moduleName)
   assert(configs, new Error(`config for module ${moduleName} not found`))
   return { configs } as unknown as { configs: Document<ModConfigs[mod]> }
 }
 
 export async function saveModConfigs<mod extends modConfigName>({
-  db_struct,
+  dbStruct,
   moduleName,
   configs,
 }: {
-  db_struct: db_struct
+  dbStruct: dbStruct
   moduleName: mod
   configs: ModConfigs[mod]
 }) {
-  const result = await db_struct.mng.coll.module_configs.save(
+  const result = await dbStruct.modules.coll.moduleConfigs.save(
     { _key: moduleName, ...configs },
     { overwriteMode: 'replace' },
   )
@@ -33,19 +27,15 @@ export async function saveModConfigs<mod extends modConfigName>({
 }
 
 export async function updateDeepPartialModConfigs({
-  db_struct,
+  dbStruct,
   moduleName,
   partialConfigs,
 }: {
-  db_struct: db_struct
+  dbStruct: dbStruct
   moduleName: string
   partialConfigs: _any
 }) {
-  const result = await db_struct.mng.coll.module_configs.update(
-    { _key: moduleName },
-    partialConfigs,
-    { returnNew: true },
-  )
+  const result = await dbStruct.modules.coll.moduleConfigs.update({ _key: moduleName }, partialConfigs, { returnNew: true })
 
   return result
 }

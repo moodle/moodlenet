@@ -1,12 +1,12 @@
 import { d_u, map, signed_token } from '@moodle/lib-types'
-import { moodle_app } from '../modules/env'
+import { moodleApp } from '../modules/env'
 
-
+type primarySessionId = string
 export type primarySession = {
-  id: string
+  id: primarySessionId
   domain: string
   protocol: d_u<protocols, 'type'>
-  app: { name: moodle_app; version: string }
+  app: { name: moodleApp; version: string }
   // NOTE: ? make it `modTokens: { [app_name:string]?: string | null  }`
   token: signed_token | null
   platforms: {

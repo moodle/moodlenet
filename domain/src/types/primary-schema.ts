@@ -1,16 +1,18 @@
-import { UserHomePrimaryMsgSchemaConfigs } from 'domain/src/modules/user-home'
 import type { makeAllPrimarySchemas } from '../lib'
-import { IamPrimaryMsgSchemaConfigs } from '../modules/iam'
-import { MoodleNetPrimaryMsgSchemaConfigs } from '../modules/net'
-import { OrgPrimaryMsgSchemaConfigs } from '../modules/org'
+import { eduPrimaryMsgSchemaConfigs } from '../modules/edu'
+import { moodlenetPrimaryMsgSchemaConfigs } from '../modules/moodlenet'
+import { orgPrimaryMsgSchemaConfigs } from '../modules/org'
 import { uploadMaxSizeConfigs } from '../modules/storage'
+import { userAccountPrimaryMsgSchemaConfigs } from '../modules/user-account'
+import { UserProfilePrimaryMsgSchemaConfigs } from '../modules/user-profile'
 
 export type AllSchemaConfigs = {
-  iamSchemaConfigs: IamPrimaryMsgSchemaConfigs
-  moodleNetSchemaConfigs: MoodleNetPrimaryMsgSchemaConfigs
-  orgSchemaConfigs: OrgPrimaryMsgSchemaConfigs
+  userAccountSchemaConfigs: userAccountPrimaryMsgSchemaConfigs
+  moodlenetSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs
+  orgSchemaConfigs: orgPrimaryMsgSchemaConfigs
   uploadMaxSizeConfigs: uploadMaxSizeConfigs
-  userHomeSchemaConfigs: UserHomePrimaryMsgSchemaConfigs
+  userProfileSchemaConfigs: UserProfilePrimaryMsgSchemaConfigs
+  eduSchemaConfigs: eduPrimaryMsgSchemaConfigs
 }
 
 export type AllPrimarySchemas = ReturnType<typeof makeAllPrimarySchemas>

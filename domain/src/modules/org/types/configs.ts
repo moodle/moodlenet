@@ -1,6 +1,6 @@
 import { url_string } from '@moodle/lib-types'
 import { asset } from '../../storage'
-import { OrgPrimaryMsgSchemaConfigs } from './primary-schemas'
+import { orgPrimaryMsgSchemaConfigs } from './primary-schemas'
 
 export interface OrgInfo {
   name: string
@@ -13,5 +13,5 @@ export interface OrgInfo {
 
 export interface Configs {
   info: OrgInfo
-  orgPrimaryMsgSchemaConfigs: OrgPrimaryMsgSchemaConfigs
+  orgPrimaryMsgSchemaConfigs: orgPrimaryMsgSchemaConfigs
 }

@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    // "../../pri/moodlenet-nextjs-react-app/.next/types/**/*.ts",
+    // "../../dist/pri/moodlenet-nextjs-react-app/.next/types/**/*.ts",
+    // "next-env.d.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["zz__legacy", "ui-cmps", "node_modules", "jest.config.ts", "**/*.spec.ts*", "**/*.test.ts*"]
+}

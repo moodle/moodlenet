@@ -1,16 +1,23 @@
 import { ReactElement } from 'react'
 import _slugify from 'slugify'
-import { BRAND, intersection, object, string, ZodSchema } from 'zod'
+import { BRAND, intersection, number, object, string, ZodSchema } from 'zod'
 import { _any, d_u } from './map'
+
+export type promise_or_value<t> = t | Promise<t>
+
 export type path = string[]
+
+export type jsonDiff = unknown
 
 export type intersection<types extends _any[]> = pretty<
   types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
 >
 
-export type pretty<t> = { [k in keyof t]: t[k] } // utility type to convert make more readable maps
+// export type pretty<t> = keyof t extends infer keyof_t ? { [k in keyof_t & keyof t]: t[k] } : never // this one prettify better, but loses optionals?: props 🤔
+export type pretty<t> = _<t>
+ type _<t> = { [k in keyof t]: t[k] } // utility type to convert make more readable maps
 
-export type _maybe<t> = t | _nullish
+ export type _maybe<t> = t | _nullish
 export type _nullish = undefined | null
 export type _falsy = false | _nullish
 // export const _void = void 0 as never // TOO DANGEROUS
@@ -31,8 +38,12 @@ export type branded<type, b extends symbol /*  | string */> = BRAND<b> & type ex
 
 // redacted logging
 export const __redacted__key = '__redacted__'
-export function logRedact(obj: _any) {
+export function __redact_stringify__(obj: _any) {
   return JSON.stringify(obj, (key, value) => (key === __redacted__key ? '###__redacted__###' : value), 2)
+}
+
+export function __redact__(data: _any): _any {
+  return JSON.parse(__redact_stringify__(data))
 }
 export function __redacted__<t>(data: t): __redacted__<t> {
   return _unchecked_brand<__redacted__<t>>({ [__redacted__key]: data })
@@ -108,6 +119,22 @@ export type signed_expire_token = {
   expires: date_time_string
 }
 
+export declare const integer_brand: unique symbol
+export type integer = branded<number, typeof integer_brand>
+export const integer_schema = number().int().brand<typeof integer_brand>()
+
+export declare const positive_integer_brand: unique symbol
+export type positive_integer = branded<number, typeof positive_integer_brand>
+export const positive_integer_schema = number().int().positive().brand<typeof positive_integer_brand>()
+
+export declare const non_negative_integer_brand: unique symbol
+export type non_negative_integer = branded<number, typeof non_negative_integer_brand>
+export const non_negative_integer_schema = number().int().nonnegative().brand<typeof non_negative_integer_brand>()
+
+export declare const fraction_brand: unique symbol
+export type fraction = branded<number, typeof fraction_brand>
+export const fraction_schema = number().min(0).max(1).brand<typeof fraction_brand>()
+
 // // export const email_address_brand = Symbol('email_address_brand')
 // export type email_address = z.infer< typeof email_address_schema> // email format
 export declare const email_address_brand: unique symbol
@@ -126,10 +153,24 @@ export function namedEmailAddressString(addr: email_address | named_email_addres
 }
 
 export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
-  return arr.filter((x): x is t => !!x)
+  return arr.filter(isNotFalsy)
+}
+
+export function isNotFalsy<t>(el: t | _falsy): el is t {
+  return el !== false && isNotNullish(el)
+}
+
+export function filterOutNullishes<t>(arr: (t | _nullish)[]): t[] {
+  return arr.filter(isNotNullish)
+}
+
+export function isNotNullish<t>(el: t | _nullish): el is t {
+  return el !== null && el !== undefined
 }
 
 export type flags<names extends string> = Record<names, boolean>
+
+
 
 // SHAREDLIB
 // FIXME: here's not the best place for type `email_body`

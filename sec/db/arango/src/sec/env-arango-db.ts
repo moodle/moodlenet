@@ -1,9 +1,9 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
-import { db_struct } from '../db-structure'
+import { dbStruct } from '../db-structure'
 import { getModConfigs, updateDeepPartialModConfigs } from '../lib'
 
-export function env_secondary_factory({ db_struct }: { db_struct: db_struct }): secondaryProvider {
+export function env_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
   return secondaryCtx => {
     const secondaryAdapter: secondaryAdapter = {
       env: {
@@ -11,7 +11,7 @@ export function env_secondary_factory({ db_struct }: { db_struct: db_struct }): 
           async modConfigs({ mod }) {
             const configs = await getModConfigs({
               moduleName: mod,
-              db_struct,
+              dbStruct,
             })
             return configs
           },
@@ -20,7 +20,7 @@ export function env_secondary_factory({ db_struct }: { db_struct: db_struct }): 
           async updatePartialConfigs({ partialConfigs, mod }) {
             const result = await updateDeepPartialModConfigs({
               moduleName: mod,
-              db_struct,
+              dbStruct,
               partialConfigs,
             })
             return [!!result, _void]
