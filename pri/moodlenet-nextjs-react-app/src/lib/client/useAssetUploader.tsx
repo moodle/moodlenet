@@ -21,6 +21,15 @@ type handler = [
 
 export type actionResponse = { done: true; newAssets?: asset[] } | { done: false; error?: string | string[] | _nullish }
 export type fileUploadedAction = (_: { tempIds: [string, ...string[]] }) => Promise<actionResponse>
+export type assetUploaderHookProps = {
+  assets: _nullish | asset | asset[]
+  action: fileUploadedAction
+  type: 'webImage' | 'file'
+  multiple?: boolean
+  optimisticAssetUrlUpdate?: boolean
+  overrideMaxSize?: number
+}
+
 export function useAssetUploader({
   assets,
   action,
@@ -28,14 +37,7 @@ export function useAssetUploader({
   multiple = false,
   optimisticAssetUrlUpdate = false,
   overrideMaxSize,
-}: {
-  assets: _nullish | asset | asset[]
-  action: fileUploadedAction
-  type: 'webImage' | 'file'
-  multiple?: boolean
-  optimisticAssetUrlUpdate?: boolean
-  overrideMaxSize?: number
-}) {
+}: assetUploaderHookProps) {
   const filestoreHttp = useFileServerDeployment()
   const { uploadMaxSizeConfigs } = useAllSchemaConfigs()
   const maxSize = overrideMaxSize ?? (type === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max)
