@@ -1,177 +1,103 @@
-import type { AddonItem } from '@moodlenet/component-library'
-import { Card, isEllipsisActive, TertiaryButton } from '@moodlenet/component-library'
-import { getBackupImage, Link, withProxy } from '@moodlenet/react-app/ui'
-import { FilterNone, Public, PublicOff } from '@mui/icons-material'
+import { Bookmark, BookmarkBorder, FilterNone, PermIdentity, Person, Public, PublicOff } from '@mui/icons-material'
 import { useEffect, useRef, useState } from 'react'
-import type {
-  CollectionCardAccess,
-  CollectionCardActions,
-  CollectionCardData,
-  CollectionCardState,
-} from '../../../../common/types.mjs'
+
+import { selection } from '@moodle/lib-types'
+import { collectionCardData } from '@moodle/module/moodlenet-react-app'
+import Link from 'next/link'
+import { useAssetUrl } from '../../../lib/client/globalContexts'
+import { appRoute } from '../../../lib/common/appRoutes'
+import { Card } from '../../atoms/Card/Card'
+import { TertiaryButton } from '../../atoms/TertiaryButton/TertiaryButton'
+import { getBackupImage, isEllipsisActive } from '../../lib/misc'
 import './CollectionCard.scss'
 
-export type CollectionCardProps = {
-  mainColumnItems: (AddonItem | null)[]
-  topLeftItems: (AddonItem | null)[]
-  topRightItems: (AddonItem | null)[]
-
-  data: CollectionCardData
-  state: CollectionCardState
-  actions: CollectionCardActions
-  access: CollectionCardAccess
+type collectionCardActions = {
+  toggleBookmark(): Promise<void>
+  toggleFollow(): Promise<void>
 }
 
-export const CollectionCard = withProxy<CollectionCardProps>(
-  ({
-    mainColumnItems,
-    topLeftItems,
-    topRightItems,
-
-    data,
-    state,
-    access,
-  }) => {
-    const { id, image, title, collectionHref } = data
-    const {
-      isPublished,
-      // bookmarked,
-      // followed,
-      // numFollowers,
-      numResources,
-    } = state
-    const {
-      // isAuthenticated,
-      // isCreator,
-      // canFollow,
-      // canBookmark,
-      canPublish,
-    } = access
-    const imageUrl = image?.location
-    const background = {
-      background: 'url(' + (imageUrl || getBackupImage(id)) + ')',
-      backgroundSize: 'cover',
-    }
-
-    const numResourcesDiv = (
-      <TertiaryButton
-        className="num-resources"
-        key="num-resources"
-        abbr={`Contains ${numResources} resource${numResources === 1 ? '' : 's'}`}
-        disabled
-      >
-        <FilterNone />
-        {numResources}
-      </TertiaryButton>
-    )
-
-    const publishState = canPublish ? (
-      isPublished ? (
-        <abbr
-          title="Published"
-          key="publish-stat"
-          style={{ cursor: 'initial' }}
-          className="publish-state"
-        >
-          <Public style={{ fill: '#00bd7e' }} />
-        </abbr>
-      ) : (
-        <abbr
-          title="Unpublished"
-          key="publish-stat"
-          style={{ cursor: 'initial' }}
-          className="publish-state"
-        >
-          <PublicOff />
-        </abbr>
-      )
-    ) : null
-
-    // const bookmarkButton = canBookmark && (
-    //   <TertiaryButton
-    //     key="bookmark-button"
-    //     className={`bookmark-button ${bookmarked ? 'bookmarked' : ''}`}
-    //     onClick={toggleBookmark}
-    //     abbr="Bookmark"
-    //   >
-    //     {bookmarked ? <Bookmark /> : <BookmarkBorder />}
-    //   </TertiaryButton>
-    // )
-
-    // const followButton = (
-    //   <TertiaryButton
-    //     key="follow-button"
-    //     className={`follow-button ${followed ? 'followed' : ''} ${!canFollow ? 'disabled' : ''}`}
-    //     abbr={
-    //       isCreator
-    //         ? 'Creators cannot follow their own content'
-    //         : !isAuthenticated
-    //         ? 'Login or signup to follow the collection'
-    //         : followed
-    //         ? 'Unfollow'
-    //         : 'Follow'
-    //     }
-    //     onClick={canFollow ? toggleFollow : (e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
-    //   >
-    //     {followed ? <Person /> : <PermIdentity />}
-    //     <span>{numFollowers}</span>
-    //   </TertiaryButton>
-    // )
-
-    const updatedTopLeftItems = [numResourcesDiv, ...(topLeftItems ?? [])].filter(
-      (item): item is AddonItem | JSX.Element => !!item,
-    )
-
-    const updatedTopRightItems = [
-      // bookmarkButton,
-      // followButton,
-      publishState,
-      ...(topRightItems ?? []),
-    ].filter((item): item is AddonItem | JSX.Element => !!item)
-
-    const header = (
+export type collectionCardProps = collectionCardData & {
+  collectionPageRoute: appRoute
+  actions: selection<collectionCardActions, never, 'toggleBookmark' | 'toggleFollow'>
+}
+export function CollectionCard(props: collectionCardProps) {
+  const [imageUrl /* , imageCredits */] = useAssetUrl(props.data.image, getBackupImage(props.id))
+  const background = {
+    background: 'url(' + imageUrl + ')',
+    backgroundSize: 'cover',
+  }
+  const titleRef = useRef<HTMLElement>(null)
+  const [showTitleAbbr, setShowTitleAbbr] = useState(false)
+  useEffect(() => {
+    titleRef.current instanceof HTMLElement && setShowTitleAbbr(isEllipsisActive(titleRef.current))
+  }, [titleRef])
+  const isPublished = props.status === 'published'
+  return (
+    <Card className={`collection-card ${isPublished ? 'published' : 'unpublished'}`} hover={true}>
+      <div className={`collection-card-background ${isPublished ? 'published' : 'unpublished'}`} style={background}>
+        <div className="overlay" />
+      </div>
       <div className={`collection-card-header`} key="header">
         <div className="header-left">
-          {updatedTopLeftItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+          {isPublished && (
+            <TertiaryButton
+              className="num-resources"
+              key="num-resources"
+              abbr={`Contains ${props.stats.numResources} resource${props.stats.numResources === 1 ? '' : 's'}`}
+              disabled
+            >
+              <FilterNone />
+              {props.stats.numResources}
+            </TertiaryButton>
+          )}
         </div>
         <div className="header-right">
-          {updatedTopRightItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+          {isPublished && (
+            <>
+              <TertiaryButton
+                key="bookmark-button"
+                className={`bookmark-button ${props.links.bookmarked ? 'bookmarked' : ''}`}
+                onClick={props.actions.toggleBookmark ? props.actions.toggleBookmark : e => e.stopPropagation()}
+                abbr="Bookmark"
+              >
+                {props.links.bookmarked ? <Bookmark /> : <BookmarkBorder />}
+              </TertiaryButton>
+              <TertiaryButton
+                key="follow-button"
+                className={`follow-button ${props.links.followed ? 'followed' : ''} ${!props.actions.toggleFollow ? 'disabled' : ''}`}
+                abbr={
+                  props.flags.isCreator
+                    ? 'Creators cannot follow their own content'
+                    : !props.flags.isAuthenticated
+                      ? 'Login or signup to follow the collection'
+                      : props.links.followed
+                        ? 'Unfollow'
+                        : 'Follow'
+                }
+                onClick={props.actions.toggleFollow ? props.actions.toggleFollow : e => e.stopPropagation()}
+              >
+                {props.links.followed ? <Person /> : <PermIdentity />}
+                <span>{props.stats.numFollowers}</span>
+              </TertiaryButton>
+            </>
+          )}
+
+          {isPublished ? (
+            <abbr title="Published" key="publish-stat" style={{ cursor: 'initial' }} className="publish-state">
+              <Public style={{ fill: '#00bd7e' }} />
+            </abbr>
+          ) : (
+            <abbr title="Unpublished" key="publish-stat" style={{ cursor: 'initial' }} className="publish-state">
+              <PublicOff />
+            </abbr>
+          )}
         </div>
       </div>
-    )
-
-    const titleRef = useRef<HTMLElement>(null)
-    const [showTitleAbbr, setShowTitleAbbr] = useState(false)
-    useEffect(() => {
-      titleRef.current instanceof HTMLElement &&
-        setShowTitleAbbr(isEllipsisActive(titleRef.current))
-    }, [titleRef])
-
-    const contentContainer = (
-      <Link href={collectionHref} className="collection-card-content" key="content-containr">
-        <abbr className="title" title={showTitleAbbr ? title : undefined} ref={titleRef}>
-          {title}
+      <Link href={props.collectionPageRoute} className="collection-card-content" key="content-containr">
+        <abbr className="title" title={showTitleAbbr ? props.data.title : undefined} ref={titleRef}>
+          {props.data.title}
         </abbr>
       </Link>
-    )
-
-    const updatedMainColumnItems = [header, contentContainer, ...(mainColumnItems ?? [])].filter(
-      (item): item is AddonItem | JSX.Element => !!item,
-    )
-
-    return (
-      <Card className={`collection-card ${isPublished ? 'published' : 'unpublished'}`} hover={true}>
-        <div
-          className={`collection-card-background ${isPublished ? 'published' : 'unpublished'}`}
-          style={background}
-        >
-          <div className="overlay" />
-        </div>
-        {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      </Card>
-    )
-  },
-  'CollectionCard',
-)
-
-CollectionCard.displayName = 'CollectionCard'
+    </Card>
+  )
+}

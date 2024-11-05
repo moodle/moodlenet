@@ -8,7 +8,7 @@ import Share from '@mui/icons-material/Share'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useCallback, useReducer, useRef } from 'react'
 import { adoptMyProfileImage } from '../../../../app/(main-layout)/profile/[moodlenetContributorId]/[slug]/profile.server'
-import { useAllPrimarySchemas, useMyLinkedContent } from '../../../../lib/client/globalContexts'
+import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 import { useAssetUploader } from '../../../../lib/client/useAssetUploader'
 import { FloatingMenu } from '../../../atoms/FloatingMenu/FloatingMenu'
 import { FollowButton } from '../../../atoms/FollowButton/FollowButton'
@@ -24,16 +24,14 @@ import defaultAvatar from '../../../lib/assets/img/default-avatar.svg'
 import defaultBackground from '../../../lib/assets/img/default-background.svg'
 import { profilePageProps } from '../ProfilePage'
 
-export function MainProfileCard({ contributorId, itsMe, profileInfo, actions }: profilePageProps) {
-  const [following] = useMyLinkedContent('follow', 'moodlenetContributors', contributorId)
-
+export function MainProfileCard({ profileInfo, actions, myLinks }: profilePageProps) {
   const schemas = useAllPrimarySchemas()
-  const [isEditing, toggleIsEditing] = useReducer(isEditing => !!actions.updateMyProfileInfo && !isEditing, false)
+  const [isEditing, toggleIsEditing] = useReducer(isEditing => !!actions.edit && !isEditing, false)
   const {
     form: { formState, register, reset },
     handleSubmitWithAction: submitForm,
   } = useHookFormAction(
-    actions.updateMyProfileInfo ?? noop_action,
+    actions.edit?.updateMyProfileInfo ?? noop_action,
     zodResolver(schemas.userProfile.updateProfileInfoMetaSchema),
     {
       formProps: { defaultValues: { ...profileInfo } },
@@ -63,7 +61,7 @@ export function MainProfileCard({ contributorId, itsMe, profileInfo, actions }: 
     useAssetUploader({
       assets: profileInfo.background,
       async action({ tempIds: [tempId] }) {
-        const saveResult = await actions.adoptMyProfileImage?.({ as: 'background', tempId })
+        const saveResult = await actions.edit?.adoptMyProfileImage({ as: 'background', tempId })
         if (!saveResult?.data) {
           return { done: false, error: saveResult?.validationErrors?._errors }
         }
@@ -86,7 +84,7 @@ export function MainProfileCard({ contributorId, itsMe, profileInfo, actions }: 
     <div className="main-profile-card" key="profile-card">
       <div className="main-column">
         <div className={`background-container`} key="background-container">
-          {!actions.updateMyProfileInfo
+          {!actions.edit
             ? null
             : isEditing && [
                 <RoundButton
@@ -110,7 +108,7 @@ export function MainProfileCard({ contributorId, itsMe, profileInfo, actions }: 
           />
         </div>
         <div className={`avatar-container`} key="avatar-container">
-          {!actions.updateMyProfileInfo
+          {!actions.edit
             ? null
             : isEditing && [
                 <RoundButton
@@ -134,7 +132,7 @@ export function MainProfileCard({ contributorId, itsMe, profileInfo, actions }: 
         </div>
         <div className="top-items" key="top-items">
           <div className="edit-save" key="edit-save">
-            {!actions.updateMyProfileInfo ? null : isEditing ? (
+            {!actions.edit ? null : isEditing ? (
               <PrimaryButton color="green" onClick={submitAll} key="save-button">
                 <Save />
               </PrimaryButton>
@@ -197,14 +195,12 @@ export function MainProfileCard({ contributorId, itsMe, profileInfo, actions }: 
             error={isEditing && formState.errors.aboutMe?.message}
           />
         </form>
-        {itsMe ? null : (
+        {actions.follow && (
           <div className="main-profile-card-footer">
             <FollowButton
-              following={following}
+              following={myLinks.followed}
               toggleFollow={() => {
-                // FIXME
-
-                alert('FollowButton')
+                actions.follow?.()
               }}
               disabled={!actions.follow}
               key="follow-button"
@@ -218,7 +214,7 @@ export function MainProfileCard({ contributorId, itsMe, profileInfo, actions }: 
                 // FIXME
                 alert('open message modal')
               }}
-              abbr={!actions.sendMessage ? 'Login or signup to send messages' : 'Send a message'}
+              abbr={'Send a message'}
             >
               Message
             </SecondaryButton>
@@ -239,7 +235,7 @@ export function MainProfileCard({ contributorId, itsMe, profileInfo, actions }: 
                       className={`report-button ${actions.report ? '' : 'disabled'}`}
                       key="report"
                       tabIndex={0}
-                      title={!actions.report ? 'Login or signup to report' : undefined}
+                      title={'Report abuse'}
                       onClick={() => {
                         // FIXME
                         alert('open report modal')

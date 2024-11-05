@@ -13,8 +13,7 @@ export function moodlenet_secondary_factory({ dbStruct }: { dbStruct: dbStruct }
           async contributor({ select, noAccessLevelFilter }) {
             const moodlenetContributorRecord = await getMoodlenetContributor({ dbStruct, select })
 
-            return moodlenetContributorRecord &&
-              (noAccessLevelFilter || moodlenetContributorRecord.access.level === 'public')
+            return moodlenetContributorRecord && (noAccessLevelFilter || moodlenetContributorRecord.access === 'public')
               ? [true, { moodlenetContributorRecord }]
               : [false, { reason: 'notFound' }]
           },
@@ -26,7 +25,7 @@ export function moodlenet_secondary_factory({ dbStruct }: { dbStruct: dbStruct }
             const aqlSort = !sortBy ? '' : aql`SORT ${sortByMap[sortBy]} ${sortDir}`
             const cursor = await dbStruct.moodlenet.db.query(aql<moodlenetContributorRecord>`
                 FOR moodlenetContributorDoc IN ${dbStruct.moodlenet.coll.contributor}
-                FILTER moodlenetContributorDoc.access.level == 'public'
+                FILTER moodlenetContributorDoc.access == 'public'
                 ${aqlSort}
                 LIMIT ${skip},${limit}
                 return MOODLE::RESTORE_RECORD(moodlenetContributorDoc)

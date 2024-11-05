@@ -3,8 +3,8 @@ import { Trans, useTranslation } from 'next-i18next'
 import { PrimaryButton } from '../../../ui/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../../ui/atoms/Searchbox/Searchbox'
 import defaultBackground from '../../../ui/lib/assets/img/default-landing-background.png'
-import { useSiteInfo } from '../../../lib/client/globalContexts'
 import { clientSlotItem } from '../../../lib/common/types'
+import { moodlenetSiteInfo } from '@moodle/module/moodlenet'
 
 export function LandingHeadShareButton() {
   return (
@@ -30,8 +30,13 @@ export function LandingHeadSearchbox() {
     />
   )
 }
-export function LandingPageHeader({ headSlotItems }: { headSlotItems: clientSlotItem[] }) {
-  const { subtitle, title } = useSiteInfo()
+export type landingPageHeaderProps = {
+  headSlotItems: clientSlotItem[]
+  moodlenetSiteInfo: moodlenetSiteInfo
+}
+
+export function LandingPageHeader({ headSlotItems, moodlenetSiteInfo }: landingPageHeaderProps) {
+  const { subtitle, title } = moodlenetSiteInfo
   const headerStyle = {
     backgroundImage: `url("${defaultBackground.src}")`,
     backgroundSize: 'cover',

@@ -1,10 +1,11 @@
 import { fetchAllSchemaConfigs } from '../../../lib'
-import { moduleCore } from '../../../types'
-import { accessMoodlenetContributor } from '../../moodlenet/core/lib/primary-access'
-import { moodlenetReactAppSessionData, profilePageData } from '../types'
-import { suggestedContent } from '../types/webapp/pageProps/landing'
-import { mapContributorToMinimalInfo } from './lib'
+import { moduleCore, moodlePrimary } from '../../../types'
+import { isMeMoodlenetContributorRecord } from '../../moodlenet/core/lib/primary-access'
+import { validate_currentUserSessionInfo } from '../../user-account/lib'
+import { landingLayoutProps, suggestedContent } from '../types/webapp/pageProps/landing'
+import { accessWebappContributorAccessData, contributorRecordToWebappContributorAccessData } from './lib'
 
+type primary = moodlePrimary['moodlenetReactApp']
 export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
   modName: 'moodlenetReactApp',
   service() {
@@ -13,23 +14,24 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
   primary(ctx) {
     return {
       async session() {
-        return {
+        const session: primary['session'] = {
           async data() {
             const mySessionUserRecords = await ctx.forward.moodlenet.session.getMySessionUserRecords()
-            const userAccount = mySessionUserRecords.type === 'authenticated' ? mySessionUserRecords.userAccountRecord : null
-            const moodlenetReactAppSessionData: moodlenetReactAppSessionData = {
-              is: {
-                admin: !!userAccount?.roles.includes('admin'),
-                contributor: !!userAccount?.roles.includes('contributor'),
-              },
-              ...mySessionUserRecords,
-            }
-            return moodlenetReactAppSessionData
+            // const userAccount = mySessionUserRecords.type === 'authenticated' ? mySessionUserRecords.userAccountRecord : null
+            // const moodlenetReactAppSessionData: moodlenetReactAppSessionData = {
+            //   is: {
+            //     admin: !!userAccount?.roles.includes('admin'),
+            //     contributor: !!userAccount?.roles.includes('contributor'),
+            //   },
+            //   ...mySessionUserRecords,
+            // }
+            return mySessionUserRecords
           },
         }
+        return session
       },
       async props() {
-        return {
+        const props: primary['props'] = {
           async allLayouts() {
             const {
               configs: { layouts },
@@ -40,14 +42,16 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
             const moodlenetConfigs = await ctx.forward.moodlenet.session.moduleInfo()
             const { filestoreHttp } = await ctx.forward.env.application.deployments()
             const allSchemaConfigs = await fetchAllSchemaConfigs({ primary: ctx.forward })
-            const session = await ctx.forward.moodlenetReactApp.session.data().catch<moodlenetReactAppSessionData>(() => ({
-              type: 'guest',
-              is: {
-                admin: false,
-                contributor: false,
-                authenticated: false,
-              },
-            }))
+            const session = await ctx.forward.moodlenetReactApp.session.data()
+            // .catch<moodlenetReactAppSessionData>(() => ({
+            //   type: 'guest',
+            //   is: {
+            //     admin: false,
+            //     contributor: false,
+            //     authenticated: false,
+            //   },
+            // }))
+
             return {
               webappGlobalCtx: {
                 allSchemaConfigs,
@@ -64,7 +68,15 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
               ctx.forward.moodlenetReactApp.props.allLayouts(),
             ])
             return {
-              session,
+              session:
+                session.type === 'authenticated'
+                  ? {
+                      type: 'authenticated',
+                      contributorId: session.moodlenetContributorRecord.id,
+                      hasAdminSectionAccess: session.userAccountRecord.roles.includes('admin'),
+                      profileInfo: session.userProfileRecord.info,
+                    }
+                  : { type: 'guest' },
               mainLayout: layouts.roots.main,
             }
           },
@@ -87,48 +99,49 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
             }
           },
           async landingLayout() {
+            const userSessionInfo = await validate_currentUserSessionInfo({ ctx })
+            const { info: moodlenetSiteInfo } = await ctx.forward.moodlenet.session.moduleInfo()
             const layouts = await ctx.forward.moodlenetReactApp.props.allLayouts()
             const { moodlenetContributorRecords } = await ctx.mod.secondary.moodlenet.query.contributors({
               range: [20],
               sort: ['points', 'DESC'],
             })
-            const leaderContributors = moodlenetContributorRecords.map(mapContributorToMinimalInfo)
+            const myUserRecords = await ctx.forward.moodlenet.session.getMySessionUserRecords()
+            const me = myUserRecords.type === 'authenticated' ? myUserRecords.moodlenetContributorRecord : null
+
+            const leaderContributors = moodlenetContributorRecords.map(moodlenetContributorRecord =>
+              contributorRecordToWebappContributorAccessData({ moodlenetContributorRecord, me }),
+            )
 
             const suggestedContent: suggestedContent = {
               contributors: [],
             }
-            return {
+            const landingLayoutProps: landingLayoutProps = {
+              authenticatedUser: !!userSessionInfo.authenticated,
+              moodlenetSiteInfo,
               landingPageLayout: layouts.pages.landing,
-              landingPageProps: {
+              landingPageData: {
                 suggestedContent,
                 leaderContributors,
               },
             }
+            return landingLayoutProps
           },
           async profilePage({ moodlenetContributorId }) {
-            const foundMoodlenetContributorAccessObject = await accessMoodlenetContributor({
+            const [hasAccess, resultWebappContributorAccessData] = await accessWebappContributorAccessData({
               ctx,
               id: moodlenetContributorId,
             })
-            if (
-              foundMoodlenetContributorAccessObject.result === 'notFound' ||
-              foundMoodlenetContributorAccessObject.access === 'notAllowed'
-            ) {
-              return [false, { reason: 'notFound' }]
+            if (!hasAccess) {
+              return [false, resultWebappContributorAccessData]
             }
 
-            const profilePageData: profilePageData = {
-              moodlenetContributorAccessObject: foundMoodlenetContributorAccessObject,
-              stats: {
-                followersCount: 66666,
-                followingCount: foundMoodlenetContributorAccessObject.linkedContent.follow.moodlenetContributors.length,
-                publishedResourcesCount: foundMoodlenetContributorAccessObject.contributions.eduResources.length,
-              },
-            }
-            return [true, profilePageData]
+            return [true, resultWebappContributorAccessData]
           },
         }
+        return props
       },
     }
   },
 }
+

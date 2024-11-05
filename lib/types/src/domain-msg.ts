@@ -1,15 +1,6 @@
 import { d_u, map } from './map'
 
-// REVIEW : consider put this access logic - as well as `accessUserProfile` logic - in `userAccount` (a as access)
-// or consider renaming `userAccount` to `im` or something
-export type found_access_obj<allowed_result, not_allowed_result = unknown> = d_u<
-  { found: access_obj<allowed_result, not_allowed_result>; notFound: unknown },
-  'result'
->
-export type access_obj<allowed_result, not_allowed_result = unknown> = d_u<
-  { allowed: allowed_result; notAllowed: not_allowed_result },
-  'access'
->
+
 
 export type ok_ko<
   success_result,

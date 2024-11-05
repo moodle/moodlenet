@@ -7,9 +7,11 @@ import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../atoms/SecondaryButton/SecondaryButton'
 import './Collection.scss'
-import { CollectionContributorCard } from './CollectionContributorCard/CollectionContributorCard'
+import {
+  CollectionContributorCard,
+  collectionContributorCardProps,
+} from './CollectionContributorCard/CollectionContributorCard'
 import { MainCollectionCard } from './MainCollectionCard/MainCollectionCard'
-import { appRoute } from '../../../lib/common/appRoutes'
 
 type saveEduCollectionMetaFn = HookSafeActionFn<unknown, eduCollectionMetaFormSchema, any, any, any, any>
 export type eduCollectionActions = {
@@ -18,7 +20,7 @@ export type eduCollectionActions = {
   editDraft: saveEduCollectionMetaFn
   deleteDraft(): Promise<unknown>
   deletePublished(): Promise<unknown>
-  applyImage(_: { tempId: string }): Promise<unknown>
+  // applyImage(_: { tempId: string }): Promise<unknown>
   unpublish(): Promise<unknown>
   follow(): Promise<unknown>
   bookmark(): Promise<unknown>
@@ -29,14 +31,17 @@ export type collectionPageProps = d_u<
     createDraft: {
       eduCollectionMeta: _nullish | eduCollectionMeta
       actions: selection<eduCollectionActions, 'saveNewDraft'>
+      contributorCardProps: null
     }
     editDraft: {
       eduCollectionMeta: eduCollectionMeta
-      actions: selection<eduCollectionActions, 'editDraft', 'publish'>
+      actions: selection<eduCollectionActions, 'editDraft' /*  | 'applyImage' */, 'publish'>
+      contributorCardProps: null
     }
     viewPublished: {
       eduCollectionMeta: eduCollectionMeta
-      actions: selection<eduCollectionActions, keyof eduCollectionActions>
+      actions: selection<eduCollectionActions, never, 'unpublish'>
+      contributorCardProps: collectionContributorCardProps
     }
     // validationSchemas: imagesize, draft, publish
   },
@@ -44,7 +49,7 @@ export type collectionPageProps = d_u<
 >
 
 export function CollectionPage(collectionPageProps: collectionPageProps) {
-  const { activity, actions } = collectionPageProps
+  const { activity, actions, contributorCardProps } = collectionPageProps
 
   // const resourceList = (
   //   <div className="resource-list">
@@ -141,15 +146,14 @@ export function CollectionPage(collectionPageProps: collectionPageProps) {
         <div className="main-card">
           <MainCollectionCard {...{ collectionPageProps }} />
         </div>
-        <div className="contributor-card">
-          <CollectionContributorCard
-            {...{ avatarUrl: null, creatorProfileHref: '' as appRoute, displayName: 'ola' }}
-            key="contributor-card"
-          />
-        </div>
+        {activity === 'viewPublished' && (
+          <div className="contributor-card">
+            <CollectionContributorCard {...contributorCardProps} key="contributor-card" />
+          </div>
+        )}
         <div className="editor-actions">
           <Card className="editor-actions" hideBorderWhenSmall={true}>
-            {actions.unpublish && <SecondaryButton onClick={() => actions.unpublish()}>Unpublish</SecondaryButton>}
+            {actions.unpublish && <SecondaryButton onClick={() => actions.unpublish?.()}>Unpublish</SecondaryButton>}
             {activity === 'editDraft' && (
               <PrimaryButton onClick={() => alert('publishCheck')} color="green">
                 Publish check

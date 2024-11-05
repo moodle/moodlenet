@@ -1,5 +1,5 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { _void, date_time_string, webSlug } from '@moodle/lib-types'
+import { _void, date_time_string, non_negative_integer, webSlug } from '@moodle/lib-types'
 import assert from 'assert'
 import { omit } from 'lodash'
 import { moduleCore } from '../../../types'
@@ -97,9 +97,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
               await ctx.write.updatePartialMoodlenetContributor({
                 select: { by: 'userAccountId', userAccountId },
                 partialMoodlenetContributorRecord: {
-                  access: {
-                    level: roles.includes('contributor') ? 'public' : 'protected',
-                  },
+                  access: roles.includes('contributor') ? 'public' : 'protected',
                 },
               })
             },
@@ -117,7 +115,6 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
                   userProfile: {
                     info: payload.partialProfileInfo,
                   },
-                  slug: payload.partialProfileInfo.displayName ? webSlug(payload.partialProfileInfo.displayName) : undefined,
                 },
               })
             },
@@ -131,16 +128,21 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
               await ctx.write.createMoodlenetContributor({
                 moodlenetContributorRecord: {
                   id,
-                  access: { level: userProfileRecord.userAccount.roles.includes('contributor') ? 'public' : 'protected' },
+                  access: userProfileRecord.userAccount.roles.includes('contributor') ? 'public' : 'protected',
                   contributions: { eduResources: [], eduResourcesCollections: [] },
-                  slug: webSlug(userProfileRecord.info.displayName),
                   linkedContent: {
                     bookmark: { eduCollections: [], eduResources: [] },
                     follow: { eduCollections: [], moodlenetContributors: [], iscedFields: [] },
                     like: { eduResources: [] },
                   },
                   preferences: { useMyInterestsAsDefaultFilters: false },
-                  stats: { points: configs.pointSystem.welcomePoints },
+                  stats: {
+                    points: configs.pointSystem.welcomePoints,
+                    followersCount: 0 as non_negative_integer,
+                    followingCount: 0 as non_negative_integer,
+                    publishedResourcesCount: 0 as non_negative_integer,
+                    recalculatedDate: date_time_string('now'),
+                  },
                   suggestedContent: {
                     listCreationDate: date_time_string('now'),
                     lists: {

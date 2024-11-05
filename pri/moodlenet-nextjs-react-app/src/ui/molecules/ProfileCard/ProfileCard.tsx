@@ -1,31 +1,34 @@
+import { selection } from '@moodle/lib-types'
+import { webappContributorAccessData } from '@moodle/module/moodlenet-react-app'
 import FilterNone from '@mui/icons-material/FilterNone'
 import Grade from '@mui/icons-material/Grade'
 import PermIdentity from '@mui/icons-material/PermIdentity'
-import { moodlenetContributorInfo } from '@moodle/module/moodlenet-react-app'
 import Link from 'next/link'
-import { useAssetUrl, useMyLinkedContent, usePointSystem } from '../../../lib/client/globalContexts'
+import { useAssetUrl, usePointSystem } from '../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../lib/client/user-levels/lib'
-import { appRoutes } from '../../../lib/common/appRoutes'
-import defaultAvatar from '../../../ui/lib/assets/img/default-avatar.svg'
-import defaultBackground from '../../../ui/lib/assets/img/default-background.svg'
+import { appRoute } from '../../../lib/common/appRoutes'
+import defaultAvatarSrc from '../../../ui/lib/assets/img/default-avatar.svg'
+import defaultBackgroundSrc from '../../../ui/lib/assets/img/default-background.svg'
 import { Card } from '../../atoms/Card/Card'
 import { FollowButton } from '../../atoms/FollowButton/FollowButton'
 import { OverallCard } from '../OverallCard/OverallCard'
 import './ProfileCard.scss'
 
-export function ProfileCard({ moodlenetContributorAccessObject, stats }: moodlenetContributorInfo) {
+type profileCardActions = {
+  toggleFollow(): Promise<void>
+}
+export type profileCardProps = Pick<webappContributorAccessData, 'myLinks' | 'profileInfo' | 'stats'> & {
+  actions: selection<profileCardActions, never, 'toggleFollow'>
+  profileHomeRoute: appRoute
+}
+
+export function ProfileCard({ myLinks, actions, profileInfo, stats, profileHomeRoute }: profileCardProps) {
   const { pointSystem } = usePointSystem()
-  const { pointAvatar, level, title } = getUserLevelDetails(pointSystem, moodlenetContributorAccessObject.stats.points)
-  const { avatar, background, displayName } = moodlenetContributorAccessObject.profileInfo
+  const { pointAvatar, level, title } = getUserLevelDetails(pointSystem, stats.points)
+  const { avatar, background, displayName } = profileInfo
 
-  const permissions = moodlenetContributorAccessObject.permissions
-
-  const [following] = useMyLinkedContent('follow', 'moodlenetContributors', moodlenetContributorAccessObject.id)
-  const profileHomeHref = appRoutes(
-    `/profile/${moodlenetContributorAccessObject.id}/${moodlenetContributorAccessObject.slug}`,
-  )
-  const [backgroundUrl] = useAssetUrl(background)
-  const [avatarUrl] = useAssetUrl(avatar)
+  const [backgroundUrl] = useAssetUrl(background, defaultBackgroundSrc)
+  const [avatarUrl] = useAssetUrl(avatar, defaultAvatarSrc)
 
   return (
     <Card
@@ -34,14 +37,14 @@ export function ProfileCard({ moodlenetContributorAccessObject, stats }: moodlen
       `}
       hover={true}
     >
-      <Link className="profile-card-content" href={profileHomeHref}>
+      <Link className="profile-card-content" href={profileHomeRoute}>
         <div className="images">
-          <img className="background" src={backgroundUrl || defaultBackground} alt="Background" />
+          <img className="background" src={backgroundUrl} alt="Background" />
           <div className="avatar">
             <abbr className={`level-avatar level-${level}`} title={`Level ${level} - ${title}`}>
               <img className="avatar" src={pointAvatar} alt="level avatar" />
             </abbr>
-            <img src={avatarUrl || defaultAvatar} alt="Avatar" />
+            <img src={avatarUrl} alt="Avatar" />
           </div>
         </div>
         <div className="info">
@@ -83,12 +86,9 @@ export function ProfileCard({ moodlenetContributorAccessObject, stats }: moodlen
       </Link>
       <div className="bottom-touch">
         <FollowButton
-          disabled={!permissions.follow}
-          following={following}
-          toggleFollow={() =>
-            // FIXME
-            alert('toggleFollow')
-          }
+          disabled={!actions.toggleFollow}
+          following={myLinks.followed}
+          toggleFollow={() => actions.toggleFollow?.()}
         />
       </div>
     </Card>

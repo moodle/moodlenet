@@ -1,7 +1,8 @@
+import { _nullish } from '@moodle/lib-types'
+import { contentCredits } from '@moodle/module/content'
 import type { MutableRefObject } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { getBackupImage, getWindowDimensions } from './misc'
-import type { CreditedImage } from './types'
 
 export const useWindowDimensions = () => {
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions())
@@ -17,23 +18,21 @@ export const useWindowDimensions = () => {
 
   return windowDimensions
 }
-export const useImageCredits = (
-  image: CreditedImage | undefined | null,
-  id = `${Math.random() * 100}`,
-) => {
-  const backupImage: CreditedImage | null | undefined = useMemo(() => getBackupImage(id), [id])
-  const credits = image ? (image.credits ? image.credits : undefined) : backupImage?.credits
+export function ImageCredits({ credits, id }: { credits: contentCredits | _nullish; id?: string | _nullish }) {
+  const defaultId = useId()
+  const backupImage = getBackupImage(id ?? defaultId)
+  const _credits = credits ?? backupImage?.credits
   return (
-    credits && (
+    _credits && (
       <div className="image-credits" key="image-credits">
         Photo by
-        <a href={credits.owner.url} target="_blank" rel="noreferrer">
-          {credits.owner.name}
+        <a href={_credits.owner.url} target="_blank" rel="noreferrer">
+          {_credits.owner.name}
         </a>
         on
         {
-          <a href={credits.owner.url} target="_blank" rel="noreferrer">
-            {credits.provider?.name}
+          <a href={_credits.owner.url} target="_blank" rel="noreferrer">
+            {_credits.provider?.name}
           </a>
         }
       </div>
@@ -56,10 +55,7 @@ export function useForwardedRef<T>(ref: RefT<T>) {
   return innerRef
 }
 
-export const useImageUrl = (
-  maybe_url_or_file: undefined | null | Blob | string,
-  defaultUrl?: string | Blob | undefined,
-) => {
+export const useImageUrl = (maybe_url_or_file: undefined | null | Blob | string, defaultUrl?: string | Blob | undefined) => {
   const [url, setUrl] = useState<string>()
   const isFile = maybe_url_or_file instanceof Blob
 
@@ -71,10 +67,7 @@ export const useImageUrl = (
 
   return [url, isFile] as const
 
-  function getImageUrl(
-    maybe_url_or_file: undefined | Blob | string,
-    defaultUrl: string | undefined,
-  ) {
+  function getImageUrl(maybe_url_or_file: undefined | Blob | string, defaultUrl: string | undefined) {
     return !maybe_url_or_file
       ? defaultUrl
       : typeof maybe_url_or_file === 'string'

@@ -11,40 +11,29 @@ export default async function ProfilePage({
 }: {
   params: params<'moodlenetContributorId' | 'slug'>
 }) {
-  const [foundContributor, profilePageData] = await access.primary.moodlenetReactApp.props.profilePage({
+  const [foundContributor, webappContributorAccessData] = await access.primary.moodlenetReactApp.props.profilePage({
     moodlenetContributorId,
   })
   if (!foundContributor) {
     return <Fallback />
   }
-  const { moodlenetContributorAccessObject } = profilePageData
-  if (moodlenetContributorAccessObject.slug !== slug) {
-    redirect(appRoutes(`/profile/${moodlenetContributorId}/${moodlenetContributorAccessObject.slug}`))
+  if (webappContributorAccessData.slug !== slug) {
+    redirect(appRoutes(`/profile/${moodlenetContributorId}/${webappContributorAccessData.slug}`))
   }
-  const { permissions, itsMe, profileInfo } = moodlenetContributorAccessObject
+  const { permissions } = webappContributorAccessData
   const profilePageProps: profilePageProps = {
-    profileInfo,
-    contributorId: moodlenetContributorId,
-    itsMe,
-    stats: {
-      points: moodlenetContributorAccessObject.stats.points,
-      followersCount: profilePageData.stats.followersCount,
-      followingCount: profilePageData.stats.followingCount,
-      publishedResourcesCount: profilePageData.stats.publishedResourcesCount,
-    },
+    ...webappContributorAccessData,
     actions: {
-      updateMyProfileInfo: permissions.editProfileInfo ? updateMyProfileInfoMetaForm : null,
-      adoptMyProfileImage: permissions.editProfileInfo ? adoptMyProfileImage : null,
+      edit: permissions.editProfileInfo
+        ? {
+            updateMyProfileInfo: updateMyProfileInfoMetaForm,
+            adoptMyProfileImage: adoptMyProfileImage,
+          }
+        : null,
       follow: permissions.follow ? null : null,
       report: permissions.report ? null : null,
       sendMessage: permissions.sendMessage ? null : null,
     },
-    drafts: itsMe
-      ? {
-          eduCollections: [],
-          eduResources: [],
-        }
-      : null,
   }
 
   return <ProfilePageClient {...profilePageProps} />

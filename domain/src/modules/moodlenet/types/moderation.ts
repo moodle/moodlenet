@@ -1,6 +1,6 @@
 import { date_time_string, non_negative_integer } from '@moodle/lib-types'
 import { userProfileId } from '../../user-profile'
-import { moodlenetContributorId } from './moodlenet-contributor'
+import { moodlenetContributorId } from './access-objects/contributor'
 
 type reportType = string //TODO: type:desc map in moodlenet Configs?
 type reportAbuseForm = {

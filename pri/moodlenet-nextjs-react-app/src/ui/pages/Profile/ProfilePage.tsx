@@ -4,18 +4,21 @@ import FilterNone from '@mui/icons-material/FilterNone'
 import Grade from '@mui/icons-material/Grade'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 
-import { _nullish, selection } from '@moodle/lib-types'
-import { moodlenetContributorId } from '@moodle/module/moodlenet'
-import { profileInfo, updateProfileInfoSchema, useProfileImageSchema } from '@moodle/module/user-profile'
+import { selection } from '@moodle/lib-types'
+import { moodlenetContributorAccessObject } from '@moodle/module/moodlenet'
+import { updateProfileInfoSchema, useProfileImageSchema } from '@moodle/module/user-profile'
 import { HookSafeActionFn } from 'next-safe-action/hooks'
 import { Card } from '../../atoms/Card/Card'
 import { OverallCard } from '../../molecules/OverallCard/OverallCard'
 import { MainProfileCard } from './MainProfileCard/MainProfileCard'
 import { UserProgressCard } from './UserProgressCard/UserProgressCard'
+import { webappContributorAccessData } from '@moodle/module/moodlenet-react-app'
 
 type actionsOnContributor = {
-  updateMyProfileInfo: updateMyProfileInfoFn
-  adoptMyProfileImage: adoptMyProfileImageFn
+  edit: {
+    updateMyProfileInfo: updateMyProfileInfoFn
+    adoptMyProfileImage: adoptMyProfileImageFn
+  }
   follow(): Promise<void>
   sendMessage(text: string): Promise<void>
   report(text: string): Promise<void>
@@ -23,22 +26,8 @@ type actionsOnContributor = {
 type adoptMyProfileImageFn = HookSafeActionFn<unknown, useProfileImageSchema, any, any, any, any>
 type updateMyProfileInfoFn = HookSafeActionFn<unknown, updateProfileInfoSchema, any, any, any, any>
 
-export interface profilePageProps {
-  actions: selection<
-    actionsOnContributor,
-    never,
-    'adoptMyProfileImage' | 'updateMyProfileInfo' | 'follow' | 'sendMessage' | 'report'
-  >
-  profileInfo: profileInfo
-  itsMe: boolean
-  contributorId: moodlenetContributorId
-  stats: { points: number; followersCount: number; followingCount: number; publishedResourcesCount: number }
-  drafts:
-    | _nullish
-    | {
-        eduCollections: eduCollectionCardProps[] // { data: eduCollectionData; resourceAmount: number; route: appRoute }[]
-        // eduResources: eduResourceCardProps[] // { data: eduResourceData; route: appRoute }[]
-      }
+export type profilePageProps = webappContributorAccessData & {
+  actions: selection<actionsOnContributor, never, 'edit' | 'follow' | 'sendMessage' | 'report'>
 }
 
 export default function ProfilePage(profilePageProps: profilePageProps) {

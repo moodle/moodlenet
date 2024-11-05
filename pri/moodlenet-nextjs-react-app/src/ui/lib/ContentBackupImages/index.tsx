@@ -1,4 +1,5 @@
-import { CreditedImage } from '../types'
+import { d_u__d, url_string } from '@moodle/lib-types'
+import { asset } from '@moodle/module/storage'
 import ashleywhitlatch from './ashleywhitlatch.jpg'
 import dvlden from './dvlden.jpg'
 import dvlden2 from './dvlden2.jpg'
@@ -16,225 +17,242 @@ import seanwsinclair from './seanwsinclair.jpg'
 import solenfeyisa from './solenfeyissa.jpg'
 import vackground from './vackground.jpg'
 
-export const ContentBackupImages: CreditedImage[] = [
+export const ContentBackupImages: d_u__d<asset, 'type', 'external'>[] = [
   {
-    location: solenfeyisa.src,
+    type: 'external',
+    url: solenfeyisa.src as url_string,
     credits: {
       owner: {
         name: 'Solen Feyissa',
-        url: 'https://unsplash.com/@solenfeyissa',
+        url: 'https://unsplash.com/@solenfeyissa' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: seanwsinclair.src,
+    type: 'external',
+    url: seanwsinclair.src as url_string,
     credits: {
       owner: {
         name: 'Sean Sinclair',
-        url: 'https://unsplash.com/@seanwsinclair',
+        url: 'https://unsplash.com/@seanwsinclair' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: fakurian.src,
+    type: 'external',
+    url: fakurian.src as url_string,
     credits: {
       owner: {
         name: 'Milad Fakurian',
-        url: 'https://unsplash.com/@fakurian',
+        url: 'https://unsplash.com/@fakurian' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: fakurian2.src,
+    type: 'external',
+    url: fakurian2.src as url_string,
     credits: {
       owner: {
         name: 'Milad Fakurian',
-        url: 'https://unsplash.com/@fakurian',
+        url: 'https://unsplash.com/@fakurian' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: mymind.src,
+    type: 'external',
+    url: mymind.src as url_string,
     credits: {
       owner: {
         name: 'mymind',
-        url: 'https://unsplash.com/@mymind',
+        url: 'https://unsplash.com/@mymind' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: ashleywhitlatch.src,
+    type: 'external',
+    url: ashleywhitlatch.src as url_string,
     credits: {
       owner: {
         name: 'Ashley Whitlatch',
-        url: 'https://unsplash.com/@ashleywhitlatch',
+        url: 'https://unsplash.com/@ashleywhitlatch' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: gradienta.src,
+    type: 'external',
+    url: gradienta.src as url_string,
     credits: {
       owner: {
         name: 'Gradienta',
-        url: 'https://unsplash.com/@gradienta',
+        url: 'https://unsplash.com/@gradienta' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: gradienta2.src,
+    type: 'external',
+    url: gradienta2.src as url_string,
     credits: {
       owner: {
         name: 'Gradienta',
-        url: 'https://unsplash.com/@gradienta',
+        url: 'https://unsplash.com/@gradienta' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: gradienta3.src,
+    type: 'external',
+    url: gradienta3.src as url_string,
     credits: {
       owner: {
         name: 'Gradienta',
-        url: 'https://unsplash.com/@gradienta',
+        url: 'https://unsplash.com/@gradienta' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: gradienta4.src,
+    type: 'external',
+    url: gradienta4.src as url_string,
     credits: {
       owner: {
         name: 'Gradienta',
-        url: 'https://unsplash.com/@gradienta',
+        url: 'https://unsplash.com/@gradienta' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: gradienta5.src,
+    type: 'external',
+    url: gradienta5.src as url_string,
     credits: {
       owner: {
         name: 'Gradienta',
-        url: 'https://unsplash.com/@gradienta',
+        url: 'https://unsplash.com/@gradienta' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: hendrikkay.src,
+    type: 'external',
+    url: hendrikkay.src as url_string,
     credits: {
       owner: {
         name: 'Hendrik Kespohl',
-        url: 'https://unsplash.com/@hendrikkay',
+        url: 'https://unsplash.com/@hendrikkay' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: lukechesser.src,
+    type: 'external',
+    url: lukechesser.src as url_string,
     credits: {
       owner: {
         name: 'Luke Chesser',
-        url: 'https://unsplash.com/@lukechesser',
+        url: 'https://unsplash.com/@lukechesser' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: lukechesser2.src,
+    type: 'external',
+    url: lukechesser2.src as url_string,
     credits: {
       owner: {
         name: 'Luke Chesser',
-        url: 'https://unsplash.com/@lukechesser',
+        url: 'https://unsplash.com/@lukechesser' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: vackground.src,
+    type: 'external',
+    url: vackground.src as url_string,
     credits: {
       owner: {
         name: 'Vackground',
-        url: 'https://unsplash.com/@vackground',
+        url: 'https://unsplash.com/@vackground' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: dvlden.src,
+    type: 'external',
+    url: dvlden.src as url_string,
     credits: {
       owner: {
         name: 'Nenad Novaković',
-        url: 'https://unsplash.com/@dvlden',
+        url: 'https://unsplash.com/@dvlden' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },
   {
-    location: dvlden2.src,
+    type: 'external',
+    url: dvlden2.src as url_string,
     credits: {
       owner: {
         name: 'Nenad Novaković',
-        url: 'https://unsplash.com/@dvlden',
+        url: 'https://unsplash.com/@dvlden' as url_string,
       },
       provider: {
         name: 'Unsplash',
-        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' as url_string,
       },
     },
   },

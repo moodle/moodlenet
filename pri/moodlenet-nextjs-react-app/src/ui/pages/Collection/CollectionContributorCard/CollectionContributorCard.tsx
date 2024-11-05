@@ -5,17 +5,13 @@ import defaultAvatar from '../../../lib/assets/img/default-avatar.svg'
 import './CollectionContributorCard.scss'
 import { appRoute } from '../../../../lib/common/appRoutes'
 
-export type CollectionContributorCardProps = {
+export type collectionContributorCardProps = {
   avatarUrl: string | null
   displayName: string
   creatorProfileHref: appRoute
 }
 
-export const CollectionContributorCard: FC<CollectionContributorCardProps> = ({
-  avatarUrl,
-  displayName,
-  creatorProfileHref,
-}) => {
+export function CollectionContributorCard({ avatarUrl, displayName, creatorProfileHref }: collectionContributorCardProps) {
   return (
     <Card className="collection-contributor-card" hideBorderWhenSmall={true}>
       <Link href={creatorProfileHref}>

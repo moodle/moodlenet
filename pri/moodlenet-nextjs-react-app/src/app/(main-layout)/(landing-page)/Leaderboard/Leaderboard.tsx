@@ -1,16 +1,15 @@
 'use client'
-import { moodlenetContributorMinimalInfo } from '@moodle/module/moodlenet-react-app'
 import Link from 'next/link'
 import { useAssetUrl, usePointSystem } from '../../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../../lib/client/user-levels/lib'
-import { appRoutes } from '../../../../lib/common/appRoutes'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import { ReactComponent as LeafIcon } from '../../../../ui/lib/assets/icons/leaf.svg'
 import defaultAvatar from '../../../../ui/lib/assets/img/default-avatar.svg'
+import { profileCardProps } from '../../../../ui/molecules/ProfileCard/ProfileCard'
 import './Leaderboard.scss'
 
 export type leaderboardProps = {
-  leaderContributors: moodlenetContributorMinimalInfo[]
+  leaderContributors: leaderRowProps[]
 }
 
 export function Leaderboard({ leaderContributors }: leaderboardProps) {
@@ -28,11 +27,13 @@ export function Leaderboard({ leaderContributors }: leaderboardProps) {
     </div>
   )
 }
-function LeaderRow({ contributor, position }: { contributor: moodlenetContributorMinimalInfo; position: number }) {
+export type leaderRowProps = Pick<profileCardProps, 'profileInfo' | 'profileHomeRoute' | 'stats'>
+
+function LeaderRow({ contributor, position }: { contributor: leaderRowProps; position: number }) {
   const { pointSystem } = usePointSystem()
-  const profileUrl = appRoutes(`/profile/${contributor.id}/${contributor.slug}`)
-  const { pointAvatar, level } = getUserLevelDetails(pointSystem, contributor.points)
-  const [avatarUrl] = useAssetUrl(contributor.avatar, defaultAvatar)
+
+  const { pointAvatar, level } = getUserLevelDetails(pointSystem, contributor.stats.points)
+  const [avatarUrl] = useAssetUrl(contributor.profileInfo.avatar, defaultAvatar)
   return (
     <div key={position} className="contributor">
       <div className="contributor-head">
@@ -45,18 +46,18 @@ function LeaderRow({ contributor, position }: { contributor: moodlenetContributo
             position
           )}
         </div>
-        <Link className="avatar" href={`/profile/${contributor.id}/${contributor.slug}`}>
+        <Link className="avatar" href={contributor.profileHomeRoute}>
           <img className="profile-avatar" src={avatarUrl} alt="avatar" />
           <div className={`level-avatar-container level-${level}`}>
             <img className="level-avatar" src={pointAvatar} alt="level avatar" />
           </div>
         </Link>
-        <Link className="name" href={profileUrl}>
-          {contributor.displayName}
+        <Link className="name" href={contributor.profileHomeRoute}>
+          {contributor.profileInfo.displayName}
         </Link>
       </div>
       <div className="score">
-        {contributor.points.toLocaleString()}
+        {contributor.stats.points.toLocaleString()}
         <LeafIcon />
       </div>
       {/*  <div className="subject">{contributor.subject}</div> */}

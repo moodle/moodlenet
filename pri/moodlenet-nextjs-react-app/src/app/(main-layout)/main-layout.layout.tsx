@@ -15,14 +15,16 @@ import {
   UserSettingsLink,
 } from './main-layout.client'
 
-import { filterOutFalsies } from '@moodle/lib-types'
-import { appRoutes } from '../../lib/common/appRoutes'
+import { filterOutFalsies, webSlug } from '@moodle/lib-types'
+import { appRoute, appRoutes } from '../../lib/common/appRoutes'
 import { access } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
 import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const { mainLayout, session } = await access.primary.moodlenetReactApp.props.mainLayout()
+  const authenticated = session.type === 'authenticated'
+
   return (
     <div className={`main-layout`}>
       <MainHeader slots={await prepareHeaderSlots()} />
@@ -35,11 +37,9 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const { center, left, right } = mainLayout.header.slots
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
-    const authenticated = session.type === 'authenticated'
-
-    const avatarAsset = authenticated ? session.userProfileRecord.info.avatar : null
+    const avatarAsset = authenticated ? session.profileInfo.avatar : null
     const defaultRights = authenticated
-      ? await(async () => {
+      ? await (async () => {
           return [
             <AvatarMenu
               key="avatar-menu"
@@ -49,13 +49,15 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
                   <ProfileLink
                     key="profile"
                     avatar={avatarAsset}
-                    profileRoute={`/profile/${session.moodlenetContributorRecord.id}/${session.moodlenetContributorRecord.slug}`}
+                    profileRoute={`/profile/${session.contributorId}/${webSlug(session.profileInfo.displayName)}`}
                   />
                 ),
                 authenticated && <BookmarksLink key="bookmarks" bookmarksRoute={'/'} />,
                 authenticated && <FollowingLink key="following" followingRoute={'/'} />,
                 authenticated && <UserSettingsLink key="user-settings" settingsRoute={'/settings'} />,
-                authenticated && session.is.admin && <AdminSettingsLink key="admin-settings" adminRoute={'/admin'} />,
+                authenticated && session.hasAdminSectionAccess && (
+                  <AdminSettingsLink key="admin-settings" adminRoute={'/admin'} />
+                ),
                 <Logout key="logout" logout={logout} />,
               ])}
             />,

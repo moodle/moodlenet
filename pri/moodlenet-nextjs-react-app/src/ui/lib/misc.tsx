@@ -1,4 +1,5 @@
-import { _any, date_time_string } from '@moodle/lib-types'
+import { _any, d_u__d, date_time_string } from '@moodle/lib-types'
+import { asset } from '@moodle/module/storage'
 import assert from 'assert'
 import defaultsDeep from 'lodash-es/defaultsDeep'
 import type { ReactElement } from 'react'
@@ -6,7 +7,6 @@ import type { PartialDeep } from 'type-fest'
 import { getVimeoEmbed, getVimeoThumbnail } from '../molecules/embeds/Vimeo/Vimeo'
 import { getYouTubeEmbed, getYouTubeThumbnail } from '../molecules/embeds/Youtube/Youtube'
 import { ContentBackupImages } from './ContentBackupImages'
-import type { CreditedImage } from './types'
 export const elementFullyInViewPort = (
   el: Element,
   options?: {
@@ -89,7 +89,7 @@ export const getPastelColor = (i?: number, opacity = 1) => {
   // return 'hsla(' + 360 * number + ',' + (25 + 60 * number) + '%,' + (45 + 1 * number) + '%, ' + opacity + ')'
 }
 
-export const getBackupImage = (id: string): CreditedImage | undefined => {
+export const getBackupImage = (id: string): d_u__d<asset, 'type', 'external'> | undefined => {
   const numId = getNumberFromString(id)
   return ContentBackupImages[numId % ContentBackupImages.length]
 }

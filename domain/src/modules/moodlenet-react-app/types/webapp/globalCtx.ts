@@ -1,14 +1,9 @@
-import { flags } from '@moodle/lib-types'
 import { AllSchemaConfigs } from '../../../../types'
 import { DeploymentInfo } from '../../../env'
-import { currentMoodlenetSessionData, moodlenetSiteInfo, pointSystem } from '../../../moodlenet'
+import { pointSystem } from '../../../moodlenet'
 
-export type moodlenetReactAppSessionData = { is: flags<'admin' | 'contributor'> } & currentMoodlenetSessionData
-
-export type webappGlobalCtx = {
+export type webappGlobals = {
   filestoreHttpDeployment: DeploymentInfo
   allSchemaConfigs: AllSchemaConfigs
-  session: moodlenetReactAppSessionData
   pointSystem: pointSystem
-  moodlenetSiteInfo: moodlenetSiteInfo
 }

@@ -11,6 +11,7 @@ export default async function CreateDraftCollectionPage() {
       saveNewDraft: saveNewEduCollectionDraft,
     },
     eduCollectionMeta: null,
+    contributorCardProps: null,
   }
   return <CollectionPage {...collectionPageProps} />
 }

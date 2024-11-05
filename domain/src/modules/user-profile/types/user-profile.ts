@@ -4,7 +4,7 @@ import { textExtractionStatus } from '../../asset-text-extraction'
 import { contentLanguageCode, contentLicenseCode } from '../../content'
 import { eduIscedFieldCode, eduIscedLevelCode } from '../../edu'
 import { eduCollectionData, eduResourceData } from '../../edu/types/edu-content'
-import { moodlenetPublicEduResourceId } from '../../moodlenet/types/moodlenet-public-contributions'
+import { moodlenetPublicEduResourceId } from '../../moodlenet/types/access-objects/eduResource'
 import { asset } from '../../storage'
 import { userAccountRecord } from '../../user-account'
 

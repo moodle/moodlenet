@@ -1,5 +1,6 @@
 import { map } from '@moodle/lib-types'
 import QueryString from 'qs'
+import {} from '@moodle/module/moodlenet-react-app'
 
 export function createRoutes<path_type extends string = appRoute>(baseUrl = '') {
   return function get<r extends appRoute>(route: r, opts?: r extends keyof routeOpts ? routeOpts[r] : never) {

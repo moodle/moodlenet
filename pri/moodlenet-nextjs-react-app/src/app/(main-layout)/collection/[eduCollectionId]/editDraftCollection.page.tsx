@@ -21,10 +21,12 @@ export default async function EditDraftCollectionPage({
   const collectionPageProps: collectionPageProps = {
     activity: 'editDraft',
     actions: {
+      // applyImage: null,
       editDraft: await editEduCollectionDraftForId({ eduCollectionDraftId: eduCollectionId }),
       publish: null,
     },
     eduCollectionMeta: myEduCollectionDraft.data,
+    contributorCardProps: null,
   }
   return <CollectionPage {...collectionPageProps} />
 }
