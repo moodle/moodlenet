@@ -110,7 +110,7 @@ export function MainCollectionCard({
     form: { formState, register, reset, getValues },
     handleSubmitWithAction: submitForm,
   } = useHookFormAction(
-    activity === 'createDraft' ? actions.saveNewDraft : activity === 'editDraft' ? actions.editDraft : noop_action,
+    activity === 'createDraft' ? actions.saveNewDraft : activity === 'editDraft' ? actions.editDraft.saveMeta : noop_action,
     zodResolver(schemas.edu.eduCollectionMetaSchema),
     {
       formProps: { defaultValues: eduCollectionMeta ?? {} },

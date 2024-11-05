@@ -5,6 +5,7 @@
 remove all ok_ko<void> ==> ok_ko
 
 FIXME: pri/moodlenet-nextjs-react-app/src/ui/lib/ContentBackupImages/index.tsx has moodle.net referral url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' this cannot apply for any other deployment !! 
+CHECK: tree-shaking for '@mui/icons-material' imports  https://mui.com/material-ui/guides/minimizing-bundle-size/#option-two-use-a-babel-plugin
 
 ### Next
 

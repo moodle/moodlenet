@@ -1,7 +1,7 @@
 'use client'
 
 import { _nullish, d_u, selection } from '@moodle/lib-types'
-import { eduCollectionMeta, eduCollectionMetaFormSchema } from '@moodle/module/edu'
+import { eduCollectionApplyImageFormSchema, eduCollectionMeta, eduCollectionMetaFormSchema } from '@moodle/module/edu'
 import { HookSafeActionFn } from 'next-safe-action/hooks'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
@@ -14,13 +14,16 @@ import {
 import { MainCollectionCard } from './MainCollectionCard/MainCollectionCard'
 
 type saveEduCollectionMetaFn = HookSafeActionFn<unknown, eduCollectionMetaFormSchema, any, any, any, any>
+type applyImageForEduCollectionMetaFn = HookSafeActionFn<unknown, eduCollectionApplyImageFormSchema, any, any, any, any>
 export type eduCollectionActions = {
   publish(): Promise<unknown>
   saveNewDraft: saveEduCollectionMetaFn
-  editDraft: saveEduCollectionMetaFn
+  editDraft: {
+    saveMeta: saveEduCollectionMetaFn
+    applyImage: applyImageForEduCollectionMetaFn
+  }
   deleteDraft(): Promise<unknown>
   deletePublished(): Promise<unknown>
-  // applyImage(_: { tempId: string }): Promise<unknown>
   unpublish(): Promise<unknown>
   follow(): Promise<unknown>
   bookmark(): Promise<unknown>
@@ -43,13 +46,65 @@ export type collectionPageProps = d_u<
       actions: selection<eduCollectionActions, never, 'unpublish'>
       contributorCardProps: collectionContributorCardProps
     }
-    // validationSchemas: imagesize, draft, publish
   },
   'activity'
 >
 
 export function CollectionPage(collectionPageProps: collectionPageProps) {
   const { activity, actions, contributorCardProps } = collectionPageProps
+
+  return (
+    <>
+      {/* {modals}
+        {snackbars} */}
+      <div className="collection-page">
+        <div className="main-card">
+          <MainCollectionCard {...{ collectionPageProps }} />
+        </div>
+        {activity === 'viewPublished' && (
+          <div className="contributor-card">
+            <CollectionContributorCard {...contributorCardProps} key="contributor-card" />
+          </div>
+        )}
+        <div className="editor-actions">
+          <Card className="editor-actions" hideBorderWhenSmall={true}>
+            {actions.unpublish && <SecondaryButton onClick={() => actions.unpublish?.()}>Unpublish</SecondaryButton>}
+            {activity === 'editDraft' && (
+              <PrimaryButton onClick={() => alert('publishCheck')} color="green">
+                Publish check
+              </PrimaryButton>
+            )}
+            {actions.publish && (
+              <PrimaryButton onClick={actions.publish} color="green">
+                Publish
+              </PrimaryButton>
+            )}
+          </Card>
+        </div>
+        <div className="resource-list">
+          <Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+            <Card>Resource</Card>
+          </Card>
+        </div>
+      </div>
+    </>
+  )
+}
 
   // const resourceList = (
   //   <div className="resource-list">
@@ -138,55 +193,3 @@ export function CollectionPage(collectionPageProps: collectionPageProps) {
   //     )}
   //   </>
   // )
-  return (
-    <>
-      {/* {modals}
-        {snackbars} */}
-      <div className="collection-page">
-        <div className="main-card">
-          <MainCollectionCard {...{ collectionPageProps }} />
-        </div>
-        {activity === 'viewPublished' && (
-          <div className="contributor-card">
-            <CollectionContributorCard {...contributorCardProps} key="contributor-card" />
-          </div>
-        )}
-        <div className="editor-actions">
-          <Card className="editor-actions" hideBorderWhenSmall={true}>
-            {actions.unpublish && <SecondaryButton onClick={() => actions.unpublish?.()}>Unpublish</SecondaryButton>}
-            {activity === 'editDraft' && (
-              <PrimaryButton onClick={() => alert('publishCheck')} color="green">
-                Publish check
-              </PrimaryButton>
-            )}
-            {actions.publish && (
-              <PrimaryButton onClick={actions.publish} color="green">
-                Publish
-              </PrimaryButton>
-            )}
-          </Card>
-        </div>
-        <div className="resource-list">
-          <Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-            <Card>Resource</Card>
-          </Card>
-        </div>
-      </div>
-    </>
-  )
-}
