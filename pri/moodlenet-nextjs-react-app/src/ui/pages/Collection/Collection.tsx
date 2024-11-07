@@ -2,7 +2,6 @@
 
 import { _nullish, d_u, selection } from '@moodle/lib-types'
 import { eduCollectionApplyImageFormSchema, eduCollectionData, eduCollectionMetaFormSchema } from '@moodle/module/edu'
-import { HookSafeActionFn } from 'next-safe-action/hooks'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../atoms/SecondaryButton/SecondaryButton'

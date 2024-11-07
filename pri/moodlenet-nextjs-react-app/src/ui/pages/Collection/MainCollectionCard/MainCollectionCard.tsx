@@ -43,7 +43,7 @@ import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton'
 import { TertiaryButton } from '../../../atoms/TertiaryButton/TertiaryButton'
 import { collectionPageProps } from '../Collection'
 import './MainCollectionCard.scss'
-import { UploadImage } from '../../../organisms/UploadImage/UploadImage'
+import { DropUpload } from '../../../organisms/DropUpload/DropUpload'
 import { useAssetUploader } from '../../../../lib/client/useAssetUploader'
 
 export function MainCollectionCard({

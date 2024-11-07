@@ -1,5 +1,7 @@
 # Dev notes
 
+https://immerjs.github.io/immer/
+
 ## TODO
 
 remove all ok_ko<void> ==> ok_ko
