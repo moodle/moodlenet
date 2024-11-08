@@ -1,5 +1,5 @@
 import type { d_u, d_u__d, deep_partial_props, ok_ko } from '@moodle/lib-types'
-import { adoptAssetResponse, adoptingAsset } from '../content'
+import { adoptAssetForm, adoptAssetResponse } from '../content'
 import { eduCollectionApplyImageForm, eduCollectionMetaForm } from '../edu'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {
@@ -112,14 +112,14 @@ export default interface UserProfileDomain {
         useTempImageInProfile(_: {
           as: profileImageType
           userProfileId: userProfileId
-          adoptingAsset: d_u__d<adoptingAsset, 'type', 'upload' | 'none'>
-        }): Promise<adoptAssetResponse>
+          adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
+        }): Promise<d_u__d<adoptAssetResponse, 'status', 'done' | 'error'>>
         useTempImageInDraft(_: {
           type: 'eduCollection' | 'eduResource'
           draftId: eduResourceDraftId | eduCollectionDraftId
           userProfileId: userProfileId
-          adoptingAsset: d_u__d<adoptingAsset, 'type', 'upload' | 'none'>
-        }): Promise<adoptAssetResponse>
+          adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
+        }): Promise<d_u__d<adoptAssetResponse, 'status', 'done' | 'error'>>
         /*  updatePartialUserProfile(_: {
           userProfileId: userProfileId
           partialUserProfile: deep_partial_props<userProfileRecord>

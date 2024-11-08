@@ -1,4 +1,4 @@
-import { unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
+import { d_u__d, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
 import sanitizeFilename from 'sanitize-filename'
 import { adoptAssetResponse } from '../../content'
 import { asset, useTempFileResult } from '../types'
@@ -47,17 +47,15 @@ export function getAssetUrl<_asset extends asset>(
 
 export async function useTempFileResult_to_adoptAssetResponse(
   p_useTempFileResult: useTempFileResult | Promise<useTempFileResult>,
-): Promise<adoptAssetResponse> {
+): Promise<d_u__d<adoptAssetResponse, 'status', 'done' | 'error'>> {
   const [done, result] = await p_useTempFileResult
-  return {
-    response: done
-      ? {
-          status: 'done',
-          asset: result.asset,
-        }
-      : {
-          status: 'error',
-          message: result.reason,
-        },
-  }
+  return done
+    ? {
+        status: 'done',
+        asset: result.asset,
+      }
+    : {
+        status: 'error',
+        message: result.reason,
+      }
 }

@@ -10,6 +10,7 @@ import { appRoutes } from '../../../lib/common/appRoutes'
 import { defaultSafeActionClient, safeActionResult_to_adoptAssetResponse } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
 import { adoptAssetService } from '@moodle/module/content'
+import { revalidatePath } from 'next/cache'
 
 export async function getEduCollectionMetaSchema() {
   const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
@@ -44,6 +45,7 @@ export async function editEduCollectionDraftForId({ eduCollectionDraftId }: { ed
             _errors: [t(`something went wrong while saving collection meta`)],
           })
         }
+        revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
       })
     return editEduCollectionDraftAction(eduCollectionMetaForm)
   }
@@ -69,7 +71,11 @@ export async function getEduCollectionDraftImageForIdadoptAssetService({
             eduCollectionDraftId,
             applyImageForm,
           })
-          .then(({ adoptAssetResponse }) => adoptAssetResponse),
+          .then(({ adoptAssetResponse }) => {
+            revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
+
+            return adoptAssetResponse
+          }),
       )
     return safeActionResult_to_adoptAssetResponse(applyEduCollectionDraftImageAction({ adoptAssetForm }))
   }

@@ -23,36 +23,36 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
     const secondaryAdapter: secondaryAdapter = {
       userProfile: {
         write: {
-          async useTempImageInProfile({ as, userProfileId, adoptingAsset: asset }) {
+          async useTempImageInProfile({ as, userProfileId, adoptAssetForm }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const absolutePath = fs_file_paths.userProfile[userProfileId]!.profile[as]!()
-            if (asset.type === 'none') {
+            if (adoptAssetForm.type === 'none') {
               await deleteFile({ absolutePath, fsDirs })
-              return { response: { asset, status: 'done' } }
+              return { asset: adoptAssetForm, status: 'done' }
             }
             return useTempFileResult_to_adoptAssetResponse(
               use_temp_file_as_web_image({
                 fsDirs,
                 secondaryContext: ctx,
                 absolutePath,
-                tempId: asset.tempId,
+                tempId: adoptAssetForm.tempId,
                 size: as === 'avatar' ? 'medium' : 'large',
               }),
             )
           },
-          async useTempImageInDraft({ draftId, adoptingAsset: asset, type, userProfileId }) {
+          async useTempImageInDraft({ draftId, adoptAssetForm, type, userProfileId }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts[type][draftId]!()
-            if (asset.type === 'none') {
+            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts[type][draftId]!.image!()
+            if (adoptAssetForm.type === 'none') {
               await deleteFile({ absolutePath, fsDirs })
-              return { response: { asset, status: 'done' } }
+              return { asset: adoptAssetForm, status: 'done' }
             }
             return useTempFileResult_to_adoptAssetResponse(
               use_temp_file_as_web_image({
                 fsDirs,
                 secondaryContext: ctx,
                 absolutePath,
-                tempId: asset.tempId,
+                tempId: adoptAssetForm.tempId,
                 size: 'large',
               }),
             )

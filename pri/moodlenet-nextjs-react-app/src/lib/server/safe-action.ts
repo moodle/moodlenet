@@ -9,19 +9,17 @@ export async function safeActionResult_to_adoptAssetResponse(
 ): Promise<adoptAssetResponse> {
   const result = await p
   if (!result) {
-    return { response: { status: 'inCharge' } }
+    return { status: 'assetSubmitted' }
   }
   const { bindArgsValidationErrors, serverError, validationErrors, data } = result
   if (bindArgsValidationErrors || serverError || validationErrors) {
     return {
-      response: {
-        status: 'error',
-        message: `something went wrong importing asset ${JSON.stringify({ bindArgsValidationErrors, serverError, validationErrors }, null, 2)}`,
-      },
+      status: 'error',
+      message: `something went wrong importing asset ${JSON.stringify({ bindArgsValidationErrors, serverError, validationErrors }, null, 2)}`,
     }
   }
   if (!data) {
-    return { response: { status: 'inCharge' } }
+    return { status: 'assetSubmitted' }
   }
   return data
 }

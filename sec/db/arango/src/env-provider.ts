@@ -1,5 +1,5 @@
 import { Config as arangojs_config } from 'arangojs/connection'
-import { literal, number, object, string } from 'zod'
+import { literal, number, object, string, union } from 'zod'
 
 import { map } from '@moodle/lib-types'
 import { ArangoDbSecEnv } from './db-structure'
@@ -18,14 +18,14 @@ export function provideArangoDbSecEnv({ env }: { env: map<unknown, env_keys> }):
   }
 
   const env_config = object({
-    MOODLE_ARANGODB_ISDEV: literal('true').or(literal('false')),
+    MOODLE_ARANGODB_ISDEV: union([literal('true'), literal('false')]),
     MOODLE_ARANGODB_DOMAIN_NAME: string()
       .toLowerCase()
       .transform(domainName => sanitizeFilename(domainName)), // CHECK: valid db prefix
     MOODLE_ARANGODB_URL: string(),
     MOODLE_ARANGODB_USER: string().optional(),
     MOODLE_ARANGODB_PWD: string().optional(),
-    MOODLE_ARANGODB_VERSION: int_schema(31200).or(literal(31200)).or(literal(31100)),
+    MOODLE_ARANGODB_VERSION: union([int_schema(31200), literal(31200), literal(31100)]),
   }).parse({
     MOODLE_ARANGODB_ISDEV: env.MOODLE_ARANGODB_ISDEV,
     MOODLE_ARANGODB_DOMAIN_NAME: env.MOODLE_ARANGODB_DOMAIN_NAME,

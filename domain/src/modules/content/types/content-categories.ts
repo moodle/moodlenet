@@ -1,5 +1,5 @@
 import { d_u, fraction, url_string, url_string_schema } from '@moodle/lib-types'
-import { literal, object, string } from 'zod'
+import { literal, object, string, union } from 'zod'
 import { asset } from '../../storage'
 
 export type contentCredits = {
@@ -26,7 +26,7 @@ export type contentLicenseRecord = {
   restrictiveness: fraction
 }
 
-export type adoptingAsset = d_u<
+export type adoptAssetForm = d_u<
   {
     upload: {
       tempId: string
@@ -37,39 +37,31 @@ export type adoptingAsset = d_u<
   'type'
 >
 
-export type adoptAssetForm = {
-  adoptingAsset: adoptingAsset
-}
-export type adoptAssetResponse = {
-  response: d_u<
-    {
-      // inCharge: unknown
-      done: { asset: asset }
-      error: { message: string }
-    },
-    'status'
-  >
-}
+export type adoptAssetResponse = d_u<
+  {
+    assetSubmitted: unknown
+    done: { asset: asset }
+    error: { message?: string }
+  },
+  'status'
+>
+
 export type adoptAssetService = (adoptAssetForm: adoptAssetForm) => Promise<adoptAssetResponse>
 
-export const adoptAssetFormSchema = object({
-  adoptingAsset: object({
+export const adoptAssetFormSchema = union([
+  object({
     type: literal('upload'),
     tempId: string(),
-  })
-    .or(
-      object({
-        type: literal('external'),
-        url: url_string_schema,
-        credits: object({
-          owner: object({ name: string().max(50), url: url_string_schema }),
-          provider: object({ name: string().max(50), url: url_string_schema }).optional(),
-        }).optional(),
-      }),
-    )
-    .or(
-      object({
-        type: literal('none'),
-      }),
-    ),
-})
+  }),
+  object({
+    type: literal('external'),
+    url: url_string_schema,
+    credits: object({
+      owner: object({ name: string().max(50), url: url_string_schema }),
+      provider: object({ name: string().max(50), url: url_string_schema }).optional(),
+    }).optional(),
+  }),
+  object({
+    type: literal('none'),
+  }),
+])

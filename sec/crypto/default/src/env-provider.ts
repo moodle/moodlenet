@@ -1,4 +1,4 @@
-import { literal, number, object, string } from 'zod'
+import { literal, number, object, string, union } from 'zod'
 
 import { map } from '@moodle/lib-types'
 import type { CryptoDefaultEnv } from './crypto-secondarys'
@@ -21,7 +21,7 @@ export function provideCryptoDefaultEnv({ env }: { env: map<unknown, env_keys> }
     MOODLE_ARGON_OPTS_TIME_COST: string_int_schema(8),
     MOODLE_ARGON_OPTS_PARALLELISM: string_int_schema(4),
     MOODLE_ARGON_OPTS_TYPE: string_int_schema(2)
-      .pipe(literal(0).or(literal(1)).or(literal(2)))
+      .pipe(union([literal(0), literal(1), literal(2)]))
       .optional(),
   }).parse({
     MOODLE_CRYPTO_PRIVATE_KEY: env.MOODLE_CRYPTO_PRIVATE_KEY,

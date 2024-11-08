@@ -25,7 +25,7 @@ export type useAssetUploaderHandler = {
   current: current
   openFileDialog: () => void
   submit(): void
-  select(selection: selection | _nullish): void
+  select: (selection: selection | _nullish) => void
   state: assetUploaderState
   dropHandlers: Pick<DOMAttributes<HTMLElement>, 'onDrop' | 'onDragEnter' | 'onDragOver'>
   opts: assetUploaderHookOpts
@@ -64,17 +64,17 @@ export function useAssetUploader(
   } satisfies assetUploaderState)
 
   const checkAndSelect = useCallback(
-    (selection: selection) => {
+    (selection: selection | _nullish) => {
       if (!adoptAssetService) {
         return
       }
-      const maxSizeExceeded = selection.type === 'file' && selection.file.size > maxSize
-      if (!maxSizeExceeded) {
+      const maxSizeExceeded = !!selection && selection.type === 'file' && selection.file.size > maxSize
+      if (maxSizeExceeded) {
         //TODO: better feedback
         alert(`File size exceeded: max ${humanFileSize(maxSize)}`)
         return
       }
-      dispatch({ type: 'select', selection })
+      dispatch({ type: 'select', selection: selection ?? { type: 'null' } })
     },
     [maxSize, adoptAssetService],
   )
@@ -167,13 +167,13 @@ export function useAssetUploader(
     }
     const _adoptAssetService = adoptAssetService
     dispatch({ type: 'submit' })
-    ;;(async (): Promise<adoptAssetForm | 'upload error'> => {
+    ;(async (): Promise<adoptAssetForm | 'upload error'> => {
       if (state.selection.type !== 'file') {
         dispatch({ type: 'uploadStatus', status: 'noUpload' })
         return state.selection.type === 'external'
-          ? { adoptingAsset: { type: 'external', url: state.selection.url, credits: state.selection.credits } }
+          ? { type: 'external', url: state.selection.url, credits: state.selection.credits }
           : state.selection.type === 'null'
-            ? { adoptingAsset: { type: 'none' } }
+            ? { type: 'none' }
             : unreachable_never(state.selection)
       } else {
         const { file } = state.selection
@@ -183,7 +183,8 @@ export function useAssetUploader(
         return new Promise<{ tempId: string }>((resolve, reject) => {
           const formData = new FormData()
           formData.append(uploadTempFieldName, file)
-          xhr.upload.addEventListener('load', () => resolve(JSON.parse(xhr.responseText)))
+          // xhr.upload.addEventListener('load', () => resolve(JSON.parse(xhr.responseText)))
+          xhr.addEventListener('load', () => resolve(JSON.parse(xhr.responseText)))
           xhr.upload.addEventListener('error', () => reject(xhr.response))
           xhr.upload.addEventListener('progress', progressEvent =>
             dispatch({
@@ -211,7 +212,7 @@ export function useAssetUploader(
           uploadResponse => {
             const { tempId } = uploadResponse
             dispatch({ type: 'uploadStatus', status: 'done', tempId })
-            return { adoptingAsset: { type: 'upload', tempId } }
+            return { type: 'upload', tempId }
           },
           err => {
             dispatch({ type: 'uploadStatus', status: 'error', message: String(err) })
@@ -224,10 +225,8 @@ export function useAssetUploader(
         return adoptAssetForm === 'upload error'
           ? Promise.reject('upload error')
           : _adoptAssetService(adoptAssetForm).catch<adoptAssetResponse>(err => ({
-              response: {
-                status: 'error',
-                message: String(err),
-              },
+              status: 'error',
+              message: String(err),
             }))
       })
       .then(adoptAssetResponse => {
@@ -237,17 +236,17 @@ export function useAssetUploader(
   }, [state.type, state.selection, filetoreHttp.href, type, adoptAssetService])
 
   return useMemo<useAssetUploaderHandler>(() => {
-    return {
+    const useAssetUploaderHandler: useAssetUploaderHandler = {
       current: activeCurrent,
       openFileDialog,
       submit,
       state,
       dropHandlers,
-      dispatch,
       opts,
       select: checkAndSelect,
       uploadingXhr,
     }
+    return useAssetUploaderHandler
   }, [activeCurrent, openFileDialog, submit, state, dropHandlers, opts, checkAndSelect, uploadingXhr])
 }
 
@@ -256,7 +255,7 @@ function getFileUploaderReducer({ maxSize }: { maxSize: number }) {
     console.log({ prev, action })
     if (prev.type === 'submitting') {
       if (action.type === 'actionResponse') {
-        if (prev.uploadStatus.status !== 'done') {
+        if (!(prev.uploadStatus.status === 'done' || prev.uploadStatus.status === 'noUpload')) {
           console.error('prev.uploadStatus.status not done', { action, prev })
           return prev
         }
