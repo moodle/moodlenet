@@ -123,33 +123,17 @@ export function MainCollectionCard({
       },
     },
   )
-  const imageAssetUploaderHandler = useAssetUploader({
-    assets: eduCollectionData?.image,
-    async action({ tempIds }) {
-      {
-        if (activity !== 'editDraft') {
-          return { done: true }
-        }
-        const saveResult = await actions.editDraft.applyImage({ tempId: tempIds?.[0] })
-        if (saveResult?.validationErrors) {
-          return { done: false, error: saveResult.validationErrors._errors }
-        }
-
-        return { done: true, newAsset: saveResult?.data }
-      }
-    },
+  const imageAssetUploaderHandler = useAssetUploader(eduCollectionData?.image, actions.editDraft?.applyImage, {
     type: 'webImage',
   })
-  const [, , /* [imageUrl] */ /* openFileDialog */ submitImage, imageUploaderState /* dropHandlers, dispatch */] =
-    imageAssetUploaderHandler
 
   const submitForm = useCallback(() => {
     formState.isDirty && submitFormMeta()
-    imageUploaderState.dirty && submitImage()
-  }, [formState.isDirty, imageUploaderState.dirty, submitFormMeta, submitImage])
+    imageAssetUploaderHandler.state.dirty && imageAssetUploaderHandler.submit()
+  }, [formState.isDirty, imageAssetUploaderHandler, submitFormMeta])
 
-  const isDirty = imageUploaderState.dirty || formState.isDirty
-  const isSubmitting = imageUploaderState.type === 'submitting' || formState.isSubmitting
+  const isDirty = imageAssetUploaderHandler.state.dirty || formState.isDirty
+  const isSubmitting = imageAssetUploaderHandler.state.type === 'submitting' || formState.isSubmitting
 
   // const descriptionEditRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null)
   // const descriptionRef = useRef<HTMLDivElement>(null)
@@ -234,7 +218,7 @@ export function MainCollectionCard({
       {/* {searchImageComponent} */}
       <Card className="main-collection-card" hideBorderWhenSmall={true}>
         {activity === 'editDraft' && (
-          <UploadImage
+          <DropUpload
             useAssetUploaderHandler={imageAssetUploaderHandler}
             // backupImage={backupImage}
             key="collection-uploader"

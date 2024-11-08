@@ -1,12 +1,13 @@
 'use server'
 
 import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
-import { usingTempFile2asset } from '@moodle/module/storage/lib'
+import { adoptAssetService } from '@moodle/module/content'
+import { profileImageType } from '@moodle/module/user-profile'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { appRoutes } from '../../../../../lib/common/appRoutes'
-import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
+import { defaultSafeActionClient, safeActionResult_to_adoptAssetResponse } from '../../../../../lib/server/safe-action'
 import { access } from '../../../../../lib/server/session-access'
 
 export async function getProfileInfoSchema() {
@@ -38,18 +39,19 @@ export async function getUseProfileImageSchema() {
   return useProfileImageSchema
 }
 
-export const adoptMyProfileImage = defaultSafeActionClient
-  .schema(getUseProfileImageSchema)
-  .action(async ({ parsedInput: useProfileImageForm }) => {
-    const [[done, result], { userProfileId }] =
-      await access.primary.userProfile.authenticated.useTempImageAsProfileImage(useProfileImageForm)
-    if (!done) {
-      returnValidationErrors(getProfileInfoSchema, {
-        _errors: [t(`something went wrong while saving ${useProfileImageForm.as}`) + ` : ${result?.reason}`],
+export async function getApplyMyProfileImageadoptAssetService(as: profileImageType): Promise<adoptAssetService> {
+  return async function adoptAssetForm_myProfileImage(adoptAssetForm) {
+    'use server'
+    const applyMyProfileImageAction = defaultSafeActionClient
+      .schema(getUseProfileImageSchema)
+      .action(async ({ parsedInput: { as, adoptAssetForm } }) => {
+        return access.primary.userProfile.authenticated
+          .useTempImageAsProfileImage({ useProfileImageForm: { as, adoptAssetForm } })
+          .then(({ adoptAssetResponse, userProfileId }) => {
+            revalidatePath(appRoutes(`/profile/${userProfileId}/`))
+            return adoptAssetResponse
+          })
       })
-    }
-
-    revalidatePath(appRoutes(`/profile/${userProfileId}/`))
-
-    // return usingTempFile2asset(result)
-  })
+    return safeActionResult_to_adoptAssetResponse(applyMyProfileImageAction({ as, adoptAssetForm }))
+  }
+}

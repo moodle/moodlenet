@@ -45,31 +45,25 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
 
   const submitFormBtnRef = useRef<HTMLButtonElement | null>(null)
 
-  const [[displayAvatarSrc], chooseImageAvatar, submitAvatar, avatarUploaderState, dropAvatarAttr] = useAssetUploader({
-    assets: profileInfo.avatar,
-    async action({ tempIds }) {
-      const saveResult = await actions.edit?.adoptMyProfileImage({ as: 'avatar', tempId: tempIds?.[0] })
-
-      return saveResult?.data
-        ? { done: true, newAssets: saveResult.data }
-        : { done: false, error: saveResult?.validationErrors?._errors }
-    },
+  const {
+    current: { url: displayAvatarSrc },
+    openFileDialog: chooseImageAvatar,
+    submit: submitAvatar,
+    state: avatarUploaderState,
+    dropHandlers: dropAvatarAttr,
+  } = useAssetUploader(profileInfo.avatar, actions.edit?.useAsMyProfileAvatar, {
     type: 'webImage',
   })
 
-  const [[displayBackgroundSrc], chooseImageBackground, submitBackground, backgroundUploaderState, dropBackgroundAttrs] =
-    useAssetUploader({
-      assets: profileInfo.background,
-      async action({ tempIds }) {
-        const saveResult = await actions.edit?.adoptMyProfileImage({ as: 'background', tempId: tempIds?.[0] })
-        if (!saveResult?.data) {
-          return { done: false, error: saveResult?.validationErrors?._errors }
-        }
-
-        return { done: true, newAssets: saveResult.data }
-      },
-      type: 'webImage',
-    })
+  const {
+    current: { url: displayBackgroundSrc },
+    openFileDialog: chooseImageBackground,
+    submit: submitBackground,
+    state: backgroundUploaderState,
+    dropHandlers: dropBackgroundAttrs,
+  } = useAssetUploader(profileInfo.background, actions.edit?.useAsMyProfileBackground, {
+    type: 'webImage',
+  })
 
   const submitAll = useCallback(() => {
     submitFormBtnRef.current?.click()
@@ -86,18 +80,15 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
         <div className={`background-container`} key="background-container">
           {!actions.edit
             ? null
-            : isEditing && [
+            : isEditing && (
                 <RoundButton
                   className="change-background-button"
                   type="edit"
                   abbrTitle={`Edit background`}
                   onClick={chooseImageBackground}
                   key="edit-background-btn"
-                />,
-                backgroundUploaderState.error && (
-                  <Snackbar key="edit-background-err">{backgroundUploaderState.error}</Snackbar>
-                ),
-              ]}
+                />
+              )}
           <div
             {...(isEditing && dropBackgroundAttrs)}
             className={`background`}
@@ -110,16 +101,15 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
         <div className={`avatar-container`} key="avatar-container">
           {!actions.edit
             ? null
-            : isEditing && [
+            : isEditing && (
                 <RoundButton
                   className="change-avatar-button"
                   type="edit"
                   abbrTitle={`Edit profile picture`}
                   onClick={chooseImageAvatar}
                   key="edit-avatar-btn"
-                />,
-                avatarUploaderState.error && <Snackbar key="edit-avatar-err">{avatarUploaderState.error}</Snackbar>,
-              ]}
+                />
+              )}
           <div
             {...(isEditing && dropAvatarAttr)}
             className={`avatar`}

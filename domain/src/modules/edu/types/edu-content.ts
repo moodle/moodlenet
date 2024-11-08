@@ -17,7 +17,7 @@ export type eduResourceMeta = {
 
 export type eduResourceData = eduResourceMeta & {
   asset: asset
-  image: _nullish | asset
+  image: asset
 }
 
 export type bloomLearningOutcome = {
@@ -31,5 +31,5 @@ export type eduCollectionMeta = {
   description: string
 }
 export type eduCollectionData = eduCollectionMeta & {
-  image: _nullish | asset
+  image: asset
 }

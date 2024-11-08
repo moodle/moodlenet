@@ -1,4 +1,6 @@
-import { fraction, url_string } from '@moodle/lib-types'
+import { d_u, fraction, url_string, url_string_schema } from '@moodle/lib-types'
+import { literal, object, string } from 'zod'
+import { asset } from '../../storage'
 
 export type contentCredits = {
   owner: { name: string; url: url_string }
@@ -23,3 +25,51 @@ export type contentLicenseRecord = {
   name: string
   restrictiveness: fraction
 }
+
+export type adoptingAsset = d_u<
+  {
+    upload: {
+      tempId: string
+    }
+    external: external_content
+    none: unknown
+  },
+  'type'
+>
+
+export type adoptAssetForm = {
+  adoptingAsset: adoptingAsset
+}
+export type adoptAssetResponse = {
+  response: d_u<
+    {
+      // inCharge: unknown
+      done: { asset: asset }
+      error: { message: string }
+    },
+    'status'
+  >
+}
+export type adoptAssetService = (adoptAssetForm: adoptAssetForm) => Promise<adoptAssetResponse>
+
+export const adoptAssetFormSchema = object({
+  adoptingAsset: object({
+    type: literal('upload'),
+    tempId: string(),
+  })
+    .or(
+      object({
+        type: literal('external'),
+        url: url_string_schema,
+        credits: object({
+          owner: object({ name: string().max(50), url: url_string_schema }),
+          provider: object({ name: string().max(50), url: url_string_schema }).optional(),
+        }).optional(),
+      }),
+    )
+    .or(
+      object({
+        type: literal('none'),
+      }),
+    ),
+})

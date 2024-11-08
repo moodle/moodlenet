@@ -1,6 +1,6 @@
 // @import '../../../../styles/application';
 
-.upload-image {
+.upload-file {
   width: 100%;
   display: flex;
   border-radius: 16px 16px 0 0;
@@ -43,7 +43,7 @@
         }
       }
 
-      &.image > svg {
+      &.file > svg {
         height: 65px;
       }
 

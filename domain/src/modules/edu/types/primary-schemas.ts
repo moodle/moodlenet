@@ -1,6 +1,7 @@
 import { single_line_string_schema } from '@moodle/lib-types'
 import type { z } from 'zod'
 import { object, string } from 'zod'
+import { adoptAssetFormSchema } from '../../content'
 export type eduPrimaryMsgSchemaConfigs = {
   eduCollectionMeta: {
     title: { max: number }
@@ -22,9 +23,7 @@ export function getEduPrimarySchemas({ eduCollectionMeta }: eduPrimaryMsgSchemaC
     description: eduCollectionDescription,
   })
 
-  const applyImageSchema = object({
-    tempId: string().nullish(),
-  })
+  const applyImageSchema = object({ adoptAssetForm: adoptAssetFormSchema })
 
   return {
     raw: {
@@ -37,3 +36,4 @@ export function getEduPrimarySchemas({ eduCollectionMeta }: eduPrimaryMsgSchemaC
     eduCollectionMetaSchema,
   }
 }
+

@@ -1,5 +1,6 @@
-import { date_time_string, mimetype, ok_ko } from '@moodle/lib-types'
+import { d_u__d, date_time_string, mimetype, ok_ko } from '@moodle/lib-types'
 import { userAccountId } from '../../user-account'
+import { asset } from './asset'
 
 export * from './primary-schemas'
 
@@ -25,10 +26,10 @@ export type uploaded_blob_meta = {
   }
 }
 
-export type usingTempFile = {
-  uploaded_blob_meta: uploaded_blob_meta
-  path: string
-}
+type usingTempFile = {
+   uploaded_blob_meta: uploaded_blob_meta
+   asset: d_u__d<asset, 'type', 'local'>
+ }
 
 export type useTempFileResult = ok_ko<
   usingTempFile,
@@ -40,5 +41,3 @@ export type useTempFileResult = ok_ko<
     invalidFile: unknown
   }
 >
-
-export type deleteFileResult = ok_ko<void>

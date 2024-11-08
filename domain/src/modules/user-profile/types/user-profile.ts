@@ -15,10 +15,10 @@ export type profileInfoMeta = {
   siteUrl: _nullish | url_string
 }
 export type profileInfo = profileInfoMeta & {
-  background: _nullish | asset
-  avatar: _nullish | asset
+  background: asset
+  avatar: asset
 }
-export type profileImage = 'avatar' | 'background'
+export type profileImageType = 'avatar' | 'background'
 
 export type userProfileId = string
 

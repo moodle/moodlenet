@@ -1,5 +1,5 @@
 import { map, path, url_path_string } from '@moodle/lib-types'
-import { profileImage } from '@moodle/module/user-profile'
+import { profileImageType } from '@moodle/module/user-profile'
 
 export type fsPathGetter = () => path
 export type fsUrlPathGetter = () => url_path_string
@@ -21,7 +21,7 @@ export type file = (alias: string) => path
 export type filesystem = {
   userProfile: {
     [userProfileId in string]: {
-      profile: map<'image', profileImage>
+      profile: map<'image', profileImageType>
       drafts: {
         eduResource: {
           [eduResourceDraftId in string]: map<'image', 'image'>

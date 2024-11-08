@@ -1,13 +1,13 @@
-import type { _nullish, d_u, deep_partial_props, ok_ko } from '@moodle/lib-types'
+import type { d_u, d_u__d, deep_partial_props, ok_ko } from '@moodle/lib-types'
+import { adoptAssetResponse, adoptingAsset } from '../content'
 import { eduCollectionApplyImageForm, eduCollectionMetaForm } from '../edu'
-import { deleteFileResult, useTempFileResult } from '../storage'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {
   UserProfilePrimaryMsgSchemaConfigs,
   eduCollectionDraft,
   eduCollectionDraftId,
   eduResourceDraftId,
-  profileImage,
+  profileImageType,
   profileInfo,
   profileInfoMeta,
   useProfileImageForm,
@@ -33,9 +33,9 @@ export default interface UserProfileDomain {
         }>
       }
       authenticated: {
-        useTempImageAsProfileImage(
-          _: useProfileImageForm,
-        ): Promise<[use_or_delete_result: useTempFileResult | deleteFileResult, { userProfileId: userProfileId }]>
+        useTempImageAsProfileImage(_: {
+          useProfileImageForm: useProfileImageForm
+        }): Promise<{ adoptAssetResponse: adoptAssetResponse; userProfileId: userProfileId }>
         editProfileInfoMeta(_: { partialProfileInfoMeta: deep_partial_props<profileInfoMeta> }): Promise<
           ok_ko<
             { userProfileId: userProfileId },
@@ -56,11 +56,10 @@ export default interface UserProfileDomain {
           eduCollectionDraftId: eduCollectionDraftId
           eduCollectionMetaForm: eduCollectionMetaForm
         }): Promise<ok_ko<void>>
-        applyEduCollectionDraftImage(
-          _: {
-            eduCollectionDraftId: eduCollectionDraftId
-          } & eduCollectionApplyImageForm,
-        ): Promise<[use_or_delete_result: useTempFileResult | deleteFileResult, { userProfileId: userProfileId }]>
+        applyEduCollectionDraftImage(_: {
+          eduCollectionDraftId: eduCollectionDraftId
+          applyImageForm: eduCollectionApplyImageForm
+        }): Promise<{ adoptAssetResponse: adoptAssetResponse; userProfileId: userProfileId }>
         getEduCollectionDraft(_: {
           eduCollectionDraftId: eduCollectionDraftId
         }): Promise<ok_ko<eduCollectionDraft, { notFound: unknown }>>
@@ -111,16 +110,16 @@ export default interface UserProfileDomain {
           partialProfileInfo: deep_partial_props<profileInfo>
         }): Promise<ok_ko<void>>
         useTempImageInProfile(_: {
-          as: profileImage
+          as: profileImageType
           userProfileId: userProfileId
-          tempId: string | _nullish
-        }): Promise<useTempFileResult | deleteFileResult>
+          adoptingAsset: d_u__d<adoptingAsset, 'type', 'upload' | 'none'>
+        }): Promise<adoptAssetResponse>
         useTempImageInDraft(_: {
           type: 'eduCollection' | 'eduResource'
           draftId: eduResourceDraftId | eduCollectionDraftId
           userProfileId: userProfileId
-          tempId: string | _nullish
-        }): Promise<useTempFileResult | deleteFileResult>
+          adoptingAsset: d_u__d<adoptingAsset, 'type', 'upload' | 'none'>
+        }): Promise<adoptAssetResponse>
         /*  updatePartialUserProfile(_: {
           userProfileId: userProfileId
           partialUserProfile: deep_partial_props<userProfileRecord>

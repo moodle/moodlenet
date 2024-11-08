@@ -1,39 +1,75 @@
 import { useState } from 'react'
 import { useAssetUploaderHandler } from '../../../lib/client/useAssetUploader'
 import { ReactComponent as UploadImageIcon } from '../../lib/assets/icons/upload-image.svg'
+import { ReactComponent as UploadFileIcon } from '../../lib/assets/icons/upload-file.svg'
 import ImageContainer from '../../molecules/ImageContainer/ImageContainer'
-import './UploadImage.scss'
+import './DropUpload.scss'
+import { unreachable_never } from '@moodle/lib-types'
 export type uploadImageProps = {
   useAssetUploaderHandler: useAssetUploaderHandler
   displayOnly?: boolean
   deleteImage?: () => unknown
 }
 
-export function UploadImage({ useAssetUploaderHandler, displayOnly }: uploadImageProps) {
-  const [[imageUrl], openFileDialog /* submit */, , uploaderState, dropHandlers, dispatch] = useAssetUploaderHandler
+export function DropUpload({ useAssetUploaderHandler, displayOnly }: uploadImageProps) {
+  const {
+    current,
+    openFileDialog,
+    state,
+    dropHandlers,
+    opts: { type },
+    select,
+  } = useAssetUploaderHandler
 
-  const [asset] = uploaderState.assets
-  const credits = asset?.type === 'external' ? asset.credits : undefined
+  const credits = current?.type === 'asset' && current?.asset.type === 'external' ? current.asset.credits : undefined
 
-  const imageContainer = (
-    <ImageContainer
-      imageUrl={imageUrl}
-      credits={credits}
-      deleteImage={() => dispatch({ type: 'select', files: null })}
-      displayOnly={displayOnly}
-      overlayCredits={true}
-    />
-  )
+  const viewerContainer =
+    type === 'webImage' ? (
+      <ImageContainer
+        imageUrl={current?.url}
+        credits={credits}
+        deleteImage={() => select(null)}
+        displayOnly={displayOnly}
+        overlayCredits={true}
+      />
+    ) : (
+      <span>
+        {current.type === 'asset'
+          ? current.asset.type === 'external'
+            ? current.asset.url
+            : current.asset.type === 'local'
+              ? current.asset.name
+              : current.asset.type === 'none'
+                ? ''
+                : unreachable_never(current.asset)
+          : current.type === 'file'
+            ? current.file.name
+            : unreachable_never(current)}
+      </span>
+    )
+  const promptContent =
+    type === 'webImage' ? (
+      <>
+        <UploadImageIcon />
+        <span>Drop or click to upload an image!</span>
+      </>
+    ) : (
+      <>
+        <UploadFileIcon />
+        <span>Drop or click to upload a File!</span>
+      </>
+    )
 
   const [isToDrop, setIsToDrop] = useState<boolean>(false)
+  const uploadErrored = state.uploadStatus?.status === 'error'
   return (
-    <div className="upload-image">
+    <div className="upload-file">
       {/* {modals}
       {snackbars} */}
-      {!imageUrl && !displayOnly ? (
+      {!current?.url && !displayOnly ? (
         <div className={`uploader `}>
           <div
-            className={`image upload ${isToDrop ? 'hover' : ''} ${uploaderState.error ? 'error' : ''}`}
+            className={`file upload ${isToDrop ? 'hover' : ''} ${uploadErrored ? 'error' : ''}`}
             onClick={openFileDialog}
             {...dropHandlers}
             onDragOver={e => {
@@ -45,12 +81,11 @@ export function UploadImage({ useAssetUploaderHandler, displayOnly }: uploadImag
             tabIndex={0}
             onKeyUp={e => e.key === 'Enter' && openFileDialog()}
           >
-            <UploadImageIcon />
-            <span>Drop or click to upload an image!</span>
+            {promptContent}
           </div>
         </div>
       ) : (
-        imageContainer
+        viewerContainer
       )}
     </div>
   )

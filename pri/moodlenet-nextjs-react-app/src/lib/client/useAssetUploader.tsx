@@ -1,17 +1,8 @@
-import { _nullish, d_u, isNotNullish } from '@moodle/lib-types'
-import { asset } from '@moodle/module/storage'
+import { _nullish, d_u, d_u__d, isNotNullish, unreachable_never, url_string } from '@moodle/lib-types'
+import { adoptAssetForm, adoptAssetResponse, adoptAssetService, external_content } from '@moodle/module/content'
+import { asset, NONE_ASSET } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
-import {
-  Dispatch,
-  DOMAttributes,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-} from 'react'
+import { DOMAttributes, useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { humanFileSize } from '../../ui/lib/misc'
 import { useAllSchemaConfigs, useFileServerDeployment } from './globalContexts'
 
@@ -19,75 +10,92 @@ import { useAllSchemaConfigs, useFileServerDeployment } from './globalContexts'
 const uploadTempFieldName = 'file'
 const uploadTempPath = '/.temp'
 const uploadTempMethod = 'POST'
-useAssetUploader.type = { webImage: '.jpg,.jpeg,.png,.gif', file: '*' }
+useAssetUploader.type = { webImage: '.jpg,.jpeg,.png,.gif', anyFile: '*' }
 
-export type useAssetUploaderHandler = [
-  activeSrcs: string[],
-  openFileDialog: () => void,
-  submit: () => void,
-  state: fileUploaderState,
-  dropHandlers: Pick<DOMAttributes<HTMLElement>, 'onDrop' | 'onDragEnter' | 'onDragOver'>,
-  dispatch: Dispatch<fileUploaderAction>,
-]
+type current = d_u<
+  {
+    asset:
+      | { asset: d_u__d<asset, 'type', 'external' | 'local'>; url: string }
+      | { asset: d_u__d<asset, 'type', 'none'>; url: _nullish }
+    file: { file: File; url: string }
+  },
+  'type'
+>
+export type useAssetUploaderHandler = {
+  current: current
+  openFileDialog: () => void
+  submit(): void
+  select(selection: selection | _nullish): void
+  state: assetUploaderState
+  dropHandlers: Pick<DOMAttributes<HTMLElement>, 'onDrop' | 'onDragEnter' | 'onDragOver'>
+  opts: assetUploaderHookOpts
+  uploadingXhr?: _nullish | uploadingXhr
+}
+type uploadingXhr = {
+  xhr: XMLHttpRequest
+  abort(): void
+  file: File
+}
 
-export type actionResponse = { done: true; newAssets?: asset[] } | { done: false; error?: string | string[] | _nullish }
-export type fileUploadedAction = (_: { tempIds: _nullish | [string, ...string[]] }) => Promise<actionResponse>
-export type assetUploaderHookProps = {
-  assets: _nullish | asset | asset[]
-  action: fileUploadedAction
-  type: 'webImage' | 'file'
-  multiple?: boolean
-  optimisticAssetUrlUpdate?: boolean
+export type submissionCallback = (_: { submission: lastSubmission[] }) => void
+
+export type assetUploaderHookOpts = {
+  type: 'webImage' | 'anyFile'
   overrideMaxSize?: number
 }
 
-export function useAssetUploader({
-  assets,
-  action,
-  type,
-  multiple = false,
-  optimisticAssetUrlUpdate = false,
-  overrideMaxSize,
-}: assetUploaderHookProps) {
-  const filestoreHttp = useFileServerDeployment()
+export function useAssetUploader(
+  _initialAsset: _nullish | asset,
+  adoptAssetService: adoptAssetService | _nullish,
+  opts: assetUploaderHookOpts,
+) {
+  const initialAsset = _initialAsset ?? NONE_ASSET
+  const { type, overrideMaxSize } = opts
+  const filetoreHttp = useFileServerDeployment()
   const { uploadMaxSizeConfigs } = useAllSchemaConfigs()
   const maxSize = overrideMaxSize ?? (type === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max)
   const inputFileRef = useRef<HTMLInputElement | null>(null)
-  const [resetState, setResetState] = useState<fileUploaderState & { type: 'reset' }>({
-    type: 'reset',
+  const [state, dispatch] = useReducer(getFileUploaderReducer({ maxSize }), {
+    type: 'settled',
     dirty: false,
-    assets: assets ? [assets].flat() : [],
+    lastSubmission: null,
     selection: null,
-    submission: { s: 'never-submitted' },
-    error: null,
-  })
-  const [state, dispatch] = useReducer(getFileUploaderReducer({ maxSize, resetState }), resetState)
-  useEffect(() => {
-    if (state.type !== 'reset') {
-      return
-    }
-    setResetState(state)
-  }, [state])
+    uploadStatus: null,
+  } satisfies assetUploaderState)
+
+  const checkAndSelect = useCallback(
+    (selection: selection) => {
+      if (!adoptAssetService) {
+        return
+      }
+      const maxSizeExceeded = selection.type === 'file' && selection.file.size > maxSize
+      if (!maxSizeExceeded) {
+        //TODO: better feedback
+        alert(`File size exceeded: max ${humanFileSize(maxSize)}`)
+        return
+      }
+      dispatch({ type: 'select', selection })
+    },
+    [maxSize, adoptAssetService],
+  )
 
   useLayoutEffect(() => {
     const inputElement = document.createElement('input')
     inputElement.type = 'file'
     inputElement.accept = useAssetUploader.type[type]
     inputElement.hidden = true
-    inputElement.multiple = multiple
+    inputElement.multiple = false
     inputElement.onchange = e => {
-      const fileList = inputFileRef.current?.files
-      if (!fileList?.length) {
-        //dispatch({ type: 'reset' })
+      const selectedFile = inputFileRef.current?.files?.item(0)
+      if (!selectedFile) {
         return
       }
-      const files = fileList.length === 0 ? null : (Array.from(fileList) as [File, ...File[]])
       if (inputFileRef.current) {
         inputFileRef.current.type = 'text'
         inputFileRef.current.type = 'file'
         inputFileRef.current.value = ''
       }
-      dispatch({ type: 'select', files })
+      checkAndSelect({ type: 'file', file: selectedFile })
     }
     inputFileRef.current = inputElement
     document.body.append(inputElement)
@@ -95,11 +103,11 @@ export function useAssetUploader({
       inputFileRef.current = null
       document.body.removeChild(inputElement)
     }
-  }, [type, maxSize, multiple])
+  }, [type, checkAndSelect])
 
   const openFileDialog = useCallback(() => inputFileRef.current?.click(), [])
 
-  const dropHandlers = useMemo<useAssetUploaderHandler['4']>(() => {
+  const dropHandlers = useMemo<useAssetUploaderHandler['dropHandlers']>(() => {
     return {
       onDragEnter: onDragOverEnter,
       onDragOver: onDragOverEnter,
@@ -109,218 +117,319 @@ export function useAssetUploader({
       e.preventDefault()
     }
     function onDrop(e: React.DragEvent<HTMLElement>) {
-      console.log({ e, i: e.dataTransfer.items.length, f: e.dataTransfer.files.length })
-      const fileList = e.dataTransfer.items
-        ? Array.from(e.dataTransfer.items)
-            .map(item => item.getAsFile())
-            .filter(isNotNullish)
-        : Array.from(e.dataTransfer.files)
-
-      if (fileList.length === 0) {
+      const fileList = (
+        e.dataTransfer.items
+          ? Array.from(e.dataTransfer.items).map(item => item.getAsFile())
+          : Array.from(e.dataTransfer.files)
+      ).filter(isNotNullish)
+      const [selectedFile] = fileList
+      if (!selectedFile) {
         return
       }
-      const files = fileList.length === 0 ? null : (Array.from(fileList) as [File, ...File[]])
-
-      dispatch({ type: 'select', files })
+      checkAndSelect({ type: 'file', file: selectedFile })
       e.preventDefault()
     }
-  }, [])
+  }, [checkAndSelect])
 
-  const [activeSrcs, setActiveSrcs] = useState<string[]>([])
+  const initializationCurrent = useMemo<current>(
+    () =>
+      initialAsset.type === 'none'
+        ? { type: 'asset', asset: initialAsset, url: null }
+        : { type: 'asset', asset: initialAsset, url: getAssetUrl(initialAsset, filetoreHttp.href) },
+    [filetoreHttp.href, initialAsset],
+  )
+  const [activeCurrent, setActiveCurrent] = useState<current>(initializationCurrent)
   useEffect(() => {
-    const newActiveSrcs =
-      state.type === 'reset'
-        ? state.submission.storedAssets
-          ? optimisticAssetUrlUpdate
-            ? state.submission.storedAssets.map(asset => getAssetUrl(asset, filestoreHttp.href))
-            : null
-          : state.assets.map(asset => getAssetUrl(asset, filestoreHttp.href))
-        : state.type === 'selected'
-          ? state.selection
-            ? state.selection.files.map(file => URL.createObjectURL(file))
-            : []
-          : state.type === 'submitting'
-            ? null
-            : null
-    newActiveSrcs && setActiveSrcs(newActiveSrcs)
+    const newActiveCurrent =
+      state.type === 'selected'
+        ? ((selection): current => {
+            if (selection.type === 'file') {
+              const url = URL.createObjectURL(selection.file) as url_string
+              return { type: 'file', file: selection.file, url }
+            }
+            return selection.type === 'external'
+              ? { type: 'asset', asset: selection, url: selection.url }
+              : selection.type === 'null'
+                ? { type: 'asset', asset: { type: 'none' }, url: null }
+                : unreachable_never(selection)
+          })(state.selection)
+        : null
+    newActiveCurrent && setActiveCurrent(newActiveCurrent)
     return () => {
-      newActiveSrcs?.forEach(URL.revokeObjectURL)
+      newActiveCurrent?.url && URL.revokeObjectURL(newActiveCurrent.url)
     }
-  }, [filestoreHttp.href, state, optimisticAssetUrlUpdate])
+  }, [filetoreHttp.href, state])
 
+  const [uploadingXhr, setUploadingXhr] = useState<_nullish | uploadingXhr>()
   const submit = useCallback(() => {
-    if (state.type !== 'selected' || state.error) {
+    if (state.type !== 'selected' || !adoptAssetService) {
       return
     }
+    const _adoptAssetService = adoptAssetService
     dispatch({ type: 'submit' })
-    const m_uploadPromise = state.selection
-      ? Promise.all(
-          state.selection.files.map(
-            file =>
-              new Promise<{ tempId: string }>(resolve => {
-                const formData = new FormData()
-                formData.append(uploadTempFieldName, file)
-
-                fetch(`${filestoreHttp.href}${uploadTempPath}/${type}`, {
-                  body: formData,
-                  method: uploadTempMethod,
-                })
-                  .then(r => r.json())
-                  .then(resolve)
-              }),
-          ),
+    ;;(async (): Promise<adoptAssetForm | 'upload error'> => {
+      if (state.selection.type !== 'file') {
+        dispatch({ type: 'uploadStatus', status: 'noUpload' })
+        return state.selection.type === 'external'
+          ? { adoptingAsset: { type: 'external', url: state.selection.url, credits: state.selection.credits } }
+          : state.selection.type === 'null'
+            ? { adoptingAsset: { type: 'none' } }
+            : unreachable_never(state.selection)
+      } else {
+        const { file } = state.selection
+        const xhr = new XMLHttpRequest()
+        const uploadingXhr: uploadingXhr = { file, xhr, abort: xhr.abort.bind(xhr) }
+        setUploadingXhr(uploadingXhr)
+        return new Promise<{ tempId: string }>((resolve, reject) => {
+          const formData = new FormData()
+          formData.append(uploadTempFieldName, file)
+          xhr.upload.addEventListener('load', () => resolve(JSON.parse(xhr.responseText)))
+          xhr.upload.addEventListener('error', () => reject(xhr.response))
+          xhr.upload.addEventListener('progress', progressEvent =>
+            dispatch({
+              type: 'uploadStatus',
+              status: 'uploading',
+              progress: progressEvent.lengthComputable ? progressEvent.loaded / progressEvent.total : NaN,
+            }),
+          )
+          xhr.upload.addEventListener('abort', () =>
+            dispatch({
+              type: 'uploadStatus',
+              status: 'aborted',
+            }),
+          )
+          xhr.upload.addEventListener('timeout', () =>
+            dispatch({
+              type: 'uploadStatus',
+              status: 'timeout',
+            }),
+          )
+          xhr.open(uploadTempMethod, `${filetoreHttp.href}${uploadTempPath}/${type}`, true)
+          //xhr.setRequestHeader("Content-Type", "application/octet-stream");
+          xhr.send(formData)
+        }).then(
+          uploadResponse => {
+            const { tempId } = uploadResponse
+            dispatch({ type: 'uploadStatus', status: 'done', tempId })
+            return { adoptingAsset: { type: 'upload', tempId } }
+          },
+          err => {
+            dispatch({ type: 'uploadStatus', status: 'error', message: String(err) })
+            return 'upload error'
+          },
         )
-      : Promise.resolve(null)
-
-    m_uploadPromise
-      .then<actionResponse, actionResponse>(
-        m_uploadResponses => {
-          return action({ tempIds: m_uploadResponses && (m_uploadResponses.map(r => r.tempId) as [string, ...string[]]) })
-        },
-        err => ({ done: false, error: String(err) }),
-      )
-      .then(actionResponse => {
-        console.dir({ actionResponse })
-        dispatch({ type: 'actionResponse', response: actionResponse })
+      }
+    })()
+      .then(adoptAssetForm => {
+        return adoptAssetForm === 'upload error'
+          ? Promise.reject('upload error')
+          : _adoptAssetService(adoptAssetForm).catch<adoptAssetResponse>(err => ({
+              response: {
+                status: 'error',
+                message: String(err),
+              },
+            }))
       })
-  }, [state, filestoreHttp.href, action, type])
+      .then(adoptAssetResponse => {
+        dispatch({ type: 'actionResponse', ...adoptAssetResponse })
+      })
+      .finally(() => setUploadingXhr(null))
+  }, [state.type, state.selection, filetoreHttp.href, type, adoptAssetService])
 
   return useMemo<useAssetUploaderHandler>(() => {
-    return [activeSrcs, openFileDialog, submit, state, dropHandlers, dispatch]
-  }, [activeSrcs, openFileDialog, state, submit, dropHandlers])
+    return {
+      current: activeCurrent,
+      openFileDialog,
+      submit,
+      state,
+      dropHandlers,
+      dispatch,
+      opts,
+      select: checkAndSelect,
+      uploadingXhr,
+    }
+  }, [activeCurrent, openFileDialog, submit, state, dropHandlers, opts, checkAndSelect, uploadingXhr])
 }
-function getFileUploaderReducer({
-  maxSize,
-  resetState,
-}: {
-  maxSize: number
-  resetState: fileUploaderState & { type: 'reset' }
-}) {
-  return function fileUploaderReducer(prev: fileUploaderState, action: fileUploaderAction): fileUploaderState {
-    console.log({ prev, action, resetState })
+
+function getFileUploaderReducer({ maxSize }: { maxSize: number }) {
+  return function fileUploaderReducer(prev: assetUploaderState, action: fileUploaderAction): assetUploaderState {
+    console.log({ prev, action })
     if (prev.type === 'submitting') {
       if (action.type === 'actionResponse') {
-        return action.response.done
-          ? {
-              type: 'reset',
-              dirty: false,
-              assets: action.response.newAssets ?? prev.assets,
-              selection: null,
-              submission: {
-                s: 'last-submitted',
-                selection: prev.selection,
-                storedAssets: action.response.newAssets ?? [],
-              },
-              error: null,
-            }
-          : {
-              type: 'selected',
-              submission: prev.submission,
-              error: [action.response?.error ?? 'unknown error while submitting'].flat().join('\n'),
-              assets: prev.assets,
-              dirty: true,
-              selection: prev.selection,
-            }
-      }
-      // if (action.type === 'abort') {
-      //    eventually add this action : 'abort during submitting'
-      // }
-    } else if (prev.type === 'selected') {
-      if (action.type === 'submit') {
-        return {
-          type: 'submitting',
-          submission: prev.submission,
-          error: null,
-          assets: prev.assets,
-          dirty: true,
-          selection: prev.selection,
+        if (prev.uploadStatus.status !== 'done') {
+          console.error('prev.uploadStatus.status not done', { action, prev })
+          return prev
         }
-      }
-    }
-
-    if (action.type === 'reset') {
-      return {
-        type: 'reset',
-        dirty: false,
-        assets: action.assets ?? prev.assets,
-        selection: null,
-        error: null,
-        submission: { s: 'never-submitted' },
-      }
-    } else if (action.type === 'select') {
-      const maxSizeExceeded = !!action.files && action.files.some(file => file.size > maxSize)
-      return maxSizeExceeded
-        ? { ...prev, error: `File size exceeds the limit of ${humanFileSize(maxSize)}` }
-        : /* !action.files &&
-            (resetState.submission.s === 'last-submitted'
-              ? !resetState.submission.selection?.files.length
-              : !resetState.assets.length)
-          ? resetState
-          : */ {
+        return {
+          type: 'settled',
+          dirty: false,
+          lastSubmission: {
+            actionResponse: action,
+            uploadStatus: prev.uploadStatus,
+          },
+          selection: null,
+          uploadStatus: null,
+        }
+      } else if (action.type === 'uploadStatus') {
+        if (prev.uploadStatus.status !== 'uploading') {
+          console.error('prev.uploadStatus not uploading', { action, prev })
+          return prev
+        }
+        if (action.status === 'uploading') {
+          const roundedProgress = Number(action.progress.toFixed(2))
+          if (roundedProgress === prev.uploadStatus.progress) {
+            return prev
+          }
+          return {
+            ...prev,
+            uploadStatus: { status: 'uploading', progress: roundedProgress },
+          }
+        } else if (action.status === 'done') {
+          return {
+            ...prev,
+            uploadStatus: { status: 'done', tempId: action.tempId },
+          }
+        } else if (action.status === 'noUpload') {
+          return {
+            ...prev,
+            uploadStatus: { status: 'noUpload' },
+          }
+        } else if (action.status === 'aborted' || action.status === 'timeout' || action.status === 'error') {
+          return {
             type: 'selected',
             dirty: true,
-            selection: action.files && { files: action.files },
-            error: null,
-            assets: prev.assets,
-            submission: prev.submission,
+            selection: prev.selection,
+            lastSubmission: {
+              actionResponse: null,
+              uploadStatus:
+                action.status === 'error'
+                  ? {
+                      status: 'error',
+                      message: action.message,
+                    }
+                  : { status: action.status },
+            },
+            uploadStatus: null,
           }
+        } else {
+          return unreachable_never(action)
+        }
+      }
+      return prev
+    } else if (prev.type === 'selected' && action.type === 'submit') {
+      return {
+        type: 'submitting',
+        dirty: true,
+        selection: prev.selection,
+        uploadStatus: { status: 'uploading', progress: 0 },
+        lastSubmission: prev.lastSubmission,
+      }
+    } else if (prev.type === 'selected' || prev.type === 'settled') {
+      if (action.type === 'select') {
+        return {
+          type: 'selected',
+          dirty: true,
+          selection: action.selection,
+          lastSubmission: prev.lastSubmission,
+          uploadStatus: null,
+        }
+      }
+      return prev
+    } else {
+      return unreachable_never(prev)
     }
-
-    return prev
   }
 }
 // Actions
+export type actionResponse = { status: 'waitingForUpload' } | adoptAssetResponse
+
+export type uploadStatus =
+  | uploadStatus_error
+  | uploadStatus_ok
+  | d_u<
+      {
+        uploading: { progress: number }
+      },
+      'status'
+    >
+export type uploadStatus_ok = d_u<
+  {
+    noUpload: unknown
+    done: { tempId: string }
+  },
+  'status'
+>
+export type uploadStatus_error = d_u<
+  {
+    aborted: unknown
+    timeout: unknown
+    error: { message: string }
+  },
+  'status'
+>
+
 type fileUploaderAction = d_u<
   {
-    reset: { assets?: asset[] }
-    select: { files: _nullish | [File, ...File[]] }
+    // reset: { asset?: asset[] }
+    select: { selection: selection }
     submit: unknown
-    actionResponse: { response: actionResponse }
+    actionResponse: adoptAssetResponse
+    uploadStatus: uploadStatus
+    abortUpload: { file: File }
   },
   'type'
 >
-type selection = _nullish | { files: [File, ...File[]] }
+
+type lastSubmission =
+  | {
+      uploadStatus: uploadStatus_ok
+      actionResponse: actionResponse
+    }
+  | {
+      uploadStatus: uploadStatus_error
+      actionResponse: _nullish
+    }
 
 // State
-export type fileUploaderState = { assets: asset[]; submission: submissionStatus; error: _nullish | string } & (
-  | stateReset
-  | stateSelected
-  | stateSubmitting
-)
-type submissionStatus = lastSubmission | neverSubmitted
-type lastSubmission = { s: 'last-submitted'; selection: selection; storedAssets: asset[] }
-type neverSubmitted = { s: 'never-submitted'; selection?: _nullish; storedAssets?: _nullish }
-type stateReset = {
-  type: 'reset'
+export type assetUploaderState = stateSettled | stateSelected | stateSubmitting
+type stateSettled = {
+  type: 'settled'
   dirty: false
-  selection: selection
+  selection: _nullish
+  uploadStatus: _nullish
+  lastSubmission: _nullish | lastSubmission
 }
 
 type stateSelected = {
   type: 'selected'
   dirty: true
   selection: selection
+  uploadStatus: _nullish
+  lastSubmission: _nullish | lastSubmission
 }
+type selection = d_u<{ file: { file: File }; external: external_content; null: unknown }, 'type'>
 
 type stateSubmitting = {
   type: 'submitting'
   dirty: true
   selection: selection
+  uploadStatus: uploadStatus
+  lastSubmission: _nullish | lastSubmission
 }
 
 // old submit logic (replaced by submit callback)
 
 // useEffect(() => {
-//   if (state.type !== 'submitting' || !state.selection.files[0]) {
+//   if (state.type !== 'submitting' || !state.selection.file[0]) {
 //     return
 //   }
-//   const uploadPromises = state.selection.files.map(
+//   const uploadPromises = state.selection.file.map(
 //     file =>
 //       new Promise<{ tempId: string }>(resolve => {
 //         const formData = new FormData()
 //         formData.append(uploadTempFieldName, file)
 
-//         fetch(`${filestoreHttp.href}${uploadTempPath}/${type}`, {
+//         fetch(`${filetoreHttp.href}${uploadTempPath}/${type}`, {
 //           body: formData,
 //           method: uploadTempMethod,
 //         })
@@ -336,4 +445,4 @@ type stateSubmitting = {
 //     .then(actionResponse => {
 //       dispatch({ type: 'actionResponse', response: actionResponse })
 //     })
-// }, [fileUploadedAction, filestoreHttp.href, state, type])
+// }, [fileUploadedAction, filetoreHttp.href, state, type])

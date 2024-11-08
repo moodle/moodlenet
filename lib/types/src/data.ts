@@ -12,7 +12,9 @@ export type jsonDiff = unknown
 export type intersection<types extends _any[]> = pretty<
   types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
 >
-
+export function unreachable_never(_: never, message?: string): never {
+  throw new TypeError(`should never happen${message ? `: ${message}` : ''}`)
+}
 // export type pretty<t> = keyof t extends infer keyof_t ? { [k in keyof_t & keyof t]: t[k] } : never // this one prettify better, but loses optionals?: props 🤔
 export type pretty<t> = _<t>
  type _<t> = { [k in keyof t]: t[k] } // utility type to convert make more readable maps
