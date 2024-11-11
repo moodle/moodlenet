@@ -45,7 +45,7 @@ export type eduCollectionDraft = draft<
   }
 >
 
-type eduResourceDraft = draft<
+export type eduResourceDraft = draft<
   eduResourceData & {
     assetProcess: {
       textExtractionStatus: textExtractionStatus

@@ -1,11 +1,12 @@
 import type { d_u, d_u__d, deep_partial_props, ok_ko } from '@moodle/lib-types'
 import { adoptAssetForm, adoptAssetResponse } from '../content'
-import { eduCollectionApplyImageForm, eduCollectionMetaForm } from '../edu'
+import { eduCollectionApplyImageForm, eduCollectionMetaForm, eduResourceApplyImageForm, eduResourceMetaForm } from '../edu'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {
   UserProfilePrimaryMsgSchemaConfigs,
   eduCollectionDraft,
   eduCollectionDraftId,
+  eduResourceDraft,
   eduResourceDraftId,
   profileImageType,
   profileInfo,
@@ -49,6 +50,8 @@ export default interface UserProfileDomain {
           userProfileRecord: Omit<userProfileRecord, 'userAccount'>
           userAccountRecord: Omit<userAccountRecord, 'displayName'>
         }>
+
+        // draft collection
         createEduCollectionDraft(_: {
           eduCollectionMetaForm: eduCollectionMetaForm
         }): Promise<ok_ko<{ eduCollectionDraftId: eduCollectionDraftId }>>
@@ -63,6 +66,24 @@ export default interface UserProfileDomain {
         getEduCollectionDraft(_: {
           eduCollectionDraftId: eduCollectionDraftId
         }): Promise<ok_ko<eduCollectionDraft, { notFound: unknown }>>
+        //
+
+        // draft resource
+        createEduResourceDraft(_: {
+          eduResourceMetaForm: eduResourceMetaForm
+        }): Promise<ok_ko<{ eduResourceDraftId: eduResourceDraftId }>>
+        editEduResourceDraft(_: {
+          eduResourceDraftId: eduResourceDraftId
+          eduResourceMetaForm: eduResourceMetaForm
+        }): Promise<ok_ko<void>>
+        applyEduResourceDraftImage(_: {
+          eduResourceDraftId: eduResourceDraftId
+          applyImageForm: eduResourceApplyImageForm
+        }): Promise<{ adoptAssetResponse: adoptAssetResponse; userProfileId: userProfileId }>
+        getEduResourceDraft(_: {
+          eduResourceDraftId: eduResourceDraftId
+        }): Promise<ok_ko<eduResourceDraft, { notFound: unknown }>>
+        //
       }
       admin: {
         byId(_: userProfileIdSelect): Promise<

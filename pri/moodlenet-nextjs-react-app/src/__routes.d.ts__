@@ -14,21 +14,16 @@ declare namespace __next_route_internal_types__ {
   type SafeSlug<S extends string> = S extends `${string}/${string}`
     ? never
     : S extends `${string}${SearchOrHash}`
-    ? never
-    : S extends ''
-    ? never
-    : S
+      ? never
+      : S extends ''
+        ? never
+        : S
 
-  type CatchAllSlug<S extends string> = S extends `${string}${SearchOrHash}`
-    ? never
-    : S extends ''
-    ? never
-    : S
+  type CatchAllSlug<S extends string> = S extends `${string}${SearchOrHash}` ? never : S extends '' ? never : S
 
-  type OptionalCatchAllSlug<S extends string> =
-    S extends `${string}${SearchOrHash}` ? never : S
+  type OptionalCatchAllSlug<S extends string> = S extends `${string}${SearchOrHash}` ? never : S
 
-  type StaticRoutes = 
+  type StaticRoutes =
     | `/`
     | `/admin`
     | `/admin/general`
@@ -46,27 +41,25 @@ declare namespace __next_route_internal_types__ {
     | `/signup`
     | `/-/api/userAccount/basic-auth/verify-signup-email-token`
     | `/-/api/userAccount/delete-my-account-request/confirm`
-  type DynamicRoutes<T extends string = string> = 
+  type DynamicRoutes<T extends string = string> =
     | `/collection/${SafeSlug<T>}`
     | `/collection/${SafeSlug<T>}/${SafeSlug<T>}`
     | `/profile/${SafeSlug<T>}/${SafeSlug<T>}`
     | `/user-account-profile/${SafeSlug<T>}`
 
-  type RouteImpl<T> = 
+  type RouteImpl<T> =
     | StaticRoutes
     | SearchOrHash
     | WithProtocol
     | `${StaticRoutes}${SearchOrHash}`
     | (T extends `${DynamicRoutes<infer _>}${Suffix}` ? T : never)
-    
 }
 
 declare module 'next' {
-  export { default } from 'next/types/index.js'
   export * from 'next/types/index.js'
+  export { default } from 'next/types/index.js'
 
-  export type Route<T extends string = string> =
-    __next_route_internal_types__.RouteImpl<T>
+  export type Route<T extends string = string> = __next_route_internal_types__.RouteImpl<T>
 }
 
 declare module 'next/link' {
@@ -75,13 +68,7 @@ declare module 'next/link' {
   import type { UrlObject } from 'url'
 
   type LinkRestProps = Omit<
-    Omit<
-      DetailedHTMLProps<
-        AnchorHTMLAttributes<HTMLAnchorElement>,
-        HTMLAnchorElement
-      >,
-      keyof OriginalLinkProps
-    > &
+    Omit<DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>, keyof OriginalLinkProps> &
       OriginalLinkProps,
     'href'
   >
@@ -100,7 +87,10 @@ declare module 'next/link' {
 declare module 'next/navigation' {
   export * from 'next/dist/client/components/navigation.js'
 
-  import type { NavigateOptions, AppRouterInstance as OriginalAppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime.js'
+  import type {
+    NavigateOptions,
+    AppRouterInstance as OriginalAppRouterInstance,
+  } from 'next/dist/shared/lib/app-router-context.shared-runtime.js'
   interface AppRouterInstance extends OriginalAppRouterInstance {
     /**
      * Navigate to the provided href.
@@ -118,5 +108,5 @@ declare module 'next/navigation' {
     prefetch<RouteType>(href: __next_route_internal_types__.RouteImpl<RouteType>): void
   }
 
-  export declare function useRouter(): AppRouterInstance;
+  export declare function useRouter(): AppRouterInstance
 }
