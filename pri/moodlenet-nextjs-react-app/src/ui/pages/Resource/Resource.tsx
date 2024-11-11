@@ -1,96 +1,14 @@
-import type { AddonItem } from '@moodlenet/component-library'
-import {
-  Card,
-  Modal,
-  PrimaryButton,
-  SecondaryButton,
-  sortAddonItems,
-  useSnackbar,
-} from '@moodlenet/component-library'
-import type { AssetInfoForm } from '@moodlenet/component-library/common'
-import { DateField, DropdownField, LicenseField } from '@moodlenet/ed-meta/ui'
-import type { MainLayoutProps } from '@moodlenet/react-app/ui'
-import { MainLayout, useViewport } from '@moodlenet/react-app/ui'
-import { InsertDriveFile, Link } from '@mui/icons-material'
-import { useFormik } from 'formik'
-import type { FC } from 'react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { SaveState } from '../../../../common/types.mjs'
-import {
-  type EdMetaOptionsProps,
-  type ResourceAccessProps,
-  type ResourceActions,
-  type ResourceDataProps,
-  type ResourceFormProps,
-  type ResourceStateProps,
-} from '../../../../common/types.mjs'
-import type { ValidationSchemas } from '../../../../common/validationSchema.mjs'
-import {
-  ResourceContributorCard,
-  type ResourceContributorCardProps,
-} from '../../molecules/ResourceContributorCard/ResourceContributorCard'
-import type {
-  MainResourceCardSlots,
-  ValidForms,
-} from '../../organisms/MainResourceCard/MainResourceCard'
-import { MainResourceCard } from '../../organisms/MainResourceCard/MainResourceCard'
+import { unreachable_never } from '@moodle/lib-types'
+import { Card } from '../../atoms/Card/Card'
+import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
+import { SecondaryButton } from '../../atoms/SecondaryButton/SecondaryButton'
+import MainResourceCard from './MainResourceCard/MainResourceCard'
 import './Resource.scss'
+import { ResourceContributorCard } from './ResourceContributorCard/ResourceContributorCard'
 
-export type ResourceProps = {
-  isCreating: boolean
-  saveState: SaveState
-  mainLayoutProps: MainLayoutProps
-  mainResourceCardSlots: MainResourceCardSlots
-  resourceContributorCardProps: ResourceContributorCardProps
+export type ResourceProps = {}
 
-  wideColumnItems: AddonItem[]
-  mainColumnItems: AddonItem[]
-  rightColumnItems: AddonItem[]
-
-  extraDetailsItems: AddonItem[]
-  generalActionsItems: AddonItem[]
-
-  resourceForm: ResourceFormProps
-  data: ResourceDataProps
-  state: ResourceStateProps
-  actions: ResourceActions
-  access: ResourceAccessProps
-  edMetaOptions: EdMetaOptionsProps
-
-  fileMaxSize: number
-  validationSchemas: ValidationSchemas
-}
-
-export const Resource: FC<ResourceProps> = ({
-  isCreating,
-  mainLayoutProps,
-  resourceContributorCardProps,
-
-  wideColumnItems,
-  mainColumnItems,
-  rightColumnItems,
-
-  extraDetailsItems,
-  generalActionsItems,
-  mainResourceCardSlots,
-
-  data,
-  resourceForm,
-  edMetaOptions,
-
-  state,
-  actions,
-  access,
-  saveState,
-
-  fileMaxSize,
-  validationSchemas: {
-    contentValidationSchema,
-    draftResourceValidationSchema,
-    imageValidationSchema,
-    publishedResourceValidationSchema,
-  },
-}) => {
+export function ResourcePage({}: ResourceProps) {
   const viewport = useViewport()
   const { downloadFilename, contentUrl, contentType, image } = data
   const {
@@ -134,17 +52,11 @@ export const Resource: FC<ResourceProps> = ({
   const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
   const [isToDelete, setIsToDelete] = useState<boolean>(false)
   const [isPublishValidating, setIsPublishValidating] = useState<boolean>(isPublished)
-  const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<
-    'success' | 'failed' | 'idle'
-  >('idle')
-  const [showPublishSuccess, setShowPublishSuccess] = useState<'success' | 'failed' | 'idle'>(
-    'idle',
-  )
+  const [showCheckPublishSuccess, setShowCheckPublishSuccess] = useState<'success' | 'failed' | 'idle'>('idle')
+  const [showPublishSuccess, setShowPublishSuccess] = useState<'success' | 'failed' | 'idle'>('idle')
   const [showUnpublishSuccess, setShowUnpublishSuccess] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(
-    emptyOnStart ||
-      (!!uploadProgress && uploadProgress !== 'N/A' && uploadProgress >= 0) ||
-      autofillState !== undefined, // || !(autofillState === undefined || autofillState === 'ai-saved-generated-data'),
+    emptyOnStart || (!!uploadProgress && uploadProgress !== 'N/A' && uploadProgress >= 0) || autofillState !== undefined, // || !(autofillState === undefined || autofillState === 'ai-saved-generated-data'),
   )
 
   const prevIsPublishedRef = useRef(isPublished)
@@ -164,9 +76,7 @@ export const Resource: FC<ResourceProps> = ({
     validateOnMount: true,
     validateOnChange: true,
     enableReinitialize: true,
-    validationSchema: isPublishValidating
-      ? publishedResourceValidationSchema
-      : draftResourceValidationSchema,
+    validationSchema: isPublishValidating ? publishedResourceValidationSchema : draftResourceValidationSchema,
     onSubmit(meta) {
       return editData(meta)
     },
@@ -203,8 +113,7 @@ export const Resource: FC<ResourceProps> = ({
     enableReinitialize: true,
     validationSchema: imageValidationSchema,
     onSubmit: values => {
-      return values.image?.location !== image?.location &&
-        typeof values.image?.location !== 'string'
+      return values.image?.location !== image?.location && typeof values.image?.location !== 'string'
         ? setImage(values.image?.location)
         : undefined
     },
@@ -258,9 +167,7 @@ export const Resource: FC<ResourceProps> = ({
     uploadProgress !== undefined ||
     (autofillState !== undefined && autofillState !== 'ai-completed')
 
-  const contributorCard = !isCreating && (
-    <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
-  )
+  const contributorCard = !isCreating && <ResourceContributorCard {...resourceContributorCardProps} key="contributor-card" />
 
   const imageForm_validateForm = imageForm.validateForm
   const imageForm_setFieldValue = imageForm.setFieldValue
@@ -297,27 +204,14 @@ export const Resource: FC<ResourceProps> = ({
       setShowPublishSuccess('failed')
       setShouldShowErrors(true)
     }
-  }, [
-    contentForm_validateForm,
-    form_validateForm,
-    isContentValid,
-    isPublishedFormValid,
-    publish,
-    setFieldsAsTouched,
-  ])
+  }, [contentForm_validateForm, form_validateForm, isContentValid, isPublishedFormValid, publish, setFieldsAsTouched])
 
   useEffect(() => {
     if (isCheckingAndPublishing) {
       applyCheckFormsAndPublish()
       setIsCheckingAndPublishing(false)
     }
-  }, [
-    isCheckingAndPublishing,
-    applyCheckFormsAndPublish,
-    isImageValid,
-    imageForm_setFieldValue,
-    imageForm_validateForm,
-  ])
+  }, [isCheckingAndPublishing, applyCheckFormsAndPublish, isImageValid, imageForm_setFieldValue, imageForm_validateForm])
 
   const [isPublishChecking, setIsPublishChecking] = useState<boolean>(false)
 
@@ -339,26 +233,14 @@ export const Resource: FC<ResourceProps> = ({
       setShowCheckPublishSuccess('failed')
       setShouldShowErrors(true)
     }
-  }, [
-    contentForm_validateForm,
-    form_validateForm,
-    isContentValid,
-    isPublishedFormValid,
-    setFieldsAsTouched,
-  ])
+  }, [contentForm_validateForm, form_validateForm, isContentValid, isPublishedFormValid, setFieldsAsTouched])
 
   useEffect(() => {
     if (isPublishChecking) {
       applyPublishCheck()
       setIsPublishChecking(false)
     }
-  }, [
-    isPublishChecking,
-    applyPublishCheck,
-    isImageValid,
-    imageForm_validateForm,
-    imageForm_setFieldValue,
-  ])
+  }, [isPublishChecking, applyPublishCheck, isImageValid, imageForm_validateForm, imageForm_setFieldValue])
 
   const unpublish = () => {
     setIsPublishValidating(false)
@@ -373,36 +255,7 @@ export const Resource: FC<ResourceProps> = ({
     isImageValid: isImageValid,
   }
 
-  const mainResourceCard = (
-    <MainResourceCard
-      key="main-resource-card"
-      learningOutcomeOptions={learningOutcomeOptions}
-      publish={checkFormsAndPublish}
-      unpublish={unpublish}
-      publishCheck={publishCheck}
-      data={data}
-      edMetaOptions={edMetaOptions}
-      form={form}
-      contentForm={contentForm}
-      imageForm={imageForm}
-      state={state}
-      actions={actions}
-      access={access}
-      slots={mainResourceCardSlots}
-      isEditing={isEditing}
-      setIsEditing={setIsEditing}
-      setIsPublishValidating={setIsPublishValidating}
-      emptyOnStart={emptyOnStart}
-      setEmptyOnStart={setEmptyOnStart}
-      disableFields={disableFields}
-      hasAllData={hasAllData}
-      areFormsValid={areFormsValid}
-      setShouldShowErrors={setShouldShowErrors}
-      shouldShowErrors={shouldShowErrors}
-      setFieldsAsTouched={setFieldsAsTouched}
-      fileMaxSize={fileMaxSize}
-    />
-  )
+  const mainResourceCard = <MainResourceCard {...props} />
 
   const publishButton: AddonItem | null =
     !isEditing && canPublish && !isPublished
@@ -456,187 +309,6 @@ export const Resource: FC<ResourceProps> = ({
         }
       : null
 
-  const subjectField = (isEditing || canEdit) && (
-    <DropdownField
-      key="subject-field"
-      disabled={disableFields}
-      title="Subject"
-      placeholder="Content category"
-      canEdit={canEdit && isEditing}
-      selection={form.values.subject}
-      options={subjectOptions}
-      error={form.errors.subject}
-      edit={e => form.setFieldValue('subject', e)}
-      shouldShowErrors={shouldShowErrors}
-    />
-  )
-
-  const licenseField = (
-    <LicenseField
-      key="license-field"
-      disabled={disableFields}
-      canEdit={canEdit && isEditing}
-      license={form.values.license}
-      licenseOptions={licenseOptions}
-      editLicense={e => {
-        form.setFieldValue('license', e)
-      }}
-      error={form.errors.license}
-      shouldShowErrors={shouldShowErrors}
-    />
-  )
-
-  const typeField = (
-    <DropdownField
-      key="type-field"
-      disabled={disableFields}
-      title="Type"
-      placeholder="Content type"
-      canEdit={canEdit && isEditing}
-      selection={form.values.type}
-      options={typeOptions}
-      edit={e => {
-        form.setFieldValue('type', e)
-      }}
-      error={form.errors.type}
-      shouldShowErrors={shouldShowErrors}
-    />
-  )
-
-  const levelField = (
-    <DropdownField
-      key="level-field"
-      disabled={disableFields}
-      title="Level"
-      placeholder="Education level"
-      canEdit={canEdit && isEditing}
-      selection={form.values.level}
-      options={levelOptions}
-      edit={e => {
-        form.setFieldValue('level', e)
-      }}
-      error={form.errors.level}
-      shouldShowErrors={shouldShowErrors}
-    />
-  )
-
-  const dateField = (
-    <DateField
-      key="date-field"
-      disabled={disableFields}
-      canEdit={canEdit && isEditing}
-      month={form.values.month}
-      monthOptions={monthOptions}
-      year={form.values.year}
-      yearOptions={yearOptions}
-      editMonth={e => {
-        form.setFieldValue('month', e)
-      }}
-      editYear={e => {
-        form.setFieldValue('year', e)
-      }}
-      errorMonth={form.errors.month}
-      errorYear={form.errors.year}
-      shouldShowErrors={shouldShowErrors}
-    />
-  )
-
-  const languageField = (
-    <DropdownField
-      key="language-field"
-      disabled={disableFields}
-      title="Language"
-      placeholder="Content language"
-      canEdit={canEdit && isEditing}
-      selection={form.values.language}
-      options={languageOptions}
-      edit={e => {
-        form.setFieldValue('language', e)
-      }}
-      error={form.errors.language}
-      shouldShowErrors={shouldShowErrors}
-    />
-  )
-
-  const updatedExtraDetailsItems = [
-    subjectField,
-    licenseField,
-    typeField,
-    levelField,
-    dateField,
-    languageField,
-    ...(extraDetailsItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
-
-  const shouldShowExtraDetails =
-    (isEditing && updatedExtraDetailsItems.length > 0) ||
-    (!isEditing &&
-      (form.values.subject ||
-        form.values.license ||
-        form.values.type ||
-        form.values.level ||
-        form.values.month ||
-        form.values.year ||
-        form.values.language ||
-        (extraDetailsItems && extraDetailsItems.length > 0)))
-
-  const extraDetailsContainer = shouldShowExtraDetails ? (
-    <Card className="extra-details-card" hideBorderWhenSmall={true} key="extra-details-container">
-      {updatedExtraDetailsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-    </Card>
-  ) : null
-
-  const downloadButton =
-    contentType === 'file' && contentUrl && contentForm.values.content ? (
-      <a
-        href={contentUrl && !disableFields ? contentUrl : undefined}
-        target="_blank"
-        rel="noreferrer"
-        download={downloadFilename}
-      >
-        <SecondaryButton key="download-or-open-link-button" disabled={disableFields}>
-          <InsertDriveFile />
-          Download file
-        </SecondaryButton>
-      </a>
-    ) : null
-
-  const openLinkButton =
-    contentType === 'link' && contentUrl && contentForm.values.content ? (
-      <a
-        href={contentUrl && !disableFields ? contentUrl : undefined}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <SecondaryButton key="download-or-open-link-button" disabled={disableFields}>
-          <Link />
-          Open link
-        </SecondaryButton>
-      </a>
-    ) : null
-
-  const updatedGeneralActionsItems = sortAddonItems([
-    publishButton,
-    autofillButton,
-    publishCheckButton,
-    unpublishButton,
-    ...(generalActionsItems ?? []),
-    downloadButton,
-    openLinkButton,
-  ])
-
-  const generalActionsContainer =
-    updatedGeneralActionsItems.length > 0 ? (
-      <Card className="resource-action-card" hideBorderWhenSmall={true} key="resource-action-card">
-        {updatedGeneralActionsItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      </Card>
-    ) : null
-
-  const updatedWideColumnItems = [
-    !viewport.screen.big && mainResourceCard,
-    ...(wideColumnItems ?? []),
-  ].filter((item): item is AddonItem | JSX.Element => !!item)
-
   const updatedMainColumnItems = [
     viewport.screen.big && mainResourceCard,
     !viewport.screen.big && contributorCard,
@@ -655,6 +327,156 @@ export const Resource: FC<ResourceProps> = ({
 
   const showUploadingSnackbar = uploadProgress !== undefined || isSavingImage === 'saving'
 
+  return (
+    <div className="resource-page">
+      <div className="main-card">
+        <MainResourceCard {...{ resourcePageProps }} />
+      </div>
+      {activity === 'viewPublished' && (
+        <div className="contributor-card">
+          <ResourceContributorCard {...contributorCardProps} key="contributor-card" />
+        </div>
+      )}
+      <div className="actions">
+        <Card hideBorderWhenSmall={true}>
+          {actions.unpublish && <SecondaryButton onClick={() => actions.unpublish?.()}>Unpublish</SecondaryButton>}
+          {activity === 'editDraft' && (
+            <PrimaryButton onClick={() => alert('publishCheck')} color="green">
+              Publish check
+            </PrimaryButton>
+          )}
+          {actions.publish && (
+            <PrimaryButton onClick={actions.publish} color="green">
+              Publish
+            </PrimaryButton>
+          )}
+          {activity === 'editDraft' && (
+            <PrimaryButton onClick={startAutofill} color="green">
+              Autofill missing fields
+            </PrimaryButton>
+          )}
+          {activity === 'viewPublished' ? (
+            type === 'link' ? (
+              <a href={contentUrl && !disableFields ? contentUrl : undefined} target="_blank" rel="noreferrer">
+                <SecondaryButton key="download-or-open-link-button" disabled={disableFields}>
+                  <Link />
+                  Open link
+                </SecondaryButton>
+              </a>
+            ) : type === 'local' ? (
+              <a
+                href={contentUrl && !disableFields ? contentUrl : undefined}
+                target="_blank"
+                rel="noreferrer"
+                download={downloadFilename}
+              >
+                <SecondaryButton key="download-or-open-link-button" disabled={disableFields}>
+                  <InsertDriveFile />
+                  Download file
+                </SecondaryButton>
+              </a>
+            ) : (
+              unreachable_never(type)
+            )
+          ) : null}
+        </Card>
+      </div>
+      <div className="details">
+        <DropdownField
+          key="subject-field"
+          disabled={disableFields}
+          title="Subject"
+          placeholder="Content category"
+          canEdit={activity === 'editDraft'}
+          selection={form.values.subject}
+          options={subjectOptions}
+          error={form.errors.subject}
+          edit={e => form.setFieldValue('subject', e)}
+          shouldShowErrors={shouldShowErrors}
+        />
+
+        <LicenseField
+          key="license-field"
+          disabled={disableFields}
+          canEdit={activity === 'editDraft'}
+          license={form.values.license}
+          licenseOptions={licenseOptions}
+          editLicense={e => {
+            form.setFieldValue('license', e)
+          }}
+          error={form.errors.license}
+          shouldShowErrors={shouldShowErrors}
+        />
+
+        <DropdownField
+          key="type-field"
+          disabled={disableFields}
+          title="Type"
+          placeholder="Content type"
+          canEdit={activity === 'editDraft'}
+          selection={form.values.type}
+          options={typeOptions}
+          edit={e => {
+            form.setFieldValue('type', e)
+          }}
+          error={form.errors.type}
+          shouldShowErrors={shouldShowErrors}
+        />
+
+        <DropdownField
+          key="level-field"
+          disabled={disableFields}
+          title="Level"
+          placeholder="Education level"
+          canEdit={activity === 'editDraft'}
+          selection={form.values.level}
+          options={levelOptions}
+          edit={e => {
+            form.setFieldValue('level', e)
+          }}
+          error={form.errors.level}
+          shouldShowErrors={shouldShowErrors}
+        />
+
+        <DateField
+          key="date-field"
+          disabled={disableFields}
+          canEdit={activity === 'editDraft'}
+          month={form.values.month}
+          monthOptions={monthOptions}
+          year={form.values.year}
+          yearOptions={yearOptions}
+          editMonth={e => {
+            form.setFieldValue('month', e)
+          }}
+          editYear={e => {
+            form.setFieldValue('year', e)
+          }}
+          errorMonth={form.errors.month}
+          errorYear={form.errors.year}
+          shouldShowErrors={shouldShowErrors}
+        />
+
+        <DropdownField
+          key="language-field"
+          disabled={disableFields}
+          title="Language"
+          placeholder="Content language"
+          canEdit={activity === 'editDraft'}
+          selection={form.values.language}
+          options={languageOptions}
+          edit={e => {
+            form.setFieldValue('language', e)
+          }}
+          error={form.errors.language}
+          shouldShowErrors={shouldShowErrors}
+        />
+      </div>
+    </div>
+  )
+}
+/*
+
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
     if (showUploadingSnackbar) {
@@ -662,8 +484,7 @@ export const Resource: FC<ResourceProps> = ({
         addSnackbar({
           position: 'bottom',
           autoHideDuration: 6000,
-          children:
-            "Uploading file, feel free to move around the platform, just don't close this tab",
+          children: "Uploading file, feel free to move around the platform, just don't close this tab",
         })
       }, 4000)
     }
@@ -698,9 +519,7 @@ export const Resource: FC<ResourceProps> = ({
         autoHideDuration: 4000,
         type: showCheckPublishSuccess === 'success' ? 'success' : 'error',
         children:
-          showCheckPublishSuccess === 'success'
-            ? `Success, save before publishing`
-            : `Failed, fix the errors and try again`,
+          showCheckPublishSuccess === 'success' ? `Success, save before publishing` : `Failed, fix the errors and try again`,
         onClose: () => setShowCheckPublishSuccess('idle'),
       })
     }
@@ -711,10 +530,7 @@ export const Resource: FC<ResourceProps> = ({
       addSnackbar({
         type: showPublishSuccess === 'success' ? 'success' : 'error',
         autoHideDuration: 4000,
-        children:
-          showPublishSuccess === 'success'
-            ? `Resource published`
-            : `Failed, fix the errors and try again`,
+        children: showPublishSuccess === 'success' ? `Resource published` : `Failed, fix the errors and try again`,
         onClose: () => setShowPublishSuccess('idle'),
       })
     }
@@ -756,34 +572,5 @@ export const Resource: FC<ResourceProps> = ({
       )}
     </>
   )
-  return (
-    <MainLayout {...mainLayoutProps}>
-      {modals}
-      <div className="resource">
-        <div className="content">
-          {updatedWideColumnItems.length > 0 && (
-            <div className="wide-column">
-              {updatedWideColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-            </div>
-          )}
-          {(updatedMainColumnItems.length > 0 || updatedRightColumnItems.length > 0) && (
-            <div className="main-and-right-columns">
-              {updatedMainColumnItems.length > 0 && (
-                <div className="main-column">
-                  {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-                </div>
-              )}
-              {updatedRightColumnItems.length > 0 && (
-                <div className="right-column">
-                  {updatedRightColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </MainLayout>
-  )
-}
-Resource.displayName = 'ResourcePage'
-export default Resource
+
+  */

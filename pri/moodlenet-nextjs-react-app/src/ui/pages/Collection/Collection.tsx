@@ -66,8 +66,8 @@ export function CollectionPage(collectionPageProps: collectionPageProps) {
             <CollectionContributorCard {...contributorCardProps} key="contributor-card" />
           </div>
         )}
-        <div className="editor-actions">
-          <Card className="editor-actions" hideBorderWhenSmall={true}>
+        <div className="actions">
+          <Card hideBorderWhenSmall={true}>
             {actions.unpublish && <SecondaryButton onClick={() => actions.unpublish?.()}>Unpublish</SecondaryButton>}
             {activity === 'editDraft' && (
               <PrimaryButton onClick={() => alert('publishCheck')} color="green">
