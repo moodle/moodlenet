@@ -1,12 +1,9 @@
 'use client'
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// import { ExpandLess, ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import type { FC, ReactNode } from 'react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import type { SelectorProps } from '../../../lib/selector'
-import { Selector, useSelectorOption } from '../../../lib/selector'
 
-// import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material'
+import { CheckBox, CheckBoxOutlineBlank, ExpandLess, ExpandMore } from '@mui/icons-material'
+import { Selector, SelectorProps, useSelectorOption } from '../../lib/selector'
 import { RoundButton } from '../RoundButton/RoundButton'
 import './Dropdown.scss'
 import { setListPosition } from './utils'
@@ -26,6 +23,7 @@ export type DropdownProps = SelectorProps & {
   position?: { top?: number; bottom?: number }
   dropdownButton?: ReactNode
   multiKeepOpenOnSelect?: boolean
+  placeholder?: string
 }
 export const Dropdown: FC<DropdownProps> = props => {
   const {
@@ -53,7 +51,7 @@ export const Dropdown: FC<DropdownProps> = props => {
   )
 }
 
-const DropdownComp: FC<DropdownProps> = props => {
+function DropdownComp(props: DropdownProps) {
   const {
     pills,
     highlight,
@@ -90,9 +88,7 @@ const DropdownComp: FC<DropdownProps> = props => {
   useEffect(() => {
     const clickOutListener = (event: MouseEvent) => {
       const div = divRef ? divRef.current : dropdownContainerRef.current
-      !((div && div.contains(event.target as Node)) || div === event.target) &&
-        showContent &&
-        setShowingContent(false)
+      !((div && div.contains(event.target as Node)) || div === event.target) && showContent && setShowingContent(false)
     }
     window.addEventListener('click', clickOutListener)
     return () => window.removeEventListener('click', clickOutListener)
@@ -209,9 +205,7 @@ const DropdownComp: FC<DropdownProps> = props => {
           setShowingContent(true)
         }}
         onBlur={isShowingContent ? undefined : () => setShowingContent(false)}
-        className={`input-container${disabled || !edit ? ' not-editing' : ''} ${
-          highlight ? ' highlight' : ''
-        }
+        className={`input-container${disabled || !edit ? ' not-editing' : ''} ${highlight ? ' highlight' : ''}
           ${multilines ? ' multilines' : ''}
           ${noBorder ? ' no-border' : ''}
         ${showContent ? ' showing-content' : ''}
@@ -226,9 +220,7 @@ const DropdownComp: FC<DropdownProps> = props => {
               placeholder={placeholder}
               onInput={({ currentTarget }) => searchByText?.(currentTarget.value)}
               onClick={isShowingContent ? _ => _.stopPropagation() : undefined}
-              onBlur={
-                isShowingContent && isHoveringOptions ? undefined : () => setShowingContent(false)
-              }
+              onBlur={isShowingContent && isHoveringOptions ? undefined : () => setShowingContent(false)}
               // onKeyDownCapture={e => {
               //   if (e.key === 'Down') {
               //     dropdownContentRef.current?.focus()
@@ -256,7 +248,7 @@ const DropdownComp: FC<DropdownProps> = props => {
                   <div className="placeholder">{placeholder}</div>
                 )}
               </div>
-              {edit && <ExpandMoreIcon className="open-arrow" />}
+              {edit && <ExpandMore className="open-arrow" />}
             </>
           ))
         )}
@@ -335,12 +327,7 @@ export const SimpleTextOption: FC<SimpleTextOptionProps> = ({ value, abbr }) => 
   const { toggle, selected } = useSelectorOption(value) ?? {}
   const title = abbr ? abbr : typeof value === 'string' ? value : undefined
   return (
-    <abbr
-      title={title}
-      key={value}
-      className={`${selected ? 'selected ' : ''}option only-text`}
-      onClick={toggle}
-    >
+    <abbr title={title} key={value} className={`${selected ? 'selected ' : ''}option only-text`} onClick={toggle}>
       {value}
     </abbr>
   )
@@ -355,12 +342,7 @@ export const TextOption: FC<TextOptionProps> = ({ value, label, abbr }) => {
   const { toggle, selected } = useSelectorOption(value) ?? {}
   const title = abbr ? abbr : typeof label === 'string' ? label : undefined
   return (
-    <abbr
-      key={value}
-      title={title}
-      className={`${selected ? 'selected ' : ''} option only-text`}
-      onClick={toggle}
-    >
+    <abbr key={value} title={title} className={`${selected ? 'selected ' : ''} option only-text`} onClick={toggle}>
       {label}
     </abbr>
   )
@@ -374,12 +356,7 @@ export const CheckmarkOption: FC<CheckmarkOptionProps> = ({ value, label, abbr }
   const { toggle, selected } = useSelectorOption(value) ?? {}
   const title = abbr ? abbr : typeof label === 'string' ? label : undefined
   return (
-    <abbr
-      key={value}
-      title={title}
-      className={`${selected ? 'selected ' : ''} option checkmark`}
-      onClick={toggle}
-    >
+    <abbr key={value} title={title} className={`${selected ? 'selected ' : ''} option checkmark`} onClick={toggle}>
       {selected ? <CheckBox /> : <CheckBoxOutlineBlank />}
       {label}
     </abbr>
@@ -396,12 +373,7 @@ export const IconTextOption: FC<IconTextOptionProps> = ({ value, label, icon, ab
   const { toggle, selected } = useSelectorOption(value) ?? {}
   const title = abbr ? abbr : typeof label === 'string' ? label : undefined
   return (
-    <abbr
-      title={title}
-      key={value}
-      className={`${selected ? 'selected ' : ''} option icon-and-text`}
-      onClick={toggle}
-    >
+    <abbr title={title} key={value} className={`${selected ? 'selected ' : ''} option icon-and-text`} onClick={toggle}>
       {icon}
       <span>{label}</span>
     </abbr>

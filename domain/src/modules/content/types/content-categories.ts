@@ -10,7 +10,7 @@ export type external_content = { url: url_string; credits?: contentCredits }
 
 export type contentLanguageCode = string
 export type contentLanguageRecord = {
-  id: contentLanguageCode
+  code: contentLanguageCode
   part2b: string | null
   part2t: string | null
   part1: string | null
@@ -21,7 +21,7 @@ export type contentLanguageRecord = {
 
 export type contentLicenseCode = string
 export type contentLicenseRecord = {
-  id: contentLicenseCode
+  code: contentLicenseCode
   name: string
   restrictiveness: fraction
 }

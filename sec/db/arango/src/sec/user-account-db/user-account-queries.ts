@@ -15,7 +15,7 @@ export async function getUserByEmail({
     aql`FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount}
       FILTER userAccountDoc.contacts.email == ${email}
       LIMIT 1
-      RETURN MOODLE::RESTORE_RECORD(userAccountDoc)`,
+      RETURN MOODLE::RESTORE_RECORD_ID(userAccountDoc)`,
   )
   const [foundUser] = await cursor.all()
 

@@ -1,7 +1,5 @@
-import type { TextOptionProps } from '@moodlenet/component-library'
-import { CheckmarkOption, Dropdown, SimplePill } from '@moodlenet/component-library'
-import type { FC } from 'react'
 import { useEffect, useState } from 'react'
+import { CheckmarkOption, Dropdown, SimplePill, TextOptionProps } from '../../../atoms/Dropdown/Dropdown'
 
 export type LevelMultipleFieldProps = {
   selections: string[]
@@ -12,14 +10,14 @@ export type LevelMultipleFieldProps = {
   edit(selections: string[]): void
 }
 
-export const LevelMultipleField: FC<LevelMultipleFieldProps> = ({
+export default function LevelMultipleField({
   selections,
   options,
   canEdit,
   errors,
   shouldShowErrors,
   edit,
-}) => {
+}: LevelMultipleFieldProps) {
   const newLevels = {
     opts: options,
     selected: options.filter(({ value }) => selections.includes(value)),
@@ -44,10 +42,7 @@ export const LevelMultipleField: FC<LevelMultipleFieldProps> = ({
           o.value.toUpperCase().includes(searchText.toUpperCase()),
       ),
       selected: options.filter(
-        ({ value }) =>
-          selections &&
-          selections.includes(value) &&
-          value.toUpperCase().includes(searchText.toUpperCase()),
+        ({ value }) => selections && selections.includes(value) && value.toUpperCase().includes(searchText.toUpperCase()),
       ),
     })
   }, [newLevels.opts, searchText, options, selections])
@@ -91,10 +86,7 @@ export const LevelMultipleField: FC<LevelMultipleFieldProps> = ({
         ({ label, value }) =>
           updatedLevels.selected &&
           updatedLevels.selected.map(
-            selected =>
-              selected?.value !== value && (
-                <CheckmarkOption key={value} label={label} value={value} />
-              ),
+            selected => selected?.value !== value && <CheckmarkOption key={value} label={label} value={value} />,
           ),
       )}
     </Dropdown>
@@ -107,5 +99,3 @@ export const LevelMultipleField: FC<LevelMultipleFieldProps> = ({
     </div>
   ) : null
 }
-
-export default LevelMultipleField

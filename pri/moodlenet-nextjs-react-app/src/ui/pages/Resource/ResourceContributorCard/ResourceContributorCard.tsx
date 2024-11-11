@@ -1,16 +1,16 @@
-import { Card } from '@moodlenet/component-library'
-import type { Href } from '@moodlenet/react-app/common'
-import { Link } from '@moodlenet/react-app/ui'
 import moment from 'moment'
 import type { FC } from 'react'
 // import '../../../../styles/tags.scss'
+import Link from 'next/link'
+import { appRoute } from '../../../../lib/common/appRoutes'
 import defaultAvatar from '../../../assets/img/default-avatar.svg'
+import { Card } from '../../../atoms/Card/Card'
 import './ResourceContributorCard.scss'
 export type ResourceContributorCardProps = {
   avatarUrl: string | null
   displayName: string
   timeSinceCreation: string
-  creatorProfileHref: Href
+  creatorProfileHref: appRoute
 }
 export const ResourceContributorCard: FC<ResourceContributorCardProps> = ({
   avatarUrl,
@@ -19,9 +19,7 @@ export const ResourceContributorCard: FC<ResourceContributorCardProps> = ({
   creatorProfileHref,
 }) => {
   const originalTime = new Date(timeSinceCreation).valueOf()
-  const time = originalTime
-    ? moment.duration(new Date(timeSinceCreation).valueOf() - new Date().valueOf()).humanize()
-    : null
+  const time = originalTime ? moment.duration(new Date(timeSinceCreation).valueOf() - new Date().valueOf()).humanize() : null
   return (
     <Card className="resource-contributor-card" hideBorderWhenSmall={true}>
       <Link href={creatorProfileHref}>

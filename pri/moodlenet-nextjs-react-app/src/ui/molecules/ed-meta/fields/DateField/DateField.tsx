@@ -1,7 +1,5 @@
-import type { TextOptionProps } from '@moodlenet/component-library'
-import { Dropdown, SimplePill, SimpleTextOption, TextOption } from '@moodlenet/component-library'
-import type { FC } from 'react'
 import { useEffect, useState } from 'react'
+import { Dropdown, SimplePill, SimpleTextOption, TextOption, TextOptionProps } from '../../../../atoms/Dropdown/Dropdown'
 import './DateField.scss'
 
 export type DateFieldProps = {
@@ -18,7 +16,7 @@ export type DateFieldProps = {
   disabled?: boolean
 }
 
-export const DateField: FC<DateFieldProps> = ({
+export default function DateField({
   month,
   monthOptions,
   year,
@@ -30,7 +28,7 @@ export const DateField: FC<DateFieldProps> = ({
   editMonth,
   editYear,
   disabled,
-}) => {
+}: DateFieldProps) {
   const months = {
     opts: monthOptions,
     selected: monthOptions.find(({ value }) => value === month),
@@ -47,8 +45,7 @@ export const DateField: FC<DateFieldProps> = ({
     setUpdatedMonths({
       opts: months.opts.filter(o => o.value.toUpperCase().includes(searchTextMonth.toUpperCase())),
       selected: monthOptions.find(
-        ({ value }) =>
-          value === month && value.toUpperCase().includes(searchTextMonth.toUpperCase()),
+        ({ value }) => value === month && value.toUpperCase().includes(searchTextMonth.toUpperCase()),
       ),
     })
   }, [searchTextMonth, month, months.opts, monthOptions])
@@ -68,9 +65,7 @@ export const DateField: FC<DateFieldProps> = ({
   useEffect(() => {
     setUpdatedYears({
       opts: years.opts.filter(o => o.toUpperCase().includes(searchTextYear.toUpperCase())),
-      selected: yearOptions.find(
-        value => value === year && value.toUpperCase().includes(searchTextYear.toUpperCase()),
-      ),
+      selected: yearOptions.find(value => value === year && value.toUpperCase().includes(searchTextYear.toUpperCase())),
     })
   }, [searchTextYear, year, yearOptions, years.opts])
 
@@ -112,9 +107,7 @@ export const DateField: FC<DateFieldProps> = ({
           )}
           {updatedMonths.opts.map(
             ({ value, label }) =>
-              updatedMonths.selected?.value !== value && (
-                <TextOption key={value} value={value} label={label} />
-              ),
+              updatedMonths.selected?.value !== value && <TextOption key={value} value={value} label={label} />,
           )}
         </Dropdown>
         <Dropdown
@@ -133,21 +126,12 @@ export const DateField: FC<DateFieldProps> = ({
           searchByText={setSearchTextYear}
           pills={
             updatedYears.selected && (
-              <SimplePill
-                key={updatedYears.selected}
-                value={updatedYears.selected}
-                label={updatedYears.selected}
-              />
+              <SimplePill key={updatedYears.selected} value={updatedYears.selected} label={updatedYears.selected} />
             )
           }
         >
-          {updatedYears.selected && (
-            <SimpleTextOption key={updatedYears.selected} value={updatedYears.selected} />
-          )}
-          {updatedYears.opts.map(
-            value =>
-              updatedYears.selected !== value && <SimpleTextOption key={value} value={value} />,
-          )}
+          {updatedYears.selected && <SimpleTextOption key={updatedYears.selected} value={updatedYears.selected} />}
+          {updatedYears.opts.map(value => updatedYears.selected !== value && <SimpleTextOption key={value} value={value} />)}
         </Dropdown>
       </div>
     </div>
@@ -161,5 +145,3 @@ export const DateField: FC<DateFieldProps> = ({
     </div>
   ) : null
 }
-
-export default DateField

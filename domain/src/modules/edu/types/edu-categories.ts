@@ -1,13 +1,13 @@
 export type eduBloomCognitiveLevel = '1' | '2' | '3' | '4' | '5' | '6'
 export type eduBloomCognitiveRecord = {
-  id: eduBloomCognitiveLevel
+  level: eduBloomCognitiveLevel
   description: string
   verbs: string[]
 }
 
 export type eduIscedFieldCode = string
 export type eduIscedFieldRecord = {
-  id: eduIscedFieldCode
+  code: eduIscedFieldCode
   enabled: boolean
   description: string
   codePath: eduIscedFieldPath
@@ -16,7 +16,7 @@ type eduIscedFieldPath = [string] | [string, string] | [string, string, string]
 
 export type eduIscedLevelCode = string
 export type eduIscedLevelRecord = {
-  id: eduIscedLevelCode
+  code: eduIscedLevelCode
   enabled: boolean
   description: string
   codePath: eduIscedLevelPath

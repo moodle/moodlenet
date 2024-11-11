@@ -51,7 +51,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
           },
           async createUserProfile({ userProfileRecord }) {
             const result = await dbStruct.userAccount.coll.userProfile
-              .save(save_id_to_key(userProfileRecord))
+              .save(save_id_to_key('id')(userProfileRecord))
               .catch(() => null)
 
             const saveDone = !!result

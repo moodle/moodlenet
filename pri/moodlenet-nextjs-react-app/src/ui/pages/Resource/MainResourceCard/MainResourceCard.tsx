@@ -1,21 +1,3 @@
-import type { AddonItem, FloatingMenuContentItem } from '@moodlenet/component-library'
-import {
-  Card,
-  FloatingMenu,
-  InputTextField,
-  Modal,
-  PrimaryButton,
-  SecondaryButton,
-  Snackbar,
-  TertiaryButton,
-  useSnackbar,
-  useWindowDimensions,
-} from '@moodlenet/component-library'
-import type { AssetInfoForm } from '@moodlenet/component-library/common'
-import type { LearningOutcomeOption } from '@moodlenet/ed-meta/common'
-import { LearningOutcomes } from '@moodlenet/ed-meta/ui'
-import type { FormikHandle } from '@moodlenet/react-app/ui'
-import { downloadOrOpenURL, getTagList } from '@moodlenet/react-app/ui'
 import {
   Check,
   Delete,
@@ -28,245 +10,19 @@ import {
   Save,
   Share,
 } from '@mui/icons-material'
-import type { FC } from 'react'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import type {
-  EdMetaOptionsProps,
-  ResourceAccessProps,
-  ResourceActions,
-  ResourceDataProps,
-  ResourceFormProps,
-  ResourceStateProps,
-} from '../../../../common/types.mjs'
-import { getResourceTypeInfo } from '../../../../common/types.mjs'
-import { UploadResource } from '../UploadResource/UploadResource'
+import { useEffect, useRef } from 'react'
+import { Card } from '../../../atoms/Card/Card'
+import { DropUpload } from '../../../organisms/DropUpload/DropUpload'
+import { LearningOutcomes } from '../../../organisms/ed-meta/LearningOutcomes/LearningOutcomes'
+import { ResourcePageProps } from '../Resource'
 import './MainResourceCard.scss'
 
-export type MainResourceCardSlots = {
-  mainColumnItems: (AddonItem | null)[]
-  headerColumnItems: (AddonItem | null)[]
-  topLeftHeaderItems: (AddonItem | null)[]
-  topRightHeaderItems: (AddonItem | null)[]
-  moreButtonItems: FloatingMenuContentItem[]
-  footerRowItems: (AddonItem | null)[]
-  uploadOptionsItems: (AddonItem | null)[]
-}
-
-export type ValidForms = {
-  isDraftFormValid: boolean
-  isPublishedFormValid: boolean
-  isContentValid: boolean
-  isImageValid: boolean
-}
-
 export type MainResourceCardProps = {
-  slots: MainResourceCardSlots
-
-  data: ResourceDataProps
-  edMetaOptions: EdMetaOptionsProps
-  form: FormikHandle<ResourceFormProps>
-  contentForm: FormikHandle<{ content: File | string }>
-  imageForm: FormikHandle<{ image: AssetInfoForm | undefined | null }>
-  learningOutcomeOptions: LearningOutcomeOption[]
-
-  state: ResourceStateProps
-  actions: ResourceActions
-  access: ResourceAccessProps
-
-  publish: () => void
-  unpublish: () => void
-  publishCheck: () => void
-
-  isEditing: boolean
-  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
-  setIsPublishValidating: React.Dispatch<React.SetStateAction<boolean>>
-
-  emptyOnStart: boolean
-  setEmptyOnStart: React.Dispatch<React.SetStateAction<boolean>>
   disableFields: boolean
-  hasAllData: boolean
+} & ResourcePageProps
 
-  areFormsValid: ValidForms
-  shouldShowErrors: boolean
-  setShouldShowErrors: React.Dispatch<React.SetStateAction<boolean>>
-
-  setFieldsAsTouched: () => void
-  fileMaxSize: number
-}
-
-export const MainResourceCard: FC<MainResourceCardProps> = ({
-  slots,
-  learningOutcomeOptions,
-  data,
-  edMetaOptions,
-  form,
-  contentForm,
-  imageForm,
-
-  state,
-  actions,
-  access,
-
-  publish,
-  unpublish,
-  publishCheck,
-
-  isEditing,
-  setIsEditing,
-  setIsPublishValidating,
-
-  emptyOnStart,
-  setEmptyOnStart,
-  disableFields,
-  hasAllData,
-
-  areFormsValid,
-  setShouldShowErrors,
-  shouldShowErrors,
-
-  setFieldsAsTouched,
-  fileMaxSize,
-}) => {
-  const {
-    mainColumnItems,
-    headerColumnItems,
-    topLeftHeaderItems,
-    topRightHeaderItems,
-    moreButtonItems,
-    footerRowItems,
-    uploadOptionsItems,
-  } = slots
-
-  const { mnUrl, contentType, downloadFilename, contentUrl, subjectHref } = data
-
-  const { subjectOptions } = edMetaOptions
-
-  const { isPublished, autofillState /* , uploadProgress */ } = state
-
-  const { deleteResource } = actions
-  const { canEdit, canPublish, canDelete } = access
-
-  const { isDraftFormValid, isPublishedFormValid, isContentValid, isImageValid } = areFormsValid
-
-  const [isToDelete, setIsToDelete] = useState<boolean>(false)
-  const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
-  const [showSaveError, setShowSaveError] = useState<boolean>(false)
-  const { width } = useWindowDimensions()
-
-  const [currentContentUrl, setCurrentContentUrl] = useState<string | null>(contentUrl)
-
-  const isFormValid = isPublished ? isPublishedFormValid : isDraftFormValid
-
-  useEffect(() => {
-    setCurrentContentUrl(contentUrl)
-  }, [contentUrl])
-
-  useEffect(() => {
-    setCurrentContentUrl(
-      typeof contentForm.values.content === 'string'
-        ? contentForm.values.content
-        : contentForm.values.content
-          ? contentForm.values.content.name
-          : null,
-    )
-  }, [contentForm])
-
-  const { typeName, typeColor } = getResourceTypeInfo(
-    contentType,
-    contentType === 'file' ? downloadFilename : currentContentUrl,
-  )
-
-  const form_submitForm = form.submitForm
-  const contentForm_submitForm = contentForm.submitForm
-  const imageForm_submitForm = imageForm.submitForm
-  const imageForm_validateForm = imageForm.validateForm
-  const imageForm_setFieldValue = imageForm.setFieldValue
-  const imageForm_setTouched = imageForm.setTouched
-
-  const setImageField = useCallback(
-    (image: AssetInfoForm | undefined | null) => {
-      imageForm_setFieldValue('image', image).then(() => {
-        imageForm_validateForm()
-        imageForm_setTouched({ image: true })
-      })
-    },
-    [imageForm_setFieldValue, imageForm_validateForm, imageForm_setTouched],
-  )
-
-  const handleOnEditClick = () => {
-    setIsEditing(true)
-    setIsPublishValidating(isPublished)
-    setShouldShowErrors(false)
-  }
-
-  const [isHandlingSaving, setIsHandlingSaving] = useState<boolean>(false)
-
-  const handleOnSaveClick = () => {
-    if (autofillState !== 'ai-completed' && !form.dirty && !imageForm.dirty && !contentForm.dirty) {
-      setIsEditing(false)
-      return
-    }
-    setIsPublishValidating(isPublished)
-    setIsHandlingSaving(true)
-  }
-
-  const applySave = useCallback(() => {
-    setFieldsAsTouched()
-    !isImageValid && setImageField(null)
-
-    if (!isFormValid || !isContentValid) {
-      setShouldShowErrors(true)
-      setShowSaveError(true)
-      return
-    }
-    if (form.dirty || autofillState === 'ai-completed') {
-      form_submitForm()
-    }
-
-    if (contentForm.dirty) {
-      contentForm.values.content !== contentUrl && contentForm_submitForm()
-    }
-
-    if (imageForm.dirty) {
-      isImageValid && imageForm_submitForm()
-    }
-
-    setIsEditing(false)
-    setEmptyOnStart(false)
-  }, [
-    autofillState,
-    contentForm.dirty,
-    contentForm.values.content,
-    contentForm_submitForm,
-    contentUrl,
-    form.dirty,
-    form_submitForm,
-    imageForm.dirty,
-    imageForm_submitForm,
-    isContentValid,
-    isFormValid,
-    isImageValid,
-    setEmptyOnStart,
-    setFieldsAsTouched,
-    setImageField,
-    setIsEditing,
-    setShouldShowErrors,
-  ])
-
-  useEffect(() => {
-    if (isHandlingSaving) {
-      applySave()
-      setIsHandlingSaving(false)
-    }
-  }, [isHandlingSaving, applySave])
-
-  const copyUrl = () => {
-    navigator.clipboard.writeText(mnUrl)
-    setShowUrlCopiedAlert(false)
-    setTimeout(() => {
-      setShowUrlCopiedAlert(true)
-    }, 100)
-  }
+export default function MainResourceCard({ disableFields }: MainResourceCardProps) {
+  const isEditing = activity === 'editDraft'
 
   const title = canEdit ? (
     <InputTextField
@@ -322,31 +78,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     !contentForm.values.content &&
     !imageForm.values.image
 
-  const shareButton: FloatingMenuContentItem | null = isPublished
-    ? {
-        Element: (
-          <div key="share-button" onClick={copyUrl}>
-            <Share /> Share
-          </div>
-        ),
-      }
-    : null
-
-  const deleteButton: FloatingMenuContentItem | null = canDelete
-    ? {
-        Element: (
-          <div
-            className={`delete-button ${emptyOnStart ? 'disabled' : ''}`}
-            key="delete-button"
-            onClick={() => !emptyOnStart && setIsToDelete(true)}
-          >
-            <Delete /> Delete
-          </div>
-        ),
-      }
-    : null
-
-  const publishButton: FloatingMenuContentItem | null =
+  const updatedMoreButtonItems = [
     !isEditing && canPublish && !isPublished
       ? {
           Element: (
@@ -358,9 +90,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
 
           wrapperClassName: 'publish-button',
         }
-      : null
-
-  const publishCheckButton: FloatingMenuContentItem | null =
+      : null,
     // isEditing && canPublish && !isPublished
     isEditing && canPublish && !isPublished && (hasAllData || disableFields)
       ? {
@@ -375,9 +105,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
             </div>
           ),
         }
-      : null
-
-  const unpublishButton: FloatingMenuContentItem | null =
+      : null,
     canPublish && isPublished
       ? {
           Element: (
@@ -388,57 +116,62 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           ),
           wrapperClassName: 'unpublish-button',
         }
-      : null
-
-  const publishedButton =
-    canPublish && isPublished ? (
-      <abbr title="Published" key="publishing-button" style={{ cursor: 'initial' }}>
-        <Public style={{ fill: '#00bd7e' }} />
-      </abbr>
-    ) : null
-
-  const unpublishedButton =
-    canPublish && !isPublished ? (
-      <abbr title="Unpublished" key="unpublished-button" style={{ cursor: 'initial' }}>
-        <PublicOff style={{ fill: '#a7a7a7' }} />
-      </abbr>
-    ) : null
-
-  const openLinkOrDownloadFile: FloatingMenuContentItem | null =
+      : null,
     width < 800 && contentUrl
       ? {
           Element:
             contentType === 'file' ? (
-              <div
-                key="open-link-or-download-file-button"
-                onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}
-              >
+              <div key="open-link-or-download-file-button" onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}>
                 <InsertDriveFile />
                 Download
               </div>
             ) : (
-              <div
-                key="open-link-or-download-file-button"
-                onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}
-              >
+              <div key="open-link-or-download-file-button" onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}>
                 <LinkIcon />
                 Open link
               </div>
             ),
         }
-      : null
-
-  const updatedMoreButtonItems = [
-    publishButton,
-    publishCheckButton,
-    unpublishButton,
-    openLinkOrDownloadFile,
-    shareButton,
-    deleteButton,
+      : null,
+    isPublished
+      ? {
+          Element: (
+            <div key="share-button" onClick={copyUrl}>
+              <Share /> Share
+            </div>
+          ),
+        }
+      : null,
+    canDelete
+      ? {
+          Element: (
+            <div
+              className={`delete-button ${emptyOnStart ? 'disabled' : ''}`}
+              key="delete-button"
+              onClick={() => !emptyOnStart && setIsToDelete(true)}
+            >
+              <Delete /> Delete
+            </div>
+          ),
+        }
+      : null,
     ...(moreButtonItems ?? []),
   ].filter((item): item is FloatingMenuContentItem => !!item)
 
-  const moreButton =
+  const disableSaveButton = (empty && emptyOnStart) || autofillState === 'ai-generation'
+
+  const updatedTopRightHeaderItems = [
+    canPublish && isPublished ? (
+      <abbr title="Published" key="publishing-button" style={{ cursor: 'initial' }}>
+        <Public style={{ fill: '#00bd7e' }} />
+      </abbr>
+    ) : null,
+    canPublish && !isPublished ? (
+      <abbr title="Unpublished" key="unpublished-button" style={{ cursor: 'initial' }}>
+        <PublicOff style={{ fill: '#a7a7a7' }} />
+      </abbr>
+    ) : null,
+    ...(topRightHeaderItems ?? []),
     updatedMoreButtonItems.length > 0 ? (
       // updatedMoreButtonItems.length === 1 ? (
       //   updatedMoreButtonItems.map(i => {
@@ -465,11 +198,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
         }
       />
     ) : // )
-    null
-
-  const disableSaveButton = (empty && emptyOnStart) || autofillState === 'ai-generation'
-
-  const editSaveButton =
+    null,
     canEdit && !isPublished
       ? {
           Item: () => (
@@ -495,14 +224,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
           ),
           key: 'edit-save-button',
         }
-      : null
-
-  const updatedTopRightHeaderItems = [
-    publishedButton,
-    unpublishedButton,
-    ...(topRightHeaderItems ?? []),
-    moreButton,
-    editSaveButton,
+      : null,
   ].filter((item): item is AddonItem => !!item)
 
   const topHeaderRow = (
@@ -516,9 +238,7 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   )
 
-  const subjectLabel = subjectOptions.find(
-    ({ ['value']: value }) => value && value === form.values.subject,
-  )
+  const subjectLabel = subjectOptions.find(({ ['value']: value }) => value && value === form.values.subject)
 
   const tagsContainer = subjectLabel ? (
     <div className="tags scroll" key="tags">
@@ -526,32 +246,8 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     </div>
   ) : null
 
-  const updatedHeaderColumnItems = [
-    topHeaderRow,
-    title,
-    tagsContainer,
-    ...(headerColumnItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
-
-  const resourceHeader = (
-    <div className="resource-header" key="resource-header">
-      {updatedHeaderColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-    </div>
-  )
-
-  const resourceUploader = (imageForm.values.image || isEditing) && (
-    <UploadResource
-      displayOnly={(canEdit && !isEditing) || !canEdit}
-      contentForm={contentForm}
-      imageForm={imageForm}
-      uploadOptionsItems={uploadOptionsItems}
-      fileMaxSize={fileMaxSize}
-      shouldShowErrors={shouldShowErrors}
-      actions={actions}
-      data={data}
-      state={state}
-      key="resource-uploader"
-    />
+  const updatedHeaderColumnItems = [topHeaderRow, title, tagsContainer, ...(headerColumnItems ?? [])].filter(
+    (item): item is AddonItem => !!item,
   )
 
   const descriptionRef = useRef<HTMLDivElement>(null)
@@ -560,90 +256,78 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
   useEffect(() => {
     const fieldElem = descriptionRef.current
     if (fieldElem) {
-      {
-        fieldElem.scrollHeight > 114 && setShowFullDescription(false)
-      }
+      fieldElem.scrollHeight > 114 && setShowFullDescription(false)
     }
   }, [descriptionRef])
 
-  const description = canEdit ? (
-    <InputTextField
-      className="description"
-      name="description"
-      key="description"
-      disabled={disableFields}
-      isTextarea
-      textAreaAutoSize
-      noBorder
-      edit={isEditing}
-      placeholder="Description"
-      value={form.values.description}
-      onChange={form.handleChange}
-      error={shouldShowErrors && isEditing && form.errors.description}
-    />
-  ) : (
-    <div className="description" key="description-container">
-      <div
-        className="description-text"
-        ref={descriptionRef}
-        style={{
-          height: showFullDescription ? 'fit-content' : '110px',
-          overflow: showFullDescription ? 'auto' : 'hidden',
-        }}
-      >
-        {form.values.description}
-      </div>
-      {!showFullDescription && (
-        <div className="see-more" onClick={() => setShowFullDescription(true)}>
-          ...see more
-        </div>
-      )}
-    </div>
-  )
-
   const outcomeErrors = form.errors.learningOutcomes
 
-  const learningOutcomes =
-    isEditing ||
-    (!isEditing && form.values.learningOutcomes.filter(e => e.sentence !== '').length > 0) ? (
-      <LearningOutcomes
-        learningOutcomeOptions={learningOutcomeOptions}
-        learningOutcomes={form.values.learningOutcomes}
-        isEditing={isEditing}
-        disabled={disableFields}
-        error={
-          shouldShowErrors && isEditing && typeof outcomeErrors === 'string'
-            ? outcomeErrors
-            : Array.isArray(outcomeErrors)
-              ? outcomeErrors.map(item =>
-                  typeof item !== 'string' && item.sentence ? item.sentence : '',
-                )
-              : undefined
-        }
-        shouldShowErrors={shouldShowErrors}
-        edit={values => form.setFieldValue('learningOutcomes', values)}
-      />
-    ) : null
+  return (
+    <>
+      {/* {modals} */}
+      <Card className="main-resource-card" key="main-resource-card" hideBorderWhenSmall={true}>
+        <div className="resource-header" key="resource-header">
+          {updatedHeaderColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
+        </div>
 
-  const updatedFooterRowItems = [...(footerRowItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
+        {(imageForm.values.image || isEditing) && <DropUpload displayOnly={canEdit && !isEditing} key="resource-uploader" />}
+        {canEdit ? (
+          <InputTextField
+            className="description"
+            name="description"
+            key="description"
+            disabled={disableFields}
+            isTextarea
+            textAreaAutoSize
+            noBorder
+            edit={isEditing}
+            placeholder="Description"
+            value={form.values.description}
+            onChange={form.handleChange}
+            error={shouldShowErrors && isEditing && form.errors.description}
+          />
+        ) : (
+          <div className="description" key="description-container">
+            <div
+              className="description-text"
+              ref={descriptionRef}
+              style={{
+                height: showFullDescription ? 'fit-content' : '110px',
+                overflow: showFullDescription ? 'auto' : 'hidden',
+              }}
+            >
+              {form.values.description}
+            </div>
+            {!showFullDescription && (
+              <div className="see-more" onClick={() => setShowFullDescription(true)}>
+                ...see more
+              </div>
+            )}
+          </div>
+        )}
+        {isEditing || form.values.learningOutcomes.filter(e => e.sentence !== '').length > 0 ? (
+          <LearningOutcomes
+            learningOutcomeRecords={learningOutcomeOptions}
+            learningOutcomes={form.values.learningOutcomes}
+            isEditing={isEditing}
+            disabled={disableFields}
+            error={
+              shouldShowErrors && isEditing && typeof outcomeErrors === 'string'
+                ? outcomeErrors
+                : Array.isArray(outcomeErrors)
+                  ? outcomeErrors.map(item => (typeof item !== 'string' && item.sentence ? item.sentence : ''))
+                  : undefined
+            }
+            shouldShowErrors={shouldShowErrors}
+            edit={values => form.setFieldValue('learningOutcomes', values)}
+          />
+        ) : null}
+        <div className="resource-footer" key="resource-footer"></div>
+      </Card>
+    </>
   )
-
-  const resourceFooter =
-    updatedFooterRowItems.length > 0 ? (
-      <div className="resource-footer" key="resource-footer">
-        {updatedFooterRowItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      </div>
-    ) : null
-
-  const updatedMainColumnItems = [
-    resourceHeader,
-    resourceUploader,
-    description,
-    learningOutcomes,
-    resourceFooter,
-    ...(mainColumnItems ?? []),
-  ].filter((item): item is AddonItem | JSX.Element => !!item)
+}
+/*
 
   const { addSnackbar } = useSnackbar()
 
@@ -704,14 +388,4 @@ export const MainResourceCard: FC<MainResourceCardProps> = ({
     ),
   ]
 
-  return (
-    <>
-      {modals}
-      <Card className="main-resource-card" key="main-resource-card" hideBorderWhenSmall={true}>
-        {updatedMainColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      </Card>
-    </>
-  )
-}
-MainResourceCard.displayName = 'MainResourceCard'
-export default MainResourceCard
+ */

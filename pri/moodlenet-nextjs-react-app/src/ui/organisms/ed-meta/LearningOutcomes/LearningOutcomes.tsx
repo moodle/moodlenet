@@ -1,28 +1,25 @@
-import {
-  Dropdown,
-  ErrorMessage,
-  InputTextField,
-  RoundButton,
-  SimpleTextOption,
-} from '@moodlenet/component-library'
+import { bloomLearningOutcome, eduBloomCognitiveRecord } from '@moodle/module/edu'
 import { Circle, HelpOutline } from '@mui/icons-material'
 import type { RefObject } from 'react'
 import { createRef, useEffect, useState, type FC } from 'react'
-import type { LearningOutcome, LearningOutcomeOption } from '../../../../common/types.mjs'
+import { Dropdown, SimpleTextOption } from '../../../atoms/Dropdown/Dropdown'
+import ErrorMessage from '../../../atoms/ErrorMessage/ErrorMessage'
+import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { RoundButton } from '../../../atoms/RoundButton/RoundButton'
 import './LearningOutcomes.scss'
 
 export type LearningOutcomesProps = {
   isEditing: boolean
-  learningOutcomes: LearningOutcome[]
-  learningOutcomeOptions: LearningOutcomeOption[]
+  learningOutcomes: bloomLearningOutcome[]
+  learningOutcomeRecords: eduBloomCognitiveRecord[]
   disabled?: boolean
   error?: string | string[]
   shouldShowErrors: boolean
-  edit: (learningOutcomes: LearningOutcome[]) => unknown
+  edit: (learningOutcomes: bloomLearningOutcome[]) => unknown
 }
 
 const MAX_LEARNING_OUTCOME_ITEMS = 4
-function getBloomClassName(bloomCode: string) {
+function getBloomClassName(bloomLevel: string) {
   return (
     {
       '1': 'knowledge',
@@ -31,12 +28,12 @@ function getBloomClassName(bloomCode: string) {
       '4': 'analysis',
       '5': 'synthesis',
       '6': 'evaluation',
-    }[bloomCode] ?? ''
+    }[bloomLevel] ?? ''
   )
 }
 
 export const LearningOutcomes: FC<LearningOutcomesProps> = ({
-  learningOutcomeOptions,
+  learningOutcomeRecords,
   learningOutcomes,
   isEditing,
   disabled,
@@ -50,33 +47,30 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
 
   const learningOutcomesList = learningOutcomes.length > 0 && (
     <div className="learning-outcomes-list" key="learning-outcomes-list">
-      {learningOutcomes.map(({ code, verb, sentence }, i) => {
-        const learningOutcomeName = getLearningOutcomeName(code)
-        const bloomUIClassName = getBloomClassName(code)
+      {learningOutcomes.map(({ level, verb, learningOutcome }, i) => {
+        const learningOutcomeName = getLearningOutcomeName(level)
+        const bloomUIClassName = getBloomClassName(level)
         return isEditing ? (
           <InputTextField
             className="learning-outcome"
-            key={`${code}-${verb}-${i}`}
+            key={`${level}-${verb}-${i}`}
             name="content"
             placeholder={`the necessary facts...`}
             edit
             disabled={disabled}
-            value={sentence}
+            value={learningOutcome}
             onChange={value => {
               const newLearningOutcomes = [...learningOutcomes]
               const newLearningOutcome = newLearningOutcomes[i]
               if (!newLearningOutcome) {
                 return
               }
-              newLearningOutcome.sentence = value.target.value
+              newLearningOutcome.learningOutcome = value.target.value
               edit(newLearningOutcomes)
             }}
-            defaultValue={sentence}
+            defaultValue={learningOutcome}
             leftSlot={
-              <abbr
-                className={`verb-pill ${bloomUIClassName}`}
-                title={`${learningOutcomeName} Bloom's category`}
-              >
+              <abbr className={`verb-pill ${bloomUIClassName}`} title={`${learningOutcomeName} Bloom's category`}>
                 {verb}
               </abbr>
             }
@@ -89,23 +83,16 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
                 onKeyUp={e => e.key === 'enter' && deleteOutcome(i)}
               />
             }
-            error={
-              shouldShowErrors && isEditing && Array.isArray(error) && error[i] !== ''
-                ? error[i]
-                : undefined
-            }
+            error={shouldShowErrors && isEditing && Array.isArray(error) && error[i] !== '' ? error[i] : undefined}
           />
         ) : (
-          sentence !== '' && (
+          learningOutcome !== '' && (
             <div className="learning-outcome-read-only">
               <Circle />
-              <abbr
-                className={`verb ${bloomUIClassName}`}
-                title={`${learningOutcomeName} Bloom's category`}
-              >
+              <abbr className={`verb ${bloomUIClassName}`} title={`${learningOutcomeName} Bloom's category`}>
                 {verb}
-              </abbr>{' '}
-              <div className="sentence">{sentence}</div>
+              </abbr>
+              <div className="sentence">{learningOutcome}</div>
             </div>
           )
         )
@@ -115,40 +102,32 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
 
   const [searchText, setSearchText] = useState('')
 
-  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = learningOutcomeOptions.map(
-    () => createRef(),
-  )
+  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = learningOutcomeRecords.map(() => createRef())
 
   const categories = isEditing && (
     <div className="categories">
-      {learningOutcomeOptions.map((learningOutcomeOption, i) => {
-        const selectedVerb = learningOutcomes.find(
-          outcome => outcome.code === learningOutcomeOption.code,
-        )
+      {learningOutcomeRecords.map((learningOutcomeOption, i) => {
+        const selectedVerb = learningOutcomes.find(outcome => outcome.level === learningOutcomeOption.level)
         const dropdownRef = learningOutcomeCategoriesRefs && learningOutcomeCategoriesRefs[i]
         const maxLearningOutcomesReached = learningOutcomes.length > MAX_LEARNING_OUTCOME_ITEMS
         return (
           <Dropdown
-            key={learningOutcomeOption.code}
+            key={learningOutcomeOption.level}
             divRef={dropdownRef}
-            className={`category ${getBloomClassName(learningOutcomeOption.code)} ${
-              selectedVerb ? 'active' : ''
-            }
+            className={`category ${getBloomClassName(learningOutcomeOption.level)} ${selectedVerb ? 'active' : ''}
         ${maxLearningOutcomesReached ? 'max-reached' : ''}`}
             pills={false}
             disabled={maxLearningOutcomesReached || disabled}
-            abbr={
-              maxLearningOutcomesReached ? 'Max learning outcomes reached' : 'Add learning outcome'
-            }
-            placeholder={learningOutcomeOption.name}
+            abbr={maxLearningOutcomesReached ? 'Max learning outcomes reached' : 'Add learning outcome'}
+            placeholder={learningOutcomeOption.level}
             searchByText={setSearchText}
             onChange={changeEvent => {
               edit([
                 ...learningOutcomes,
                 {
-                  code: learningOutcomeOption.code,
+                  level: learningOutcomeOption.level,
                   verb: changeEvent.target.value,
-                  sentence: '',
+                  learningOutcome: '',
                 },
               ])
             }}
@@ -174,11 +153,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
 
   const findOutMore = (
     <abbr className="find-out-more" title="Find out more">
-      <a
-        href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a href="https://en.wikipedia.org/wiki/Bloom%27s_taxonomy" target="_blank" rel="noopener noreferrer">
         <HelpOutline />
       </a>
     </abbr>
@@ -199,9 +174,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
     </div>
   )
 
-  const errorDiv = isEditing && shouldShowErrors && error && typeof error === 'string' && (
-    <ErrorMessage error={error} />
-  )
+  const errorDiv = isEditing && shouldShowErrors && error && typeof error === 'string' && <ErrorMessage error={error} />
 
   return (
     <div className={`learning-outcomes-section ${disabled ? 'disabled' : ''}`}>
@@ -212,8 +185,8 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
       {learningOutcomesList}
     </div>
   )
-  function getLearningOutcomeName(byCode: string) {
-    return learningOutcomeOptions.find(({ code }) => code === byCode)?.name ?? 'unknown'
+  function getLearningOutcomeName(byLevel: string) {
+    return learningOutcomeRecords.find(({ level }) => level === byLevel)?.description ?? 'unknown'
   }
 }
 

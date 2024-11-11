@@ -1,7 +1,5 @@
-import type { TextOptionProps } from '@moodlenet/component-library'
-import { Dropdown, SimplePill, TextOption } from '@moodlenet/component-library'
-import type { FC } from 'react'
 import { useEffect, useState } from 'react'
+import { Dropdown, SimplePill, TextOption, TextOptionProps } from '../../../atoms/Dropdown/Dropdown'
 
 export type DropdownFieldProps = {
   selection: string | undefined
@@ -10,24 +8,24 @@ export type DropdownFieldProps = {
   placeholder: string
   canEdit: boolean
   error: string | undefined
-  shouldShowErrors: boolean
+  shouldShowErrors?: boolean
   edit(selection: string): void
   noBorder?: boolean
   disabled?: boolean
 }
 
-export const DropdownField: FC<DropdownFieldProps> = ({
+export default function DropdownField({
   selection,
   options,
   title,
   placeholder,
   canEdit,
   error,
-  shouldShowErrors,
+  shouldShowErrors = false,
   edit,
-  noBorder,
+  noBorder = true,
   disabled,
-}) => {
+}: DropdownFieldProps) {
   const elements = {
     opts: options,
     selected: options.find(({ value }) => value === selection),
@@ -45,10 +43,7 @@ export const DropdownField: FC<DropdownFieldProps> = ({
   useEffect(() => {
     setUpdatedElements({
       opts: elements.opts.filter(o => o.value.toUpperCase().includes(searchText.toUpperCase())),
-      selected: options.find(
-        ({ value }) =>
-          value === selection && value.toUpperCase().includes(searchText.toUpperCase()),
-      ),
+      selected: options.find(({ value }) => value === selection && value.toUpperCase().includes(searchText.toUpperCase())),
     })
   }, [searchText, selection, elements.opts, options])
 
@@ -87,9 +82,7 @@ export const DropdownField: FC<DropdownFieldProps> = ({
       )}
       {updatedElements.opts.map(
         ({ value, label }) =>
-          updatedElements.selected?.value !== value && (
-            <TextOption key={value} value={value} label={label} />
-          ),
+          updatedElements.selected?.value !== value && <TextOption key={value} value={value} label={label} />,
       )}
     </Dropdown>
   ) : selection ? (
@@ -101,9 +94,3 @@ export const DropdownField: FC<DropdownFieldProps> = ({
     </div>
   ) : null
 }
-
-DropdownField.defaultProps = {
-  noBorder: true,
-}
-
-export default DropdownField
