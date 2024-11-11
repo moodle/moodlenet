@@ -17,14 +17,14 @@ export type dir<_dir> = {
   [key in keyof _dir]: _dir[key] extends file ? file : dir<_dir[key]>
 }
 export type file = (alias: string) => path
-// REVIEW:
-// REVIEW:
-// REVIEW:
-// REVIEW: should this FILESYSTEM STRUCTURE be in DOMAIN ?
-// REVIEW: also .. review it completely ... it doesn't ensure you get to an end leaf to save a file
-// REVIEW:    e.g. to save a collectoin image, it accepts userProfile.xxxx.drafts.eduCollection.yyy
-// REVIEW:    instead of userProfile.xxxx.drafts.eduCollection.yyy.image
-// REVIEW:    that's ok when want to reference a directory, but no good for saving a file
+// FIXME:
+// FIXME:
+// FIXME:
+// FIXME: should this FILESYSTEM STRUCTURE be in DOMAIN ?
+// FIXME: also .. review it completely ... it doesn't ensure you get to an end leaf to save a file
+// FIXME:    e.g. to save a collectoin image, it accepts userProfile.xxxx.drafts.eduCollection.yyy
+// FIXME:    instead of userProfile.xxxx.drafts.eduCollection.yyy.image
+// FIXME:    that's ok when want to reference a directory, but no good for saving a file
 export type filesystem = {
   userProfile: {
     [userProfileId in string]: {
