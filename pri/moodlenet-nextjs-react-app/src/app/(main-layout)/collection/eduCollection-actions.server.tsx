@@ -77,7 +77,7 @@ export async function getEduCollectionDraftImageForIdadoptAssetService({
             return adoptAssetResponse
           }),
       )
-    return safeActionResult_to_adoptAssetResponse(applyEduCollectionDraftImageAction({ adoptAssetForm }))
+    return safeActionResult_to_adoptAssetResponse(applyEduCollectionDraftImageAction({ resourceImageForm: adoptAssetForm }))
   }
 }
 

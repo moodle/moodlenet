@@ -1,7 +1,7 @@
 import { single_line_string_schema } from '@moodle/lib-types'
 import type { z } from 'zod'
-import { array, number, object, string } from 'zod'
-import { adoptAssetFormSchema } from '../../content'
+import { array, literal, number, object, string, union } from 'zod'
+import { adoptAssetFormSchema, adoptValuedAssetFormSchema } from '../../content'
 export type eduPrimaryMsgSchemaConfigs = {
   eduCollectionMeta: {
     title: { max: number }
@@ -26,8 +26,11 @@ export type eduResourceMetaForm = z.infer<eduResourceMetaFormSchema>
 export type eduResourceApplyImageFormSchema = ReturnType<typeof getEduPrimarySchemas>['applyImageSchema']
 export type eduResourceApplyImageForm = z.infer<eduResourceApplyImageFormSchema>
 
+export type createNewResourceDraftSchema = ReturnType<typeof getEduPrimarySchemas>['createNewResourceDraftSchema']
+export type createNewResourceDraftSchemaForm = z.infer<createNewResourceDraftSchema>
+
 export function getEduPrimarySchemas({ eduCollectionMeta, eduResourceMeta }: eduPrimaryMsgSchemaConfigs) {
-  const applyImageSchema = object({ adoptAssetForm: adoptAssetFormSchema })
+  const applyImageSchema = object({ resourceImageForm: adoptAssetFormSchema })
 
   //
 
@@ -42,7 +45,7 @@ export function getEduPrimarySchemas({ eduCollectionMeta, eduResourceMeta }: edu
   //
 
   const bloomLearningOutcomeSchema = object({
-    level: string(),
+    level: union([literal('1'), literal('2'), literal('3'), literal('4'), literal('5'), literal('6')]),
     verb: string(),
     learningOutcome: string(),
   })
@@ -58,7 +61,14 @@ export function getEduPrimarySchemas({ eduCollectionMeta, eduResourceMeta }: edu
     language: string().nullish(),
     license: string().nullish(),
     bloomLearningOutcomes: array(bloomLearningOutcomeSchema),
-    publicationDate: object({ month: number().int().min(1).max(12), year: number().int().min(1900).max(2024) }).nullish(),
+    publicationDate: object({
+      month: number().min(1).max(12),
+      year: number().min(1900).max(2024),
+    }).nullish(),
+  })
+  const createNewResourceDraftSchema = object({
+    newResourceAsset: adoptValuedAssetFormSchema,
+    eduResourceMeta: eduResourceMetaSchema.nullish().optional(),
   })
 
   return {
@@ -71,6 +81,6 @@ export function getEduPrimarySchemas({ eduCollectionMeta, eduResourceMeta }: edu
     applyImageSchema,
     eduCollectionMetaSchema,
     eduResourceMetaSchema,
+    createNewResourceDraftSchema,
   }
 }
-

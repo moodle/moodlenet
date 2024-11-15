@@ -13,13 +13,13 @@ function contentLicenses(): Omit<contentLicenseRecord, 'enabled'>[] {
     { code: 'cc-by-sa', name: 'Attribution + ShareAlike', restrictiveness: fraction_schema.parse(0.2) },
     { code: 'cc-by-nc', name: 'Attribution + NonCommercial', restrictiveness: fraction_schema.parse(0.3) },
     {
-      id: 'cc-by-nc-sa',
+      code: 'cc-by-nc-sa',
       name: 'Attribution + NonCommercial + ShareAlike',
       restrictiveness: fraction_schema.parse(0.4),
     },
     { code: 'cc-by-nd', name: 'Attribution + NoDerivatives', restrictiveness: fraction_schema.parse(0.5) },
     {
-      id: 'cc-by-nc-nd',
+      code: 'cc-by-nc-nd',
       name: 'Attribution + NonCommercial + NoDerivatives',
       restrictiveness: fraction_schema.parse(0.6),
     },

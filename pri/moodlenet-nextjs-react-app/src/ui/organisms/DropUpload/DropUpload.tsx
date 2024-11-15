@@ -12,19 +12,12 @@ export type uploadImageProps = {
 }
 
 export function DropUpload({ useAssetUploaderHandler, displayOnly }: uploadImageProps) {
-  const {
-    current,
-    openFileDialog,
-    state,
-    dropHandlers,
-    opts: { type },
-    select,
-  } = useAssetUploaderHandler
+  const { current, openFileDialog, state, dropHandlers, select, assetType } = useAssetUploaderHandler
 
   const credits = current?.type === 'asset' && current?.asset.type === 'external' ? current.asset.credits : undefined
 
   const viewerContainer =
-    type === 'webImage' ? (
+    assetType === 'webImage' ? (
       <ImageContainer
         imageUrl={current?.url}
         credits={credits}
@@ -48,7 +41,7 @@ export function DropUpload({ useAssetUploaderHandler, displayOnly }: uploadImage
       </span>
     )
   const promptContent =
-    type === 'webImage' ? (
+    assetType === 'webImage' ? (
       <>
         <UploadImageIcon />
         <span>Drop or click to upload an image!</span>

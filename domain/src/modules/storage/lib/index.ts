@@ -47,7 +47,7 @@ export function getAssetUrl<_asset extends asset>(
 
 export async function useTempFileResult_to_adoptAssetResponse(
   p_useTempFileResult: useTempFileResult | Promise<useTempFileResult>,
-): Promise<d_u__d<adoptAssetResponse, 'status', 'done' | 'error'>> {
+): Promise<d_u__d<adoptAssetResponse<'local'>, 'status', 'done' | 'error'>> {
   const [done, result] = await p_useTempFileResult
   return done
     ? {

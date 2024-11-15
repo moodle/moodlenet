@@ -39,17 +39,17 @@ type uploadingXhr = {
 
 export type submissionCallback = (_: { submission: lastSubmission[] }) => void
 
-export type assetUploaderHookOpts = {
+export type assetUploaderHookOpts<non_nullable extends boolean | undefined> = {
   overrideMaxSize?: number
+  nonNullable?: non_nullable
 }
 
 type assetType = 'webImage' | 'anyFile'
-
-export function useAssetUploader(
+export function useAssetUploader<non_nullable extends boolean | undefined>(
   assetType: assetType,
   _initialAsset: _nullish | asset,
-  adoptAssetService: adoptAssetService | _nullish,
-  opts?: assetUploaderHookOpts,
+  adoptAssetService: _nullish | (non_nullable extends true ? adoptAssetService<'upload' | 'external'> : adoptAssetService),
+  opts?: assetUploaderHookOpts<non_nullable>,
 ) {
   const initialAsset = _initialAsset ?? NONE_ASSET
   const { overrideMaxSize } = opts ?? {}
@@ -167,6 +167,9 @@ export function useAssetUploader(
     if (state.type !== 'selected' || !adoptAssetService) {
       return
     }
+    if (state.selection.type === 'null' && opts?.nonNullable) {
+      return
+    }
     const _adoptAssetService = adoptAssetService
     dispatch({ type: 'submit' })
     ;(async (): Promise<adoptAssetForm | 'upload error'> => {
@@ -226,7 +229,7 @@ export function useAssetUploader(
       .then(adoptAssetForm => {
         return adoptAssetForm === 'upload error'
           ? Promise.reject('upload error')
-          : _adoptAssetService(adoptAssetForm).catch<adoptAssetResponse>(err => ({
+          : (_adoptAssetService as adoptAssetService)(adoptAssetForm).catch<adoptAssetResponse>(err => ({
               status: 'error',
               message: String(err),
             }))
@@ -235,7 +238,7 @@ export function useAssetUploader(
         dispatch({ type: 'actionResponse', ...adoptAssetResponse })
       })
       .finally(() => setUploadingXhr(null))
-  }, [state.type, state.selection, filetoreHttp.href, assetType, adoptAssetService])
+  }, [state.type, state.selection, adoptAssetService, opts?.nonNullable, filetoreHttp.href, assetType])
 
   return useMemo<useAssetUploaderHandler>(() => {
     const useAssetUploaderHandler: useAssetUploaderHandler = {

@@ -13,10 +13,7 @@ export async function createDatabases({ dbStruct }: { dbStruct: dbStruct }) {
     [dbStruct.sys_db, dbStruct.moodlenet.db, dbStruct.modules.db, dbStruct.userAccount.db].map(db =>
       db.createFunction(
         'MOODLE::RESTORE_RECORD_ID',
-        `(doc, idProp) => ({
-            ...Object.fromEntries(Object.entries(doc).filter(([prop]) => !prop.startsWith('_'))),
-            [idProp||'id']: doc._key,
-          })`,
+        `(doc) => Object.fromEntries(Object.entries(doc).filter(([prop]) => !prop.startsWith('_')))`,
       ),
     ),
   )

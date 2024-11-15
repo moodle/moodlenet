@@ -12,22 +12,34 @@ import { appRoutes } from '../../../lib/common/appRoutes'
 import { defaultSafeActionClient, safeActionResult_to_adoptAssetResponse } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
 
+export async function getCreateNewEduResourceSchema() {
+  const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
+  return edu.createNewResourceDraftSchema
+}
+
+export async function getCreateNewEduResourceDraft(): Promise<adoptAssetService<'external' | 'upload'>> {
+  return async function adoptAssetService_newEduResourceFileDraft(newResourceAsset) {
+    'use server'
+    const createNewEduResourceDraftImageAction = defaultSafeActionClient
+      .schema(getCreateNewEduResourceSchema)
+      .action(async ({ parsedInput: newResourceAssetForm }) =>
+        access.primary.userProfile.authenticated.createEduResourceDraft(newResourceAssetForm).then(([done, result]) => {
+          if (!done) {
+            returnValidationErrors(getCreateNewEduResourceSchema, {
+              _errors: [t(`something went wrong while saving resource meta`)],
+            })
+          }
+          redirect(appRoutes(`/resource/${result.eduResourceDraftId}`))
+        }),
+      )
+    return safeActionResult_to_adoptAssetResponse(createNewEduResourceDraftImageAction({ newResourceAsset }))
+  }
+}
+
 export async function getEduResourceMetaSchema() {
   const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
   return edu.eduResourceMetaSchema
 }
-
-export const saveNewEduResourceDraft = defaultSafeActionClient
-  .schema(getEduResourceMetaSchema)
-  .action(async ({ parsedInput: eduResourceMetaForm }) => {
-    const [done, result] = await access.primary.userProfile.authenticated.createEduResourceDraft({ eduResourceMetaForm })
-    if (!done) {
-      returnValidationErrors(getEduResourceMetaSchema, {
-        _errors: [t(`something went wrong while saving resource meta`)],
-      })
-    }
-    redirect(appRoutes(`/resource/${result.eduResourceDraftId}`), RedirectType.replace)
-  })
 
 export async function editEduResourceDraftForId({ eduResourceDraftId }: { eduResourceDraftId: eduResourceDraftId }) {
   return async function editEduResourceDraft(eduResourceMetaForm: eduResourceMetaForm) {
@@ -55,12 +67,12 @@ export async function getApplyEduResourceDraftImageSchema() {
   const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
   return edu.applyImageSchema
 }
-export async function getEduResourceDraftImageForIdadoptAssetService({
+export async function getEduResourceDraftImageForIdAdoptAssetService({
   eduResourceDraftId,
 }: {
   eduResourceDraftId: eduResourceDraftId
 }): Promise<adoptAssetService> {
-  return async function adoptAssetForm_eduResourceDraftImage(adoptAssetForm) {
+  return async function adoptAssetService_eduResourceDraftImage(resourceImageForm) {
     'use server'
 
     const applyEduResourceDraftImageAction = defaultSafeActionClient
@@ -77,7 +89,7 @@ export async function getEduResourceDraftImageForIdadoptAssetService({
             return adoptAssetResponse
           }),
       )
-    return safeActionResult_to_adoptAssetResponse(applyEduResourceDraftImageAction({ adoptAssetForm }))
+    return safeActionResult_to_adoptAssetResponse(applyEduResourceDraftImageAction({ resourceImageForm }))
   }
 }
 

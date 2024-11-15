@@ -10,7 +10,7 @@ import {
   Save,
   Share,
 } from '@mui/icons-material'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Card } from '../../../atoms/Card/Card'
 import { DropUpload } from '../../../organisms/DropUpload/DropUpload'
 import { LearningOutcomes } from '../../../organisms/ed-meta/LearningOutcomes/LearningOutcomes'
@@ -23,7 +23,10 @@ import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import { simpleUseHookFormActionHookReturn } from '../../../../lib/common/types'
 import { eduResourceMetaFormSchema } from '@moodle/module/edu'
 import { useAssetUploaderHandler } from '../../../../lib/client/useAssetUploader'
-import { isNotFalsy } from '@moodle/lib-types'
+import { isNotFalsy, unreachable_never } from '@moodle/lib-types'
+import { getResourceTypeInfo, getTag, getTagList } from '../../../lib/misc'
+import { TertiaryButton } from '../../../atoms/TertiaryButton/TertiaryButton'
+import { useWindowDimensions } from '../../../lib/hooks'
 
 export type mainResourceCardProps = resourcePageProps & {
   hookFormHandle: simpleUseHookFormActionHookReturn<eduResourceMetaFormSchema, void>
@@ -32,236 +35,87 @@ export type mainResourceCardProps = resourcePageProps & {
 }
 
 export default function MainResourceCard(props: mainResourceCardProps) {
-  const {uploadImageHandler,eduBloomCognitiveRecords,uploadResourceHandler, actions, activity, contributorCardProps, eduResourceData, hookFormHandle } = props
+  const { uploadResourceHandler, actions, activity, eduResourceData, hookFormHandle, references } = props
+  const { width } = useWindowDimensions()
   const disableFields = activity === 'viewPublished'
   const isEditing = activity === 'editDraft'
   const shouldShowErrors = isEditing
-  const title = canEdit ? (
-    <InputTextField
-      key="title"
-      className="title"
-      isTextarea
-      disabled={disableFields}
-      edit={isEditing}
-      placeholder="Title"
-      textAreaAutoSize
-      noBorder
-      {...hookFormHandle.form.register('title')}
-    />
-  ) : (
-    <div className="title" key="resource-title">
-      {eduResourceData?.title}
-    </div>
-  )
 
-  const resourceLabel = (
-    <div className="resource-label" key="resource-label">
-      Resource
-    </div>
-  )
+  const typePillAttr = getResourceTypeInfo(eduResourceData?.asset)
 
-  const { typeName, typeColor } = getResourceTypeInfo(
-    contentType,
-    contentType === 'file' ? downloadFilename : currentContentUrl,
-  )
-  const typePill =
-    contentForm.values.content && typeName && typeColor ? (
-      <div
-        className="type-pill"
-        key="type-pill"
-        style={{
-          background: typeColor,
-        }}
-      >
-        {typeName}
-      </div>
-    ) : null
+  const moreButtonItems = [
+    actions.publish && {
+      Element: (
+        <div key="publish-button" onClick={() => alert('publish')}>
+          <Public style={{ fill: '#00bd7e' }} />
+          Publish
+        </div>
+      ),
 
-  const updatedTopLeftHeaderItems = [
-    resourceLabel,
-    typePill,
-    // savingFeedback,
-    ...(topLeftHeaderItems ?? []),
-  ].filter((item): item is AddonItem => !!item)
-
-  const empty =
-    (!form.values.title || form.values.title === '') &&
-    (!form.values.description || form.values.description === '') &&
-    !(form.values.learningOutcomes.length > 0) &&
-    !contentForm.values.content &&
-    !imageForm.values.image
-
-  const updatedMoreButtonItems = [
-    !isEditing && canPublish && !isPublished
-      ? {
-          Element: (
-            <div key="publish-button" onClick={publish}>
-              <Public style={{ fill: '#00bd7e' }} />
-              Publish
-            </div>
-          ),
-
-          wrapperClassName: 'publish-button',
-        }
-      : null,
-    // isEditing && canPublish && !isPublished
-    isEditing && canPublish && !isPublished && (hasAllData || disableFields)
-      ? {
-          Element: (
-            <div
-              className={`publish-check-button ${disableFields ? 'disabled' : ''}`}
-              key="publish-check-button"
-              onClick={publishCheck}
-            >
-              <Check />
-              Publish check
-            </div>
-          ),
-        }
-      : null,
-    canPublish && isPublished
-      ? {
-          Element: (
-            <div key="unpublish-button" onClick={unpublish}>
-              <PublicOff />
-              Unpublish
-            </div>
-          ),
-          wrapperClassName: 'unpublish-button',
-        }
-      : null,
-    width < 800 && contentUrl
-      ? {
-          Element:
-            contentType === 'file' ? (
-              <div key="open-link-or-download-file-button" onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}>
+      wrapperClassName: 'publish-button',
+    },
+    activity === 'editDraft' && {
+      Element: (
+        <div
+          className={`publish-check-button ${disableFields ? 'disabled' : ''}`}
+          key="publish-check-button"
+          onClick={() => alert('publishCheck')}
+        >
+          <Check />
+          Publish check
+        </div>
+      ),
+    },
+    actions.unpublish && {
+      Element: (
+        <div key="unpublish-button" onClick={() => alert('unpublish')}>
+          <PublicOff />
+          Unpublish
+        </div>
+      ),
+      wrapperClassName: 'unpublish-button',
+    },
+    activity !== 'createDraft' &&
+      width < 800 && {
+        Element: (
+          <div key="open-link-or-download-file-button">
+            {eduResourceData.asset.type === 'local' ? (
+              <>
                 <InsertDriveFile />
                 Download
-              </div>
-            ) : (
-              <div key="open-link-or-download-file-button" onClick={() => downloadOrOpenURL(contentUrl, downloadFilename)}>
+              </>
+            ) : eduResourceData.asset.type === 'external' ? (
+              <>
                 <LinkIcon />
                 Open link
-              </div>
-            ),
-        }
-      : null,
-    isPublished
-      ? {
-          Element: (
-            <div key="share-button" onClick={copyUrl}>
-              <Share /> Share
-            </div>
-          ),
-        }
-      : null,
-    canDelete
-      ? {
-          Element: (
-            <div
-              className={`delete-button ${emptyOnStart ? 'disabled' : ''}`}
-              key="delete-button"
-              onClick={() => !emptyOnStart && setIsToDelete(true)}
-            >
-              <Delete /> Delete
-            </div>
-          ),
-        }
-      : null,
-    ...(moreButtonItems ?? []),
+              </>
+            ) : (
+              unreachable_never(eduResourceData.asset)
+            )}
+          </div>
+        ),
+      },
+    activity === 'viewPublished' && {
+      Element: (
+        <div key="share-button" onClick={() => alert('copyUrl')}>
+          <Share /> Share
+        </div>
+      ),
+    },
+    actions.deleteDraft ||
+      (actions.deletePublished && {
+        Element: (
+          <div
+            /* className={`delete-button ${emptyOnStart ? 'disabled' : ''}`} */
+            className={`delete-button`}
+            key="delete-button"
+            onClick={() => alert(' setIsToDelete(true)')}
+          >
+            <Delete /> Delete
+          </div>
+        ),
+      }),
   ].filter(isNotFalsy)
-
-  const disableSaveButton = (empty && emptyOnStart) || autofillState === 'ai-generation'
-
-  const updatedTopRightHeaderItems = [
-    canPublish && isPublished ? (
-      <abbr title="Published" key="publishing-button" style={{ cursor: 'initial' }}>
-        <Public style={{ fill: '#00bd7e' }} />
-      </abbr>
-    ) : null,
-    canPublish && !isPublished ? (
-      <abbr title="Unpublished" key="unpublished-button" style={{ cursor: 'initial' }}>
-        <PublicOff style={{ fill: '#a7a7a7' }} />
-      </abbr>
-    ) : null,
-    ...(topRightHeaderItems ?? []),
-    updatedMoreButtonItems.length > 0 ? (
-      // updatedMoreButtonItems.length === 1 ? (
-      //   updatedMoreButtonItems.map(i => {
-      //     return (
-      //       <TertiaryButton
-      //         key={i.key}
-      //         abbr={i.text}
-      //         onClick={i.onClick}
-      //         className={i.className ?? i.key}
-      //       >
-      //         {i.Icon}
-      //       </TertiaryButton>
-      //     )
-      //   })
-      // ) : (
-      <FloatingMenu
-        className="more-button"
-        key="more-button"
-        menuContent={updatedMoreButtonItems}
-        hoverElement={
-          <TertiaryButton className={`more`} abbr="More options">
-            <MoreVert />
-          </TertiaryButton>
-        }
-      />
-    ) : // )
-    null,
-    canEdit && !isPublished
-      ? {
-          Item: () => (
-            <div className="edit-save">
-              {isEditing && (
-                <PrimaryButton
-                  className={`save-button`}
-                  color="green"
-                  onClick={handleOnSaveClick}
-                  disabled={disableSaveButton}
-                >
-                  <div className="label">
-                    <Save />
-                  </div>
-                </PrimaryButton>
-              )}
-              {!isEditing && (
-                <SecondaryButton className="edit-button" onClick={handleOnEditClick} color="orange">
-                  <Edit />
-                </SecondaryButton>
-              )}
-            </div>
-          ),
-          key: 'edit-save-button',
-        }
-      : null,
-  ].filter((item): item is AddonItem => !!item)
-
-  const topHeaderRow = (
-    <div className="top-header-row" key="top-header-row">
-      <div className="top-left-header" key="top-left-header">
-        {updatedTopLeftHeaderItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      </div>
-      <div className="top-right-header" key="top-right-header">
-        {updatedTopRightHeaderItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-      </div>
-    </div>
-  )
-
-  const subjectLabel = subjectOptions.find(({ ['value']: value }) => value && value === form.values.subject)
-
-  const tagsContainer = subjectLabel ? (
-    <div className="tags scroll" key="tags">
-      {getTagList([{ name: subjectLabel.label, href: subjectHref, type: 'subject' }], 'small')}
-    </div>
-  ) : null
-
-  const updatedHeaderColumnItems = [topHeaderRow, title, tagsContainer, ...(headerColumnItems ?? [])].filter(
-    (item): item is AddonItem => !!item,
-  )
 
   const descriptionRef = useRef<HTMLDivElement>(null)
   const [showFullDescription, setShowFullDescription] = useState(true)
@@ -273,50 +127,127 @@ export default function MainResourceCard(props: mainResourceCardProps) {
     }
   }, [descriptionRef])
 
-  const outcomeErrors = form.errors.learningOutcomes
+  const bloomLearningOutcomesErrors = hookFormHandle.form.formState.errors.bloomLearningOutcomes
 
   return (
     <>
       {/* {modals} */}
       <Card className="main-resource-card" key="main-resource-card" hideBorderWhenSmall={true}>
         <div className="resource-header" key="resource-header">
-          {updatedHeaderColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
-        </div>
-
-        {activity === 'createDraft' ?<DropUpload useAssetUploaderHandler={uploadResourceHandler}  />
-
-        uploadImageHandler
-        {actions.editDraft ? (
-          <InputTextField
-            className="description"
-            key="description"
-            disabled={disableFields}
-            isTextarea
-            textAreaAutoSize
-            noBorder
-            edit={isEditing}
-            placeholder="Description"
-            {...hookFormHandle.form.register('description')}
-          />
-        ) : (
-          <div className="description" key="description-container">
-            <div
-              className="description-text"
-              ref={descriptionRef}
-              style={{
-                height: showFullDescription ? 'fit-content' : '110px',
-                overflow: showFullDescription ? 'auto' : 'hidden',
-              }}
-            >
-              {eduResourceData?.description}
+          <div className="top-header-row" key="top-header-row">
+            <div className="top-left-header" key="top-left-header">
+              <div className="resource-label" key="resource-label">
+                Resource
+              </div>
+              {typePillAttr ? (
+                <div
+                  className="type-pill"
+                  key="type-pill"
+                  style={{
+                    background: typePillAttr.typeColor,
+                  }}
+                >
+                  {typePillAttr.typeName}
+                </div>
+              ) : null}
             </div>
-            {!showFullDescription && (
-              <div className="see-more" onClick={() => setShowFullDescription(true)}>
-                ...see more
+            <div className="top-right-header" key="top-right-header">
+              {activity === 'viewPublished' && (
+                <abbr title="Published" key="publishing-button" style={{ cursor: 'initial' }}>
+                  <Public style={{ fill: '#00bd7e' }} />
+                </abbr>
+              )}
+              {actions.unpublish && (
+                <abbr title="Unpublished" key="unpublished-button" style={{ cursor: 'initial' }}>
+                  <PublicOff style={{ fill: '#a7a7a7' }} />
+                </abbr>
+              )}
+              {moreButtonItems.length > 0 && (
+                <FloatingMenu
+                  className="more-button"
+                  key="more-button"
+                  menuContent={moreButtonItems}
+                  hoverElement={
+                    <TertiaryButton className={`more`} abbr="More options">
+                      <MoreVert />
+                    </TertiaryButton>
+                  }
+                />
+              )}
+              {activity === 'editDraft' && (
+                <div className="edit-save">
+                  <PrimaryButton className={`save-button`} color="green" onClick={hookFormHandle.handleSubmitWithAction}>
+                    <div className="label">
+                      <Save />
+                    </div>
+                  </PrimaryButton>
+                </div>
+              )}
+            </div>
+            {isEditing ? (
+              <InputTextField
+                key="title"
+                className="title"
+                isTextarea
+                disabled={disableFields}
+                edit={isEditing}
+                placeholder="Title"
+                textAreaAutoSize
+                noBorder
+                {...hookFormHandle.form.register('title')}
+              />
+            ) : (
+              <div className="title" key="resource-title">
+                {eduResourceData?.title}
               </div>
             )}
+            {activity === 'viewPublished' ? (
+              <div className="tags scroll" key="tags">
+                {getTag(
+                  { name: references.iscedField.name, appRoute: references.iscedField.homePageRoute, type: 'subject' },
+                  'small',
+                )}
+              </div>
+            ) : null}
           </div>
-        )}
+
+          {activity === 'createDraft' ? (
+            <DropUpload useAssetUploaderHandler={uploadResourceHandler} />
+          ) : activity === 'editDraft' ? (
+            <DropUpload useAssetUploaderHandler={uploadResourceHandler} />
+          ) : null}
+          {activity === 'editDraft' ? (
+            <InputTextField
+              className="description"
+              key="description"
+              disabled={disableFields}
+              isTextarea
+              textAreaAutoSize
+              noBorder
+              edit={isEditing}
+              placeholder="Description"
+              {...hookFormHandle.form.register('description')}
+            />
+          ) : (
+            <div className="description" key="description-container">
+              <div
+                className="description-text"
+                ref={descriptionRef}
+                style={{
+                  height: showFullDescription ? 'fit-content' : '110px',
+                  overflow: showFullDescription ? 'auto' : 'hidden',
+                }}
+              >
+                {eduResourceData?.description}
+              </div>
+              {!showFullDescription && (
+                <div className="see-more" onClick={() => setShowFullDescription(true)}>
+                  ...see more
+                </div>
+              )}
+            </div>
+          )}
+        </div>
         {props.activity !== 'createDraft' ? (
           <LearningOutcomes
             eduBloomCognitiveRecords={props.eduBloomCognitiveRecords ?? []}
@@ -324,11 +255,9 @@ export default function MainResourceCard(props: mainResourceCardProps) {
             isEditing={activity === 'editDraft'}
             disabled={disableFields}
             error={
-              shouldShowErrors && isEditing && typeof outcomeErrors === 'string'
-                ? outcomeErrors
-                : Array.isArray(outcomeErrors)
-                  ? outcomeErrors.map(item => (typeof item !== 'string' && item.sentence ? item.sentence : ''))
-                  : undefined
+              shouldShowErrors && isEditing && bloomLearningOutcomesErrors
+                ? bloomLearningOutcomesErrors.map?.(item => item?.learningOutcome?.message ?? '')
+                : undefined
             }
             shouldShowErrors={shouldShowErrors}
             edit={values => hookFormHandle.form.setValue('bloomLearningOutcomes', values)}

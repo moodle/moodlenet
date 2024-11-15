@@ -25,3 +25,4 @@ type eduIscedLevelPath = [string] | [string, string] | [string, string, string]
 
 export type eduResourceTypeCode = string
 export type eduResourceTypeRecord = { enabled: boolean; description: string; id: eduResourceTypeCode }
+

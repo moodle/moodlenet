@@ -4,7 +4,7 @@ import { access, getAuthenticatedUserSessionOrRedirectToLogin } from '../../../.
 import { params } from '../../../../lib/server/types'
 import { Fallback } from '../../../../ui/pages/Fallback/Fallback'
 import { ResourcePage, resourcePageProps } from '../../../../ui/pages/Resource/Resource'
-import { editEduResourceDraftForId, getEduResourceDraftImageForIdadoptAssetService } from '../eduResource-actions.server'
+import { editEduResourceDraftForId, getEduResourceDraftImageForIdAdoptAssetService } from '../eduResource-actions.server'
 
 export default async function EditDraftResourcePage({ params: { eduResourceId } }: { params: params<'eduResourceId'> }) {
   await getAuthenticatedUserSessionOrRedirectToLogin()
@@ -20,11 +20,12 @@ export default async function EditDraftResourcePage({ params: { eduResourceId } 
       // applyImage: null,
       editDraft: {
         saveMeta: await editEduResourceDraftForId({ eduResourceDraftId: eduResourceId }),
-        applyImage: await getEduResourceDraftImageForIdadoptAssetService({ eduResourceDraftId: eduResourceId }),
+        applyImage: await getEduResourceDraftImageForIdAdoptAssetService({ eduResourceDraftId: eduResourceId }),
       },
-
       publish: null,
     },
+    eduBloomCognitiveRecords: [],
+    references: null,
     eduResourceData: myEduResourceDraft.data,
     contributorCardProps: null,
   }

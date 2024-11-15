@@ -1,6 +1,6 @@
 import { getAuthenticatedUserSessionOrRedirectToLogin } from '../../../lib/server/session-access'
 import { ResourcePage, resourcePageProps } from '../../../ui/pages/Resource/Resource'
-import { saveNewEduResourceDraft } from './eduResource-actions.server'
+import { getCreateNewEduResourceDraft } from './eduResource-actions.server'
 // import ResourceClient from './resource.client'
 
 export default async function CreateDraftResourcePage() {
@@ -8,10 +8,12 @@ export default async function CreateDraftResourcePage() {
   const resourcePageProps: resourcePageProps = {
     activity: 'createDraft',
     actions: {
-      saveNewDraft: saveNewEduResourceDraft,
+      saveNewResourceAsset: await getCreateNewEduResourceDraft(),
     },
     eduResourceData: null,
     contributorCardProps: null,
+    eduBloomCognitiveRecords: null,
+    references: null,
   }
   return <ResourcePage {...resourcePageProps} />
 }

@@ -1,4 +1,4 @@
-import { d_u, fraction, url_string, url_string_schema } from '@moodle/lib-types'
+import { d_u, d_u__d, fraction, url_string, url_string_schema } from '@moodle/lib-types'
 import { literal, object, string, union } from 'zod'
 import { asset } from '../../storage'
 
@@ -37,18 +37,20 @@ export type adoptAssetForm = d_u<
   'type'
 >
 
-export type adoptAssetResponse = d_u<
+export type adoptAssetResponse<assetType extends asset['type'] = asset['type']> = d_u<
   {
     assetSubmitted: unknown
-    done: { asset: asset }
+    done: { asset: d_u__d<asset, 'type', assetType> }
     error: { message?: string }
   },
   'status'
 >
 
-export type adoptAssetService = (adoptAssetForm: adoptAssetForm) => Promise<adoptAssetResponse>
+export type adoptAssetService<accepts extends adoptAssetForm['type'] = adoptAssetForm['type']> = (
+  adoptAssetForm: d_u__d<adoptAssetForm, 'type', accepts>,
+) => Promise<adoptAssetResponse>
 
-export const adoptAssetFormSchema = union([
+export const adoptValuedAssetFormSchema = union([
   object({
     type: literal('upload'),
     tempId: string(),
@@ -61,6 +63,9 @@ export const adoptAssetFormSchema = union([
       provider: object({ name: string().max(50), url: url_string_schema }).optional(),
     }).optional(),
   }),
+])
+export const adoptAssetFormSchema = union([
+  adoptValuedAssetFormSchema,
   object({
     type: literal('none'),
   }),

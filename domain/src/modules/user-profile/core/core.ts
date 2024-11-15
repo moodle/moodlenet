@@ -1,5 +1,5 @@
 import { omit } from 'lodash'
-import UserProfileDomain, { eduCollectionDraft } from '..'
+import UserProfileDomain, { eduCollectionDraft, eduResourceDraft } from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
 import {
   assert_authorizeAuthenticatedCurrentUserSession,
@@ -77,6 +77,40 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             })
             return [done, _void]
           },
+          async applyEduResourceDraftImage({ eduResourceDraftId, applyImageForm: { resourceImageForm: adoptAssetForm } }) {
+            const {
+              userProfileRecord: { id: userProfileId },
+            } = authenticatedUserSession
+            if (adoptAssetForm.type === 'external') {
+              const asset: asset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
+              const [done /* , result */] = await ctx.write.updateEduResourceDraft({
+                userProfileId,
+                eduResourceDraftId,
+                partialEduResourceDraft: {
+                  data: { image: asset },
+                },
+              })
+              return { userProfileId, adoptAssetResponse: done ? { status: 'done', asset } : { status: 'error' } }
+            }
+            const adoptAssetResponse = await ctx.write.useTempImageInDraft({
+              type: 'eduResource',
+              draftId: eduResourceDraftId,
+              userProfileId,
+              adoptAssetForm,
+            })
+            return { adoptAssetResponse, userProfileId }
+          },
+          async editEduResourceDraft({ eduResourceDraftId, eduResourceMetaForm }) {
+            const [done] = await ctx.write.updateEduResourceDraft({
+              userProfileId,
+              eduResourceDraftId,
+              partialEduResourceDraft: {
+                lastUpdateDate: date_time_string('now'),
+                data: eduResourceMetaForm,
+              },
+            })
+            return [done, _void]
+          },
           async getEduCollectionDraft({ eduCollectionDraftId }) {
             const response = await ctx.mod.secondary.userProfile.query.getEduCollectionDraft({
               userProfileId,
@@ -85,7 +119,18 @@ export const user_profile_core: moduleCore<'userProfile'> = {
 
             return response
           },
-          async applyEduCollectionDraftImage({ eduCollectionDraftId, applyImageForm: { adoptAssetForm } }) {
+          async getEduResourceDraft({ eduResourceDraftId }) {
+            const response = await ctx.mod.secondary.userProfile.query.getEduResourceDraft({
+              userProfileId,
+              eduResourceDraftId,
+            })
+
+            return response
+          },
+          async applyEduCollectionDraftImage({
+            eduCollectionDraftId,
+            applyImageForm: { resourceImageForm: adoptAssetForm },
+          }) {
             const {
               userProfileRecord: { id: userProfileId },
             } = authenticatedUserSession
@@ -107,6 +152,65 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               adoptAssetForm,
             })
             return { adoptAssetResponse, userProfileId }
+          },
+          async createEduResourceDraft({ newResourceAsset, eduResourceMeta }) {
+            const {
+              userProfileRecord: { id: userProfileId },
+            } = authenticatedUserSession
+            const eduResourceDraftId = await generateNanoId()
+            const now = date_time_string('now')
+            const asset =
+              newResourceAsset.type === 'external'
+                ? newResourceAsset
+                : await ctx.write
+                    .useTempFileAsResourceDraftAsset({
+                      adoptAssetForm: newResourceAsset,
+                      resourceDraftId: eduResourceDraftId,
+                      userProfileId,
+                    })
+                    .then(result =>
+                      result.status === 'done'
+                        ? result.asset
+                        : ({ type: 'save asset error', message: result.message } as const),
+                    )
+
+            if (asset.type === 'save asset error') {
+              return [false, _void /* , { reason: asset.message } */]
+            }
+
+            const eduResourceDraft: eduResourceDraft = {
+              created: now,
+              lastUpdateDate: now,
+              data: {
+                title: '',
+                description: '',
+                asset,
+                assetProcess: {
+                  aiAgentSuggestion: { generationProcess: { status: 'neverStarted' } },
+                  textExtractionStatus: { status: 'neverStarted' },
+                },
+                bloomLearningOutcomes: [],
+                image: NONE_ASSET,
+                iscedField: null,
+                iscedLevel: null,
+                language: null,
+                license: null,
+                type: null,
+                publicationDate: null,
+                ...eduResourceMeta,
+              },
+            }
+
+            const [done /* , result */] = await ctx.write.createEduResourceDraft({
+              userProfileId,
+              eduResourceDraftId,
+              eduResourceDraft,
+            })
+
+            if (!done) {
+              return [false, _void /* , { reason: 'unknown' } */]
+            }
+            return [true, { eduResourceDraftId }]
           },
           async useTempImageAsProfileImage({ useProfileImageForm: { as, adoptAssetForm } }) {
             const { userProfileRecord } = authenticatedUserSession

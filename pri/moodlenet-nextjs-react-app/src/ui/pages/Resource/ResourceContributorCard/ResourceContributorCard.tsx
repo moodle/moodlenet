@@ -3,7 +3,7 @@ import type { FC } from 'react'
 // import '../../../../styles/tags.scss'
 import Link from 'next/link'
 import { appRoute } from '../../../../lib/common/appRoutes'
-import defaultAvatar from '../../../assets/img/default-avatar.svg'
+import defaultAvatar from '../../../lib/assets/img/default-avatar.svg'
 import { Card } from '../../../atoms/Card/Card'
 import './ResourceContributorCard.scss'
 export type ResourceContributorCardProps = {

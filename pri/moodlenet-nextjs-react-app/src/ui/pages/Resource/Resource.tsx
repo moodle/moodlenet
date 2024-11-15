@@ -1,3 +1,4 @@
+'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { _nullish, d_u, selection, unreachable_never } from '@moodle/lib-types'
 import { adoptAssetService } from '@moodle/module/content'
@@ -7,6 +8,7 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { noop_action } from '../../../lib/client/actions'
 import { useAllPrimarySchemas, useAssetUrl } from '../../../lib/client/globalContexts'
 import { useAssetUploader } from '../../../lib/client/useAssetUploader'
+import { appRoute } from '../../../lib/common/appRoutes'
 import { simpleHookSafeAction } from '../../../lib/common/types'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
@@ -20,7 +22,7 @@ import { ResourceContributorCard, ResourceContributorCardProps } from './Resourc
 type saveEduResourceMetaFn = simpleHookSafeAction<eduResourceMetaFormSchema, void>
 export type eduResourceActions = {
   publish(): Promise<unknown>
-  saveNewResourceAsset: adoptAssetService
+  saveNewResourceAsset: adoptAssetService<'external' | 'upload'>
   editDraft: {
     saveMeta: saveEduResourceMetaFn
     applyImage: adoptAssetService
@@ -34,22 +36,30 @@ export type eduResourceActions = {
 export type resourcePageProps = d_u<
   {
     createDraft: {
-      eduResourceData: _nullish | eduResourceData
+      eduResourceData: _nullish
       actions: selection<eduResourceActions, 'saveNewResourceAsset'>
-      contributorCardProps: null
-      eduBloomCognitiveRecords: null
+      contributorCardProps: _nullish
+      eduBloomCognitiveRecords: _nullish
+      references: _nullish
     }
     editDraft: {
       eduResourceData: eduResourceData
-      actions: selection<eduResourceActions, 'editDraft' /*  | 'applyImage' */, 'publish'>
-      contributorCardProps: null
+      actions: selection<eduResourceActions, 'editDraft', 'publish'>
       eduBloomCognitiveRecords: eduBloomCognitiveRecord[]
+      references: _nullish
+      contributorCardProps: _nullish
     }
     viewPublished: {
       eduResourceData: eduResourceData
-      actions: selection<eduResourceActions, never, 'unpublish'>
+      references: {
+        iscedField: {
+          homePageRoute: appRoute
+          name: string
+        }
+      }
+      actions: selection<eduResourceActions, never, 'unpublish' | 'deletePublished'>
       contributorCardProps: ResourceContributorCardProps
-      eduBloomCognitiveRecords: null
+      eduBloomCognitiveRecords: _nullish
     }
   },
   'activity'
@@ -69,13 +79,13 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
       },
     },
   )
-
   const {
     form: { formState, register, reset, getValues, setValue },
-    handleSubmitWithAction: submitFormMeta,
   } = hookFormHandle
 
-  const uploadResourceHandler = useAssetUploader('anyFile', null, actions.saveNewResourceAsset)
+  const shouldShowErrors = formState.isDirty // && formState.isSubmitted
+
+  const uploadResourceHandler = useAssetUploader('anyFile', null, actions.saveNewResourceAsset, { nonNullable: true })
   const uploadImageHandler = useAssetUploader('webImage', null, actions.editDraft?.applyImage)
 
   const disableFields = activity === 'viewPublished'
@@ -135,10 +145,10 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           label="Subject"
           placeholder="Content category"
           edit={activity === 'editDraft'}
-          options={subjectOptions}
+          options={[] /* subjectOptions */}
           error={formState.errors.subject}
           {...register('subject')}
-          // shouldShowErrors={shouldShowErrors}
+          shouldShowErrors={shouldShowErrors}
         />
 
         <DropdownField
@@ -147,10 +157,10 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           label="License"
           placeholder="License type"
           edit={activity === 'editDraft'}
-          options={licenseOptions}
+          options={[] /* licenseOptions */}
           error={formState.errors.license}
           {...register('license')}
-          // shouldShowErrors={shouldShowErrors}
+          shouldShowErrors={shouldShowErrors}
         />
 
         <DropdownField
@@ -159,10 +169,10 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           label="Type"
           placeholder="Content type"
           edit={activity === 'editDraft'}
-          options={typeOptions}
+          options={[] /* typeOptions */}
           error={formState.errors.type}
           {...register('type')}
-          // shouldShowErrors={shouldShowErrors}
+          shouldShowErrors={shouldShowErrors}
         />
 
         <DropdownField
@@ -171,10 +181,10 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           label="Level"
           placeholder="Education level"
           edit={activity === 'editDraft'}
-          options={levelOptions}
+          options={[] /* levelOptions */}
           error={formState.errors.iscedLevel}
           {...register('iscedLevel')}
-          // shouldShowErrors={shouldShowErrors}
+          shouldShowErrors={shouldShowErrors}
         />
 
         <DateField
@@ -182,9 +192,9 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           disabled={disableFields}
           canEdit={activity === 'editDraft'}
           month={getValues().month}
-          monthOptions={monthOptions}
+          monthOptions={[] /* monthOptions */}
           year={getValues().year}
-          yearOptions={yearOptions}
+          yearOptions={[] /* yearOptions */}
           editMonth={e => {
             setValue('month', e)
           }}
@@ -193,7 +203,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           }}
           errorMonth={formState.errors.month}
           errorYear={formState.errors.year}
-          // shouldShowErrors={shouldShowErrors}
+          shouldShowErrors={shouldShowErrors}
         />
 
         <DropdownField
@@ -202,10 +212,10 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           label="Language"
           placeholder="Content language"
           edit={activity === 'editDraft'}
-          options={languageOptions}
+          options={[] /* languageOptions */}
           error={formState.errors.language}
           {...register('language')}
-          // shouldShowErrors={shouldShowErrors}
+          shouldShowErrors={shouldShowErrors}
         />
       </div>
     </div>

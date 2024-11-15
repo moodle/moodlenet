@@ -1,4 +1,4 @@
-import { _nullish, d_u__d, positive_integer } from '@moodle/lib-types'
+import { _nullish, d_u__d } from '@moodle/lib-types'
 import { contentLanguageCode, contentLicenseCode } from '../../content'
 import { asset } from '../../storage'
 import { eduBloomCognitiveLevel, eduIscedFieldCode, eduIscedLevelCode, eduResourceTypeCode } from './edu-categories'
@@ -12,7 +12,7 @@ export type eduResourceMeta = {
   type: _nullish | eduResourceTypeCode
   language: _nullish | contentLanguageCode
   license: _nullish | contentLicenseCode
-  publicationDate: _nullish | { month: positive_integer; year: positive_integer }
+  publicationDate: _nullish | { month: number; year: number }
 }
 
 export type eduResourceData = eduResourceMeta & {

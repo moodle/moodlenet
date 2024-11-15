@@ -35,12 +35,12 @@ export function getDbStruct(databaseConnections: databaseConnections) {
     moodlenet: {
       db: moodlenet_db,
       coll: {
-        eduIscedField: moodlenet_db.collection<record_doc<eduIscedFieldRecord>>('eduIscedField'),
-        eduIscedLevel: moodlenet_db.collection<record_doc<eduIscedLevelRecord>>('eduIscedLevel'),
-        eduBloomCognitive: moodlenet_db.collection<record_doc<eduBloomCognitiveRecord>>('eduBloomCognitive'),
+        eduIscedField: moodlenet_db.collection<record_doc<eduIscedFieldRecord, 'code'>>('eduIscedField'),
+        eduIscedLevel: moodlenet_db.collection<record_doc<eduIscedLevelRecord, 'code'>>('eduIscedLevel'),
+        eduBloomCognitive: moodlenet_db.collection<record_doc<eduBloomCognitiveRecord, 'level'>>('eduBloomCognitive'),
         eduResourceType: moodlenet_db.collection<record_doc<eduResourceTypeRecord>>('eduResourceType'),
-        contentLanguage: moodlenet_db.collection<record_doc<contentLanguageRecord>>('contentLanguage'),
-        contentLicense: moodlenet_db.collection<record_doc<contentLicenseRecord>>('contentLicense'),
+        contentLanguage: moodlenet_db.collection<record_doc<contentLanguageRecord, 'code'>>('contentLanguage'),
+        contentLicense: moodlenet_db.collection<record_doc<contentLicenseRecord, 'code'>>('contentLicense'),
         contributor: moodlenet_db.collection<record_doc<moodlenetContributorRecord>>('contributor'),
       },
     },
