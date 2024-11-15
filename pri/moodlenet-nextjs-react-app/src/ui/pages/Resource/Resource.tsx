@@ -1,23 +1,89 @@
-import { unreachable_never } from '@moodle/lib-types'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { _nullish, d_u, selection, unreachable_never } from '@moodle/lib-types'
+import { adoptAssetService } from '@moodle/module/content'
+import { eduBloomCognitiveRecord, eduResourceData, eduResourceMetaFormSchema } from '@moodle/module/edu'
+import { InsertDriveFile } from '@mui/icons-material'
+import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
+import { noop_action } from '../../../lib/client/actions'
+import { useAllPrimarySchemas, useAssetUrl } from '../../../lib/client/globalContexts'
+import { useAssetUploader } from '../../../lib/client/useAssetUploader'
+import { simpleHookSafeAction } from '../../../lib/common/types'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../atoms/SecondaryButton/SecondaryButton'
 import DateField from '../../molecules/ed-meta/fields/DateField/DateField'
 import DropdownField from '../../molecules/ed-meta/fields/DropdownField'
 import MainResourceCard from './MainResourceCard/MainResourceCard'
-import { ResourceContributorCard } from './ResourceContributorCard/ResourceContributorCard'
-import { InsertDriveFile } from '@mui/icons-material'
 import './Resource.scss'
+import { ResourceContributorCard, ResourceContributorCardProps } from './ResourceContributorCard/ResourceContributorCard'
 
-export type ResourcePageProps = {}
+type saveEduResourceMetaFn = simpleHookSafeAction<eduResourceMetaFormSchema, void>
+export type eduResourceActions = {
+  publish(): Promise<unknown>
+  saveNewResourceAsset: adoptAssetService
+  editDraft: {
+    saveMeta: saveEduResourceMetaFn
+    applyImage: adoptAssetService
+  }
+  deleteDraft(): Promise<unknown>
+  deletePublished(): Promise<unknown>
+  unpublish(): Promise<unknown>
+  like(): Promise<unknown>
+}
 
-export function ResourcePage({}: ResourcePageProps) {
+export type resourcePageProps = d_u<
+  {
+    createDraft: {
+      eduResourceData: _nullish | eduResourceData
+      actions: selection<eduResourceActions, 'saveNewResourceAsset'>
+      contributorCardProps: null
+      eduBloomCognitiveRecords: null
+    }
+    editDraft: {
+      eduResourceData: eduResourceData
+      actions: selection<eduResourceActions, 'editDraft' /*  | 'applyImage' */, 'publish'>
+      contributorCardProps: null
+      eduBloomCognitiveRecords: eduBloomCognitiveRecord[]
+    }
+    viewPublished: {
+      eduResourceData: eduResourceData
+      actions: selection<eduResourceActions, never, 'unpublish'>
+      contributorCardProps: ResourceContributorCardProps
+      eduBloomCognitiveRecords: null
+    }
+  },
+  'activity'
+>
+export function ResourcePage(resourcePageProps: resourcePageProps) {
+  const { actions, activity, contributorCardProps, eduResourceData } = resourcePageProps
+  const schemas = useAllPrimarySchemas()
+  const hookFormHandle = useHookFormAction(
+    activity === 'editDraft' ? actions.editDraft.saveMeta : noop_action,
+    zodResolver(schemas.edu.eduResourceMetaSchema),
+    {
+      formProps: { defaultValues: eduResourceData ?? {} },
+      actionProps: {
+        onSuccess({ input }) {
+          reset(input)
+        },
+      },
+    },
+  )
+
+  const {
+    form: { formState, register, reset, getValues, setValue },
+    handleSubmitWithAction: submitFormMeta,
+  } = hookFormHandle
+
+  const uploadResourceHandler = useAssetUploader('anyFile', null, actions.saveNewResourceAsset)
+  const uploadImageHandler = useAssetUploader('webImage', null, actions.editDraft?.applyImage)
+
   const disableFields = activity === 'viewPublished'
-
+  const [assetUrl] = useAssetUrl(eduResourceData?.asset)
   return (
     <div className="resource-page">
       <div className="main-card">
-        <MainResourceCard {...{ resourcePageProps }} />
+        <MainResourceCard {...{ ...resourcePageProps, hookFormHandle, uploadResourceHandler, uploadImageHandler }} />
       </div>
       {activity === 'viewPublished' && (
         <div className="contributor-card">
@@ -37,32 +103,27 @@ export function ResourcePage({}: ResourcePageProps) {
               Publish
             </PrimaryButton>
           )}
-          {activity === 'editDraft' && (
+          {/* activity === 'editDraft' && (
             <PrimaryButton onClick={startAutofill} color="green">
               Autofill missing fields
             </PrimaryButton>
-          )}
+          ) */}
           {activity === 'viewPublished' ? (
-            type === 'link' ? (
-              <a href={contentUrl && !disableFields ? contentUrl : undefined} target="_blank" rel="noreferrer">
+            eduResourceData.asset.type === 'external' ? (
+              <a href={assetUrl} target="_blank" rel="noreferrer">
                 <SecondaryButton key="download-or-open-link-button" disabled={disableFields}>
                   Open link
                 </SecondaryButton>
               </a>
-            ) : type === 'local' ? (
-              <a
-                href={contentUrl && !disableFields ? contentUrl : undefined}
-                target="_blank"
-                rel="noreferrer"
-                download={downloadFilename}
-              >
+            ) : eduResourceData.asset.type === 'local' ? (
+              <a href={assetUrl} target="_blank" rel="noreferrer" download={eduResourceData.asset.name}>
                 <SecondaryButton key="download-or-open-link-button" disabled={disableFields}>
                   <InsertDriveFile />
                   Download file
                 </SecondaryButton>
               </a>
             ) : (
-              unreachable_never(type)
+              unreachable_never(eduResourceData.asset)
             )
           ) : null}
         </Card>
@@ -71,58 +132,48 @@ export function ResourcePage({}: ResourcePageProps) {
         <DropdownField
           key="subject-field"
           disabled={disableFields}
-          title="Subject"
+          label="Subject"
           placeholder="Content category"
-          canEdit={activity === 'editDraft'}
-          selection={form.values.subject}
+          edit={activity === 'editDraft'}
           options={subjectOptions}
-          error={form.errors.subject}
-          edit={e => form.setFieldValue('subject', e)}
+          error={formState.errors.subject}
+          {...register('subject')}
           // shouldShowErrors={shouldShowErrors}
         />
 
         <DropdownField
           key="license-field"
           disabled={disableFields}
-          title="License"
+          label="License"
           placeholder="License type"
-          canEdit={activity === 'editDraft'}
-          selection={form.values.license}
+          edit={activity === 'editDraft'}
           options={licenseOptions}
-          edit={e => {
-            form.setFieldValue('license', e)
-          }}
-          error={form.errors.license}
+          error={formState.errors.license}
+          {...register('license')}
           // shouldShowErrors={shouldShowErrors}
         />
 
         <DropdownField
           key="type-field"
           disabled={disableFields}
-          title="Type"
+          label="Type"
           placeholder="Content type"
-          canEdit={activity === 'editDraft'}
-          selection={form.values.type}
+          edit={activity === 'editDraft'}
           options={typeOptions}
-          edit={e => {
-            form.setFieldValue('type', e)
-          }}
-          error={form.errors.type}
+          error={formState.errors.type}
+          {...register('type')}
           // shouldShowErrors={shouldShowErrors}
         />
 
         <DropdownField
           key="level-field"
           disabled={disableFields}
-          title="Level"
+          label="Level"
           placeholder="Education level"
-          canEdit={activity === 'editDraft'}
-          selection={form.values.level}
+          edit={activity === 'editDraft'}
           options={levelOptions}
-          edit={e => {
-            form.setFieldValue('level', e)
-          }}
-          error={form.errors.level}
+          error={formState.errors.iscedLevel}
+          {...register('iscedLevel')}
           // shouldShowErrors={shouldShowErrors}
         />
 
@@ -130,33 +181,30 @@ export function ResourcePage({}: ResourcePageProps) {
           key="date-field"
           disabled={disableFields}
           canEdit={activity === 'editDraft'}
-          month={form.values.month}
+          month={getValues().month}
           monthOptions={monthOptions}
-          year={form.values.year}
+          year={getValues().year}
           yearOptions={yearOptions}
           editMonth={e => {
-            form.setFieldValue('month', e)
+            setValue('month', e)
           }}
           editYear={e => {
-            form.setFieldValue('year', e)
+            setValue('year', e)
           }}
-          errorMonth={form.errors.month}
-          errorYear={form.errors.year}
+          errorMonth={formState.errors.month}
+          errorYear={formState.errors.year}
           // shouldShowErrors={shouldShowErrors}
         />
 
         <DropdownField
           key="language-field"
           disabled={disableFields}
-          title="Language"
+          label="Language"
           placeholder="Content language"
-          canEdit={activity === 'editDraft'}
-          selection={form.values.language}
+          edit={activity === 'editDraft'}
           options={languageOptions}
-          edit={e => {
-            form.setFieldValue('language', e)
-          }}
-          error={form.errors.language}
+          error={formState.errors.language}
+          {...register('language')}
           // shouldShowErrors={shouldShowErrors}
         />
       </div>

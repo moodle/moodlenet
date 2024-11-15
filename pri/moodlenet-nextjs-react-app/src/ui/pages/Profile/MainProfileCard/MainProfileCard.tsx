@@ -51,9 +51,7 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
     submit: submitAvatar,
     state: avatarUploaderState,
     dropHandlers: dropAvatarAttr,
-  } = useAssetUploader(profileInfo.avatar, actions.edit?.useAsMyProfileAvatar, {
-    type: 'webImage',
-  })
+  } = useAssetUploader('webImage', profileInfo.avatar, actions.edit?.useAsMyProfileAvatar)
 
   const {
     current: { url: displayBackgroundSrc },
@@ -61,9 +59,7 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
     submit: submitBackground,
     state: backgroundUploaderState,
     dropHandlers: dropBackgroundAttrs,
-  } = useAssetUploader(profileInfo.background, actions.edit?.useAsMyProfileBackground, {
-    type: 'webImage',
-  })
+  } = useAssetUploader('webImage', profileInfo.background, actions.edit?.useAsMyProfileBackground)
 
   const submitAll = useCallback(() => {
     submitFormBtnRef.current?.click()

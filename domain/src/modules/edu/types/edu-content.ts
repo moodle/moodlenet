@@ -1,4 +1,4 @@
-import { _nullish, positive_integer } from '@moodle/lib-types'
+import { _nullish, d_u__d, positive_integer } from '@moodle/lib-types'
 import { contentLanguageCode, contentLicenseCode } from '../../content'
 import { asset } from '../../storage'
 import { eduBloomCognitiveLevel, eduIscedFieldCode, eduIscedLevelCode, eduResourceTypeCode } from './edu-categories'
@@ -16,7 +16,7 @@ export type eduResourceMeta = {
 }
 
 export type eduResourceData = eduResourceMeta & {
-  asset: asset
+  asset: d_u__d<asset, 'type', 'external' | 'local'>
   image: asset
 }
 

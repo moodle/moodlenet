@@ -10,8 +10,8 @@ import './LearningOutcomes.scss'
 
 export type LearningOutcomesProps = {
   isEditing: boolean
-  learningOutcomes: bloomLearningOutcome[]
-  learningOutcomeRecords: eduBloomCognitiveRecord[]
+  bloomLearningOutcomes: bloomLearningOutcome[]
+  eduBloomCognitiveRecords: eduBloomCognitiveRecord[]
   disabled?: boolean
   error?: string | string[]
   shouldShowErrors: boolean
@@ -33,8 +33,8 @@ function getBloomClassName(bloomLevel: string) {
 }
 
 export const LearningOutcomes: FC<LearningOutcomesProps> = ({
-  learningOutcomeRecords,
-  learningOutcomes,
+  eduBloomCognitiveRecords,
+  bloomLearningOutcomes,
   isEditing,
   disabled,
   error,
@@ -42,12 +42,12 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   edit,
 }) => {
   const deleteOutcome = (index: number) => {
-    edit(learningOutcomes.filter((_, i) => i !== index))
+    edit(bloomLearningOutcomes.filter((_, i) => i !== index))
   }
 
-  const learningOutcomesList = learningOutcomes.length > 0 && (
+  const learningOutcomesList = bloomLearningOutcomes.length > 0 && (
     <div className="learning-outcomes-list" key="learning-outcomes-list">
-      {learningOutcomes.map(({ level, verb, learningOutcome }, i) => {
+      {bloomLearningOutcomes.map(({ level, verb, learningOutcome }, i) => {
         const learningOutcomeName = getLearningOutcomeName(level)
         const bloomUIClassName = getBloomClassName(level)
         return isEditing ? (
@@ -60,7 +60,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
             disabled={disabled}
             value={learningOutcome}
             onChange={value => {
-              const newLearningOutcomes = [...learningOutcomes]
+              const newLearningOutcomes = [...bloomLearningOutcomes]
               const newLearningOutcome = newLearningOutcomes[i]
               if (!newLearningOutcome) {
                 return
@@ -102,14 +102,14 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
 
   const [searchText, setSearchText] = useState('')
 
-  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = learningOutcomeRecords.map(() => createRef())
+  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = eduBloomCognitiveRecords.map(() => createRef())
 
   const categories = isEditing && (
     <div className="categories">
-      {learningOutcomeRecords.map((learningOutcomeOption, i) => {
-        const selectedVerb = learningOutcomes.find(outcome => outcome.level === learningOutcomeOption.level)
+      {eduBloomCognitiveRecords.map((learningOutcomeOption, i) => {
+        const selectedVerb = bloomLearningOutcomes.find(outcome => outcome.level === learningOutcomeOption.level)
         const dropdownRef = learningOutcomeCategoriesRefs && learningOutcomeCategoriesRefs[i]
-        const maxLearningOutcomesReached = learningOutcomes.length > MAX_LEARNING_OUTCOME_ITEMS
+        const maxLearningOutcomesReached = bloomLearningOutcomes.length > MAX_LEARNING_OUTCOME_ITEMS
         return (
           <Dropdown
             key={learningOutcomeOption.level}
@@ -123,7 +123,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
             searchByText={setSearchText}
             onChange={changeEvent => {
               edit([
-                ...learningOutcomes,
+                ...bloomLearningOutcomes,
                 {
                   level: learningOutcomeOption.level,
                   verb: changeEvent.target.value,
@@ -186,7 +186,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
     </div>
   )
   function getLearningOutcomeName(byLevel: string) {
-    return learningOutcomeRecords.find(({ level }) => level === byLevel)?.description ?? 'unknown'
+    return eduBloomCognitiveRecords.find(({ level }) => level === byLevel)?.description ?? 'unknown'
   }
 }
 

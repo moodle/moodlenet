@@ -14,34 +14,43 @@ import { useEffect, useRef } from 'react'
 import { Card } from '../../../atoms/Card/Card'
 import { DropUpload } from '../../../organisms/DropUpload/DropUpload'
 import { LearningOutcomes } from '../../../organisms/ed-meta/LearningOutcomes/LearningOutcomes'
-import { ResourcePageProps } from '../Resource'
+import { resourcePageProps } from '../Resource'
 import './MainResourceCard.scss'
+import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton'
+import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton'
+import { FloatingMenu, FloatingMenuContentItem } from '../../../atoms/FloatingMenu/FloatingMenu'
+import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { simpleUseHookFormActionHookReturn } from '../../../../lib/common/types'
+import { eduResourceMetaFormSchema } from '@moodle/module/edu'
+import { useAssetUploaderHandler } from '../../../../lib/client/useAssetUploader'
+import { isNotFalsy } from '@moodle/lib-types'
 
-export type MainResourceCardProps = {
-  disableFields: boolean
-} & ResourcePageProps
+export type mainResourceCardProps = resourcePageProps & {
+  hookFormHandle: simpleUseHookFormActionHookReturn<eduResourceMetaFormSchema, void>
+  uploadResourceHandler: useAssetUploaderHandler
+  uploadImageHandler: useAssetUploaderHandler
+}
 
-export default function MainResourceCard({ disableFields }: MainResourceCardProps) {
+export default function MainResourceCard(props: mainResourceCardProps) {
+  const {uploadImageHandler,eduBloomCognitiveRecords,uploadResourceHandler, actions, activity, contributorCardProps, eduResourceData, hookFormHandle } = props
+  const disableFields = activity === 'viewPublished'
   const isEditing = activity === 'editDraft'
-
+  const shouldShowErrors = isEditing
   const title = canEdit ? (
     <InputTextField
-      name="title"
       key="title"
       className="title"
       isTextarea
       disabled={disableFields}
       edit={isEditing}
-      value={form.values.title}
       placeholder="Title"
-      onChange={form.handleChange}
-      error={shouldShowErrors && isEditing && form.errors.title}
       textAreaAutoSize
       noBorder
+      {...hookFormHandle.form.register('title')}
     />
   ) : (
     <div className="title" key="resource-title">
-      {form.values.title}
+      {eduResourceData?.title}
     </div>
   )
 
@@ -51,6 +60,10 @@ export default function MainResourceCard({ disableFields }: MainResourceCardProp
     </div>
   )
 
+  const { typeName, typeColor } = getResourceTypeInfo(
+    contentType,
+    contentType === 'file' ? downloadFilename : currentContentUrl,
+  )
   const typePill =
     contentForm.values.content && typeName && typeColor ? (
       <div
@@ -156,7 +169,7 @@ export default function MainResourceCard({ disableFields }: MainResourceCardProp
         }
       : null,
     ...(moreButtonItems ?? []),
-  ].filter((item): item is FloatingMenuContentItem => !!item)
+  ].filter(isNotFalsy)
 
   const disableSaveButton = (empty && emptyOnStart) || autofillState === 'ai-generation'
 
@@ -270,11 +283,12 @@ export default function MainResourceCard({ disableFields }: MainResourceCardProp
           {updatedHeaderColumnItems.map(i => ('Item' in i ? <i.Item key={i.key} /> : i))}
         </div>
 
-        {(imageForm.values.image || isEditing) && <DropUpload displayOnly={canEdit && !isEditing} key="resource-uploader" />}
-        {canEdit ? (
+        {activity === 'createDraft' ?<DropUpload useAssetUploaderHandler={uploadResourceHandler}  />
+
+        uploadImageHandler
+        {actions.editDraft ? (
           <InputTextField
             className="description"
-            name="description"
             key="description"
             disabled={disableFields}
             isTextarea
@@ -282,9 +296,7 @@ export default function MainResourceCard({ disableFields }: MainResourceCardProp
             noBorder
             edit={isEditing}
             placeholder="Description"
-            value={form.values.description}
-            onChange={form.handleChange}
-            error={shouldShowErrors && isEditing && form.errors.description}
+            {...hookFormHandle.form.register('description')}
           />
         ) : (
           <div className="description" key="description-container">
@@ -296,7 +308,7 @@ export default function MainResourceCard({ disableFields }: MainResourceCardProp
                 overflow: showFullDescription ? 'auto' : 'hidden',
               }}
             >
-              {form.values.description}
+              {eduResourceData?.description}
             </div>
             {!showFullDescription && (
               <div className="see-more" onClick={() => setShowFullDescription(true)}>
@@ -305,11 +317,11 @@ export default function MainResourceCard({ disableFields }: MainResourceCardProp
             )}
           </div>
         )}
-        {isEditing || form.values.learningOutcomes.filter(e => e.sentence !== '').length > 0 ? (
+        {props.activity !== 'createDraft' ? (
           <LearningOutcomes
-            learningOutcomeRecords={learningOutcomeOptions}
-            learningOutcomes={form.values.learningOutcomes}
-            isEditing={isEditing}
+            eduBloomCognitiveRecords={props.eduBloomCognitiveRecords ?? []}
+            bloomLearningOutcomes={props.eduResourceData.bloomLearningOutcomes}
+            isEditing={activity === 'editDraft'}
             disabled={disableFields}
             error={
               shouldShowErrors && isEditing && typeof outcomeErrors === 'string'
@@ -319,7 +331,7 @@ export default function MainResourceCard({ disableFields }: MainResourceCardProp
                   : undefined
             }
             shouldShowErrors={shouldShowErrors}
-            edit={values => form.setFieldValue('learningOutcomes', values)}
+            edit={values => hookFormHandle.form.setValue('bloomLearningOutcomes', values)}
           />
         ) : null}
         <div className="resource-footer" key="resource-footer"></div>

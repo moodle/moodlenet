@@ -123,9 +123,7 @@ export function MainCollectionCard({
       },
     },
   )
-  const imageAssetUploaderHandler = useAssetUploader(eduCollectionData?.image, actions.editDraft?.applyImage, {
-    type: 'webImage',
-  })
+  const imageAssetUploaderHandler = useAssetUploader('webImage', eduCollectionData?.image, actions.editDraft?.applyImage)
 
   const submitForm = useCallback(() => {
     formState.isDirty && submitFormMeta()

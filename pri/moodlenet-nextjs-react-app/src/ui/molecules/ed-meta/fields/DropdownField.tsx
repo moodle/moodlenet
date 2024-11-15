@@ -1,34 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Dropdown, SimplePill, TextOption, TextOptionProps } from '../../../atoms/Dropdown/Dropdown'
+import { Dropdown, DropdownProps, SimplePill, TextOption, TextOptionProps } from '../../../atoms/Dropdown/Dropdown'
 
 export type DropdownFieldProps = {
-  selection: string | undefined
   options: TextOptionProps[]
-  title: string
-  placeholder: string
-  canEdit: boolean
-  error: string | undefined
   shouldShowErrors?: boolean
-  edit(selection: string): void
-  noBorder?: boolean
-  disabled?: boolean
-}
+} & Omit<DropdownProps & { multiple?: undefined }, 'pills'>
 
-export default function DropdownField({
-  selection,
-  options,
-  title,
-  placeholder,
-  canEdit,
-  error,
-  shouldShowErrors = false,
-  edit,
-  noBorder = true,
-  disabled,
-}: DropdownFieldProps) {
+export default function DropdownField({ options, edit, shouldShowErrors = false, ...dropdownProps }: DropdownFieldProps) {
   const elements = {
     opts: options,
-    selected: options.find(({ value }) => value === selection),
+    selected: options.find(({ value }) => value === value),
   }
   const [updatedElements, setUpdatedElements] = useState(elements)
   const [searchText, setSearchText] = useState('')
@@ -36,31 +17,25 @@ export default function DropdownField({
   useEffect(() => {
     setUpdatedElements({
       opts: options,
-      selected: options.find(({ value }) => value === selection),
+      selected: options.find(({ value }) => dropdownProps.value === value),
     })
-  }, [selection, options])
+  }, [dropdownProps.value, options])
 
   useEffect(() => {
     setUpdatedElements({
       opts: elements.opts.filter(o => o.value.toUpperCase().includes(searchText.toUpperCase())),
-      selected: options.find(({ value }) => value === selection && value.toUpperCase().includes(searchText.toUpperCase())),
+      selected: options.find(
+        ({ value }) => dropdownProps.value === value && value.toUpperCase().includes(searchText.toUpperCase()),
+      ),
     })
-  }, [searchText, selection, elements.opts, options])
+  }, [searchText, dropdownProps.value, elements.opts, options])
 
-  return canEdit ? (
+  return edit ? (
     <Dropdown
-      name={title}
-      value={selection}
-      disabled={disabled}
-      onChange={e => {
-        e.currentTarget.value !== selection && edit(e.currentTarget.value)
-      }}
-      label={title}
-      placeholder={placeholder}
-      noBorder={noBorder}
+      {...dropdownProps}
       edit
-      highlight={shouldShowErrors && !!error}
-      error={shouldShowErrors && error}
+      highlight={shouldShowErrors && !!dropdownProps.error}
+      error={shouldShowErrors && dropdownProps.error}
       position={{ top: 50, bottom: 25 }}
       searchByText={setSearchText}
       pills={
@@ -85,9 +60,9 @@ export default function DropdownField({
           updatedElements.selected?.value !== value && <TextOption key={value} value={value} label={label} />,
       )}
     </Dropdown>
-  ) : selection ? (
-    <div className={`detail selection ${disabled ? 'disabled' : ''}`}>
-      <div className="title">{title}</div>
+  ) : dropdownProps.value ? (
+    <div className={`detail selection ${dropdownProps.disabled ? 'disabled' : ''}`}>
+      <div className="title">{dropdownProps.label}</div>
       <abbr className="value" title={elements.selected?.label}>
         {elements.selected?.label}
       </abbr>

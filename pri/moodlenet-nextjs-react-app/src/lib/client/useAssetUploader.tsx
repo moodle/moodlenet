@@ -28,8 +28,8 @@ export type useAssetUploaderHandler = {
   select: (selection: selection | _nullish) => void
   state: assetUploaderState
   dropHandlers: Pick<DOMAttributes<HTMLElement>, 'onDrop' | 'onDragEnter' | 'onDragOver'>
-  opts: assetUploaderHookOpts
   uploadingXhr?: _nullish | uploadingXhr
+  assetType: assetType
 }
 type uploadingXhr = {
   xhr: XMLHttpRequest
@@ -40,20 +40,22 @@ type uploadingXhr = {
 export type submissionCallback = (_: { submission: lastSubmission[] }) => void
 
 export type assetUploaderHookOpts = {
-  type: 'webImage' | 'anyFile'
   overrideMaxSize?: number
 }
 
+type assetType = 'webImage' | 'anyFile'
+
 export function useAssetUploader(
+  assetType: assetType,
   _initialAsset: _nullish | asset,
   adoptAssetService: adoptAssetService | _nullish,
-  opts: assetUploaderHookOpts,
+  opts?: assetUploaderHookOpts,
 ) {
   const initialAsset = _initialAsset ?? NONE_ASSET
-  const { type, overrideMaxSize } = opts
+  const { overrideMaxSize } = opts ?? {}
   const filetoreHttp = useFileServerDeployment()
   const { uploadMaxSizeConfigs } = useAllSchemaConfigs()
-  const maxSize = overrideMaxSize ?? (type === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max)
+  const maxSize = overrideMaxSize ?? (assetType === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max)
   const inputFileRef = useRef<HTMLInputElement | null>(null)
   const [state, dispatch] = useReducer(getFileUploaderReducer({ maxSize }), {
     type: 'settled',
@@ -82,7 +84,7 @@ export function useAssetUploader(
   useLayoutEffect(() => {
     const inputElement = document.createElement('input')
     inputElement.type = 'file'
-    inputElement.accept = useAssetUploader.type[type]
+    inputElement.accept = useAssetUploader.type[assetType]
     inputElement.hidden = true
     inputElement.multiple = false
     inputElement.onchange = e => {
@@ -103,7 +105,7 @@ export function useAssetUploader(
       inputFileRef.current = null
       document.body.removeChild(inputElement)
     }
-  }, [type, checkAndSelect])
+  }, [assetType, checkAndSelect])
 
   const openFileDialog = useCallback(() => inputFileRef.current?.click(), [])
 
@@ -205,7 +207,7 @@ export function useAssetUploader(
               status: 'timeout',
             }),
           )
-          xhr.open(uploadTempMethod, `${filetoreHttp.href}${uploadTempPath}/${type}`, true)
+          xhr.open(uploadTempMethod, `${filetoreHttp.href}${uploadTempPath}/${assetType}`, true)
           //xhr.setRequestHeader("Content-Type", "application/octet-stream");
           xhr.send(formData)
         }).then(
@@ -233,7 +235,7 @@ export function useAssetUploader(
         dispatch({ type: 'actionResponse', ...adoptAssetResponse })
       })
       .finally(() => setUploadingXhr(null))
-  }, [state.type, state.selection, filetoreHttp.href, type, adoptAssetService])
+  }, [state.type, state.selection, filetoreHttp.href, assetType, adoptAssetService])
 
   return useMemo<useAssetUploaderHandler>(() => {
     const useAssetUploaderHandler: useAssetUploaderHandler = {
@@ -242,12 +244,12 @@ export function useAssetUploader(
       submit,
       state,
       dropHandlers,
-      opts,
       select: checkAndSelect,
       uploadingXhr,
+      assetType,
     }
     return useAssetUploaderHandler
-  }, [activeCurrent, openFileDialog, submit, state, dropHandlers, opts, checkAndSelect, uploadingXhr])
+  }, [activeCurrent, openFileDialog, submit, state, dropHandlers, checkAndSelect, uploadingXhr, assetType])
 }
 
 function getFileUploaderReducer({ maxSize }: { maxSize: number }) {
