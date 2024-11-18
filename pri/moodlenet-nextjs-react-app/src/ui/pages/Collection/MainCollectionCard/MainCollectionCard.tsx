@@ -34,7 +34,6 @@ import { useCallback, useMemo, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { isNotFalsy } from '@moodle/lib-types'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
-import { noop_action } from '../../../../lib/client/actions'
 import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 import { Card } from '../../../atoms/Card/Card'
 import { FloatingMenu } from '../../../atoms/FloatingMenu/FloatingMenu'
@@ -45,6 +44,7 @@ import { collectionPageProps } from '../Collection'
 import './MainCollectionCard.scss'
 import { DropUpload } from '../../../organisms/DropUpload/DropUpload'
 import { useAssetUploader } from '../../../../lib/client/useAssetUploader'
+import { default_noop_action } from '../../../../lib/common/actions'
 
 export function MainCollectionCard({
   collectionPageProps: { activity, actions, eduCollectionData },
@@ -112,7 +112,9 @@ export function MainCollectionCard({
     form: { formState, register, reset, getValues },
     handleSubmitWithAction: submitFormMeta,
   } = useHookFormAction(
-    activity === 'createDraft' ? actions.saveNewDraft : activity === 'editDraft' ? actions.editDraft.saveMeta : noop_action,
+    default_noop_action(
+      activity === 'createDraft' ? actions.saveNewDraft : activity === 'editDraft' ? actions.editDraft.saveMeta : null,
+    ),
     zodResolver(schemas.edu.eduCollectionMetaSchema),
     {
       formProps: { defaultValues: eduCollectionData ?? {} },

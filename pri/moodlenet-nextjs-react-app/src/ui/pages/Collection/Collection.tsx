@@ -3,7 +3,6 @@
 import { _nullish, d_u, selection } from '@moodle/lib-types'
 import { adoptAssetService } from '@moodle/module/content'
 import { eduCollectionData, eduCollectionMetaFormSchema } from '@moodle/module/edu'
-import { simpleHookSafeAction } from '../../../lib/common/types'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../atoms/SecondaryButton/SecondaryButton'
@@ -13,6 +12,7 @@ import {
   collectionContributorCardProps,
 } from './CollectionContributorCard/CollectionContributorCard'
 import { MainCollectionCard } from './MainCollectionCard/MainCollectionCard'
+import { simpleHookSafeAction } from '../../../lib/common/actions'
 
 type saveEduCollectionMetaFn = simpleHookSafeAction<eduCollectionMetaFormSchema, void>
 export type eduCollectionActions = {

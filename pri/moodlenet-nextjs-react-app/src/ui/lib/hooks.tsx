@@ -3,17 +3,25 @@ import { contentCredits } from '@moodle/module/content'
 import type { MutableRefObject } from 'react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { getBackupImage, getWindowDimensions } from './misc'
+import { useInBrowser } from './nextjs/utils'
 
 export const useWindowDimensions = () => {
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions())
+  const inBrowser = useInBrowser()
+  const [windowDimensions, setWindowDimensions] = useState(
+    inBrowser
+      ? getWindowDimensions()
+      : {
+          width: 0,
+          height: 0,
+        },
+  )
 
   useEffect(() => {
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
     function handleResize() {
       setWindowDimensions(getWindowDimensions())
     }
-
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   return windowDimensions

@@ -1,7 +1,9 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { isNotFalsy, unreachable_never, url_string_schema } from '@moodle/lib-types'
+import { eduResourceMetaFormSchema } from '@moodle/module/edu'
 import {
   Check,
   Delete,
-  Edit,
   InsertDriveFile,
   Link as LinkIcon,
   MoreVert,
@@ -10,112 +12,55 @@ import {
   Save,
   Share,
 } from '@mui/icons-material'
-import { useEffect, useRef, useState } from 'react'
+import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { object } from 'zod'
+import { useAssetUrl } from '../../../../lib/client/globalContexts'
+import { useAssetUploader } from '../../../../lib/client/useAssetUploader'
+import { simpleHookSafeAction, simpleUseHookFormActionHookReturn } from '../../../../lib/common/actions'
 import { Card } from '../../../atoms/Card/Card'
+import { FloatingMenu } from '../../../atoms/FloatingMenu/FloatingMenu'
+import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton'
+import { TertiaryButton } from '../../../atoms/TertiaryButton/TertiaryButton'
+import { useWindowDimensions } from '../../../lib/hooks'
+import { getResourceTypeInfo, getTag } from '../../../lib/misc'
 import { DropUpload } from '../../../organisms/DropUpload/DropUpload'
 import { LearningOutcomes } from '../../../organisms/ed-meta/LearningOutcomes/LearningOutcomes'
 import { resourcePageProps } from '../Resource'
 import './MainResourceCard.scss'
-import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton'
-import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton'
-import { FloatingMenu, FloatingMenuContentItem } from '../../../atoms/FloatingMenu/FloatingMenu'
-import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { simpleUseHookFormActionHookReturn } from '../../../../lib/common/types'
-import { eduResourceMetaFormSchema } from '@moodle/module/edu'
-import { useAssetUploaderHandler } from '../../../../lib/client/useAssetUploader'
-import { isNotFalsy, unreachable_never } from '@moodle/lib-types'
-import { getResourceTypeInfo, getTag, getTagList } from '../../../lib/misc'
-import { TertiaryButton } from '../../../atoms/TertiaryButton/TertiaryButton'
-import { useWindowDimensions } from '../../../lib/hooks'
 
 export type mainResourceCardProps = resourcePageProps & {
   hookFormHandle: simpleUseHookFormActionHookReturn<eduResourceMetaFormSchema, void>
-  uploadResourceHandler: useAssetUploaderHandler
-  uploadImageHandler: useAssetUploaderHandler
 }
 
 export default function MainResourceCard(props: mainResourceCardProps) {
-  const { uploadResourceHandler, actions, activity, eduResourceData, hookFormHandle, references } = props
   const { width } = useWindowDimensions()
-  const disableFields = activity === 'viewPublished'
-  const isEditing = activity === 'editDraft'
-  const shouldShowErrors = isEditing
+  const { t } = useTranslation()
+  const { actions, activity, eduResourceData, hookFormHandle, references } = props
+  const [resourceUrl] = useAssetUrl(eduResourceData?.asset)
 
-  const typePillAttr = getResourceTypeInfo(eduResourceData?.asset)
-
-  const moreButtonItems = [
-    actions.publish && {
-      Element: (
-        <div key="publish-button" onClick={() => alert('publish')}>
-          <Public style={{ fill: '#00bd7e' }} />
-          Publish
-        </div>
-      ),
-
-      wrapperClassName: 'publish-button',
-    },
-    activity === 'editDraft' && {
-      Element: (
-        <div
-          className={`publish-check-button ${disableFields ? 'disabled' : ''}`}
-          key="publish-check-button"
-          onClick={() => alert('publishCheck')}
-        >
-          <Check />
-          Publish check
-        </div>
-      ),
-    },
-    actions.unpublish && {
-      Element: (
-        <div key="unpublish-button" onClick={() => alert('unpublish')}>
-          <PublicOff />
-          Unpublish
-        </div>
-      ),
-      wrapperClassName: 'unpublish-button',
-    },
-    activity !== 'createDraft' &&
-      width < 800 && {
-        Element: (
-          <div key="open-link-or-download-file-button">
-            {eduResourceData.asset.type === 'local' ? (
-              <>
-                <InsertDriveFile />
-                Download
-              </>
-            ) : eduResourceData.asset.type === 'external' ? (
-              <>
-                <LinkIcon />
-                Open link
-              </>
-            ) : (
-              unreachable_never(eduResourceData.asset)
-            )}
-          </div>
-        ),
-      },
-    activity === 'viewPublished' && {
-      Element: (
-        <div key="share-button" onClick={() => alert('copyUrl')}>
-          <Share /> Share
-        </div>
-      ),
-    },
-    actions.deleteDraft ||
-      (actions.deletePublished && {
-        Element: (
-          <div
-            /* className={`delete-button ${emptyOnStart ? 'disabled' : ''}`} */
-            className={`delete-button`}
-            key="delete-button"
-            onClick={() => alert(' setIsToDelete(true)')}
-          >
-            <Delete /> Delete
-          </div>
-        ),
-      }),
-  ].filter(isNotFalsy)
+  const uploadResourceHandler = useAssetUploader('file', null, actions.saveNewResourceAsset, { nonNullable: true })
+  const { state: resourceUploaderState, submit: resourceUploaderSubmit } = uploadResourceHandler
+  useEffect(() => {
+    if (resourceUploaderState.type === 'selected') {
+      resourceUploaderSubmit()
+    }
+  }, [resourceUploaderState, resourceUploaderSubmit])
+  const newResourceLinkFormSchema = object({ url: url_string_schema })
+  const newResourceLinkFormAction: simpleHookSafeAction<typeof newResourceLinkFormSchema, undefined> = async input => {
+    return actions
+      .saveNewResourceAsset?.({
+        type: 'external',
+        url: newResourceLinkFormSchema.parse(input).url,
+      })
+      .then(
+        () => undefined,
+        err => ({ validationErrors: { url: { _errors: [String(err)] } } }),
+      )
+  }
+  const newResourceLinkHookForm = useHookFormAction(newResourceLinkFormAction, zodResolver(newResourceLinkFormSchema))
 
   const descriptionRef = useRef<HTMLDivElement>(null)
   const [showFullDescription, setShowFullDescription] = useState(true)
@@ -127,8 +72,14 @@ export default function MainResourceCard(props: mainResourceCardProps) {
     }
   }, [descriptionRef])
 
-  const bloomLearningOutcomesErrors = hookFormHandle.form.formState.errors.bloomLearningOutcomes
+  const uploadImageHandler = useAssetUploader('webImage', eduResourceData?.image, actions.editDraft?.applyImage)
+  const saveDraft = useCallback(() => {
+    uploadImageHandler.state.dirty && uploadImageHandler.submit()
+    hookFormHandle.form.formState.isDirty && hookFormHandle.handleSubmitWithAction()
+  }, [uploadImageHandler, hookFormHandle])
 
+  const typePillAttr = getResourceTypeInfo(eduResourceData?.asset)
+  const moreButtonItems = getMoreButtons()
   return (
     <>
       {/* {modals} */}
@@ -176,7 +127,7 @@ export default function MainResourceCard(props: mainResourceCardProps) {
               )}
               {activity === 'editDraft' && (
                 <div className="edit-save">
-                  <PrimaryButton className={`save-button`} color="green" onClick={hookFormHandle.handleSubmitWithAction}>
+                  <PrimaryButton className={`save-button`} color="green" onClick={saveDraft}>
                     <div className="label">
                       <Save />
                     </div>
@@ -184,13 +135,12 @@ export default function MainResourceCard(props: mainResourceCardProps) {
                 </div>
               )}
             </div>
-            {isEditing ? (
+            {activity === 'editDraft' ? (
               <InputTextField
                 key="title"
                 className="title"
                 isTextarea
-                disabled={disableFields}
-                edit={isEditing}
+                edit={activity === 'editDraft'}
                 placeholder="Title"
                 textAreaAutoSize
                 noBorder
@@ -212,19 +162,29 @@ export default function MainResourceCard(props: mainResourceCardProps) {
           </div>
 
           {activity === 'createDraft' ? (
-            <DropUpload useAssetUploaderHandler={uploadResourceHandler} />
-          ) : activity === 'editDraft' ? (
-            <DropUpload useAssetUploaderHandler={uploadResourceHandler} />
+            <>
+              <DropUpload useAssetUploaderHandler={uploadResourceHandler} />
+              <InputTextField
+                className="link"
+                placeholder={t`Paste or type a link`}
+                edit
+                onKeyDown={e => e.key === 'Enter' && newResourceLinkHookForm.handleSubmitWithAction(e)}
+                rightSlot={<PrimaryButton onClick={newResourceLinkHookForm.handleSubmitWithAction}>Add</PrimaryButton>}
+                {...newResourceLinkHookForm.form.register('url')}
+                error={newResourceLinkHookForm.form.formState.errors.url?.message}
+              />
+            </>
+          ) : activity === 'editDraft' || activity === 'viewPublished' ? (
+            <DropUpload useAssetUploaderHandler={uploadImageHandler} displayOnly={activity === 'viewPublished'} />
           ) : null}
           {activity === 'editDraft' ? (
             <InputTextField
               className="description"
               key="description"
-              disabled={disableFields}
               isTextarea
               textAreaAutoSize
               noBorder
-              edit={isEditing}
+              edit={activity === 'editDraft'}
               placeholder="Description"
               {...hookFormHandle.form.register('description')}
             />
@@ -253,13 +213,17 @@ export default function MainResourceCard(props: mainResourceCardProps) {
             eduBloomCognitiveRecords={props.eduBloomCognitiveRecords ?? []}
             bloomLearningOutcomes={props.eduResourceData.bloomLearningOutcomes}
             isEditing={activity === 'editDraft'}
-            disabled={disableFields}
+            disabled={activity === 'viewPublished'}
             error={
-              shouldShowErrors && isEditing && bloomLearningOutcomesErrors
-                ? bloomLearningOutcomesErrors.map?.(item => item?.learningOutcome?.message ?? '')
+              activity === 'editDraft' &&
+              activity === 'editDraft' &&
+              hookFormHandle.form.formState.errors.bloomLearningOutcomes?.map
+                ? hookFormHandle.form.formState.errors.bloomLearningOutcomes.map(
+                    item => item?.learningOutcome?.message ?? '',
+                  )
                 : undefined
             }
-            shouldShowErrors={shouldShowErrors}
+            shouldShowErrors={activity === 'editDraft'}
             edit={values => hookFormHandle.form.setValue('bloomLearningOutcomes', values)}
           />
         ) : null}
@@ -267,6 +231,82 @@ export default function MainResourceCard(props: mainResourceCardProps) {
       </Card>
     </>
   )
+
+  function getMoreButtons() {
+    return [
+      actions.publish && {
+        Element: (
+          <div key="publish-button" onClick={() => alert('publish')}>
+            <Public style={{ fill: '#00bd7e' }} />
+            Publish
+          </div>
+        ),
+
+        wrapperClassName: 'publish-button',
+      },
+      activity === 'editDraft' && {
+        Element: (
+          <div className={`publish-check-button`} key="publish-check-button" onClick={() => alert('publishCheck')}>
+            <Check />
+            Publish check
+          </div>
+        ),
+      },
+      actions.unpublish && {
+        Element: (
+          <div key="unpublish-button" onClick={() => alert('unpublish')}>
+            <PublicOff />
+            Unpublish
+          </div>
+        ),
+        wrapperClassName: 'unpublish-button',
+      },
+      activity !== 'createDraft' &&
+        width < 800 && {
+          Element: (
+            <div key="open-link-or-download-file-button">
+              {eduResourceData.asset.type === 'local' ? (
+                <>
+                  <InsertDriveFile />
+                  <a href={resourceUrl} target="_blank" rel="noopener noreferrer" download={eduResourceData.asset.name}>
+                    Download
+                  </a>
+                </>
+              ) : eduResourceData.asset.type === 'external' ? (
+                <>
+                  <LinkIcon />
+                  <a href={resourceUrl} target="_blank" rel="noopener noreferrer">
+                    Open link
+                  </a>
+                </>
+              ) : (
+                unreachable_never(eduResourceData.asset)
+              )}
+            </div>
+          ),
+        },
+      activity === 'viewPublished' && {
+        Element: (
+          <div key="share-button" onClick={() => alert('copyUrl')}>
+            <Share /> Share
+          </div>
+        ),
+      },
+      actions.deleteDraft ||
+        (actions.deletePublished && {
+          Element: (
+            <div
+              /* className={`delete-button ${emptyOnStart ? 'disabled' : ''}`} */
+              className={`delete-button`}
+              key="delete-button"
+              onClick={() => alert(' setIsToDelete(true)')}
+            >
+              <Delete /> Delete
+            </div>
+          ),
+        }),
+    ].filter(isNotFalsy)
+  }
 }
 /*
 

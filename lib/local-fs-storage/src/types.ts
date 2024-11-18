@@ -31,10 +31,15 @@ export type filesystem = {
       profile: map<'image', profileImageType>
       drafts: {
         eduResource: {
-          [eduResourceDraftId in string]: map<'image', 'image'>
+          [eduResourceDraftId in string]: {
+            image: 'image'
+            asset: 'asset'
+          }
         }
         eduCollection: {
-          [eduCollectionDraftId in string]: map<'image', 'image'>
+          [eduCollectionDraftId in string]: {
+            image: 'image'
+          }
         }
       }
     }

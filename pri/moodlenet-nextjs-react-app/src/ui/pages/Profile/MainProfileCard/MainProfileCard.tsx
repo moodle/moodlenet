@@ -19,10 +19,10 @@ import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton'
 import { Snackbar } from '../../../atoms/Snackbar/Snackbar'
 import './MainProfileCard.scss'
 // import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
-import { noop_action } from '../../../../lib/client/actions'
 import defaultAvatar from '../../../lib/assets/img/default-avatar.svg'
 import defaultBackground from '../../../lib/assets/img/default-background.svg'
 import { profilePageProps } from '../ProfilePage'
+import { default_noop_action } from '../../../../lib/common/actions'
 
 export function MainProfileCard({ profileInfo, actions, myLinks }: profilePageProps) {
   const schemas = useAllPrimarySchemas()
@@ -31,7 +31,7 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
     form: { formState, register, reset },
     handleSubmitWithAction: submitForm,
   } = useHookFormAction(
-    actions.edit?.updateMyProfileInfo ?? noop_action,
+    default_noop_action(actions.edit?.updateMyProfileInfo),
     zodResolver(schemas.userProfile.updateProfileInfoMetaSchema),
     {
       formProps: { defaultValues: { ...profileInfo } },

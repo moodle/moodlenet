@@ -1,26 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Dropdown, SimplePill, SimpleTextOption, TextOption, TextOptionProps } from '../../../../atoms/Dropdown/Dropdown'
 import './DateField.scss'
 
 export type DateFieldProps = {
-  month: string | undefined
-  monthOptions: TextOptionProps[]
-  yearOptions: string[]
-  year: string | undefined
+  month: number | undefined
+  allowedYears: number[]
+  year: number | undefined
   canEdit: boolean
   errorMonth: string | undefined
   errorYear: string | undefined
   shouldShowErrors: boolean
-  editMonth(month: string): void
-  editYear(year: string): void
+  editMonth(month: number): void
+  editYear(year: number): void
   disabled?: boolean
 }
 
 export default function DateField({
   month,
-  monthOptions,
   year,
-  yearOptions,
+  allowedYears,
   canEdit,
   shouldShowErrors,
   errorMonth,
@@ -29,56 +28,38 @@ export default function DateField({
   editYear,
   disabled,
 }: DateFieldProps) {
-  const months = {
-    opts: monthOptions,
-    selected: monthOptions.find(({ value }) => value === month),
-  }
-  const [updatedMonths, setUpdatedMonths] = useState(months)
-  const [searchTextMonth, setSearchTextMonth] = useState('')
-  useEffect(() => {
-    setUpdatedMonths({
-      opts: monthOptions,
-      selected: monthOptions.find(({ value }) => value === month),
-    })
-  }, [month, monthOptions])
-  useEffect(() => {
-    setUpdatedMonths({
-      opts: months.opts.filter(o => o.value.toUpperCase().includes(searchTextMonth.toUpperCase())),
-      selected: monthOptions.find(
-        ({ value }) => value === month && value.toUpperCase().includes(searchTextMonth.toUpperCase()),
-      ),
-    })
-  }, [searchTextMonth, month, months.opts, monthOptions])
+  const { t } = useTranslation()
+  const { current: monthOptionsProps } = useRef<TextOptionProps[]>([
+    { value: `1`, label: t`January` },
+    { value: `2`, label: t`February` },
+    { value: `3`, label: t`March` },
+    { value: `4`, label: t`April` },
+    { value: `5`, label: t`May` },
+    { value: `6`, label: t`June` },
+    { value: `7`, label: t`July` },
+    { value: `8`, label: t`August` },
+    { value: `9`, label: t`September` },
+    { value: `10`, label: t`October` },
+    { value: `11`, label: t`November` },
+    { value: `12`, label: t`December` },
+  ])
+  const selectedMonthProps = monthOptionsProps.find(({ value }) => value === String(month))
 
-  const years = {
-    opts: yearOptions,
-    selected: yearOptions.find(value => value === month),
-  }
-  const [updatedYears, setUpdatedYears] = useState(years)
-  const [searchTextYear, setSearchTextYear] = useState('')
-  useEffect(() => {
-    setUpdatedYears({
-      opts: yearOptions,
-      selected: yearOptions.find(value => value === month),
-    })
-  }, [month, yearOptions])
-  useEffect(() => {
-    setUpdatedYears({
-      opts: years.opts.filter(o => o.toUpperCase().includes(searchTextYear.toUpperCase())),
-      selected: yearOptions.find(value => value === year && value.toUpperCase().includes(searchTextYear.toUpperCase())),
-    })
-  }, [searchTextYear, year, yearOptions, years.opts])
+  const yearOptionsProps = useMemo<TextOptionProps[]>(
+    () => allowedYears.map(String).map<TextOptionProps>(year => ({ value: year, label: year })),
+    [allowedYears],
+  )
+  const selectedYearProps = yearOptionsProps.find(({ value }) => value === String(year))
 
-  const monthLabel = monthOptions.find(({ value }) => value === month)?.label
   return canEdit ? (
     <div className={`date-field ${disabled ? 'disabled' : ''}`}>
       <label>Original creation date</label>
       <div className="fields date-field">
         <Dropdown
           name="month"
-          value={month}
+          value={String(month)}
           onChange={e => {
-            e.currentTarget.value !== month && editMonth(e.currentTarget.value)
+            e.currentTarget.value !== String(month) && editMonth(parseInt(e.currentTarget.value))
           }}
           placeholder="Month"
           edit
@@ -87,34 +68,21 @@ export default function DateField({
           highlight={shouldShowErrors}
           error={shouldShowErrors && errorMonth}
           position={{ top: 30, bottom: 25 }}
-          searchByText={setSearchTextMonth}
-          pills={
-            updatedMonths.selected && (
-              <SimplePill
-                key={updatedMonths.selected.value}
-                value={updatedMonths.selected.value}
-                label={updatedMonths.selected.label}
-              />
-            )
-          }
+          // searchByText={setSearchTextMonth}
+          pills={selectedMonthProps && <SimplePill {...selectedMonthProps} />}
         >
-          {updatedMonths.selected && (
-            <TextOption
-              key={updatedMonths.selected.value}
-              value={updatedMonths.selected.value}
-              label={updatedMonths.selected.label}
-            />
-          )}
-          {updatedMonths.opts.map(
-            ({ value, label }) =>
-              updatedMonths.selected?.value !== value && <TextOption key={value} value={value} label={label} />,
-          )}
+          {selectedMonthProps && <TextOption {...selectedMonthProps} />}
+          {monthOptionsProps
+            .filter(({ value }) => value !== String(month))
+            .map(monthOptProp => (
+              <TextOption key={monthOptProp.value} {...monthOptProp} />
+            ))}
         </Dropdown>
         <Dropdown
           name="year"
-          value={year}
+          value={String(year)}
           onChange={e => {
-            e.currentTarget.value !== year && editYear(e.currentTarget.value)
+            e.currentTarget.value !== String(year) && editYear(parseInt(e.currentTarget.value))
           }}
           placeholder="Year"
           edit
@@ -123,24 +91,24 @@ export default function DateField({
           highlight={shouldShowErrors}
           error={shouldShowErrors && errorYear}
           position={{ top: 30, bottom: 25 }}
-          searchByText={setSearchTextYear}
-          pills={
-            updatedYears.selected && (
-              <SimplePill key={updatedYears.selected} value={updatedYears.selected} label={updatedYears.selected} />
-            )
-          }
+          // searchByText={setSearchTextYear}
+          pills={selectedYearProps && <SimplePill {...selectedYearProps} />}
         >
-          {updatedYears.selected && <SimpleTextOption key={updatedYears.selected} value={updatedYears.selected} />}
-          {updatedYears.opts.map(value => updatedYears.selected !== value && <SimpleTextOption key={value} value={value} />)}
+          {selectedYearProps && <SimpleTextOption {...selectedYearProps} />}
+          {yearOptionsProps
+            .filter(({ value }) => value !== String(year))
+            .map(yearOptProps => (
+              <SimpleTextOption key={yearOptProps.value} {...yearOptProps} />
+            ))}
         </Dropdown>
       </div>
     </div>
   ) : month || year ? (
     <div className={`date-field-read-mode detail ${disabled ? 'disabled' : ''}`}>
       <div className="title">Original creation date</div>
-      <abbr className={`value date`} title={`${monthLabel ?? ''} ${year ?? ''}`}>
-        {monthLabel && <span>{monthLabel}</span>}
-        {year && <span>{year}</span>}
+      <abbr className={`value date`} title={`${selectedMonthProps?.value ?? ''} ${selectedYearProps?.value ?? ''}`}>
+        {selectedMonthProps && <span>{selectedMonthProps.value}</span>}
+        {selectedYearProps && <span>{selectedYearProps.value}</span>}
       </abbr>
     </div>
   ) : null

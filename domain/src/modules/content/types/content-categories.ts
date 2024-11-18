@@ -50,23 +50,20 @@ export type adoptAssetService<accepts extends adoptAssetForm['type'] = adoptAsse
   adoptAssetForm: d_u__d<adoptAssetForm, 'type', accepts>,
 ) => Promise<adoptAssetResponse>
 
-export const adoptValuedAssetFormSchema = union([
-  object({
-    type: literal('upload'),
-    tempId: string(),
-  }),
-  object({
-    type: literal('external'),
-    url: url_string_schema,
-    credits: object({
-      owner: object({ name: string().max(50), url: url_string_schema }),
-      provider: object({ name: string().max(50), url: url_string_schema }).optional(),
-    }).optional(),
-  }),
-])
-export const adoptAssetFormSchema = union([
-  adoptValuedAssetFormSchema,
-  object({
-    type: literal('none'),
-  }),
-])
+export const adoptUploadedAssetFormSchema = object({
+  type: literal('upload'),
+  tempId: string(),
+})
+export const adoptExternalAssetFormSchema = object({
+  type: literal('external'),
+  url: url_string_schema,
+  credits: object({
+    owner: object({ name: string().max(50), url: url_string_schema }),
+    provider: object({ name: string().max(50), url: url_string_schema }).optional(),
+  }).optional(),
+})
+export const adoptValuedAssetFormSchema = union([adoptUploadedAssetFormSchema, adoptExternalAssetFormSchema])
+export const adoptNoneAssetFormSchema = object({
+  type: literal('none'),
+})
+export const adoptAssetFormSchema = union([adoptValuedAssetFormSchema, adoptNoneAssetFormSchema])

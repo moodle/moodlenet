@@ -10,7 +10,7 @@ import { useAllSchemaConfigs, useFileServerDeployment } from './globalContexts'
 const uploadTempFieldName = 'file'
 const uploadTempPath = '/.temp'
 const uploadTempMethod = 'POST'
-useAssetUploader.type = { webImage: '.jpg,.jpeg,.png,.gif', anyFile: '*' }
+useAssetUploader.type = { webImage: '.jpg,.jpeg,.png,.gif', file: '*' }
 
 type current = d_u<
   {
@@ -44,7 +44,7 @@ export type assetUploaderHookOpts<non_nullable extends boolean | undefined> = {
   nonNullable?: non_nullable
 }
 
-type assetType = 'webImage' | 'anyFile'
+type assetType = 'webImage' | 'file'
 export function useAssetUploader<non_nullable extends boolean | undefined>(
   assetType: assetType,
   _initialAsset: _nullish | asset,
@@ -57,13 +57,90 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
   const { uploadMaxSizeConfigs } = useAllSchemaConfigs()
   const maxSize = overrideMaxSize ?? (assetType === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max)
   const inputFileRef = useRef<HTMLInputElement | null>(null)
-  const [state, dispatch] = useReducer(getFileUploaderReducer({ maxSize }), {
+  const [state, dispatch] = useReducer(fileUploaderReducer, {
     type: 'settled',
     dirty: false,
     lastSubmission: null,
     selection: null,
     uploadStatus: null,
   } satisfies assetUploaderState)
+
+  const submit = useCallback(() => {
+    if (state.type !== 'selected' || !adoptAssetService) {
+      return
+    }
+    if (state.selection.type === 'null' && opts?.nonNullable) {
+      return
+    }
+    const _adoptAssetService = adoptAssetService
+    dispatch({ type: 'submit' })
+    ;(async (): Promise<adoptAssetForm | 'upload error'> => {
+      if (state.selection.type !== 'file') {
+        dispatch({ type: 'uploadStatus', status: 'noUpload' })
+        return state.selection.type === 'external'
+          ? { type: 'external', url: state.selection.url, credits: state.selection.credits }
+          : state.selection.type === 'null'
+            ? { type: 'none' }
+            : unreachable_never(state.selection)
+      } else {
+        const { file } = state.selection
+        const xhr = new XMLHttpRequest()
+        const uploadingXhr: uploadingXhr = { file, xhr, abort: xhr.abort.bind(xhr) }
+        setUploadingXhr(uploadingXhr)
+        return new Promise<{ tempId: string }>((resolve, reject) => {
+          const formData = new FormData()
+          formData.append(uploadTempFieldName, file)
+          // xhr.upload.addEventListener('load', () => resolve(JSON.parse(xhr.responseText)))
+          xhr.addEventListener('load', () => resolve(JSON.parse(xhr.responseText)))
+          xhr.upload.addEventListener('error', () => reject(xhr.response))
+          xhr.upload.addEventListener('progress', progressEvent =>
+            dispatch({
+              type: 'uploadStatus',
+              status: 'uploading',
+              progress: progressEvent.lengthComputable ? progressEvent.loaded / progressEvent.total : NaN,
+            }),
+          )
+          xhr.upload.addEventListener('abort', () =>
+            dispatch({
+              type: 'uploadStatus',
+              status: 'aborted',
+            }),
+          )
+          xhr.upload.addEventListener('timeout', () =>
+            dispatch({
+              type: 'uploadStatus',
+              status: 'timeout',
+            }),
+          )
+          xhr.open(uploadTempMethod, `${filetoreHttp.href}${uploadTempPath}/${assetType}`, true)
+          //xhr.setRequestHeader("Content-Type", "application/octet-stream");
+          xhr.send(formData)
+        }).then(
+          uploadResponse => {
+            const { tempId } = uploadResponse
+            dispatch({ type: 'uploadStatus', status: 'done', tempId })
+            return { type: 'upload', tempId }
+          },
+          err => {
+            dispatch({ type: 'uploadStatus', status: 'error', message: String(err) })
+            return 'upload error'
+          },
+        )
+      }
+    })()
+      .then(adoptAssetForm => {
+        return adoptAssetForm === 'upload error'
+          ? Promise.reject('upload error')
+          : (_adoptAssetService as adoptAssetService)(adoptAssetForm).catch<adoptAssetResponse>(err => ({
+              status: 'error',
+              message: String(err),
+            }))
+      })
+      .then(adoptAssetResponse => {
+        dispatch({ type: 'actionResponse', ...adoptAssetResponse })
+      })
+      .finally(() => setUploadingXhr(null))
+  }, [state.type, state.selection, adoptAssetService, opts?.nonNullable, filetoreHttp.href, assetType])
 
   const checkAndSelect = useCallback(
     (selection: selection | _nullish) => {
@@ -163,82 +240,6 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
   }, [filetoreHttp.href, state])
 
   const [uploadingXhr, setUploadingXhr] = useState<_nullish | uploadingXhr>()
-  const submit = useCallback(() => {
-    if (state.type !== 'selected' || !adoptAssetService) {
-      return
-    }
-    if (state.selection.type === 'null' && opts?.nonNullable) {
-      return
-    }
-    const _adoptAssetService = adoptAssetService
-    dispatch({ type: 'submit' })
-    ;(async (): Promise<adoptAssetForm | 'upload error'> => {
-      if (state.selection.type !== 'file') {
-        dispatch({ type: 'uploadStatus', status: 'noUpload' })
-        return state.selection.type === 'external'
-          ? { type: 'external', url: state.selection.url, credits: state.selection.credits }
-          : state.selection.type === 'null'
-            ? { type: 'none' }
-            : unreachable_never(state.selection)
-      } else {
-        const { file } = state.selection
-        const xhr = new XMLHttpRequest()
-        const uploadingXhr: uploadingXhr = { file, xhr, abort: xhr.abort.bind(xhr) }
-        setUploadingXhr(uploadingXhr)
-        return new Promise<{ tempId: string }>((resolve, reject) => {
-          const formData = new FormData()
-          formData.append(uploadTempFieldName, file)
-          // xhr.upload.addEventListener('load', () => resolve(JSON.parse(xhr.responseText)))
-          xhr.addEventListener('load', () => resolve(JSON.parse(xhr.responseText)))
-          xhr.upload.addEventListener('error', () => reject(xhr.response))
-          xhr.upload.addEventListener('progress', progressEvent =>
-            dispatch({
-              type: 'uploadStatus',
-              status: 'uploading',
-              progress: progressEvent.lengthComputable ? progressEvent.loaded / progressEvent.total : NaN,
-            }),
-          )
-          xhr.upload.addEventListener('abort', () =>
-            dispatch({
-              type: 'uploadStatus',
-              status: 'aborted',
-            }),
-          )
-          xhr.upload.addEventListener('timeout', () =>
-            dispatch({
-              type: 'uploadStatus',
-              status: 'timeout',
-            }),
-          )
-          xhr.open(uploadTempMethod, `${filetoreHttp.href}${uploadTempPath}/${assetType}`, true)
-          //xhr.setRequestHeader("Content-Type", "application/octet-stream");
-          xhr.send(formData)
-        }).then(
-          uploadResponse => {
-            const { tempId } = uploadResponse
-            dispatch({ type: 'uploadStatus', status: 'done', tempId })
-            return { type: 'upload', tempId }
-          },
-          err => {
-            dispatch({ type: 'uploadStatus', status: 'error', message: String(err) })
-            return 'upload error'
-          },
-        )
-      }
-    })()
-      .then(adoptAssetForm => {
-        return adoptAssetForm === 'upload error'
-          ? Promise.reject('upload error')
-          : (_adoptAssetService as adoptAssetService)(adoptAssetForm).catch<adoptAssetResponse>(err => ({
-              status: 'error',
-              message: String(err),
-            }))
-      })
-      .then(adoptAssetResponse => {
-        dispatch({ type: 'actionResponse', ...adoptAssetResponse })
-      })
-      .finally(() => setUploadingXhr(null))
-  }, [state.type, state.selection, adoptAssetService, opts?.nonNullable, filetoreHttp.href, assetType])
 
   return useMemo<useAssetUploaderHandler>(() => {
     const useAssetUploaderHandler: useAssetUploaderHandler = {
@@ -255,93 +256,90 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
   }, [activeCurrent, openFileDialog, submit, state, dropHandlers, checkAndSelect, uploadingXhr, assetType])
 }
 
-function getFileUploaderReducer({ maxSize }: { maxSize: number }) {
-  return function fileUploaderReducer(prev: assetUploaderState, action: fileUploaderAction): assetUploaderState {
-    console.log({ prev, action })
-    if (prev.type === 'submitting') {
-      if (action.type === 'actionResponse') {
-        if (!(prev.uploadStatus.status === 'done' || prev.uploadStatus.status === 'noUpload')) {
-          console.error('prev.uploadStatus.status not done', { action, prev })
+export function fileUploaderReducer(prev: assetUploaderState, action: fileUploaderAction): assetUploaderState {
+  if (prev.type === 'submitting') {
+    if (action.type === 'actionResponse') {
+      if (!(prev.uploadStatus.status === 'done' || prev.uploadStatus.status === 'noUpload')) {
+        console.error('prev.uploadStatus.status not done', { action, prev })
+        return prev
+      }
+      return {
+        type: 'settled',
+        dirty: false,
+        lastSubmission: {
+          actionResponse: action,
+          uploadStatus: prev.uploadStatus,
+        },
+        selection: null,
+        uploadStatus: null,
+      }
+    } else if (action.type === 'uploadStatus') {
+      if (prev.uploadStatus.status !== 'uploading') {
+        console.error('prev.uploadStatus not uploading', { action, prev })
+        return prev
+      }
+      if (action.status === 'uploading') {
+        const roundedProgress = Number(action.progress.toFixed(2))
+        if (roundedProgress === prev.uploadStatus.progress) {
           return prev
         }
         return {
-          type: 'settled',
-          dirty: false,
-          lastSubmission: {
-            actionResponse: action,
-            uploadStatus: prev.uploadStatus,
-          },
-          selection: null,
-          uploadStatus: null,
+          ...prev,
+          uploadStatus: { status: 'uploading', progress: roundedProgress },
         }
-      } else if (action.type === 'uploadStatus') {
-        if (prev.uploadStatus.status !== 'uploading') {
-          console.error('prev.uploadStatus not uploading', { action, prev })
-          return prev
+      } else if (action.status === 'done') {
+        return {
+          ...prev,
+          uploadStatus: { status: 'done', tempId: action.tempId },
         }
-        if (action.status === 'uploading') {
-          const roundedProgress = Number(action.progress.toFixed(2))
-          if (roundedProgress === prev.uploadStatus.progress) {
-            return prev
-          }
-          return {
-            ...prev,
-            uploadStatus: { status: 'uploading', progress: roundedProgress },
-          }
-        } else if (action.status === 'done') {
-          return {
-            ...prev,
-            uploadStatus: { status: 'done', tempId: action.tempId },
-          }
-        } else if (action.status === 'noUpload') {
-          return {
-            ...prev,
-            uploadStatus: { status: 'noUpload' },
-          }
-        } else if (action.status === 'aborted' || action.status === 'timeout' || action.status === 'error') {
-          return {
-            type: 'selected',
-            dirty: true,
-            selection: prev.selection,
-            lastSubmission: {
-              actionResponse: null,
-              uploadStatus:
-                action.status === 'error'
-                  ? {
-                      status: 'error',
-                      message: action.message,
-                    }
-                  : { status: action.status },
-            },
-            uploadStatus: null,
-          }
-        } else {
-          return unreachable_never(action)
+      } else if (action.status === 'noUpload') {
+        return {
+          ...prev,
+          uploadStatus: { status: 'noUpload' },
         }
-      }
-      return prev
-    } else if (prev.type === 'selected' && action.type === 'submit') {
-      return {
-        type: 'submitting',
-        dirty: true,
-        selection: prev.selection,
-        uploadStatus: { status: 'uploading', progress: 0 },
-        lastSubmission: prev.lastSubmission,
-      }
-    } else if (prev.type === 'selected' || prev.type === 'settled') {
-      if (action.type === 'select') {
+      } else if (action.status === 'aborted' || action.status === 'timeout' || action.status === 'error') {
         return {
           type: 'selected',
           dirty: true,
-          selection: action.selection,
-          lastSubmission: prev.lastSubmission,
+          selection: prev.selection,
+          lastSubmission: {
+            actionResponse: null,
+            uploadStatus:
+              action.status === 'error'
+                ? {
+                    status: 'error',
+                    message: action.message,
+                  }
+                : { status: action.status },
+          },
           uploadStatus: null,
         }
+      } else {
+        return unreachable_never(action)
       }
-      return prev
-    } else {
-      return unreachable_never(prev)
     }
+    return prev
+  } else if (prev.type === 'selected' && action.type === 'submit') {
+    return {
+      type: 'submitting',
+      dirty: true,
+      selection: prev.selection,
+      uploadStatus: { status: 'uploading', progress: 0 },
+      lastSubmission: prev.lastSubmission,
+    }
+  } else if (prev.type === 'selected' || prev.type === 'settled') {
+    if (action.type === 'select') {
+      return {
+        type: 'selected',
+        dirty: true,
+        selection: action.selection,
+        lastSubmission: prev.lastSubmission,
+        uploadStatus: null,
+      }
+    }
+    return prev
+  } else {
+    return unreachable_never(prev)
   }
 }
 // Actions

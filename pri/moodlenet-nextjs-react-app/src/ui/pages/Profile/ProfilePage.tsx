@@ -8,11 +8,11 @@ import { selection } from '@moodle/lib-types'
 import { adoptAssetService } from '@moodle/module/content'
 import { webappContributorAccessData } from '@moodle/module/moodlenet-react-app'
 import { updateProfileInfoSchema } from '@moodle/module/user-profile'
-import { simpleHookSafeAction } from '../../../lib/common/types'
 import { Card } from '../../atoms/Card/Card'
 import { OverallCard } from '../../molecules/OverallCard/OverallCard'
 import { MainProfileCard } from './MainProfileCard/MainProfileCard'
 import { UserProgressCard } from './UserProgressCard/UserProgressCard'
+import { simpleHookSafeAction } from '../../../lib/common/actions'
 
 type actionsOnContributor = {
   edit: {

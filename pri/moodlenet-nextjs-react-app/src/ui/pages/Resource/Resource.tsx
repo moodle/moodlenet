@@ -5,11 +5,9 @@ import { adoptAssetService } from '@moodle/module/content'
 import { eduBloomCognitiveRecord, eduResourceData, eduResourceMetaFormSchema } from '@moodle/module/edu'
 import { InsertDriveFile } from '@mui/icons-material'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
-import { noop_action } from '../../../lib/client/actions'
 import { useAllPrimarySchemas, useAssetUrl } from '../../../lib/client/globalContexts'
 import { useAssetUploader } from '../../../lib/client/useAssetUploader'
 import { appRoute } from '../../../lib/common/appRoutes'
-import { simpleHookSafeAction } from '../../../lib/common/types'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../atoms/SecondaryButton/SecondaryButton'
@@ -18,6 +16,7 @@ import DropdownField from '../../molecules/ed-meta/fields/DropdownField'
 import MainResourceCard from './MainResourceCard/MainResourceCard'
 import './Resource.scss'
 import { ResourceContributorCard, ResourceContributorCardProps } from './ResourceContributorCard/ResourceContributorCard'
+import { default_noop_action, simpleHookSafeAction } from '../../../lib/common/actions'
 
 type saveEduResourceMetaFn = simpleHookSafeAction<eduResourceMetaFormSchema, void>
 export type eduResourceActions = {
@@ -41,6 +40,7 @@ export type resourcePageProps = d_u<
       contributorCardProps: _nullish
       eduBloomCognitiveRecords: _nullish
       references: _nullish
+      allowedYears: _nullish
     }
     editDraft: {
       eduResourceData: eduResourceData
@@ -48,6 +48,7 @@ export type resourcePageProps = d_u<
       eduBloomCognitiveRecords: eduBloomCognitiveRecord[]
       references: _nullish
       contributorCardProps: _nullish
+      allowedYears: number[]
     }
     viewPublished: {
       eduResourceData: eduResourceData
@@ -60,15 +61,16 @@ export type resourcePageProps = d_u<
       actions: selection<eduResourceActions, never, 'unpublish' | 'deletePublished'>
       contributorCardProps: ResourceContributorCardProps
       eduBloomCognitiveRecords: _nullish
+      allowedYears: _nullish
     }
   },
   'activity'
 >
 export function ResourcePage(resourcePageProps: resourcePageProps) {
-  const { actions, activity, contributorCardProps, eduResourceData } = resourcePageProps
+  const { actions, activity, contributorCardProps, eduResourceData, allowedYears } = resourcePageProps
   const schemas = useAllPrimarySchemas()
   const hookFormHandle = useHookFormAction(
-    activity === 'editDraft' ? actions.editDraft.saveMeta : noop_action,
+    default_noop_action(actions.editDraft?.saveMeta),
     zodResolver(schemas.edu.eduResourceMetaSchema),
     {
       formProps: { defaultValues: eduResourceData ?? {} },
@@ -85,15 +87,12 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
 
   const shouldShowErrors = formState.isDirty // && formState.isSubmitted
 
-  const uploadResourceHandler = useAssetUploader('anyFile', null, actions.saveNewResourceAsset, { nonNullable: true })
-  const uploadImageHandler = useAssetUploader('webImage', null, actions.editDraft?.applyImage)
-
   const disableFields = activity === 'viewPublished'
   const [assetUrl] = useAssetUrl(eduResourceData?.asset)
   return (
     <div className="resource-page">
       <div className="main-card">
-        <MainResourceCard {...{ ...resourcePageProps, hookFormHandle, uploadResourceHandler, uploadImageHandler }} />
+        <MainResourceCard {...{ ...resourcePageProps, hookFormHandle }} />
       </div>
       {activity === 'viewPublished' && (
         <div className="contributor-card">
@@ -102,7 +101,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
       )}
       <div className="actions">
         <Card hideBorderWhenSmall={true}>
-          {actions.unpublish && <SecondaryButton onClick={() => actions.unpublish?.()}>Unpublish</SecondaryButton>}
+          {actions.unpublish && <SecondaryButton onClick={actions.unpublish}>Unpublish</SecondaryButton>}
           {activity === 'editDraft' && (
             <PrimaryButton onClick={() => alert('publishCheck')} color="green">
               Publish check
@@ -146,8 +145,8 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           placeholder="Content category"
           edit={activity === 'editDraft'}
           options={[] /* subjectOptions */}
-          error={formState.errors.subject}
-          {...register('subject')}
+          error={formState.errors.iscedField?.message}
+          {...register('iscedField')}
           shouldShowErrors={shouldShowErrors}
         />
 
@@ -158,7 +157,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           placeholder="License type"
           edit={activity === 'editDraft'}
           options={[] /* licenseOptions */}
-          error={formState.errors.license}
+          error={formState.errors.license?.message}
           {...register('license')}
           shouldShowErrors={shouldShowErrors}
         />
@@ -170,7 +169,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           placeholder="Content type"
           edit={activity === 'editDraft'}
           options={[] /* typeOptions */}
-          error={formState.errors.type}
+          error={formState.errors.type?.message}
           {...register('type')}
           shouldShowErrors={shouldShowErrors}
         />
@@ -182,7 +181,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           placeholder="Education level"
           edit={activity === 'editDraft'}
           options={[] /* levelOptions */}
-          error={formState.errors.iscedLevel}
+          error={formState.errors.iscedLevel?.message}
           {...register('iscedLevel')}
           shouldShowErrors={shouldShowErrors}
         />
@@ -191,18 +190,17 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           key="date-field"
           disabled={disableFields}
           canEdit={activity === 'editDraft'}
-          month={getValues().month}
-          monthOptions={[] /* monthOptions */}
-          year={getValues().year}
-          yearOptions={[] /* yearOptions */}
+          month={getValues().publicationDate?.month}
+          year={getValues().publicationDate?.year}
+          allowedYears={allowedYears ?? []}
           editMonth={e => {
-            setValue('month', e)
+            setValue('publicationDate.month', e, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
           }}
           editYear={e => {
-            setValue('year', e)
+            setValue('publicationDate.year', e, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
           }}
-          errorMonth={formState.errors.month}
-          errorYear={formState.errors.year}
+          errorMonth={formState.errors.publicationDate?.month?.message}
+          errorYear={formState.errors.publicationDate?.year?.message}
           shouldShowErrors={shouldShowErrors}
         />
 
@@ -213,7 +211,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           placeholder="Content language"
           edit={activity === 'editDraft'}
           options={[] /* languageOptions */}
-          error={formState.errors.language}
+          error={formState.errors.language?.message}
           {...register('language')}
           shouldShowErrors={shouldShowErrors}
         />

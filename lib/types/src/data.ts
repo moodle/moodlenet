@@ -19,7 +19,7 @@ export function unreachable_never(_: never, message?: string): never {
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type pretty<t> = { [k in keyof t]: t[k] } & {} // utility type to convert make more readable maps
 
- export type _maybe<t> = t | _nullish
+export type _maybe<t> = t | _nullish
 export type _nullish = undefined | null
 export type _falsy = false | _nullish
 // export const _void = void 0 as never // TOO DANGEROUS

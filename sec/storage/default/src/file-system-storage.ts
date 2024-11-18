@@ -6,6 +6,7 @@ import {
   get_temp_file_paths,
   getFsDirectories,
   prefixed_domain_file_fs_paths,
+  use_temp_file,
   use_temp_file_as_web_image,
 } from '@moodle/lib-local-fs-storage'
 import { _void } from '@moodle/lib-types'
@@ -37,6 +38,16 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
                 absolutePath,
                 tempId: adoptAssetForm.tempId,
                 size: as === 'avatar' ? 'medium' : 'large',
+              }),
+            )
+          },
+          async useTempFileAsResourceDraftAsset({ adoptAssetForm, resourceDraftId, userProfileId }) {
+            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts.eduResource[resourceDraftId]!.asset()
+            return useTempFileResult_to_adoptAssetResponse(
+              use_temp_file({
+                fsDirs,
+                absolutePath,
+                tempId: adoptAssetForm.tempId,
               }),
             )
           },

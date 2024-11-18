@@ -308,13 +308,20 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               }
               const asset = adoptAssetResponse.asset
               if (type === 'eduResource') {
-                throw 'not implemented refactor updateEduCollectionDraft => updateMyDraft (type:eduResource|eduCollection)'
+                await ctx.write.updateEduResourceDraft({
+                  userProfileId: id,
+                  eduResourceDraftId: draftId,
+                  partialEduResourceDraft: { data: { image: asset } },
+                })
+              } else if (type === 'eduCollection') {
+                await ctx.write.updateEduCollectionDraft({
+                  userProfileId: id,
+                  eduCollectionDraftId: draftId,
+                  partialEduCollectionDraft: { data: { image: asset } },
+                })
+              } else {
+                unreachable_never(type, 'watch useTempImageInDraft: unknown type')
               }
-              await ctx.write.updateEduCollectionDraft({
-                userProfileId: id,
-                eduCollectionDraftId: draftId,
-                partialEduCollectionDraft: { data: { image: asset } },
-              })
             },
           },
         },
