@@ -7,11 +7,10 @@ export type DropdownFieldProps = {
 } & Omit<DropdownProps & { multiple?: undefined }, 'pills'>
 
 export default function DropdownField({ options, edit, shouldShowErrors = false, ...dropdownProps }: DropdownFieldProps) {
-  const elements = {
+  const [updatedElements, setUpdatedElements] = useState({
     opts: options,
-    selected: options.find(({ value }) => value === value),
-  }
-  const [updatedElements, setUpdatedElements] = useState(elements)
+    selected: options.find(() => false),
+  })
   const [searchText, setSearchText] = useState('')
 
   useEffect(() => {
@@ -23,12 +22,16 @@ export default function DropdownField({ options, edit, shouldShowErrors = false,
 
   useEffect(() => {
     setUpdatedElements({
-      opts: elements.opts.filter(o => o.value.toUpperCase().includes(searchText.toUpperCase())),
+      opts: options.filter(o =>
+        `${o.value.toUpperCase()} ${o.label.toUpperCase()} ${o.abbr?.toUpperCase() ?? ''}`.includes(
+          searchText.toUpperCase(),
+        ),
+      ),
       selected: options.find(
         ({ value }) => dropdownProps.value === value && value.toUpperCase().includes(searchText.toUpperCase()),
       ),
     })
-  }, [searchText, dropdownProps.value, elements.opts, options])
+  }, [searchText, dropdownProps.value, options])
 
   return edit ? (
     <Dropdown
@@ -60,11 +63,11 @@ export default function DropdownField({ options, edit, shouldShowErrors = false,
           updatedElements.selected?.value !== value && <TextOption key={value} value={value} label={label} />,
       )}
     </Dropdown>
-  ) : dropdownProps.value ? (
+  ) : updatedElements.selected ? (
     <div className={`detail selection ${dropdownProps.disabled ? 'disabled' : ''}`}>
       <div className="title">{dropdownProps.label}</div>
-      <abbr className="value" title={elements.selected?.label}>
-        {elements.selected?.label}
+      <abbr className="value" title={updatedElements.selected.label}>
+        {updatedElements.selected.label}
       </abbr>
     </div>
   ) : null

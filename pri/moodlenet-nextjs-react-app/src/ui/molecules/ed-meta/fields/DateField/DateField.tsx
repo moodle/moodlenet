@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dropdown, SimplePill, SimpleTextOption, TextOption, TextOptionProps } from '../../../../atoms/Dropdown/Dropdown'
 import './DateField.scss'
+import DropdownField from '../DropdownField'
 
 export type DateFieldProps = {
   month: number | undefined
@@ -55,7 +56,7 @@ export default function DateField({
     <div className={`date-field ${disabled ? 'disabled' : ''}`}>
       <label>Original creation date</label>
       <div className="fields date-field">
-        <Dropdown
+        <DropdownField
           name="month"
           value={String(month)}
           onChange={e => {
@@ -68,17 +69,9 @@ export default function DateField({
           highlight={shouldShowErrors}
           error={shouldShowErrors && errorMonth}
           position={{ top: 30, bottom: 25 }}
-          // searchByText={setSearchTextMonth}
-          pills={selectedMonthProps && <SimplePill {...selectedMonthProps} />}
-        >
-          {selectedMonthProps && <TextOption {...selectedMonthProps} />}
-          {monthOptionsProps
-            .filter(({ value }) => value !== String(month))
-            .map(monthOptProp => (
-              <TextOption key={monthOptProp.value} {...monthOptProp} />
-            ))}
-        </Dropdown>
-        <Dropdown
+          options={monthOptionsProps}
+        />
+        <DropdownField
           name="year"
           value={String(year)}
           onChange={e => {
@@ -91,16 +84,8 @@ export default function DateField({
           highlight={shouldShowErrors}
           error={shouldShowErrors && errorYear}
           position={{ top: 30, bottom: 25 }}
-          // searchByText={setSearchTextYear}
-          pills={selectedYearProps && <SimplePill {...selectedYearProps} />}
-        >
-          {selectedYearProps && <SimpleTextOption {...selectedYearProps} />}
-          {yearOptionsProps
-            .filter(({ value }) => value !== String(year))
-            .map(yearOptProps => (
-              <SimpleTextOption key={yearOptProps.value} {...yearOptProps} />
-            ))}
-        </Dropdown>
+          options={yearOptionsProps}
+        />
       </div>
     </div>
   ) : month || year ? (

@@ -78,6 +78,8 @@ export default function MainResourceCard(props: mainResourceCardProps) {
     hookFormHandle.form.formState.isDirty && hookFormHandle.handleSubmitWithAction()
   }, [uploadImageHandler, hookFormHandle])
 
+  const isDirty = uploadImageHandler.state.dirty || hookFormHandle.form.formState.isDirty
+
   const typePillAttr = getResourceTypeInfo(eduResourceData?.asset)
   const moreButtonItems = getMoreButtons()
   return (
@@ -127,7 +129,7 @@ export default function MainResourceCard(props: mainResourceCardProps) {
               )}
               {activity === 'editDraft' && (
                 <div className="edit-save">
-                  <PrimaryButton className={`save-button`} color="green" onClick={saveDraft}>
+                  <PrimaryButton className={`save-button`} color="green" onClick={saveDraft} disabled={!isDirty}>
                     <div className="label">
                       <Save />
                     </div>

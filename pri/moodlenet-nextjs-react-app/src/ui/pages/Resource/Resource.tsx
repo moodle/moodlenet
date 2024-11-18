@@ -6,7 +6,7 @@ import { eduBloomCognitiveRecord, eduResourceData, eduResourceMetaFormSchema } f
 import { InsertDriveFile } from '@mui/icons-material'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useAllPrimarySchemas, useAssetUrl } from '../../../lib/client/globalContexts'
-import { useAssetUploader } from '../../../lib/client/useAssetUploader'
+import { default_noop_action, simpleHookSafeAction } from '../../../lib/common/actions'
 import { appRoute } from '../../../lib/common/appRoutes'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
@@ -16,7 +16,6 @@ import DropdownField from '../../molecules/ed-meta/fields/DropdownField'
 import MainResourceCard from './MainResourceCard/MainResourceCard'
 import './Resource.scss'
 import { ResourceContributorCard, ResourceContributorCardProps } from './ResourceContributorCard/ResourceContributorCard'
-import { default_noop_action, simpleHookSafeAction } from '../../../lib/common/actions'
 
 type saveEduResourceMetaFn = simpleHookSafeAction<eduResourceMetaFormSchema, void>
 export type eduResourceActions = {
