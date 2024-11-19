@@ -1,10 +1,10 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
-import { _void, date_time_string } from '@moodle/lib-types'
+import { _void, date_time_string, deep_partial_props } from '@moodle/lib-types'
 import { userAccountRecord } from '@moodle/module/user-account'
 import { aql } from 'arangojs'
 import { createHash } from 'node:crypto'
 import { dbStruct } from '../db-structure'
-import { restore_maybe_record, save_id_to_key } from '../lib/key-id-mapping'
+import { save_id_to_key } from '../lib/key-id-mapping'
 import { getUserByEmail, getUserById } from './user-account-db'
 
 export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
@@ -22,7 +22,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
         write: {
           async saveNewUser({ newUser }) {
             const savedUser = await dbStruct.userAccount.coll.userAccount
-              .save(save_id_to_key(newUser), { overwriteMode: 'conflict', returnNew: true })
+              .save(save_id_to_key('id')(newUser), { overwriteMode: 'conflict', returnNew: true })
               .catch(() => null)
 
             return [!!savedUser?.new, _void]
@@ -39,7 +39,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             )
             if (!deactivatingUser) return [false, _void]
 
-            const anonymization = anonymize
+            const anonymization: null | deep_partial_props<userAccountRecord> = anonymize
               ? {
                   displayName: '',
                   roles: [],
@@ -50,18 +50,19 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 }
               : null
 
-            const deactivatedUserAccountRecord = await dbStruct.userAccount.coll.userAccount
-              .update(
-                { _key: userAccountId },
-                {
-                  deactivated: { anonymized: anonymize, date, reason },
-                  ...anonymization,
-                },
-                { returnOld: true },
-              )
-              .then(({ old }) => old)
-              .then(restore_maybe_record)
-              .catch(() => null)
+            const updateRecordWith: deep_partial_props<userAccountRecord> = {
+              deactivated: { anonymized: anonymize, date, reason },
+              ...anonymization,
+            }
+
+            const deactivatedUserAccount_cursor = await dbStruct.userAccount.db.query<userAccountRecord>(`
+                FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount}
+                FILTER userAccountDoc._key == ${userAccountId}
+                LIMIT 1
+                UPDATE userAccountDoc WITH ${updateRecordWith} IN ${dbStruct.userAccount.coll.userAccount}
+                RETURN MOODLE::RESTORE_RECORD_ID(OLD)
+              `)
+            const [deactivatedUserAccountRecord] = await deactivatedUserAccount_cursor.all()
 
             return deactivatedUserAccountRecord ? [true, { deactivatedUserAccountRecord }] : [false, _void]
           },
@@ -83,11 +84,14 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             return [!!updated, _void]
           },
           async setUserRoles({ userAccountId, roles }) {
-            const updated = await dbStruct.userAccount.coll.userAccount
-              .update({ _key: userAccountId }, { roles }, { returnOld: true })
-              .then(({ old }) => old)
-              .then(restore_maybe_record)
-              .catch(() => null)
+            const updatedUserRoles_cursor = await dbStruct.userAccount.db.query<userAccountRecord>(`
+                FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount}
+                FILTER userAccountDoc._key == ${userAccountId}
+                LIMIT 1
+                UPDATE userAccountDoc WITH { roles: ${roles} } IN ${dbStruct.userAccount.coll.userAccount}
+                RETURN MOODLE::RESTORE_RECORD_ID(OLD)
+              `)
+            const [updated] = await updatedUserRoles_cursor.all()
             return updated ? [true, { newRoles: roles, oldRoles: updated.roles }] : [false, _void]
           },
         },
@@ -112,7 +116,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 ${deactivatedFilter}
                 ${textFilter}
                 LIMIT 50
-                RETURN MOODLE::RESTORE_RECORD(userAccountDoc)
+                RETURN MOODLE::RESTORE_RECORD_ID(userAccountDoc)
                 `,
             )
             const userAccountRecords = await userDocs_cursor.all()

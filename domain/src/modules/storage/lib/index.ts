@@ -1,6 +1,7 @@
-import { url_path_string, url_string } from '@moodle/lib-types'
+import { d_u__d, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
 import sanitizeFilename from 'sanitize-filename'
-import { asset, usingTempFile } from '../types'
+import { adoptAssetResponse } from '../../content'
+import { asset, useTempFileResult } from '../types'
 
 // export function newFsFileRelativePath(filename: string, date = date_time_string('now')) {
 //   return [
@@ -31,19 +32,30 @@ export function getRndPrefixedSanitizedFileName(originalFilename: string, prefix
   const rnd = String(Math.random()).substring(2, 2 + prefixLength)
   return `${rnd}_${getSanitizedFileName(originalFilename)}`
 }
-export function getAssetUrl(asset: asset, filestoreHttpHref: url_string) {
-  return asset.type === 'external' ? asset.url : (`${filestoreHttpHref}/${asset.path}/${asset.name}` as url_path_string)
+export function getAssetUrl<_asset extends asset>(
+  asset: _asset,
+  filestoreHttpHref: url_string,
+): _asset extends { type: 'none' } ? undefined : url_string {
+  return asset.type === 'none'
+    ? (undefined as any) // TS doesn't infer here we ar e in _asset extends { type: 'none' } branch 🤔
+    : asset.type === 'external'
+      ? asset.url
+      : asset.type === 'local'
+        ? (`${filestoreHttpHref}/${asset.path}/${asset.name}` as url_path_string)
+        : unreachable_never(asset)
 }
 
-export function usingTempFile2asset({ path, uploaded_blob_meta }: usingTempFile) {
-  const asset: asset = {
-    type: 'local',
-    path,
-    hash: uploaded_blob_meta.hash,
-    uploaded: { date: uploaded_blob_meta.uploaded.date, primarySessionId: uploaded_blob_meta.uploaded.primarySessionId },
-    mimetype: uploaded_blob_meta.mimetype,
-    name: uploaded_blob_meta.name,
-    size: uploaded_blob_meta.size,
-  }
-  return asset
+export async function useTempFileResult_to_adoptAssetResponse(
+  p_useTempFileResult: useTempFileResult | Promise<useTempFileResult>,
+): Promise<d_u__d<adoptAssetResponse<'local'>, 'status', 'done' | 'error'>> {
+  const [done, result] = await p_useTempFileResult
+  return done
+    ? {
+        status: 'done',
+        asset: result.asset,
+      }
+    : {
+        status: 'error',
+        message: result.reason,
+      }
 }

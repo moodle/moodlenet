@@ -12,28 +12,28 @@
       'main-card'
       'resources'
       'contributor-card'
-      'editor-actions';
+      'actions';
   }
   @media screen and (min-width: 500px) and (max-width: 799px) {
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
       'main-card          main-card'
       'resources          resources'
-      'contributor-card   editor-actions';
+      'contributor-card   actions';
   }
   @media screen and (min-width: 800px) {
     grid-template-columns: 5fr 2fr;
     grid-template-areas:
       'main-card   main-card'
       'resources   contributor-card'
-      'resources   editor-actions';
+      'resources   actions';
   }
 
   .main-card { grid-area: main-card; }
   .contributor-card { grid-area: contributor-card; }
   .resources { grid-area: resources; }
-  .editor-actions {
-    grid-area: editor-actions;
+  .actions {
+    grid-area: actions;
     > .button,
     > a > .button {
       width: 100%;

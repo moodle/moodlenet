@@ -3,17 +3,25 @@ import { contentCredits } from '@moodle/module/content'
 import type { MutableRefObject } from 'react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { getBackupImage, getWindowDimensions } from './misc'
+import { useInBrowser } from './nextjs/utils'
 
 export const useWindowDimensions = () => {
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions())
+  const inBrowser = useInBrowser()
+  const [windowDimensions, setWindowDimensions] = useState(
+    inBrowser
+      ? getWindowDimensions()
+      : {
+          width: 0,
+          height: 0,
+        },
+  )
 
   useEffect(() => {
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
     function handleResize() {
       setWindowDimensions(getWindowDimensions())
     }
-
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   return windowDimensions
@@ -41,14 +49,14 @@ export function ImageCredits({ credits, id }: { credits: contentCredits | _nulli
 }
 
 type RefT<T> = ((instance: T | null) => void) | MutableRefObject<T | null> | null
-export function useForwardedRef<T>(ref: RefT<T>) {
+export function useForwardedRef<T>(forwardedRef: RefT<T>) {
   const innerRef = useRef<T>(null)
   useEffect(() => {
-    if (!ref) return
-    if (typeof ref === 'function') {
-      ref(innerRef.current)
+    if (!forwardedRef) return
+    if (typeof forwardedRef === 'function') {
+      forwardedRef(innerRef.current)
     } else {
-      ref.current = innerRef.current
+      forwardedRef.current = innerRef.current
     }
   })
 

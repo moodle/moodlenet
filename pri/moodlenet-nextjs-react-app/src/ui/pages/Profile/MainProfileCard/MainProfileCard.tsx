@@ -19,10 +19,10 @@ import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton'
 import { Snackbar } from '../../../atoms/Snackbar/Snackbar'
 import './MainProfileCard.scss'
 // import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
-import { noop_action } from '../../../../lib/client/actions'
 import defaultAvatar from '../../../lib/assets/img/default-avatar.svg'
 import defaultBackground from '../../../lib/assets/img/default-background.svg'
 import { profilePageProps } from '../ProfilePage'
+import { default_noop_action } from '../../../../lib/common/actions'
 
 export function MainProfileCard({ profileInfo, actions, myLinks }: profilePageProps) {
   const schemas = useAllPrimarySchemas()
@@ -31,7 +31,7 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
     form: { formState, register, reset },
     handleSubmitWithAction: submitForm,
   } = useHookFormAction(
-    actions.edit?.updateMyProfileInfo ?? noop_action,
+    default_noop_action(actions.edit?.updateMyProfileInfo),
     zodResolver(schemas.userProfile.updateProfileInfoMetaSchema),
     {
       formProps: { defaultValues: { ...profileInfo } },
@@ -45,31 +45,21 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
 
   const submitFormBtnRef = useRef<HTMLButtonElement | null>(null)
 
-  const [[displayAvatarSrc], chooseImageAvatar, submitAvatar, avatarUploaderState, dropAvatarAttr] = useAssetUploader({
-    assets: profileInfo.avatar,
-    async action({ tempIds }) {
-      const saveResult = await actions.edit?.adoptMyProfileImage({ as: 'avatar', tempId: tempIds?.[0] })
+  const {
+    current: { url: displayAvatarSrc },
+    openFileDialog: chooseImageAvatar,
+    submit: submitAvatar,
+    state: avatarUploaderState,
+    dropHandlers: dropAvatarAttr,
+  } = useAssetUploader('webImage', profileInfo.avatar, actions.edit?.useAsMyProfileAvatar)
 
-      return saveResult?.data
-        ? { done: true, newAssets: saveResult.data }
-        : { done: false, error: saveResult?.validationErrors?._errors }
-    },
-    type: 'webImage',
-  })
-
-  const [[displayBackgroundSrc], chooseImageBackground, submitBackground, backgroundUploaderState, dropBackgroundAttrs] =
-    useAssetUploader({
-      assets: profileInfo.background,
-      async action({ tempIds }) {
-        const saveResult = await actions.edit?.adoptMyProfileImage({ as: 'background', tempId: tempIds?.[0] })
-        if (!saveResult?.data) {
-          return { done: false, error: saveResult?.validationErrors?._errors }
-        }
-
-        return { done: true, newAssets: saveResult.data }
-      },
-      type: 'webImage',
-    })
+  const {
+    current: { url: displayBackgroundSrc },
+    openFileDialog: chooseImageBackground,
+    submit: submitBackground,
+    state: backgroundUploaderState,
+    dropHandlers: dropBackgroundAttrs,
+  } = useAssetUploader('webImage', profileInfo.background, actions.edit?.useAsMyProfileBackground)
 
   const submitAll = useCallback(() => {
     submitFormBtnRef.current?.click()
@@ -86,18 +76,15 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
         <div className={`background-container`} key="background-container">
           {!actions.edit
             ? null
-            : isEditing && [
+            : isEditing && (
                 <RoundButton
                   className="change-background-button"
                   type="edit"
                   abbrTitle={`Edit background`}
                   onClick={chooseImageBackground}
                   key="edit-background-btn"
-                />,
-                backgroundUploaderState.error && (
-                  <Snackbar key="edit-background-err">{backgroundUploaderState.error}</Snackbar>
-                ),
-              ]}
+                />
+              )}
           <div
             {...(isEditing && dropBackgroundAttrs)}
             className={`background`}
@@ -110,16 +97,15 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
         <div className={`avatar-container`} key="avatar-container">
           {!actions.edit
             ? null
-            : isEditing && [
+            : isEditing && (
                 <RoundButton
                   className="change-avatar-button"
                   type="edit"
                   abbrTitle={`Edit profile picture`}
                   onClick={chooseImageAvatar}
                   key="edit-avatar-btn"
-                />,
-                avatarUploaderState.error && <Snackbar key="edit-avatar-err">{avatarUploaderState.error}</Snackbar>,
-              ]}
+                />
+              )}
           <div
             {...(isEditing && dropAvatarAttr)}
             className={`avatar`}

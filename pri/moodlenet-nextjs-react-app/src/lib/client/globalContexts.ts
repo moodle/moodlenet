@@ -1,5 +1,5 @@
 import { makeAllPrimarySchemas } from '@moodle/domain/lib'
-import { _nullish, url_path_string } from '@moodle/lib-types'
+import { _nullish, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
 import { webappGlobals } from '@moodle/module/moodlenet-react-app'
 import { asset } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
@@ -46,16 +46,25 @@ export function useAllPrimarySchemas() {
 export function useAssetUrl(asset: asset | _nullish, defaultTo?: string | asset) {
   const filestoreHttp = useFileServerDeployment()
   return useMemo(() => {
-    const m_asset_or_url = asset ? asset : (defaultTo as url_path_string | asset | undefined)
-
+    const defaultUrl = !defaultTo
+      ? undefined
+      : typeof defaultTo === 'string'
+        ? (defaultTo as url_string)
+        : defaultTo.type === 'none'
+          ? undefined
+          : defaultTo.type === 'external'
+            ? defaultTo.url
+            : defaultTo.type === 'local'
+              ? getAssetUrl(defaultTo, filestoreHttp.href)
+              : unreachable_never(defaultTo)
     const [url, credits] =
-      typeof m_asset_or_url === 'string'
-        ? ([m_asset_or_url, undefined] as const)
-        : m_asset_or_url?.type === 'local'
-          ? ([getAssetUrl(m_asset_or_url, filestoreHttp.href), undefined] as const)
-          : m_asset_or_url?.type === 'external'
-            ? ([m_asset_or_url.url, m_asset_or_url.credits] as const)
-            : ([undefined, undefined] as const)
+      !asset || asset.type === 'none'
+        ? ([defaultUrl, undefined] as const)
+        : asset.type === 'local'
+          ? ([getAssetUrl(asset, filestoreHttp.href), undefined] as const)
+          : asset.type === 'external'
+            ? ([asset.url, asset.credits] as const)
+            : unreachable_never(asset)
 
     return [url, credits] as const
   }, [asset, filestoreHttp.href, defaultTo])

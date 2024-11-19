@@ -1,6 +1,7 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { userAccountRecord } from '../../../user-account'
 import { userProfileRecord } from '../../types'
+import { NONE_ASSET } from '../../../storage'
 
 export async function createNewUserProfileData({ newUser }: { newUser: userAccountRecord }): Promise<userProfileRecord> {
   const userProfileId = await generateNanoId()
@@ -17,8 +18,8 @@ export async function createNewUserProfileData({ newUser }: { newUser: userAccou
       aboutMe: '',
       location: '',
       siteUrl: null,
-      avatar: null,
-      background: null,
+      avatar: NONE_ASSET,
+      background: NONE_ASSET,
     },
   }
   return userProfileRecord

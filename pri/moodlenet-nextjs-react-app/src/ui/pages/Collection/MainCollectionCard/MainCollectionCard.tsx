@@ -34,7 +34,6 @@ import { useCallback, useMemo, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { isNotFalsy } from '@moodle/lib-types'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
-import { noop_action } from '../../../../lib/client/actions'
 import { useAllPrimarySchemas } from '../../../../lib/client/globalContexts'
 import { Card } from '../../../atoms/Card/Card'
 import { FloatingMenu } from '../../../atoms/FloatingMenu/FloatingMenu'
@@ -43,8 +42,9 @@ import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton'
 import { TertiaryButton } from '../../../atoms/TertiaryButton/TertiaryButton'
 import { collectionPageProps } from '../Collection'
 import './MainCollectionCard.scss'
-import { UploadImage } from '../../../organisms/UploadImage/UploadImage'
+import { DropUpload } from '../../../organisms/DropUpload/DropUpload'
 import { useAssetUploader } from '../../../../lib/client/useAssetUploader'
+import { default_noop_action } from '../../../../lib/common/actions'
 
 export function MainCollectionCard({
   collectionPageProps: { activity, actions, eduCollectionData },
@@ -112,7 +112,9 @@ export function MainCollectionCard({
     form: { formState, register, reset, getValues },
     handleSubmitWithAction: submitFormMeta,
   } = useHookFormAction(
-    activity === 'createDraft' ? actions.saveNewDraft : activity === 'editDraft' ? actions.editDraft.saveMeta : noop_action,
+    default_noop_action(
+      activity === 'createDraft' ? actions.saveNewDraft : activity === 'editDraft' ? actions.editDraft.saveMeta : null,
+    ),
     zodResolver(schemas.edu.eduCollectionMetaSchema),
     {
       formProps: { defaultValues: eduCollectionData ?? {} },
@@ -123,33 +125,15 @@ export function MainCollectionCard({
       },
     },
   )
-  const imageAssetUploaderHandler = useAssetUploader({
-    assets: eduCollectionData?.image,
-    async action({ tempIds }) {
-      {
-        if (activity !== 'editDraft') {
-          return { done: true }
-        }
-        const saveResult = await actions.editDraft.applyImage({ tempId: tempIds?.[0] })
-        if (saveResult?.validationErrors) {
-          return { done: false, error: saveResult.validationErrors._errors }
-        }
-
-        return { done: true, newAsset: saveResult?.data }
-      }
-    },
-    type: 'webImage',
-  })
-  const [, , /* [imageUrl] */ /* openFileDialog */ submitImage, imageUploaderState /* dropHandlers, dispatch */] =
-    imageAssetUploaderHandler
+  const imageAssetUploaderHandler = useAssetUploader('webImage', eduCollectionData?.image, actions.editDraft?.applyImage)
 
   const submitForm = useCallback(() => {
     formState.isDirty && submitFormMeta()
-    imageUploaderState.dirty && submitImage()
-  }, [formState.isDirty, imageUploaderState.dirty, submitFormMeta, submitImage])
+    imageAssetUploaderHandler.state.dirty && imageAssetUploaderHandler.submit()
+  }, [formState.isDirty, imageAssetUploaderHandler, submitFormMeta])
 
-  const isDirty = imageUploaderState.dirty || formState.isDirty
-  const isSubmitting = imageUploaderState.type === 'submitting' || formState.isSubmitting
+  const isDirty = imageAssetUploaderHandler.state.dirty || formState.isDirty
+  const isSubmitting = imageAssetUploaderHandler.state.type === 'submitting' || formState.isSubmitting
 
   // const descriptionEditRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null)
   // const descriptionRef = useRef<HTMLDivElement>(null)
@@ -234,7 +218,7 @@ export function MainCollectionCard({
       {/* {searchImageComponent} */}
       <Card className="main-collection-card" hideBorderWhenSmall={true}>
         {activity === 'editDraft' && (
-          <UploadImage
+          <DropUpload
             useAssetUploaderHandler={imageAssetUploaderHandler}
             // backupImage={backupImage}
             key="collection-uploader"

@@ -28,7 +28,7 @@ export function moodlenet_secondary_factory({ dbStruct }: { dbStruct: dbStruct }
                 FILTER moodlenetContributorDoc.access == 'public'
                 ${aqlSort}
                 LIMIT ${skip},${limit}
-                return MOODLE::RESTORE_RECORD(moodlenetContributorDoc)
+                return MOODLE::RESTORE_RECORD_ID(moodlenetContributorDoc)
               `)
             const moodlenetContributorRecords = await cursor.all()
             return { moodlenetContributorRecords }
@@ -36,7 +36,7 @@ export function moodlenet_secondary_factory({ dbStruct }: { dbStruct: dbStruct }
         },
         write: {
           async createMoodlenetContributor({ moodlenetContributorRecord }) {
-            dbStruct.moodlenet.coll.contributor.save(save_id_to_key(moodlenetContributorRecord)).catch(() => null)
+            dbStruct.moodlenet.coll.contributor.save(save_id_to_key('id')(moodlenetContributorRecord)).catch(() => null)
             return
           },
           async updatePartialMoodlenetContributor({ partialMoodlenetContributorRecord, select }) {

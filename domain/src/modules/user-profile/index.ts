@@ -1,13 +1,20 @@
-import type { _nullish, d_u, deep_partial_props, ok_ko } from '@moodle/lib-types'
-import { eduCollectionApplyImageForm, eduCollectionMetaForm } from '../edu'
-import { deleteFileResult, useTempFileResult } from '../storage'
+import type { d_u, d_u__d, deep_partial_props, ok_ko } from '@moodle/lib-types'
+import { adoptAssetForm, adoptAssetResponse } from '../content'
+import {
+  createNewResourceDraftSchemaForm,
+  eduCollectionApplyImageForm,
+  eduCollectionMetaForm,
+  eduResourceApplyImageForm,
+  eduResourceMetaForm,
+} from '../edu'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {
   UserProfilePrimaryMsgSchemaConfigs,
   eduCollectionDraft,
   eduCollectionDraftId,
+  eduResourceDraft,
   eduResourceDraftId,
-  profileImage,
+  profileImageType,
   profileInfo,
   profileInfoMeta,
   useProfileImageForm,
@@ -33,9 +40,9 @@ export default interface UserProfileDomain {
         }>
       }
       authenticated: {
-        useTempImageAsProfileImage(
-          _: useProfileImageForm,
-        ): Promise<[use_or_delete_result: useTempFileResult | deleteFileResult, { userProfileId: userProfileId }]>
+        useTempImageAsProfileImage(_: {
+          useProfileImageForm: useProfileImageForm
+        }): Promise<{ adoptAssetResponse: adoptAssetResponse; userProfileId: userProfileId }>
         editProfileInfoMeta(_: { partialProfileInfoMeta: deep_partial_props<profileInfoMeta> }): Promise<
           ok_ko<
             { userProfileId: userProfileId },
@@ -49,6 +56,8 @@ export default interface UserProfileDomain {
           userProfileRecord: Omit<userProfileRecord, 'userAccount'>
           userAccountRecord: Omit<userAccountRecord, 'displayName'>
         }>
+
+        // draft collection
         createEduCollectionDraft(_: {
           eduCollectionMetaForm: eduCollectionMetaForm
         }): Promise<ok_ko<{ eduCollectionDraftId: eduCollectionDraftId }>>
@@ -56,14 +65,31 @@ export default interface UserProfileDomain {
           eduCollectionDraftId: eduCollectionDraftId
           eduCollectionMetaForm: eduCollectionMetaForm
         }): Promise<ok_ko<void>>
-        applyEduCollectionDraftImage(
-          _: {
-            eduCollectionDraftId: eduCollectionDraftId
-          } & eduCollectionApplyImageForm,
-        ): Promise<[use_or_delete_result: useTempFileResult | deleteFileResult, { userProfileId: userProfileId }]>
+        applyEduCollectionDraftImage(_: {
+          eduCollectionDraftId: eduCollectionDraftId
+          applyImageForm: eduCollectionApplyImageForm
+        }): Promise<{ adoptAssetResponse: adoptAssetResponse; userProfileId: userProfileId }>
         getEduCollectionDraft(_: {
           eduCollectionDraftId: eduCollectionDraftId
         }): Promise<ok_ko<eduCollectionDraft, { notFound: unknown }>>
+        //
+
+        // draft resource
+        createEduResourceDraft(
+          _: createNewResourceDraftSchemaForm,
+        ): Promise<ok_ko<{ eduResourceDraftId: eduResourceDraftId }>>
+        editEduResourceDraft(_: {
+          eduResourceDraftId: eduResourceDraftId
+          eduResourceMetaForm: eduResourceMetaForm
+        }): Promise<ok_ko<void>>
+        applyEduResourceDraftImage(_: {
+          eduResourceDraftId: eduResourceDraftId
+          applyImageForm: eduResourceApplyImageForm
+        }): Promise<{ adoptAssetResponse: adoptAssetResponse; userProfileId: userProfileId }>
+        getEduResourceDraft(_: {
+          eduResourceDraftId: eduResourceDraftId
+        }): Promise<ok_ko<eduResourceDraft, { notFound: unknown }>>
+        //
       }
       admin: {
         byId(_: userProfileIdSelect): Promise<
@@ -93,12 +119,31 @@ export default interface UserProfileDomain {
           userProfileId: userProfileId
           eduCollectionDraftId: eduCollectionDraftId
         }): Promise<ok_ko<eduCollectionDraft, { notFound: unknown }>>
+        getEduResourceDraft(_: {
+          userProfileId: userProfileId
+          eduResourceDraftId: eduResourceDraftId
+        }): Promise<ok_ko<eduResourceDraft, { notFound: unknown }>>
       }
       write: {
         createEduCollectionDraft(_: {
           userProfileId: userProfileId
           eduCollectionDraft: eduCollectionDraft
           eduCollectionDraftId: eduCollectionDraftId
+        }): Promise<ok_ko<void>>
+        useTempFileAsResourceDraftAsset(_: {
+          resourceDraftId: eduResourceDraftId
+          userProfileId: userProfileId
+          adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload'>
+        }): Promise<d_u__d<adoptAssetResponse<'local'>, 'status', 'done' | 'error'>>
+        createEduResourceDraft(_: {
+          userProfileId: userProfileId
+          eduResourceDraft: eduResourceDraft
+          eduResourceDraftId: eduResourceDraftId
+        }): Promise<ok_ko<void>>
+        updateEduResourceDraft(_: {
+          userProfileId: userProfileId
+          eduResourceDraftId: eduResourceDraftId
+          partialEduResourceDraft: deep_partial_props<eduResourceDraft>
         }): Promise<ok_ko<void>>
         updateEduCollectionDraft(_: {
           userProfileId: userProfileId
@@ -111,16 +156,16 @@ export default interface UserProfileDomain {
           partialProfileInfo: deep_partial_props<profileInfo>
         }): Promise<ok_ko<void>>
         useTempImageInProfile(_: {
-          as: profileImage
+          as: profileImageType
           userProfileId: userProfileId
-          tempId: string | _nullish
-        }): Promise<useTempFileResult | deleteFileResult>
+          adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
+        }): Promise<d_u__d<adoptAssetResponse<'local' | 'none'>, 'status', 'done' | 'error'>>
         useTempImageInDraft(_: {
           type: 'eduCollection' | 'eduResource'
           draftId: eduResourceDraftId | eduCollectionDraftId
           userProfileId: userProfileId
-          tempId: string | _nullish
-        }): Promise<useTempFileResult | deleteFileResult>
+          adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
+        }): Promise<d_u__d<adoptAssetResponse<'local' | 'none'>, 'status', 'done' | 'error'>>
         /*  updatePartialUserProfile(_: {
           userProfileId: userProfileId
           partialUserProfile: deep_partial_props<userProfileRecord>

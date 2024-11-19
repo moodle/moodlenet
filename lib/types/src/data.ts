@@ -12,12 +12,14 @@ export type jsonDiff = unknown
 export type intersection<types extends _any[]> = pretty<
   types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
 >
-
+export function unreachable_never(_: never, message?: string): never {
+  throw new TypeError(`never [${JSON.stringify(_, null, 2)}]${message ? `: ${message}` : ''}`)
+}
 // export type pretty<t> = keyof t extends infer keyof_t ? { [k in keyof_t & keyof t]: t[k] } : never // this one prettify better, but loses optionals?: props 🤔
-export type pretty<t> = _<t>
- type _<t> = { [k in keyof t]: t[k] } // utility type to convert make more readable maps
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type pretty<t> = { [k in keyof t]: t[k] } & {} // utility type to convert make more readable maps
 
- export type _maybe<t> = t | _nullish
+export type _maybe<t> = t | _nullish
 export type _nullish = undefined | null
 export type _falsy = false | _nullish
 // export const _void = void 0 as never // TOO DANGEROUS

@@ -19,6 +19,7 @@ export type domainLayer = 'primary' | 'service' | 'secondary' | 'background' | '
 //   track: { [req in ctx_type]: ctx_id }
 // }
 
+//FIXME: probably, any inter-module access should be only by primary
 export type contextModuleAccess = {
   secondary: {
     [modName in keyof moodleSecondary]: Pick<moodleSecondary[modName], 'query' | 'service'> //FIX: remove service if service below enough

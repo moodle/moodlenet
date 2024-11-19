@@ -6,7 +6,7 @@ export type moodlenetContributorMinimalInfo = {
   id: moodlenetContributorId
   slug: string
   displayName: string
-  avatar: _nullish | asset
+  avatar: asset
   points: non_negative_integer
 }
 export type moodlenetContributorInfo = {

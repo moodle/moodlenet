@@ -7,11 +7,11 @@ import { eduIscedFieldRecord } from '../types'
 
 export const eduIscedFieldsSetup = _eduIscedFieldsSetup().map<eduIscedFieldRecord>(record => ({
   ...record,
-  id: record.codePath.join(''),
+  code: record.codePath.join(''),
   enabled: record.codePath.length === 3,
 }))
 
-function _eduIscedFieldsSetup(): Omit<eduIscedFieldRecord, 'id' | 'enabled'>[] {
+function _eduIscedFieldsSetup(): Omit<eduIscedFieldRecord, 'code' | 'enabled'>[] {
   return [
     {
       codePath: ['10', '1', '5'],

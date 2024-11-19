@@ -1,20 +1,21 @@
-version: '3'
 services:
   arangodb:
+    network_mode: host
     image: arangodb:3.12
     # user: "${UID}:${GID}"
     ports:
       - "8529:8529"
     environment:
       ARANGO_NO_AUTH: 1
-    networks:
-      - default
+    # networks:
+    #   - default
     volumes:
       - ./container-data/arangodb3:/var/lib/arangodb3
   nginx:
+    network_mode: host
     image: nginx
-    networks:
-      - default
+    # networks:
+    #   - default
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
