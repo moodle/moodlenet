@@ -63,14 +63,15 @@ export default function MainResourceCard(props: mainResourceCardProps) {
   const newResourceLinkHookForm = useHookFormAction(newResourceLinkFormAction, zodResolver(newResourceLinkFormSchema))
 
   const descriptionRef = useRef<HTMLDivElement>(null)
-  const [showFullDescription, setShowFullDescription] = useState(true)
+  const [showFullDescription, setShowFullDescription] = useState(false)
 
+  const descriptionFieldElemRefScrollHeight = descriptionRef.current?.scrollHeight
   useEffect(() => {
-    const fieldElem = descriptionRef.current
-    if (fieldElem) {
-      fieldElem.scrollHeight > 114 && setShowFullDescription(false)
+    if (!descriptionFieldElemRefScrollHeight) {
+      return
     }
-  }, [descriptionRef])
+    setShowFullDescription(descriptionFieldElemRefScrollHeight < 114)
+  }, [descriptionFieldElemRefScrollHeight])
 
   const uploadImageHandler = useAssetUploader('webImage', eduResourceData?.image, actions.editDraft?.applyImage)
   const saveDraft = useCallback(() => {
@@ -137,22 +138,7 @@ export default function MainResourceCard(props: mainResourceCardProps) {
                 </div>
               )}
             </div>
-            {activity === 'editDraft' ? (
-              <InputTextField
-                key="title"
-                className="title"
-                isTextarea
-                edit={activity === 'editDraft'}
-                placeholder="Title"
-                textAreaAutoSize
-                noBorder
-                {...hookFormHandle.form.register('title')}
-              />
-            ) : (
-              <div className="title" key="resource-title">
-                {eduResourceData?.title}
-              </div>
-            )}
+
             {activity === 'viewPublished' ? (
               <div className="tags scroll" key="tags">
                 {getTag(
@@ -162,7 +148,22 @@ export default function MainResourceCard(props: mainResourceCardProps) {
               </div>
             ) : null}
           </div>
-
+          {activity === 'editDraft' ? (
+            <InputTextField
+              key="title"
+              className="title"
+              isTextarea
+              edit={activity === 'editDraft'}
+              placeholder="Title"
+              textAreaAutoSize
+              noBorder
+              {...hookFormHandle.form.register('title')}
+            />
+          ) : (
+            <div className="title" key="resource-title">
+              {eduResourceData?.title}
+            </div>
+          )}
           {activity === 'createDraft' ? (
             <>
               <DropUpload useAssetUploaderHandler={uploadResourceHandler} />
@@ -179,14 +180,14 @@ export default function MainResourceCard(props: mainResourceCardProps) {
           ) : activity === 'editDraft' || activity === 'viewPublished' ? (
             <DropUpload useAssetUploaderHandler={uploadImageHandler} displayOnly={activity === 'viewPublished'} />
           ) : null}
-          {activity === 'editDraft' ? (
+          {activity !== 'editDraft' ? (
             <InputTextField
               className="description"
               key="description"
               isTextarea
               textAreaAutoSize
               noBorder
-              edit={activity === 'editDraft'}
+              edit={activity === 'createDraft'}
               placeholder="Description"
               {...hookFormHandle.form.register('description')}
             />

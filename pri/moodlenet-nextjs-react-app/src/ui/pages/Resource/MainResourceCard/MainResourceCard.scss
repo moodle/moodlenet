@@ -192,6 +192,23 @@
       padding: 3px 0 3px 5px;
       gap: 5px;
     }
+    > .description {
+      font-size: 14px;
+      line-height: 22px;
+      position: relative;
+      > .see-more {
+        position: absolute;
+        cursor: pointer;
+        bottom: 0;
+        right: 0;
+        color: gray;
+        background: white;
+        padding-left: 8px;
+        &:hover {
+          color: #1a6aff;
+        }
+      }
+    }
   }
 
   > .resource-header > .input-text-field,
@@ -209,23 +226,7 @@
     }
   }
 
-  > .description {
-    font-size: 14px;
-    line-height: 22px;
-    position: relative;
-    > .see-more {
-      position: absolute;
-      cursor: pointer;
-      bottom: 0;
-      right: 0;
-      color: gray;
-      background: white;
-      padding-left: 8px;
-      &:hover {
-        color: #1a6aff;
-      }
-    }
-  }
+
 
   > .resource-header > .title.disabled,
   > .description.disabled {
