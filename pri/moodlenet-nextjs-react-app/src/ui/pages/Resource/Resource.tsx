@@ -85,7 +85,6 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
   } = hookFormHandle
 
   const shouldShowErrors = formState.isDirty // && formState.isSubmitted
-
   const disableFields = activity === 'viewPublished'
   const [assetUrl] = useAssetUrl(eduResourceData?.asset)
   return (

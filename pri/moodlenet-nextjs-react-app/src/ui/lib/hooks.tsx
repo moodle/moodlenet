@@ -49,14 +49,14 @@ export function ImageCredits({ credits, id }: { credits: contentCredits | _nulli
 }
 
 type RefT<T> = ((instance: T | null) => void) | MutableRefObject<T | null> | null
-export function useForwardedRef<T>(ref: RefT<T>) {
+export function useForwardedRef<T>(forwardedRef: RefT<T>) {
   const innerRef = useRef<T>(null)
   useEffect(() => {
-    if (!ref) return
-    if (typeof ref === 'function') {
-      ref(innerRef.current)
+    if (!forwardedRef) return
+    if (typeof forwardedRef === 'function') {
+      forwardedRef(innerRef.current)
     } else {
-      ref.current = innerRef.current
+      forwardedRef.current = innerRef.current
     }
   })
 

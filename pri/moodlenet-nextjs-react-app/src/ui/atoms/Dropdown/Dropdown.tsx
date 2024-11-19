@@ -1,6 +1,6 @@
 'use client'
 import type { FC, ReactNode } from 'react'
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { CheckBox, CheckBoxOutlineBlank, ExpandLess, ExpandMore } from '@mui/icons-material'
 import { Selector, SelectorProps, useSelectorOption } from '../../lib/selector'
@@ -25,7 +25,7 @@ export type DropdownProps = SelectorProps & {
   multiKeepOpenOnSelect?: boolean
   placeholder?: string
 }
-export const Dropdown: FC<DropdownProps> = props => {
+export const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>((props, forwardedSelectRef) => {
   const {
     children,
     multiKeepOpenOnSelect,
@@ -45,13 +45,17 @@ export const Dropdown: FC<DropdownProps> = props => {
     ...selectorProps
   } = props
   return (
-    <Selector {...selectorProps}>
+    <Selector {...selectorProps} ref={forwardedSelectRef}>
       <DropdownComp {...props}>{children}</DropdownComp>
     </Selector>
   )
-}
+})
+Dropdown.displayName = 'Dropdown'
 
-function DropdownComp(props: DropdownProps) {
+const DropdownComp = forwardRef<HTMLSelectElement, DropdownProps>(function DropdownComp(
+  props: DropdownProps,
+  forwardedSelectRef,
+) {
   const {
     pills,
     highlight,
@@ -102,8 +106,8 @@ function DropdownComp(props: DropdownProps) {
   //   return () => window.removeEventListener('click', clickOutListener)
   // }, [isShowingContent])
   // const dropdownRef = useRef<HTMLDivElement>(null)
-  const dropdownButtonRef = useRef<HTMLInputElement>(null)
   const dropdownContentRef = useRef<HTMLInputElement>(null)
+  const dropdownButtonRef = useRef<HTMLInputElement>(null)
   const inputContainerRef = useRef<HTMLDivElement>(null)
   const multilinesRef = useRef<HTMLDivElement>(null)
 
@@ -276,7 +280,7 @@ function DropdownComp(props: DropdownProps) {
       )}
     </abbr>
   )
-}
+})
 
 export const SimplePill: FC<{
   value: string

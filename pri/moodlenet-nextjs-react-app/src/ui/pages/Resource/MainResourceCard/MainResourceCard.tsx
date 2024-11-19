@@ -14,7 +14,7 @@ import {
 } from '@mui/icons-material'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from 'next-i18next'
 import { object } from 'zod'
 import { useAssetUrl } from '../../../../lib/client/globalContexts'
 import { useAssetUploader } from '../../../../lib/client/useAssetUploader'

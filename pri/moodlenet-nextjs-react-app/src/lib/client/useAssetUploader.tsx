@@ -28,11 +28,11 @@ export type useAssetUploaderHandler = {
   select: (selection: selection | _nullish) => void
   state: assetUploaderState
   dropHandlers: Pick<DOMAttributes<HTMLElement>, 'onDrop' | 'onDragEnter' | 'onDragOver'>
-  uploadingXhr?: _nullish | uploadingXhr
+  uploadingHandler?: _nullish | uploadingHandler
   assetType: assetType
 }
-type uploadingXhr = {
-  xhr: XMLHttpRequest
+type uploadingHandler = {
+  //xhr: XMLHttpRequest
   abort(): void
   file: File
 }
@@ -85,8 +85,13 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
       } else {
         const { file } = state.selection
         const xhr = new XMLHttpRequest()
-        const uploadingXhr: uploadingXhr = { file, xhr, abort: xhr.abort.bind(xhr) }
-        setUploadingXhr(uploadingXhr)
+        const uploadingHandler: uploadingHandler = {
+          file,
+          abort() {
+            xhr.abort()
+          } /* , xhr */,
+        }
+        setUploadingXhr(uploadingHandler)
         return new Promise<{ tempId: string }>((resolve, reject) => {
           const formData = new FormData()
           formData.append(uploadTempFieldName, file)
@@ -184,7 +189,12 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
     }
   }, [assetType, checkAndSelect])
 
-  const openFileDialog = useCallback(() => inputFileRef.current?.click(), [])
+  const openFileDialog = useCallback(() => {
+    if (state.type === 'submitting') {
+      return
+    }
+    inputFileRef.current?.click()
+  }, [state.type])
 
   const dropHandlers = useMemo<useAssetUploaderHandler['dropHandlers']>(() => {
     return {
@@ -219,27 +229,26 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
   )
   const [activeCurrent, setActiveCurrent] = useState<current>(initializationCurrent)
   useEffect(() => {
-    const newActiveCurrent =
-      state.type === 'selected'
-        ? ((selection): current => {
-            if (selection.type === 'file') {
-              const url = URL.createObjectURL(selection.file) as url_string
-              return { type: 'file', file: selection.file, url }
-            }
-            return selection.type === 'external'
-              ? { type: 'asset', asset: selection, url: selection.url }
-              : selection.type === 'null'
-                ? { type: 'asset', asset: { type: 'none' }, url: null }
-                : unreachable_never(selection)
-          })(state.selection)
-        : null
-    newActiveCurrent && setActiveCurrent(newActiveCurrent)
+    const newActiveCurrent = state.selection
+      ? ((selection): current => {
+          if (selection.type === 'file') {
+            const url = URL.createObjectURL(selection.file) as url_string
+            return { type: 'file', file: selection.file, url }
+          }
+          return selection.type === 'external'
+            ? { type: 'asset', asset: selection, url: selection.url }
+            : selection.type === 'null'
+              ? { type: 'asset', asset: { type: 'none' }, url: null }
+              : unreachable_never(selection)
+        })(state.selection)
+      : null
+    setActiveCurrent(newActiveCurrent ? newActiveCurrent : initializationCurrent)
     return () => {
       newActiveCurrent?.url && URL.revokeObjectURL(newActiveCurrent.url)
     }
-  }, [filetoreHttp.href, state])
+  }, [filetoreHttp.href, state, initializationCurrent])
 
-  const [uploadingXhr, setUploadingXhr] = useState<_nullish | uploadingXhr>()
+  const [uploadingHandler, setUploadingXhr] = useState<_nullish | uploadingHandler>()
 
   return useMemo<useAssetUploaderHandler>(() => {
     const useAssetUploaderHandler: useAssetUploaderHandler = {
@@ -249,11 +258,11 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
       state,
       dropHandlers,
       select: checkAndSelect,
-      uploadingXhr,
+      uploadingHandler,
       assetType,
     }
     return useAssetUploaderHandler
-  }, [activeCurrent, openFileDialog, submit, state, dropHandlers, checkAndSelect, uploadingXhr, assetType])
+  }, [activeCurrent, openFileDialog, submit, state, dropHandlers, checkAndSelect, uploadingHandler, assetType])
 }
 
 export function fileUploaderReducer(prev: assetUploaderState, action: fileUploaderAction): assetUploaderState {
@@ -298,22 +307,30 @@ export function fileUploaderReducer(prev: assetUploaderState, action: fileUpload
           uploadStatus: { status: 'noUpload' },
         }
       } else if (action.status === 'aborted' || action.status === 'timeout' || action.status === 'error') {
-        return {
-          type: 'selected',
-          dirty: true,
-          selection: prev.selection,
-          lastSubmission: {
-            actionResponse: null,
-            uploadStatus:
-              action.status === 'error'
-                ? {
-                    status: 'error',
-                    message: action.message,
-                  }
-                : { status: action.status },
-          },
-          uploadStatus: null,
-        }
+        return action.status === 'aborted'
+          ? {
+              type: 'settled',
+              dirty: false,
+              lastSubmission: prev.lastSubmission,
+              selection: null,
+              uploadStatus: null,
+            }
+          : {
+              type: 'selected',
+              dirty: true,
+              selection: prev.selection,
+              lastSubmission: {
+                actionResponse: null,
+                uploadStatus:
+                  action.status === 'error'
+                    ? {
+                        status: 'error',
+                        message: action.message,
+                      }
+                    : { status: action.status },
+              },
+              uploadStatus: null,
+            }
       } else {
         return unreachable_never(action)
       }
@@ -377,7 +394,7 @@ type fileUploaderAction = d_u<
     submit: unknown
     actionResponse: adoptAssetResponse
     uploadStatus: uploadStatus
-    abortUpload: { file: File }
+    // abortUpload: unknown
   },
   'type'
 >

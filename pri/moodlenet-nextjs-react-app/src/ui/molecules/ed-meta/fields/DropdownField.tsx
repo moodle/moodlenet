@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import { Dropdown, DropdownProps, SimplePill, TextOption, TextOptionProps } from '../../../atoms/Dropdown/Dropdown'
 
 export type DropdownFieldProps = {
@@ -6,7 +6,10 @@ export type DropdownFieldProps = {
   shouldShowErrors?: boolean
 } & Omit<DropdownProps & { multiple?: undefined }, 'pills'>
 
-export default function DropdownField({ options, edit, shouldShowErrors = false, ...dropdownProps }: DropdownFieldProps) {
+export const DropdownField = forwardRef<HTMLSelectElement, DropdownFieldProps>(function DropdownField(
+  { options, shouldShowErrors = false, ...dropdownProps },
+  forwardedRef,
+) {
   const [updatedElements, setUpdatedElements] = useState({
     opts: options,
     selected: options.find(() => false),
@@ -33,10 +36,10 @@ export default function DropdownField({ options, edit, shouldShowErrors = false,
     })
   }, [searchText, dropdownProps.value, options])
 
-  return edit ? (
+  return dropdownProps.edit ? (
     <Dropdown
+        ref={forwardedRef}
       {...dropdownProps}
-      edit
       highlight={shouldShowErrors && !!dropdownProps.error}
       error={shouldShowErrors && dropdownProps.error}
       position={{ top: 50, bottom: 25 }}
@@ -71,4 +74,5 @@ export default function DropdownField({ options, edit, shouldShowErrors = false,
       </abbr>
     </div>
   ) : null
-}
+})
+export default DropdownField

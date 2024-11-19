@@ -1,13 +1,6 @@
 import type { DetailedHTMLProps, FC, SelectHTMLAttributes } from 'react'
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { createContext, forwardRef, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useForwardedRef } from './hooks'
 
 export type SelectorProps = Omit<
   React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>,
@@ -76,8 +69,11 @@ export const useSelectorOption = (optionValue: string) => {
     deselect: () => deselectOption(optionValue),
   }
 }
-export const Selector: FC<SelectorProps> = props => {
-  const selectElemRef = useRef<HTMLSelectElement>(null)
+
+export const Selector = forwardRef<HTMLSelectElement, SelectorProps>((props, forwardedSelectRef) => {
+  // const selectElemRef = useRef<HTMLSelectElement>(null)
+  const selectElemRef = useForwardedRef(forwardedSelectRef)
+
   const { multiple } = props
   const [selections, setSelections] = useState(() => normalizeValue(props.defaultValue))
 
@@ -93,7 +89,7 @@ export const Selector: FC<SelectorProps> = props => {
     }
 
     setSelections(normalizedPropsValue)
-  }, [props.value, selections])
+  }, [props.value, selections, selectElemRef])
 
   useLayoutEffect(() => {
     if (!selectElemRef.current) {
@@ -101,9 +97,7 @@ export const Selector: FC<SelectorProps> = props => {
     }
     const empty = () => {
       selectElemRef.current &&
-        Array.from(selectElemRef.current.options).forEach(opt =>
-          selectElemRef.current?.removeChild(opt),
-        )
+        Array.from(selectElemRef.current.options).forEach(opt => selectElemRef.current?.removeChild(opt))
     }
 
     empty()
@@ -112,23 +106,21 @@ export const Selector: FC<SelectorProps> = props => {
       selectElemRef.current?.appendChild(optElem)
     })
     return empty
-  }, [selections])
+  }, [selections, selectElemRef])
 
   const fireChange = useCallback(() => {
     if (!selectElemRef.current) {
       return
     }
     fireEvent(selectElemRef.current, 'change')
-  }, [])
+  }, [selectElemRef])
 
   const deselectOption = useCallback(
     (optionValue: string) => {
       if (!selectElemRef.current) {
         return
       }
-      const optionToDeselect = Array.from(selectElemRef.current.options).find(
-        ({ value }) => value === optionValue,
-      )
+      const optionToDeselect = Array.from(selectElemRef.current.options).find(({ value }) => value === optionValue)
       if (!optionToDeselect) {
         return
       }
@@ -137,7 +129,7 @@ export const Selector: FC<SelectorProps> = props => {
       selectElemRef.current.removeChild(optionToDeselect)
       fireChange()
     },
-    [fireChange, props],
+    [fireChange, props, selectElemRef],
   )
 
   const selectOption = useCallback(
@@ -145,34 +137,29 @@ export const Selector: FC<SelectorProps> = props => {
       if (!selectElemRef.current) {
         return
       }
-      const alreadySelectedOptionEl = Array.from(selectElemRef.current.options).find(
-        ({ value }) => value === optionValue,
-      )
+      const alreadySelectedOptionEl = Array.from(selectElemRef.current.options).find(({ value }) => value === optionValue)
       if (alreadySelectedOptionEl) {
         return
       }
       const optElem = createOptionElem(optionValue)
       props.onItemSelect?.(optionValue)
       if (!multiple) {
-        Array.from(selectElemRef.current.options).forEach(opt =>
-          selectElemRef.current?.removeChild(opt),
-        )
+        Array.from(selectElemRef.current.options).forEach(opt => selectElemRef.current?.removeChild(opt))
       }
       selectElemRef.current.appendChild(optElem)
       fireChange()
     },
-    [fireChange, multiple, props],
+    [fireChange, multiple, props, selectElemRef],
   )
 
   const toggleOption = useCallback(
     (optionValue: string, selected: boolean) => {
-
       if (!selectElemRef.current) {
         return
       }
       selected ? deselectOption(optionValue) : selectOption(optionValue)
     },
-    [deselectOption, selectOption],
+    [deselectOption, selectOption, selectElemRef],
   )
 
   const ctx: SelectorCtxType = useMemo(
@@ -212,10 +199,7 @@ export const Selector: FC<SelectorProps> = props => {
     onItemDeselect: _onItemDeselect,
     ...restProps
   } = props
-  const selectProps: DetailedHTMLProps<
-    SelectHTMLAttributes<HTMLSelectElement>,
-    HTMLSelectElement
-  > = {
+  const selectProps: DetailedHTMLProps<SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement> = {
     ref: selectElemRef,
     style: { display: 'none', visibility: 'hidden' },
     hidden: true,
@@ -229,7 +213,8 @@ export const Selector: FC<SelectorProps> = props => {
       <select {...selectProps} disabled />
     </SelectorContext.Provider>
   )
-}
+})
+Selector.displayName = 'Selector'
 
 function createOptionElem(value: string) {
   const optElem = document.createElement('option')

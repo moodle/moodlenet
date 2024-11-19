@@ -1,8 +1,8 @@
 import { useMemo, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Dropdown, SimplePill, SimpleTextOption, TextOption, TextOptionProps } from '../../../../atoms/Dropdown/Dropdown'
-import './DateField.scss'
+import { useTranslation } from 'next-i18next'
+import { TextOptionProps } from '../../../../atoms/Dropdown/Dropdown'
 import DropdownField from '../DropdownField'
+import './DateField.scss'
 
 export type DateFieldProps = {
   month: number | undefined

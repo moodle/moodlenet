@@ -1,25 +1,28 @@
 import { useState } from 'react'
+import uploadingFileImg from '../../lib/assets/img/uploading-file.png'
 import { useAssetUploaderHandler } from '../../../lib/client/useAssetUploader'
 import { ReactComponent as UploadImageIcon } from '../../lib/assets/icons/upload-image.svg'
 import { ReactComponent as UploadFileIcon } from '../../lib/assets/icons/upload-file.svg'
 import ImageContainer from '../../molecules/ImageContainer/ImageContainer'
 import './DropUpload.scss'
 import { unreachable_never } from '@moodle/lib-types'
+import { RoundButton } from '../../atoms/RoundButton/RoundButton'
 export type uploadImageProps = {
   useAssetUploaderHandler: useAssetUploaderHandler
   displayOnly?: boolean
+  showSelectedWhileUpload?: boolean
   deleteImage?: () => unknown
 }
 
-export function DropUpload({ useAssetUploaderHandler, displayOnly }: uploadImageProps) {
-  const { current, openFileDialog, state, dropHandlers, select, assetType } = useAssetUploaderHandler
+export function DropUpload({ useAssetUploaderHandler, displayOnly, showSelectedWhileUpload }: uploadImageProps) {
+  const { current, openFileDialog, state, dropHandlers, select, assetType, uploadingHandler } = useAssetUploaderHandler
 
-  const credits = current?.type === 'asset' && current?.asset.type === 'external' ? current.asset.credits : undefined
+  const credits = current.type === 'asset' && current.asset.type === 'external' ? current.asset.credits : undefined
 
   const viewerContainer =
     assetType === 'webImage' ? (
       <ImageContainer
-        imageUrl={current?.url}
+        imageUrl={current.url}
         credits={credits}
         deleteImage={() => select(null)}
         displayOnly={displayOnly}
@@ -40,8 +43,17 @@ export function DropUpload({ useAssetUploaderHandler, displayOnly }: uploadImage
             : unreachable_never(current)}
       </span>
     )
-  const promptContent =
-    assetType === 'webImage' ? (
+
+  const content =
+    useAssetUploaderHandler.state.type === 'submitting' ? (
+      <div className="uploading-animation">
+        <img
+          className="uploading-img"
+          src={uploadingFileImg.src}
+          alt="Uploading animation,koala on a rocket with a document flying"
+        />
+      </div>
+    ) : assetType === 'webImage' ? (
       <>
         <UploadImageIcon />
         <span>Drop or click to upload an image!</span>
@@ -53,13 +65,31 @@ export function DropUpload({ useAssetUploaderHandler, displayOnly }: uploadImage
       </>
     )
 
+  const uploadingBeats =
+    state.uploadStatus?.status === 'uploading' ? (
+      <div className="upload-beats beats progress">
+        {state.uploadStatus.progress ? (
+          <div className="beat" style={{ width: `${state.uploadStatus.progress * 100}%` }} />
+        ) : (
+          <div className="upload-beats beats infinite">
+            <div className="beat beat1" />
+            <div className="beat beat2" />
+            <div className="beat beat3" />
+          </div>
+        )}
+        <RoundButton className={`abort`} type="cross" abbrTitle={`Abort upload`} onClick={uploadingHandler?.abort} />
+      </div>
+    ) : null
+
   const [isToDrop, setIsToDrop] = useState<boolean>(false)
   const uploadErrored = state.uploadStatus?.status === 'error'
   return (
     <div className="upload-file">
       {/* {modals}
       {snackbars} */}
-      {!current?.url && !displayOnly ? (
+      {displayOnly || ((state.type === 'settled' || state.type === 'selected') && current.url) ? (
+        viewerContainer
+      ) : (
         <div className={`uploader `}>
           <div
             className={`file upload ${isToDrop ? 'hover' : ''} ${uploadErrored ? 'error' : ''}`}
@@ -74,11 +104,10 @@ export function DropUpload({ useAssetUploaderHandler, displayOnly }: uploadImage
             tabIndex={0}
             onKeyUp={e => e.key === 'Enter' && openFileDialog()}
           >
-            {promptContent}
+            {content}
+            {uploadingBeats}
           </div>
         </div>
-      ) : (
-        viewerContainer
       )}
     </div>
   )
