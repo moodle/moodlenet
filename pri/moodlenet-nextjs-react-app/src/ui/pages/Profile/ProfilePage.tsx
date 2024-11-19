@@ -4,29 +4,26 @@ import FilterNone from '@mui/icons-material/FilterNone'
 import Grade from '@mui/icons-material/Grade'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 
-import { _any, selection } from '@moodle/lib-types'
-import { moodlenetContributorAccessObject } from '@moodle/module/moodlenet'
-import { updateProfileInfoSchema, useProfileImageSchema } from '@moodle/module/user-profile'
-import { HookSafeActionFn } from 'next-safe-action/hooks'
+import { selection } from '@moodle/lib-types'
+import { adoptAssetService } from '@moodle/module/content'
+import { webappContributorAccessData } from '@moodle/module/moodlenet-react-app'
+import { updateProfileInfoSchema } from '@moodle/module/user-profile'
 import { Card } from '../../atoms/Card/Card'
 import { OverallCard } from '../../molecules/OverallCard/OverallCard'
 import { MainProfileCard } from './MainProfileCard/MainProfileCard'
 import { UserProgressCard } from './UserProgressCard/UserProgressCard'
-import { webappContributorAccessData } from '@moodle/module/moodlenet-react-app'
-import { ValidationErrors } from 'next-safe-action/.'
-import { asset } from '@moodle/module/storage'
-import { simpleHookSafeAction } from '../../../lib/common/types'
+import { simpleHookSafeAction } from '../../../lib/common/actions'
 
 type actionsOnContributor = {
   edit: {
     updateMyProfileInfo: updateMyProfileInfoFn
-    adoptMyProfileImage: adoptMyProfileImageFn
+    useAsMyProfileBackground: adoptAssetService
+    useAsMyProfileAvatar: adoptAssetService
   }
   follow(): Promise<void>
   sendMessage(text: string): Promise<void>
   report(text: string): Promise<void>
 }
-type adoptMyProfileImageFn = simpleHookSafeAction<useProfileImageSchema, void | asset[]>
 type updateMyProfileInfoFn = simpleHookSafeAction<updateProfileInfoSchema, void>
 
 export type profilePageProps = webappContributorAccessData & {

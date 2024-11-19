@@ -1,6 +1,7 @@
 import { single_line_string_schema, url_string_schema } from '@moodle/lib-types'
 import type { z, ZodString } from 'zod'
 import { any, literal, object, string, union } from 'zod'
+import { adoptAssetFormSchema } from '../../content'
 export interface UserProfilePrimaryMsgSchemaConfigs {
   profileInfoMeta: {
     displayName: { max: number; min: number; regex: null | [regex: string, flags: string] }
@@ -14,6 +15,7 @@ export type updateProfileInfoForm = z.infer<updateProfileInfoSchema>
 
 export type useProfileImageSchema = ReturnType<typeof getUserProfilePrimarySchemas>['useProfileImageSchema']
 export type useProfileImageForm = z.infer<useProfileImageSchema>
+// export type useProfileImageForm = adoptAssetForm & {as : 'avatar' | 'background'}
 
 export function getUserProfilePrimarySchemas({ profileInfoMeta }: UserProfilePrimaryMsgSchemaConfigs) {
   const profileImageSchema = union([literal('avatar'), literal('background')])
@@ -34,7 +36,7 @@ export function getUserProfilePrimarySchemas({ profileInfoMeta }: UserProfilePri
 
   const useProfileImageSchema = object({
     as: profileImageSchema,
-    tempId: string().nullish(),
+    adoptAssetForm: adoptAssetFormSchema,
   })
 
   const updateProfileInfoMetaSchema = object({

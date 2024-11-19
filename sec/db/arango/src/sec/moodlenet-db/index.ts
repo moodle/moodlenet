@@ -33,7 +33,7 @@ export async function getMoodlenetContributor({
       FILTER ${filter_id}
       LIMIT 1
       ${apply}
-      return MOODLE::RESTORE_RECORD(moodlenetContributorDoc)
+      return MOODLE::RESTORE_RECORD_ID(moodlenetContributorDoc)
     `)
 
   const [m_moodlenetContributorRecord] = await cursor.all()

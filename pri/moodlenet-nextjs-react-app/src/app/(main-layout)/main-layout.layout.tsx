@@ -37,31 +37,31 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
     const { center, left, right } = mainLayout.header.slots
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
-    const avatarAsset = authenticated ? session.profileInfo.avatar : null
     const defaultRights = authenticated
-      ? await (async () => {
+      ? await(async () => {
+          const avatarAsset = session.profileInfo.avatar
           return [
-            <AvatarMenu
-              key="avatar-menu"
-              avatar={avatarAsset}
-              menuItems={filterOutFalsies([
-                authenticated && (
-                  <ProfileLink
-                    key="profile"
-                    avatar={avatarAsset}
-                    profileRoute={`/profile/${session.contributorId}/${webSlug(session.profileInfo.displayName)}`}
-                  />
-                ),
-                authenticated && <BookmarksLink key="bookmarks" bookmarksRoute={'/'} />,
-                authenticated && <FollowingLink key="following" followingRoute={'/'} />,
-                authenticated && <UserSettingsLink key="user-settings" settingsRoute={'/settings'} />,
-                authenticated && session.hasAdminSectionAccess && (
-                  <AdminSettingsLink key="admin-settings" adminRoute={'/admin'} />
-                ),
-                <Logout key="logout" logout={logout} />,
-              ])}
-            />,
-          ]
+        <AvatarMenu
+          key="avatar-menu"
+          avatar={avatarAsset}
+          menuItems={filterOutFalsies([
+            authenticated && (
+              <ProfileLink
+                key="profile"
+                avatar={avatarAsset}
+                profileRoute={`/profile/${session.contributorId}/${webSlug(session.profileInfo.displayName)}`}
+              />
+            ),
+            authenticated && <BookmarksLink key="bookmarks" bookmarksRoute={'/'} />,
+            authenticated && <FollowingLink key="following" followingRoute={'/'} />,
+            authenticated && <UserSettingsLink key="user-settings" settingsRoute={'/settings'} />,
+            authenticated && session.hasAdminSectionAccess && (
+              <AdminSettingsLink key="admin-settings" adminRoute={'/admin'} />
+            ),
+            <Logout key="logout" logout={logout} />,
+          ])}
+        />,
+      ]
         })()
       : [
           <LoginHeaderButton loginRoute="/login" key="login-header-button" />,

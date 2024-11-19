@@ -38,6 +38,14 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             }
             return [true, eduCollectionDraft]
           },
+          async getEduResourceDraft({ eduResourceDraftId, userProfileId }) {
+            const userProfileRecord = await getUserProfileById({ select: { by: 'userProfileId', userProfileId }, dbStruct })
+            const eduResourceDraft = userProfileRecord?.myDrafts.eduResources[eduResourceDraftId]
+            if (!eduResourceDraft) {
+              return [false, { reason: 'notFound' }]
+            }
+            return [true, eduResourceDraft]
+          },
         },
         write: {
           async updatePartialProfileInfo({ partialProfileInfo, userProfileId }) {
@@ -51,7 +59,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
           },
           async createUserProfile({ userProfileRecord }) {
             const result = await dbStruct.userAccount.coll.userProfile
-              .save(save_id_to_key(userProfileRecord))
+              .save(save_id_to_key('id')(userProfileRecord))
               .catch(() => null)
 
             const saveDone = !!result
@@ -82,6 +90,38 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 myDrafts: {
                   eduCollections: {
                     [eduCollectionDraftId]: eduCollectionDraft,
+                  },
+                },
+              },
+              select: { by: 'userProfileId', userProfileId },
+            })
+            const updateDone = !!updateResult
+            return [updateDone, _void]
+          },
+          async updateEduResourceDraft({ userProfileId, eduResourceDraftId, partialEduResourceDraft }) {
+            const updateResult = await updateUserProfileById({
+              dbStruct,
+              preCondition: aql`FILTER HAS( userProfileDoc.myDrafts.eduResources, ${eduResourceDraftId} )`,
+              partialUserProfile: {
+                myDrafts: {
+                  eduResources: {
+                    [eduResourceDraftId]: partialEduResourceDraft,
+                  },
+                },
+              },
+              select: { by: 'userProfileId', userProfileId },
+            })
+            const updateDone = !!updateResult
+            return [updateDone, _void]
+          },
+          async createEduResourceDraft({ userProfileId, eduResourceDraftId, eduResourceDraft }) {
+            const updateResult = await updateUserProfileById({
+              dbStruct,
+              preCondition: aql`FILTER NOT( HAS( userProfileDoc.myDrafts.eduResources, ${eduResourceDraftId} ) )`,
+              partialUserProfile: {
+                myDrafts: {
+                  eduResources: {
+                    [eduResourceDraftId]: eduResourceDraft,
                   },
                 },
               },

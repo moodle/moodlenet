@@ -18,7 +18,7 @@ import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
 import * as path from 'path'
-import { coerce, literal, object } from 'zod'
+import { coerce, literal, object, union } from 'zod'
 import { configurator } from './types'
 import { createDefaultDomainLoggerProvider } from './winston-logger'
 
@@ -46,7 +46,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
 
       const env = object({
         MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS: coerce.number().default(60),
-        MOODLE_CORE_INIT_BACKGROUND_PROCESSES: literal('true').or(literal('false')).optional(),
+        MOODLE_CORE_INIT_BACKGROUND_PROCESSES: union([literal('true'), literal('false')]).optional(),
         MOODLE_SYS_ADMIN_EMAIL: email_address_schema,
         MOODLE_NET_WEBAPP_DEPLOYMENT_URL: url_string_schema,
         MOODLE_FILE_SERVER_DEPLOYMENT_URL: url_string_schema,

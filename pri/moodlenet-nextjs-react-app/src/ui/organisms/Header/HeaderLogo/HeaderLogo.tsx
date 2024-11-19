@@ -4,10 +4,11 @@ import './HeaderLogo.scss'
 import { asset } from '@moodle/module/storage'
 import { useAssetUrl } from '../../../../lib/client/globalContexts'
 import { appRoute } from '../../../../lib/common/appRoutes'
+import { _nullish } from '@moodle/lib-types'
 
 export interface HeaderLogoProps {
-  logo: asset
-  smallLogo: asset
+  logo: asset | _nullish
+  smallLogo: asset | _nullish
   landingPath: appRoute
 }
 

@@ -7,8 +7,10 @@ import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { redirect, RedirectType } from 'next/navigation'
 import { appRoutes } from '../../../lib/common/appRoutes'
-import { defaultSafeActionClient } from '../../../lib/server/safe-action'
+import { defaultSafeActionClient, safeActionResult_to_adoptAssetResponse } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
+import { adoptAssetService } from '@moodle/module/content'
+import { revalidatePath } from 'next/cache'
 
 export async function getEduCollectionMetaSchema() {
   const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
@@ -43,6 +45,7 @@ export async function editEduCollectionDraftForId({ eduCollectionDraftId }: { ed
             _errors: [t(`something went wrong while saving collection meta`)],
           })
         }
+        revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
       })
     return editEduCollectionDraftAction(eduCollectionMetaForm)
   }
@@ -52,28 +55,29 @@ export async function getApplyEduCollectionDraftImageSchema() {
   const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
   return edu.applyImageSchema
 }
-export async function applyEduCollectionDraftImageForId({
+export async function getEduCollectionDraftImageForIdadoptAssetService({
   eduCollectionDraftId,
 }: {
   eduCollectionDraftId: eduCollectionDraftId
-}) {
-  return async function applyEduCollectionDraftImage(eduCollectionApplyImageForm: eduCollectionApplyImageForm) {
+}): Promise<adoptAssetService> {
+  return async function adoptAssetForm_eduCollectionDraftImage(adoptAssetForm) {
     'use server'
+
     const applyEduCollectionDraftImageAction = defaultSafeActionClient
       .schema(getApplyEduCollectionDraftImageSchema)
-      .action(async ({ parsedInput: { tempId } }) => {
-        'use server'
-        const [done /* , result */] = await access.primary.userProfile.authenticated.applyEduCollectionDraftImage({
-          eduCollectionDraftId,
-          tempId,
-        })
-        if (!done) {
-          returnValidationErrors(getApplyEduCollectionDraftImageSchema, {
-            _errors: [t(`something went wrong while saving collection image`)],
+      .action(async ({ parsedInput: applyImageForm }) =>
+        access.primary.userProfile.authenticated
+          .applyEduCollectionDraftImage({
+            eduCollectionDraftId,
+            applyImageForm,
           })
-        }
-      })
-    return applyEduCollectionDraftImageAction(eduCollectionApplyImageForm)
+          .then(({ adoptAssetResponse }) => {
+            revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
+
+            return adoptAssetResponse
+          }),
+      )
+    return safeActionResult_to_adoptAssetResponse(applyEduCollectionDraftImageAction({ resourceImageForm: adoptAssetForm }))
   }
 }
 

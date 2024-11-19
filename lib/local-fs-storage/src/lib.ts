@@ -6,7 +6,7 @@ import { rimraf } from 'rimraf'
 import sharp from 'sharp'
 import { filesystem, fs, fsDirectories, fsUrlPathGetter } from './types'
 
-import { deleteFileResult, fileHashes, uploaded_blob_meta, useTempFileResult, webImageSize } from '@moodle/module/storage'
+import { asset, fileHashes, uploaded_blob_meta, useTempFileResult, webImageSize } from '@moodle/module/storage'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
 import { getSanitizedFileName } from '@moodle/module/storage/lib'
@@ -106,17 +106,17 @@ export function fs_storage_path_of({ path, fsDirs }: { path: path; fsDirs: fsDir
 export async function ensure_temp_file({ tempId, fsDirs }: { tempId: string; fsDirs: fsDirectories }) {
   const temp_paths = get_temp_file_paths({ tempId, fsDirs })
 
-  const meta: uploaded_blob_meta = await readFile(temp_paths.meta, 'utf8')
+  const uploaded_blob_meta: uploaded_blob_meta = await readFile(temp_paths.meta, 'utf8')
     .then(JSON.parse)
     .catch(() => null)
-  if (!meta) {
+  if (!uploaded_blob_meta) {
     return false
   }
   const file = await stat(temp_paths.file).catch(() => null)
   if (!file) {
     return false
   }
-  return { temp_paths, meta, file }
+  return { temp_paths, uploaded_blob_meta, file }
 }
 export async function use_temp_file_as_web_image({
   tempId,
@@ -165,7 +165,7 @@ export async function use_temp_file({
   await rimraf(absolutePath, { maxRetries: 2 }).catch(() => null)
   await mkdir(absolutePath, { recursive: true })
 
-  const mvError = await rename(temp_file.temp_paths.file, join(absolutePath, temp_file.meta.name)).then(
+  const mvError = await rename(temp_file.temp_paths.file, join(absolutePath, temp_file.uploaded_blob_meta.name)).then(
     () => false as const,
     e => String(e),
   )
@@ -174,10 +174,23 @@ export async function use_temp_file({
   if (mvError) {
     return [false, { reason: 'move', error: mvError }]
   }
-
+  const { uploaded_blob_meta } = temp_file
   const path = relative(fsDirs.fsStorage, absolutePath) //join(absolutePath, temp_file.meta.name))
+  const asset = usingTempFile2asset({ path, uploaded_blob_meta })
+  return [true, { uploaded_blob_meta, asset }]
+}
 
-  return [true, { uploaded_blob_meta: temp_file.meta, path }]
+export function usingTempFile2asset({ path, uploaded_blob_meta }: { uploaded_blob_meta: uploaded_blob_meta; path: string }) {
+  const asset: asset = {
+    type: 'local',
+    path,
+    hash: uploaded_blob_meta.hash,
+    uploaded: { date: uploaded_blob_meta.uploaded.date, primarySessionId: uploaded_blob_meta.uploaded.primarySessionId },
+    mimetype: uploaded_blob_meta.mimetype,
+    name: uploaded_blob_meta.name,
+    size: uploaded_blob_meta.size,
+  }
+  return asset
 }
 
 export async function resizeTempImage({
@@ -213,14 +226,14 @@ export async function resizeTempImage({
       withoutEnlargement: true,
     })
     .toFile(resizedTempFilePaths.file)
-  const resized_temp_meta: uploaded_blob_meta = {
-    ...original_temp_file.meta,
+  const resized_temp_uploaded_blob_meta: uploaded_blob_meta = {
+    ...original_temp_file.uploaded_blob_meta,
     hash: await generateFileHashes(resizedTempFilePaths.file),
     size: resizedInfo.size,
     original: {
-      size: original_temp_file.meta.size,
-      hash: original_temp_file.meta.hash,
-      ...original_temp_file.meta.original,
+      size: original_temp_file.uploaded_blob_meta.size,
+      hash: original_temp_file.uploaded_blob_meta.hash,
+      ...original_temp_file.uploaded_blob_meta.original,
     },
   }
   //   ...original_temp_file.meta,
@@ -230,21 +243,15 @@ export async function resizeTempImage({
   //     size: original_temp_file.meta.size,
   //   },
   // }
-  await writeFile(resizedTempFilePaths.meta, JSON.stringify(resized_temp_meta), 'utf8')
+  await writeFile(resizedTempFilePaths.meta, JSON.stringify(resized_temp_uploaded_blob_meta), 'utf8')
 
   return [true, { resizedTempId, resizedTempFilePaths }]
 }
-export async function deleteFile({
-  absolutePath,
-  fsDirs,
-}: {
-  absolutePath: string
-  fsDirs: fsDirectories
-}): Promise<deleteFileResult> {
+export async function deleteFile({ absolutePath, fsDirs }: { absolutePath: string; fsDirs: fsDirectories }): Promise<void> {
   //_and_clean_upper_empty_dirs
   //TODO: ensure this check is enough to avoid climbing up too much !
   if (normalize(fsDirs.fsStorage).startsWith(normalize(absolutePath))) {
-    return [true, _void]
+    return
   }
   await rimraf(absolutePath, { maxRetries: 2 }).catch(() => null)
   const parent_dir = dirname(absolutePath)
@@ -253,7 +260,7 @@ export async function deleteFile({
     `to prevent deleting this dir, as it's not ensured to be empy`,
   ])
   if (parent_dir_files.length > 0) {
-    return [true, _void]
+    return
   }
   return deleteFile({ absolutePath: parent_dir, fsDirs })
 }

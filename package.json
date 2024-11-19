@@ -34,6 +34,7 @@
     "express": "^5.0.0",
     "humanize-duration": "^3.32.1",
     "i18next": "^23.15.1",
+    "immer": "^10.1.1",
     "interweave": "^13.1.0",
     "iso8601-duration": "^2.1.2",
     "jose": "^5.8.0",

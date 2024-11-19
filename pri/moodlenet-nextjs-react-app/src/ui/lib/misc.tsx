@@ -1,9 +1,11 @@
-import { _any, d_u__d, date_time_string } from '@moodle/lib-types'
+import { _any, _nullish, d_u__d, date_time_string, unreachable_never } from '@moodle/lib-types'
 import { asset } from '@moodle/module/storage'
 import assert from 'assert'
 import defaultsDeep from 'lodash-es/defaultsDeep'
-import type { ReactElement } from 'react'
+import Link from 'next/link'
+import type { CSSProperties, ReactElement } from 'react'
 import type { PartialDeep } from 'type-fest'
+import { appRoute } from '../../lib/common/appRoutes'
 import { getVimeoEmbed, getVimeoThumbnail } from '../molecules/embeds/Vimeo/Vimeo'
 import { getYouTubeEmbed, getYouTubeThumbnail } from '../molecules/embeds/Youtube/Youtube'
 import { ContentBackupImages } from './ContentBackupImages'
@@ -93,6 +95,110 @@ export const getBackupImage = (id: string): d_u__d<asset, 'type', 'external'> | 
   const numId = getNumberFromString(id)
   return ContentBackupImages[numId % ContentBackupImages.length]
 }
+export type FollowTag = {
+  type: 'subject' | 'collection' | 'type'
+  name: string
+  appRoute?: appRoute
+}
+export const getTag = (
+  tag: FollowTag,
+  size?: 'small' | 'medium' | 'big',
+  click = true,
+  index = 0,
+  style?: CSSProperties,
+) => {
+  return click && tag.appRoute ? (
+    <Link href={tag.appRoute} className="tag-container" key={index}>
+      <div className={`tag ${tag.type} hover ${size}`} style={style}>
+        <abbr title={tag.name}>{tag.name}</abbr>
+      </div>
+    </Link>
+  ) : (
+    <div className={`tag ${tag.type} ${size}`} key={index} style={style}>
+      <abbr title={tag.name}>{tag.name}</abbr>
+    </div>
+  )
+}
+
+export const getTagList = (tags: FollowTag[], size: 'small' | 'medium' | 'big', click = true) => {
+  return tags.map((tag, index) => {
+    return getTag(tag, size, click, index)
+  })
+}
+
+export const getResourceDomainName = (url: string): string | undefined => {
+  const domain = getDomainUrl(url)
+  switch (domain) {
+    case 'youtube.com':
+    case 'youtu.be':
+      return 'youtube'
+    case 'vimeo.com':
+      return 'vimeo'
+    case undefined:
+      return 'unknown'
+    default:
+      return 'link'
+  }
+}
+
+export const getResourceTypeInfo = (asset?: asset | _nullish): { typeName: string; typeColor: string } | null => {
+  if (!asset || asset.type === 'none') return null
+  const resourceType =
+    asset.type === 'local'
+      ? asset.name.split('.').pop()
+      : asset.type === 'external'
+        ? getResourceDomainName(asset.url)
+        : unreachable_never(asset, `unknown asset.type`)
+  switch (resourceType) {
+    case 'mp4':
+    case 'avi':
+    case 'mov':
+    case 'wmv':
+    case 'mkv':
+    case 'webm':
+    case 'avchd':
+    case 'flv':
+    case 'f4v':
+    case 'swf':
+      return { typeName: `Video`, typeColor: '#2A75C0' }
+    case 'mp3':
+    case 'wav':
+    case 'wma':
+    case 'aac':
+    case 'm4a':
+      return { typeName: `Audio`, typeColor: '#8033c7' }
+    case 'jpeg':
+    case 'jpg':
+    case 'png':
+    case 'gif':
+      return { typeName: `Image`, typeColor: '#27a930' }
+    case 'pdf':
+      return { typeName: 'pdf', typeColor: '#df3131' }
+    case 'youtube':
+      return { typeName: 'YouTube', typeColor: '#f00' }
+    case 'vimeo':
+      return { typeName: 'Vimeo', typeColor: '#00adef' }
+    case 'xls':
+    case 'xlsx':
+    case 'ods':
+      return { typeName: `Spreadsheet`, typeColor: '#0f9d58' }
+    case 'doc':
+    case 'docx':
+    case 'odt':
+      return { typeName: 'Word', typeColor: '#4285f4' }
+    case 'ppt':
+    case 'pptx':
+    case 'odp':
+      return { typeName: `Presentation`, typeColor: '#dfa600' }
+    case 'mbz':
+      return { typeName: 'Moodle course', typeColor: '#f88012' }
+    case 'link':
+      return { typeName: `Web page`, typeColor: '#C233C7' }
+    default:
+      return null
+  }
+}
+
 export type EmbedType = ReactElement | null
 export type ThumbnailType = string | null
 

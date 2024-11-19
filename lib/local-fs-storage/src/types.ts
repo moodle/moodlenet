@@ -1,5 +1,5 @@
 import { map, path, url_path_string } from '@moodle/lib-types'
-import { profileImage } from '@moodle/module/user-profile'
+import { profileImageType } from '@moodle/module/user-profile'
 
 export type fsPathGetter = () => path
 export type fsUrlPathGetter = () => url_path_string
@@ -17,17 +17,29 @@ export type dir<_dir> = {
   [key in keyof _dir]: _dir[key] extends file ? file : dir<_dir[key]>
 }
 export type file = (alias: string) => path
-// VOGLIO QUESTO FILESYSTEM STRUCTURE IN DOMAIN ?
+// FIXME:
+// FIXME:
+// FIXME:
+// FIXME: should this FILESYSTEM STRUCTURE be in DOMAIN ?
+// FIXME: also .. review it completely ... it doesn't ensure you get to an end leaf to save a file
+// FIXME:    e.g. to save a collectoin image, it accepts userProfile.xxxx.drafts.eduCollection.yyy
+// FIXME:    instead of userProfile.xxxx.drafts.eduCollection.yyy.image
+// FIXME:    that's ok when want to reference a directory, but no good for saving a file
 export type filesystem = {
   userProfile: {
     [userProfileId in string]: {
-      profile: map<'image', profileImage>
+      profile: map<'image', profileImageType>
       drafts: {
         eduResource: {
-          [eduResourceDraftId in string]: map<'image', 'image'>
+          [eduResourceDraftId in string]: {
+            image: 'image'
+            asset: 'asset'
+          }
         }
         eduCollection: {
-          [eduCollectionDraftId in string]: map<'image', 'image'>
+          [eduCollectionDraftId in string]: {
+            image: 'image'
+          }
         }
       }
     }

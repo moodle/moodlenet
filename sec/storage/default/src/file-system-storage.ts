@@ -6,10 +6,12 @@ import {
   get_temp_file_paths,
   getFsDirectories,
   prefixed_domain_file_fs_paths,
+  use_temp_file,
   use_temp_file_as_web_image,
 } from '@moodle/lib-local-fs-storage'
 import { _void } from '@moodle/lib-types'
 import { uploaded_blob_meta } from '@moodle/module/storage'
+import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
 import { mkdir, readdir, readFile, stat } from 'fs/promises'
 import { join } from 'path'
 import { rimraf } from 'rimraf'
@@ -22,34 +24,49 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
     const secondaryAdapter: secondaryAdapter = {
       userProfile: {
         write: {
-          async useTempImageInProfile({ as, userProfileId, tempId }) {
-            // ctx.log('debug', 'useImageInProfile', { as, id: userProfileId, tempId })
+          async useTempImageInProfile({ as, userProfileId, adoptAssetForm }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const absolutePath = fs_file_paths.userProfile[userProfileId]!.profile[as]!()
-            if (!tempId) {
-              return deleteFile({ absolutePath, fsDirs })
+            if (adoptAssetForm.type === 'none') {
+              await deleteFile({ absolutePath, fsDirs })
+              return { asset: adoptAssetForm, status: 'done' }
             }
-            return use_temp_file_as_web_image({
-              fsDirs,
-              secondaryContext: ctx,
-              absolutePath,
-              tempId,
-              size: as === 'avatar' ? 'medium' : 'large',
-            })
+            return useTempFileResult_to_adoptAssetResponse(
+              use_temp_file_as_web_image({
+                fsDirs,
+                secondaryContext: ctx,
+                absolutePath,
+                tempId: adoptAssetForm.tempId,
+                size: as === 'avatar' ? 'medium' : 'large',
+              }),
+            )
           },
-          async useTempImageInDraft({ draftId, tempId, type, userProfileId }) {
+          async useTempFileAsResourceDraftAsset({ adoptAssetForm, resourceDraftId, userProfileId }) {
+            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts.eduResource[resourceDraftId]!.asset()
+            return useTempFileResult_to_adoptAssetResponse(
+              use_temp_file({
+                fsDirs,
+                absolutePath,
+                tempId: adoptAssetForm.tempId,
+              }),
+            )
+          },
+          async useTempImageInDraft({ draftId, adoptAssetForm, type, userProfileId }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts[type][draftId]!()
-            if (!tempId) {
-              return deleteFile({ absolutePath, fsDirs })
+            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts[type][draftId]!.image!()
+            if (adoptAssetForm.type === 'none') {
+              await deleteFile({ absolutePath, fsDirs })
+              return { asset: adoptAssetForm, status: 'done' }
             }
-            return use_temp_file_as_web_image({
-              fsDirs,
-              secondaryContext: ctx,
-              absolutePath,
-              tempId,
-              size: 'large',
-            })
+            return useTempFileResult_to_adoptAssetResponse(
+              use_temp_file_as_web_image({
+                fsDirs,
+                secondaryContext: ctx,
+                absolutePath,
+                tempId: adoptAssetForm.tempId,
+                size: 'large',
+              }),
+            )
           },
         },
       },

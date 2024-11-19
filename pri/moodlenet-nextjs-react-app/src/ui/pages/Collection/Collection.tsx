@@ -1,8 +1,8 @@
 'use client'
 
 import { _nullish, d_u, selection } from '@moodle/lib-types'
-import { eduCollectionApplyImageFormSchema, eduCollectionData, eduCollectionMetaFormSchema } from '@moodle/module/edu'
-import { HookSafeActionFn } from 'next-safe-action/hooks'
+import { adoptAssetService } from '@moodle/module/content'
+import { eduCollectionData, eduCollectionMetaFormSchema } from '@moodle/module/edu'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../atoms/SecondaryButton/SecondaryButton'
@@ -12,17 +12,15 @@ import {
   collectionContributorCardProps,
 } from './CollectionContributorCard/CollectionContributorCard'
 import { MainCollectionCard } from './MainCollectionCard/MainCollectionCard'
-import { simpleHookSafeAction } from '../../../lib/common/types'
-import { asset } from '@moodle/module/storage'
+import { simpleHookSafeAction } from '../../../lib/common/actions'
 
 type saveEduCollectionMetaFn = simpleHookSafeAction<eduCollectionMetaFormSchema, void>
-type applyImageForEduCollectionMetaFn = simpleHookSafeAction<eduCollectionApplyImageFormSchema, asset[]>
 export type eduCollectionActions = {
   publish(): Promise<unknown>
   saveNewDraft: saveEduCollectionMetaFn
   editDraft: {
     saveMeta: saveEduCollectionMetaFn
-    applyImage: applyImageForEduCollectionMetaFn
+    applyImage: adoptAssetService
   }
   deleteDraft(): Promise<unknown>
   deletePublished(): Promise<unknown>
@@ -68,8 +66,8 @@ export function CollectionPage(collectionPageProps: collectionPageProps) {
             <CollectionContributorCard {...contributorCardProps} key="contributor-card" />
           </div>
         )}
-        <div className="editor-actions">
-          <Card className="editor-actions" hideBorderWhenSmall={true}>
+        <div className="actions">
+          <Card hideBorderWhenSmall={true}>
             {actions.unpublish && <SecondaryButton onClick={() => actions.unpublish?.()}>Unpublish</SecondaryButton>}
             {activity === 'editDraft' && (
               <PrimaryButton onClick={() => alert('publishCheck')} color="green">

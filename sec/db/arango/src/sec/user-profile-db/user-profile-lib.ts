@@ -23,7 +23,7 @@ export async function getUserProfileById({
     FILTER ${filter_id}
     LIMIT 1
     ${apply}
-    RETURN MOODLE::RESTORE_RECORD(userProfileDoc)
+    RETURN MOODLE::RESTORE_RECORD_ID(userProfileDoc)
     `)
   const [userProfile] = await cursor.all()
   return userProfile ?? null

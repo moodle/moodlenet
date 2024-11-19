@@ -4,7 +4,7 @@ import { access } from '../../../../../lib/server/session-access'
 import { params } from '../../../../../lib/server/types'
 import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'
 import ProfilePageClient, { profilePageProps } from '../../../../../ui/pages/Profile/ProfilePage'
-import { adoptMyProfileImage, updateMyProfileInfoMetaForm } from './profile.server'
+import { getApplyMyProfileImageadoptAssetService, updateMyProfileInfoMetaForm } from './profile.server'
 
 export default async function ProfilePage({
   params: { moodlenetContributorId, slug },
@@ -27,7 +27,8 @@ export default async function ProfilePage({
       edit: permissions.editProfileInfo
         ? {
             updateMyProfileInfo: updateMyProfileInfoMetaForm,
-            adoptMyProfileImage: adoptMyProfileImage,
+            useAsMyProfileAvatar: await getApplyMyProfileImageadoptAssetService('avatar'),
+            useAsMyProfileBackground: await getApplyMyProfileImageadoptAssetService('background'),
           }
         : null,
       follow: permissions.follow ? null : null,
