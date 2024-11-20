@@ -95,5 +95,9 @@
     "CREDITS": ["CREDITS", "CREDIT", "THANKS", "THANK"],
     "SHAREDLIB": ["SHAREDLIB", "SHARED_LIB", "MAKE_SHARED_LIB", "NEED_SHARED_LIB", "SHARED_LIB_NEEDED"]
   },
-  "typescript.preferences.importModuleSpecifier": "project-relative"
+  "typescript.preferences.importModuleSpecifier": "project-relative",
+  "workbench.colorCustomizations": {
+    "minimap.background": "#00000000",
+    "scrollbar.shadow": "#00000000"
+  }
 }

@@ -48,7 +48,8 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "pri-file-server:build:development"
+          "buildTarget": "pri-file-server:build:development",
+          "port": 9210
         },
         "production": {
           "buildTarget": "pri-file-server:build:production"
