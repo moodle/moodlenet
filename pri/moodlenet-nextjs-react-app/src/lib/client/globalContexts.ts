@@ -43,7 +43,7 @@ export function useAllPrimarySchemas() {
   return primarySchemas
 }
 
-export function useAssetUrl(asset: asset | _nullish, defaultTo?: string | asset) {
+export function useAssetUrl(asset: asset | _nullish, defaultTo?: url_string | asset) {
   const filestoreHttp = useFileServerDeployment()
   return useMemo(() => {
     const defaultUrl = !defaultTo

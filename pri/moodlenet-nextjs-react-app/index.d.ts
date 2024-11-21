@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 declare module '*.svg' {
-  const content: any
-  export const ReactComponent: any
+  const content: import('@moodle/lib-types').url_string
+  export const ReactComponent: import('react').ComponentType
   export default content
 }

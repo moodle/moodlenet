@@ -17,6 +17,7 @@ import { useAssetUrl } from '../../lib/client/globalContexts'
 import { clientSlotItem } from '../../lib/common/types'
 import defaultAvatar from '../../ui/lib/assets/img/default-avatar.svg'
 
+
 export type LoginHeaderProps = {
   loginRoute: appRoute
 }
