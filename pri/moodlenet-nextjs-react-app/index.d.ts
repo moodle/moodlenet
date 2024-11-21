@@ -1,5 +1,7 @@
 declare module '*.svg' {
-  const content: import('@moodle/lib-types').url_string
-  export const ReactComponent: import('react').ComponentType
+  type url_string = import('@moodle/lib-types').url_string
+  type SvgIntrinsicElement = import('react').JSX.IntrinsicElements.svg
+  const content: url_string
+  export const ReactComponent: SvgIntrinsicElement & { src: url_string }
   export default content
 }
