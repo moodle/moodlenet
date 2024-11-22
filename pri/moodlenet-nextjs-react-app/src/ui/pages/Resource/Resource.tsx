@@ -2,10 +2,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { _nullish, d_u, selection, unreachable_never } from '@moodle/lib-types'
 import { adoptAssetService } from '@moodle/module/content'
-import { eduBloomCognitiveRecord, eduResourceData, eduResourceMetaFormSchema } from '@moodle/module/edu'
+import { eduResourceData, eduResourceMetaFormSchema } from '@moodle/module/edu'
 import { InsertDriveFile } from '@mui/icons-material'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
-import { useAllPrimarySchemas, useAssetUrl } from '../../../lib/client/globalContexts'
+import { useAllPrimarySchemas, useAssetUrl, useGlobalCtx } from '../../../lib/client/globalContexts'
 import { default_noop_action, simpleHookSafeAction } from '../../../lib/common/actions'
 import { appRoute } from '../../../lib/common/appRoutes'
 import { Card } from '../../atoms/Card/Card'
@@ -37,14 +37,12 @@ export type resourcePageProps = d_u<
       eduResourceData: _nullish
       actions: selection<eduResourceActions, 'saveNewResourceAsset'>
       contributorCardProps: _nullish
-      eduBloomCognitiveRecords: _nullish
       references: _nullish
       allowedYears: _nullish
     }
     editDraft: {
       eduResourceData: eduResourceData
       actions: selection<eduResourceActions, 'editDraft', 'publish'>
-      eduBloomCognitiveRecords: eduBloomCognitiveRecord[]
       references: _nullish
       contributorCardProps: _nullish
       allowedYears: number[]
@@ -59,7 +57,6 @@ export type resourcePageProps = d_u<
       }
       actions: selection<eduResourceActions, never, 'unpublish' | 'deletePublished'>
       contributorCardProps: ResourceContributorCardProps
-      eduBloomCognitiveRecords: _nullish
       allowedYears: _nullish
     }
   },
@@ -67,12 +64,13 @@ export type resourcePageProps = d_u<
 >
 export function ResourcePage(resourcePageProps: resourcePageProps) {
   const { actions, activity, contributorCardProps, eduResourceData, allowedYears } = resourcePageProps
+  const { enabledCategoriesOptions } = useGlobalCtx()
   const schemas = useAllPrimarySchemas()
   const hookFormHandle = useHookFormAction(
     default_noop_action(actions.editDraft?.saveMeta),
     zodResolver(schemas.edu.eduResourceMetaSchema),
     {
-      formProps: { defaultValues: eduResourceData ?? {} },
+      formProps: { defaultValues: eduResourceData ?? {}, mode: 'onChange' },
       actionProps: {
         onSuccess({ input }) {
           reset(input)
@@ -138,11 +136,12 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
       <div className="details">
         <DropdownField
           key="subject-field"
+          defaultValue={getValues().iscedField}
           disabled={disableFields}
           label="Subject"
           placeholder="Content category"
           edit={activity === 'editDraft'}
-          options={[] /* subjectOptions */}
+          options={enabledCategoriesOptions.iscedFields}
           error={formState.errors.iscedField?.message}
           {...register('iscedField')}
           shouldShowErrors={shouldShowErrors}
@@ -150,11 +149,12 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
 
         <DropdownField
           key="license-field"
+          defaultValue={getValues().license}
           disabled={disableFields}
           label="License"
           placeholder="License type"
           edit={activity === 'editDraft'}
-          options={[] /* licenseOptions */}
+          options={enabledCategoriesOptions.licenses}
           error={formState.errors.license?.message}
           {...register('license')}
           shouldShowErrors={shouldShowErrors}
@@ -162,11 +162,12 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
 
         <DropdownField
           key="type-field"
+          defaultValue={getValues().type}
           disabled={disableFields}
           label="Type"
           placeholder="Content type"
           edit={activity === 'editDraft'}
-          options={[] /* typeOptions */}
+          options={enabledCategoriesOptions.resourceTypes}
           error={formState.errors.type?.message}
           {...register('type')}
           shouldShowErrors={shouldShowErrors}
@@ -174,11 +175,12 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
 
         <DropdownField
           key="level-field"
+          defaultValue={getValues().iscedLevel}
           disabled={disableFields}
           label="Level"
           placeholder="Education level"
           edit={activity === 'editDraft'}
-          options={[] /* levelOptions */}
+          options={enabledCategoriesOptions.iscedLevels}
           error={formState.errors.iscedLevel?.message}
           {...register('iscedLevel')}
           shouldShowErrors={shouldShowErrors}
@@ -188,14 +190,10 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           key="date-field"
           disabled={disableFields}
           canEdit={activity === 'editDraft'}
-          month={getValues().publicationDate?.month}
-          year={getValues().publicationDate?.year}
+          publicationDate={getValues().publicationDate}
           allowedYears={allowedYears ?? []}
-          editMonth={e => {
-            setValue('publicationDate.month', e, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
-          }}
-          editYear={e => {
-            setValue('publicationDate.year', e, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
+          onChange={pubDate => {
+            setValue('publicationDate', pubDate, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
           }}
           errorMonth={formState.errors.publicationDate?.month?.message}
           errorYear={formState.errors.publicationDate?.year?.message}
@@ -204,11 +202,12 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
 
         <DropdownField
           key="language-field"
+          defaultValue={getValues().language}
           disabled={disableFields}
           label="Language"
           placeholder="Content language"
           edit={activity === 'editDraft'}
-          options={[] /* languageOptions */}
+          options={enabledCategoriesOptions.languages}
           error={formState.errors.language?.message}
           {...register('language')}
           shouldShowErrors={shouldShowErrors}

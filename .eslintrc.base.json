@@ -10,7 +10,7 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": ["*.d.ts"],
+            "allow": ["@moodle/lib-types", "react"],
             "depConstraints": [
               {
                 "sourceTag": "*",

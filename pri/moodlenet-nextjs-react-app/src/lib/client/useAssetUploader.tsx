@@ -4,7 +4,7 @@ import { asset, NONE_ASSET } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
 import { DOMAttributes, useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { humanFileSize } from '../../ui/lib/misc'
-import { useAllSchemaConfigs, useFileServerDeployment } from './globalContexts'
+import { useGlobalCtx } from './globalContexts'
 
 //SHAREDLIB: paths and also useFileUploader({type: 'webImage' | 'file'}) that acts as subpath (type) prop
 const uploadTempFieldName = 'file'
@@ -53,8 +53,8 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
 ) {
   const initialAsset = _initialAsset ?? NONE_ASSET
   const { overrideMaxSize } = opts ?? {}
-  const filetoreHttp = useFileServerDeployment()
-  const { uploadMaxSizeConfigs } = useAllSchemaConfigs()
+  const filetoreHttp = useGlobalCtx().filestoreHttpDeployment
+  const { uploadMaxSizeConfigs } = useGlobalCtx().allSchemaConfigs
   const maxSize = overrideMaxSize ?? (assetType === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max)
   const inputFileRef = useRef<HTMLInputElement | null>(null)
   const [state, dispatch] = useReducer(fileUploaderReducer, {

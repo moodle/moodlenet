@@ -37,7 +37,7 @@ export function getAssetUrl<_asset extends asset>(
   filestoreHttpHref: url_string,
 ): _asset extends { type: 'none' } ? undefined : url_string {
   return asset.type === 'none'
-    ? (undefined as any) // TS doesn't infer here we ar e in _asset extends { type: 'none' } branch 🤔
+    ? (undefined as any) // TS doesn't infer here we are in _asset extends { type: 'none' } branch 🤔
     : asset.type === 'external'
       ? asset.url
       : asset.type === 'local'

@@ -13,7 +13,6 @@ export default async function CreateDraftResourcePage() {
     },
     eduResourceData: null,
     contributorCardProps: null,
-    eduBloomCognitiveRecords: null,
     references: null,
   }
   return <ResourcePage {...resourcePageProps} />

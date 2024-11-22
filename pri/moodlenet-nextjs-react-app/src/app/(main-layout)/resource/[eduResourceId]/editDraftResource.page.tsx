@@ -25,7 +25,6 @@ export default async function EditDraftResourcePage({ params: { eduResourceId } 
       },
       publish: null,
     },
-    eduBloomCognitiveRecords: [],
     references: null,
     eduResourceData: myEduResourceDraft.data,
     contributorCardProps: null,

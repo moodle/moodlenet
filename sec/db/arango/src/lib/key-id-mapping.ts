@@ -1,14 +1,15 @@
 import { pretty } from '@moodle/lib-types'
 
-export function save_id_to_key<idProp extends string>(idProp: idProp) {
-  return <record extends { [Prop in idProp]: string }>(record: record): pretty<record & { _key: string }> => {
+export function save_id_to_key<keyProp extends string>(keyProp: keyProp) {
+  return <record extends { [_keyProp in keyProp]: string }>(record: record): record_doc<record, keyProp> => {
     return {
-      _key: record[idProp],
+      _key: record[keyProp],
+      _key_prop: keyProp,
       ...record,
     }
   }
 }
 
-export type record_doc<record extends { [id in idProp]: string }, idProp extends string = 'id'> = pretty<
-  record & { _key: string }
+export type record_doc<record extends { [_keyProp in keyProp]: string }, keyProp extends string = 'id'> = pretty<
+  record & { _key: string; _key_prop: keyProp }
 >

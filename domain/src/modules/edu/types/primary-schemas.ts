@@ -10,6 +10,7 @@ export type eduPrimaryMsgSchemaConfigs = {
   eduResourceMeta: {
     title: { max: number }
     description: { max: number }
+    learningOutcomeItems: { max: number; min: number; learningOutcome: { max: number; min: number } }
   }
 }
 export type eduCollectionMetaFormSchema = ReturnType<typeof getEduPrimarySchemas>['eduCollectionMetaSchema']
@@ -29,6 +30,7 @@ export type eduResourceApplyImageForm = z.infer<eduResourceApplyImageFormSchema>
 export type createNewResourceDraftSchema = ReturnType<typeof getEduPrimarySchemas>['createNewResourceDraftSchema']
 export type createNewResourceDraftSchemaForm = z.infer<createNewResourceDraftSchema>
 
+// TODO: add enabled categories records along with configs
 export function getEduPrimarySchemas({ eduCollectionMeta, eduResourceMeta }: eduPrimaryMsgSchemaConfigs) {
   const applyImageSchema = object({ resourceImageForm: adoptAssetFormSchema })
 
@@ -47,7 +49,9 @@ export function getEduPrimarySchemas({ eduCollectionMeta, eduResourceMeta }: edu
   const bloomLearningOutcomeSchema = object({
     level: union([literal('1'), literal('2'), literal('3'), literal('4'), literal('5'), literal('6')]),
     verb: string(),
-    learningOutcome: string(),
+    learningOutcome: string()
+      .min(eduResourceMeta.learningOutcomeItems.learningOutcome.min)
+      .max(eduResourceMeta.learningOutcomeItems.learningOutcome.max),
   })
   const eduResourceTitle = string().trim().max(eduResourceMeta.title.max).pipe(single_line_string_schema)
   const eduResourceDescription = string().trim().max(eduResourceMeta.description.max)
@@ -60,9 +64,11 @@ export function getEduPrimarySchemas({ eduCollectionMeta, eduResourceMeta }: edu
     type: string().nullish(),
     language: string().nullish(),
     license: string().nullish(),
-    bloomLearningOutcomes: array(bloomLearningOutcomeSchema),
+    bloomLearningOutcomes: array(bloomLearningOutcomeSchema)
+      .max(eduResourceMeta.learningOutcomeItems.max)
+      .min(eduResourceMeta.learningOutcomeItems.min),
     publicationDate: object({
-      month: number().min(1).max(12),
+      month: number().min(1).max(12).nullish(),
       year: number().min(1900).max(2024),
     }).nullish(),
   })

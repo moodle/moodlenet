@@ -42,7 +42,7 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
             const moodlenetConfigs = await ctx.forward.moodlenet.session.moduleInfo()
             const { filestoreHttp } = await ctx.forward.env.application.deployments()
             const allSchemaConfigs = await fetchAllSchemaConfigs({ primary: ctx.forward })
-            const session = await ctx.forward.moodlenetReactApp.session.data()
+            // const session = await ctx.forward.moodlenetReactApp.session.data()
             // .catch<moodlenetReactAppSessionData>(() => ({
             //   type: 'guest',
             //   is: {
@@ -56,9 +56,10 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
               webappGlobalCtx: {
                 allSchemaConfigs,
                 filestoreHttpDeployment: filestoreHttp,
-                session,
+                // session,
                 pointSystem: moodlenetConfigs.pointSystem,
-                moodlenetSiteInfo: moodlenetConfigs.info,
+                // moodlenetSiteInfo: moodlenetConfigs.info,
+                enabledCategories: moodlenetConfigs.enabledCategories,
               },
             }
           },

@@ -12,7 +12,7 @@ export type eduResourceMeta = {
   type: _nullish | eduResourceTypeCode
   language: _nullish | contentLanguageCode
   license: _nullish | contentLicenseCode
-  publicationDate: _nullish | { month: number; year: number }
+  publicationDate: _nullish | { month?: number | _nullish; year: number }
 }
 
 export type eduResourceData = eduResourceMeta & {

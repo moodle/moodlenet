@@ -11,6 +11,7 @@ export type external_content = { url: url_string; credits?: contentCredits }
 export type contentLanguageCode = string
 export type contentLanguageRecord = {
   code: contentLanguageCode
+  enabled: boolean
   part2b: string | null
   part2t: string | null
   part1: string | null
@@ -22,6 +23,7 @@ export type contentLanguageRecord = {
 export type contentLicenseCode = string
 export type contentLicenseRecord = {
   code: contentLicenseCode
+  enabled: boolean
   name: string
   restrictiveness: fraction
 }

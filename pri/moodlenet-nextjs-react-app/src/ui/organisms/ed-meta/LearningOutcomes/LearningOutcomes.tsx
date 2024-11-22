@@ -1,7 +1,8 @@
-import { bloomLearningOutcome, eduBloomCognitiveRecord } from '@moodle/module/edu'
+import { bloomLearningOutcome } from '@moodle/module/edu'
 import { Circle, HelpOutline } from '@mui/icons-material'
 import type { RefObject } from 'react'
 import { createRef, useEffect, useState, type FC } from 'react'
+import { useGlobalCtx } from '../../../../lib/client/globalContexts'
 import { Dropdown, SimpleTextOption } from '../../../atoms/Dropdown/Dropdown'
 import ErrorMessage from '../../../atoms/ErrorMessage/ErrorMessage'
 import InputTextField from '../../../atoms/InputTextField/InputTextField'
@@ -11,14 +12,12 @@ import './LearningOutcomes.scss'
 export type LearningOutcomesProps = {
   isEditing: boolean
   bloomLearningOutcomes: bloomLearningOutcome[]
-  eduBloomCognitiveRecords: eduBloomCognitiveRecord[]
   disabled?: boolean
   error?: string | string[]
   shouldShowErrors: boolean
   edit: (learningOutcomes: bloomLearningOutcome[]) => unknown
 }
 
-const MAX_LEARNING_OUTCOME_ITEMS = 4
 function getBloomClassName(bloomLevel: string) {
   return (
     {
@@ -33,7 +32,6 @@ function getBloomClassName(bloomLevel: string) {
 }
 
 export const LearningOutcomes: FC<LearningOutcomesProps> = ({
-  eduBloomCognitiveRecords,
   bloomLearningOutcomes,
   isEditing,
   disabled,
@@ -41,6 +39,8 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   shouldShowErrors,
   edit,
 }) => {
+  const { enabledCategories, allSchemaConfigs } = useGlobalCtx()
+  const eduResourceMetaSchemaConfigs = allSchemaConfigs.eduSchemaConfigs.eduResourceMeta
   const deleteOutcome = (index: number) => {
     edit(bloomLearningOutcomes.filter((_, i) => i !== index))
   }
@@ -48,7 +48,8 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   const learningOutcomesList = bloomLearningOutcomes.length > 0 && (
     <div className="learning-outcomes-list" key="learning-outcomes-list">
       {bloomLearningOutcomes.map(({ level, verb, learningOutcome }, i) => {
-        const learningOutcomeName = getLearningOutcomeName(level)
+        const learningOutcomeName =
+          enabledCategories.bloomCognitives.find(record => level === record.level)?.description ?? 'unknown'
         const bloomUIClassName = getBloomClassName(level)
         return isEditing ? (
           <InputTextField
@@ -68,7 +69,6 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
               newLearningOutcome.learningOutcome = value.target.value
               edit(newLearningOutcomes)
             }}
-            defaultValue={learningOutcome}
             leftSlot={
               <abbr className={`verb-pill ${bloomUIClassName}`} title={`${learningOutcomeName} Bloom's category`}>
                 {verb}
@@ -102,36 +102,42 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
 
   const [searchText, setSearchText] = useState('')
 
-  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = eduBloomCognitiveRecords.map(() => createRef())
+  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = enabledCategories.bloomCognitives.map(() => createRef())
 
   const categories = isEditing && (
     <div className="categories">
-      {eduBloomCognitiveRecords.map((learningOutcomeOption, i) => {
+      {enabledCategories.bloomCognitives.map((learningOutcomeOption, i) => {
         const selectedVerb = bloomLearningOutcomes.find(outcome => outcome.level === learningOutcomeOption.level)
         const dropdownRef = learningOutcomeCategoriesRefs && learningOutcomeCategoriesRefs[i]
-        const maxLearningOutcomesReached = bloomLearningOutcomes.length > MAX_LEARNING_OUTCOME_ITEMS
+        const maxLearningOutcomesReached =
+          bloomLearningOutcomes.length >= eduResourceMetaSchemaConfigs.learningOutcomeItems.max
         return (
           <Dropdown
             key={learningOutcomeOption.level}
+            optionValues={learningOutcomeOption.verbs}
+            name={`${learningOutcomeOption.level}-verb`}
             divRef={dropdownRef}
             className={`category ${getBloomClassName(learningOutcomeOption.level)} ${selectedVerb ? 'active' : ''}
         ${maxLearningOutcomesReached ? 'max-reached' : ''}`}
             pills={false}
             disabled={maxLearningOutcomesReached || disabled}
             abbr={maxLearningOutcomesReached ? 'Max learning outcomes reached' : 'Add learning outcome'}
-            placeholder={learningOutcomeOption.level}
+            placeholder={learningOutcomeOption.description}
             searchByText={setSearchText}
-            onChange={changeEvent => {
+            onItem={(action, selectedVerb) => {
+              if (action !== 'select') {
+                return
+              }
               edit([
                 ...bloomLearningOutcomes,
                 {
                   level: learningOutcomeOption.level,
-                  verb: changeEvent.target.value,
+                  verb: selectedVerb,
                   learningOutcome: '',
                 },
               ])
+              return false
             }}
-            edit
           >
             {learningOutcomeOption.verbs
               .filter(verb => verb.toUpperCase().includes(searchText.toUpperCase()))
@@ -185,9 +191,6 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
       {learningOutcomesList}
     </div>
   )
-  function getLearningOutcomeName(byLevel: string) {
-    return eduBloomCognitiveRecords.find(({ level }) => level === byLevel)?.description ?? 'unknown'
-  }
 }
 
 LearningOutcomes.displayName = 'LearningOutcomes'

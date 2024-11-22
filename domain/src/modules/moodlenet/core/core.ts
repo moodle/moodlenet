@@ -41,10 +41,12 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
           },
           async moduleInfo() {
             const {
-              configs: { siteInfo: info, pointSystem, moodlenetPrimaryMsgSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs },
+              configs: { siteInfo: info, pointSystem, moodlenetPrimaryMsgSchemaConfigs },
             } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
+            const { enabledCategories } = await ctx.mod.secondary.moodlenet.query.enabledCategories()
             return {
               info,
+              enabledCategories,
               schemaConfigs: moodlenetPrimaryMsgSchemaConfigs,
               pointSystem,
             }

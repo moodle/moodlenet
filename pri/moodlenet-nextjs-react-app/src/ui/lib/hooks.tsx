@@ -1,7 +1,7 @@
 import { _nullish } from '@moodle/lib-types'
 import { contentCredits } from '@moodle/module/content'
 import type { MutableRefObject } from 'react'
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { getBackupImage, getWindowDimensions } from './misc'
 import { useInBrowser } from './nextjs/utils'
 
@@ -51,7 +51,7 @@ export function ImageCredits({ credits, id }: { credits: contentCredits | _nulli
 type RefT<T> = ((instance: T | null) => void) | MutableRefObject<T | null> | null
 export function useForwardedRef<T>(forwardedRef: RefT<T>) {
   const innerRef = useRef<T>(null)
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!forwardedRef) return
     if (typeof forwardedRef === 'function') {
       forwardedRef(innerRef.current)

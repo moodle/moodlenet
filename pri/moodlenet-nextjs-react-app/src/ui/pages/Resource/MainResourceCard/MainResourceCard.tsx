@@ -213,8 +213,7 @@ export default function MainResourceCard(props: mainResourceCardProps) {
         </div>
         {props.activity !== 'createDraft' ? (
           <LearningOutcomes
-            eduBloomCognitiveRecords={props.eduBloomCognitiveRecords ?? []}
-            bloomLearningOutcomes={props.eduResourceData.bloomLearningOutcomes}
+            bloomLearningOutcomes={hookFormHandle.form.getValues().bloomLearningOutcomes}
             isEditing={activity === 'editDraft'}
             disabled={activity === 'viewPublished'}
             error={
@@ -227,7 +226,13 @@ export default function MainResourceCard(props: mainResourceCardProps) {
                 : undefined
             }
             shouldShowErrors={activity === 'editDraft'}
-            edit={values => hookFormHandle.form.setValue('bloomLearningOutcomes', values)}
+            edit={bloomLearningOutcomes =>
+              hookFormHandle.form.setValue('bloomLearningOutcomes', bloomLearningOutcomes, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true,
+              })
+            }
           />
         ) : null}
         <div className="resource-footer" key="resource-footer"></div>

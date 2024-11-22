@@ -52,10 +52,7 @@ export const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>((props, for
 })
 Dropdown.displayName = 'Dropdown'
 
-const DropdownComp = forwardRef<HTMLSelectElement, DropdownProps>(function DropdownComp(
-  props: DropdownProps,
-  forwardedSelectRef,
-) {
+function DropdownComp(props: DropdownProps) {
   const {
     pills,
     highlight,
@@ -280,7 +277,7 @@ const DropdownComp = forwardRef<HTMLSelectElement, DropdownProps>(function Dropd
       )}
     </abbr>
   )
-})
+}
 
 export const SimplePill: FC<{
   value: string
@@ -337,10 +334,8 @@ export const SimpleTextOption: FC<SimpleTextOptionProps> = ({ value, abbr }) => 
   )
 }
 
-export type TextOptionProps = {
-  value: string
+export type TextOptionProps = SimpleTextOptionProps & {
   label: string
-  abbr?: string
 }
 export const TextOption: FC<TextOptionProps> = ({ value, label, abbr }) => {
   const { toggle, selected } = useSelectorOption(value) ?? {}
@@ -351,11 +346,7 @@ export const TextOption: FC<TextOptionProps> = ({ value, label, abbr }) => {
     </abbr>
   )
 }
-export type CheckmarkOptionProps = {
-  value: string
-  label: string
-  abbr?: string
-}
+export type CheckmarkOptionProps = TextOptionProps
 export const CheckmarkOption: FC<CheckmarkOptionProps> = ({ value, label, abbr }) => {
   const { toggle, selected } = useSelectorOption(value) ?? {}
   const title = abbr ? abbr : typeof label === 'string' ? label : undefined
@@ -367,11 +358,8 @@ export const CheckmarkOption: FC<CheckmarkOptionProps> = ({ value, label, abbr }
   )
 }
 
-export type IconTextOptionProps = {
-  value: string
-  label: string
+export type IconTextOptionProps = TextOptionProps & {
   icon: ReactNode
-  abbr?: string
 }
 export const IconTextOption: FC<IconTextOptionProps> = ({ value, label, icon, abbr }) => {
   const { toggle, selected } = useSelectorOption(value) ?? {}
