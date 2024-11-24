@@ -16,6 +16,7 @@ import DropdownField from '../../molecules/ed-meta/fields/DropdownField'
 import MainResourceCard from './MainResourceCard/MainResourceCard'
 import './Resource.scss'
 import { ResourceContributorCard, ResourceContributorCardProps } from './ResourceContributorCard/ResourceContributorCard'
+import { blankToNullOption } from '../../lib/react-hook-form'
 
 type saveEduResourceMetaFn = simpleHookSafeAction<eduResourceMetaFormSchema, void>
 export type eduResourceActions = {
@@ -143,7 +144,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           edit={activity === 'editDraft'}
           options={enabledCategoriesOptions.iscedFields}
           error={formState.errors.iscedField?.message}
-          {...register('iscedField')}
+          {...register('iscedField', blankToNullOption)}
           shouldShowErrors={shouldShowErrors}
         />
 
@@ -156,7 +157,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           edit={activity === 'editDraft'}
           options={enabledCategoriesOptions.licenses}
           error={formState.errors.license?.message}
-          {...register('license')}
+          {...register('license', blankToNullOption)}
           shouldShowErrors={shouldShowErrors}
         />
 
@@ -169,7 +170,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           edit={activity === 'editDraft'}
           options={enabledCategoriesOptions.resourceTypes}
           error={formState.errors.type?.message}
-          {...register('type')}
+          {...register('type', blankToNullOption)}
           shouldShowErrors={shouldShowErrors}
         />
 
@@ -182,7 +183,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           edit={activity === 'editDraft'}
           options={enabledCategoriesOptions.iscedLevels}
           error={formState.errors.iscedLevel?.message}
-          {...register('iscedLevel')}
+          {...register('iscedLevel', blankToNullOption)}
           shouldShowErrors={shouldShowErrors}
         />
 
@@ -209,7 +210,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           edit={activity === 'editDraft'}
           options={enabledCategoriesOptions.languages}
           error={formState.errors.language?.message}
-          {...register('language')}
+          {...register('language', blankToNullOption)}
           shouldShowErrors={shouldShowErrors}
         />
       </div>

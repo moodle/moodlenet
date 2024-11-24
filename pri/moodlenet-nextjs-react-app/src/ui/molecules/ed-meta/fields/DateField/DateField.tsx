@@ -61,11 +61,11 @@ export default function DateField({
 
   const yearValue = publicationDate?.year ? String(publicationDate.year) : undefined
   const monthValue = publicationDate?.month ? String(publicationDate.month) : undefined
-  console.log({
-    publicationDate,
-    monthValue,
-    yearValue,
-  })
+  // console.log({
+  //   publicationDate,
+  //   monthValue,
+  //   yearValue,
+  // })
   return canEdit ? (
     <div className={`date-field ${disabled ? 'disabled' : ''}`}>
       <label>Original creation date</label>
@@ -73,7 +73,7 @@ export default function DateField({
         <DropdownField
           name="month"
           disabled={disabled || !yearValue}
-          defaultValue={monthValue}
+          value={!yearValue ? undefined : monthValue}
           onItem={(action, month) => handleChange('month', action, month)}
           // onChange={ev => handleChange('month', ev.target.value)}
           placeholder="Month"
@@ -86,7 +86,7 @@ export default function DateField({
         />
         <DropdownField
           name="year"
-          defaultValue={yearValue}
+          value={yearValue}
           onItem={(action, year) => handleChange('year', action, year)}
           placeholder="Year"
           edit
