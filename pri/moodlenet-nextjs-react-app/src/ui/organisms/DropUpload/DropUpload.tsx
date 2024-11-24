@@ -10,14 +10,14 @@ import { RoundButton } from '../../atoms/RoundButton/RoundButton'
 export type uploadImageProps = {
   useAssetUploaderHandler: useAssetUploaderHandler
   displayOnly?: boolean
-  showSelectedWhileUpload?: boolean
+  // showSelectedWhileUpload?: boolean
   deleteImage?: () => unknown
 }
 
-export function DropUpload({ useAssetUploaderHandler, displayOnly, showSelectedWhileUpload }: uploadImageProps) {
+export function DropUpload({ useAssetUploaderHandler, displayOnly/* , showSelectedWhileUpload  */}: uploadImageProps) {
   const { current, openFileDialog, state, dropHandlers, select, assetType, uploadingHandler } = useAssetUploaderHandler
 
-  const credits = current.type === 'asset' && current.asset.type === 'external' ? current.asset.credits : undefined
+  const credits = current.asset.type === 'external' ? current.asset.credits : undefined
 
   const viewerContainer =
     assetType === 'webImage' ? (
@@ -30,7 +30,7 @@ export function DropUpload({ useAssetUploaderHandler, displayOnly, showSelectedW
       />
     ) : (
       <span>
-        {current.type === 'asset'
+        {current.type === 'settled'
           ? current.asset.type === 'external'
             ? current.asset.url
             : current.asset.type === 'local'
@@ -38,8 +38,14 @@ export function DropUpload({ useAssetUploaderHandler, displayOnly, showSelectedW
               : current.asset.type === 'none'
                 ? ''
                 : unreachable_never(current.asset)
-          : current.type === 'file'
-            ? current.file.name
+          : current.type === 'selected'
+            ? current.asset.type === 'file'
+              ? current.asset.file.name
+              : current.asset.type === 'external'
+                ? current.asset.url
+                : current.asset.type === 'none'
+                  ? ''
+                  : unreachable_never(current.asset)
             : unreachable_never(current)}
       </span>
     )

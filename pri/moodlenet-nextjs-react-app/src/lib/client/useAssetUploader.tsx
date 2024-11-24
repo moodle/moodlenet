@@ -2,9 +2,10 @@ import { _nullish, d_u, d_u__d, isNotNullish, unreachable_never, url_string } fr
 import { adoptAssetForm, adoptAssetResponse, adoptAssetService, external_content } from '@moodle/module/content'
 import { asset, NONE_ASSET } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
-import { DOMAttributes, useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { DOMAttributes, useCallback, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { humanFileSize } from '../../ui/lib/misc'
 import { useGlobalCtx } from './globalContexts'
+import { DeploymentInfo } from 'domain/src/modules/env'
 
 //SHAREDLIB: paths and also useFileUploader({type: 'webImage' | 'file'}) that acts as subpath (type) prop
 const uploadTempFieldName = 'file'
@@ -12,12 +13,35 @@ const uploadTempPath = '/.temp'
 const uploadTempMethod = 'POST'
 useAssetUploader.type = { webImage: '.jpg,.jpeg,.png,.gif', file: '*' }
 
+type selectedCurrentAsset =
+  | {
+      asset: d_u__d<asset, 'type', 'external'>
+      url: string
+    }
+  | {
+      asset: d_u__d<asset, 'type', 'none'>
+      url: _nullish
+    }
+  | {
+      asset: { type: 'file'; file: File }
+      url: string
+    }
+
+type settledCurrentAsset =
+  | {
+      asset: d_u__d<asset, 'type', 'external' | 'local'>
+      url: string
+    }
+  | {
+      asset: d_u__d<asset, 'type', 'none'>
+      url: _nullish
+    }
+
 type current = d_u<
   {
-    asset:
-      | { asset: d_u__d<asset, 'type', 'external' | 'local'>; url: string }
-      | { asset: d_u__d<asset, 'type', 'none'>; url: _nullish }
-    file: { file: File; url: string }
+    settled: settledCurrentAsset
+
+    selected: selectedCurrentAsset
   },
   'type'
 >
@@ -47,11 +71,10 @@ export type assetUploaderHookOpts<non_nullable extends boolean | undefined> = {
 type assetType = 'webImage' | 'file'
 export function useAssetUploader<non_nullable extends boolean | undefined>(
   assetType: assetType,
-  _initialAsset: _nullish | asset,
+  initialAsset: _nullish | asset,
   adoptAssetService: _nullish | (non_nullable extends true ? adoptAssetService<'upload' | 'external'> : adoptAssetService),
   opts?: assetUploaderHookOpts<non_nullable>,
 ) {
-  const initialAsset = _initialAsset ?? NONE_ASSET
   const { overrideMaxSize } = opts ?? {}
   const filetoreHttp = useGlobalCtx().filestoreHttpDeployment
   const { uploadMaxSizeConfigs } = useGlobalCtx().allSchemaConfigs
@@ -59,6 +82,7 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
   const inputFileRef = useRef<HTMLInputElement | null>(null)
   const [state, dispatch] = useReducer(fileUploaderReducer, {
     type: 'settled',
+    lastSettledAsset: initialAsset ?? NONE_ASSET,
     dirty: false,
     lastSubmission: null,
     selection: null,
@@ -91,7 +115,7 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
             xhr.abort()
           } /* , xhr */,
         }
-        setUploadingXhr(uploadingHandler)
+        setUploadingHandler(uploadingHandler)
         return new Promise<{ tempId: string }>((resolve, reject) => {
           const formData = new FormData()
           formData.append(uploadTempFieldName, file)
@@ -144,7 +168,7 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
       .then(adoptAssetResponse => {
         dispatch({ type: 'actionResponse', ...adoptAssetResponse })
       })
-      .finally(() => setUploadingXhr(null))
+      .finally(() => setUploadingHandler(null))
   }, [state.type, state.selection, adoptAssetService, opts?.nonNullable, filetoreHttp.href, assetType])
 
   const checkAndSelect = useCallback(
@@ -169,7 +193,7 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
     inputElement.accept = useAssetUploader.type[assetType]
     inputElement.hidden = true
     inputElement.multiple = false
-    inputElement.onchange = e => {
+    inputElement.onchange = () => {
       const selectedFile = inputFileRef.current?.files?.item(0)
       if (!selectedFile) {
         return
@@ -220,39 +244,30 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
     }
   }, [checkAndSelect])
 
-  const initializationCurrent = useMemo<current>(
-    () =>
-      initialAsset.type === 'none'
-        ? { type: 'asset', asset: initialAsset, url: null }
-        : { type: 'asset', asset: initialAsset, url: getAssetUrl(initialAsset, filetoreHttp.href) },
-    [filetoreHttp.href, initialAsset],
-  )
-  const [activeCurrent, setActiveCurrent] = useState<current>(initializationCurrent)
-  useEffect(() => {
-    const newActiveCurrent = state.selection
-      ? ((selection): current => {
-          if (selection.type === 'file') {
-            const url = URL.createObjectURL(selection.file) as url_string
-            return { type: 'file', file: selection.file, url }
-          }
-          return selection.type === 'external'
-            ? { type: 'asset', asset: selection, url: selection.url }
-            : selection.type === 'null'
-              ? { type: 'asset', asset: { type: 'none' }, url: null }
-              : unreachable_never(selection)
-        })(state.selection)
-      : null
-    setActiveCurrent(newActiveCurrent ? newActiveCurrent : initializationCurrent)
-    return () => {
-      newActiveCurrent?.url && URL.revokeObjectURL(newActiveCurrent.url)
-    }
-  }, [filetoreHttp.href, state, initializationCurrent])
+  const [current, setCurrent] = useState<current>(currentFromAsset(state.lastSettledAsset, filetoreHttp))
+  const newCurrent: current = state.selection
+    ? ((selection): current => {
+        if (selection.type === 'file') {
+          const url = URL.createObjectURL(selection.file) as url_string
+          return { type: 'selected', asset: { type: 'file', file: selection.file }, url }
+        }
+        return selection.type === 'external'
+          ? { type: 'selected', asset: selection, url: selection.url }
+          : selection.type === 'null'
+            ? { type: 'selected', asset: { type: 'none' }, url: null }
+            : unreachable_never(selection)
+      })(state.selection)
+    : currentFromAsset(state.lastSettledAsset, filetoreHttp)
+  if (!currentEquals(newCurrent, current)) {
+    current.url && URL.revokeObjectURL(current.url)
+    setCurrent(newCurrent)
+  }
 
-  const [uploadingHandler, setUploadingXhr] = useState<_nullish | uploadingHandler>()
+  const [uploadingHandler, setUploadingHandler] = useState<_nullish | uploadingHandler>()
 
   return useMemo<useAssetUploaderHandler>(() => {
     const useAssetUploaderHandler: useAssetUploaderHandler = {
-      current: activeCurrent,
+      current,
       openFileDialog,
       submit,
       state,
@@ -262,7 +277,36 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
       assetType,
     }
     return useAssetUploaderHandler
-  }, [activeCurrent, openFileDialog, submit, state, dropHandlers, checkAndSelect, uploadingHandler, assetType])
+  }, [current, openFileDialog, submit, state, dropHandlers, checkAndSelect, uploadingHandler, assetType])
+}
+
+function currentFromAsset(asset: asset, filetoreHttp: DeploymentInfo): current {
+  return asset.type === 'none'
+    ? {
+        type: 'settled',
+        asset: asset,
+        url: null,
+      }
+    : {
+        type: 'settled',
+        asset: asset,
+        url: getAssetUrl(asset, filetoreHttp.href),
+      }
+}
+function currentEquals(newCurr: current, prevCurr: current) {
+  if (newCurr.asset.type === 'none' && prevCurr.asset.type === 'none') {
+    return true
+  }
+  if (newCurr.asset.type === 'file' && prevCurr.asset.type === 'file') {
+    return newCurr.asset.file === prevCurr.asset.file
+  }
+  if (newCurr.asset.type === 'external' && prevCurr.asset.type === 'external') {
+    return newCurr.asset.url === prevCurr.asset.url
+  }
+  if (newCurr.asset.type === 'local' && prevCurr.asset.type === 'local') {
+    return newCurr.asset.path === prevCurr.asset.path
+  }
+  return false
 }
 
 export function fileUploaderReducer(prev: assetUploaderState, action: fileUploaderAction): assetUploaderState {
@@ -275,6 +319,7 @@ export function fileUploaderReducer(prev: assetUploaderState, action: fileUpload
       return {
         type: 'settled',
         dirty: false,
+        lastSettledAsset: action.status === 'done' ? action.asset : prev.lastSettledAsset,
         lastSubmission: {
           actionResponse: action,
           uploadStatus: prev.uploadStatus,
@@ -311,6 +356,7 @@ export function fileUploaderReducer(prev: assetUploaderState, action: fileUpload
           ? {
               type: 'settled',
               dirty: false,
+              lastSettledAsset: prev.lastSettledAsset,
               lastSubmission: prev.lastSubmission,
               selection: null,
               uploadStatus: null,
@@ -319,6 +365,7 @@ export function fileUploaderReducer(prev: assetUploaderState, action: fileUpload
               type: 'selected',
               dirty: true,
               selection: prev.selection,
+              lastSettledAsset: prev.lastSettledAsset,
               lastSubmission: {
                 actionResponse: null,
                 uploadStatus:
@@ -340,24 +387,40 @@ export function fileUploaderReducer(prev: assetUploaderState, action: fileUpload
     return {
       type: 'submitting',
       dirty: true,
+      lastSettledAsset: prev.lastSettledAsset,
       selection: prev.selection,
       uploadStatus: { status: 'uploading', progress: 0 },
       lastSubmission: prev.lastSubmission,
     }
   } else if (prev.type === 'selected' || prev.type === 'settled') {
     if (action.type === 'select') {
-      return {
-        type: 'selected',
-        dirty: true,
-        selection: action.selection,
-        lastSubmission: prev.lastSubmission,
-        uploadStatus: null,
-      }
+      return selectionEqualsAsset(action.selection, prev.lastSettledAsset)
+        ? {
+            type: 'settled',
+            dirty: false,
+            lastSettledAsset: prev.lastSettledAsset,
+            selection: null,
+            lastSubmission: prev.lastSubmission,
+            uploadStatus: null,
+          }
+        : {
+            type: 'selected',
+            dirty: true,
+            lastSettledAsset: prev.lastSettledAsset,
+            selection: action.selection,
+            lastSubmission: prev.lastSubmission,
+            uploadStatus: null,
+          }
     }
     return prev
   } else {
     return unreachable_never(prev)
   }
+}
+function selectionEqualsAsset(selection: selection, asset: asset) {
+  const areBothNone = selection.type === 'null' && asset.type === 'none'
+  const areSameExternal = selection.type === 'external' && asset.type === 'external' && selection.url === asset.url
+  return areBothNone || areSameExternal
 }
 // Actions
 export type actionResponse = { status: 'waitingForUpload' } | adoptAssetResponse
@@ -414,6 +477,7 @@ export type assetUploaderState = stateSettled | stateSelected | stateSubmitting
 type stateSettled = {
   type: 'settled'
   dirty: false
+  lastSettledAsset: asset
   selection: _nullish
   uploadStatus: _nullish
   lastSubmission: _nullish | lastSubmission
@@ -422,6 +486,7 @@ type stateSettled = {
 type stateSelected = {
   type: 'selected'
   dirty: true
+  lastSettledAsset: asset
   selection: selection
   uploadStatus: _nullish
   lastSubmission: _nullish | lastSubmission
@@ -431,37 +496,8 @@ type selection = d_u<{ file: { file: File }; external: external_content; null: u
 type stateSubmitting = {
   type: 'submitting'
   dirty: true
+  lastSettledAsset: asset
   selection: selection
   uploadStatus: uploadStatus
   lastSubmission: _nullish | lastSubmission
 }
-
-// old submit logic (replaced by submit callback)
-
-// useEffect(() => {
-//   if (state.type !== 'submitting' || !state.selection.file[0]) {
-//     return
-//   }
-//   const uploadPromises = state.selection.file.map(
-//     file =>
-//       new Promise<{ tempId: string }>(resolve => {
-//         const formData = new FormData()
-//         formData.append(uploadTempFieldName, file)
-
-//         fetch(`${filetoreHttp.href}${uploadTempPath}/${type}`, {
-//           body: formData,
-//           method: uploadTempMethod,
-//         })
-//           .then(r => r.json())
-//           .then(resolve)
-//       }),
-//   )
-//   Promise.all(uploadPromises)
-//     .then<actionResponse, actionResponse>(
-//       uploadResponses => fileUploadedAction({ tempIds: uploadResponses.map(r => r.tempId) as [string, ...string[]] }),
-//       err => ({ done: false, error: String(err) }),
-//     )
-//     .then(actionResponse => {
-//       dispatch({ type: 'actionResponse', response: actionResponse })
-//     })
-// }, [fileUploadedAction, filetoreHttp.href, state, type])
