@@ -1,4 +1,4 @@
-import { _nullish, non_negative_integer } from '@moodle/lib-types'
+import { non_negative_integer } from '@moodle/lib-types'
 import { moodlenetContributorAccessObject, moodlenetContributorId } from '../../../moodlenet/types'
 import { asset } from '../../../storage'
 

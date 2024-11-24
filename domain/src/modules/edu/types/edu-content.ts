@@ -1,4 +1,4 @@
-import { _nullish, d_u__d } from '@moodle/lib-types'
+import { d_u__d } from '@moodle/lib-types'
 import { contentLanguageCode, contentLicenseCode } from '../../content'
 import { asset } from '../../storage'
 import { eduBloomCognitiveLevel, eduIscedFieldCode, eduIscedLevelCode, eduResourceTypeCode } from './edu-categories'
@@ -6,13 +6,13 @@ import { eduBloomCognitiveLevel, eduIscedFieldCode, eduIscedLevelCode, eduResour
 export type eduResourceMeta = {
   title: string
   description: string
-  iscedField: _nullish | eduIscedFieldCode
-  iscedLevel: _nullish | eduIscedLevelCode
+  iscedField: null | eduIscedFieldCode
+  iscedLevel: null | eduIscedLevelCode
   bloomLearningOutcomes: bloomLearningOutcome[]
-  type: _nullish | eduResourceTypeCode
-  language: _nullish | contentLanguageCode
-  license: _nullish | contentLicenseCode
-  publicationDate: _nullish | { month?: number | _nullish; year: number }
+  type: null | eduResourceTypeCode
+  language: null | contentLanguageCode
+  license: null | contentLicenseCode
+  publicationDate: null | { month: number | null; year: number }
 }
 
 export type eduResourceData = eduResourceMeta & {

@@ -1,4 +1,4 @@
-import { _nullish, non_negative_integer, positive_integer } from '@moodle/lib-types'
+import { non_negative_integer, positive_integer } from '@moodle/lib-types'
 
 export type pointSystem = {
   welcomePoints: non_negative_integer
@@ -99,7 +99,7 @@ type pointBadgeStep = {
 }
 type highestBadgeStep = {
   title: string
-  lessThanPoints?: _nullish | positive_integer
+  lessThanPoints?: null | positive_integer
 }
 
 export type pointBadgeSteps = [

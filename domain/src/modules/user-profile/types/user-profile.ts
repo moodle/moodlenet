@@ -1,4 +1,4 @@
-import { _nullish, d_u, date_time_string, map, url_string } from '@moodle/lib-types'
+import { d_u, date_time_string, map, url_string } from '@moodle/lib-types'
 import { aiAgentResourceSuggestionStatus } from '../../ai-agent'
 import { textExtractionStatus } from '../../asset-text-extraction'
 import { contentLanguageCode, contentLicenseCode } from '../../content'
@@ -12,7 +12,7 @@ export type profileInfoMeta = {
   displayName: string
   aboutMe: string
   location: string
-  siteUrl: _nullish | url_string
+  siteUrl: null | url_string
 }
 export type profileInfo = profileInfoMeta & {
   background: asset

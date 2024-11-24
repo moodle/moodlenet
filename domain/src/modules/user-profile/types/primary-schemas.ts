@@ -32,7 +32,7 @@ export function getUserProfilePrimarySchemas({ profileInfoMeta }: UserProfilePri
     .pipe(single_line_string_schema)
   const aboutMe = string().trim().max(profileInfoMeta.aboutMe.max).optional()
   const location = string().trim().max(profileInfoMeta.location.max).optional().pipe(single_line_string_schema)
-  const siteUrl = url_string_schema.nullish()
+  const siteUrl = url_string_schema.nullable()
 
   const useProfileImageSchema = object({
     as: profileImageSchema,

@@ -1,11 +1,11 @@
-import { _nullish } from '@moodle/lib-types'
+import { _any, _nullish } from '@moodle/lib-types'
 import { adoptAssetResponse } from '@moodle/module/content'
 import { createSafeActionClient, SafeActionResult } from 'next-safe-action'
 
 export const defaultSafeActionClient = createSafeActionClient()
 
 export async function safeActionResult_to_adoptAssetResponse(
-  p: Promise<SafeActionResult<any, any, any, any, any, adoptAssetResponse | void> | _nullish>,
+  p: Promise<SafeActionResult<_any, _any, _any, _any, _any, adoptAssetResponse | void> | _nullish>,
 ): Promise<adoptAssetResponse> {
   const result = await p
   if (!result) {

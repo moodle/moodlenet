@@ -59,22 +59,22 @@ export function getEduPrimarySchemas({ eduCollectionMeta, eduResourceMeta }: edu
   const eduResourceMetaSchema = object({
     title: eduResourceTitle,
     description: eduResourceDescription,
-    iscedField: string().nullish(),
-    iscedLevel: string().nullish(),
-    type: string().nullish(),
-    language: string().nullish(),
-    license: string().nullish(),
+    iscedField: string().nullable(),
+    iscedLevel: string().nullable(),
+    type: string().nullable(),
+    language: string().nullable(),
+    license: string().nullable(),
     bloomLearningOutcomes: array(bloomLearningOutcomeSchema)
       .max(eduResourceMeta.learningOutcomeItems.max)
       .min(eduResourceMeta.learningOutcomeItems.min),
     publicationDate: object({
-      month: number().min(1).max(12).nullish(),
+      month: number().min(1).max(12).nullable(),
       year: number().min(1900).max(2024),
-    }).nullish(),
+    }).nullable(),
   })
   const createNewResourceDraftSchema = object({
     newResourceAsset: adoptValuedAssetFormSchema,
-    eduResourceMeta: eduResourceMetaSchema.nullish().optional(),
+    eduResourceMeta: eduResourceMetaSchema.nullable().optional(),
   })
 
   return {

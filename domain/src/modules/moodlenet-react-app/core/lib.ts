@@ -1,4 +1,4 @@
-import { _nullish, ok_ko, webSlug } from '@moodle/lib-types'
+import { _any, ok_ko, webSlug } from '@moodle/lib-types'
 import { primaryContext } from '../../../types'
 import {
   accessMoodlenetContributor,
@@ -20,7 +20,7 @@ export function contributorRecordToWebappContributorAccessData({
   me,
 }: {
   moodlenetContributorRecord: moodlenetContributorRecord
-  me: _nullish | Pick<moodlenetContributorRecord, 'id' | 'linkedContent'>
+  me: null | Pick<moodlenetContributorRecord, 'id' | 'linkedContent'>
 }): webappContributorAccessData {
   return contributorAccessObjectToWebappContributorAccessData(
     contributorRecordToContributorAccessObject({
@@ -34,7 +34,7 @@ export async function accessWebappContributorAccessData({
   ctx,
   id,
 }: {
-  ctx: primaryContext<any>
+  ctx: primaryContext<_any>
   id: moodlenetContributorId
 }): Promise<ok_ko<webappContributorAccessData, { notFound: unknown; notAllowed: unknown }>> {
   const [gotIt, result] = await accessMoodlenetContributor({
