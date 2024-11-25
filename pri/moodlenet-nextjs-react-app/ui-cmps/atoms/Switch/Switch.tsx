@@ -3,7 +3,7 @@ import type { FC } from 'react'
 import './Switch.scss'
 
 export type SwitchProps = {
-  enabled: boolean
+
   mandatory?: boolean
   size?: 'small' | 'medium' | 'big'
   className?: string

@@ -1,6 +1,6 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { __redacted__, _void, date_time_string, url_string_schema } from '@moodle/lib-types'
-import userAccountDomain, { getuserAccountPrimarySchemas, userRole } from '..'
+import userAccountDomain, { getUserAccountPrimarySchemas, userRole } from '..'
 import { moduleCore } from '../../../types'
 import {
   assert_authorizeAuthenticatedCurrentUserSession,
@@ -308,7 +308,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           async invalidateSession(/* {sessionToken} */) {
             // TODO implement session_token invalidation
             //! -------------------------------------
-            return {userAccountId}
+            return { userAccountId }
           },
           async selfDeletionRequest({ redirectUrl }) {
             const {
@@ -380,7 +380,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
       const {
         configs: { userAccountPrimaryMsgSchemaConfigs },
       } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userAccount' })
-      return getuserAccountPrimarySchemas(userAccountPrimaryMsgSchemaConfigs)
+      return getUserAccountPrimarySchemas(userAccountPrimaryMsgSchemaConfigs)
     }
   },
   watch(ctx) {

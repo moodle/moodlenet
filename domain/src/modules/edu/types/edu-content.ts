@@ -23,7 +23,7 @@ export type eduResourceData = eduResourceMeta & {
 export type bloomLearningOutcome = {
   level: eduBloomCognitiveLevel
   verb: string
-  learningOutcome: string
+  sentence: string
 }
 
 export type eduCollectionMeta = {

@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 import _slugify from 'slugify'
-import { BRAND, intersection, number, object, string, ZodSchema } from 'zod'
+import { BRAND, intersection, number, object, string, ZodNullable, ZodSchema } from 'zod'
 import { _any, d_u } from './map'
 
 export type promise_or_value<t> = t | Promise<t>
@@ -21,9 +21,12 @@ export type pretty<t> = { [k in keyof t]: t[k] } & {} // utility type to convert
 
 export type _maybe<t> = t | _nullish
 export type _nullish = undefined | null
-export type _falsy = false | _nullish
-// export const _void = void 0 as never // TOO DANGEROUS
+export type _falsy_stricter = false | _nullish
+export type _falsy = '' | 0 | _falsy_stricter
+
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 export const _void = void 0 as void
+
 export type primitive = primitive_value | null | undefined
 export type primitive_value = string | number | boolean | bigint
 
@@ -172,7 +175,12 @@ export function isNotNullish<t>(el: t | _nullish): el is t {
 
 export type flags<names extends string> = Record<names, boolean>
 
-
+export function zod_m_nullable<zodSchema extends ZodSchema>(
+  zodSchema: zodSchema,
+  nullable: boolean,
+): ZodNullable<zodSchema> {
+  return (nullable ? zodSchema.nullable() : zodSchema) as ZodNullable<zodSchema>
+}
 
 // SHAREDLIB
 // FIXME: here's not the best place for type `email_body`

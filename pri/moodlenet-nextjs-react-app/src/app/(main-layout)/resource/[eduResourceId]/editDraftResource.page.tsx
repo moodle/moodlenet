@@ -16,7 +16,6 @@ export default async function EditDraftResourcePage({ params: { eduResourceId } 
   }
   const resourcePageProps: resourcePageProps = {
     activity: 'editDraft',
-    allowedYears: [2020, 2021, 2022, 2023, 2024],
     actions: {
       // applyImage: null,
       editDraft: {

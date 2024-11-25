@@ -16,14 +16,14 @@ export interface userAccountPrimaryMsgSchemaConfigs {
     selfDeletionRequestReason: { max: number }
   }
 }
-export type loginForm = z.infer<ReturnType<typeof getuserAccountPrimarySchemas>['loginSchema']>
+export type loginForm = z.infer<ReturnType<typeof getUserAccountPrimarySchemas>['loginSchema']>
 
-export type signupForm = z.infer<ReturnType<typeof getuserAccountPrimarySchemas>['signupSchema']>
+export type signupForm = z.infer<ReturnType<typeof getUserAccountPrimarySchemas>['signupSchema']>
 
-export type changePasswordForm = z.infer<ReturnType<typeof getuserAccountPrimarySchemas>['changePasswordSchema']>
-export type resetPasswordForm = z.infer<ReturnType<typeof getuserAccountPrimarySchemas>['resetPasswordSchema']>
+export type changePasswordForm = z.infer<ReturnType<typeof getUserAccountPrimarySchemas>['changePasswordSchema']>
+export type resetPasswordForm = z.infer<ReturnType<typeof getUserAccountPrimarySchemas>['resetPasswordSchema']>
 
-export function getuserAccountPrimarySchemas({ user, myAccount }: userAccountPrimaryMsgSchemaConfigs) {
+export function getUserAccountPrimarySchemas({ user, myAccount }: userAccountPrimaryMsgSchemaConfigs) {
   const email = string().max(user.email.max).pipe(email_address_schema)
 
   const password = string().trim().min(user.password.min).max(user.password.max).pipe(single_line_string_schema)

@@ -18,8 +18,8 @@ export async function getUserProfileById({
       ? aql`userProfileDoc._key == ${select.userProfileId}`
       : aql`userProfileDoc.userAccount.id == ${select.userAccountId}`
 
-  const cursor = await dbStruct.moodlenet.db.query(aql<userProfileRecord>`
-    FOR userProfileDoc in ${dbStruct.userAccount.coll.userProfile}
+  const cursor = await dbStruct.appData.db.query(aql<userProfileRecord>`
+    FOR userProfileDoc in ${dbStruct.appData.coll.userProfile}
     FILTER ${filter_id}
     LIMIT 1
     ${apply}
@@ -43,7 +43,7 @@ export async function updateUserProfileById({
   return getUserProfileById({
     apply: aql`
     ${preCondition}
-    UPDATE userProfileDoc WITH ${partialUserProfile} IN ${dbStruct.userAccount.coll.userProfile}`,
+    UPDATE userProfileDoc WITH ${partialUserProfile} IN ${dbStruct.appData.coll.userProfile}`,
     dbStruct,
     select,
   })

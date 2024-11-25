@@ -8,26 +8,26 @@ export function GlobalContextProvider({ children, webappGlobals }: PropsWithChil
   const globalCtx: globalCtx = {
     ...webappGlobals,
     enabledCategoriesOptions: {
-      bloomCognitives: webappGlobals.enabledCategories.bloomCognitives.map(eduBloomCognitiveRecord => ({
+      bloomCognitives: webappGlobals.moodlenetCategories.eduBloomCognitives.map(eduBloomCognitiveRecord => ({
         value: eduBloomCognitiveRecord.level,
         label: eduBloomCognitiveRecord.description,
       })),
-      iscedFields: webappGlobals.enabledCategories.iscedFields.map(eduIscedFieldRecord => ({
+      iscedFields: webappGlobals.moodlenetCategories.eduIscedFields.map(eduIscedFieldRecord => ({
         value: eduIscedFieldRecord.code,
         label: eduIscedFieldRecord.description,
       })),
-      iscedLevels: webappGlobals.enabledCategories.iscedLevels.map(eduIscedLevelRecord => ({
+      iscedLevels: webappGlobals.moodlenetCategories.eduIscedLevels.map(eduIscedLevelRecord => ({
         value: eduIscedLevelRecord.code,
         label: eduIscedLevelRecord.description,
       })),
-      resourceTypes: webappGlobals.enabledCategories.resourceTypes.map(eduResourceTypeRecord => ({
-        value: eduResourceTypeRecord.id,
+      resourceTypes: webappGlobals.moodlenetCategories.eduResourceTypes.map(eduResourceTypeRecord => ({
+        value: eduResourceTypeRecord.code,
         label: eduResourceTypeRecord.description,
       })),
-      licenses: webappGlobals.enabledCategories.licenses
+      licenses: webappGlobals.moodlenetCategories.contentLicenses
         .sort((a, b) => a.restrictiveness - b.restrictiveness)
         .map(eduLicenseRecord => ({ value: eduLicenseRecord.code, label: eduLicenseRecord.name })),
-      languages: webappGlobals.enabledCategories.languages.map(eduLanguageRecord => ({
+      languages: webappGlobals.moodlenetCategories.contentLanguages.map(eduLanguageRecord => ({
         value: eduLanguageRecord.code,
         label: eduLanguageRecord.name,
       })),

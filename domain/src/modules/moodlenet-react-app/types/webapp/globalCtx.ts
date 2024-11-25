@@ -8,12 +8,15 @@ export type webappGlobals = {
   filestoreHttpDeployment: DeploymentInfo
   allSchemaConfigs: AllSchemaConfigs
   pointSystem: pointSystem
-  enabledCategories: {
-    bloomCognitives: eduBloomCognitiveRecord[]
-    iscedFields: eduIscedFieldRecord[]
-    iscedLevels: eduIscedLevelRecord[]
-    resourceTypes: eduResourceTypeRecord[]
-    languages: contentLanguageRecord[]
-    licenses: contentLicenseRecord[]
-  }
+  moodlenetCategories: moodlenetCategories
+  serverTimeMs: number
+}
+
+export type moodlenetCategories = {
+  eduBloomCognitives: eduBloomCognitiveRecord[]
+  eduIscedFields: eduIscedFieldRecord[]
+  eduIscedLevels: eduIscedLevelRecord[]
+  eduResourceTypes: eduResourceTypeRecord[]
+  contentLanguages: contentLanguageRecord[]
+  contentLicenses: contentLicenseRecord[]
 }

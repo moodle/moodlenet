@@ -13,42 +13,41 @@ export function getDbStruct(databaseConnections: databaseConnections) {
     keepalive: true,
     retryOnConflict: 5,
   }
-  const moodlenet_db = new Database({ ...baseConnectionConfig, ...databaseConnections.moodlenet })
-  const user_account_db = new Database({ ...baseConnectionConfig, ...databaseConnections.userAccount })
-  const mng_db = new Database({ ...baseConnectionConfig, ...databaseConnections.modules })
+  const appData_db = new Database({ ...baseConnectionConfig, ...databaseConnections.appData })
+  const identity_db = new Database({ ...baseConnectionConfig, ...databaseConnections.identity })
+  const logs_db = new Database({ ...baseConnectionConfig, ...databaseConnections.logs })
   const sys_db = new Database({
     ...baseConnectionConfig,
-    ...databaseConnections.modules,
-    databaseName: '_system',
+    // databaseName: '_system',
   })
 
   return {
     connections: databaseConnections,
     sys_db,
-    modules: {
-      db: mng_db,
+    logs: {
+      db: logs_db,
       coll: {
-        moduleConfigs: mng_db.collection<ModConfigs[modConfigName]>('moduleConfigs'),
-        migrations: mng_db.collection('migrations'),
+        migrations: logs_db.collection('migrations'),
       },
     },
-    moodlenet: {
-      db: moodlenet_db,
+    appData: {
+      db: appData_db,
       coll: {
-        eduIscedField: moodlenet_db.collection<record_doc<eduIscedFieldRecord, 'code'>>('eduIscedField'),
-        eduIscedLevel: moodlenet_db.collection<record_doc<eduIscedLevelRecord, 'code'>>('eduIscedLevel'),
-        eduBloomCognitive: moodlenet_db.collection<record_doc<eduBloomCognitiveRecord, 'level'>>('eduBloomCognitive'),
-        eduResourceType: moodlenet_db.collection<record_doc<eduResourceTypeRecord>>('eduResourceType'),
-        contentLanguage: moodlenet_db.collection<record_doc<contentLanguageRecord, 'code'>>('contentLanguage'),
-        contentLicense: moodlenet_db.collection<record_doc<contentLicenseRecord, 'code'>>('contentLicense'),
-        contributor: moodlenet_db.collection<record_doc<moodlenetContributorRecord>>('contributor'),
+        moduleConfigs: appData_db.collection<ModConfigs[modConfigName]>('moduleConfigs'),
+        eduIscedField: appData_db.collection<record_doc<eduIscedFieldRecord, 'code'>>('eduIscedField'),
+        eduIscedLevel: appData_db.collection<record_doc<eduIscedLevelRecord, 'code'>>('eduIscedLevel'),
+        eduBloomCognitive: appData_db.collection<record_doc<eduBloomCognitiveRecord, 'level'>>('eduBloomCognitive'),
+        eduResourceType: appData_db.collection<record_doc<eduResourceTypeRecord, 'code'>>('eduResourceType'),
+        contentLanguage: appData_db.collection<record_doc<contentLanguageRecord, 'code'>>('contentLanguage'),
+        contentLicense: appData_db.collection<record_doc<contentLicenseRecord, 'code'>>('contentLicense'),
+        contributor: appData_db.collection<record_doc<moodlenetContributorRecord>>('contributor'),
+        userProfile: appData_db.collection<record_doc<userProfileRecord>>('userProfile'),
       },
     },
-    userAccount: {
-      db: user_account_db,
+    identity: {
+      db: identity_db,
       coll: {
-        userProfile: moodlenet_db.collection<record_doc<userProfileRecord>>('userProfile'),
-        userAccount: user_account_db.collection<record_doc<userAccountRecord>>('userAccount'),
+        userAccount: identity_db.collection<record_doc<userAccountRecord>>('userAccount'),
       },
     },
   }

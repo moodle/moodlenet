@@ -12,11 +12,11 @@ export async function migrateArangoDB({
   log: Logger
 }): Promise<string> {
   const dbStruct = getDbStruct(databaseConnections)
-  const isInit = !(await dbStruct.modules.db.exists())
+  const isInit = !(await dbStruct.logs.db.exists())
 
   if (isInit) {
-    await dbStruct.sys_db.createDatabase(dbStruct.modules.db.name)
-    await dbStruct.modules.coll.migrations.create()
+    await dbStruct.sys_db.createDatabase(dbStruct.logs.db.name)
+    await dbStruct.logs.coll.migrations.create()
   }
   return upgrade({ dbStruct, log }).then(async final_version => {
     return final_version
@@ -25,7 +25,7 @@ export async function migrateArangoDB({
 
 export async function upgrade({ dbStruct, log }: { dbStruct: dbStruct; log: Logger }): Promise<string> {
   const from_v: keyof typeof migrations | typeof TARGET_V =
-    (await dbStruct.modules.coll.migrations.document('latest', { graceful: true }))?.current ?? 'init'
+    (await dbStruct.logs.coll.migrations.document('latest', { graceful: true }))?.current ?? 'init'
 
   if (from_v === TARGET_V) {
     log('info', `current arangodb persistence version: [${TARGET_V}]`)
@@ -41,7 +41,7 @@ export async function upgrade({ dbStruct, log }: { dbStruct: dbStruct; log: Logg
 
   const migrationDoc = await migrateMod.migrate({ dbStruct })
 
-  await dbStruct.modules.coll.migrations.saveAll(
+  await dbStruct.logs.coll.migrations.saveAll(
     [
       {
         _key: `${migrationDoc.previous}::${migrationDoc.current}`,

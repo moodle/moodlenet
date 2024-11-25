@@ -12,6 +12,26 @@ export const moodlenet_default_configs: configs = {
       title: { max: 100, min: 3 },
     },
   },
+  eduPublishPrimaryMsgSchemaConfigOverrides: {
+    eduCollectionMeta: {
+      description: { min: 15 },
+      title: { min: 5 },
+    },
+    eduResourceMeta: {
+      description: { min: 15 },
+      title: { min: 5 },
+      iscedField: { required: true },
+      iscedLevel: { required: true },
+      type: { required: true },
+      language: { required: true },
+      license: { required: true },
+      publicationDate: { required: true },
+      bloomLearningOutcomes: {
+        amount: { min: 1 },
+        sentence: { min: 10 },
+      },
+    },
+  },
   pointSystem: {
     welcomePoints: non_negative_integer_schema.parse(5),
     curation: {

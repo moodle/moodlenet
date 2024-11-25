@@ -17,6 +17,7 @@ import MainResourceCard from './MainResourceCard/MainResourceCard'
 import './Resource.scss'
 import { ResourceContributorCard, ResourceContributorCardProps } from './ResourceContributorCard/ResourceContributorCard'
 import { blankToNullOption } from '../../lib/react-hook-form'
+import { useCallback, useState } from 'react'
 
 type saveEduResourceMetaFn = simpleHookSafeAction<eduResourceMetaFormSchema, void>
 export type eduResourceActions = {
@@ -39,14 +40,12 @@ export type resourcePageProps = d_u<
       actions: selection<eduResourceActions, 'saveNewResourceAsset'>
       contributorCardProps: _nullish
       references: _nullish
-      allowedYears: _nullish
     }
     editDraft: {
       eduResourceData: eduResourceData
       actions: selection<eduResourceActions, 'editDraft', 'publish'>
       references: _nullish
       contributorCardProps: _nullish
-      allowedYears: number[]
     }
     viewPublished: {
       eduResourceData: eduResourceData
@@ -58,18 +57,20 @@ export type resourcePageProps = d_u<
       }
       actions: selection<eduResourceActions, never, 'unpublish' | 'deletePublished'>
       contributorCardProps: ResourceContributorCardProps
-      allowedYears: _nullish
     }
   },
   'activity'
 >
 export function ResourcePage(resourcePageProps: resourcePageProps) {
-  const { actions, activity, contributorCardProps, eduResourceData, allowedYears } = resourcePageProps
+  const { actions, activity, contributorCardProps, eduResourceData } = resourcePageProps
   const { enabledCategoriesOptions } = useGlobalCtx()
+  const allSchemaConfigs = useGlobalCtx().allSchemaConfigs
   const schemas = useAllPrimarySchemas()
+  const validationSchemas = { draft: schemas.edu.eduResourceMetaSchema, publish: schemas.eduPublish.eduResourceMetaSchema }
+  const [usingSchema, setUsingSchema] = useState<'draft' | 'publish'>('draft')
   const hookFormHandle = useHookFormAction(
     default_noop_action(actions.editDraft?.saveMeta),
-    zodResolver(schemas.edu.eduResourceMetaSchema),
+    zodResolver(validationSchemas[usingSchema]),
     {
       formProps: { defaultValues: eduResourceData ?? {}, mode: 'onChange' },
       actionProps: {
@@ -83,13 +84,23 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
     form: { formState, register, reset, getValues, setValue },
   } = hookFormHandle
 
-  const shouldShowErrors = formState.isDirty // && formState.isSubmitted
+  const shouldShowErrors = activity === 'editDraft' && (formState.isDirty || usingSchema === 'publish')
   const disableFields = activity === 'viewPublished'
   const [assetUrl] = useAssetUrl(eduResourceData?.asset)
+  const publishCheck = useCallback(() => {
+    setUsingSchema('publish')
+    hookFormHandle.form.trigger()
+  }, [hookFormHandle.form])
   return (
     <div className="resource-page">
       <div className="main-card">
-        <MainResourceCard {...{ ...resourcePageProps, hookFormHandle }} />
+        <MainResourceCard
+          {...{
+            ...resourcePageProps,
+            hookFormHandle,
+            publishCheck,shouldShowErrors
+          }}
+        />
       </div>
       {activity === 'viewPublished' && (
         <div className="contributor-card">
@@ -100,7 +111,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
         <Card hideBorderWhenSmall={true}>
           {actions.unpublish && <SecondaryButton onClick={actions.unpublish}>Unpublish</SecondaryButton>}
           {activity === 'editDraft' && (
-            <PrimaryButton onClick={() => alert('publishCheck')} color="green">
+            <PrimaryButton onClick={publishCheck} color="green">
               Publish check
             </PrimaryButton>
           )}
@@ -192,7 +203,10 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           disabled={disableFields}
           canEdit={activity === 'editDraft'}
           publicationDate={getValues().publicationDate}
-          allowedYears={allowedYears ?? []}
+          sinceYear={
+            (usingSchema === 'draft' ? allSchemaConfigs.eduSchemaConfigs : allSchemaConfigs.eduPublishSchemaConfigs)
+              .eduResourceMeta.publicationDate.sinceYear
+          }
           onChange={pubDate => {
             setValue('publicationDate', pubDate, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
           }}

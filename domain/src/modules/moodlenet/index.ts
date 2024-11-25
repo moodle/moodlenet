@@ -3,9 +3,9 @@ import { userAccountId } from '../user-account'
 import { userProfileId } from '../user-profile'
 import {
   currentMoodlenetSessionData,
-  moodlenetCategories,
   moodlenetContributorId,
   moodlenetContributorRecord,
+  moodlenetEduPublishPrimaryMsgSchemaConfigOverrides,
   moodlenetPrimaryMsgSchemaConfigs,
   moodlenetSiteInfo,
   pointSystem,
@@ -22,7 +22,7 @@ export default interface MoodlenetDomain {
           info: moodlenetSiteInfo
           schemaConfigs: moodlenetPrimaryMsgSchemaConfigs
           pointSystem: pointSystem
-          enabledCategories: moodlenetCategories
+          eduPublishPrimaryMsgSchemaConfigOverrides: moodlenetEduPublishPrimaryMsgSchemaConfigOverrides
         }>
         getMySessionUserRecords(): Promise<currentMoodlenetSessionData>
       }
@@ -55,7 +55,6 @@ export default interface MoodlenetDomain {
         }): Promise<void>
       }
       query: {
-        enabledCategories(): Promise<{ enabledCategories: moodlenetCategories }>
         contributors({
           range,
           sort,

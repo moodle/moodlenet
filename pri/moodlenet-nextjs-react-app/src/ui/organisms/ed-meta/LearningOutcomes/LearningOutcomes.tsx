@@ -39,7 +39,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
   shouldShowErrors,
   edit,
 }) => {
-  const { enabledCategories, allSchemaConfigs } = useGlobalCtx()
+  const { moodlenetCategories: enabledCategories, allSchemaConfigs } = useGlobalCtx()
   const eduResourceMetaSchemaConfigs = allSchemaConfigs.eduSchemaConfigs.eduResourceMeta
   const deleteOutcome = (index: number) => {
     edit(bloomLearningOutcomes.filter((_, i) => i !== index))
@@ -47,9 +47,9 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
 
   const learningOutcomesList = bloomLearningOutcomes.length > 0 && (
     <div className="learning-outcomes-list" key="learning-outcomes-list">
-      {bloomLearningOutcomes.map(({ level, verb, learningOutcome }, i) => {
+      {bloomLearningOutcomes.map(({ level, verb, sentence: learningOutcome }, i) => {
         const learningOutcomeName =
-          enabledCategories.bloomCognitives.find(record => level === record.level)?.description ?? 'unknown'
+          enabledCategories.eduBloomCognitives.find(record => level === record.level)?.description ?? 'unknown'
         const bloomUIClassName = getBloomClassName(level)
         return isEditing ? (
           <InputTextField
@@ -66,7 +66,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
               if (!newLearningOutcome) {
                 return
               }
-              newLearningOutcome.learningOutcome = value.target.value
+              newLearningOutcome.sentence = value.target.value
               edit(newLearningOutcomes)
             }}
             leftSlot={
@@ -102,15 +102,17 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
 
   const [searchText, setSearchText] = useState('')
 
-  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = enabledCategories.bloomCognitives.map(() => createRef())
+  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = enabledCategories.eduBloomCognitives.map(() =>
+    createRef(),
+  )
 
   const categories = isEditing && (
     <div className="categories">
-      {enabledCategories.bloomCognitives.map((learningOutcomeOption, i) => {
+      {enabledCategories.eduBloomCognitives.map((learningOutcomeOption, i) => {
         const selectedVerb = bloomLearningOutcomes.find(outcome => outcome.level === learningOutcomeOption.level)
         const dropdownRef = learningOutcomeCategoriesRefs && learningOutcomeCategoriesRefs[i]
         const maxLearningOutcomesReached =
-          bloomLearningOutcomes.length >= eduResourceMetaSchemaConfigs.learningOutcomeItems.max
+          bloomLearningOutcomes.length >= eduResourceMetaSchemaConfigs.bloomLearningOutcomes.amount.max
         return (
           <Dropdown
             key={learningOutcomeOption.level}
@@ -133,7 +135,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
                 {
                   level: learningOutcomeOption.level,
                   verb: selectedVerb,
-                  learningOutcome: '',
+                  sentence: '',
                 },
               ])
               return false

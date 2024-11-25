@@ -7,7 +7,6 @@ export default async function CreateDraftResourcePage() {
   await getAuthenticatedUserSessionOrRedirectToLogin()
   const resourcePageProps: resourcePageProps = {
     activity: 'createDraft',
-    allowedYears: null,
     actions: {
       saveNewResourceAsset: await getCreateNewEduResourceDraft(),
     },

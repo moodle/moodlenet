@@ -1,4 +1,4 @@
-import { _any, _nullish, d_u__d, date_time_string, unreachable_never } from '@moodle/lib-types'
+import { _any, _nullish, d_u__d, unreachable_never } from '@moodle/lib-types'
 import { asset } from '@moodle/module/storage'
 import assert from 'assert'
 import defaultsDeep from 'lodash-es/defaultsDeep'
@@ -58,13 +58,12 @@ export const randomIntFromInterval = (min: number, max: number) => {
 
 export const fileExceedsMaxUploadSize = (size: number, max: number | null) => (max === null ? false : size > max)
 
-export const getYearList = (startYear: number): string[] => {
-  const currentYear = new Date(date_time_string('now')).getFullYear()
-  const years = []
-  while (startYear <= currentYear) {
-    years.push((startYear++).toString())
-  }
-  return years.reverse()
+export function getYearList({ sinceYear, thisYear }: { thisYear: number; sinceYear: number }): number[] {
+  const years = new Array(thisYear - sinceYear + 1)
+    .fill(0)
+    .map((_, index) => sinceYear + index)
+    .reverse()
+  return years
 }
 
 export const getWindowDimensions = () => {

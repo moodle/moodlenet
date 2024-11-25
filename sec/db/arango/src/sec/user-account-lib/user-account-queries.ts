@@ -10,8 +10,8 @@ export async function getUserByEmail({
   dbStruct: dbStruct
   email: email_address
 }): Promise<ok_ko<userAccountRecord>> {
-  const cursor = await dbStruct.userAccount.db.query<userAccountRecord>(
-    aql`FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount}
+  const cursor = await dbStruct.identity.db.query<userAccountRecord>(
+    aql`FOR userAccountDoc IN ${dbStruct.identity.coll.userAccount}
       FILTER userAccountDoc.contacts.email == ${email}
       LIMIT 1
       RETURN MOODLE::RESTORE_RECORD_ID(userAccountDoc)`,
@@ -27,8 +27,8 @@ export async function getUserById({
   dbStruct: dbStruct
   userAccountId: userAccountId
 }): Promise<ok_ko<userAccountRecord>> {
-  const cursor = await dbStruct.userAccount.db.query<userAccountRecord>(
-    aql`FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount}
+  const cursor = await dbStruct.identity.db.query<userAccountRecord>(
+    aql`FOR userAccountDoc IN ${dbStruct.identity.coll.userAccount}
       FILTER userAccountDoc._key == ${userAccountId}
       LIMIT 1
       RETURN MOODLE::RESTORE_RECORD_ID(userAccountDoc)`,

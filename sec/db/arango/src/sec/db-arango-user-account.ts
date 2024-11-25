@@ -5,15 +5,15 @@ import { aql } from 'arangojs'
 import { createHash } from 'node:crypto'
 import { dbStruct } from '../db-structure'
 import { save_id_to_key } from '../lib/key-id-mapping'
-import { getUserByEmail, getUserById } from './user-account-db'
+import { getUserByEmail, getUserById } from './user-account-lib'
 
 export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
-  return secondaryCtx => {
+  return (/* secondaryCtx */) => {
     const secondaryAdapter: secondaryAdapter = {
       userAccount: {
         sync: {
           async userDisplayname({ displayName, userAccountId }) {
-            const done = !!(await dbStruct.userAccount.coll.userAccount
+            const done = !!(await dbStruct.identity.coll.userAccount
               .update({ _key: userAccountId }, { displayName })
               .catch(() => null))
             return [done, _void]
@@ -21,7 +21,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
         },
         write: {
           async saveNewUser({ newUser }) {
-            const savedUser = await dbStruct.userAccount.coll.userAccount
+            const savedUser = await dbStruct.identity.coll.userAccount
               .save(save_id_to_key('id')(newUser), { overwriteMode: 'conflict', returnNew: true })
               .catch(() => null)
 
@@ -33,7 +33,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             userAccountId,
             overrideDeactivationDate: date = date_time_string('now'),
           }) {
-            const deactivatingUser = await dbStruct.userAccount.coll.userAccount.document(
+            const deactivatingUser = await dbStruct.identity.coll.userAccount.document(
               { _key: userAccountId },
               { graceful: true },
             )
@@ -55,11 +55,11 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               ...anonymization,
             }
 
-            const deactivatedUserAccount_cursor = await dbStruct.userAccount.db.query<userAccountRecord>(`
-                FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount}
+            const deactivatedUserAccount_cursor = await dbStruct.identity.db.query<userAccountRecord>(`
+                FOR userAccountDoc IN ${dbStruct.identity.coll.userAccount}
                 FILTER userAccountDoc._key == ${userAccountId}
                 LIMIT 1
-                UPDATE userAccountDoc WITH ${updateRecordWith} IN ${dbStruct.userAccount.coll.userAccount}
+                UPDATE userAccountDoc WITH ${updateRecordWith} IN ${dbStruct.identity.coll.userAccount}
                 RETURN MOODLE::RESTORE_RECORD_ID(OLD)
               `)
             const [deactivatedUserAccountRecord] = await deactivatedUserAccount_cursor.all()
@@ -69,7 +69,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
 
           async setUserPassword({ newPasswordHash, userAccountId }) {
             const {
-              userAccount: {
+              identity: {
                 coll: { userAccount: user },
               },
             } = dbStruct
@@ -84,11 +84,11 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             return [!!updated, _void]
           },
           async setUserRoles({ userAccountId, roles }) {
-            const updatedUserRoles_cursor = await dbStruct.userAccount.db.query<userAccountRecord>(`
-                FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount}
+            const updatedUserRoles_cursor = await dbStruct.identity.db.query<userAccountRecord>(`
+                FOR userAccountDoc IN ${dbStruct.identity.coll.userAccount}
                 FILTER userAccountDoc._key == ${userAccountId}
                 LIMIT 1
-                UPDATE userAccountDoc WITH { roles: ${roles} } IN ${dbStruct.userAccount.coll.userAccount}
+                UPDATE userAccountDoc WITH { roles: ${roles} } IN ${dbStruct.identity.coll.userAccount}
                 RETURN MOODLE::RESTORE_RECORD_ID(OLD)
               `)
             const [updated] = await updatedUserRoles_cursor.all()
@@ -110,9 +110,9 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                       SORT sim DESC`
               : aql``
             const deactivatedFilter = includeDeactivated ? aql`` : aql`FILTER NOT(userAccountDoc.deactivated)`
-            const userDocs_cursor = await dbStruct.userAccount.db.query<userAccountRecord>(
+            const userDocs_cursor = await dbStruct.identity.db.query<userAccountRecord>(
               aql`
-                FOR userAccountDoc IN ${dbStruct.userAccount.coll.userAccount}
+                FOR userAccountDoc IN ${dbStruct.identity.coll.userAccount}
                 ${deactivatedFilter}
                 ${textFilter}
                 LIMIT 50

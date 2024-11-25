@@ -1,8 +1,9 @@
-import { DeepComplete } from './-deep-requires'
+//import { DeepComplete } from './-deep-requires'
 import { _nullish, pretty } from './data'
 
 export type splitMap<T, right extends keyof T> = [Pick<T, right>, Omit<T, right>]
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type _any = any
 export type _any_k = keyof _any
 

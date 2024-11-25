@@ -1,5 +1,5 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { _void, date_time_string, non_negative_integer, webSlug } from '@moodle/lib-types'
+import { _void, date_time_string, non_negative_integer } from '@moodle/lib-types'
 import assert from 'assert'
 import { omit } from 'lodash'
 import { moduleCore } from '../../../types'
@@ -41,14 +41,18 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
           },
           async moduleInfo() {
             const {
-              configs: { siteInfo: info, pointSystem, moodlenetPrimaryMsgSchemaConfigs },
+              configs: {
+                siteInfo: info,
+                pointSystem,
+                moodlenetPrimaryMsgSchemaConfigs,
+                eduPublishPrimaryMsgSchemaConfigOverrides,
+              },
             } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
-            const { enabledCategories } = await ctx.mod.secondary.moodlenet.query.enabledCategories()
             return {
               info,
-              enabledCategories,
               schemaConfigs: moodlenetPrimaryMsgSchemaConfigs,
               pointSystem,
+              eduPublishPrimaryMsgSchemaConfigOverrides,
             }
           },
         }

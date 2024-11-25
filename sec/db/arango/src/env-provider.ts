@@ -21,7 +21,7 @@ export function provideArangoDbSecEnv({ env }: { env: map<unknown, env_keys> }):
     MOODLE_ARANGODB_ISDEV: union([literal('true'), literal('false')]),
     MOODLE_ARANGODB_DOMAIN_NAME: string()
       .toLowerCase()
-      .transform(domainName => sanitizeFilename(domainName)), // CHECK: valid db prefix
+      .transform(domainName => sanitizeFilename(domainName)), // CHECK: ensure valid db prefix
     MOODLE_ARANGODB_URL: string(),
     MOODLE_ARANGODB_USER: string().optional(),
     MOODLE_ARANGODB_PWD: string().optional(),
@@ -48,17 +48,17 @@ export function provideArangoDbSecEnv({ env }: { env: map<unknown, env_keys> }):
   }
   const arangoDbSecEnv: ArangoDbSecEnv = {
     database_connections: {
-      modules: {
+      logs: {
         ...baseArangoDbConnection,
-        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_modules`,
+        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_logs`,
       },
-      moodlenet: {
+      appData: {
         ...baseArangoDbConnection,
-        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_moodlenet`,
+        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_appData`,
       },
-      userAccount: {
+      identity: {
         ...baseArangoDbConnection,
-        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_userAccount`,
+        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_identity`,
       },
     },
   }

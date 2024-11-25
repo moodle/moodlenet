@@ -6,7 +6,7 @@ import { getUserProfileById, updateUserProfileById } from './user-profile-db'
 import { aql } from 'arangojs'
 
 export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
-  return secondaryCtx => {
+  return (/* secondaryCtx */) => {
     const secondaryAdapter: secondaryAdapter = {
       userProfile: {
         sync: {
@@ -58,7 +58,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             return [updateDone, _void]
           },
           async createUserProfile({ userProfileRecord }) {
-            const result = await dbStruct.userAccount.coll.userProfile
+            const result = await dbStruct.appData.coll.userProfile
               .save(save_id_to_key('id')(userProfileRecord))
               .catch(() => null)
 

@@ -4,10 +4,12 @@ import { useCallback, useMemo, useRef } from 'react'
 import { TextOptionProps } from '../../../../atoms/Dropdown/Dropdown'
 import DropdownField from '../DropdownField'
 import './DateField.scss'
+import { useGlobalCtx } from '../../../../../lib/client/globalContexts'
+import { getYearList } from '../../../../lib/misc'
 
 export type DateFieldProps = {
   publicationDate: eduResourceMeta['publicationDate']
-  allowedYears: number[]
+  sinceYear: number
   canEdit: boolean
   errorMonth: string | undefined
   errorYear: string | undefined
@@ -18,7 +20,7 @@ export type DateFieldProps = {
 
 export default function DateField({
   publicationDate,
-  allowedYears,
+  sinceYear,
   canEdit,
   shouldShowErrors,
   errorMonth,
@@ -41,10 +43,13 @@ export default function DateField({
     { value: `11`, label: t`November` },
     { value: `12`, label: t`December` },
   ])
-
+  const { serverTimeMs } = useGlobalCtx()
   const yearOptionsProps = useMemo<TextOptionProps[]>(
-    () => allowedYears.map(String).map<TextOptionProps>(year => ({ value: year, label: year })),
-    [allowedYears],
+    () =>
+      getYearList({ sinceYear, thisYear: new Date(serverTimeMs).getFullYear() })
+        .map(String)
+        .map<TextOptionProps>(year => ({ value: year, label: year })),
+    [serverTimeMs, sinceYear],
   )
   const handleChange = useCallback(
     (field: 'month' | 'year', action: 'select' | 'deselect', valueStr: string | null) => {

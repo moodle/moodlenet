@@ -90,7 +90,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         get_default_crypto_secondarys_factory(crypto_env),
         get_nodemailer_secondary_factory(nodemailer_env),
         get_storage_default_secondary_factory(file_system_storage_sec_env),
-        secondaryContext => {
+        (/* secondaryContext */) => {
           const secondaryAdapter: secondaryAdapter = {
             env: {
               query: {
@@ -124,7 +124,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
           service() {
             return
           },
-          primary(ctx) {
+          primary(/* ctx */) {
             return {
               async domain() {
                 return {
@@ -167,6 +167,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         promiseResolveConfiguration(configuration)
       })
     }).catch(e => {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete cache[domainName]
       throw e
     })

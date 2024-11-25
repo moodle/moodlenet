@@ -1,6 +1,5 @@
 import { fetchAllSchemaConfigs } from '../../../lib'
 import { moduleCore, moodlePrimary } from '../../../types'
-import { isMeMoodlenetContributorRecord } from '../../moodlenet/core/lib/primary-access'
 import { validate_currentUserSessionInfo } from '../../user-account/lib'
 import { landingLayoutProps, suggestedContent } from '../types/webapp/pageProps/landing'
 import { accessWebappContributorAccessData, contributorRecordToWebappContributorAccessData } from './lib'
@@ -40,6 +39,7 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
           },
           async rootLayout() {
             const moodlenetConfigs = await ctx.forward.moodlenet.session.moduleInfo()
+            const { moodlenetCategories } = await ctx.mod.secondary.moodlenetReactApp.query.moodlenetCategories()
             const { filestoreHttp } = await ctx.forward.env.application.deployments()
             const allSchemaConfigs = await fetchAllSchemaConfigs({ primary: ctx.forward })
             // const session = await ctx.forward.moodlenetReactApp.session.data()
@@ -59,7 +59,8 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
                 // session,
                 pointSystem: moodlenetConfigs.pointSystem,
                 // moodlenetSiteInfo: moodlenetConfigs.info,
-                enabledCategories: moodlenetConfigs.enabledCategories,
+                moodlenetCategories,
+                serverTimeMs: Date.now(),
               },
             }
           },
