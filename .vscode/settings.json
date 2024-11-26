@@ -71,6 +71,10 @@
       "foreground": "#fff",
       "background": "#00a97ae6"
     }
+  },
+  "workbench.colorCustomizations": {
+    "minimap.background": "#00000000",
+    "scrollbar.shadow": "#00000000"
   }
 }
 // https://github.com/microsoft/vscode-eslint/issues/91

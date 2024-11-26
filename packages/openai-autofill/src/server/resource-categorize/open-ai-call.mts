@@ -32,10 +32,18 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   shell.log('notice', 'calling openai for', { contentDesc, type })
 
   const { completionConfig, prompts } = await getCompletionConfigs()
-  const resp = await openAiClient.chat.completions.create(completionConfig).catch(err => {
-    shell.log('warn', 'openai chat completions call failed', err)
-    return null
-  })
+  const resp = await openAiClient.chat.completions
+    .create(
+      {
+        ...env.generationConfigs.metadata.params,
+        ...completionConfig,
+      },
+      { ...env.generationConfigs.metadata.options },
+    )
+    .catch(err => {
+      shell.log('warn', 'openai chat completions call failed', err)
+      return null
+    })
   if (!resp) {
     return null
   }
@@ -166,13 +174,15 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
       Note: Please ensure there is no text, writing, or any form of lettering included in the image
       `
     const imageGenResp = await openAiClient.images
-      .generate({
-        model: 'dall-e-3',
-        prompt: imagePrompt,
-        n: 1,
-        size: '1024x1024',
-        style: 'natural',
-      })
+      .generate(
+        {
+          ...env.generationConfigs.image.params,
+          prompt: imagePrompt,
+        },
+        {
+          ...env.generationConfigs.image.options,
+        },
+      )
       .catch(err => {
         shell.log('warn', 'openai dall-e-3 call failed', err)
         return undefined
@@ -321,9 +331,10 @@ and the most suitable natural language for descriptive parameters ("${par(
 
     const messages = [...prompts.systemMessagesJsonl.messages, /*  ...examples, */ prompt]
 
-    const completionConfig: ChatCompletionCreateParams = {
-      model: 'gpt-4o',
-      temperature: 0.0,
+    const completionConfig: Pick<
+      ChatCompletionCreateParams,
+      'messages' | 'functions' | 'function_call'
+    > = {
       messages,
       functions: [classifyResourceFn],
       function_call: { name: FN_NAME },

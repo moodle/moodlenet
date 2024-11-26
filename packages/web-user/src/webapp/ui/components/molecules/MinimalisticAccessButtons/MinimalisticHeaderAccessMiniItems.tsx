@@ -12,7 +12,7 @@ export function getMiniAccessButtonsHeaderItems({
   const miniAccessButtons = [
     <SignupButtonMini key="SignupButtonMini" signupHref={signupHref} />,
     <LoginButtonMini key="LoginButtonMini" loginHref={loginHref} />,
-    <a href="https://moodle.org/mod/forum/view.php?id=8726" target="__blank" key="Learn more">
+    <a href="https://moodle.org/mod/forum/view.php?id=8806" target="__blank" key="Learn more">
       <PrimaryButton color="grey">Learn more</PrimaryButton>
     </a>,
   ]

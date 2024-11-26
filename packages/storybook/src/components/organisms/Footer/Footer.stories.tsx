@@ -29,7 +29,7 @@ export const FooterStoryProps: MainFooterProps = {
           className="extended"
           style={{ textAlign: 'center', color: '#6b6b6b', fontSize: '14px' }}
         >
-          We'd love to get{' '}
+          We&apos;d love to get{' '}
           <a
             href="https://feedback.moodle.org/index.php?r=survey/index&sid=766627&lang=en"
             target="_blank"
@@ -48,7 +48,7 @@ export const FooterStoryProps: MainFooterProps = {
             }}
           />{' '}
           You can suggest new features and report bugs in the{' '}
-          <a href="https://moodle.org/mod/forum/view.php?id=8726" target="_blank" rel="noreferrer">
+          <a href="https://moodle.org/mod/forum/view.php?id=8806" target="_blank" rel="noreferrer">
             MoodleNet community
           </a>
           .

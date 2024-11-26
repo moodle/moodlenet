@@ -28,7 +28,7 @@ export const getMinimalisticAccessHeaderItems = (
     showSignupButton ? <SignupButtonMini signupHref={signupHref} /> : null,
     showLoginButton ? <LoginButtonMini loginHref={loginHref} /> : null,
     showLearnMoreButton ? (
-      <a href="https://moodle.org/mod/forum/view.php?id=8726" target="__blank">
+      <a href="https://moodle.org/mod/forum/view.php?id=8806" target="__blank">
         <PrimaryButton color="grey">Learn more</PrimaryButton>
       </a>
     ) : null,

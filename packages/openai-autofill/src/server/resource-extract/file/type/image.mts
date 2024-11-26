@@ -1,4 +1,5 @@
 import { assertRpcFileReadable } from '@moodlenet/core'
+import { env } from '../../../init/env.mjs'
 import openAiClient from '../../../openai-client.mjs'
 import { imageResizer, streamToBuffer } from '../../util.mjs'
 import defaultExtractor from '../defaultExtractor.mjs'
@@ -23,36 +24,41 @@ ${extractedText}`,
 
   const base64encodedImage = (await streamToBuffer(resized)).toString('base64')
   const base64encodedImageUrl = `data:image/${format};base64,${base64encodedImage}`
-  const chatCompletion = await openAiClient.chat.completions.create({
-    model: 'gpt-4-vision-preview',
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'text',
-            text: `I will provide you an image, meant to be used as an educational resource.`,
-          },
-          ...(extractedTextPrompts ? [extractedTextPrompts] : []),
-          {
-            type: 'text',
-            text: `analyze the image content, then provide an extensive description capturing subjects and topics.`,
-          },
-          {
-            type: 'text',
-            text: `here's the educational image`,
-          },
-          {
-            type: 'image_url',
-            image_url: {
-              url: base64encodedImageUrl,
+  const chatCompletion = await openAiClient.chat.completions.create(
+    {
+      ...env.generationConfigs.imageAnalysis.params,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: `I will provide you an image, meant to be used as an educational resource.`,
             },
-          },
-        ],
-      },
-    ],
-    // max_tokens: 300,
-  })
+            ...(extractedTextPrompts ? [extractedTextPrompts] : []),
+            {
+              type: 'text',
+              text: `analyze the image content, then provide an extensive description capturing subjects and topics.`,
+            },
+            {
+              type: 'text',
+              text: `here's the educational image`,
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: base64encodedImageUrl,
+              },
+            },
+          ],
+        },
+      ],
+      // max_tokens: 300,
+    },
+    {
+      ...env.generationConfigs.imageAnalysis.options,
+    },
+  )
   const aiContent = chatCompletion?.choices[0]?.message.content
   return {
     title: defaultExtraction?.title,
