@@ -34,16 +34,13 @@ function getEnv(): Env {
     generationConfigs: {
       image: {
         params: {
-          temperature: 0.0,
           size: '1024x1024',
           style: 'natural',
           ...(config.generationConfigs?.image?.params ?? {}),
           n: 1,
-          stream: false,
         },
         options: {
           ...(config.generationConfigs?.image?.options ?? {}),
-          stream: false,
         },
       },
       metadata: {
