@@ -14,7 +14,7 @@ export function createMoodleDomainProxy({
       ...unsupportedProxyHandler(),
       get(_target, prop) {
         if (typeof prop !== 'string') {
-          throw new TypeError(`${String(prop)} not here`)
+          throw new TypeError(`Invalid property ${String(prop)}`)
         }
         return domain_proxy([...endpoint, prop])
       },
