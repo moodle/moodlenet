@@ -3,6 +3,9 @@ import _slugify from 'slugify'
 import { BRAND, intersection, number, object, string, ZodNullable, ZodSchema } from 'zod'
 import { _any, d_u } from './map'
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type _other_string = string & {}
+
 export type promise_or_value<t> = t | Promise<t>
 
 export type path = string[]

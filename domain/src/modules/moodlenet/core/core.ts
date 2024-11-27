@@ -1,5 +1,5 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { _void, date_time_string, non_negative_integer } from '@moodle/lib-types'
+import { _void, non_negative_integer } from '@moodle/lib-types'
 import assert from 'assert'
 import { omit } from 'lodash'
 import { moduleCore } from '../../../types'
@@ -147,10 +147,10 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
                     followersCount: 0 as non_negative_integer,
                     followingCount: 0 as non_negative_integer,
                     publishedResourcesCount: 0 as non_negative_integer,
-                    recalculatedDate: date_time_string('now'),
+                    recalculatedDate: ctx.now,
                   },
                   suggestedContent: {
-                    listCreationDate: date_time_string('now'),
+                    listCreationDate: ctx.now,
                     lists: {
                       eduCollections: [],
                       eduResources: [],

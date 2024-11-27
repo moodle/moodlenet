@@ -1,5 +1,5 @@
 import { generateUlid } from '@moodle/lib-id-gen'
-import { __redact__, _any } from '@moodle/lib-types'
+import { __redact__, _any, date_time_string } from '@moodle/lib-types'
 import { merge } from 'lodash'
 import { inspect } from 'util'
 import {
@@ -159,30 +159,34 @@ export function provideDomainAccessDispatcher({
     ) {
       // mainLogger('debug', `dispatchMsg`, domainMsg.endpoint, domainMsg.payload)
       // const endpoint = domainMsg.endpoint.reduce((currProp, currPathSegment) => currProp?.[currPathSegment], impl)
-      const endpoint = await(async () => {
+      const endpoint = await (async () => {
         const [layer, moduleName, channelName, endpointName] = domainMsg.endpoint
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const channelProp = impl[layer!]?.[moduleName!]?.[channelName!]
         if (!channelProp) {
           return
         }
         if (layer === 'primary') {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           return (await channelProp())?.[endpointName!]
         }
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return channelProp?.[endpointName!]
       })()
 
       if (typeof endpoint !== 'function') {
-        if (opts?.graceful) {
-          return
-        }
         const err_msg = `
       NOT IMPLEMENTED: ${domainMsg.endpoint.join('/')}
       FOUND: ${inspect(endpoint, { colors: true, showHidden: true, depth: 10 })}
       `
+        if (opts?.graceful) {
+          return logMessage('warn', err_msg)
+        }
+
         throw TypeError(err_msg)
       }
       const endpointResponse = await endpoint(domainMsg.payload)
-      logMessage //('debug', ':)', { payload: domainMsg.payload ?? null, response: endpointResponse })
+      //logMessage('debug', ':)', { payload: domainMsg.payload ?? null, response: endpointResponse })
       return endpointResponse
     }
     function triggerWatchers({ result }: { result: _any }) {
@@ -213,7 +217,7 @@ export function provideDomainAccessDispatcher({
     moduleName: modName,
     current_domainAccess?: domainAccess,
   ) {
-    const id = await generateUlid()
+    const id = await generateUlid({ onDate: date_time_string('now') })
 
     const moodleDomainProxy = createMoodleDomainProxy({
       ctrl({ domainMsg: { endpoint, payload } }) {
@@ -253,8 +257,9 @@ export function provideDomainAccessDispatcher({
       eventContext<modName> &
       watchContext<modName> &
       secondaryContext = {
-      domain,
       id,
+      domain,
+      now: date_time_string('now'),
       track: callerContext,
       from: originEndpoint,
       session: current_domainAccess?.primarySession as primarySession, // HACK : could be undefined - but this is a one-fit-all-context ;)

@@ -49,7 +49,7 @@ export type eduResourceDraft = draft<
   eduResourceData & {
     assetProcess: {
       textExtractionStatus: textExtractionStatus
-      aiAgentSuggestion: aiAgentResourceSuggestionStatus
+      aiAgentSuggestion: aiAgentResourceSuggestionStatus | { status: 'notAvailable' }
     }
   }
 >

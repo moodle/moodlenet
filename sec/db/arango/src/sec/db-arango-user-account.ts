@@ -1,5 +1,5 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
-import { _void, date_time_string, deep_partial_props } from '@moodle/lib-types'
+import { _void, deep_partial_props } from '@moodle/lib-types'
 import { userAccountRecord } from '@moodle/module/user-account'
 import { aql } from 'arangojs'
 import { createHash } from 'node:crypto'
@@ -8,7 +8,7 @@ import { save_id_to_key } from '../lib/key-id-mapping'
 import { getUserByEmail, getUserById } from './user-account-lib'
 
 export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
-  return (/* secondaryCtx */) => {
+  return ctx => {
     const secondaryAdapter: secondaryAdapter = {
       userAccount: {
         sync: {
@@ -27,12 +27,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
 
             return [!!savedUser?.new, _void]
           },
-          async deactivateUser({
-            anonymize,
-            reason,
-            userAccountId,
-            overrideDeactivationDate: date = date_time_string('now'),
-          }) {
+          async deactivateUser({ anonymize, reason, userAccountId, overrideDeactivationDate: date = ctx.now }) {
             const deactivatingUser = await dbStruct.identity.coll.userAccount.document(
               { _key: userAccountId },
               { graceful: true },

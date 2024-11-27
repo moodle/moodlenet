@@ -7,7 +7,7 @@ export type aiAgentResourceSuggestionStatus = {
 
 type aiGenerationStatus<dataType> = d_u<
   {
-    neverStarted: unknown
+    neverEnqueued: unknown
     enqueued: aiGenerationEnqueued
     ongoing: aiGenerationStarted
     aborted: aiGenerationEnded
@@ -18,6 +18,7 @@ type aiGenerationStatus<dataType> = d_u<
 >
 type aiGenerationEnqueued = {
   enqueueDate: date_time_string
+  attempt: number
 }
 type aiGenerationStarted = aiGenerationEnqueued & {
   startDate: date_time_string

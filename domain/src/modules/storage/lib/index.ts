@@ -3,7 +3,7 @@ import sanitizeFilename from 'sanitize-filename'
 import { adoptAssetResponse } from '../../content'
 import { asset, useTempFileResult } from '../types'
 
-// export function newFsFileRelativePath(filename: string, date = date_time_string('now')) {
+// export function newFsFileRelativePath(filename: string, date = ctx.now) {
 //   return [
 //     String(date.getFullYear()),
 //     String(date.getMonth() + 1).padStart(2, '0'),

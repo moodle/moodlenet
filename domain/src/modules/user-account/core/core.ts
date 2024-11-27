@@ -1,5 +1,6 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { __redacted__, _void, date_time_string, url_string_schema } from '@moodle/lib-types'
+import { __redacted__, _void, url_string_schema } from '@moodle/lib-types'
+import assert from 'assert'
 import userAccountDomain, { getUserAccountPrimarySchemas, userRole } from '..'
 import { moduleCore } from '../../../types'
 import {
@@ -9,7 +10,6 @@ import {
   generateSessionForUserAccountId,
   validateCurrentUserSession,
 } from '../lib'
-import assert from 'assert'
 
 type primary = userAccountDomain['primary']['userAccount']
 export const userAccount_core: moduleCore<'userAccount'> = {
@@ -120,14 +120,13 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               return [false, { reason: 'userWithThisEmailExists' }]
             }
 
-            const now = date_time_string('now')
             const newUser = await createNewUserAccountRecordData({
-              creationDate: now,
+              creationDate: ctx.now,
               roles: newlyCreatedUserRoles,
               displayName: validatedSignedTokenData.displayName,
               email: validatedSignedTokenData.email,
               passwordHash: validatedSignedTokenData.passwordHash,
-              lastLogin: now,
+              lastLogin: ctx.now,
             })
             const [newUserCreated] = await ctx.write.saveNewUser({
               newUser,
@@ -447,6 +446,8 @@ export const userAccount_core: moduleCore<'userAccount'> = {
         email: sysAdminInfo.email,
         passwordHash,
         roles: ['admin', 'contributor'],
+        creationDate: ctx.now,
+        lastLogin: ctx.now,
       })
 
       await ctx.write.saveNewUser({ newUser })

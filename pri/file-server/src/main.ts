@@ -172,7 +172,7 @@ async function getPrimarySession(req: express.Request) {
   const ua = userAgent({ headers: headers })
   assert(xHost, 'x-host not found in headers')
   const userSession: primarySession = {
-    id: await generateUlid(),
+    id: await generateUlid({ onDate: date_time_string('now') }),
     domain: xHost,
     token: getAuthTokenCookie(req).sessionToken,
     app: {

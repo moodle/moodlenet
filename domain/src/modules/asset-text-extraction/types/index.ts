@@ -11,7 +11,7 @@ export type textExtractionResult = {
 
 export type textExtractionStatus = d_u<
   {
-    neverStarted: unknown
+    // neverStarted: unknown
     enqueued: textExtractionEnqueued
     ongoing: textExtractionStarted
     extracted: textExtractionEnded & { result: textExtractionResult }
@@ -21,6 +21,7 @@ export type textExtractionStatus = d_u<
 >
 
 type textExtractionEnqueued = {
+  attempt: number
   enqueueDate: date_time_string
 }
 type textExtractionStarted = textExtractionEnqueued & {

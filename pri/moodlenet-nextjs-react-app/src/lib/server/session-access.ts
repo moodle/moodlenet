@@ -2,7 +2,7 @@ import { http_bind } from '@moodle/bindings-node'
 import { MoodleDomain, moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { _any, map } from '@moodle/lib-types'
+import { _any, date_time_string, map } from '@moodle/lib-types'
 import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/user-account/lib'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
@@ -116,7 +116,7 @@ export async function getAuthenticatedUserSessionOrRedirectToLogin() {
 export async function getAdminUserSessionOrRedirect(path = '/') {
   const authenticatedUserSession = await getAuthenticatedUserSessionOrRedirectToLogin()
   if (!isAdminUserSession(authenticatedUserSession)) {
-    redirect('/')
+    redirect(path)
   }
   return authenticatedUserSession
 }
@@ -140,7 +140,7 @@ async function getPrimarySession() {
   const ua = userAgent({ headers: _headers })
   assert(xHost, 'x-host not found in headers')
   const primarySession: primarySession = {
-    id: await generateUlid(),
+    id: await generateUlid({ onDate: date_time_string('now') }),
     token: getAuthTokenCookie().sessionToken,
     app: {
       name: 'moodlenetWebapp',

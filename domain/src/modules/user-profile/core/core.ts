@@ -1,14 +1,14 @@
+import { generateNanoId } from '@moodle/lib-id-gen'
+import { _void, unreachable_never } from '@moodle/lib-types'
 import { omit } from 'lodash'
 import UserProfileDomain, { eduCollectionDraft, eduResourceDraft } from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
+import { asset, NONE_ASSET } from '../../storage'
 import {
   assert_authorizeAuthenticatedCurrentUserSession,
   assert_authorizeCurrentUserSessionWithRole,
 } from '../../user-account/lib'
 import { createNewUserProfileData } from './lib/new-user-profile'
-import { _void, date_time_string, unreachable_never } from '@moodle/lib-types'
-import { generateNanoId } from '@moodle/lib-id-gen'
-import { asset, NONE_ASSET } from '../../storage'
 
 type userProfilePrimary = UserProfileDomain['primary']['userProfile']
 export const user_profile_core: moduleCore<'userProfile'> = {
@@ -44,10 +44,9 @@ export const user_profile_core: moduleCore<'userProfile'> = {
         const primaries: userProfilePrimary['authenticated'] = {
           async createEduCollectionDraft({ eduCollectionMetaForm }) {
             const eduCollectionDraftId = await generateNanoId()
-            const now = date_time_string('now')
             const eduCollectionDraft: eduCollectionDraft = {
-              created: now,
-              lastUpdateDate: now,
+              created: ctx.now,
+              lastUpdateDate: ctx.now,
               data: {
                 description: eduCollectionMetaForm.description,
                 title: eduCollectionMetaForm.title,
@@ -71,7 +70,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               userProfileId,
               eduCollectionDraftId,
               partialEduCollectionDraft: {
-                lastUpdateDate: date_time_string('now'),
+                lastUpdateDate: ctx.now,
                 data: eduCollectionMetaForm,
               },
             })
@@ -105,7 +104,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               userProfileId,
               eduResourceDraftId,
               partialEduResourceDraft: {
-                lastUpdateDate: date_time_string('now'),
+                lastUpdateDate: ctx.now,
                 data: eduResourceMetaForm,
               },
             })
@@ -158,7 +157,6 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               userProfileRecord: { id: userProfileId },
             } = authenticatedUserSession
             const eduResourceDraftId = await generateNanoId()
-            const now = date_time_string('now')
             const asset =
               newResourceAsset.type === 'external'
                 ? newResourceAsset
@@ -179,15 +177,15 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             }
 
             const eduResourceDraft: eduResourceDraft = {
-              created: now,
-              lastUpdateDate: now,
+              created: ctx.now,
+              lastUpdateDate: ctx.now,
               data: {
                 title: '',
                 description: '',
                 asset,
                 assetProcess: {
-                  aiAgentSuggestion: { generationProcess: { status: 'neverStarted' } },
-                  textExtractionStatus: { status: 'neverStarted' },
+                  aiAgentSuggestion: { generationProcess: { status: 'neverEnqueued' } },
+                  textExtractionStatus: { status: 'enqueued', attempt: 1, enqueueDate: ctx.now },
                 },
                 bloomLearningOutcomes: [],
                 image: NONE_ASSET,

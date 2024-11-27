@@ -1,4 +1,4 @@
-import { any_function, deep_partial, path } from '@moodle/lib-types'
+import { any_function, date_time_string, deep_partial, path } from '@moodle/lib-types'
 import { MoodleDomain } from '../moodle-domain'
 import { primarySession } from './access-session'
 import { Logger } from './log'
@@ -36,6 +36,7 @@ export type ctxTrack = {
 export type baseContext = {
   id: ctxId
   domain: string
+  now: date_time_string
   log: Logger
   mod: contextModuleAccess //FIXME: access to other-modules secondary should not be available in primaryContext
   track?: ctxTrack
