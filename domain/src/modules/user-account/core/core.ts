@@ -400,20 +400,17 @@ export const userAccount_core: moduleCore<'userAccount'> = {
         },
         userProfile: {
           write: {
-            async updatePartialProfileInfo([
+            async updateProfileInfoMeta([
               [done],
               {
-                userProfileId,
-                partialProfileInfo: { displayName },
+                userProfileIdSelect,
+                profileInfoMeta: { displayName },
               },
             ]) {
               if (!done || typeof displayName !== 'string') {
                 return
               }
-              const [found, response] = await ctx.mod.secondary.userProfile.query.getUserProfile({
-                by: 'userProfileId',
-                userProfileId,
-              })
+              const [found, response] = await ctx.mod.secondary.userProfile.query.getUserProfile(userProfileIdSelect)
               if (!found) {
                 return
               }

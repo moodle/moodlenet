@@ -3,7 +3,7 @@ import { moodlenetContributorIdSelect, moodlenetContributorRecord } from '@moodl
 import { aql } from 'arangojs'
 import { AqlQuery } from 'arangojs/aql'
 import { dbStruct } from '../../db-structure'
-import { getUserProfileById } from '../user-profile-db'
+import { overUserProfileById } from '../user-profile-db'
 
 export async function getMoodlenetContributor({
   dbStruct,
@@ -17,7 +17,7 @@ export async function getMoodlenetContributor({
   const filter_id =
     select.by === 'moodlenetContributorId'
       ? aql`moodlenetContributorDoc._key == ${select.moodlenetContributorId}`
-      : await getUserProfileById({ dbStruct, select }).then(mProfileRecord => {
+      : await overUserProfileById({ dbStruct, userProfileIdSelect: select }).then(mProfileRecord => {
           if (!mProfileRecord) {
             return
           }

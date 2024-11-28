@@ -28,9 +28,11 @@ type moodlenetContributions = {
   eduResources: publicContributionRef[]
 }
 
+export type contributorAccessLevel = 'public' | 'protected'
+
 export type moodlenetContributorRecord = {
   id: moodlenetContributorId
-  access: 'public' | 'protected'
+  access: contributorAccessLevel
   userProfile: moodlenetContributorProfileExcerpt
   preferences: {
     useMyInterestsAsDefaultFilters: boolean

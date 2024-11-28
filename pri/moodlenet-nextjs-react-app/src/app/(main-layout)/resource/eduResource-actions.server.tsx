@@ -7,14 +7,14 @@ import { eduResourceDraftId } from '@moodle/module/user-profile'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
-import { redirect, RedirectType } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { appRoutes } from '../../../lib/common/appRoutes'
 import { defaultSafeActionClient, safeActionResult_to_adoptAssetResponse } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
 
 export async function getCreateNewEduResourceSchema() {
   const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
-  return edu.createNewResourceDraftSchema
+  return edu.createNewEduResourceDraftSchema
 }
 
 export async function getCreateNewEduResourceDraft(): Promise<adoptAssetService<'external' | 'upload'>> {

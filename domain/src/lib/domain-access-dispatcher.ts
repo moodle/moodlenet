@@ -1,30 +1,30 @@
 import { generateUlid } from '@moodle/lib-id-gen'
 import { __redact__, _any, date_time_string } from '@moodle/lib-types'
 import { merge } from 'lodash'
-import { inspect } from 'util'
 import {
-  moodleModuleName,
-  moodleSecondary,
-  moodlePrimary,
   backgroundContext,
-  moduleCore,
   ctxTrack,
   domainAccess,
   domainLayer,
   domainMsg,
   eventContext,
+  Logger,
   loggerProvider,
   messageDispatcher,
   modPrimary,
+  moduleCore,
+  moodleModuleName,
+  moodlePrimary,
+  moodleSecondary,
   primaryContext,
   primarySession,
   secondaryAdapter,
   secondaryContext,
   secondaryProvider,
   watchContext,
-  Logger,
 } from '../types'
 import { createMoodleDomainProxy } from './domain-proxy'
+import { format } from 'util'
 export type configuration = {
   domain: string
   moduleCores: moduleCore<_any>[]
@@ -177,15 +177,22 @@ export function provideDomainAccessDispatcher({
       if (typeof endpoint !== 'function') {
         const err_msg = `
       NOT IMPLEMENTED: ${domainMsg.endpoint.join('/')}
-      FOUND: ${inspect(endpoint, { colors: true, showHidden: true, depth: 10 })}
+      FOUND: ${endpoint}
       `
         if (opts?.graceful) {
-          return logMessage('warn', err_msg)
+          return logMessage('warn', err_msg, endpoint)
         }
 
         throw TypeError(err_msg)
       }
-      const endpointResponse = await endpoint(domainMsg.payload)
+      const endpointResponse = await endpoint(domainMsg.payload).catch((err: unknown) => {
+        logMessage(
+          'error',
+          domainMsg.endpoint.join('/'),
+          err instanceof Error ? { stack: err.stack, format: format(err) } : String(err),
+        )
+        throw err
+      })
       //logMessage('debug', ':)', { payload: domainMsg.payload ?? null, response: endpointResponse })
       return endpointResponse
     }

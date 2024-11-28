@@ -21,7 +21,7 @@ export async function accessMoodlenetContributor({
       by: 'moodlenetContributorId',
       moodlenetContributorId: id,
     },
-    noAccessLevelFilter: true, // !! noAccessLevelFilter
+    filter: { accessLevel: false },
   })
   if (!found) {
     return [false, { reason: 'notFound' }]

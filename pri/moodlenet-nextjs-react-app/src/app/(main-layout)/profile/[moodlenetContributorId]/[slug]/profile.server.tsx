@@ -10,24 +10,24 @@ import { appRoutes } from '../../../../../lib/common/appRoutes'
 import { defaultSafeActionClient, safeActionResult_to_adoptAssetResponse } from '../../../../../lib/server/safe-action'
 import { access } from '../../../../../lib/server/session-access'
 
-export async function getProfileInfoSchema() {
+export async function getEditProfileInfoSchema() {
   const {
-    userProfile: { updateProfileInfoMetaSchema },
+    userProfile: { editProfileInfoMetaSchema },
   } = await fetchAllPrimarySchemas({ primary: access.primary })
-  return updateProfileInfoMetaSchema
+  return editProfileInfoMetaSchema
 }
 
 export const updateMyProfileInfoMetaForm = defaultSafeActionClient
-  .schema(getProfileInfoSchema)
-  .action(async ({ parsedInput: partialProfileInfoMeta }) => {
+  .schema(getEditProfileInfoSchema)
+  .action(async ({ parsedInput: profileInfoMeta }) => {
     const [editDone, editResult] = await access.primary.userProfile.authenticated.editProfileInfoMeta({
-      partialProfileInfoMeta,
+      profileInfoMeta,
     })
     if (editDone) {
       revalidatePath(appRoutes(`/profile/${editResult.userProfileId}/`))
       return
     }
-    returnValidationErrors(getProfileInfoSchema, {
+    returnValidationErrors(getEditProfileInfoSchema, {
       _errors: [t(`something went wrong while saving profile info`) + ` : ${editResult.reason}`],
     })
   })
@@ -39,19 +39,19 @@ export async function getUseProfileImageSchema() {
   return useProfileImageSchema
 }
 
-export async function getApplyMyProfileImageadoptAssetService(as: profileImageType): Promise<adoptAssetService> {
+export async function getApplyMyProfileImageadoptAssetService(type: profileImageType): Promise<adoptAssetService> {
   return async function adoptAssetForm_myProfileImage(adoptAssetForm) {
     'use server'
     const applyMyProfileImageAction = defaultSafeActionClient
       .schema(getUseProfileImageSchema)
-      .action(async ({ parsedInput: { as, adoptAssetForm } }) => {
+      .action(async ({ parsedInput: { type, adoptAssetForm } }) => {
         return access.primary.userProfile.authenticated
-          .useTempImageAsProfileImage({ useProfileImageForm: { as, adoptAssetForm } })
+          .useTempImageAsProfileImage({ useProfileImageForm: { type, adoptAssetForm } })
           .then(({ adoptAssetResponse, userProfileId }) => {
             revalidatePath(appRoutes(`/profile/${userProfileId}/`))
             return adoptAssetResponse
           })
       })
-    return safeActionResult_to_adoptAssetResponse(applyMyProfileImageAction({ as, adoptAssetForm }))
+    return safeActionResult_to_adoptAssetResponse(applyMyProfileImageAction({ type, adoptAssetForm }))
   }
 }

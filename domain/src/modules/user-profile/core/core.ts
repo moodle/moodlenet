@@ -1,5 +1,5 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { _void, unreachable_never } from '@moodle/lib-types'
+import { _void } from '@moodle/lib-types'
 import { omit } from 'lodash'
 import UserProfileDomain, { eduCollectionDraft, eduResourceDraft } from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
@@ -46,7 +46,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             const eduCollectionDraftId = await generateNanoId()
             const eduCollectionDraft: eduCollectionDraft = {
               created: ctx.now,
-              lastUpdateDate: ctx.now,
+              lastEditDate: ctx.now,
               data: {
                 description: eduCollectionMetaForm.description,
                 title: eduCollectionMetaForm.title,
@@ -54,10 +54,11 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 image: NONE_ASSET,
               },
             }
-            const [done] = await ctx.write.createEduCollectionDraft({
-              userProfileId,
-              eduCollectionDraft,
-              eduCollectionDraftId,
+            const [done] = await ctx.write.createDraft({
+              userProfileIdSelect: { by: 'userProfileId', userProfileId },
+              draftType: 'eduCollection',
+              draft: eduCollectionDraft,
+              draftId: eduCollectionDraftId,
             })
             if (!done) {
               return [false, _void]
@@ -66,13 +67,12 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             return [true, { eduCollectionDraftId }]
           },
           async editEduCollectionDraft({ eduCollectionDraftId, eduCollectionMetaForm }) {
-            const [done] = await ctx.write.updateEduCollectionDraft({
-              userProfileId,
-              eduCollectionDraftId,
-              partialEduCollectionDraft: {
-                lastUpdateDate: ctx.now,
-                data: eduCollectionMetaForm,
-              },
+            const [done] = await ctx.write.updateDraftMeta({
+              userProfileIdSelect: { by: 'userProfileId', userProfileId },
+              draftId: eduCollectionDraftId,
+              lastEditDate: ctx.now,
+              meta: eduCollectionMetaForm,
+              draftType: 'eduCollection',
             })
             return [done, _void]
           },
@@ -82,17 +82,17 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             } = authenticatedUserSession
             if (adoptAssetForm.type === 'external') {
               const asset: asset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
-              const [done /* , result */] = await ctx.write.updateEduResourceDraft({
-                userProfileId,
-                eduResourceDraftId,
-                partialEduResourceDraft: {
-                  data: { image: asset },
-                },
+              const [done /* , result */] = await ctx.write.updateDraftImage({
+                userProfileIdSelect: { by: 'userProfileId', userProfileId },
+                draftId: eduResourceDraftId,
+                image: asset,
+                lastEditDate: ctx.now,
+                draftType: 'eduResource',
               })
               return { userProfileId, adoptAssetResponse: done ? { status: 'done', asset } : { status: 'error' } }
             }
             const adoptAssetResponse = await ctx.write.useTempImageInDraft({
-              type: 'eduResource',
+              draftType: 'eduResource',
               draftId: eduResourceDraftId,
               userProfileId,
               adoptAssetForm,
@@ -100,28 +100,29 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             return { adoptAssetResponse, userProfileId }
           },
           async editEduResourceDraft({ eduResourceDraftId, eduResourceMetaForm }) {
-            const [done] = await ctx.write.updateEduResourceDraft({
-              userProfileId,
-              eduResourceDraftId,
-              partialEduResourceDraft: {
-                lastUpdateDate: ctx.now,
-                data: eduResourceMetaForm,
-              },
+            const [done] = await ctx.write.updateDraftMeta({
+              userProfileIdSelect: { by: 'userProfileId', userProfileId },
+              draftType: 'eduResource',
+              draftId: eduResourceDraftId,
+              lastEditDate: ctx.now,
+              meta: eduResourceMetaForm,
             })
             return [done, _void]
           },
           async getEduCollectionDraft({ eduCollectionDraftId }) {
-            const response = await ctx.mod.secondary.userProfile.query.getEduCollectionDraft({
-              userProfileId,
-              eduCollectionDraftId,
+            const response = await ctx.mod.secondary.userProfile.query.getDraft({
+              userProfileIdSelect: { by: 'userProfileId', userProfileId },
+              draftType: 'eduCollection',
+              draftId: eduCollectionDraftId,
             })
 
             return response
           },
           async getEduResourceDraft({ eduResourceDraftId }) {
-            const response = await ctx.mod.secondary.userProfile.query.getEduResourceDraft({
-              userProfileId,
-              eduResourceDraftId,
+            const response = await ctx.mod.secondary.userProfile.query.getDraft({
+              userProfileIdSelect: { by: 'userProfileId', userProfileId },
+              draftId: eduResourceDraftId,
+              draftType: 'eduResource',
             })
 
             return response
@@ -135,17 +136,17 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             } = authenticatedUserSession
             if (adoptAssetForm.type === 'external') {
               const asset: asset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
-              const [done /* , result */] = await ctx.write.updateEduCollectionDraft({
-                userProfileId,
-                eduCollectionDraftId,
-                partialEduCollectionDraft: {
-                  data: { image: asset },
-                },
+              const [done /* , result */] = await ctx.write.updateDraftImage({
+                userProfileIdSelect: { by: 'userProfileId', userProfileId },
+                draftId: eduCollectionDraftId,
+                image: asset,
+                lastEditDate: ctx.now,
+                draftType: 'eduCollection',
               })
               return { userProfileId, adoptAssetResponse: done ? { status: 'done', asset } : { status: 'error' } }
             }
             const adoptAssetResponse = await ctx.write.useTempImageInDraft({
-              type: 'eduCollection',
+              draftType: 'eduCollection',
               draftId: eduCollectionDraftId,
               userProfileId,
               adoptAssetForm,
@@ -178,7 +179,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
 
             const eduResourceDraft: eduResourceDraft = {
               created: ctx.now,
-              lastUpdateDate: ctx.now,
+              lastEditDate: ctx.now,
               data: {
                 title: '',
                 description: '',
@@ -199,10 +200,11 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               },
             }
 
-            const [done /* , result */] = await ctx.write.createEduResourceDraft({
-              userProfileId,
-              eduResourceDraftId,
-              eduResourceDraft,
+            const [done /* , result */] = await ctx.write.createDraft({
+              userProfileIdSelect: { by: 'userProfileId', userProfileId },
+              draftId: eduResourceDraftId,
+              draftType: 'eduResource',
+              draft: eduResourceDraft,
             })
 
             if (!done) {
@@ -210,29 +212,20 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             }
             return [true, { eduResourceDraftId }]
           },
-          async useTempImageAsProfileImage({ useProfileImageForm: { as, adoptAssetForm } }) {
+          async useTempImageAsProfileImage({ useProfileImageForm: { type, adoptAssetForm } }) {
             const { userProfileRecord } = authenticatedUserSession
             if (adoptAssetForm.type === 'external') {
               const asset: asset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
-              // FIXME:
-              // FIXME:
-              // FIXME:
-              // FIXME:
-              // FIXME:
-              // FIXME: updatePartialProfileInfo is not good to update atomic objects
-              // FIXME:   e.g. setting an asset { type: 'none' } over a local asset,
-              // FIXME:   will update the { type } property only, keeping all the rest
-              // FIXME:   investigate if it makes sense to get rid of partial-update-services
-              // FIXME:   or, anyaway, find a way to properly and safely update for every scenario
-              const [done /* , result */] = await ctx.write.updatePartialProfileInfo({
-                userProfileId,
-                partialProfileInfo:
-                  as === 'avatar' ? { avatar: asset } : as === 'background' ? { background: asset } : unreachable_never(as),
+              const [done /* , result */] = await ctx.write.updateProfileImage({
+                userProfileIdSelect: { by: 'userProfileId', userProfileId },
+                lastEditDate: ctx.now,
+                type,
+                image: asset,
               })
               return { userProfileId, adoptAssetResponse: done ? { status: 'done', asset } : { status: 'error' } }
             }
             const adoptAssetResponse = await ctx.write.useTempImageInProfile({
-              as,
+              type,
               userProfileId: userProfileRecord.id,
               adoptAssetForm,
             })
@@ -250,11 +243,11 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               userAccountRecord: omit(userAccontRecord, 'displayName'),
             }
           },
-          async editProfileInfoMeta({ partialProfileInfoMeta }) {
-            const { userProfileRecord } = authenticatedUserSession
-            const [done] = await ctx.write.updatePartialProfileInfo({
-              userProfileId: userProfileRecord.id,
-              partialProfileInfo: partialProfileInfoMeta,
+          async editProfileInfoMeta({ profileInfoMeta: partialProfileInfoMeta }) {
+            const [done] = await ctx.write.updateProfileInfoMeta({
+              userProfileIdSelect: { by: 'userProfileId', userProfileId },
+              profileInfoMeta: partialProfileInfoMeta,
+              lastEditDate: ctx.now,
             })
             if (!done) {
               return [false, { reason: 'unknown' }]
@@ -289,43 +282,36 @@ export const user_profile_core: moduleCore<'userProfile'> = {
       secondary: {
         userProfile: {
           write: {
-            async useTempImageInProfile([adoptAssetResponse, { userProfileId: id, as }]) {
+            async useTempImageInProfile([adoptAssetResponse, { userProfileId: id, type }]) {
               if (adoptAssetResponse.status === 'error') {
                 return
               }
               const asset = adoptAssetResponse.asset
-              await ctx.write.updatePartialProfileInfo({
-                userProfileId: id,
-                partialProfileInfo:
-                  as === 'avatar' ? { avatar: asset } : as === 'background' ? { background: asset } : unreachable_never(as),
+              await ctx.write.updateProfileImage({
+                userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
+                lastEditDate: ctx.now,
+                type,
+                image: asset,
               })
             },
-            async useTempImageInDraft([adoptAssetResponse, { userProfileId: id, draftId, type }]) {
+            async useTempImageInDraft([adoptAssetResponse, { userProfileId: id, draftId, draftType }]) {
               if (adoptAssetResponse.status === 'error') {
                 return
               }
               const asset = adoptAssetResponse.asset
-              if (type === 'eduResource') {
-                await ctx.write.updateEduResourceDraft({
-                  userProfileId: id,
-                  eduResourceDraftId: draftId,
-                  partialEduResourceDraft: { data: { image: asset } },
-                })
-              } else if (type === 'eduCollection') {
-                await ctx.write.updateEduCollectionDraft({
-                  userProfileId: id,
-                  eduCollectionDraftId: draftId,
-                  partialEduCollectionDraft: { data: { image: asset } },
-                })
-              } else {
-                unreachable_never(type, 'watch useTempImageInDraft: unknown type')
-              }
+              await ctx.write.updateDraftImage({
+                userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
+                draftId,
+                image: asset,
+                lastEditDate: ctx.now,
+                draftType,
+              })
             },
           },
         },
         userAccount: {
           write: {
-            //REVIEW - this userAccount should emit an event and catch it here  in userprofile
+            //REVIEW - this userAccount should emit an event and catch it here in userprofile
             async saveNewUser([[created, resp], { newUser }]) {
               ctx.log('debug', 'user-profile watch saveNewUser', { created, resp, newUser })
               if (!created) {

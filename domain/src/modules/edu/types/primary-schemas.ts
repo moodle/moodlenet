@@ -46,8 +46,8 @@ export type eduResourceMetaForm = z.infer<eduResourceMetaFormSchema>
 export type eduResourceApplyImageFormSchema = ReturnType<typeof getEduPrimarySchemas>['applyImageSchema']
 export type eduResourceApplyImageForm = z.infer<eduResourceApplyImageFormSchema>
 
-export type createNewResourceDraftSchema = ReturnType<typeof getEduPrimarySchemas>['createNewResourceDraftSchema']
-export type createNewResourceDraftSchemaForm = z.infer<createNewResourceDraftSchema>
+export type createNewEduResourceDraftSchema = ReturnType<typeof getEduPrimarySchemas>['createNewEduResourceDraftSchema']
+export type createNewEduResourceDraftSchemaForm = z.infer<createNewEduResourceDraftSchema>
 
 export function getEduPrimarySchemas(
   { eduCollectionMeta, eduResourceMeta }: eduPrimaryMsgSchemaConfigs,
@@ -147,7 +147,7 @@ export function getEduPrimarySchemas(
   }
   const eduResourceMetaSchema = object(eduResourceMetaRawSchemas)
 
-  const createNewResourceDraftSchema = object({
+  const createNewEduResourceDraftSchema = object({
     newResourceAsset: adoptValuedAssetFormSchema,
     eduResourceMeta: eduResourceMetaSchema.nullable().optional(),
   })
@@ -160,6 +160,6 @@ export function getEduPrimarySchemas(
     applyImageSchema,
     eduCollectionMetaSchema,
     eduResourceMetaSchema,
-    createNewResourceDraftSchema,
+    createNewEduResourceDraftSchema,
   }
 }

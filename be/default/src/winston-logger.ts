@@ -46,7 +46,11 @@ export function createDefaultDomainLoggerProvider({ loggerConfigs }: { loggerCon
   const loggerProvider: loggerProvider = loggerContext => {
     const childLogger = winstonLogger.child(loggerContext)
     return (level, ...args) => {
-      const message = args.map((arg: unknown) => inspect(arg, { colors: true, depth: 8, })).join('\n')
+      const message = args
+        .map((arg: unknown) => {
+          return typeof arg === 'object' ? inspect(arg, { colors: true, depth: 8 }) : arg
+        })
+        .join('\n')
       childLogger.log(level, message)
     }
   }
@@ -67,7 +71,8 @@ function ctxString({
   endpoint,
 }: extended_loggerContext) {
   const NOT_AVAILABLE_CHAR = '~'
-  return `${timestamp} [${level}]
+  return `
+${timestamp} [${level}]
   domain            : ${domain}
   context           : ${contextLayer} # ${id}
   callerContext     : ${callerContext ? `${callerContext.layer}.${callerContext.module} # ${callerContext.ctxId}` : NOT_AVAILABLE_CHAR}

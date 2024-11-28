@@ -24,7 +24,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
     const secondaryAdapter: secondaryAdapter = {
       userProfile: {
         write: {
-          async useTempImageInProfile({ as, userProfileId, adoptAssetForm }) {
+          async useTempImageInProfile({ type: as, userProfileId, adoptAssetForm }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const absolutePath = fs_file_paths.userProfile[userProfileId]!.profile[as]!()
             if (adoptAssetForm.type === 'none') {
@@ -42,6 +42,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
             )
           },
           async useTempFileAsResourceDraftAsset({ adoptAssetForm, resourceDraftId, userProfileId }) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts.eduResource[resourceDraftId]!.asset()
             return useTempFileResult_to_adoptAssetResponse(
               use_temp_file({
@@ -51,9 +52,9 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
               }),
             )
           },
-          async useTempImageInDraft({ draftId, adoptAssetForm, type, userProfileId }) {
+          async useTempImageInDraft({ draftId, adoptAssetForm, draftType, userProfileId }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts[type][draftId]!.image!()
+            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts[draftType][draftId]!.image!()
             if (adoptAssetForm.type === 'none') {
               await deleteFile({ absolutePath, fsDirs })
               return { asset: adoptAssetForm, status: 'done' }

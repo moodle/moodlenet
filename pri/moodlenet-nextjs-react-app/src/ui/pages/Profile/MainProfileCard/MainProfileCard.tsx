@@ -32,7 +32,7 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
     handleSubmitWithAction: submitForm,
   } = useHookFormAction(
     default_noop_action(actions.edit?.updateMyProfileInfo),
-    zodResolver(schemas.userProfile.updateProfileInfoMetaSchema),
+    zodResolver(schemas.userProfile.editProfileInfoMetaSchema),
     {
       formProps: { defaultValues: { ...profileInfo } },
       actionProps: {

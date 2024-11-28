@@ -1,15 +1,20 @@
-import type { d_u, d_u__d, deep_partial_props, ok_ko } from '@moodle/lib-types'
+import type { d_u, d_u__d, date_time_string, ok_ko } from '@moodle/lib-types'
 import { adoptAssetForm, adoptAssetResponse } from '../content'
 import {
-  createNewResourceDraftSchemaForm,
+  createNewEduResourceDraftSchemaForm,
   eduCollectionApplyImageForm,
+  eduCollectionData,
+  eduCollectionMeta,
   eduCollectionMetaForm,
   eduResourceApplyImageForm,
+  eduResourceData,
+  eduResourceMeta,
   eduResourceMetaForm,
 } from '../edu'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {
   UserProfilePrimaryMsgSchemaConfigs,
+  draftId,
   eduCollectionDraft,
   eduCollectionDraftId,
   eduResourceDraft,
@@ -43,7 +48,7 @@ export default interface UserProfileDomain {
         useTempImageAsProfileImage(_: {
           useProfileImageForm: useProfileImageForm
         }): Promise<{ adoptAssetResponse: adoptAssetResponse; userProfileId: userProfileId }>
-        editProfileInfoMeta(_: { partialProfileInfoMeta: deep_partial_props<profileInfoMeta> }): Promise<
+        editProfileInfoMeta(_: { profileInfoMeta: profileInfoMeta }): Promise<
           ok_ko<
             { userProfileId: userProfileId },
             {
@@ -76,7 +81,7 @@ export default interface UserProfileDomain {
 
         // draft resource
         createEduResourceDraft(
-          _: createNewResourceDraftSchemaForm,
+          _: createNewEduResourceDraftSchemaForm,
         ): Promise<ok_ko<{ eduResourceDraftId: eduResourceDraftId }>>
         editEduResourceDraft(_: {
           eduResourceDraftId: eduResourceDraftId
@@ -113,58 +118,79 @@ export default interface UserProfileDomain {
       }
       query: {
         getUserProfile(
-          _: userProfileIdSelect,
+          userProfileIdSelect: userProfileIdSelect,
         ): Promise<ok_ko<{ userProfileRecord: userProfileRecord }, { notFound: unknown }>>
-        getEduCollectionDraft(_: {
-          userProfileId: userProfileId
-          eduCollectionDraftId: eduCollectionDraftId
-        }): Promise<ok_ko<eduCollectionDraft, { notFound: unknown }>>
-        getEduResourceDraft(_: {
-          userProfileId: userProfileId
-          eduResourceDraftId: eduResourceDraftId
-        }): Promise<ok_ko<eduResourceDraft, { notFound: unknown }>>
+        getDraft<draftType extends 'eduResource' | 'eduCollection'>(_: {
+          userProfileIdSelect: userProfileIdSelect
+          draftType: draftType
+          draftId: string
+        }): Promise<
+          ok_ko<
+            draftType extends 'eduResource'
+              ? eduResourceDraft
+              : draftType extends 'eduCollection'
+                ? eduCollectionDraft
+                : never,
+            { notFound: unknown }
+          >
+        >
       }
       write: {
-        createEduCollectionDraft(_: {
-          userProfileId: userProfileId
-          eduCollectionDraft: eduCollectionDraft
-          eduCollectionDraftId: eduCollectionDraftId
-        }): Promise<ok_ko<void>>
         useTempFileAsResourceDraftAsset(_: {
           resourceDraftId: eduResourceDraftId
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload'>
         }): Promise<d_u__d<adoptAssetResponse<'local'>, 'status', 'done' | 'error'>>
-        createEduResourceDraft(_: {
-          userProfileId: userProfileId
-          eduResourceDraft: eduResourceDraft
-          eduResourceDraftId: eduResourceDraftId
+        createDraft<draftType extends 'eduResource' | 'eduCollection'>(_: {
+          userProfileIdSelect: userProfileIdSelect
+          draftType: draftType
+          draft: draftType extends 'eduResource'
+            ? eduResourceDraft
+            : draftType extends 'eduCollection'
+              ? eduCollectionDraft
+              : never
+          draftId: draftId
         }): Promise<ok_ko<void>>
-        updateEduResourceDraft(_: {
-          userProfileId: userProfileId
-          eduResourceDraftId: eduResourceDraftId
-          partialEduResourceDraft: deep_partial_props<eduResourceDraft>
+        updateDraftMeta<draftType extends 'eduResource' | 'eduCollection'>(_: {
+          userProfileIdSelect: userProfileIdSelect
+          draftType: draftType
+          draftId: draftId
+          meta: draftType extends 'eduResource'
+            ? eduResourceMeta
+            : draftType extends 'eduCollection'
+              ? eduCollectionMeta
+              : never
+          lastEditDate: date_time_string
         }): Promise<ok_ko<void>>
-        updateEduCollectionDraft(_: {
-          userProfileId: userProfileId
-          eduCollectionDraftId: eduCollectionDraftId
-          partialEduCollectionDraft: deep_partial_props<eduCollectionDraft>
+        updateDraftImage<draftType extends 'eduResource' | 'eduCollection'>(_: {
+          draftType: draftType
+          userProfileIdSelect: userProfileIdSelect
+          lastEditDate: date_time_string
+          draftId: draftId
+          image: eduCollectionData['image'] & eduResourceData['image']
         }): Promise<ok_ko<void>>
         createUserProfile(_: { userProfileRecord: userProfileRecord }): Promise<ok_ko<void>>
-        updatePartialProfileInfo(_: {
-          userProfileId: userProfileId
-          partialProfileInfo: deep_partial_props<profileInfo>
+        updateProfileImage(_: {
+          userProfileIdSelect: userProfileIdSelect
+          lastEditDate: date_time_string
+          image: profileInfo['avatar']
+          type: profileImageType
+        }): Promise<ok_ko<void>>
+        updateProfileInfoMeta(_: {
+          lastEditDate: date_time_string
+          userProfileIdSelect: userProfileIdSelect
+          profileInfoMeta: profileInfoMeta
         }): Promise<ok_ko<void>>
         useTempImageInProfile(_: {
-          as: profileImageType
+          type: profileImageType
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
         }): Promise<d_u__d<adoptAssetResponse<'local' | 'none'>, 'status', 'done' | 'error'>>
-        useTempImageInDraft(_: {
-          type: 'eduCollection' | 'eduResource'
-          draftId: eduResourceDraftId | eduCollectionDraftId
+        useTempImageInDraft<draftType extends 'eduResource' | 'eduCollection'>(_: {
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
+          draftId: draftId
+          draftType: draftType
         }): Promise<d_u__d<adoptAssetResponse<'local' | 'none'>, 'status', 'done' | 'error'>>
         /*  updatePartialUserProfile(_: {
           userProfileId: userProfileId

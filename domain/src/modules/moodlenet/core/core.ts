@@ -26,7 +26,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
                 by: 'userProfileId',
                 userProfileId: userProfileRecord.id,
               },
-              noAccessLevelFilter: true,
+              filter: { accessLevel: false },
             })
             assert(
               foundContributorRecord,
@@ -84,7 +84,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
             return [done, _void]
           },
           async contributor(select) {
-            const result = await ctx.mod.secondary.moodlenet.query.contributor({ select, noAccessLevelFilter: true })
+            const result = await ctx.mod.secondary.moodlenet.query.contributor({ select, filter: { accessLevel: false } })
             return result
           },
         }
@@ -100,29 +100,35 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
               if (!done) {
                 return
               }
-              await ctx.write.updatePartialMoodlenetContributor({
+              await ctx.write.updateMoodlenetContributorAccess({
                 select: { by: 'userAccountId', userAccountId },
-                partialMoodlenetContributorRecord: {
-                  access: roles.includes('contributor') ? 'public' : 'protected',
-                },
+                access: roles.includes('contributor') ? 'public' : 'protected',
               })
             },
           },
         },
         userProfile: {
           write: {
-            async updatePartialProfileInfo([[done], payload]) {
+            async updateProfileInfoMeta([[done], payload]) {
               if (!done) {
                 return
               }
-              await ctx.write.updatePartialMoodlenetContributor({
-                select: { by: 'userProfileId', userProfileId: payload.userProfileId },
-                partialMoodlenetContributorRecord: {
-                  userProfile: {
-                    info: payload.partialProfileInfo,
-                  },
-                },
+              await ctx.write.updateMoodlenetContributorProfileInfoMeta({
+                select: payload.userProfileIdSelect,
+                profileInfoMeta:payload.profileInfoMeta,
+                lastEditDate: payload.lastEditDate,
               })
+            },
+            async updateProfileImage([[done], payload]) {
+              if (!done) {
+                return
+              }
+              await ctx.write.updateMoodlenetContributorProfileInfoImage({
+                select: payload.userProfileIdSelect,
+                image:payload.image,
+                type:payload.type,
+          lastEditDate: payload.lastEditDate
+        })
             },
             async createUserProfile([[created], payload]) {
               if (!created) {

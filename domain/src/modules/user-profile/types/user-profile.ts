@@ -15,10 +15,11 @@ export type profileInfoMeta = {
   siteUrl: null | url_string
 }
 export type profileInfo = profileInfoMeta & {
+  lastEditDate: date_time_string
   background: asset
   avatar: asset
 }
-export type profileImageType = 'avatar' | 'background'
+export type profileImageType = ('avatar' | 'background') & keyof profileInfo
 
 export type userProfileId = string
 
@@ -55,8 +56,8 @@ export type eduResourceDraft = draft<
 >
 
 type myDrafts = {
-  eduResources: map<eduResourceDraft, eduResourceDraftId>
-  eduCollections: map<eduCollectionDraft, eduCollectionDraftId>
+  eduResource: map<eduResourceDraft, eduResourceDraftId>
+  eduCollection: map<eduCollectionDraft, eduCollectionDraftId>
 }
 
 type draftEduCollectionEduResourceRef = d_u<
@@ -70,9 +71,10 @@ type draftEduCollectionEduResourceRef = d_u<
 type draft<dataType extends eduResourceData | eduCollectionData> = {
   data: dataType
   created: date_time_string
-  lastUpdateDate: date_time_string
+  lastEditDate: date_time_string
   // updates: { date: date_time_string; diff: jsonDiff }[]
 }
 
 export type eduResourceDraftId = string
 export type eduCollectionDraftId = string
+export type draftId = eduResourceDraftId & eduCollectionDraftId
