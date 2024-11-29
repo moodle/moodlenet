@@ -114,7 +114,7 @@ export function makeExtPortsApp() {
               ? err
               : {
                   rpcStatusCode: 500,
-                  payload: err,
+                  payload: { error: err },
                 }
             shell.log(
               `error`,

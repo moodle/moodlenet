@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/arangodb",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "publishConfig": {
     "access": "public"
   },
@@ -31,12 +31,12 @@
     "arangojs": "8.3.0"
   },
   "devDependencies": {
-    "@moodlenet/core": "^0.9.1",
+    "@moodlenet/core": "^0.9.2",
     "@types/node": "17.0.35",
     "typescript": "5.4"
   },
   "peerDependencies": {
-    "@moodlenet/core": "^0.9.1"
+    "@moodlenet/core": "^0.9.2"
   },
   "scripts": {},
   "gitHead": "4b8737c02083f2eca71b432c601ba3f595cd4f51"
