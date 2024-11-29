@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/email-service",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "publishConfig": {
     "access": "public"
   },
@@ -31,23 +31,23 @@
   "repository": "https://github.com/moodle/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "@moodlenet/key-value-store": "^0.9.2",
+    "@moodlenet/key-value-store": "^0.9.3",
     "dot": "1.1.3",
     "nodemailer": "6.6.1",
     "@react-email/render": "^0.0.12"
   },
   "peerDependencies": {
-    "@moodlenet/core": "^0.9.2",
-    "@moodlenet/component-library": "^0.9.2",
-    "@moodlenet/organization": "^0.9.2",
-    "@moodlenet/react-app": "^0.9.2"
+    "@moodlenet/core": "^0.9.3",
+    "@moodlenet/component-library": "^0.9.3",
+    "@moodlenet/organization": "^0.9.3",
+    "@moodlenet/react-app": "^0.9.3"
   },
   "devDependencies": {
     "react": "18.3.1",
-    "@moodlenet/core": "^0.9.2",
-    "@moodlenet/component-library": "^0.9.2",
-    "@moodlenet/organization": "^0.9.2",
-    "@moodlenet/react-app": "^0.9.2",
+    "@moodlenet/core": "^0.9.3",
+    "@moodlenet/component-library": "^0.9.3",
+    "@moodlenet/organization": "^0.9.3",
+    "@moodlenet/react-app": "^0.9.3",
     "@types/dot": "1.1.5",
     "@types/node": "17.0.35",
     "@types/nodemailer": "6.4.5",

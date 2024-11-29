@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/openai-autofill",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "publishConfig": {
     "access": "public"
   },
@@ -43,18 +43,18 @@
     "youtube-transcript": "1.0.6"
   },
   "peerDependencies": {
-    "@moodlenet/core": "^0.9.2",
-    "@moodlenet/core-domain": "^0.9.2",
-    "@moodlenet/ed-meta": "^0.9.2",
-    "@moodlenet/ed-resource": "^0.9.2",
-    "@moodlenet/system-entities": "^0.9.2"
+    "@moodlenet/core": "^0.9.3",
+    "@moodlenet/core-domain": "^0.9.3",
+    "@moodlenet/ed-meta": "^0.9.3",
+    "@moodlenet/ed-resource": "^0.9.3",
+    "@moodlenet/system-entities": "^0.9.3"
   },
   "devDependencies": {
-    "@moodlenet/core": "^0.9.2",
-    "@moodlenet/core-domain": "^0.9.2",
-    "@moodlenet/ed-meta": "^0.9.2",
-    "@moodlenet/ed-resource": "^0.9.2",
-    "@moodlenet/system-entities": "^0.9.2",
+    "@moodlenet/core": "^0.9.3",
+    "@moodlenet/core-domain": "^0.9.3",
+    "@moodlenet/ed-meta": "^0.9.3",
+    "@moodlenet/ed-resource": "^0.9.3",
+    "@moodlenet/system-entities": "^0.9.3",
     "@types/file-type": "10.9.1",
     "@types/istextorbinary": "2.3.4",
     "@types/node": "17.0.35",
