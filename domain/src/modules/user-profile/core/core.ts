@@ -185,7 +185,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 description: '',
                 asset,
                 assetProcess: {
-                  aiAgentSuggestion: { generationProcess: { status: 'neverEnqueued' } },
+                  aiAnalysis: { generationProcess: { status: 'neverEnqueued' } },
                   textExtractionStatus: { status: 'enqueued', attempt: 1, enqueueDate: ctx.now },
                 },
                 bloomLearningOutcomes: [],

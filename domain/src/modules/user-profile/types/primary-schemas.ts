@@ -1,7 +1,7 @@
 import { single_line_string_schema, url_string_schema } from '@moodle/lib-types'
 import type { z, ZodString } from 'zod'
 import { any, literal, object, string, union } from 'zod'
-import { adoptAssetFormSchema } from '../../content'
+import { adoptAssetFormSchema } from '../../storage'
 export interface UserProfilePrimaryMsgSchemaConfigs {
   profileInfoMeta: {
     displayName: { max: number; min: number; regex: null | [regex: string, flags: string] }

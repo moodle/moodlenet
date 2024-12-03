@@ -1,5 +1,5 @@
 import type { d_u, d_u__d, date_time_string, ok_ko } from '@moodle/lib-types'
-import { adoptAssetForm, adoptAssetResponse } from '../content'
+import { adoptAssetForm, adoptAssetResponse } from '../storage'
 import {
   createNewEduResourceDraftSchemaForm,
   eduCollectionApplyImageForm,

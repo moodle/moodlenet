@@ -1,7 +1,7 @@
 'use server'
 
 import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
-import { adoptAssetService } from '@moodle/module/content'
+import { adoptAssetService } from '@moodle/module/storage'
 import { eduResourceMetaForm } from '@moodle/module/edu'
 import { eduResourceDraftId } from '@moodle/module/user-profile'
 import { t } from 'i18next'

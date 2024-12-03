@@ -1,7 +1,8 @@
 import { single_line_string_schema, zod_m_nullable } from '@moodle/lib-types'
 import type { z } from 'zod'
 import { array, enum as enum_z, number, object, string } from 'zod'
-import { adoptAssetFormSchema, adoptValuedAssetFormSchema, contentLanguageCode, contentLicenseCode } from '../../content'
+import { adoptAssetFormSchema, adoptValuedAssetFormSchema } from '../../storage'
+import { contentLanguageCode, contentLicenseCode } from '../../content'
 import { eduBloomCognitiveRecord, eduIscedFieldCode, eduIscedLevelCode, eduResourceTypeCode } from './edu-categories'
 
 export type eduPrimaryMsgSchemaConfigs = {

@@ -1,7 +1,7 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { _nullish, d_u, selection, unreachable_never } from '@moodle/lib-types'
-import { adoptAssetService } from '@moodle/module/content'
+import { adoptAssetService } from '@moodle/module/storage'
 import { eduResourceData, eduResourceMetaFormSchema } from '@moodle/module/edu'
 import { InsertDriveFile } from '@mui/icons-material'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'

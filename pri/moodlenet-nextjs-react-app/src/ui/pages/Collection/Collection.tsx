@@ -1,7 +1,7 @@
 'use client'
 
 import { _nullish, d_u, selection } from '@moodle/lib-types'
-import { adoptAssetService } from '@moodle/module/content'
+import { adoptAssetService } from '@moodle/module/storage'
 import { eduCollectionData, eduCollectionMetaFormSchema } from '@moodle/module/edu'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'

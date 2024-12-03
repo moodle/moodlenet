@@ -1,7 +1,6 @@
-import { d_u__d, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
+import { _any, d_u__d, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
 import sanitizeFilename from 'sanitize-filename'
-import { adoptAssetResponse } from '../../content'
-import { asset, useTempFileResult } from '../types'
+import { adoptAssetResponse, asset, useTempFileResult } from '../types'
 
 // export function newFsFileRelativePath(filename: string, date = ctx.now) {
 //   return [
@@ -37,7 +36,7 @@ export function getAssetUrl<_asset extends asset>(
   filestoreHttpHref: url_string,
 ): _asset extends { type: 'none' } ? undefined : url_string {
   return asset.type === 'none'
-    ? (undefined as any) // TS doesn't infer here we are in _asset extends { type: 'none' } branch 🤔
+    ? (undefined as _any) // TS doesn't infer here we are in _asset extends { type: 'none' } branch 🤔
     : asset.type === 'external'
       ? asset.url
       : asset.type === 'local'

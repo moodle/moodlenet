@@ -1,16 +1,16 @@
 'use server'
 
 import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
-import { eduCollectionApplyImageForm, eduCollectionMetaForm } from '@moodle/module/edu'
+import { eduCollectionMetaForm } from '@moodle/module/edu'
+import { adoptAssetService } from '@moodle/module/storage'
 import { eduCollectionDraftId } from '@moodle/module/user-profile'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
+import { revalidatePath } from 'next/cache'
 import { redirect, RedirectType } from 'next/navigation'
 import { appRoutes } from '../../../lib/common/appRoutes'
 import { defaultSafeActionClient, safeActionResult_to_adoptAssetResponse } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
-import { adoptAssetService } from '@moodle/module/content'
-import { revalidatePath } from 'next/cache'
 
 export async function getEduCollectionMetaSchema() {
   const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })

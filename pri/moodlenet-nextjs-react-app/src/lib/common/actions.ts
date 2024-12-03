@@ -1,5 +1,5 @@
 import { _any, _nullish } from '@moodle/lib-types'
-import { adoptExternalAssetFormSchema } from '@moodle/module/content'
+import { adoptExternalAssetFormSchema } from '@moodle/module/storage'
 import { UseHookFormActionHookReturn } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { ValidationErrors } from 'next-safe-action'
 import { HookSafeActionFn } from 'next-safe-action/hooks'

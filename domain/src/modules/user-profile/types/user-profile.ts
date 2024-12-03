@@ -1,5 +1,5 @@
 import { d_u, date_time_string, map, url_string } from '@moodle/lib-types'
-import { aiAgentResourceSuggestionStatus } from '../../ai-agent'
+import { aiAgentResourceAnalysisStatus } from '../../ai-agent'
 import { textExtractionStatus } from '../../asset-text-extraction'
 import { contentLanguageCode, contentLicenseCode } from '../../content'
 import { eduIscedFieldCode, eduIscedLevelCode } from '../../edu'
@@ -34,10 +34,10 @@ export type userProfileRecord = {
 export type userAccountExcerpt = Pick<userAccountRecord, 'roles' | 'id'> //REVIEW remove roles ?
 
 type eduInterestFields = {
-  iscedFields: eduIscedFieldCode[]
-  iscedLevels: eduIscedLevelCode[]
-  languages: contentLanguageCode[]
-  licenses: contentLicenseCode[]
+  iscedFields: { code: eduIscedFieldCode }[]
+  iscedLevels: { code: eduIscedLevelCode }[]
+  languages: { code: contentLanguageCode }[]
+  licenses: { code: contentLicenseCode }[]
 }
 
 export type eduCollectionDraft = draft<
@@ -45,12 +45,19 @@ export type eduCollectionDraft = draft<
     items: draftEduCollectionEduResourceRef[]
   }
 >
+type draftEduCollectionEduResourceRef = d_u<
+  {
+    myDraft: { eduResourceDraftId: eduResourceDraftId }
+    publishedOnMoodlenet: { moodlenetPublicEduResourceId: moodlenetPublicEduResourceId }
+  },
+  'type'
+>
 
 export type eduResourceDraft = draft<
   eduResourceData & {
     assetProcess: {
       textExtractionStatus: textExtractionStatus
-      aiAgentSuggestion: aiAgentResourceSuggestionStatus
+      aiAnalysis: aiAgentResourceAnalysisStatus
     }
   }
 >
@@ -60,13 +67,6 @@ type myDrafts = {
   eduCollection: map<eduCollectionDraft, eduCollectionDraftId>
 }
 
-type draftEduCollectionEduResourceRef = d_u<
-  {
-    myDraft: { eduResourceDraftId: eduResourceDraftId }
-    publishedOnMoodlenet: { moodlenetPublicEduResourceId: moodlenetPublicEduResourceId }
-  },
-  'type'
->
 
 type draft<dataType extends eduResourceData | eduCollectionData> = {
   data: dataType

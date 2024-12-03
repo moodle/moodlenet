@@ -5,7 +5,7 @@ import Grade from '@mui/icons-material/Grade'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 
 import { selection } from '@moodle/lib-types'
-import { adoptAssetService } from '@moodle/module/content'
+import { adoptAssetService } from '@moodle/module/storage'
 import { webappContributorAccessData } from '@moodle/module/moodlenet-react-app'
 import { updateProfileInfoSchema } from '@moodle/module/user-profile'
 import { Card } from '../../atoms/Card/Card'

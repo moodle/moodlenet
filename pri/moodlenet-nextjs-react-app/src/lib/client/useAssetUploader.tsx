@@ -1,5 +1,5 @@
 import { _nullish, d_u, d_u__d, isNotNullish, unreachable_never, url_string } from '@moodle/lib-types'
-import { adoptAssetForm, adoptAssetResponse, adoptAssetService, external_content } from '@moodle/module/content'
+import { adoptAssetForm, adoptAssetResponse, adoptAssetService, external_asset } from '@moodle/module/storage'
 import { asset, NONE_ASSET } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
 import { DOMAttributes, useCallback, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
@@ -491,7 +491,7 @@ type stateSelected = {
   uploadStatus: _nullish
   lastSubmission: _nullish | lastSubmission
 }
-type selection = d_u<{ file: { file: File }; external: external_content; null: unknown }, 'type'>
+type selection = d_u<{ file: { file: File }; external: external_asset; null: unknown }, 'type'>
 
 type stateSubmitting = {
   type: 'submitting'

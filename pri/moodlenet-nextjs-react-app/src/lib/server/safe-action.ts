@@ -1,5 +1,5 @@
 import { _any, _nullish } from '@moodle/lib-types'
-import { adoptAssetResponse } from '@moodle/module/content'
+import { adoptAssetResponse } from '@moodle/module/storage'
 import { createSafeActionClient, SafeActionResult } from 'next-safe-action'
 
 export const defaultSafeActionClient = createSafeActionClient()
