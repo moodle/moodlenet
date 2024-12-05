@@ -6,7 +6,7 @@ import {
   fs_storage_path_of,
   get_temp_file_paths,
   getFsDirectories,
-  prefixed_domain_file_fs_paths,
+  prefixedDomainFsPaths,
   use_temp_file,
   use_temp_file_as_web_image,
 } from '@moodle/lib-storage-local-fs'
@@ -20,7 +20,8 @@ import { StorageDefaultSecEnv } from './types'
 export function get_storage_default_secondary_factory({ homeDir }: StorageDefaultSecEnv): secondaryProvider {
   return ctx => {
     const fsDirs = getFsDirectories({ domainName: ctx.domain, homeDir })
-    const fs_file_paths = prefixed_domain_file_fs_paths(fsDirs.fsStorage)
+    const { paths: fs_paths, files: fs_file_paths } = prefixedDomainFsPaths(fsDirs.fsStorage)
+
     const secondaryAdapter: secondaryAdapter = {
       userProfile: {
         write: {
@@ -52,7 +53,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
               }),
             )
           },
-          async useTempImageInDraft({ draftId, adoptAssetForm, draftType, userProfileId }) {
+          async useTempImageInDraft({ draftId, adoptAssetForm, userProfileId, draftType }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts[draftType][draftId]!.image!()
             if (adoptAssetForm.type === 'none') {
@@ -75,7 +76,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
         sync: {
           async createUserProfile({ userProfileId }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const userProfilePath = fs_file_paths.userProfile[userProfileId]!()
+            const userProfilePath = fs_paths.userProfile[userProfileId]!()
             await mkdir(userProfilePath, { recursive: true })
             return [true, _void]
           },

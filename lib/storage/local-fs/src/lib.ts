@@ -1,10 +1,10 @@
 import { secondaryContext } from '@moodle/domain'
-import { createPathProxy, ok_ko, path, url_path_string_schema } from '@moodle/lib-types'
+import { createPathProxy, ok_ko, path } from '@moodle/lib-types'
 import { mkdir, readdir, readFile, rename, stat, writeFile } from 'fs/promises'
-import { dirname, join, normalize, relative, resolve, sep } from 'path'
+import { dirname, join, normalize, sep as os_path_separator, relative, resolve } from 'path'
 import { rimraf } from 'rimraf'
 import sharp from 'sharp'
-import { filesystem, fs, fsDirectories, fsUrlPathGetter } from './types'
+import { files, filesystem, fsDirectories, paths } from './types'
 
 import {
   asset,
@@ -34,15 +34,18 @@ export async function generateFileHashes(filePath: string): Promise<fileHashes> 
   }
 }
 
-export function prefixed_domain_file_fs_paths(prefix: path | string) {
+export function prefixedDomainFsPaths(prefix: path | string) {
   const _prefix = [prefix].flat()
-  const prefixed_domain_file_paths = createPathProxy<fs<filesystem, fsUrlPathGetter>>({
+  const prefixed_domain_file_paths = createPathProxy<files<filesystem> & paths<filesystem>>({
     apply({ path }) {
-      const _path = [..._prefix, ...path].join(sep)
-      return url_path_string_schema.parse(_path)
+      const _path = [..._prefix, ...path].join(os_path_separator)
+      return _path
     },
   })
-  return prefixed_domain_file_paths
+  return {
+    files: prefixed_domain_file_paths as files<filesystem>,
+    paths: prefixed_domain_file_paths as paths<filesystem>,
+  }
 }
 
 export function getFsDirectories({ domainName, homeDir }: { homeDir: string; domainName: string }): fsDirectories {
@@ -107,7 +110,7 @@ export async function deleteTemp({ tempId, fsDirs }: { tempId: string; fsDirs: f
 }
 
 export function fs_storage_path_of({ path, fsDirs }: { path: path; fsDirs: fsDirectories }) {
-  const fs_path = [fsDirs.fsStorage, ...path].join(sep)
+  const fs_path = [fsDirs.fsStorage, ...path].join(os_path_separator)
   return fs_path
 }
 

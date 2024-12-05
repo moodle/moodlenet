@@ -22,7 +22,7 @@ export type domainLayer = 'primary' | 'service' | 'secondary' | 'background' | '
 //FIXME: probably, any inter-module access should be only by primary
 export type contextModuleAccess = {
   secondary: {
-    [modName in keyof moodleSecondary]: Pick<moodleSecondary[modName], 'query' | 'service'> //FIX: remove service if service below enough
+    [modName in keyof moodleSecondary]: Pick<moodleSecondary[modName], 'query' | 'service'> //FIX: remove service if service below enough (must move `(crypto|userAccount).secondary.services` to '(crypto|userAccount).services`)
   }
   service: moodleService
 }

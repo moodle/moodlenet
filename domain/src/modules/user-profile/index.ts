@@ -186,11 +186,11 @@ export default interface UserProfileDomain {
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
         }): Promise<d_u__d<adoptAssetResponse<'stored' | 'none'>, 'status', 'done' | 'error'>>
-        useTempImageInDraft<draftType extends 'eduResource' | 'eduCollection'>(_: {
+        useTempImageInDraft(_: {
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
           draftId: draftId
-          draftType: draftType
+          draftType: 'eduResource' | 'eduCollection'
         }): Promise<d_u__d<adoptAssetResponse<'stored' | 'none'>, 'status', 'done' | 'error'>>
         /*  updatePartialUserProfile(_: {
           userProfileId: userProfileId

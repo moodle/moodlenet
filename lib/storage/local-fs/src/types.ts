@@ -1,10 +1,16 @@
-import { map, path, url_path_string } from '@moodle/lib-types'
-import { profileImageType } from '@moodle/module/user-profile'
+import { map, path } from '@moodle/lib-types'
 
-export type fsPathGetter = () => path
-export type fsUrlPathGetter = () => url_path_string
-export type fs<_fs, getterType> = {
-  [fsId in keyof _fs]: getterType & (_fs[fsId] extends filetype ? _fs[fsId] : fs<_fs[fsId], getterType>)
+declare const filetype_sym: unique symbol
+export type filetype = typeof filetype_sym
+
+type fsPath = string
+export type filePathGetter = () => fsPath
+export type files<_fs> = {
+  [fsId in keyof _fs]: _fs[fsId] extends filetype ? filePathGetter : files<_fs[fsId]>
+}
+export type pathGetter = () => fsPath
+export type paths<_fs> = {
+  [fsId in keyof _fs]: pathGetter & (_fs[fsId] extends filetype ? _fs[fsId] : paths<_fs[fsId]>)
 }
 
 export type fsDirectories = {
@@ -17,33 +23,20 @@ export type dir<_dir> = {
   [key in keyof _dir]: _dir[key] extends file ? file : dir<_dir[key]>
 }
 export type file = (alias: string) => path
-// FIXME:
-// FIXME:
-// FIXME:
-// FIXME: should this FILESYSTEM STRUCTURE be in DOMAIN ?
-// FIXME: also .. review it completely ... it doesn't ensure you get to an end leaf to save a file
-// FIXME:    e.g. to save a collectoin image, it accepts userProfile.xxxx.drafts.eduCollection.yyy
-// FIXME:    instead of userProfile.xxxx.drafts.eduCollection.yyy.image
-// FIXME:    that's ok when want to reference a directory, but no good for saving a file
 export type filesystem = {
-  userProfile: {
-    [userProfileId in string]: {
-      profile: map<'image', profileImageType>
-      drafts: {
-        eduResource: {
-          [eduResourceDraftId in string]: {
-            image: 'image'
-            asset: 'asset'
-          }
-        }
-        eduCollection: {
-          [eduCollectionDraftId in string]: {
-            image: 'image'
-          }
-        }
-      }
+  userProfile: map<{
+    profile: {
+      avatar: filetype
+      background: filetype
     }
-  }
+    drafts: {
+      eduResource: map<{
+        image: filetype
+        asset: filetype
+      }>
+      eduCollection: map<{
+        image: filetype
+      }>
+    }
+  }>
 }
-
-export type filetype = 'image'
