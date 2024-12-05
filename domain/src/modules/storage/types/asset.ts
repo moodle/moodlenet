@@ -2,9 +2,14 @@ import { d_u, d_u__d, date_time_string, mimetype, url_string, url_string_schema 
 import { literal, object, string, union } from 'zod'
 
 import { contentCredits } from '../../content'
-import { fileHashes } from './temp'
+import { userAccountId } from '../../user-account'
 
 export type externalAsset = { url: url_string; credits?: contentCredits }
+
+export type fileHashes = {
+  sha256: string
+  // ssdeep: string
+}
 
 export type accessibleAsset = d_u<
   {
@@ -13,7 +18,25 @@ export type accessibleAsset = d_u<
   },
   'type'
 >
+export type fileMeta = {
+  name: string
+  size: number
+}
 
+export type fileAssetMeta = fileMeta & {
+  mimetype: mimetype
+  hash: fileHashes
+  uploaded: null | {
+    date: date_time_string
+    byUserAccountId: userAccountId
+    primarySessionId: string
+    original?: {
+      name: string
+      size?: number
+      hash?: fileHashes
+    }
+  }
+}
 export type asset = d_u<
   {
     stored: storedAssetMeta
@@ -33,20 +56,9 @@ export type localAssetMeta = fileAssetMeta & {
   absolutePath: string
 }
 
-type fileAssetMeta = {
-  name: string
-  size: number
-  mimetype: mimetype
-  hash: fileHashes
-  uploaded: {
-    date: date_time_string
-    primarySessionId: string
-  } | null
-}
-
 export type adoptAssetForm = d_u<
   {
-    upload: {
+    tempFile: {
       tempId: string
     }
     external: externalAsset
@@ -68,8 +80,8 @@ export type adoptAssetService<accepts extends adoptAssetForm['type'] = adoptAsse
   adoptAssetForm: d_u__d<adoptAssetForm, 'type', accepts>,
 ) => Promise<adoptAssetResponse>
 
-export const adoptUploadedAssetFormSchema = object({
-  type: literal('upload'),
+export const adoptTempFileFormSchema = object({
+  type: literal('tempFile'),
   tempId: string(),
 })
 export const adoptExternalAssetFormSchema = object({
@@ -80,7 +92,7 @@ export const adoptExternalAssetFormSchema = object({
     provider: object({ name: string().max(50), url: url_string_schema }).optional(),
   }).optional(),
 })
-export const adoptValuedAssetFormSchema = union([adoptUploadedAssetFormSchema, adoptExternalAssetFormSchema])
+export const adoptValuedAssetFormSchema = union([adoptTempFileFormSchema, adoptExternalAssetFormSchema])
 export const adoptNoneAssetFormSchema = object({
   type: literal('none'),
 })

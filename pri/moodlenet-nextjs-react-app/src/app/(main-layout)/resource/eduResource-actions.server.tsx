@@ -17,7 +17,7 @@ export async function getCreateNewEduResourceSchema() {
   return edu.createNewEduResourceDraftSchema
 }
 
-export async function getCreateNewEduResourceDraft(): Promise<adoptAssetService<'external' | 'upload'>> {
+export async function getCreateNewEduResourceDraft(): Promise<adoptAssetService<'external' | 'tempFile'>> {
   return async function adoptAssetService_newEduResourceFileDraft(newResourceAsset) {
     'use server'
     const createNewEduResourceDraftImageAction = defaultSafeActionClient

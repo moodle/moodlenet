@@ -10,7 +10,7 @@ import {
   use_temp_file,
   use_temp_file_as_web_image,
 } from '@moodle/lib-storage-local-fs'
-import { uploaded_blob_meta } from '@moodle/module/storage'
+import { fileAssetMeta } from '@moodle/module/storage'
 import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
 import { mkdir, readdir, readFile, stat } from 'fs/promises'
 import { join } from 'path'
@@ -85,7 +85,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
           async tempMeta({ tempId }) {
             const { meta: temp_file_meta_path } = get_temp_file_paths({ tempId, fsDirs })
 
-            const meta: uploaded_blob_meta = await readFile(temp_file_meta_path, 'utf8').then(JSON.parse).catch(null)
+            const meta: fileAssetMeta = await readFile(temp_file_meta_path, 'utf8').then(JSON.parse).catch(null)
 
             if (!meta) {
               await deleteTemp({ tempId, fsDirs }).catch(() => null)
@@ -136,7 +136,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
         // async useTempFile({ absolutePath, tempId }) {
         //   const { temp_file_meta_path } = get_temp_file_paths({ tempId })
 
-        //   const meta: uploaded_blob_meta = await readFile(temp_file_meta_path, 'utf8')
+        //   const meta: fileAssetMeta = await readFile(temp_file_meta_path, 'utf8')
         //     .then(JSON.parse)
         //     .catch(null)
         //   if (!meta) {

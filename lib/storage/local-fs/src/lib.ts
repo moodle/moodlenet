@@ -6,14 +6,7 @@ import { rimraf } from 'rimraf'
 import sharp from 'sharp'
 import { files, filesystem, fsDirectories, paths } from './types'
 
-import {
-  asset,
-  fileHashes,
-  localAssetMeta,
-  uploaded_blob_meta,
-  useTempFileResult,
-  webImageSize,
-} from '@moodle/module/storage'
+import { asset, fileHashes, localAssetMeta, fileAssetMeta, useTempFileResult, webImageSize } from '@moodle/module/storage'
 import { getSanitizedFileName } from '@moodle/module/storage/lib'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
@@ -59,40 +52,6 @@ export function getFsDirectories({ domainName, homeDir }: { homeDir: string; dom
   }
 }
 
-// export function provide_assetRecord2asset(moodlePrimary: moodlePrimary, assetRecord: assetRecord) {
-//   const prefixed_domain_file_paths = createPathProxy<fs<filesystem, () => Promise<asset>>>({
-//     async apply({ path }) {
-//       if (assetRecord.type === 'external') {
-//         return {
-//           type: 'external',
-//           url: assetRecord.url,
-//           credits: assetRecord.credits,
-//         }
-//       } else if (assetRecord.type === 'uploaded') {
-//         const { filestoreHttp } = await moodlePrimary.env.application.deployments()
-//         const url = url_path_string_schema.parse([filestoreHttp.href, ...path, assetRecord.uploadMeta.name].join('/'))
-//         return {
-//           type: 'uploaded',
-//           url,
-//         }
-//       }
-//       throw new Error(`Invalid assetRecord type ${JSON.stringify(assetRecord)}`)
-//     },
-//   })
-//   return prefixed_domain_file_paths
-// }
-
-// export function file_server_domain_file_url({ primary }: { primary: moodlePrimary }) {
-//   const prefixed_domain_file_paths = createPathProxy<fs<filesystem, fsUrlPathGetter>>({
-//     async apply({ path }) {
-//       const { filestoreHttp } = await primary.env.application.deployments()
-//       const _path = [filestoreHttp.href, ...path].join('/')
-//       return url_path_string_schema.parse(_path)
-//     },
-//   })
-//   return prefixed_domain_file_paths
-// }
-
 type temp_file_paths = {
   file: string
   meta: string
@@ -114,20 +73,20 @@ export function fs_storage_path_of({ path, fsDirs }: { path: path; fsDirs: fsDir
   return fs_path
 }
 
-export async function ensure_temp_file({ tempId, fsDirs }: { tempId: string; fsDirs: fsDirectories }) {
+async function ensure_temp_file({ tempId, fsDirs }: { tempId: string; fsDirs: fsDirectories }) {
   const temp_paths = get_temp_file_paths({ tempId, fsDirs })
 
-  const uploaded_blob_meta: uploaded_blob_meta = await readFile(temp_paths.meta, 'utf8')
+  const fileAssetMeta: fileAssetMeta = await readFile(temp_paths.meta, 'utf8')
     .then(JSON.parse)
     .catch(() => null)
-  if (!uploaded_blob_meta) {
+  if (!fileAssetMeta) {
     return false
   }
   const file = await stat(temp_paths.file).catch(() => null)
   if (!file) {
     return false
   }
-  return { temp_paths, uploaded_blob_meta, file }
+  return { temp_paths, fileAssetMeta, file }
 }
 export async function use_temp_file_as_web_image({
   tempId,
@@ -176,7 +135,7 @@ export async function use_temp_file({
   await rimraf(absolutePath, { maxRetries: 2 }).catch(() => null)
   await mkdir(absolutePath, { recursive: true })
 
-  const mvError = await rename(temp_file.temp_paths.file, join(absolutePath, temp_file.uploaded_blob_meta.name)).then(
+  const mvError = await rename(temp_file.temp_paths.file, join(absolutePath, temp_file.fileAssetMeta.name)).then(
     () => false as const,
     e => String(e),
   )
@@ -185,21 +144,21 @@ export async function use_temp_file({
   if (mvError) {
     return [false, { reason: 'move', error: mvError }]
   }
-  const { uploaded_blob_meta } = temp_file
+  const { fileAssetMeta } = temp_file
   const path = relative(fsDirs.fsStorage, absolutePath) //join(absolutePath, temp_file.meta.name))
-  const asset = usingTempFile2asset({ path, uploaded_blob_meta })
-  return [true, { uploaded_blob_meta, asset }]
+  const asset = usingTempFile2asset({ path, fileAssetMeta })
+  return [true, { fileAssetMeta, asset }]
 }
 
-export function usingTempFile2asset({ path, uploaded_blob_meta }: { uploaded_blob_meta: uploaded_blob_meta; path: string }) {
+export function usingTempFile2asset({ path, fileAssetMeta }: { fileAssetMeta: fileAssetMeta; path: string }) {
   const asset: asset = {
     type: 'stored',
     path,
-    hash: uploaded_blob_meta.hash,
-    uploaded: { date: uploaded_blob_meta.uploaded.date, primarySessionId: uploaded_blob_meta.uploaded.primarySessionId },
-    mimetype: uploaded_blob_meta.mimetype,
-    name: uploaded_blob_meta.name,
-    size: uploaded_blob_meta.size,
+    hash: fileAssetMeta.hash,
+    uploaded: fileAssetMeta.uploaded,
+    mimetype: fileAssetMeta.mimetype,
+    name: fileAssetMeta.name,
+    size: fileAssetMeta.size,
   }
   return asset
 }
@@ -241,14 +200,17 @@ export async function resizeTempImage({
       withoutEnlargement: true,
     })
     .toFile(resizedTempFilePaths.file)
-  const resized_temp_uploaded_blob_meta: uploaded_blob_meta = {
-    ...original_temp_file.uploaded_blob_meta,
+  const resized_temp_fileAssetMeta: fileAssetMeta = {
+    ...original_temp_file.fileAssetMeta,
     hash: await generateFileHashes(resizedTempFilePaths.file),
     size: resizedInfo.size,
-    original: {
-      size: original_temp_file.uploaded_blob_meta.size,
-      hash: original_temp_file.uploaded_blob_meta.hash,
-      ...original_temp_file.uploaded_blob_meta.original,
+    uploaded: original_temp_file.fileAssetMeta.uploaded && {
+      ...original_temp_file.fileAssetMeta.uploaded,
+      original: {
+        size: original_temp_file.fileAssetMeta.size,
+        hash: original_temp_file.fileAssetMeta.hash,
+        name: original_temp_file.fileAssetMeta.name,
+      },
     },
   }
   //   ...original_temp_file.meta,
@@ -258,7 +220,7 @@ export async function resizeTempImage({
   //     size: original_temp_file.meta.size,
   //   },
   // }
-  await writeFile(resizedTempFilePaths.meta, JSON.stringify(resized_temp_uploaded_blob_meta), 'utf8')
+  await writeFile(resizedTempFilePaths.meta, JSON.stringify(resized_temp_fileAssetMeta), 'utf8')
 
   return [true, { resizedTempId, resizedTempFilePaths }]
 }
@@ -272,7 +234,7 @@ export async function deleteFile({ absolutePath, fsDirs }: { absolutePath: strin
   const parent_dir = dirname(absolutePath)
   const parent_dir_files = await readdir(parent_dir).catch(() => [
     `placeholder in case of (unlikely) readdir error`,
-    `to prevent deleting this dir, as it's not ensured to be empy`,
+    `to prevent deleting this dir, as it's not ensured to be empty`,
   ])
   if (parent_dir_files.length > 0) {
     return

@@ -22,7 +22,7 @@ import { useCallback, useState } from 'react'
 type saveEduResourceMetaFn = simpleHookSafeAction<eduResourceMetaFormSchema, void>
 export type eduResourceActions = {
   publish(): Promise<unknown>
-  saveNewResourceAsset: adoptAssetService<'external' | 'upload'>
+  saveNewResourceAsset: adoptAssetService<'external' | 'tempFile'>
   editDraft: {
     saveMeta: saveEduResourceMetaFn
     applyImage: adoptAssetService

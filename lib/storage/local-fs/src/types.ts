@@ -2,6 +2,8 @@ import { map, path } from '@moodle/lib-types'
 
 declare const filetype_sym: unique symbol
 export type filetype = typeof filetype_sym
+declare const image_filetype_sym: unique symbol
+export type image_filetype = filetype & typeof image_filetype_sym
 
 type fsPath = string
 export type filePathGetter = () => fsPath
@@ -26,16 +28,16 @@ export type file = (alias: string) => path
 export type filesystem = {
   userProfile: map<{
     profile: {
-      avatar: filetype
-      background: filetype
+      avatar: image_filetype
+      background: image_filetype
     }
     drafts: {
       eduResource: map<{
-        image: filetype
+        image: image_filetype
         asset: filetype
       }>
       eduCollection: map<{
-        image: filetype
+        image: image_filetype
       }>
     }
   }>

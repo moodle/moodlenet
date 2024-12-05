@@ -4,7 +4,7 @@ import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
 import { fsDirectories, generateFileHashes, getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-storage-local-fs'
-import { uploaded_blob_meta } from '@moodle/module/storage'
+import { fileAssetMeta } from '@moodle/module/storage'
 import { getSanitizedFileName } from '@moodle/module/storage/lib'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
@@ -38,7 +38,7 @@ declare global {
 
 const app = express()
 const trnspClient = http_bind.client()
-console.log('!!! moodle-fs-file-server started !!!')
+console.log('moodle-fs-file-server started')
 app.use(cookieParser()).use(async (req, _res, next) => {
   const primarySession = await getPrimarySession(req)
   const ap = createMoodleDomainProxy({
@@ -81,7 +81,6 @@ const router = express
     // if (!canServe) {
     //   return res.status(401).send('UNAUTHORIZED')
     // }
-    // USA ALIAS NAME METTI UPLOADED_BLOB_META NEL DB NDO SERVE CO I WATCH !
 
     // req.url = dirname(req.url)
     express.static(join(req.moodleDirs.fsStorage), {})(req, res, () => {
@@ -115,7 +114,7 @@ const router = express
         return res.status(500).send(`invalid mimetype ${req.file.mimetype}`)
       }
 
-      const uploaded_blob_meta: uploaded_blob_meta = {
+      const fileAssetMeta: fileAssetMeta = {
         hash: await generateFileHashes(req.file.path),
         name: getSanitizedFileName(req.file.originalname),
         mimetype: req.file.mimetype,
@@ -124,22 +123,22 @@ const router = express
           primarySessionId: req.moodlePrimarySession.id,
           byUserAccountId: userSession.user.id,
           date: date_time_string('now'),
-        },
-        original: {
-          name: req.file.originalname,
+          original: {
+            name: req.file.originalname,
+          },
         },
       }
-      writeFile(`${req.file.path}.json`, JSON.stringify(uploaded_blob_meta), 'utf8')
+      writeFile(`${req.file.path}.json`, JSON.stringify(fileAssetMeta), 'utf8')
       res.status(200).json({ tempId: req.file.filename })
 
-      //req.file: {
+      //sample req.file: {
       //   fieldname: 'file',
-      //   originalname: 'jp.jpg',
+      //   originalname: 'filename.jpg',
       //   encoding: '7bit',
       //   mimetype: 'image/jpeg',
-      //   destination: '/path/to/.moodle.env.home/localhost/fs-storage/.temp',
+      //   destination: '/path/to/temp_dir',
       //   filename: '085dcd493a51adf9e34bdc776926e225',
-      //   path: '/path/to/.moodle.env.home/localhost/fs-storage/.temp/085dcd493a51adf9e34bdc776926e225',
+      //   path: '/path/to/temp_dir/085dcd493a51adf9e34bdc776926e225',
       //   size: 129352
       // }
     })

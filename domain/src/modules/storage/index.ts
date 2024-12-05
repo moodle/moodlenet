@@ -1,6 +1,6 @@
 import type { ok_ko, path } from '@moodle/lib-types'
 import { userProfileId } from '../user-profile'
-import { uploaded_blob_meta } from './types/temp'
+import { fileAssetMeta } from './types/asset'
 import { uploadMaxSizeConfigs } from './types/configs'
 export * from './types'
 
@@ -21,7 +21,7 @@ export default interface StorageDomain {
         createUserProfile(_: { userProfileId: userProfileId }): Promise<ok_ko<void>>
       }
       query: {
-        tempMeta(_: { tempId: string }): Promise<ok_ko<{ meta: uploaded_blob_meta }, { notFound: unknown }>>
+        tempMeta(_: { tempId: string }): Promise<ok_ko<{ meta: fileAssetMeta }, { notFound: unknown }>>
       }
       write: {
         deletePath(_: {

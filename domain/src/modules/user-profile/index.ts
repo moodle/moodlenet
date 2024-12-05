@@ -139,7 +139,7 @@ export default interface UserProfileDomain {
         useTempFileAsResourceDraftAsset(_: {
           resourceDraftId: eduResourceDraftId
           userProfileId: userProfileId
-          adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload'>
+          adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'tempFile'>
         }): Promise<d_u__d<adoptAssetResponse<'stored'>, 'status', 'done' | 'error'>>
         createDraft<draftType extends 'eduResource' | 'eduCollection'>(_: {
           userProfileIdSelect: userProfileIdSelect
@@ -184,11 +184,11 @@ export default interface UserProfileDomain {
         useTempImageInProfile(_: {
           type: profileImageType
           userProfileId: userProfileId
-          adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
+          adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'tempFile' | 'none'>
         }): Promise<d_u__d<adoptAssetResponse<'stored' | 'none'>, 'status', 'done' | 'error'>>
         useTempImageInDraft(_: {
           userProfileId: userProfileId
-          adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
+          adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'tempFile' | 'none'>
           draftId: draftId
           draftType: 'eduResource' | 'eduCollection'
         }): Promise<d_u__d<adoptAssetResponse<'stored' | 'none'>, 'status', 'done' | 'error'>>

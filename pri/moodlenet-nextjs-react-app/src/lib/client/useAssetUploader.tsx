@@ -72,7 +72,7 @@ type assetType = 'webImage' | 'file'
 export function useAssetUploader<non_nullable extends boolean | undefined>(
   assetType: assetType,
   initialAsset: _nullish | asset,
-  adoptAssetService: _nullish | (non_nullable extends true ? adoptAssetService<'upload' | 'external'> : adoptAssetService),
+  adoptAssetService: _nullish | (non_nullable extends true ? adoptAssetService<'tempFile' | 'external'> : adoptAssetService),
   opts?: assetUploaderHookOpts<non_nullable>,
 ) {
   const { overrideMaxSize } = opts ?? {}
@@ -148,7 +148,7 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
           uploadResponse => {
             const { tempId } = uploadResponse
             dispatch({ type: 'uploadStatus', status: 'done', tempId })
-            return { type: 'upload', tempId }
+            return { type: 'tempFile', tempId }
           },
           err => {
             dispatch({ type: 'uploadStatus', status: 'error', message: String(err) })
