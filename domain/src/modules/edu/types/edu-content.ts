@@ -16,7 +16,7 @@ export type eduResourceMeta = {
 }
 
 export type eduResourceData = eduResourceMeta & {
-  asset: d_u__d<asset, 'type', 'external' | 'local'>
+  asset: d_u__d<asset, 'type', 'external' | 'stored'>
   image: asset
 }
 

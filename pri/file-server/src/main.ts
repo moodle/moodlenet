@@ -2,8 +2,8 @@ import { http_bind } from '@moodle/bindings-node'
 import { moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { fsDirectories, generateFileHashes, getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
+import { fsDirectories, generateFileHashes, getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-storage-local-fs'
 import { uploaded_blob_meta } from '@moodle/module/storage'
 import { getSanitizedFileName } from '@moodle/module/storage/lib'
 import assert from 'assert'
@@ -191,7 +191,7 @@ async function getPrimarySession(req: express.Request) {
       },
     },
     platforms: {
-      local: {
+      stored: {
         type: 'nodeJs',
         version: process.version,
         //    env: process.env,

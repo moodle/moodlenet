@@ -1,5 +1,5 @@
 import { _nullish, d_u, d_u__d, isNotNullish, unreachable_never, url_string } from '@moodle/lib-types'
-import { adoptAssetForm, adoptAssetResponse, adoptAssetService, external_asset } from '@moodle/module/storage'
+import { adoptAssetForm, adoptAssetResponse, adoptAssetService, externalAsset } from '@moodle/module/storage'
 import { asset, NONE_ASSET } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
 import { DOMAttributes, useCallback, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
@@ -29,7 +29,7 @@ type selectedCurrentAsset =
 
 type settledCurrentAsset =
   | {
-      asset: d_u__d<asset, 'type', 'external' | 'local'>
+      asset: d_u__d<asset, 'type', 'external' | 'stored'>
       url: string
     }
   | {
@@ -303,7 +303,7 @@ function currentEquals(newCurr: current, prevCurr: current) {
   if (newCurr.asset.type === 'external' && prevCurr.asset.type === 'external') {
     return newCurr.asset.url === prevCurr.asset.url
   }
-  if (newCurr.asset.type === 'local' && prevCurr.asset.type === 'local') {
+  if (newCurr.asset.type === 'stored' && prevCurr.asset.type === 'stored') {
     return newCurr.asset.path === prevCurr.asset.path
   }
   return false
@@ -491,7 +491,7 @@ type stateSelected = {
   uploadStatus: _nullish
   lastSubmission: _nullish | lastSubmission
 }
-type selection = d_u<{ file: { file: File }; external: external_asset; null: unknown }, 'type'>
+type selection = d_u<{ file: { file: File }; external: externalAsset; null: unknown }, 'type'>
 
 type stateSubmitting = {
   type: 'submitting'

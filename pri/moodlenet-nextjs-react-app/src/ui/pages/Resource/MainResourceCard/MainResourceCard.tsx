@@ -268,7 +268,7 @@ export default function MainResourceCard(props: mainResourceCardProps) {
         width < 800 && {
           Element: (
             <div key="open-link-or-download-file-button">
-              {eduResourceData.asset.type === 'local' ? (
+              {eduResourceData.asset.type === 'stored' ? (
                 <>
                   <InsertDriveFile />
                   <a href={resourceUrl} target="_blank" rel="noopener noreferrer" download={eduResourceData.asset.name}>

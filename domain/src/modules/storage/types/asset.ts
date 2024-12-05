@@ -4,20 +4,36 @@ import { literal, object, string, union } from 'zod'
 import { contentCredits } from '../../content'
 import { fileHashes } from './temp'
 
-export type external_asset = { url: url_string; credits?: contentCredits }
+export type externalAsset = { url: url_string; credits?: contentCredits }
+
+export type accessibleAsset = d_u<
+  {
+    local: localAssetMeta
+    external: externalAsset
+  },
+  'type'
+>
 
 export type asset = d_u<
   {
-    local: local_asset_meta
-    external: external_asset
+    stored: storedAssetMeta
+    external: externalAsset
     none: unknown
   },
   'type'
 >
+
 export const NONE_ASSET: asset = { type: 'none' }
 
-export type local_asset_meta = {
+export type storedAssetMeta = fileAssetMeta & {
   path: string
+}
+
+export type localAssetMeta = fileAssetMeta & {
+  absolutePath: string
+}
+
+type fileAssetMeta = {
   name: string
   size: number
   mimetype: mimetype
@@ -25,7 +41,7 @@ export type local_asset_meta = {
   uploaded: {
     date: date_time_string
     primarySessionId: string
-  }
+  } | null
 }
 
 export type adoptAssetForm = d_u<
@@ -33,7 +49,7 @@ export type adoptAssetForm = d_u<
     upload: {
       tempId: string
     }
-    external: external_asset
+    external: externalAsset
     none: unknown
   },
   'type'

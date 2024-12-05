@@ -140,7 +140,7 @@ export default interface UserProfileDomain {
           resourceDraftId: eduResourceDraftId
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload'>
-        }): Promise<d_u__d<adoptAssetResponse<'local'>, 'status', 'done' | 'error'>>
+        }): Promise<d_u__d<adoptAssetResponse<'stored'>, 'status', 'done' | 'error'>>
         createDraft<draftType extends 'eduResource' | 'eduCollection'>(_: {
           userProfileIdSelect: userProfileIdSelect
           draftType: draftType
@@ -185,13 +185,13 @@ export default interface UserProfileDomain {
           type: profileImageType
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
-        }): Promise<d_u__d<adoptAssetResponse<'local' | 'none'>, 'status', 'done' | 'error'>>
+        }): Promise<d_u__d<adoptAssetResponse<'stored' | 'none'>, 'status', 'done' | 'error'>>
         useTempImageInDraft<draftType extends 'eduResource' | 'eduCollection'>(_: {
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'upload' | 'none'>
           draftId: draftId
           draftType: draftType
-        }): Promise<d_u__d<adoptAssetResponse<'local' | 'none'>, 'status', 'done' | 'error'>>
+        }): Promise<d_u__d<adoptAssetResponse<'stored' | 'none'>, 'status', 'done' | 'error'>>
         /*  updatePartialUserProfile(_: {
           userProfileId: userProfileId
           partialUserProfile: deep_partial_props<userProfileRecord>

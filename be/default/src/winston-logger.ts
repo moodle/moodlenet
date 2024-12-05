@@ -62,6 +62,7 @@ function ctxString({
   message,
   timestamp,
   domain,
+  moduleName,
   id,
   contextLayer,
   //
@@ -74,11 +75,12 @@ function ctxString({
   return `
 ${timestamp} [${level}]
   domain            : ${domain}
+  moduleName        : ${moduleName}
   context           : ${contextLayer} # ${id}
-  callerContext     : ${callerContext ? `${callerContext.layer}.${callerContext.module} # ${callerContext.ctxId}` : NOT_AVAILABLE_CHAR}
-  originEndpoint    : ${(originEndpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
   endpoint          : ${(endpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
   primarySessionId  : ${primarySessionId ?? NOT_AVAILABLE_CHAR}
+  callerContext     : ${callerContext ? `${callerContext.layer}.${callerContext.module} # ${callerContext.ctxId}` : NOT_AVAILABLE_CHAR}
+  originEndpoint    : ${(originEndpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
 
 ${message}
 

@@ -1,6 +1,6 @@
 import { d_u, date_time_string, map, url_string } from '@moodle/lib-types'
-import { aiAgentResourceAnalysisStatus } from '../../ai-agent'
-import { textExtractionStatus } from '../../asset-text-extraction'
+import { aiAgentResourceAnalysisStatus } from '../../resource-metadata-generation'
+import { resourceExtractionStatus } from '../../resource-extraction'
 import { contentLanguageCode, contentLicenseCode } from '../../content'
 import { eduIscedFieldCode, eduIscedLevelCode } from '../../edu'
 import { eduCollectionData, eduResourceData } from '../../edu/types/edu-content'
@@ -56,7 +56,7 @@ type draftEduCollectionEduResourceRef = d_u<
 export type eduResourceDraft = draft<
   eduResourceData & {
     assetProcess: {
-      textExtractionStatus: textExtractionStatus
+      resourceExtractionStatus: resourceExtractionStatus
       aiAnalysis: aiAgentResourceAnalysisStatus
     }
   }

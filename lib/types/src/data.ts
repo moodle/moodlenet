@@ -51,7 +51,7 @@ export function __redact_stringify__(obj: _any) {
 }
 
 export function __redact__(data: _any): _any {
-  return JSON.parse(__redact_stringify__(data))
+  return data === null || typeof data !== 'object' ? data : JSON.parse(__redact_stringify__(data))
 }
 export function __redacted__<t>(data: t): __redacted__<t> {
   return _unchecked_brand<__redacted__<t>>({ [__redacted__key]: data })

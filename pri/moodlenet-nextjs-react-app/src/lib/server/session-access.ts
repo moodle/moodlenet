@@ -159,7 +159,7 @@ async function getPrimarySession() {
     },
     domain: xHost,
     platforms: {
-      local: {
+      stored: {
         type: 'nodeJs',
         version: process.version,
         //env: process.env,

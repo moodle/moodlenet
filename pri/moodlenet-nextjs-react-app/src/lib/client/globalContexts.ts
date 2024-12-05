@@ -41,13 +41,13 @@ export function useAssetUrl(asset: asset | _nullish, defaultTo?: url_string | as
           ? undefined
           : defaultTo.type === 'external'
             ? defaultTo.url
-            : defaultTo.type === 'local'
+            : defaultTo.type === 'stored'
               ? getAssetUrl(defaultTo, filestoreHttp.href)
               : unreachable_never(defaultTo)
     const [url, credits] =
       !asset || asset.type === 'none'
         ? ([defaultUrl, undefined] as const)
-        : asset.type === 'local'
+        : asset.type === 'stored'
           ? ([getAssetUrl(asset, filestoreHttp.href), undefined] as const)
           : asset.type === 'external'
             ? ([asset.url, asset.credits] as const)

@@ -27,9 +27,9 @@ export type uploaded_blob_meta = {
 }
 
 type usingTempFile = {
-   uploaded_blob_meta: uploaded_blob_meta
-   asset: d_u__d<asset, 'type', 'local'>
- }
+  uploaded_blob_meta: uploaded_blob_meta
+  asset: d_u__d<asset, 'type', 'stored'>
+}
 
 export type useTempFileResult = ok_ko<
   usingTempFile,

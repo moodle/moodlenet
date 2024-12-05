@@ -143,7 +143,7 @@ export const getResourceDomainName = (url: string): string | undefined => {
 export const getResourceTypeInfo = (asset?: asset | _nullish): { typeName: string; typeColor: string } | null => {
   if (!asset || asset.type === 'none') return null
   const resourceType =
-    asset.type === 'local'
+    asset.type === 'stored'
       ? asset.name.split('.').pop()
       : asset.type === 'external'
         ? getResourceDomainName(asset.url)

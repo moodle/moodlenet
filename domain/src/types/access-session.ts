@@ -10,7 +10,7 @@ export type primarySession = {
   // NOTE: ? make it `modTokens: { [app_name:string]?: string | null  }`
   token: signed_token | null
   platforms: {
-    local: platform
+    stored: platform
     remote: platform
   }
 }

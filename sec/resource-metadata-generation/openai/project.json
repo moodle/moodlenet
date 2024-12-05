@@ -1,0 +1,9 @@
+{
+  "name": "sec-resource-metadata-generation-openai",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "sec/resource-metadata-generation/openai/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project sec-resource-metadata-generation-openai --web",
+  "targets": {}
+}

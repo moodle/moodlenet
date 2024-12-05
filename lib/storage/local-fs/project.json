@@ -1,0 +1,9 @@
+{
+  "name": "lib-storage-local-fs",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/storage/local-fs/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project lib-storage-local-fs --web",
+  "targets": {}
+}

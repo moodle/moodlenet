@@ -33,14 +33,17 @@ export type ctxTrack = {
   ctxId: ctxId
 }
 
-export type baseContext = {
+export type contextInfo = {
   id: ctxId
   domain: string
   now: date_time_string
-  log: Logger
-  mod: contextModuleAccess //FIXME: access to other-modules secondary should not be available in primaryContext
   track?: ctxTrack
   from?: path
+}
+
+export type baseContext = contextInfo & {
+  log: Logger
+  mod: contextModuleAccess //FIXME: access to other-modules secondary should not be available in primaryContext
 }
 
 export type modSecondary<mod extends moodleModuleName = never> = Pick<moodleSecondary, mod>[mod]
@@ -54,6 +57,7 @@ export type backgroundContext<mod extends moodleModuleName = never> = coreContex
 export type primaryContext<mod extends moodleModuleName = never> = coreContext<mod> & {
   forward: moodlePrimary
   session: primarySession
+  moduleName: moodleModuleName
 } // & p_track<'primary'>
 
 export type serviceContext<mod extends moodleModuleName = never> = coreContext<mod>

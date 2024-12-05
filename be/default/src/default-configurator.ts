@@ -1,13 +1,13 @@
-import { moduleCore, secondaryAdapter, secondaryProvider, sys_admin_info } from '@moodle/domain'
+import { moduleCore, moodleModuleName, secondaryAdapter, secondaryProvider, sys_admin_info } from '@moodle/domain'
 import { configuration, deploymentInfoFromUrlString } from '@moodle/domain/lib'
-import { getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
+import { getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-storage-local-fs'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
-import { userAccount_core } from '@moodle/module/user-account/core'
+import { edu_core } from '@moodle/module/edu/core'
 import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
 import { moodlenet_core } from '@moodle/module/moodlenet/core'
 import { org_core } from '@moodle/module/org/core'
-import { edu_core } from '@moodle/module/edu/core'
 import { storage_core } from '@moodle/module/storage/core'
+import { userAccount_core } from '@moodle/module/user-account/core'
 import { user_profile_core } from '@moodle/module/user-profile/core'
 import { CryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
 import { ArangoDbSecEnv, get_arango_persistence_factory, provideArangoDbSecEnv } from '@moodle/sec-db-arango'
@@ -151,7 +151,12 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
       let do_start_background_processes = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
       migrateArangoDB({
         databaseConnections: arango_db_env.database_connections,
-        log: loggerProvider({ domain: domainName, contextLayer: 'secondary', id: 'migration', endpoint: ['sec-arangodb'] }),
+        log: loggerProvider({
+          domain: domainName,
+          contextLayer: 'secondary',
+          id: 'migration',
+          moduleName: 'sec-arangodb' as moodleModuleName,
+        }),
       }).then(() => {
         const configuration: configuration = {
           moduleCores,

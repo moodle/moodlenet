@@ -1,5 +1,5 @@
 import { _any } from '@moodle/lib-types'
-import { baseContext, domainLayer } from './concrete'
+import { baseContext, domainLayer, moodleModuleName } from './concrete'
 import { domainEndpoint, domainAccess } from './msg'
 
 //https://datatracker.ietf.org/doc/html/rfc5424
@@ -19,6 +19,7 @@ export type loggerContext = {
   primarySessionId?: string
   contextLayer: domainLayer
   endpoint?: domainEndpoint
+  moduleName: moodleModuleName
 } & Pick<baseContext, 'domain' | 'id'> &
   Pick<domainAccess, 'callerContext' | 'originEndpoint'>
 

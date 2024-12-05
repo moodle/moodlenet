@@ -98,7 +98,8 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
           {...{
             ...resourcePageProps,
             hookFormHandle,
-            publishCheck,shouldShowErrors
+            publishCheck,
+            shouldShowErrors,
           }}
         />
       </div>
@@ -132,7 +133,7 @@ export function ResourcePage(resourcePageProps: resourcePageProps) {
                   Open link
                 </SecondaryButton>
               </a>
-            ) : eduResourceData.asset.type === 'local' ? (
+            ) : eduResourceData.asset.type === 'stored' ? (
               <a href={assetUrl} target="_blank" rel="noreferrer" download={eduResourceData.asset.name}>
                 <SecondaryButton key="download-or-open-link-button" disabled={disableFields}>
                   <InsertDriveFile />

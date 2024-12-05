@@ -1,4 +1,5 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
+import { _void } from '@moodle/lib-types'
 import {
   deleteFile,
   deleteTemp,
@@ -8,8 +9,7 @@ import {
   prefixed_domain_file_fs_paths,
   use_temp_file,
   use_temp_file_as_web_image,
-} from '@moodle/lib-local-fs-storage'
-import { _void } from '@moodle/lib-types'
+} from '@moodle/lib-storage-local-fs'
 import { uploaded_blob_meta } from '@moodle/module/storage'
 import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
 import { mkdir, readdir, readFile, stat } from 'fs/promises'

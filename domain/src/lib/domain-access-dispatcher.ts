@@ -24,7 +24,6 @@ import {
   watchContext,
 } from '../types'
 import { createMoodleDomainProxy } from './domain-proxy'
-import { format } from 'util'
 export type configuration = {
   domain: string
   moduleCores: moduleCore<_any>[]
@@ -159,10 +158,10 @@ export function provideDomainAccessDispatcher({
     ) {
       // mainLogger('debug', `dispatchMsg`, domainMsg.endpoint, domainMsg.payload)
       // const endpoint = domainMsg.endpoint.reduce((currProp, currPathSegment) => currProp?.[currPathSegment], impl)
-      const endpoint = await (async () => {
-        const [layer, moduleName, channelName, endpointName] = domainMsg.endpoint
+      const endpoint = await (async (_domainMsg, _impl) => {
+        const [layer, moduleName, channelName, endpointName] = _domainMsg.endpoint
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const channelProp = impl[layer!]?.[moduleName!]?.[channelName!]
+        const channelProp = _impl[layer!]?.[moduleName!]?.[channelName!]
         if (!channelProp) {
           return
         }
@@ -172,7 +171,7 @@ export function provideDomainAccessDispatcher({
         }
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return channelProp?.[endpointName!]
-      })()
+      })(domainMsg, impl)
 
       if (typeof endpoint !== 'function') {
         const err_msg = `
@@ -180,18 +179,15 @@ export function provideDomainAccessDispatcher({
       FOUND: ${endpoint}
       `
         if (opts?.graceful) {
-          return logMessage('warn', err_msg, endpoint)
+          return
         }
+        logMessage('warn', err_msg, endpoint)
 
         throw TypeError(err_msg)
       }
-      const endpointResponse = await endpoint(domainMsg.payload).catch((err: unknown) => {
-        logMessage(
-          'error',
-          domainMsg.endpoint.join('/'),
-          err instanceof Error ? { stack: err.stack, format: format(err) } : String(err),
-        )
-        throw err
+      const endpointResponse = await endpoint(domainMsg.payload).catch((error: unknown) => {
+        logMessage('error', domainMsg.endpoint.join('/'), { error })
+        throw error
       })
       //logMessage('debug', ':)', { payload: domainMsg.payload ?? null, response: endpointResponse })
       return endpointResponse
@@ -253,6 +249,7 @@ export function provideDomainAccessDispatcher({
       loggerProvider({
         domain,
         id,
+        moduleName,
         originEndpoint,
         callerContext,
         contextLayer,
@@ -266,6 +263,7 @@ export function provideDomainAccessDispatcher({
       secondaryContext = {
       id,
       domain,
+      moduleName,
       now: date_time_string('now'),
       track: callerContext,
       from: originEndpoint,

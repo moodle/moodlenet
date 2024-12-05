@@ -39,14 +39,14 @@ export function getAssetUrl<_asset extends asset>(
     ? (undefined as _any) // TS doesn't infer here we are in _asset extends { type: 'none' } branch 🤔
     : asset.type === 'external'
       ? asset.url
-      : asset.type === 'local'
+      : asset.type === 'stored'
         ? (`${filestoreHttpHref}/${asset.path}/${asset.name}` as url_path_string)
         : unreachable_never(asset)
 }
 
 export async function useTempFileResult_to_adoptAssetResponse(
   p_useTempFileResult: useTempFileResult | Promise<useTempFileResult>,
-): Promise<d_u__d<adoptAssetResponse<'local'>, 'status', 'done' | 'error'>> {
+): Promise<d_u__d<adoptAssetResponse<'stored'>, 'status', 'done' | 'error'>> {
   const [done, result] = await p_useTempFileResult
   return done
     ? {

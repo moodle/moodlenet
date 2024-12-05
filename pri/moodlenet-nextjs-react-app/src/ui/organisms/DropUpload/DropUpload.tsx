@@ -33,7 +33,7 @@ export function DropUpload({ useAssetUploaderHandler, displayOnly/* , showSelect
         {current.type === 'settled'
           ? current.asset.type === 'external'
             ? current.asset.url
-            : current.asset.type === 'local'
+            : current.asset.type === 'stored'
               ? current.asset.name
               : current.asset.type === 'none'
                 ? ''
