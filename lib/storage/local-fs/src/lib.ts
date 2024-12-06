@@ -19,10 +19,30 @@ import {
   useTempFileResult,
   webImageSize,
 } from '@moodle/module/storage'
-import { sanitizeFilename } from '@moodle/module/storage/lib'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
 import { Readable } from 'stream'
+
+import sanitize_filename from 'sanitize-filename'
+export function sanitizeFilename(originalFilename: string) {
+  const sanitized = sanitize_filename(originalFilename)
+    .normalize('NFKD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/[^a-z0-9._-]/gi, '_')
+    .replace(/^[_-]+/, '')
+    .replace(/[_-]+$/, '')
+    .replace(/[_-]+/g, '_')
+
+  return sanitized
+  // originalFilename.normalize("NFD").replace(/\p{Diacritic}/gu, "")
+  // const origExt = originalFilename.split('.').pop()
+  // const mDotExt = origExt ? `.${origExt}` : ''
+}
+
+export function getRndPrefixedSanitizedFileName(originalFilename: string, prefixLength = 3) {
+  const rnd = String(Math.random()).substring(2, 2 + prefixLength)
+  return `${rnd}_${sanitizeFilename(originalFilename)}`
+}
 
 export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
 
