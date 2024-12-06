@@ -1,9 +1,15 @@
 import { http_bind } from '@moodle/bindings-node'
 import { moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
-import { createTempFile, deleteTemp, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
+import {
+  createTempFile,
+  deleteTemp,
+  domainFsDirectories,
+  getDomainFsDirectories,
+  MOODLE_DEFAULT_HOME_DIR,
+} from '@moodle/lib-domain-fs'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { getLocalStorageFsDirectories, localStorageFsDirectories } from '@moodle/lib-storage-local-fs'
+import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
 import { date_time_string, fileAssetMeta, isMimetype, signed_token_schema } from '@moodle/lib-types'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
@@ -11,7 +17,7 @@ import express from 'express'
 import { mkdir } from 'fs/promises'
 import multer from 'multer'
 import { userAgent } from 'next/server'
-import { join, resolve } from 'path'
+import { resolve } from 'path'
 import { Headers } from 'undici'
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
@@ -30,7 +36,7 @@ declare global {
     export interface Request {
       moodlePrimary: moodlePrimary
       moodlePrimarySession: primarySession
-      moodleDirs: localStorageFsDirectories
+      moodleDirs: domainFsDirectories
     }
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Multer {
@@ -61,7 +67,7 @@ app.use(cookieParser()).use(async (req, _res, next) => {
     },
   })
 
-  req.moodleDirs = getLocalStorageFsDirectories({
+  req.moodleDirs = getDomainFsDirectories({
     domainName: primarySession.domain,
     homeDir: MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR,
   })
@@ -91,7 +97,9 @@ const router = express
     // }
 
     // req.url = dirname(req.url)
-    express.static(join(req.moodleDirs.fsStorage), {})(req, res, () => {
+    const localFsStorageDirectory = getDefaultLocalFsStorageDirectory({ domainFsDirectories: req.moodleDirs })
+
+    express.static(localFsStorageDirectory, {})(req, res, () => {
       res.status(404).send('NOT FOUND')
     })
   })

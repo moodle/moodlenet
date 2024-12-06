@@ -1,7 +1,6 @@
 import { moduleCore, moodleModuleName, secondaryAdapter, secondaryProvider, sys_admin_info } from '@moodle/domain'
 import { configuration, deploymentInfoFromUrlString } from '@moodle/domain/lib'
-import { MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
-import { getLocalStorageFsDirectories } from '@moodle/lib-storage-local-fs'
+import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { edu_core } from '@moodle/module/edu/core'
 import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
@@ -22,6 +21,7 @@ import * as path from 'path'
 import { coerce, literal, object, union } from 'zod'
 import { configurator } from './types'
 import { createDefaultDomainLoggerProvider } from './winston-logger'
+import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
 
 const cache: map<Promise<configuration>> = {}
 
@@ -34,12 +34,13 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
   if (!cache[domainName]) {
     cache[domainName] = new Promise<configuration>(promiseResolveConfiguration => {
       const MOODLE_HOME_DIR = path.resolve(process.cwd(), process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
-      const { currentDomainDir } = getLocalStorageFsDirectories({
+      const domainFsDirectories = getDomainFsDirectories({
         homeDir: MOODLE_HOME_DIR,
         domainName,
       })
-      dotenvExpand(dotenv.config({ path: path.join(currentDomainDir, '.env'), override: true }))
-      console.debug({ currentDomainDir, MOODLE_HOME_DIR })
+
+      dotenvExpand(dotenv.config({ path: path.join(domainFsDirectories.currentDomainDir, '.env'), override: true }))
+      console.debug({ currentDomainDir: domainFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
 
       const { loggerProvider } = createDefaultDomainLoggerProvider({ loggerConfigs })
 
@@ -60,8 +61,8 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
       })
 
       console.info(`configuring domain [${domainName}] env:`, { MOODLE_HOME_DIR, ...env })
-      const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(currentDomainDir, `private.key`), 'utf8')
-      const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(currentDomainDir, `public.key`), 'utf8')
+      const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `private.key`), 'utf8')
+      const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `public.key`), 'utf8')
       const _process_env = process.env as _any
 
       const arango_db_env: ArangoDbSecEnv = provideArangoDbSecEnv({
@@ -80,9 +81,10 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
       const sys_admin_info: sys_admin_info = {
         email: env.MOODLE_SYS_ADMIN_EMAIL,
       }
-
+      const localFsStorageDirectory = getDefaultLocalFsStorageDirectory({ domainFsDirectories })
       const file_system_storage_sec_env: StorageDefaultSecEnv = {
-        homeDir: MOODLE_HOME_DIR,
+        domainFsDirectories,
+        localFsStorageDirectory,
       }
 
       const secondaryProviders: secondaryProvider[] = [

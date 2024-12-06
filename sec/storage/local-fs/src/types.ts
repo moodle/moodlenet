@@ -1,3 +1,6 @@
+import { domainFsDirectories } from '@moodle/lib-domain-fs'
+
 export interface StorageDefaultSecEnv {
-  homeDir: string
+  domainFsDirectories: domainFsDirectories
+  localFsStorageDirectory: string
 }

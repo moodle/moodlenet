@@ -1,21 +1,21 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { deleteStaleTemp, deleteTemp, getTempFilePaths } from '@moodle/lib-domain-fs'
-import {
-  createDir,
-  deleteStorageFile,
-  getLocalStorageFsDirectories,
-  useTempFile,
-  useTempFileAsWebImage,
-} from '@moodle/lib-storage-local-fs'
+import { createDir, deleteStorageFile, useTempFile, useTempFileAsWebImage } from '@moodle/lib-storage-local-fs'
 import { _void, fileAssetMeta } from '@moodle/lib-types'
 import { domainFs } from '@moodle/module/storage'
 import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
 import { readFile } from 'fs/promises'
 import { StorageDefaultSecEnv } from './types'
 
-export function get_storage_default_secondary_factory({ homeDir }: StorageDefaultSecEnv): secondaryProvider {
+export function get_storage_default_secondary_factory({
+  domainFsDirectories,
+  localFsStorageDirectory,
+}: StorageDefaultSecEnv): secondaryProvider {
   return ctx => {
-    const fsDirs = getLocalStorageFsDirectories({ domainName: ctx.domain, homeDir })
+    const fsDirs = {
+      ...domainFsDirectories,
+      storageDir: localFsStorageDirectory,
+    }
 
     const secondaryAdapter: secondaryAdapter = {
       userProfile: {

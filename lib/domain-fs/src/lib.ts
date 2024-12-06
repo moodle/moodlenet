@@ -8,7 +8,7 @@ import { rimraf } from 'rimraf'
 import sanitize_filename from 'sanitize-filename'
 import sharp from 'sharp'
 import { Readable } from 'stream'
-import { domainFsDirectories } from './types'
+import { domainFsDirectories, tempFilePaths } from './types'
 
 export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
 
@@ -63,12 +63,7 @@ export async function generateHashes(readable: Readable): Promise<fileHashes> {
   }
 }
 
-type temp_file_paths = {
-  file: string
-  meta: string
-}
-
-export function getTempFilePaths({ tempId, fsDirs }: { tempId: string; fsDirs: domainFsDirectories }): temp_file_paths {
+export function getTempFilePaths({ tempId, fsDirs }: { tempId: string; fsDirs: domainFsDirectories }): tempFilePaths {
   const file = join(fsDirs.temp, tempId)
   const meta = `${file}.meta.json`
   return { file, meta }
@@ -134,7 +129,7 @@ export async function resizeTempImage({
   maxSizePixel: number
   fsDirs: domainFsDirectories
 }): Promise<
-  ok_ko<{ resizedTempId: string; resizedTempFilePaths: temp_file_paths }, { tempNotFound: unknown; invalidFile: unknown }>
+  ok_ko<{ resizedTempId: string; resizedTempFilePaths: tempFilePaths }, { tempNotFound: unknown; invalidFile: unknown }>
 > {
   const original_temp_file = await ensureTempFile({ tempId, fsDirs })
   if (!original_temp_file) {

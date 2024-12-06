@@ -1,30 +1,19 @@
-import { ensureTempFile, getDomainFsDirectories, resizeTempImage } from '@moodle/lib-domain-fs'
+import { domainFsDirectories, ensureTempFile, resizeTempImage } from '@moodle/lib-domain-fs'
 import { dirPath, path, useTempFileResult } from '@moodle/lib-types'
 import { mkdir, readdir, rename } from 'fs/promises'
 import { join, normalize, sep as os_path_separator } from 'path'
 import { rimraf } from 'rimraf'
 import { localStorageFsDirectories } from './types'
 
-export function getLocalStorageFsDirectories({
-  domainName,
-  homeDir,
-}: {
-  homeDir: string
-  domainName: string
-}): localStorageFsDirectories {
-  const domainFsDirectories = getDomainFsDirectories({ domainName, homeDir })
-  const fsStorage = join(domainFsDirectories.currentDomainDir, 'local-fs-storage')
-  return {
-    ...domainFsDirectories,
-    fsStorage,
-  }
-}
-
 function absolutePathOf({ path, fsDirs }: { path: path; fsDirs: localStorageFsDirectories }) {
-  const absolute_path = [fsDirs.fsStorage, ...path].join(os_path_separator)
+  const absolute_path = [fsDirs.storageDir, ...path].join(os_path_separator)
   return absolute_path
 }
 
+export function getDefaultLocalFsStorageDirectory({ domainFsDirectories }: { domainFsDirectories: domainFsDirectories }) {
+  const localFsStorageDirectory = join(domainFsDirectories.currentDomainDir, 'local-fs-storage')
+  return localFsStorageDirectory
+}
 export async function useTempFileAsWebImage({
   tempId,
   path,
@@ -95,7 +84,7 @@ export async function deleteStorageFile({ path, fsDirs }: { path: path; fsDirs: 
   const absolutePath = absolutePathOf({ path, fsDirs })
   //_and_clean_upper_empty_dirs
   //TODO: ensure this check is enough to avoid climbing up too much !
-  if (normalize(fsDirs.fsStorage).startsWith(normalize(absolutePath))) {
+  if (normalize(fsDirs.storageDir).startsWith(normalize(absolutePath))) {
     return
   }
   await rimraf(absolutePath, { maxRetries: 2 }).catch(() => null)
