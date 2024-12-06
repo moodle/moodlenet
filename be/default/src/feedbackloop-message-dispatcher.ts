@@ -10,6 +10,7 @@ const feedbackLoopMessageDispatcherProvider: feedbackLoopMessageDispatcherProvid
     moduleCores: configuration.moduleCores,
     secondaryProviders: configuration.secondaryProviders,
     loggerProvider: configuration.loggerProvider,
+    domainFsDirectories: configuration.domainFsDirectories,
     feedbackDispatcher({ domainAccess: feedbackDomainAccess }) {
       return feedbackDispatcher({ domainAccess: feedbackDomainAccess })
     },

@@ -2,6 +2,7 @@ import { any_function, date_time_string, deep_partial, path } from '@moodle/lib-
 import { MoodleDomain } from '../moodle-domain'
 import { primarySession } from './access-session'
 import { Logger } from './log'
+import { domainFsDirectories } from '@moodle/lib-domain-fs'
 
 export type moodleModuleName = keyof moodlePrimary & keyof moodleSecondary & keyof moodleEvent & keyof moodleService
 export type moodlePrimary = MoodleDomain['primary']
@@ -68,9 +69,10 @@ export type watchContext<mod extends moodleModuleName = never> = coreContext<mod
   sync: modSecondary<mod>['sync']
 } // & track<'primary'> | track<'secondary'>
 
-export type secondaryContext = baseContext //& {
-//   emit: modEmitter<mod>
-// }
+export type secondaryContext = baseContext & {
+  domainFsDirectories: domainFsDirectories
+  // emit: modEmitter<mod>
+}
 // & { query: all secondary reads }?
 //   | track<'primary'>
 //   | track<'secondary'>

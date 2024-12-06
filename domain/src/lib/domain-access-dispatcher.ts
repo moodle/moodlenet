@@ -24,12 +24,14 @@ import {
   watchContext,
 } from '../types'
 import { createMoodleDomainProxy } from './domain-proxy'
+import { domainFsDirectories } from '@moodle/lib-domain-fs'
 export type configuration = {
   domain: string
   moduleCores: moduleCore<_any>[]
   secondaryProviders: secondaryProvider[]
   start_background_processes: boolean
   loggerProvider: loggerProvider
+  domainFsDirectories: domainFsDirectories
 }
 export type domainAccessDispatcherProviderDeps = configuration & {
   feedbackDispatcher: messageDispatcher
@@ -49,6 +51,7 @@ export function provideDomainAccessDispatcher({
   loggerProvider,
   start_background_processes,
   feedbackDispatcher,
+  domainFsDirectories,
 }: domainAccessDispatcherProviderDeps): messageDispatcher {
   return async ({ domainAccess: current_domainAccess }) => {
     // console.dir(current_domainAccess.endpoint)
@@ -66,6 +69,7 @@ export function provideDomainAccessDispatcher({
     const currentDomainAccessContext = await generateAccessContext(
       currentDomainAccessLayer,
       currentDomainAccessModuleName,
+      domainFsDirectories,
       current_domainAccess,
     )
     const { log } = currentDomainAccessContext
@@ -82,7 +86,11 @@ export function provideDomainAccessDispatcher({
           if (!startBackgroundProcess) {
             return
           }
-          const backgroundContext = await generateAccessContext('background', modName as moodleModuleName)
+          const backgroundContext = await generateAccessContext(
+            'background',
+            modName as moodleModuleName,
+            domainFsDirectories,
+          )
           return startBackgroundProcess(backgroundContext)
         }),
       )
@@ -130,7 +138,12 @@ export function provideDomainAccessDispatcher({
           if (!event) {
             return
           }
-          const eventAccessContext = await generateAccessContext('event', modName as moodleModuleName, current_domainAccess)
+          const eventAccessContext = await generateAccessContext(
+            'event',
+            modName as moodleModuleName,
+            domainFsDirectories,
+            current_domainAccess,
+          )
           const eventListener = event(eventAccessContext)
           return dispatchDomainMsg({ event: eventListener }, current_domainAccess, eventAccessContext.log, {
             graceful: true,
@@ -198,7 +211,7 @@ export function provideDomainAccessDispatcher({
           if (!watch) {
             return
           }
-          const watchContext = await generateAccessContext('watch', modName, current_domainAccess)
+          const watchContext = await generateAccessContext('watch', modName, domainFsDirectories, current_domainAccess)
           const watcher = watch(watchContext)
           // mainLogger('debug', `triggerWatchers`, current_domainAccess.endpoint, maybe_watchImpl)
           return dispatchDomainMsg(
@@ -218,6 +231,7 @@ export function provideDomainAccessDispatcher({
   async function generateAccessContext<modName extends moodleModuleName, layer extends domainLayer>(
     contextLayer: layer,
     moduleName: modName,
+    domainFsDirectories: domainFsDirectories,
     current_domainAccess?: domainAccess,
   ) {
     const id = await generateUlid({ onDate: date_time_string('now') })
@@ -264,6 +278,7 @@ export function provideDomainAccessDispatcher({
       id,
       domain,
       moduleName,
+      domainFsDirectories,
       now: date_time_string('now'),
       track: callerContext,
       from: originEndpoint,
@@ -278,3 +293,4 @@ export function provideDomainAccessDispatcher({
     return accessContext
   }
 }
+

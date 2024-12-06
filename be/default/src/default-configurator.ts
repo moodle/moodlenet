@@ -83,7 +83,6 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
       }
       const localFsStorageDirectory = getDefaultLocalFsStorageDirectory({ domainFsDirectories })
       const file_system_storage_sec_env: StorageDefaultSecEnv = {
-        domainFsDirectories,
         localFsStorageDirectory,
       }
 
@@ -166,6 +165,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
           secondaryProviders,
           loggerProvider,
           domain: domainName,
+          domainFsDirectories,
           get start_background_processes() {
             const resp = do_start_background_processes
             do_start_background_processes = false

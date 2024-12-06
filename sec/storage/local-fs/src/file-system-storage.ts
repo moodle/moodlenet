@@ -10,11 +10,9 @@ import { domainFs } from '@moodle/module/storage'
 import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
 import { StorageDefaultSecEnv } from './types'
 
-export function get_storage_default_secondary_factory({
-  domainFsDirectories,
-  localFsStorageDirectory,
-}: StorageDefaultSecEnv): secondaryProvider {
+export function get_storage_default_secondary_factory({ localFsStorageDirectory }: StorageDefaultSecEnv): secondaryProvider {
   return ctx => {
+    const { domainFsDirectories } = ctx
     const localStorageFsDirectories: localStorageFsDirectories = {
       ...domainFsDirectories,
       storageDir: localFsStorageDirectory,
