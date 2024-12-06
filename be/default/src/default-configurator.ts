@@ -1,6 +1,6 @@
 import { moduleCore, moodleModuleName, secondaryAdapter, secondaryProvider, sys_admin_info } from '@moodle/domain'
 import { configuration, deploymentInfoFromUrlString } from '@moodle/domain/lib'
-import { getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-storage-local-fs'
+import { getLocalStorageFsDirectories } from '@moodle/lib-storage-local-fs'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { edu_core } from '@moodle/module/edu/core'
 import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
@@ -21,6 +21,7 @@ import * as path from 'path'
 import { coerce, literal, object, union } from 'zod'
 import { configurator } from './types'
 import { createDefaultDomainLoggerProvider } from './winston-logger'
+import { MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 
 const cache: map<Promise<configuration>> = {}
 
@@ -33,7 +34,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
   if (!cache[domainName]) {
     cache[domainName] = new Promise<configuration>(promiseResolveConfiguration => {
       const MOODLE_HOME_DIR = path.resolve(process.cwd(), process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
-      const { currentDomainDir } = getFsDirectories({
+      const { currentDomainDir } = getLocalStorageFsDirectories({
         homeDir: MOODLE_HOME_DIR,
         domainName,
       })

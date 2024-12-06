@@ -25,10 +25,12 @@
       "@moodle/domain": ["domain/src/index.ts"],
       "@moodle/domain/lib": ["domain/src/lib/index.ts"],
       "@moodle/lib-asset-extraction-tika": ["lib/asset-extraction/tika/src/index.ts"],
+      "@moodle/lib-domain-fs": ["lib/domain-fs/src/index.ts"],
       "@moodle/lib-email-templates/org": ["lib/email-templates/src/moodle/index.ts"],
       "@moodle/lib-email-templates/user-account": ["lib/email-templates/src/moodle/user-account/index.ts"],
       "@moodle/lib-id-gen": ["lib/id-gen/src/index.ts"],
       "@moodle/lib-jwt-jose": ["lib/jwt/jose/src/index.ts"],
+      "@moodle/lib-nodejs-common": ["lib/nodejs/common/src/index.ts"],
       "@moodle/lib-storage-local-fs": ["lib/storage/local-fs/src/index.ts"],
       "@moodle/lib-types": ["lib/types/src/index.ts"],
       "@moodle/module/content": ["domain/src/modules/content/index.ts"],
@@ -84,7 +86,6 @@
       "@moodle/sec-email-nodemailer": ["sec/email/nodemailer/src/index.ts"],
       "@moodle/sec-resource-metadata-generation-openai": ["sec/resource-metadata-generation/openai/src/index.ts"],
       "@moodle/sec-storage-default": ["sec/storage/default/src/index.ts"],
-      "@moodle/lib-nodejs-common": ["lib/nodejs/common/src/index.ts"],
       "sec-resource-extraction-default": ["sec/resource-extraction/default/src/index.ts"]
     }
   },

@@ -1,14 +1,9 @@
 import { http_bind } from '@moodle/bindings-node'
 import { moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
+import { createTempFile, deleteTemp, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 import { generateUlid } from '@moodle/lib-id-gen'
-import {
-  create_temp_file,
-  deleteTemp,
-  getFsDirectories,
-  localFsDirectories,
-  MOODLE_DEFAULT_HOME_DIR,
-} from '@moodle/lib-storage-local-fs'
+import { getLocalStorageFsDirectories, localStorageFsDirectories } from '@moodle/lib-storage-local-fs'
 import { date_time_string, fileAssetMeta, isMimetype, signed_token_schema } from '@moodle/lib-types'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
@@ -35,7 +30,7 @@ declare global {
     export interface Request {
       moodlePrimary: moodlePrimary
       moodlePrimarySession: primarySession
-      moodleDirs: localFsDirectories
+      moodleDirs: localStorageFsDirectories
     }
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Multer {
@@ -66,7 +61,7 @@ app.use(cookieParser()).use(async (req, _res, next) => {
     },
   })
 
-  req.moodleDirs = getFsDirectories({
+  req.moodleDirs = getLocalStorageFsDirectories({
     domainName: primarySession.domain,
     homeDir: MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR,
   })
@@ -139,7 +134,7 @@ const router = express
             cb(new Error(`invalid mimetype ${file.mimetype}`))
             return
           }
-          create_temp_file({
+          createTempFile({
             expiresSeconds: tempFileMaxRetentionSeconds,
             fsDirs: req.moodleDirs,
             readable: file.stream,

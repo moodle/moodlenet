@@ -1,9 +1,5 @@
 import { createPathProxy, dirPaths, filePaths } from '@moodle/lib-types'
 
-export type domainFsDirectories = {
-  currentDomainDir: string
-  temp: string
-}
 
 export interface DomainFilesystem {
   _?: never

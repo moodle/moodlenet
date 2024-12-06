@@ -1,23 +1,21 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import {
   createDir,
-  deleteStaleTemp,
   deleteStorageFile,
-  deleteTemp,
-  get_temp_file_paths,
-  getFsDirectories,
-  use_temp_file,
-  use_temp_file_as_web_image,
+  getLocalStorageFsDirectories,
+  useTempFile,
+  useTempFileAsWebImage,
 } from '@moodle/lib-storage-local-fs'
 import { _void, fileAssetMeta } from '@moodle/lib-types'
 import { domainFs } from '@moodle/module/storage'
 import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
 import { readFile } from 'fs/promises'
 import { StorageDefaultSecEnv } from './types'
+import { deleteStaleTemp, deleteTemp, getTempFilePaths } from '@moodle/lib-domain-fs'
 
 export function get_storage_default_secondary_factory({ homeDir }: StorageDefaultSecEnv): secondaryProvider {
   return ctx => {
-    const fsDirs = getFsDirectories({ domainName: ctx.domain, homeDir })
+    const fsDirs = getLocalStorageFsDirectories({ domainName: ctx.domain, homeDir })
 
     const secondaryAdapter: secondaryAdapter = {
       userProfile: {
@@ -34,7 +32,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
             } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
             const maxSizePixel = webImageResizes[as === 'avatar' ? 'medium' : 'large']
             return useTempFileResult_to_adoptAssetResponse(
-              use_temp_file_as_web_image({
+              useTempFileAsWebImage({
                 fsDirs,
                 maxSizePixel,
                 path: profileImagePath,
@@ -47,7 +45,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               domainFs.file.userProfile[userProfileId]!.drafts.eduResource[resourceDraftId]!.asset()
             return useTempFileResult_to_adoptAssetResponse(
-              use_temp_file({
+              useTempFile({
                 fsDirs,
                 path: resourceDraftAssetPath,
                 tempId: adoptAssetForm.tempId,
@@ -65,7 +63,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
               configs: { webImageResizes },
             } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
             return useTempFileResult_to_adoptAssetResponse(
-              use_temp_file_as_web_image({
+              useTempFileAsWebImage({
                 fsDirs,
                 maxSizePixel: webImageResizes.large,
                 path: draftImagePath,
@@ -85,7 +83,7 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
         },
         query: {
           async tempMeta({ tempId }) {
-            const { meta: temp_file_meta_path } = get_temp_file_paths({ tempId, fsDirs })
+            const { meta: temp_file_meta_path } = getTempFilePaths({ tempId, fsDirs })
 
             const meta: fileAssetMeta = await readFile(temp_file_meta_path, 'utf8').then(JSON.parse).catch(null)
 
