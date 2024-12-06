@@ -6,6 +6,7 @@ export type fileAssetMeta = fileMeta & {
   hash: fileHashes
   uploaded: null | uploadedFileMeta
 }
+
 export type uploadedFileMeta = {
   date: date_time_string
   primarySessionId: string
@@ -15,10 +16,12 @@ export type uploadedFileMeta = {
     hash?: fileHashes
   }
 }
+
 export type fileHashes = {
   sha256: string
   // ssdeep: string
 }
+
 export type fileMeta = {
   name: string
   size: number

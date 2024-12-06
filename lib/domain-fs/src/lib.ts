@@ -63,6 +63,11 @@ export async function generateHashes(readable: Readable): Promise<fileHashes> {
   }
 }
 
+export async function getTempFileReadable({ tempId, fsDirs }: { tempId: string; fsDirs: domainFsDirectories }) {
+  const { file } = getTempFilePaths({ tempId, fsDirs })
+  return createReadStream(file)
+}
+
 export function getTempFilePaths({ tempId, fsDirs }: { tempId: string; fsDirs: domainFsDirectories }): tempFilePaths {
   const file = join(fsDirs.temp, tempId)
   const meta = `${file}.meta.json`
@@ -77,6 +82,25 @@ export async function deleteTemp({ tempId, fsDirs }: { tempId: string; fsDirs: d
 export async function createTempFile({
   fsDirs,
   readable,
+  fileName,
+  expiresSeconds,
+}: {
+  fsDirs: domainFsDirectories
+  readable: Readable
+  fileName: string
+  expiresSeconds: number
+}) {
+  const sanitizedFilename = sanitizeFilename(fileName)
+  const ulid = await generateUlid({ onDate: new Date().valueOf() + expiresSeconds * 1000 })
+  const tempId = `${ulid}_${sanitizedFilename}`
+  const tempPaths = getTempFilePaths({ tempId, fsDirs })
+  await writeFile(tempPaths.file, readable)
+  return { tempId, tempPaths, sanitizedFilename }
+}
+
+export async function createUploadedTempFile({
+  fsDirs,
+  readable,
   fileMeta,
   uploadedFileMeta,
   expiresSeconds,
@@ -84,23 +108,23 @@ export async function createTempFile({
   fsDirs: domainFsDirectories
   readable: Readable
   fileMeta: fileMeta
-  uploadedFileMeta: null | uploadedFileMeta
+  uploadedFileMeta: uploadedFileMeta
   expiresSeconds: number
 }) {
-  const sanitizedFilename = sanitizeFilename(fileMeta.name)
-  const ulid = await generateUlid({ onDate: new Date().valueOf() + expiresSeconds * 1000 })
-  const tempId = `${ulid}_${sanitizedFilename}`
-  const temp_paths = getTempFilePaths({ tempId, fsDirs })
-  await writeFile(temp_paths.file, readable)
-
+  const { tempId, tempPaths, sanitizedFilename } = await createTempFile({
+    expiresSeconds,
+    fileName: fileMeta.name,
+    fsDirs,
+    readable,
+  })
   const fileAssetMeta: fileAssetMeta = {
-    hash: await generateFileHashes(temp_paths.file),
+    hash: await generateFileHashes(tempPaths.file),
     name: sanitizedFilename,
-    mimetype: fileMeta.mimetype, // get it from actual writed file
+    mimetype: fileMeta.mimetype, // get it from actual writed file ?
     size: fileMeta.size,
     uploaded: uploadedFileMeta,
   }
-  await writeFile(temp_paths.meta, JSON.stringify(fileAssetMeta), 'utf8')
+  await writeFile(tempPaths.meta, JSON.stringify(fileAssetMeta), 'utf8')
   return { tempId, fileAssetMeta }
 }
 

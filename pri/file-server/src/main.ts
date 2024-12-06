@@ -2,7 +2,7 @@ import { http_bind } from '@moodle/bindings-node'
 import { moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import {
-  createTempFile,
+  createUploadedTempFile,
   deleteTemp,
   domainFsDirectories,
   getDomainFsDirectories,
@@ -142,7 +142,7 @@ const router = express
             cb(new Error(`invalid mimetype ${file.mimetype}`))
             return
           }
-          createTempFile({
+          createUploadedTempFile({
             expiresSeconds: tempFileMaxRetentionSeconds,
             fsDirs: req.moodleDirs,
             readable: file.stream,
