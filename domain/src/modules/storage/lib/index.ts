@@ -35,11 +35,10 @@ export async function useTempFileResult_to_adoptAssetResponse(
         status: 'done',
         asset: {
           type: 'stored',
-          hash: result.fileAssetMeta.hash,
-          mimetype: result.fileAssetMeta.mimetype,
-          name: result.fileAssetMeta.name,
-          size: result.fileAssetMeta.size,
-          uploaded: result.fileAssetMeta.uploaded,
+          mimetype: result.fileMeta.mimetype,
+          name: result.fileMeta.name,
+          size: result.fileMeta.size,
+          uploaded: result.fileMeta.uploaded,
           path: result.path,
         },
       }

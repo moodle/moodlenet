@@ -1,7 +1,7 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { deleteStaleTemp, deleteTemp, getTempFilePaths } from '@moodle/lib-domain-fs'
 import { createDir, deleteStorageFile, useTempFile, useTempFileAsWebImage } from '@moodle/lib-storage-local-fs'
-import { fileAssetMeta } from '@moodle/lib-domain-fs'
+import { fileMeta } from '@moodle/lib-domain-fs'
 import { _void } from '@moodle/lib-types'
 import { domainFs } from '@moodle/module/storage'
 import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
@@ -86,7 +86,7 @@ export function get_storage_default_secondary_factory({
           async tempMeta({ tempId }) {
             const { meta: temp_file_meta_path } = getTempFilePaths({ tempId, fsDirs })
 
-            const meta: fileAssetMeta = await readFile(temp_file_meta_path, 'utf8').then(JSON.parse).catch(null)
+            const meta: fileMeta = await readFile(temp_file_meta_path, 'utf8').then(JSON.parse).catch(null)
 
             if (!meta) {
               await deleteTemp({ tempId, fsDirs }).catch(() => null)
@@ -110,7 +110,7 @@ export function get_storage_default_secondary_factory({
         // async useTempFile({ absolutePath, tempId }) {
         //   const { temp_file_meta_path } = get_temp_file_paths({ tempId })
 
-        //   const meta: fileAssetMeta = await readFile(temp_file_meta_path, 'utf8')
+        //   const meta: fileMeta = await readFile(temp_file_meta_path, 'utf8')
         //     .then(JSON.parse)
         //     .catch(null)
         //   if (!meta) {

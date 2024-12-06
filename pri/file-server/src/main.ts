@@ -10,7 +10,7 @@ import {
 } from '@moodle/lib-domain-fs'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
-import { fileAssetMeta } from '@moodle/lib-domain-fs'
+import { fileMeta } from '@moodle/lib-domain-fs'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
@@ -44,7 +44,7 @@ declare global {
       export interface File {
         moodleUploaded: {
           tempId: string
-          fileAssetMeta: fileAssetMeta
+          fileMeta: fileMeta
         }
       }
     }
@@ -147,21 +147,21 @@ const router = express
             expiresSeconds: tempFileMaxRetentionSeconds,
             fsDirs: req.moodleDirs,
             readable: file.stream,
-            fileMeta: {
+            uploadedFileMeta: {
               name: file.originalname,
               mimetype: file.mimetype,
               size: file.size,
-            },
-            uploadedFileMeta: {
-              primarySessionId: req.moodlePrimarySession.id,
-              date: date_time_string('now'),
-              original: {
-                name: file.originalname,
+              uploaded: {
+                primarySessionId: req.moodlePrimarySession.id,
+                date: date_time_string('now'),
+                original: {
+                  name: file.originalname,
+                },
               },
             },
           }).then(
-            ({ fileAssetMeta, tempId }) => {
-              cb(null, { moodleUploaded: { fileAssetMeta, tempId } })
+            ({ fileMeta, tempId }) => {
+              cb(null, { moodleUploaded: { fileMeta, tempId } })
             },
             e => {
               cb(e)

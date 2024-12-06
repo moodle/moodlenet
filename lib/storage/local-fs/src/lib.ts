@@ -68,7 +68,7 @@ export async function useTempFile({
   await rimraf(useInAbsolutePath, { maxRetries: 2 }).catch(() => null)
   await mkdir(useInAbsolutePath, { recursive: true })
 
-  const mvError = await rename(temp_file.temp_paths.file, join(useInAbsolutePath, temp_file.fileAssetMeta.name)).then(
+  const mvError = await rename(temp_file.temp_paths.file, join(useInAbsolutePath, temp_file.fileMeta.name)).then(
     () => false as const,
     e => String(e),
   )
@@ -77,8 +77,8 @@ export async function useTempFile({
   if (mvError) {
     return [false, { reason: 'move', error: mvError }]
   }
-  const { fileAssetMeta } = temp_file
-  return [true, { path, fileAssetMeta }]
+  const { fileMeta } = temp_file
+  return [true, { path, fileMeta }]
 }
 
 export async function deleteStorageFile({ path, fsDirs }: { path: path; fsDirs: localStorageFsDirectories }): Promise<void> {

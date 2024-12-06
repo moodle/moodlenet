@@ -1,4 +1,4 @@
-import { fileAssetMeta } from '@moodle/lib-domain-fs'
+import { fileMeta } from '@moodle/lib-domain-fs'
 import { d_u, d_u__d, path, url_string, url_string_schema } from '@moodle/lib-types'
 import { literal, object, string, union } from 'zod'
 
@@ -15,7 +15,7 @@ export type asset = d_u<
   'type'
 >
 
-export type storedAssetMeta = fileAssetMeta & {
+export type storedAssetMeta = fileMeta & {
   path: path
 }
 

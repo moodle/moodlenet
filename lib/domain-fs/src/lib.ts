@@ -1,6 +1,5 @@
 import { decodeUlid, generateUlid } from '@moodle/lib-id-gen'
 import { isNotFalsy, ok_ko } from '@moodle/lib-types'
-import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
 import { readdir, readFile, stat, writeFile } from 'fs/promises'
 import { join, resolve } from 'path'
@@ -8,9 +7,25 @@ import { rimraf } from 'rimraf'
 import sanitize_filename from 'sanitize-filename'
 import sharp from 'sharp'
 import { Readable } from 'stream'
-import { fileAssetMeta, fileHashes, fileMeta, uploadedFileMeta, domainFsDirectories, tempFilePaths } from './types'
+import { domainFsDirectories, fileMeta, tempFilePaths } from './types'
 
 export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
+
+// export function generateFileHashes(filePath: string): Promise<fileHashes> {
+//   return generateHashes(createReadStream(filePath))
+// }
+
+// export async function generateHashes(readable: Readable): Promise<fileHashes> {
+//   const sha256 = await new Promise<string>((resolve, reject) => {
+//     const hash = createHash('sha256')
+//     readable.on('error', reject)
+//     readable.on('data', chunk => hash.update(chunk))
+//     readable.on('end', () => resolve(hash.digest('hex')))
+//   })
+//   return {
+//     sha256,
+//   }
+// }
 
 export function getDomainFsDirectories({
   domainName,
@@ -40,27 +55,6 @@ export function sanitizeFilename(originalFilename: string) {
   // originalFilename.normalize("NFD").replace(/\p{Diacritic}/gu, "")
   // const origExt = originalFilename.split('.').pop()
   // const mDotExt = origExt ? `.${origExt}` : ''
-}
-
-export function getRndPrefixedSanitizedFileName(originalFilename: string, prefixLength = 3) {
-  const rnd = String(Math.random()).substring(2, 2 + prefixLength)
-  return `${rnd}_${sanitizeFilename(originalFilename)}`
-}
-
-export async function generateFileHashes(filePath: string): Promise<fileHashes> {
-  return await generateHashes(createReadStream(filePath))
-}
-
-export async function generateHashes(readable: Readable): Promise<fileHashes> {
-  const sha256 = await new Promise<string>((resolve, reject) => {
-    const hash = createHash('sha256')
-    readable.on('error', reject)
-    readable.on('data', chunk => hash.update(chunk))
-    readable.on('end', () => resolve(hash.digest('hex')))
-  })
-  return {
-    sha256,
-  }
 }
 
 export async function getTempFileReadable({ tempId, fsDirs }: { tempId: string; fsDirs: domainFsDirectories }) {
@@ -101,47 +95,44 @@ export async function createTempFile({
 export async function createUploadedTempFile({
   fsDirs,
   readable,
-  fileMeta,
   uploadedFileMeta,
   expiresSeconds,
 }: {
   fsDirs: domainFsDirectories
   readable: Readable
-  fileMeta: fileMeta
-  uploadedFileMeta: uploadedFileMeta
+  uploadedFileMeta: fileMeta
   expiresSeconds: number
 }) {
   const { tempId, tempPaths, sanitizedFilename } = await createTempFile({
     expiresSeconds,
-    fileName: fileMeta.name,
+    fileName: uploadedFileMeta.name,
     fsDirs,
     readable,
   })
-  const fileAssetMeta: fileAssetMeta = {
-    hash: await generateFileHashes(tempPaths.file),
+  const fileMeta: fileMeta = {
     name: sanitizedFilename,
-    mimetype: fileMeta.mimetype, // get it from actual writed file ?
-    size: fileMeta.size,
-    uploaded: uploadedFileMeta,
+    mimetype: uploadedFileMeta.mimetype, // get it from actual writed file ?
+    size: uploadedFileMeta.size,
+    uploaded: uploadedFileMeta.uploaded,
   }
-  await writeFile(tempPaths.meta, JSON.stringify(fileAssetMeta), 'utf8')
-  return { tempId, fileAssetMeta }
+  await writeFile(tempPaths.meta, JSON.stringify(fileMeta), 'utf8')
+  return { tempId, fileMeta }
 }
 
 export async function ensureTempFile({ tempId, fsDirs }: { tempId: string; fsDirs: domainFsDirectories }) {
   const temp_paths = getTempFilePaths({ tempId, fsDirs })
 
-  const fileAssetMeta: fileAssetMeta = await readFile(temp_paths.meta, 'utf8')
+  const fileMeta: fileMeta = await readFile(temp_paths.meta, 'utf8')
     .then(JSON.parse)
     .catch(() => null)
-  if (!fileAssetMeta) {
+  if (!fileMeta) {
     return false
   }
   const file = await stat(temp_paths.file).catch(() => null)
   if (!file) {
     return false
   }
-  return { temp_paths, fileAssetMeta, file }
+  return { temp_paths, fileMeta, file }
 }
 
 export async function resizeTempImage({
@@ -172,16 +163,14 @@ export async function resizeTempImage({
       withoutEnlargement: true,
     })
     .toFile(resizedTempFilePaths.file)
-  const resized_temp_fileAssetMeta: fileAssetMeta = {
-    ...original_temp_file.fileAssetMeta,
-    hash: await generateFileHashes(resizedTempFilePaths.file),
+  const resized_temp_fileMeta: fileMeta = {
+    ...original_temp_file.fileMeta,
     size: resizedInfo.size,
-    uploaded: original_temp_file.fileAssetMeta.uploaded && {
-      ...original_temp_file.fileAssetMeta.uploaded,
+    uploaded: original_temp_file.fileMeta.uploaded && {
+      ...original_temp_file.fileMeta.uploaded,
       original: {
-        size: original_temp_file.fileAssetMeta.size,
-        hash: original_temp_file.fileAssetMeta.hash,
-        name: original_temp_file.fileAssetMeta.name,
+        size: original_temp_file.fileMeta.size,
+        name: original_temp_file.fileMeta.name,
       },
     },
   }
@@ -192,7 +181,7 @@ export async function resizeTempImage({
   //     size: original_temp_file.meta.size,
   //   },
   // }
-  await writeFile(resizedTempFilePaths.meta, JSON.stringify(resized_temp_fileAssetMeta), 'utf8')
+  await writeFile(resizedTempFilePaths.meta, JSON.stringify(resized_temp_fileMeta), 'utf8')
 
   return [true, { resizedTempId, resizedTempFilePaths }]
 }
