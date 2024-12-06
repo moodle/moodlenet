@@ -145,7 +145,7 @@ const router = express
           }
           createUploadedTempFile({
             expiresSeconds: tempFileMaxRetentionSeconds,
-            fsDirs: req.moodleDirs,
+            domainFsDirectories: req.moodleDirs,
             readable: file.stream,
             uploadedFileMeta: {
               name: file.originalname,
@@ -170,7 +170,7 @@ const router = express
         },
         _removeFile(req, file, callback) {
           deleteTemp({
-            fsDirs: req.moodleDirs,
+            domainFsDirectories: req.moodleDirs,
             tempId: file.moodleUploaded.tempId,
           }).then(() => callback(null), callback)
         },

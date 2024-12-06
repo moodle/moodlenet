@@ -1,6 +1,4 @@
-import { fileMeta } from '@moodle/lib-domain-fs'
-import type { ok_ko } from '@moodle/lib-types'
-import { userProfileId } from '../user-profile'
+import { storedAssetMeta } from './types'
 import { Configs } from './types/configs'
 export * from './types'
 
@@ -16,13 +14,14 @@ export default interface StorageDomain {
   }
   secondary: {
     storage: {
-      service?: unknown
-      sync: {
-        createUserProfile(_: { userProfileId: userProfileId }): Promise<ok_ko<void>>
+      service: {
+        createStoredAssetTempFileReference(_: {
+          expiresSeconds: number
+          storedAssetMeta: Pick<storedAssetMeta, 'path' | 'name'>
+        }): Promise<{ tempId: string }>
       }
-      query: {
-        tempMeta(_: { tempId: string }): Promise<ok_ko<{ meta: fileMeta }, { notFound: unknown }>>
-      }
+      sync: unknown
+      query: unknown
       write: {
         deleteStaleTemp(): Promise<void>
       }

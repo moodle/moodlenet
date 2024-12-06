@@ -1,13 +1,18 @@
-import { domainFsDirectories, ensureTempFile, resizeTempImage } from '@moodle/lib-domain-fs'
-import { useTempFileResult } from '@moodle/lib-domain-fs'
+import { domainFsDirectories, ensureTempWithMeta, resizeTempImage, useTempFileResult } from '@moodle/lib-domain-fs'
 import { dirPath, path } from '@moodle/lib-types'
 import { mkdir, readdir, rename } from 'fs/promises'
 import { join, normalize, sep as os_path_separator } from 'path'
 import { rimraf } from 'rimraf'
 import { localStorageFsDirectories } from './types'
 
-function absolutePathOf({ path, fsDirs }: { path: path; fsDirs: localStorageFsDirectories }) {
-  const absolute_path = [fsDirs.storageDir, ...path].join(os_path_separator)
+function absolutePathOf({
+  path,
+  localStorageFsDirectories,
+}: {
+  path: path
+  localStorageFsDirectories: localStorageFsDirectories
+}) {
+  const absolute_path = [localStorageFsDirectories.storageDir, ...path].join(os_path_separator)
   return absolute_path
 }
 
@@ -19,17 +24,17 @@ export async function useTempFileAsWebImage({
   tempId,
   path,
   maxSizePixel,
-  fsDirs,
+  localStorageFsDirectories,
 }: {
   tempId: string
   path: path
   maxSizePixel: number
-  fsDirs: localStorageFsDirectories
+  localStorageFsDirectories: localStorageFsDirectories
 }): Promise<useTempFileResult> {
   const [resizeDone, resizeResult] = await resizeTempImage({
     maxSizePixel,
     tempId,
-    fsDirs,
+    domainFsDirectories: localStorageFsDirectories,
   })
   // console.log({ resizeDone, resizeResult })
   if (!resizeDone) {
@@ -38,13 +43,19 @@ export async function useTempFileAsWebImage({
   const use_temp_file_result = await useTempFile({
     tempId: resizeResult.resizedTempId,
     path,
-    fsDirs,
+    localStorageFsDirectories,
   })
   return use_temp_file_result
 }
 
-export async function createDir({ dirPath, fsDirs }: { dirPath: dirPath; fsDirs: localStorageFsDirectories }) {
-  const absolutePath = absolutePathOf({ path: dirPath, fsDirs })
+export async function createDir({
+  dirPath,
+  localStorageFsDirectories,
+}: {
+  dirPath: dirPath
+  localStorageFsDirectories: localStorageFsDirectories
+}) {
+  const absolutePath = absolutePathOf({ path: dirPath, localStorageFsDirectories })
   return mkdir(absolutePath, { recursive: true }).then(
     () => true,
     () => false,
@@ -54,21 +65,21 @@ export async function createDir({ dirPath, fsDirs }: { dirPath: dirPath; fsDirs:
 export async function useTempFile({
   tempId,
   path,
-  fsDirs,
+  localStorageFsDirectories,
 }: {
   tempId: string
   path: path
-  fsDirs: localStorageFsDirectories
+  localStorageFsDirectories: localStorageFsDirectories
 }): Promise<useTempFileResult> {
-  const temp_file = await ensureTempFile({ tempId, fsDirs })
-  if (!temp_file) {
+  const ensuredTemp = await ensureTempWithMeta({ tempId, domainFsDirectories: localStorageFsDirectories })
+  if (!ensuredTemp) {
     return [false, { reason: 'tempNotFound' }]
   }
-  const useInAbsolutePath = absolutePathOf({ path: path, fsDirs })
+  const useInAbsolutePath = absolutePathOf({ path: path, localStorageFsDirectories: localStorageFsDirectories })
   await rimraf(useInAbsolutePath, { maxRetries: 2 }).catch(() => null)
   await mkdir(useInAbsolutePath, { recursive: true })
 
-  const mvError = await rename(temp_file.temp_paths.file, join(useInAbsolutePath, temp_file.fileMeta.name)).then(
+  const mvError = await rename(ensuredTemp.paths.file, join(useInAbsolutePath, ensuredTemp.fileMeta.name)).then(
     () => false as const,
     e => String(e),
   )
@@ -77,20 +88,29 @@ export async function useTempFile({
   if (mvError) {
     return [false, { reason: 'move', error: mvError }]
   }
-  const { fileMeta } = temp_file
+  const { fileMeta } = ensuredTemp
   return [true, { path, fileMeta }]
 }
 
-export async function deleteStorageFile({ path, fsDirs }: { path: path; fsDirs: localStorageFsDirectories }): Promise<void> {
-  const absolutePath = absolutePathOf({ path, fsDirs })
+export async function deleteStorageFile({
+  path,
+  localStorageFsDirectories,
+}: {
+  path: path
+  localStorageFsDirectories: localStorageFsDirectories
+}): Promise<void> {
+  const absolutePath = absolutePathOf({ path, localStorageFsDirectories: localStorageFsDirectories })
   //_and_clean_upper_empty_dirs
   //TODO: ensure this check is enough to avoid climbing up too much !
-  if (normalize(fsDirs.storageDir).startsWith(normalize(absolutePath))) {
+  if (normalize(localStorageFsDirectories.storageDir).startsWith(normalize(absolutePath))) {
     return
   }
   await rimraf(absolutePath, { maxRetries: 2 }).catch(() => null)
   const parent_dir_path = path.slice(0, path.length - 1)
-  const parentDirAbsolutePath = absolutePathOf({ path: parent_dir_path, fsDirs })
+  const parentDirAbsolutePath = absolutePathOf({
+    path: parent_dir_path,
+    localStorageFsDirectories: localStorageFsDirectories,
+  })
   const parent_dir_files = await readdir(parentDirAbsolutePath).catch(() => [
     `placeholder in case of (unlikely) readdir error`,
     `to prevent deleting this dir, as it's not ensured to be empty`,
@@ -98,5 +118,5 @@ export async function deleteStorageFile({ path, fsDirs }: { path: path; fsDirs: 
   if (parent_dir_files.length > 0) {
     return
   }
-  return deleteStorageFile({ path: parent_dir_path, fsDirs })
+  return deleteStorageFile({ path: parent_dir_path, localStorageFsDirectories: localStorageFsDirectories })
 }

@@ -1,11 +1,13 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
-import { deleteStaleTemp, deleteTemp, getTempFilePaths } from '@moodle/lib-domain-fs'
-import { createDir, deleteStorageFile, useTempFile, useTempFileAsWebImage } from '@moodle/lib-storage-local-fs'
-import { fileMeta } from '@moodle/lib-domain-fs'
-import { _void } from '@moodle/lib-types'
+import { createTempFile, deleteStaleTemp } from '@moodle/lib-domain-fs'
+import {
+  deleteStorageFile,
+  localStorageFsDirectories,
+  useTempFile,
+  useTempFileAsWebImage,
+} from '@moodle/lib-storage-local-fs'
 import { domainFs } from '@moodle/module/storage'
 import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
-import { readFile } from 'fs/promises'
 import { StorageDefaultSecEnv } from './types'
 
 export function get_storage_default_secondary_factory({
@@ -13,7 +15,7 @@ export function get_storage_default_secondary_factory({
   localFsStorageDirectory,
 }: StorageDefaultSecEnv): secondaryProvider {
   return ctx => {
-    const fsDirs = {
+    const localStorageFsDirectories: localStorageFsDirectories = {
       ...domainFsDirectories,
       storageDir: localFsStorageDirectory,
     }
@@ -25,7 +27,7 @@ export function get_storage_default_secondary_factory({
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const profileImagePath = domainFs.file.userProfile[userProfileId]!.profile[as]!()
             if (adoptAssetForm.type === 'none') {
-              await deleteStorageFile({ path: profileImagePath, fsDirs })
+              await deleteStorageFile({ path: profileImagePath, localStorageFsDirectories: localStorageFsDirectories })
               return { asset: adoptAssetForm, status: 'done' }
             }
             const {
@@ -34,7 +36,7 @@ export function get_storage_default_secondary_factory({
             const maxSizePixel = webImageResizes[as === 'avatar' ? 'medium' : 'large']
             return useTempFileResult_to_adoptAssetResponse(
               useTempFileAsWebImage({
-                fsDirs,
+                localStorageFsDirectories,
                 maxSizePixel,
                 path: profileImagePath,
                 tempId: adoptAssetForm.tempId,
@@ -47,7 +49,7 @@ export function get_storage_default_secondary_factory({
               domainFs.file.userProfile[userProfileId]!.drafts.eduResource[resourceDraftId]!.asset()
             return useTempFileResult_to_adoptAssetResponse(
               useTempFile({
-                fsDirs,
+                localStorageFsDirectories,
                 path: resourceDraftAssetPath,
                 tempId: adoptAssetForm.tempId,
               }),
@@ -57,7 +59,7 @@ export function get_storage_default_secondary_factory({
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const draftImagePath = domainFs.file.userProfile[userProfileId]!.drafts[draftType][draftId]!.image!()
             if (adoptAssetForm.type === 'none') {
-              await deleteStorageFile({ path: draftImagePath, fsDirs })
+              await deleteStorageFile({ path: draftImagePath, localStorageFsDirectories: localStorageFsDirectories })
               return { asset: adoptAssetForm, status: 'done' }
             }
             const {
@@ -65,7 +67,7 @@ export function get_storage_default_secondary_factory({
             } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
             return useTempFileResult_to_adoptAssetResponse(
               useTempFileAsWebImage({
-                fsDirs,
+                localStorageFsDirectories,
                 maxSizePixel: webImageResizes.large,
                 path: draftImagePath,
                 tempId: adoptAssetForm.tempId,
@@ -75,30 +77,21 @@ export function get_storage_default_secondary_factory({
         },
       },
       storage: {
-        sync: {
-          async createUserProfile({ userProfileId }) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const userProfilePath = domainFs.dir.userProfile[userProfileId]!()
-            return [await createDir({ dirPath: userProfilePath, fsDirs }), _void]
+        service: {
+          async createStoredAssetTempFileReference({ storedAssetMeta, expiresSeconds }) {
+            const { tempId } = await createTempFile({
+              expiresSeconds,
+              fileName: storedAssetMeta.name,
+              domainFsDirectories,
+              readable,
+            })
+            return { tempId }
           },
         },
-        query: {
-          async tempMeta({ tempId }) {
-            const { meta: temp_file_meta_path } = getTempFilePaths({ tempId, fsDirs })
-
-            const meta: fileMeta = await readFile(temp_file_meta_path, 'utf8').then(JSON.parse).catch(null)
-
-            if (!meta) {
-              await deleteTemp({ tempId, fsDirs }).catch(() => null)
-              return [false, { reason: 'notFound' }]
-            }
-
-            return [true, { meta }] //, temp_file_full_path, temp_file_name, temp_file_dir }
-          },
-        },
+        query: {},
         write: {
           async deleteStaleTemp() {
-            const deletedFiles = await deleteStaleTemp({ fsDirs })
+            const deletedFiles = await deleteStaleTemp({ domainFsDirectories })
 
             deletedFiles.forEach(result => {
               if (result.invalidUlid) {

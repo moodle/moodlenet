@@ -57,29 +57,29 @@ export function sanitizeFilename(originalFilename: string) {
   // const mDotExt = origExt ? `.${origExt}` : ''
 }
 
-export async function getTempFileReadable({ tempId, fsDirs }: { tempId: string; fsDirs: domainFsDirectories }) {
-  const { file } = getTempFilePaths({ tempId, fsDirs })
+export async function getTempFileReadable({ tempId, domainFsDirectories }: { tempId: string; domainFsDirectories: domainFsDirectories }) {
+  const { file } = getTempFilePaths({ tempId, domainFsDirectories })
   return createReadStream(file)
 }
 
-export function getTempFilePaths({ tempId, fsDirs }: { tempId: string; fsDirs: domainFsDirectories }): tempFilePaths {
-  const file = join(fsDirs.temp, tempId)
+export function getTempFilePaths({ tempId, domainFsDirectories }: { tempId: string; domainFsDirectories: domainFsDirectories }): tempFilePaths {
+  const file = join(domainFsDirectories.temp, tempId)
   const meta = `${file}.meta.json`
   return { file, meta }
 }
 
-export async function deleteTemp({ tempId, fsDirs }: { tempId: string; fsDirs: domainFsDirectories }) {
-  const { file: temp_file_path } = getTempFilePaths({ tempId, fsDirs })
+export async function deleteTemp({ tempId, domainFsDirectories }: { tempId: string; domainFsDirectories: domainFsDirectories }) {
+  const { file: temp_file_path } = getTempFilePaths({ tempId, domainFsDirectories })
   await rimraf(`${temp_file_path}*`, { maxRetries: 2 }).catch(() => null)
 }
 
 export async function createTempFile({
-  fsDirs,
+  domainFsDirectories,
   readable,
   fileName,
   expiresSeconds,
 }: {
-  fsDirs: domainFsDirectories
+  domainFsDirectories: domainFsDirectories
   readable: Readable
   fileName: string
   expiresSeconds: number
@@ -87,18 +87,18 @@ export async function createTempFile({
   const sanitizedFilename = sanitizeFilename(fileName)
   const ulid = await generateUlid({ onDate: new Date().valueOf() + expiresSeconds * 1000 })
   const tempId = `${ulid}_${sanitizedFilename}`
-  const tempPaths = getTempFilePaths({ tempId, fsDirs })
+  const tempPaths = getTempFilePaths({ tempId, domainFsDirectories })
   await writeFile(tempPaths.file, readable)
   return { tempId, tempPaths, sanitizedFilename }
 }
 
 export async function createUploadedTempFile({
-  fsDirs,
+  domainFsDirectories,
   readable,
   uploadedFileMeta,
   expiresSeconds,
 }: {
-  fsDirs: domainFsDirectories
+  domainFsDirectories: domainFsDirectories
   readable: Readable
   uploadedFileMeta: fileMeta
   expiresSeconds: number
@@ -106,7 +106,7 @@ export async function createUploadedTempFile({
   const { tempId, tempPaths, sanitizedFilename } = await createTempFile({
     expiresSeconds,
     fileName: uploadedFileMeta.name,
-    fsDirs,
+    domainFsDirectories,
     readable,
   })
   const fileMeta: fileMeta = {
@@ -119,50 +119,54 @@ export async function createUploadedTempFile({
   return { tempId, fileMeta }
 }
 
-export async function ensureTempFile({ tempId, fsDirs }: { tempId: string; fsDirs: domainFsDirectories }) {
-  const temp_paths = getTempFilePaths({ tempId, fsDirs })
+export async function ensureTempWithMeta({ tempId, domainFsDirectories }: { tempId: string; domainFsDirectories: domainFsDirectories }) {
+  const ensuredTempFile = await ensureTemp({ tempId, domainFsDirectories })
+  if (!ensuredTempFile) {
+    return false
+  }
 
-  const fileMeta: fileMeta = await readFile(temp_paths.meta, 'utf8')
+  const fileMeta: fileMeta = await readFile(ensuredTempFile.paths.meta, 'utf8')
     .then(JSON.parse)
     .catch(() => null)
   if (!fileMeta) {
     return false
   }
-  const file = await stat(temp_paths.file).catch(() => null)
+  return { ...ensuredTempFile, fileMeta }
+}
+export async function ensureTemp({ tempId, domainFsDirectories }: { tempId: string; domainFsDirectories: domainFsDirectories }) {
+  const paths = getTempFilePaths({ tempId, domainFsDirectories })
+
+  const file = await stat(paths.file).catch(() => null)
   if (!file) {
     return false
   }
-  return { temp_paths, fileMeta, file }
+  return { paths, file }
 }
 
 export async function resizeTempImage({
   maxSizePixel,
   tempId,
-  fsDirs,
+  domainFsDirectories,
 }: {
   tempId: string
   maxSizePixel: number
-  fsDirs: domainFsDirectories
-}): Promise<
-  ok_ko<{ resizedTempId: string; resizedTempFilePaths: tempFilePaths }, { tempNotFound: unknown; invalidFile: unknown }>
-> {
-  const original_temp_file = await ensureTempFile({ tempId, fsDirs })
+  domainFsDirectories: domainFsDirectories
+}): Promise<ok_ko<{ resizedTempId: string; resizedPaths: tempFilePaths }, { tempNotFound: unknown; invalidFile: unknown }>> {
+  const original_temp_file = await ensureTempWithMeta({ tempId, domainFsDirectories })
   if (!original_temp_file) {
     return [false, { reason: 'tempNotFound' }]
   }
 
-  original_temp_file.temp_paths.file
-
   const resizedTempId = `${tempId}_${maxSizePixel}`
-  const resizedTempFilePaths = getTempFilePaths({ tempId: resizedTempId, fsDirs })
-  const resizedInfo = await sharp(original_temp_file.temp_paths.file)
+  const resizedpaths = getTempFilePaths({ tempId: resizedTempId, domainFsDirectories })
+  const resizedInfo = await sharp(original_temp_file.paths.file)
     .resize({
       width: maxSizePixel,
       height: maxSizePixel,
       fit: 'inside',
       withoutEnlargement: true,
     })
-    .toFile(resizedTempFilePaths.file)
+    .toFile(resizedpaths.file)
   const resized_temp_fileMeta: fileMeta = {
     ...original_temp_file.fileMeta,
     size: resizedInfo.size,
@@ -181,13 +185,13 @@ export async function resizeTempImage({
   //     size: original_temp_file.meta.size,
   //   },
   // }
-  await writeFile(resizedTempFilePaths.meta, JSON.stringify(resized_temp_fileMeta), 'utf8')
+  await writeFile(resizedpaths.meta, JSON.stringify(resized_temp_fileMeta), 'utf8')
 
-  return [true, { resizedTempId, resizedTempFilePaths }]
+  return [true, { resizedTempId, resizedPaths: resizedpaths }]
 }
 
-export async function deleteStaleTemp({ fsDirs }: { fsDirs: domainFsDirectories }) {
-  const { temp } = fsDirs
+export async function deleteStaleTemp({ domainFsDirectories }: { domainFsDirectories: domainFsDirectories }) {
+  const { temp } = domainFsDirectories
   const temp_dir_content = await readdir(temp)
   const deletedFiles = await Promise.all(
     temp_dir_content.map(async temp_dir_content_name => {

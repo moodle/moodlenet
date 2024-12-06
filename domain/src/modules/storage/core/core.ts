@@ -28,20 +28,20 @@ export const storage_core: moduleCore<'storage'> = {
       },
     }
   },
-  watch(ctx) {
-    return {
-      secondary: {
-        userProfile: {
-          write: {
-            async createUserProfile([[done], { userProfileRecord: userProfile }]) {
-              if (!done) {
-                return
-              }
-              ctx.sync.createUserProfile({ userProfileId: userProfile.id })
-            },
-          },
-        },
-      },
-    }
-  },
+  // watch(ctx) {
+  //   return {
+  //     secondary: {
+  //       userProfile: {
+  //         write: {
+  //           async createUserProfile([[done], { userProfileRecord: userProfile }]) {
+  //             if (!done) {
+  //               return
+  //             }
+  //             ctx.sync.createUserProfile({ userProfileId: userProfile.id })
+  //           },
+  //         },
+  //       },
+  //     },
+  //   }
+  // },
 }
