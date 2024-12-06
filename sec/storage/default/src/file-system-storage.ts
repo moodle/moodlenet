@@ -4,14 +4,13 @@ import {
   deleteStaleTemp,
   deleteStorageFile,
   deleteTemp,
-  domainFs,
   get_temp_file_paths,
   getFsDirectories,
   use_temp_file,
   use_temp_file_as_web_image,
 } from '@moodle/lib-storage-local-fs'
 import { _void } from '@moodle/lib-types'
-import { fileAssetMeta } from '@moodle/module/storage'
+import { fileAssetMeta, domainFs } from '@moodle/module/storage'
 import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
 import { readFile } from 'fs/promises'
 import { StorageDefaultSecEnv } from './types'

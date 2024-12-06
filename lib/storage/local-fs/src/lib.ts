@@ -1,12 +1,5 @@
-import { createPathProxy, dirPath, dirPaths, filePaths, isNotFalsy, ok_ko, path } from '@moodle/lib-types'
-import { DomainFilesystem } from '@moodle/module/storage'
-import { mkdir, readdir, readFile, rename, stat, writeFile } from 'fs/promises'
-import { join, normalize, sep as os_path_separator, resolve } from 'path'
-import { rimraf } from 'rimraf'
-import sharp from 'sharp'
-import { localFsDirectories } from './types'
-
 import { decodeUlid, generateUlid } from '@moodle/lib-id-gen'
+import { dirPath, isNotFalsy, ok_ko, path } from '@moodle/lib-types'
 import {
   asset,
   fileAssetMeta,
@@ -18,9 +11,14 @@ import {
 } from '@moodle/module/storage'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
-import { Readable } from 'stream'
-
+import { mkdir, readdir, readFile, rename, stat, writeFile } from 'fs/promises'
+import { join, normalize, sep as os_path_separator, resolve } from 'path'
+import { rimraf } from 'rimraf'
 import sanitize_filename from 'sanitize-filename'
+import sharp from 'sharp'
+import { Readable } from 'stream'
+import { localFsDirectories } from './types'
+
 export function sanitizeFilename(originalFilename: string) {
   const sanitized = sanitize_filename(originalFilename)
     .normalize('NFKD')
@@ -57,16 +55,6 @@ export async function generateHashes(readable: Readable): Promise<fileHashes> {
   return {
     sha256,
   }
-}
-
-const domain_fs_paths = createPathProxy<filePaths<DomainFilesystem> & dirPaths<DomainFilesystem>>({
-  apply({ path }) {
-    return path
-  },
-})
-export const domainFs = {
-  file: domain_fs_paths as filePaths<DomainFilesystem>,
-  dir: domain_fs_paths as dirPaths<DomainFilesystem>,
 }
 
 export function getFsDirectories({ domainName, homeDir }: { homeDir: string; domainName: string }): localFsDirectories {
