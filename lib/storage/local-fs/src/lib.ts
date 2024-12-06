@@ -1,7 +1,6 @@
 import { decodeUlid, generateUlid } from '@moodle/lib-id-gen'
 import { dirPath, isNotFalsy, ok_ko, path } from '@moodle/lib-types'
 import {
-  asset,
   fileAssetMeta,
   fileHashes,
   fileMeta,
@@ -195,27 +194,7 @@ export async function use_temp_file({
     return [false, { reason: 'move', error: mvError }]
   }
   const { fileAssetMeta } = temp_file
-  const asset = usingTempFile2asset({ path: path, fileAssetMeta })
-  return [true, { fileAssetMeta, asset }]
-}
-
-export function usingTempFile2asset({
-  path,
-  fileAssetMeta,
-}: {
-  fileAssetMeta: fileAssetMeta
-  path: path //
-}) {
-  const asset: asset = {
-    type: 'stored',
-    path,
-    hash: fileAssetMeta.hash,
-    uploaded: fileAssetMeta.uploaded,
-    mimetype: fileAssetMeta.mimetype,
-    name: fileAssetMeta.name,
-    size: fileAssetMeta.size,
-  }
-  return asset
+  return [true, { path, fileAssetMeta }]
 }
 
 export async function getReadableLocalAsset({

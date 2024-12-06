@@ -14,7 +14,7 @@ export type fileHashes = {
 export type useTempFileResult = ok_ko<
   {
     fileAssetMeta: fileAssetMeta
-    asset: d_u__d<asset, 'type', 'stored'>
+    path: path
   },
   {
     tempNotFound: unknown

@@ -32,7 +32,15 @@ export async function useTempFileResult_to_adoptAssetResponse(
   return done
     ? {
         status: 'done',
-        asset: result.asset,
+        asset: {
+          type: 'stored',
+          hash: result.fileAssetMeta.hash,
+          mimetype: result.fileAssetMeta.mimetype,
+          name: result.fileAssetMeta.name,
+          size: result.fileAssetMeta.size,
+          uploaded: result.fileAssetMeta.uploaded,
+          path: result.path,
+        },
       }
     : {
         status: 'error',
