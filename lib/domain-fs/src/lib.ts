@@ -1,5 +1,5 @@
 import { decodeUlid, generateUlid } from '@moodle/lib-id-gen'
-import { fileAssetMeta, fileHashes, fileMeta, isNotFalsy, ok_ko, uploadedFileMeta } from '@moodle/lib-types'
+import { isNotFalsy, ok_ko } from '@moodle/lib-types'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
 import { readdir, readFile, stat, writeFile } from 'fs/promises'
@@ -8,7 +8,7 @@ import { rimraf } from 'rimraf'
 import sanitize_filename from 'sanitize-filename'
 import sharp from 'sharp'
 import { Readable } from 'stream'
-import { domainFsDirectories, tempFilePaths } from './types'
+import { fileAssetMeta, fileHashes, fileMeta, uploadedFileMeta, domainFsDirectories, tempFilePaths } from './types'
 
 export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
 

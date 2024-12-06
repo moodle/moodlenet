@@ -1,4 +1,5 @@
-import { d_u, d_u__d, fileAssetMeta, path, url_string, url_string_schema } from '@moodle/lib-types'
+import { fileAssetMeta } from '@moodle/lib-domain-fs'
+import { d_u, d_u__d, path, url_string, url_string_schema } from '@moodle/lib-types'
 import { literal, object, string, union } from 'zod'
 
 import { contentCredits } from '../../content'

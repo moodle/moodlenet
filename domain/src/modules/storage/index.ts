@@ -1,4 +1,5 @@
-import type { fileAssetMeta, ok_ko } from '@moodle/lib-types'
+import { fileAssetMeta } from '@moodle/lib-domain-fs'
+import type { ok_ko } from '@moodle/lib-types'
 import { userProfileId } from '../user-profile'
 import { Configs } from './types/configs'
 export * from './types'

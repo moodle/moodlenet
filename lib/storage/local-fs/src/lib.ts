@@ -1,5 +1,6 @@
 import { domainFsDirectories, ensureTempFile, resizeTempImage } from '@moodle/lib-domain-fs'
-import { dirPath, path, useTempFileResult } from '@moodle/lib-types'
+import { useTempFileResult } from '@moodle/lib-domain-fs'
+import { dirPath, path } from '@moodle/lib-types'
 import { mkdir, readdir, rename } from 'fs/promises'
 import { join, normalize, sep as os_path_separator } from 'path'
 import { rimraf } from 'rimraf'
