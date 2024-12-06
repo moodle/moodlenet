@@ -1,5 +1,6 @@
 import { moduleCore } from '../../../types'
 
+const ONE_MINUTE = 60 * 1000
 export const storage_core: moduleCore<'storage'> = {
   modName: 'storage',
   service() {
@@ -12,13 +13,7 @@ export const storage_core: moduleCore<'storage'> = {
       ctx.write
         .deleteStaleTemp()
         .catch(e => ctx.log('warn', 'error deleteStaleTemp', e))
-        .then(() =>
-          ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' }).catch(e => {
-            ctx.log('alert', 'error query modConfigs, defaulting tempFileMaxRetentionSeconds to 10 minutes', e)
-            return { configs: { tempFileMaxRetentionSeconds: 10 * 60 } }
-          }),
-        )
-        .then(({ configs: { tempFileMaxRetentionSeconds } }) => setTimeout(delStales, tempFileMaxRetentionSeconds * 1000))
+        .then(() => setTimeout(delStales, ONE_MINUTE))
     }
   },
   primary(ctx) {
@@ -26,10 +21,8 @@ export const storage_core: moduleCore<'storage'> = {
       async session() {
         return {
           async moduleInfo() {
-            const {
-              configs: { uploadMaxSize },
-            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
-            return { uploadMaxSizeConfigs: uploadMaxSize }
+            const { configs } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
+            return { configs }
           },
         }
       },

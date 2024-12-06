@@ -1,70 +1,69 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
-import { _void } from '@moodle/lib-types'
 import {
-  deleteFile,
+  createDir,
+  deleteStaleTemp,
+  deleteStorageFile,
   deleteTemp,
-  fs_storage_path_of,
+  domainFs,
   get_temp_file_paths,
   getFsDirectories,
-  prefixedDomainFsPaths,
   use_temp_file,
   use_temp_file_as_web_image,
 } from '@moodle/lib-storage-local-fs'
+import { _void } from '@moodle/lib-types'
 import { fileAssetMeta } from '@moodle/module/storage'
 import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
-import { mkdir, readdir, readFile, stat } from 'fs/promises'
-import { join } from 'path'
-import { rimraf } from 'rimraf'
+import { readFile } from 'fs/promises'
 import { StorageDefaultSecEnv } from './types'
 
 export function get_storage_default_secondary_factory({ homeDir }: StorageDefaultSecEnv): secondaryProvider {
   return ctx => {
     const fsDirs = getFsDirectories({ domainName: ctx.domain, homeDir })
-    const { paths: fs_paths, files: fs_file_paths } = prefixedDomainFsPaths(fsDirs.fsStorage)
 
     const secondaryAdapter: secondaryAdapter = {
       userProfile: {
         write: {
           async useTempImageInProfile({ type: as, userProfileId, adoptAssetForm }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const absolutePath = fs_file_paths.userProfile[userProfileId]!.profile[as]!()
+            const profileImagePath = domainFs.file.userProfile[userProfileId]!.profile[as]!()
             if (adoptAssetForm.type === 'none') {
-              await deleteFile({ absolutePath, fsDirs })
+              await deleteStorageFile({ path: profileImagePath, fsDirs })
               return { asset: adoptAssetForm, status: 'done' }
             }
             return useTempFileResult_to_adoptAssetResponse(
               use_temp_file_as_web_image({
                 fsDirs,
                 secondaryContext: ctx,
-                absolutePath,
+                path: profileImagePath,
                 tempId: adoptAssetForm.tempId,
                 size: as === 'avatar' ? 'medium' : 'large',
               }),
             )
           },
           async useTempFileAsResourceDraftAsset({ adoptAssetForm, resourceDraftId, userProfileId }) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts.eduResource[resourceDraftId]!.asset()
+            const resourceDraftAssetPath =
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              domainFs.file.userProfile[userProfileId]!.drafts.eduResource[resourceDraftId]!.asset()
             return useTempFileResult_to_adoptAssetResponse(
               use_temp_file({
                 fsDirs,
-                absolutePath,
+                path: resourceDraftAssetPath,
                 tempId: adoptAssetForm.tempId,
               }),
             )
           },
           async useTempImageInDraft({ draftId, adoptAssetForm, userProfileId, draftType }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const absolutePath = fs_file_paths.userProfile[userProfileId]!.drafts[draftType][draftId]!.image!()
+            const draftImagePath = domainFs.file.userProfile[userProfileId]!.drafts[draftType][draftId]!.image!()
             if (adoptAssetForm.type === 'none') {
-              await deleteFile({ absolutePath, fsDirs })
+              await deleteStorageFile({ path: draftImagePath, fsDirs })
               return { asset: adoptAssetForm, status: 'done' }
             }
             return useTempFileResult_to_adoptAssetResponse(
               use_temp_file_as_web_image({
                 fsDirs,
                 secondaryContext: ctx,
-                absolutePath,
+                path: draftImagePath,
                 tempId: adoptAssetForm.tempId,
                 size: 'large',
               }),
@@ -76,9 +75,8 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
         sync: {
           async createUserProfile({ userProfileId }) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const userProfilePath = fs_paths.userProfile[userProfileId]!()
-            await mkdir(userProfilePath, { recursive: true })
-            return [true, _void]
+            const userProfilePath = domainFs.dir.userProfile[userProfileId]!()
+            return [await createDir({ dirPath: userProfilePath, fsDirs }), _void]
           },
         },
         query: {
@@ -96,41 +94,14 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
           },
         },
         write: {
-          async deletePath({ path, type }) {
-            const fs_path = fs_storage_path_of({ path, fsDirs })
-            const file_stats = await stat(fs_path).catch(() => null)
-            if (!file_stats) {
-              return [false, { reason: 'notFound' }]
-            }
-            if (type === 'dir' && !file_stats.isDirectory()) {
-              return [false, { reason: 'unexpectedType' }]
-            }
-            if (type === 'file' && !file_stats.isFile()) {
-              return [false, { reason: 'unexpectedType' }]
-            }
-            return [true, _void]
-          },
           async deleteStaleTemp() {
-            const {
-              configs: { tempFileMaxRetentionSeconds },
-            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
-            const tempFileMaxRetentionMilliseconds = tempFileMaxRetentionSeconds * 1000
-            const { temp } = fsDirs
-            const temp_dirs_or_whatever = await readdir(temp)
-            temp_dirs_or_whatever.forEach(async temp_dir_or_whatever => {
-              const temp_dir_or_whatever_path = join(temp, temp_dir_or_whatever)
-              const { ctime } = await stat(temp_dir_or_whatever_path).catch(() => ({
-                ctime: null,
-              }))
-              const now = Date.now()
-              const timeAgoMillis = ctime ? now - ctime.getTime() : Infinity
-              const expired = timeAgoMillis > tempFileMaxRetentionMilliseconds
-              if (!expired) {
-                return
+            const deletedFiles = await deleteStaleTemp({ fsDirs })
+
+            deletedFiles.forEach(result => {
+              if (result.invalidUlid) {
+                ctx.log('warn', ` deleted temp file [${result.deletedFile}] for invalid ulid`)
               }
-              rimraf(temp_dir_or_whatever_path, { maxRetries: 2 })
             })
-            //setTimeout(cleanupTemp, tempFileMaxRetentionMilliseconds)
           },
         },
         // async useTempFile({ absolutePath, tempId }) {

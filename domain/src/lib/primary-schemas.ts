@@ -37,7 +37,7 @@ export async function fetchAllSchemaConfigs({ primary }: { primary: moodlePrimar
         eduPublishPrimaryMsgSchemaConfigOverrides,
       })),
       primary.org.session.moduleInfo().then(({ schemaConfigs }) => schemaConfigs),
-      primary.storage.session.moduleInfo().then(({ uploadMaxSizeConfigs }) => uploadMaxSizeConfigs),
+      primary.storage.session.moduleInfo().then(({ configs: { uploadMaxSize } }) => uploadMaxSize),
       primary.edu.session
         .moduleInfo()
         .then(({ schemaConfigs, enabledCategoriesSchemaConfigs }) => ({ schemaConfigs, enabledCategoriesSchemaConfigs })),

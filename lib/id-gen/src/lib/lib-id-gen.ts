@@ -9,7 +9,6 @@ export type id_type = d_u<
   },
   'type'
 >
-
 const globalMonoUlid = ulidx.monotonicFactory()
 export async function generateUlid({ onDate }: { onDate: Date | number | string }) {
   const date = new Date(onDate)
@@ -31,4 +30,11 @@ export async function generateId(id_type: id_type) {
     case 'ulid':
       return generateUlid({ onDate: id_type.onDate })
   }
+}
+
+export function decodeUlid(ulid: string) {
+  if (!ulidx.isValid(ulid)) {
+    return null
+  }
+  return ulidx.decodeTime(ulid)
 }

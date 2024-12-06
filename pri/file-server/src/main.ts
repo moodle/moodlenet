@@ -2,14 +2,19 @@ import { http_bind } from '@moodle/bindings-node'
 import { moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
+import {
+  create_temp_file,
+  deleteTemp,
+  localFsDirectories,
+  getFsDirectories,
+  MOODLE_DEFAULT_HOME_DIR,
+} from '@moodle/lib-storage-local-fs'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
-import { fsDirectories, generateFileHashes, getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-storage-local-fs'
 import { fileAssetMeta } from '@moodle/module/storage'
-import { getSanitizedFileName } from '@moodle/module/storage/lib'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
-import { mkdir, writeFile } from 'fs/promises'
+import { mkdir } from 'fs/promises'
 import multer from 'multer'
 import { userAgent } from 'next/server'
 import { join, resolve } from 'path'
@@ -31,7 +36,16 @@ declare global {
     export interface Request {
       moodlePrimary: moodlePrimary
       moodlePrimarySession: primarySession
-      moodleDirs: fsDirectories
+      moodleDirs: localFsDirectories
+    }
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    namespace Multer {
+      export interface File {
+        moodleUploaded: {
+          tempId: string
+          fileAssetMeta: fileAssetMeta
+        }
+      }
     }
   }
 }
@@ -98,49 +112,73 @@ const router = express
     if (userSession.type !== 'authenticated') {
       return res.status(401).send('UNAUTHORIZED')
     }
-    const { uploadMaxSizeConfigs } = await req.moodlePrimary.storage.session.moduleInfo()
-    const fileSizeLimit = req.params.type === 'file' ? uploadMaxSizeConfigs.max : uploadMaxSizeConfigs.webImage
+    const {
+      configs: { uploadMaxSize, uploadedTempFileMaxRetentionSeconds: tempFileMaxRetentionSeconds },
+    } = await req.moodlePrimary.storage.session.moduleInfo()
+    const fileSizeLimit = req.params.type === 'file' ? uploadMaxSize.max : uploadMaxSize.webImage
     const multerOptions: multer.Options = {
       limits: {
         fileSize: fileSizeLimit,
       },
-    } //get from req.moodlePrimary
-
+      storage: {
+        _handleFile(req, file, cb) {
+          //sample file: {
+          //   fieldname: 'file',
+          //   originalname: 'filename.jpg',
+          //   encoding: '7bit',
+          //   mimetype: 'image/jpeg',
+          //   destination: '/path/to/temp_dir',
+          //   filename: '085dcd493a51adf9e34bdc776926e225',
+          //   path: '/path/to/temp_dir/085dcd493a51adf9e34bdc776926e225',
+          //   size: 129352
+          // }
+          if (!file || !isMimetype(file.mimetype)) {
+            cb(new Error('upload failed'))
+            return
+          }
+          if (!isMimetype(file.mimetype)) {
+            cb(new Error(`invalid mimetype ${file.mimetype}`))
+            return
+          }
+          create_temp_file({
+            expiresSeconds: tempFileMaxRetentionSeconds,
+            fsDirs: req.moodleDirs,
+            readable: file.stream,
+            fileMeta: {
+              name: file.originalname,
+              mimetype: file.mimetype,
+              size: file.size,
+            },
+            uploadedFileMeta: {
+              primarySessionId: req.moodlePrimarySession.id,
+              byUserAccountId: userSession.user.id,
+              date: date_time_string('now'),
+              original: {
+                name: file.originalname,
+              },
+            },
+          }).then(
+            ({ fileAssetMeta, tempId }) => {
+              cb(null, { moodleUploaded: { fileAssetMeta, tempId } })
+            },
+            e => {
+              cb(e)
+            },
+          )
+        },
+        _removeFile(req, file, callback) {
+          deleteTemp({
+            fsDirs: req.moodleDirs,
+            tempId: file.moodleUploaded.tempId,
+          }).then(() => callback(null), callback)
+        },
+      }, //get from req.moodlePrimary
+    }
     multer({ dest: req.moodleDirs.temp, ...multerOptions }).single('file')(req, res, async () => {
-      if (!req.file) {
+      if (!req.file?.moodleUploaded) {
         return res.status(500).send('upload failed')
       }
-      if (!isMimetype(req.file.mimetype)) {
-        return res.status(500).send(`invalid mimetype ${req.file.mimetype}`)
-      }
-
-      const fileAssetMeta: fileAssetMeta = {
-        hash: await generateFileHashes(req.file.path),
-        name: getSanitizedFileName(req.file.originalname),
-        mimetype: req.file.mimetype,
-        size: req.file.size,
-        uploaded: {
-          primarySessionId: req.moodlePrimarySession.id,
-          byUserAccountId: userSession.user.id,
-          date: date_time_string('now'),
-          original: {
-            name: req.file.originalname,
-          },
-        },
-      }
-      writeFile(`${req.file.path}.json`, JSON.stringify(fileAssetMeta), 'utf8')
-      res.status(200).json({ tempId: req.file.filename })
-
-      //sample req.file: {
-      //   fieldname: 'file',
-      //   originalname: 'filename.jpg',
-      //   encoding: '7bit',
-      //   mimetype: 'image/jpeg',
-      //   destination: '/path/to/temp_dir',
-      //   filename: '085dcd493a51adf9e34bdc776926e225',
-      //   path: '/path/to/temp_dir/085dcd493a51adf9e34bdc776926e225',
-      //   size: 129352
-      // }
+      res.status(200).json({ tempId: req.file.moodleUploaded.tempId })
     })
   })
 app.use(BASE_HTTP_PATH, router)

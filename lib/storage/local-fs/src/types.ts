@@ -1,44 +1,5 @@
-import { map, path } from '@moodle/lib-types'
+import { domainFsDirectories } from '@moodle/module/storage'
 
-declare const filetype_sym: unique symbol
-export type filetype = typeof filetype_sym
-declare const image_filetype_sym: unique symbol
-export type image_filetype = filetype & typeof image_filetype_sym
-
-type fsPath = string
-export type filePathGetter = () => fsPath
-export type files<_fs> = {
-  [fsId in keyof _fs]: _fs[fsId] extends filetype ? filePathGetter : files<_fs[fsId]>
-}
-export type pathGetter = () => fsPath
-export type paths<_fs> = {
-  [fsId in keyof _fs]: pathGetter & (_fs[fsId] extends filetype ? _fs[fsId] : paths<_fs[fsId]>)
-}
-
-export type fsDirectories = {
-  currentDomainDir: string
-  temp: string
+export type localFsDirectories = domainFsDirectories & {
   fsStorage: string
-}
-
-export type dir<_dir> = {
-  [key in keyof _dir]: _dir[key] extends file ? file : dir<_dir[key]>
-}
-export type file = (alias: string) => path
-export type filesystem = {
-  userProfile: map<{
-    profile: {
-      avatar: image_filetype
-      background: image_filetype
-    }
-    drafts: {
-      eduResource: map<{
-        image: image_filetype
-        asset: filetype
-      }>
-      eduCollection: map<{
-        image: image_filetype
-      }>
-    }
-  }>
 }

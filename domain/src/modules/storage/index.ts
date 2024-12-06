@@ -1,7 +1,7 @@
-import type { ok_ko, path } from '@moodle/lib-types'
+import type { ok_ko } from '@moodle/lib-types'
 import { userProfileId } from '../user-profile'
 import { fileAssetMeta } from './types/asset'
-import { uploadMaxSizeConfigs } from './types/configs'
+import { Configs } from './types/configs'
 export * from './types'
 
 export default interface StorageDomain {
@@ -10,7 +10,7 @@ export default interface StorageDomain {
   primary: {
     storage: {
       session: {
-        moduleInfo(): Promise<{ uploadMaxSizeConfigs: uploadMaxSizeConfigs }>
+        moduleInfo(): Promise<{ configs: Configs }>
       }
     }
   }
@@ -24,10 +24,6 @@ export default interface StorageDomain {
         tempMeta(_: { tempId: string }): Promise<ok_ko<{ meta: fileAssetMeta }, { notFound: unknown }>>
       }
       write: {
-        deletePath(_: {
-          path: path
-          type: 'file' | 'dir'
-        }): Promise<ok_ko<void, { notFound: unknown; unexpectedType: unknown }>>
         deleteStaleTemp(): Promise<void>
       }
     }

@@ -1,13 +1,25 @@
 import { secondaryContext } from '@moodle/domain'
-import { createPathProxy, ok_ko, path } from '@moodle/lib-types'
+import { createPathProxy, isNotFalsy, ok_ko, path } from '@moodle/lib-types'
 import { mkdir, readdir, readFile, rename, stat, writeFile } from 'fs/promises'
-import { dirname, join, normalize, sep as os_path_separator, relative, resolve } from 'path'
+import { join, normalize, sep as os_path_separator, resolve } from 'path'
 import { rimraf } from 'rimraf'
 import sharp from 'sharp'
-import { files, filesystem, fsDirectories, paths } from './types'
+import { localFsDirectories } from './types'
+import { dirPath, dirPaths, filePaths } from '@moodle/lib-types'
+import { DomainFilesystem } from '@moodle/module/storage'
 
-import { asset, fileHashes, localAssetMeta, fileAssetMeta, useTempFileResult, webImageSize } from '@moodle/module/storage'
-import { getSanitizedFileName } from '@moodle/module/storage/lib'
+import { decodeUlid, generateUlid } from '@moodle/lib-id-gen'
+import {
+  asset,
+  fileAssetMeta,
+  fileHashes,
+  fileMeta,
+  storedAssetMeta,
+  uploadedFileMeta,
+  useTempFileResult,
+  webImageSize,
+} from '@moodle/module/storage'
+import { sanitizeFilename } from '@moodle/module/storage/lib'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
 import { Readable } from 'stream'
@@ -15,34 +27,33 @@ import { Readable } from 'stream'
 export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
 
 export async function generateFileHashes(filePath: string): Promise<fileHashes> {
+  return await generateHashes(createReadStream(filePath))
+}
+
+export async function generateHashes(readable: Readable): Promise<fileHashes> {
   const sha256 = await new Promise<string>((resolve, reject) => {
     const hash = createHash('sha256')
-    const rs = createReadStream(filePath)
-    rs.on('error', reject)
-    rs.on('data', chunk => hash.update(chunk))
-    rs.on('end', () => resolve(hash.digest('hex')))
+    readable.on('error', reject)
+    readable.on('data', chunk => hash.update(chunk))
+    readable.on('end', () => resolve(hash.digest('hex')))
   })
   return {
     sha256,
   }
 }
 
-export function prefixedDomainFsPaths(prefix: path | string) {
-  const _prefix = [prefix].flat()
-  const prefixed_domain_file_paths = createPathProxy<files<filesystem> & paths<filesystem>>({
-    apply({ path }) {
-      const _path = [..._prefix, ...path].join(os_path_separator)
-      return _path
-    },
-  })
-  return {
-    files: prefixed_domain_file_paths as files<filesystem>,
-    paths: prefixed_domain_file_paths as paths<filesystem>,
-  }
+const domain_fs_paths = createPathProxy<filePaths<DomainFilesystem> & dirPaths<DomainFilesystem>>({
+  apply({ path }) {
+    return path
+  },
+})
+export const domainFs = {
+  file: domain_fs_paths as filePaths<DomainFilesystem>,
+  dir: domain_fs_paths as dirPaths<DomainFilesystem>,
 }
 
-export function getFsDirectories({ domainName, homeDir }: { homeDir: string; domainName: string }): fsDirectories {
-  const currentDomainDir = resolve(homeDir, getSanitizedFileName(domainName))
+export function getFsDirectories({ domainName, homeDir }: { homeDir: string; domainName: string }): localFsDirectories {
+  const currentDomainDir = resolve(homeDir, sanitizeFilename(domainName))
   const temp = join(currentDomainDir, '.temp')
   const fsStorage = join(currentDomainDir, 'fs-storage')
   return {
@@ -57,23 +68,53 @@ type temp_file_paths = {
   meta: string
 }
 
-export function get_temp_file_paths({ tempId, fsDirs }: { tempId: string; fsDirs: fsDirectories }): temp_file_paths {
+export function get_temp_file_paths({ tempId, fsDirs }: { tempId: string; fsDirs: localFsDirectories }): temp_file_paths {
   const file = join(fsDirs.temp, tempId)
-  const meta = `${file}.json`
+  const meta = `${file}.meta.json`
   return { file, meta }
 }
 
-export async function deleteTemp({ tempId, fsDirs }: { tempId: string; fsDirs: fsDirectories }) {
+export async function deleteTemp({ tempId, fsDirs }: { tempId: string; fsDirs: localFsDirectories }) {
   const { file: temp_file_path } = get_temp_file_paths({ tempId, fsDirs })
   await rimraf(`${temp_file_path}*`, { maxRetries: 2 }).catch(() => null)
 }
 
-export function fs_storage_path_of({ path, fsDirs }: { path: path; fsDirs: fsDirectories }) {
-  const fs_path = [fsDirs.fsStorage, ...path].join(os_path_separator)
-  return fs_path
+// FIXME: this may not be exported
+function absolute_path_of({ path, fsDirs }: { path: path; fsDirs: localFsDirectories }) {
+  const absolute_path = [fsDirs.fsStorage, ...path].join(os_path_separator)
+  return absolute_path
 }
 
-async function ensure_temp_file({ tempId, fsDirs }: { tempId: string; fsDirs: fsDirectories }) {
+export async function create_temp_file({
+  fsDirs,
+  readable,
+  fileMeta,
+  uploadedFileMeta,
+  expiresSeconds,
+}: {
+  fsDirs: localFsDirectories
+  readable: Readable
+  fileMeta: fileMeta
+  uploadedFileMeta: null | uploadedFileMeta
+  expiresSeconds: number
+}) {
+  const sanitizedFilename = sanitizeFilename(fileMeta.name)
+  const ulid = await generateUlid({ onDate: new Date().valueOf() + expiresSeconds * 1000 })
+  const tempId = `${ulid}_${sanitizedFilename}`
+  const temp_paths = get_temp_file_paths({ tempId, fsDirs })
+  await writeFile(temp_paths.file, readable)
+
+  const fileAssetMeta: fileAssetMeta = {
+    hash: await generateFileHashes(temp_paths.file),
+    name: sanitizedFilename,
+    mimetype: fileMeta.mimetype, // get it from actual writed file
+    size: fileMeta.size,
+    uploaded: uploadedFileMeta,
+  }
+  await writeFile(temp_paths.meta, JSON.stringify(fileAssetMeta), 'utf8')
+  return { tempId, fileAssetMeta }
+}
+async function ensure_temp_file({ tempId, fsDirs }: { tempId: string; fsDirs: localFsDirectories }) {
   const temp_paths = get_temp_file_paths({ tempId, fsDirs })
 
   const fileAssetMeta: fileAssetMeta = await readFile(temp_paths.meta, 'utf8')
@@ -90,16 +131,16 @@ async function ensure_temp_file({ tempId, fsDirs }: { tempId: string; fsDirs: fs
 }
 export async function use_temp_file_as_web_image({
   tempId,
-  absolutePath,
+  path,
   size,
   secondaryContext,
   fsDirs,
 }: {
   tempId: string
-  absolutePath: string
+  path: path
   size: webImageSize
   secondaryContext: secondaryContext
-  fsDirs: fsDirectories
+  fsDirs: localFsDirectories
 }): Promise<useTempFileResult> {
   const [resizeDone, resizeResult] = await resizeTempImage({
     size,
@@ -113,29 +154,36 @@ export async function use_temp_file_as_web_image({
   }
   const use_temp_file_result = await use_temp_file({
     tempId: resizeResult.resizedTempId,
-    absolutePath,
+    path,
     fsDirs,
   })
   return use_temp_file_result
 }
-
+export async function createDir({ dirPath, fsDirs }: { dirPath: dirPath; fsDirs: localFsDirectories }) {
+  const absolutePath = absolute_path_of({ path: dirPath, fsDirs })
+  return mkdir(absolutePath, { recursive: true }).then(
+    () => true,
+    () => false,
+  )
+}
 export async function use_temp_file({
   tempId,
-  absolutePath,
+  path,
   fsDirs,
 }: {
   tempId: string
-  absolutePath: string
-  fsDirs: fsDirectories
+  path: path
+  fsDirs: localFsDirectories
 }): Promise<useTempFileResult> {
   const temp_file = await ensure_temp_file({ tempId, fsDirs })
   if (!temp_file) {
     return [false, { reason: 'tempNotFound' }]
   }
-  await rimraf(absolutePath, { maxRetries: 2 }).catch(() => null)
-  await mkdir(absolutePath, { recursive: true })
+  const useInAbsolutePath = absolute_path_of({ path: path, fsDirs })
+  await rimraf(useInAbsolutePath, { maxRetries: 2 }).catch(() => null)
+  await mkdir(useInAbsolutePath, { recursive: true })
 
-  const mvError = await rename(temp_file.temp_paths.file, join(absolutePath, temp_file.fileAssetMeta.name)).then(
+  const mvError = await rename(temp_file.temp_paths.file, join(useInAbsolutePath, temp_file.fileAssetMeta.name)).then(
     () => false as const,
     e => String(e),
   )
@@ -145,12 +193,17 @@ export async function use_temp_file({
     return [false, { reason: 'move', error: mvError }]
   }
   const { fileAssetMeta } = temp_file
-  const path = relative(fsDirs.fsStorage, absolutePath) //join(absolutePath, temp_file.meta.name))
-  const asset = usingTempFile2asset({ path, fileAssetMeta })
+  const asset = usingTempFile2asset({ path: path, fileAssetMeta })
   return [true, { fileAssetMeta, asset }]
 }
 
-export function usingTempFile2asset({ path, fileAssetMeta }: { fileAssetMeta: fileAssetMeta; path: string }) {
+export function usingTempFile2asset({
+  path,
+  fileAssetMeta,
+}: {
+  fileAssetMeta: fileAssetMeta
+  path: path //
+}) {
   const asset: asset = {
     type: 'stored',
     path,
@@ -163,8 +216,16 @@ export function usingTempFile2asset({ path, fileAssetMeta }: { fileAssetMeta: fi
   return asset
 }
 
-export async function getReadableLocalAsset(localAssetMeta: Pick<localAssetMeta, 'absolutePath'>): Promise<Readable> {
-  return createReadStream(localAssetMeta.absolutePath)
+export async function getReadableLocalAsset({
+  fsDirs,
+  localAssetMeta,
+}: {
+  fsDirs: localFsDirectories
+  localAssetMeta: Pick<storedAssetMeta, 'path'>
+}): Promise<Readable> {
+  const localFileAbsolutePath = absolute_path_of({ path: localAssetMeta.path, fsDirs })
+  // TODO: check for existence ..
+  return createReadStream(localFileAbsolutePath)
 }
 
 export async function resizeTempImage({
@@ -176,7 +237,7 @@ export async function resizeTempImage({
   tempId: string
   size: webImageSize
   secondaryContext: secondaryContext
-  fsDirs: fsDirectories
+  fsDirs: localFsDirectories
 }): Promise<
   ok_ko<{ resizedTempId: string; resizedTempFilePaths: temp_file_paths }, { tempNotFound: unknown; invalidFile: unknown }>
 > {
@@ -224,20 +285,48 @@ export async function resizeTempImage({
 
   return [true, { resizedTempId, resizedTempFilePaths }]
 }
-export async function deleteFile({ absolutePath, fsDirs }: { absolutePath: string; fsDirs: fsDirectories }): Promise<void> {
+
+export async function deleteStorageFile({ path, fsDirs }: { path: path; fsDirs: localFsDirectories }): Promise<void> {
+  const absolutePath = absolute_path_of({ path, fsDirs })
   //_and_clean_upper_empty_dirs
   //TODO: ensure this check is enough to avoid climbing up too much !
   if (normalize(fsDirs.fsStorage).startsWith(normalize(absolutePath))) {
     return
   }
   await rimraf(absolutePath, { maxRetries: 2 }).catch(() => null)
-  const parent_dir = dirname(absolutePath)
-  const parent_dir_files = await readdir(parent_dir).catch(() => [
+  const parent_dir_path = path.slice(0, path.length - 1)
+  const parentDirAbsolutePath = absolute_path_of({ path: parent_dir_path, fsDirs })
+  const parent_dir_files = await readdir(parentDirAbsolutePath).catch(() => [
     `placeholder in case of (unlikely) readdir error`,
     `to prevent deleting this dir, as it's not ensured to be empty`,
   ])
   if (parent_dir_files.length > 0) {
     return
   }
-  return deleteFile({ absolutePath: parent_dir, fsDirs })
+  return deleteStorageFile({ path: parent_dir_path, fsDirs })
+}
+
+export async function deleteStaleTemp({ fsDirs }: { fsDirs: localFsDirectories }) {
+  const { temp } = fsDirs
+  const temp_dir_content = await readdir(temp)
+  const deletedFiles = await Promise.all(
+    temp_dir_content.map(async temp_dir_content_name => {
+      const temp_dir_content_path = join(temp, temp_dir_content_name)
+      const now_millis = Date.now().valueOf()
+      const m_ulid_expires_string = temp_dir_content_name.split('_')[0]
+      const expires_date_millis = m_ulid_expires_string ? decodeUlid(m_ulid_expires_string) : null
+
+      const expired = (expires_date_millis || now_millis) <= now_millis
+      if (!expired) {
+        return
+      }
+      rimraf(temp_dir_content_path, { maxRetries: 2 })
+      return {
+        deletedFile: temp_dir_content_path,
+        invalidUlid: !expires_date_millis,
+      }
+    }),
+  )
+  //setTimeout(cleanupTemp, tempFileMaxRetentionMilliseconds)
+  return deletedFiles.filter(isNotFalsy)
 }

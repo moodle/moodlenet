@@ -10,6 +10,7 @@ export type promise_or_value<t> = t | Promise<t>
 
 export type path = string[]
 
+
 export type jsonDiff = unknown
 
 export type intersection<types extends _any[]> = pretty<

@@ -1,5 +1,5 @@
 import { _any, d_u__d, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
-import sanitizeFilename from 'sanitize-filename'
+import sanitize_filename from 'sanitize-filename'
 import { adoptAssetResponse, asset, useTempFileResult } from '../types'
 
 // export function newFsFileRelativePath(filename: string, date = ctx.now) {
@@ -13,8 +13,8 @@ import { adoptAssetResponse, asset, useTempFileResult } from '../types'
 //     filename,
 //   ]
 // }
-export function getSanitizedFileName(originalFilename: string) {
-  const sanitized = sanitizeFilename(originalFilename)
+export function sanitizeFilename(originalFilename: string) {
+  const sanitized = sanitize_filename(originalFilename)
     .normalize('NFKD')
     .replace(/\p{Diacritic}/gu, '')
     .replace(/[^a-z0-9._-]/gi, '_')
@@ -29,7 +29,7 @@ export function getSanitizedFileName(originalFilename: string) {
 }
 export function getRndPrefixedSanitizedFileName(originalFilename: string, prefixLength = 3) {
   const rnd = String(Math.random()).substring(2, 2 + prefixLength)
-  return `${rnd}_${getSanitizedFileName(originalFilename)}`
+  return `${rnd}_${sanitizeFilename(originalFilename)}`
 }
 export function getAssetUrl<_asset extends asset>(
   asset: _asset,
@@ -40,7 +40,7 @@ export function getAssetUrl<_asset extends asset>(
     : asset.type === 'external'
       ? asset.url
       : asset.type === 'stored'
-        ? (`${filestoreHttpHref}/${asset.path}/${asset.name}` as url_path_string)
+        ? (`${filestoreHttpHref}/${asset.path.join('/')}/${asset.name}` as url_path_string)
         : unreachable_never(asset)
 }
 
