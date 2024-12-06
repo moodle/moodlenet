@@ -85,7 +85,7 @@
       "@moodle/sec-db-arango/migrate": ["sec/db/arango/src/migrate.ts"],
       "@moodle/sec-email-nodemailer": ["sec/email/nodemailer/src/index.ts"],
       "@moodle/sec-resource-metadata-generation-openai": ["sec/resource-metadata-generation/openai/src/index.ts"],
-      "@moodle/sec-storage-default": ["sec/storage/default/src/index.ts"],
+      "@moodle/sec-storage-local-fs": ["sec/storage/local-fs/src/index.ts"],
       "sec-resource-extraction-default": ["sec/resource-extraction/default/src/index.ts"]
     }
   },

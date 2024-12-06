@@ -1,5 +1,6 @@
 import { moduleCore, moodleModuleName, secondaryAdapter, secondaryProvider, sys_admin_info } from '@moodle/domain'
 import { configuration, deploymentInfoFromUrlString } from '@moodle/domain/lib'
+import { MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 import { getLocalStorageFsDirectories } from '@moodle/lib-storage-local-fs'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { edu_core } from '@moodle/module/edu/core'
@@ -13,7 +14,7 @@ import { CryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoD
 import { ArangoDbSecEnv, get_arango_persistence_factory, provideArangoDbSecEnv } from '@moodle/sec-db-arango'
 import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
 import { get_nodemailer_secondary_factory, NodemailerSecEnv, provideNodemailerSecEnv } from '@moodle/sec-email-nodemailer'
-import { get_storage_default_secondary_factory, StorageDefaultSecEnv } from '@moodle/sec-storage-default'
+import { get_storage_default_secondary_factory, StorageDefaultSecEnv } from '@moodle/sec-storage-local-fs'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
@@ -21,7 +22,6 @@ import * as path from 'path'
 import { coerce, literal, object, union } from 'zod'
 import { configurator } from './types'
 import { createDefaultDomainLoggerProvider } from './winston-logger'
-import { MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 
 const cache: map<Promise<configuration>> = {}
 

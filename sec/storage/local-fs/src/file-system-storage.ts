@@ -1,4 +1,5 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
+import { deleteStaleTemp, deleteTemp, getTempFilePaths } from '@moodle/lib-domain-fs'
 import {
   createDir,
   deleteStorageFile,
@@ -11,7 +12,6 @@ import { domainFs } from '@moodle/module/storage'
 import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
 import { readFile } from 'fs/promises'
 import { StorageDefaultSecEnv } from './types'
-import { deleteStaleTemp, deleteTemp, getTempFilePaths } from '@moodle/lib-domain-fs'
 
 export function get_storage_default_secondary_factory({ homeDir }: StorageDefaultSecEnv): secondaryProvider {
   return ctx => {
