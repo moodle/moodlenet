@@ -1,13 +1,15 @@
 import { decodeUlid, generateUlid } from '@moodle/lib-id-gen'
-import { dirPath, isNotFalsy, ok_ko, path } from '@moodle/lib-types'
 import {
+  dirPath,
   fileAssetMeta,
   fileHashes,
   fileMeta,
-  storedAssetMeta,
+  isNotFalsy,
+  ok_ko,
+  path,
   uploadedFileMeta,
   useTempFileResult,
-} from '@moodle/module/storage'
+} from '@moodle/lib-types'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
 import { mkdir, readdir, readFile, rename, stat, writeFile } from 'fs/promises'
@@ -197,17 +199,7 @@ export async function use_temp_file({
   return [true, { path, fileAssetMeta }]
 }
 
-export async function getReadableLocalAsset({
-  fsDirs,
-  localAssetMeta,
-}: {
-  fsDirs: localFsDirectories
-  localAssetMeta: Pick<storedAssetMeta, 'path'>
-}): Promise<Readable> {
-  const localFileAbsolutePath = absolute_path_of({ path: localAssetMeta.path, fsDirs })
-  // TODO: check for existence ..
-  return createReadStream(localFileAbsolutePath)
-}
+
 
 export async function resizeTempImage({
   maxSizePixel,

@@ -5,12 +5,11 @@ import { generateUlid } from '@moodle/lib-id-gen'
 import {
   create_temp_file,
   deleteTemp,
-  localFsDirectories,
   getFsDirectories,
+  localFsDirectories,
   MOODLE_DEFAULT_HOME_DIR,
 } from '@moodle/lib-storage-local-fs'
-import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
-import { fileAssetMeta } from '@moodle/module/storage'
+import { date_time_string, fileAssetMeta, isMimetype, signed_token_schema } from '@moodle/lib-types'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
@@ -151,7 +150,6 @@ const router = express
             },
             uploadedFileMeta: {
               primarySessionId: req.moodlePrimarySession.id,
-              byUserAccountId: userSession.user.id,
               date: date_time_string('now'),
               original: {
                 name: file.originalname,

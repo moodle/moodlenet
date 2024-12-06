@@ -9,8 +9,8 @@ import {
   use_temp_file,
   use_temp_file_as_web_image,
 } from '@moodle/lib-storage-local-fs'
-import { _void } from '@moodle/lib-types'
-import { fileAssetMeta, domainFs } from '@moodle/module/storage'
+import { _void, fileAssetMeta } from '@moodle/lib-types'
+import { domainFs } from '@moodle/module/storage'
 import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
 import { readFile } from 'fs/promises'
 import { StorageDefaultSecEnv } from './types'

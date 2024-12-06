@@ -1,51 +1,9 @@
-import { d_u, d_u__d, date_time_string, mimetype, ok_ko, path, url_string, url_string_schema } from '@moodle/lib-types'
+import { d_u, d_u__d, fileAssetMeta, path, url_string, url_string_schema } from '@moodle/lib-types'
 import { literal, object, string, union } from 'zod'
 
 import { contentCredits } from '../../content'
-import { userAccountId } from '../../user-account'
 
 export type externalAsset = { url: url_string; credits?: contentCredits }
-
-export type fileHashes = {
-  sha256: string
-  // ssdeep: string
-}
-
-export type useTempFileResult = ok_ko<
-  {
-    fileAssetMeta: fileAssetMeta
-    path: path
-  },
-  {
-    tempNotFound: unknown
-    move: {
-      error: string
-    }
-    invalidFile: unknown
-  }
->
-
-export type uploadedFileMeta = {
-  date: date_time_string
-  byUserAccountId: userAccountId
-  primarySessionId: string
-  original?: {
-    name: string
-    size?: number
-    hash?: fileHashes
-  }
-}
-
-export type fileMeta = {
-  name: string
-  size: number
-  mimetype: mimetype
-}
-
-export type fileAssetMeta = fileMeta & {
-  hash: fileHashes
-  uploaded: null | uploadedFileMeta
-}
 
 export type asset = d_u<
   {
@@ -56,11 +14,11 @@ export type asset = d_u<
   'type'
 >
 
-export const NONE_ASSET: asset = { type: 'none' }
-
 export type storedAssetMeta = fileAssetMeta & {
   path: path
 }
+
+export const NONE_ASSET: asset = { type: 'none' }
 
 export type adoptAssetForm = d_u<
   {
