@@ -30,13 +30,16 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
               await deleteStorageFile({ path: profileImagePath, fsDirs })
               return { asset: adoptAssetForm, status: 'done' }
             }
+            const {
+              configs: { webImageResizes },
+            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
+            const maxSizePixel = webImageResizes[as === 'avatar' ? 'medium' : 'large']
             return useTempFileResult_to_adoptAssetResponse(
               use_temp_file_as_web_image({
                 fsDirs,
-                secondaryContext: ctx,
+                maxSizePixel,
                 path: profileImagePath,
                 tempId: adoptAssetForm.tempId,
-                size: as === 'avatar' ? 'medium' : 'large',
               }),
             )
           },
@@ -59,13 +62,15 @@ export function get_storage_default_secondary_factory({ homeDir }: StorageDefaul
               await deleteStorageFile({ path: draftImagePath, fsDirs })
               return { asset: adoptAssetForm, status: 'done' }
             }
+            const {
+              configs: { webImageResizes },
+            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
             return useTempFileResult_to_adoptAssetResponse(
               use_temp_file_as_web_image({
                 fsDirs,
-                secondaryContext: ctx,
+                maxSizePixel: webImageResizes.large,
                 path: draftImagePath,
                 tempId: adoptAssetForm.tempId,
-                size: 'large',
               }),
             )
           },

@@ -1,12 +1,10 @@
-import { secondaryContext } from '@moodle/domain'
-import { createPathProxy, isNotFalsy, ok_ko, path } from '@moodle/lib-types'
+import { createPathProxy, dirPath, dirPaths, filePaths, isNotFalsy, ok_ko, path } from '@moodle/lib-types'
+import { DomainFilesystem } from '@moodle/module/storage'
 import { mkdir, readdir, readFile, rename, stat, writeFile } from 'fs/promises'
 import { join, normalize, sep as os_path_separator, resolve } from 'path'
 import { rimraf } from 'rimraf'
 import sharp from 'sharp'
 import { localFsDirectories } from './types'
-import { dirPath, dirPaths, filePaths } from '@moodle/lib-types'
-import { DomainFilesystem } from '@moodle/module/storage'
 
 import { decodeUlid, generateUlid } from '@moodle/lib-id-gen'
 import {
@@ -17,7 +15,6 @@ import {
   storedAssetMeta,
   uploadedFileMeta,
   useTempFileResult,
-  webImageSize,
 } from '@moodle/module/storage'
 import { createHash } from 'crypto'
 import { createReadStream } from 'fs'
@@ -152,20 +149,17 @@ async function ensure_temp_file({ tempId, fsDirs }: { tempId: string; fsDirs: lo
 export async function use_temp_file_as_web_image({
   tempId,
   path,
-  size,
-  secondaryContext,
+  maxSizePixel,
   fsDirs,
 }: {
   tempId: string
   path: path
-  size: webImageSize
-  secondaryContext: secondaryContext
+  maxSizePixel: number
   fsDirs: localFsDirectories
 }): Promise<useTempFileResult> {
   const [resizeDone, resizeResult] = await resizeTempImage({
-    size,
+    maxSizePixel,
     tempId,
-    secondaryContext,
     fsDirs,
   })
   // console.log({ resizeDone, resizeResult })
@@ -249,14 +243,12 @@ export async function getReadableLocalAsset({
 }
 
 export async function resizeTempImage({
-  size,
+  maxSizePixel,
   tempId,
-  secondaryContext,
   fsDirs,
 }: {
   tempId: string
-  size: webImageSize
-  secondaryContext: secondaryContext
+  maxSizePixel: number
   fsDirs: localFsDirectories
 }): Promise<
   ok_ko<{ resizedTempId: string; resizedTempFilePaths: temp_file_paths }, { tempNotFound: unknown; invalidFile: unknown }>
@@ -265,18 +257,15 @@ export async function resizeTempImage({
   if (!original_temp_file) {
     return [false, { reason: 'tempNotFound' }]
   }
-  const {
-    configs: { webImageResizes },
-  } = await secondaryContext.mod.secondary.env.query.modConfigs({ mod: 'storage' })
-  const resizeTo = webImageResizes[size]
+
   original_temp_file.temp_paths.file
 
-  const resizedTempId = `${tempId}_${size}`
+  const resizedTempId = `${tempId}_${maxSizePixel}`
   const resizedTempFilePaths = get_temp_file_paths({ tempId: resizedTempId, fsDirs })
   const resizedInfo = await sharp(original_temp_file.temp_paths.file)
     .resize({
-      width: resizeTo,
-      height: resizeTo,
+      width: maxSizePixel,
+      height: maxSizePixel,
       fit: 'inside',
       withoutEnlargement: true,
     })

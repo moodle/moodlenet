@@ -11,14 +11,6 @@ export type fileHashes = {
   // ssdeep: string
 }
 
-export type accessibleAsset = d_u<
-  {
-    local: storedAssetMeta
-    external: externalAsset
-  },
-  'type'
->
-
 export type useTempFileResult = ok_ko<
   {
     fileAssetMeta: fileAssetMeta
@@ -49,10 +41,12 @@ export type fileMeta = {
   size: number
   mimetype: mimetype
 }
+
 export type fileAssetMeta = fileMeta & {
   hash: fileHashes
   uploaded: null | uploadedFileMeta
 }
+
 export type asset = d_u<
   {
     stored: storedAssetMeta
