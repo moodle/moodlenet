@@ -3,7 +3,7 @@ import { _void } from '@moodle/lib-types'
 import { omit } from 'lodash'
 import UserProfileDomain, { eduCollectionDraft, eduResourceDraft } from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
-import { asset, NONE_ASSET } from '../../storage'
+import { maybeAsset, NONE_ASSET } from '../../storage'
 import {
   assert_authorizeAuthenticatedCurrentUserSession,
   assert_authorizeCurrentUserSessionWithRole,
@@ -13,8 +13,16 @@ import { createNewUserProfileData } from './lib/new-user-profile'
 type userProfilePrimary = UserProfileDomain['primary']['userProfile']
 export const user_profile_core: moduleCore<'userProfile'> = {
   modName: 'userProfile',
-  service() {
-    return
+  service(ctx) {
+    return {
+      // async draftResourceIngestionOutcome({ eduResourceDraftId, userProfileIdSelect, ingestionOutcome }) {
+      //   await ctx.write.setResourceIngestionStatus({
+      //     userProfileIdSelect,
+      //     eduResourceDraftId,
+      //     resourceIngestionStatus: ingestionOutcome,
+      //   })
+      // },
+    }
   },
   primary(ctx) {
     return {
@@ -45,6 +53,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
           async createEduCollectionDraft({ eduCollectionMetaForm }) {
             const eduCollectionDraftId = await generateNanoId()
             const eduCollectionDraft: eduCollectionDraft = {
+              draftId: eduCollectionDraftId,
               created: ctx.now,
               lastEditDate: ctx.now,
               data: {
@@ -56,9 +65,10 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             }
             const [done] = await ctx.write.createDraft({
               userProfileIdSelect: { by: 'userProfileId', userProfileId },
-              draftType: 'eduCollection',
-              draft: eduCollectionDraft,
-              draftId: eduCollectionDraftId,
+              draft: {
+                type: 'eduCollection',
+                data: eduCollectionDraft,
+              },
             })
             if (!done) {
               return [false, _void]
@@ -71,8 +81,10 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               userProfileIdSelect: { by: 'userProfileId', userProfileId },
               draftId: eduCollectionDraftId,
               lastEditDate: ctx.now,
-              meta: eduCollectionMetaForm,
-              draftType: 'eduCollection',
+              meta: {
+                type: 'eduCollection',
+                data: eduCollectionMetaForm,
+              },
             })
             return [done, _void]
           },
@@ -81,7 +93,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               userProfileRecord: { id: userProfileId },
             } = authenticatedUserSession
             if (adoptAssetForm.type === 'external') {
-              const asset: asset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
+              const asset: maybeAsset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
               const [done /* , result */] = await ctx.write.updateDraftImage({
                 userProfileIdSelect: { by: 'userProfileId', userProfileId },
                 draftId: eduResourceDraftId,
@@ -102,10 +114,12 @@ export const user_profile_core: moduleCore<'userProfile'> = {
           async editEduResourceDraft({ eduResourceDraftId, eduResourceMetaForm }) {
             const [done] = await ctx.write.updateDraftMeta({
               userProfileIdSelect: { by: 'userProfileId', userProfileId },
-              draftType: 'eduResource',
               draftId: eduResourceDraftId,
               lastEditDate: ctx.now,
-              meta: eduResourceMetaForm,
+              meta: {
+                type: 'eduResource',
+                data: eduResourceMetaForm,
+              },
             })
             return [done, _void]
           },
@@ -135,7 +149,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               userProfileRecord: { id: userProfileId },
             } = authenticatedUserSession
             if (adoptAssetForm.type === 'external') {
-              const asset: asset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
+              const asset: maybeAsset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
               const [done /* , result */] = await ctx.write.updateDraftImage({
                 userProfileIdSelect: { by: 'userProfileId', userProfileId },
                 draftId: eduCollectionDraftId,
@@ -178,6 +192,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             }
 
             const eduResourceDraft: eduResourceDraft = {
+              draftId: eduResourceDraftId,
               created: ctx.now,
               lastEditDate: ctx.now,
               data: {
@@ -185,8 +200,8 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 description: '',
                 asset,
                 assetProcess: {
-                  aiAnalysis: { generationProcess: { status: 'neverEnqueued' } },
-                  resourceExtractionStatus: { status: 'enqueued', attempt: 1, enqueueDate: ctx.now },
+                  aiAnalysis: { status: 'neverEnqueued' },
+                  resourceIngestionStatus: { status: 'neverEnqueued' },
                 },
                 bloomLearningOutcomes: [],
                 image: NONE_ASSET,
@@ -202,9 +217,10 @@ export const user_profile_core: moduleCore<'userProfile'> = {
 
             const [done /* , result */] = await ctx.write.createDraft({
               userProfileIdSelect: { by: 'userProfileId', userProfileId },
-              draftId: eduResourceDraftId,
-              draftType: 'eduResource',
-              draft: eduResourceDraft,
+              draft: {
+                type: 'eduResource',
+                data: eduResourceDraft,
+              },
             })
 
             if (!done) {
@@ -215,7 +231,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
           async useTempImageAsProfileImage({ useProfileImageForm: { type, adoptAssetForm } }) {
             const { userProfileRecord } = authenticatedUserSession
             if (adoptAssetForm.type === 'external') {
-              const asset: asset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
+              const asset: maybeAsset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
               const [done /* , result */] = await ctx.write.updateProfileImage({
                 userProfileIdSelect: { by: 'userProfileId', userProfileId },
                 lastEditDate: ctx.now,

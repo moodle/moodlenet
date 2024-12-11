@@ -1,11 +1,11 @@
-import { d_u, date_time_string, map, url_string } from '@moodle/lib-types'
-import { aiAgentResourceAnalysisStatus } from '../../resource-metadata-generation'
-import { resourceExtractionStatus } from '../../resource-extraction'
+import { d_u, date_time_string, url_string } from '@moodle/lib-types'
 import { contentLanguageCode, contentLicenseCode } from '../../content'
 import { eduIscedFieldCode, eduIscedLevelCode } from '../../edu'
 import { eduCollectionData, eduResourceData } from '../../edu/types/edu-content'
 import { moodlenetPublicEduResourceId } from '../../moodlenet/types/access-objects/eduResource'
-import { asset } from '../../storage'
+import { eduResourceIngestionStatus } from '../../resource-ingestion'
+import { aiEduResourceDataGenerationStatus } from '../../resource-metadata-generation'
+import { maybeAsset } from '../../storage'
 import { userAccountRecord } from '../../user-account'
 
 export type profileInfoMeta = {
@@ -16,8 +16,8 @@ export type profileInfoMeta = {
 }
 export type profileInfo = profileInfoMeta & {
   lastEditDate: date_time_string
-  background: asset
-  avatar: asset
+  background: maybeAsset
+  avatar: maybeAsset
 }
 export type profileImageType = ('avatar' | 'background') & keyof profileInfo
 
@@ -56,19 +56,19 @@ type draftEduCollectionEduResourceRef = d_u<
 export type eduResourceDraft = draft<
   eduResourceData & {
     assetProcess: {
-      resourceExtractionStatus: resourceExtractionStatus
-      aiAnalysis: aiAgentResourceAnalysisStatus
+      resourceIngestionStatus: { status: 'neverEnqueued' } | eduResourceIngestionStatus
+      aiAnalysis: { status: 'neverEnqueued' } | aiEduResourceDataGenerationStatus
     }
   }
 >
 
 type myDrafts = {
-  eduResource: map<eduResourceDraft, eduResourceDraftId>
-  eduCollection: map<eduCollectionDraft, eduCollectionDraftId>
+  eduResource: eduResourceDraft[]
+  eduCollection: eduCollectionDraft[]
 }
 
-
 type draft<dataType extends eduResourceData | eduCollectionData> = {
+  draftId: draftId
   data: dataType
   created: date_time_string
   lastEditDate: date_time_string

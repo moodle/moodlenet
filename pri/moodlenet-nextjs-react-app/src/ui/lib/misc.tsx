@@ -1,5 +1,5 @@
 import { _any, _nullish, d_u__d, unreachable_never } from '@moodle/lib-types'
-import { asset } from '@moodle/module/storage'
+import { maybeAsset } from '@moodle/module/storage'
 import assert from 'assert'
 import defaultsDeep from 'lodash-es/defaultsDeep'
 import Link from 'next/link'
@@ -90,7 +90,7 @@ export const getPastelColor = (i?: number, opacity = 1) => {
   // return 'hsla(' + 360 * number + ',' + (25 + 60 * number) + '%,' + (45 + 1 * number) + '%, ' + opacity + ')'
 }
 
-export const getBackupImage = (id: string): d_u__d<asset, 'type', 'external'> | undefined => {
+export const getBackupImage = (id: string): d_u__d<maybeAsset, 'type', 'external'> | undefined => {
   const numId = getNumberFromString(id)
   return ContentBackupImages[numId % ContentBackupImages.length]
 }
@@ -140,7 +140,7 @@ export const getResourceDomainName = (url: string): string | undefined => {
   }
 }
 
-export const getResourceTypeInfo = (asset?: asset | _nullish): { typeName: string; typeColor: string } | null => {
+export const getResourceTypeInfo = (asset?: maybeAsset | _nullish): { typeName: string; typeColor: string } | null => {
   if (!asset || asset.type === 'none') return null
   const resourceType =
     asset.type === 'stored'

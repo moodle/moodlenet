@@ -57,20 +57,65 @@ export function sanitizeFilename(originalFilename: string) {
   // const mDotExt = origExt ? `.${origExt}` : ''
 }
 
-export async function getTempFileReadable({ tempId, domainFsDirectories }: { tempId: string; domainFsDirectories: domainFsDirectories }) {
+export async function getTempFileReadable({
+  tempId,
+  domainFsDirectories,
+}: {
+  tempId: string
+  domainFsDirectories: domainFsDirectories
+}) {
   const { file } = getTempFilePaths({ tempId, domainFsDirectories })
   return createReadStream(file)
 }
 
-export function getTempFilePaths({ tempId, domainFsDirectories }: { tempId: string; domainFsDirectories: domainFsDirectories }): tempFilePaths {
+export function getTempFilePaths({
+  tempId,
+  domainFsDirectories,
+}: {
+  tempId: string
+  domainFsDirectories: domainFsDirectories
+}): tempFilePaths {
   const file = join(domainFsDirectories.temp, tempId)
   const meta = `${file}.meta.json`
   return { file, meta }
 }
 
-export async function deleteTemp({ tempId, domainFsDirectories }: { tempId: string; domainFsDirectories: domainFsDirectories }) {
+export async function deleteTemp({
+  tempId,
+  domainFsDirectories,
+}: {
+  tempId: string
+  domainFsDirectories: domainFsDirectories
+}) {
   const { file: temp_file_path } = getTempFilePaths({ tempId, domainFsDirectories })
   await rimraf(`${temp_file_path}*`, { maxRetries: 2 }).catch(() => null)
+}
+
+export async function getTempReadable({
+  tempId,
+  domainFsDirectories,
+}: {
+  tempId: string
+  domainFsDirectories: domainFsDirectories
+}) {
+  const { file: temp_file_path } = getTempFilePaths({ tempId, domainFsDirectories })
+  return createReadStream(temp_file_path)
+}
+
+export async function createTempFileReferenceNames({
+  domainFsDirectories,
+  fileName,
+  expiresSeconds,
+}: {
+  domainFsDirectories: domainFsDirectories
+  fileName: string
+  expiresSeconds: number
+}) {
+  const sanitizedFilename = sanitizeFilename(fileName)
+  const ulid = await generateUlid({ onDate: new Date().valueOf() + expiresSeconds * 1000 })
+  const tempId = `${ulid}_${sanitizedFilename}`
+  const tempPaths = getTempFilePaths({ tempId, domainFsDirectories })
+  return { tempPaths, tempId, sanitizedFilename }
 }
 
 export async function createTempFile({
@@ -84,10 +129,11 @@ export async function createTempFile({
   fileName: string
   expiresSeconds: number
 }) {
-  const sanitizedFilename = sanitizeFilename(fileName)
-  const ulid = await generateUlid({ onDate: new Date().valueOf() + expiresSeconds * 1000 })
-  const tempId = `${ulid}_${sanitizedFilename}`
-  const tempPaths = getTempFilePaths({ tempId, domainFsDirectories })
+  const { tempPaths, sanitizedFilename, tempId } = await createTempFileReferenceNames({
+    domainFsDirectories,
+    expiresSeconds,
+    fileName,
+  })
   await writeFile(tempPaths.file, readable)
   return { tempId, tempPaths, sanitizedFilename }
 }

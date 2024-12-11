@@ -1,6 +1,7 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
-import { createTempFile, deleteStaleTemp } from '@moodle/lib-domain-fs'
+import { deleteStaleTemp } from '@moodle/lib-domain-fs'
 import {
+  createStoredAssetTempFileSymlink,
   deleteStorageFile,
   localStorageFsDirectories,
   useTempFile,
@@ -77,11 +78,10 @@ export function get_storage_default_secondary_factory({ localFsStorageDirectory 
       storage: {
         service: {
           async createStoredAssetTempFileReference({ storedAssetMeta, expiresSeconds }) {
-            const { tempId } = await createTempFile({
+            const { tempId } = await createStoredAssetTempFileSymlink({
               expiresSeconds,
-              fileName: storedAssetMeta.name,
-              domainFsDirectories,
-              readable,
+              localStorageFsDirectories,
+              storedAssetMeta,
             })
             return { tempId }
           },

@@ -2,9 +2,9 @@ import type { ResourceDoc } from '@moodlenet/core-domain/resource'
 import type { ChatCompletion, ChatCompletionCreateParams, ChatCompletionMessageParam } from 'openai/resources/index'
 import { env } from '../init/env'
 import openAiClient from '../openai-client'
-import { extractResourceData } from '../resource-extract/extractResourceText'
-import type { resourceExtractionMetadata } from '../resource-extract/types'
-import { urlToRpcFile } from '../resource-extract/util'
+import { ingestResourceData } from '../resource-ingest/ingestResourceText'
+import type { resourceIngestionMetadata } from '../resource-ingest/types'
+import { urlToRpcFile } from '../resource-ingest/util'
 import { shell } from '../shell'
 import getPromptsAndData from './get-prompts-and-data'
 import type { BloomsCognitiveElem, ClassifyPars } from './types'
@@ -12,19 +12,19 @@ import { FN_NAME, bcAttr, par } from './types'
 
 interface OpenAiResponse {
   data: null | Partial<ClassifyPars>
-  resourceExtraction: resourceExtractionMetadata
+  resourceIngestion: resourceIngestionMetadata
 }
 
 export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | null> {
-  const resourceExtraction = await extractResourceData(doc).catch(err => {
-    shell.log('warn', 'resourceExtraction err', err)
+  const resourceIngestion = await ingestResourceData(doc).catch(err => {
+    shell.log('warn', 'resourceIngestion err', err)
     return null
   })
-  if (!resourceExtraction) {
+  if (!resourceIngestion) {
     return null
   }
 
-  const { contentDesc, content, title, type, provideImage } = resourceExtraction
+  const { contentDesc, content, title, type, provideImage } = resourceIngestion
   shell.log('notice', 'calling openai for', { contentDesc, type })
 
   const { completionConfig, prompts } = await getCompletionConfigs()
@@ -47,7 +47,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   // console.log({ promptL: prompt.content?.length,  messagesL: prompts.systemMessagesJsonl.messages.reduce((_, { content }) => {     return _ + (content?.length ?? 0) }, 0), tokens: resp.usage, })
   const cleaneupCompletions = cleanupChatCompletion(resp)
   if (!cleaneupCompletions) {
-    return { data: null, resourceExtraction }
+    return { data: null, resourceIngestion }
   }
   const {
     data,
@@ -61,7 +61,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   const openAiProvideImage = provideImage ?? (await generateProvideImage())
   return {
     data,
-    resourceExtraction: {
+    resourceIngestion: {
       contentDesc,
       content,
       title,

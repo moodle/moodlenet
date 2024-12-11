@@ -14,8 +14,8 @@ export async function generateMeta(doc: ResourceDoc): Promise<null | {
     return {
       generatedData: {
         meta: {
-          description: openAiResponse.resourceExtraction.content?.substring(0, 300),
-          title: openAiResponse.resourceExtraction.title?.substring(0, 60),
+          description: openAiResponse.resourceIngestion.content?.substring(0, 300),
+          title: openAiResponse.resourceIngestion.title?.substring(0, 60),
           learningOutcomes: [],
           language: null,
           level: null,
@@ -23,7 +23,7 @@ export async function generateMeta(doc: ResourceDoc): Promise<null | {
           type: null,
         },
       },
-      provideImage: openAiResponse.resourceExtraction.provideImage,
+      provideImage: openAiResponse.resourceIngestion.provideImage,
     }
   }
 
@@ -58,6 +58,6 @@ export async function generateMeta(doc: ResourceDoc): Promise<null | {
 
   return {
     generatedData,
-    provideImage: doc.image ? undefined : openAiResponse.resourceExtraction.provideImage,
+    provideImage: doc.image ? undefined : openAiResponse.resourceIngestion.provideImage,
   }
 }

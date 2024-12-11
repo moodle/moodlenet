@@ -1,6 +1,13 @@
-import { domainFsDirectories, ensureTempWithMeta, resizeTempImage, useTempFileResult } from '@moodle/lib-domain-fs'
+import {
+  createTempFileReferenceNames,
+  domainFsDirectories,
+  ensureTempWithMeta,
+  resizeTempImage,
+  useTempFileResult,
+} from '@moodle/lib-domain-fs'
 import { dirPath, path } from '@moodle/lib-types'
-import { mkdir, readdir, rename } from 'fs/promises'
+import { storedAssetMeta } from '@moodle/module/storage'
+import { mkdir, readdir, rename, symlink } from 'fs/promises'
 import { join, normalize, sep as os_path_separator } from 'path'
 import { rimraf } from 'rimraf'
 import { localStorageFsDirectories } from './types'
@@ -14,6 +21,29 @@ function absolutePathOf({
 }) {
   const absolute_path = [localStorageFsDirectories.storageDir, ...path].join(os_path_separator)
   return absolute_path
+}
+
+export async function createStoredAssetTempFileSymlink({
+  storedAssetMeta,
+  expiresSeconds,
+  localStorageFsDirectories,
+}: {
+  expiresSeconds: number
+  storedAssetMeta: Pick<storedAssetMeta, 'path' | 'name'>
+  localStorageFsDirectories: localStorageFsDirectories
+}) {
+  const { tempPaths, tempId } = await createTempFileReferenceNames({
+    domainFsDirectories: localStorageFsDirectories,
+    expiresSeconds,
+    fileName: storedAssetMeta.name,
+  })
+  const storedAssetAbsolutePath = absolutePathOf({
+    path: storedAssetMeta.path,
+    localStorageFsDirectories,
+  })
+  await symlink(storedAssetAbsolutePath, tempPaths.file)
+
+  return { tempId }
 }
 
 export function getDefaultLocalFsStorageDirectory({ domainFsDirectories }: { domainFsDirectories: domainFsDirectories }) {
@@ -75,7 +105,7 @@ export async function useTempFile({
   if (!ensuredTemp) {
     return [false, { reason: 'tempNotFound' }]
   }
-  const useInAbsolutePath = absolutePathOf({ path: path, localStorageFsDirectories: localStorageFsDirectories })
+  const useInAbsolutePath = absolutePathOf({ path, localStorageFsDirectories: localStorageFsDirectories })
   await rimraf(useInAbsolutePath, { maxRetries: 2 }).catch(() => null)
   await mkdir(useInAbsolutePath, { recursive: true })
 

@@ -13,24 +13,28 @@ export async function overUserProfileById({
   dbStruct: dbStruct
   userProfileIdSelect: userProfileIdSelect
   apply?: AqlQuery
-  returns?: 'userProfileDoc' | 'OLD' | 'NEW'
+  returns?: 'userProfileDoc' | 'OLD' | 'NEW' // | _other_string
 }): Promise<userProfileRecord | null> {
-  const filter_id =
-    userProfileIdSelect.by === 'userProfileId'
-      ? aql`userProfileDoc._key == ${userProfileIdSelect.userProfileId}`
-      : userProfileIdSelect.by === 'userAccountId'
-        ? aql`userProfileDoc.userAccount.id == ${userProfileIdSelect.userAccountId}`
-        : unreachable_never(userProfileIdSelect)
+  const getUserProfileAql = getUserProfileByIdSelectAql(userProfileIdSelect, dbStruct)
 
   const cursor = await dbStruct.appData.db.query(aql<userProfileRecord>`
-    FOR userProfileDoc IN ${dbStruct.appData.coll.userProfile}
-    FILTER ${filter_id}
-    LIMIT 1
-    ${apply}
-    RETURN MOODLE::RESTORE_RECORD_ID(${literal(returns)})
+      ${getUserProfileAql}
+      ${apply}
+      RETURN MOODLE::RESTORE_RECORD_ID(${literal(returns)})
     `)
   const [userProfile] = await cursor.all()
   return userProfile ?? null
+}
+
+export function getUserProfileByIdSelectAql(userProfileIdSelect: userProfileIdSelect, dbStruct: dbStruct) {
+  return userProfileIdSelect.by === 'userProfileId'
+    ? aql`LET userProfileDoc = DOCUMENT(${dbStruct.appData.coll.userProfile}, ${userProfileIdSelect.userProfileId})
+            FILTER userProfileDoc != null`
+    : userProfileIdSelect.by === 'userAccountId'
+      ? aql`FOR userProfileDoc IN ${dbStruct.appData.coll.userProfile}
+                FILTER userProfileDoc.userAccount.id == ${userProfileIdSelect.userAccountId}
+                LIMIT 1`
+      : unreachable_never(userProfileIdSelect)
 }
 
 export async function getDraft<draftType extends 'eduResource' | 'eduCollection'>({
@@ -48,7 +52,7 @@ export async function getDraft<draftType extends 'eduResource' | 'eduCollection'
     dbStruct,
     userProfileIdSelect: userProfileIdSelect,
   })
-  return userProfileRecord?.myDrafts[draftType]?.[draftId] as
+  return userProfileRecord?.myDrafts[draftType].find(draft => draft.draftId === draftId) as
     | undefined
     | (draftType extends 'eduResource' ? eduResourceDraft : draftType extends 'eduCollection' ? eduCollectionDraft : never)
 }

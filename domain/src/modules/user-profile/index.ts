@@ -1,5 +1,4 @@
 import type { d_u, d_u__d, date_time_string, ok_ko } from '@moodle/lib-types'
-import { adoptAssetForm, adoptAssetResponse } from '../storage'
 import {
   createNewEduResourceDraftSchemaForm,
   eduCollectionApplyImageForm,
@@ -11,6 +10,8 @@ import {
   eduResourceMeta,
   eduResourceMetaForm,
 } from '../edu'
+import { eduResourceIngestionStatus, ingestionOutcome } from '../resource-ingestion'
+import { adoptAssetForm, adoptAssetResponse } from '../storage'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {
   UserProfilePrimaryMsgSchemaConfigs,
@@ -36,7 +37,15 @@ export type userProfileIdSelect = d_u<
 
 export default interface UserProfileDomain {
   event: { userProfile: unknown }
-  service: { userProfile: unknown }
+  service: {
+    userProfile: {
+      // draftResourceIngestionOutcome(_: {
+      //   userProfileIdSelect: userProfileIdSelect
+      //   eduResourceDraftId: eduResourceDraftId
+      //   ingestionOutcome: ingestionOutcome
+      // }): Promise<void>
+    }
+  }
   primary: {
     userProfile: {
       session: {
@@ -112,7 +121,7 @@ export default interface UserProfileDomain {
   }
   secondary: {
     userProfile: {
-      service?: unknown
+      service: unknown
       sync: {
         userAccountExcerpt(_: { userAccountExcerpt: userAccountExcerpt }): Promise<ok_ko<void>>
       }
@@ -136,30 +145,35 @@ export default interface UserProfileDomain {
         >
       }
       write: {
+        setResourceIngestionStatus(_: {
+          userProfileIdSelect: userProfileIdSelect
+          eduResourceDraftId: eduResourceDraftId
+          resourceIngestionStatus: eduResourceIngestionStatus
+        }): Promise<void>
         useTempFileAsResourceDraftAsset(_: {
           resourceDraftId: eduResourceDraftId
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'tempFile'>
         }): Promise<d_u__d<adoptAssetResponse<'stored'>, 'status', 'done' | 'error'>>
-        createDraft<draftType extends 'eduResource' | 'eduCollection'>(_: {
+        createDraft(_: {
           userProfileIdSelect: userProfileIdSelect
-          draftType: draftType
-          draft: draftType extends 'eduResource'
-            ? eduResourceDraft
-            : draftType extends 'eduCollection'
-              ? eduCollectionDraft
-              : never
-          draftId: draftId
+          draft: d_u<
+            {
+              eduResource: { data: eduResourceDraft }
+              eduCollection: { data: eduCollectionDraft }
+            },
+            'type'
+          >
         }): Promise<ok_ko<void>>
-        updateDraftMeta<draftType extends 'eduResource' | 'eduCollection'>(_: {
+        updateDraftResourceIngestionStatus(_: {
+          eduResourceDraftId: eduResourceDraftId
           userProfileIdSelect: userProfileIdSelect
-          draftType: draftType
+          resourceIngestionStatus: eduResourceIngestionStatus
+        }): Promise<ok_ko<void>>
+        updateDraftMeta(_: {
+          userProfileIdSelect: userProfileIdSelect
           draftId: draftId
-          meta: draftType extends 'eduResource'
-            ? eduResourceMeta
-            : draftType extends 'eduCollection'
-              ? eduCollectionMeta
-              : never
+          meta: d_u<{ eduResource: { data: eduResourceMeta }; eduCollection: { data: eduCollectionMeta } }, 'type'>
           lastEditDate: date_time_string
         }): Promise<ok_ko<void>>
         updateDraftImage<draftType extends 'eduResource' | 'eduCollection'>(_: {

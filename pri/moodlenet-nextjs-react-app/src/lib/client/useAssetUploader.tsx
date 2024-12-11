@@ -1,6 +1,6 @@
 import { _nullish, d_u, d_u__d, isNotNullish, unreachable_never, url_string } from '@moodle/lib-types'
-import { adoptAssetForm, adoptAssetResponse, adoptAssetService, externalAsset } from '@moodle/module/storage'
-import { asset, NONE_ASSET } from '@moodle/module/storage'
+import { adoptAssetForm, adoptAssetResponse, adoptAssetService, externalAsset, asset } from '@moodle/module/storage'
+import { maybeAsset, NONE_ASSET } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
 import { DOMAttributes, useCallback, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { humanFileSize } from '../../ui/lib/misc'
@@ -15,11 +15,11 @@ useAssetUploader.type = { webImage: '.jpg,.jpeg,.png,.gif', file: '*' }
 
 type selectedCurrentAsset =
   | {
-      asset: d_u__d<asset, 'type', 'external'>
+      asset: d_u__d<maybeAsset, 'type', 'external'>
       url: string
     }
   | {
-      asset: d_u__d<asset, 'type', 'none'>
+      asset: d_u__d<maybeAsset, 'type', 'none'>
       url: _nullish
     }
   | {
@@ -29,11 +29,11 @@ type selectedCurrentAsset =
 
 type settledCurrentAsset =
   | {
-      asset: d_u__d<asset, 'type', 'external' | 'stored'>
+      asset: asset
       url: string
     }
   | {
-      asset: d_u__d<asset, 'type', 'none'>
+      asset: d_u__d<maybeAsset, 'type', 'none'>
       url: _nullish
     }
 
@@ -71,7 +71,7 @@ export type assetUploaderHookOpts<non_nullable extends boolean | undefined> = {
 type assetType = 'webImage' | 'file'
 export function useAssetUploader<non_nullable extends boolean | undefined>(
   assetType: assetType,
-  initialAsset: _nullish | asset,
+  initialAsset: _nullish | maybeAsset,
   adoptAssetService: _nullish | (non_nullable extends true ? adoptAssetService<'tempFile' | 'external'> : adoptAssetService),
   opts?: assetUploaderHookOpts<non_nullable>,
 ) {
@@ -280,7 +280,7 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
   }, [current, openFileDialog, submit, state, dropHandlers, checkAndSelect, uploadingHandler, assetType])
 }
 
-function currentFromAsset(asset: asset, filetoreHttp: DeploymentInfo): current {
+function currentFromAsset(asset: maybeAsset, filetoreHttp: DeploymentInfo): current {
   return asset.type === 'none'
     ? {
         type: 'settled',
@@ -417,7 +417,7 @@ export function fileUploaderReducer(prev: assetUploaderState, action: fileUpload
     return unreachable_never(prev)
   }
 }
-function selectionEqualsAsset(selection: selection, asset: asset) {
+function selectionEqualsAsset(selection: selection, asset: maybeAsset) {
   const areBothNone = selection.type === 'null' && asset.type === 'none'
   const areSameExternal = selection.type === 'external' && asset.type === 'external' && selection.url === asset.url
   return areBothNone || areSameExternal
@@ -477,7 +477,7 @@ export type assetUploaderState = stateSettled | stateSelected | stateSubmitting
 type stateSettled = {
   type: 'settled'
   dirty: false
-  lastSettledAsset: asset
+  lastSettledAsset: maybeAsset
   selection: _nullish
   uploadStatus: _nullish
   lastSubmission: _nullish | lastSubmission
@@ -486,7 +486,7 @@ type stateSettled = {
 type stateSelected = {
   type: 'selected'
   dirty: true
-  lastSettledAsset: asset
+  lastSettledAsset: maybeAsset
   selection: selection
   uploadStatus: _nullish
   lastSubmission: _nullish | lastSubmission
@@ -496,7 +496,7 @@ type selection = d_u<{ file: { file: File }; external: externalAsset; null: unkn
 type stateSubmitting = {
   type: 'submitting'
   dirty: true
-  lastSettledAsset: asset
+  lastSettledAsset: maybeAsset
   selection: selection
   uploadStatus: uploadStatus
   lastSubmission: _nullish | lastSubmission

@@ -89,53 +89,24 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             const updateDone = !!updateResult
             return [updateDone, _void]
           },
-          async updateDraftImage({ lastEditDate, userProfileIdSelect, image, draftId, draftType }) {
+          async updateDraftResourceIngestionStatus({ eduResourceDraftId, resourceIngestionStatus, userProfileIdSelect }) {
             const updateResult = await overUserProfileById({
               dbStruct,
               userProfileIdSelect,
               apply: aql`
-                FILTER HAS( userProfileDoc.myDrafts[${draftType}], ${draftId} )
-                REPLACE MERGE_RECURSIVE(userProfileDoc, {
-                                                          myDrafts: {
-                                                            [${draftType}]: {
-                                                              [${draftId}]: {
-                                                                data: {
-                                                                  image: null
-                                                                },
-                                                              },
-                                                            },
-                                                          },
-                                                        }, {
-                                                          myDrafts: {
-                                                            [${draftType}]: {
-                                                              [${draftId}]: {
-                                                                lastEditDate: ${lastEditDate},
-                                                                data: {
-                                                                  image: ${image}
-                                                                },
-                                                              },
-                                                            },
-                                                          },
-                                                        }) IN ${dbStruct.appData.coll.userProfile}
-              `,
-            })
-            const updateDone = !!updateResult
-            return [updateDone, _void]
-          },
-          async updateDraftMeta({ userProfileIdSelect, draftId, draftType, meta, lastEditDate }) {
-            const updateResult = await overUserProfileById({
-              dbStruct,
-              userProfileIdSelect,
-              apply: aql`
-                FILTER HAS( userProfileDoc.myDrafts[${draftType}], ${draftId} )
+                FILTER ${eduResourceDraftId} IN userProfileDoc.myDrafts.eduResource[*].draftId
                 UPDATE userProfileDoc WITH {
                   myDrafts: {
-                    [${draftType}]: {
-                      [${draftId}]: {
-                        lastEditDate: ${lastEditDate},
-                        data: ${meta}
-                      }
-                    }
+                    eduResource: FOR draft IN userProfileDoc.myDrafts.eduResource
+                                          RETURN draft.draftId == ${eduResourceDraftId}
+                                                  ? MERGE( draft, {
+                                                                    data:  {
+                                                                      assetProcess: MERGE( UNSET(draft.data.assetProcess, 'resourceIngestionStatus'),{
+                                                                        resourceIngestionStatus: ${resourceIngestionStatus},
+                                                                      }),
+                                                                    },
+                                                                  })
+                                                  : draft
                   }
                 } IN ${dbStruct.appData.coll.userProfile}
               `,
@@ -143,17 +114,62 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             const updateDone = !!updateResult
             return [updateDone, _void]
           },
-          async createDraft({ userProfileIdSelect, draft, draftId, draftType }) {
+          async updateDraftImage({ lastEditDate, userProfileIdSelect, image, draftId, draftType }) {
+            const updateResult = await overUserProfileById({
+              dbStruct,
+              userProfileIdSelect,
+              apply: aql`
+                FILTER ${draftId} IN userProfileDoc.myDrafts[${draftType}][*].draftId
+                UPDATE userProfileDoc WITH {
+                  myDrafts: {
+                    [${draftType}]: FOR draft IN userProfileDoc.myDrafts[${draftType}]
+                                      RETURN draft.draftId == ${draftId}
+                                              ? MERGE(draft,{
+                                                              lastEditDate: ${lastEditDate},
+                                                              data: MERGE( UNSET(draft.data, 'image'), {
+                                                                image: ${image}
+                                                              }),
+                                                            })
+                                              : draft
+                  }
+                } IN ${dbStruct.appData.coll.userProfile}
+              `,
+            })
+            const updateDone = !!updateResult
+            return [updateDone, _void]
+          },
+          async updateDraftMeta({ userProfileIdSelect, draftId, meta, lastEditDate }) {
+            const updateResult = await overUserProfileById({
+              dbStruct,
+              userProfileIdSelect,
+              apply: aql`
+                FILTER ${draftId} IN userProfileDoc.myDrafts[${meta.type}][*].draftId
+                UPDATE userProfileDoc WITH {
+                  myDrafts: {
+                    [${meta.type}]: FOR draft IN userProfileDoc.myDrafts[${meta.type}]
+                                      RETURN draft.draftId == ${draftId}
+                                              ? MERGE(draft, {
+                                                                lastEditDate: ${lastEditDate},
+                                                                data: ${meta.data}
+                                                              })
+                                              : draft
+                  }
+                } IN ${dbStruct.appData.coll.userProfile}
+              `,
+            })
+            const updateDone = !!updateResult
+            return [updateDone, _void]
+          },
+          async createDraft({ userProfileIdSelect, draft }) {
+            const { draftId } = draft.data
             const createDraftUpdateResult = await overUserProfileById({
               dbStruct,
               userProfileIdSelect,
               apply: aql`
-                FILTER NOT( HAS( userProfileDoc.myDrafts[${draftType}], ${draftId} ) )
+                FILTER ${draftId} NOT IN userProfileDoc.myDrafts[${draft.type}][*].draftId
                 UPDATE userProfileDoc WITH {
                   myDrafts: {
-                    [${draftType}]: {
-                      [${draftId}]: ${draft}
-                    }
+                    [${draft.type}]: PUSH(userProfileDoc.myDrafts[${draft.type}], ${draft.data})
                   }
                 } IN ${dbStruct.appData.coll.userProfile}
               `,

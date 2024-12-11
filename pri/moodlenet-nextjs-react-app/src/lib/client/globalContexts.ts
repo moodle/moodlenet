@@ -1,7 +1,7 @@
 import { makeAllPrimarySchemas } from '@moodle/domain/lib'
 import { _any, _nullish, unreachable_never, url_string } from '@moodle/lib-types'
 import { webappGlobals } from '@moodle/module/moodlenet-react-app'
-import { asset } from '@moodle/module/storage'
+import { maybeAsset } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
 import { createContext, useContext, useMemo } from 'react'
 import { TextOptionProps } from '../../ui/atoms/Dropdown/Dropdown'
@@ -30,7 +30,7 @@ export function useAllPrimarySchemas() {
   return primarySchemas
 }
 
-export function useAssetUrl(asset: asset | _nullish, defaultTo?: url_string | asset) {
+export function useAssetUrl(asset: maybeAsset | _nullish, defaultTo?: url_string | maybeAsset) {
   const filestoreHttp = useGlobalCtx().filestoreHttpDeployment
   return useMemo(() => {
     const defaultUrl = !defaultTo

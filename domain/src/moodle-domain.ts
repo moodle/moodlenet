@@ -9,6 +9,7 @@ import userProfile from './modules/user-profile'
 import crypto from './modules/crypto'
 import userNotification from './modules/user-notification'
 import edu from './modules/edu'
+import resourceIngestion from './modules/resource-ingestion'
 
 export type MoodleDomain = intersection<
   [
@@ -23,5 +24,6 @@ export type MoodleDomain = intersection<
     userProfile,
     crypto,
     userNotification,
+    resourceIngestion,
   ]
 >

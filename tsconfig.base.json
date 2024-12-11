@@ -24,7 +24,6 @@
       "@moodle/bindings-node": ["bindings/node/src/index.ts"],
       "@moodle/domain": ["domain/src/index.ts"],
       "@moodle/domain/lib": ["domain/src/lib/index.ts"],
-      "@moodle/lib-asset-extraction-tika": ["lib/asset-extraction/tika/src/index.ts"],
       "@moodle/lib-domain-fs": ["lib/domain-fs/src/index.ts"],
       "@moodle/lib-email-templates/org": ["lib/email-templates/src/moodle/index.ts"],
       "@moodle/lib-email-templates/user-account": ["lib/email-templates/src/moodle/user-account/index.ts"],
@@ -54,10 +53,10 @@
       "@moodle/module/org/core": ["domain/src/modules/org/core/index.ts"],
       "@moodle/module/org/lib": ["domain/src/modules/org/lib/index.ts"],
       "@moodle/module/org/setup": ["domain/src/modules/org/setup/index.ts"],
-      "@moodle/module/resource-extraction": ["domain/src/modules/resource-extraction/index.ts"],
-      "@moodle/module/resource-extraction/core": ["domain/src/modules/resource-extraction/core/index.ts"],
-      "@moodle/module/resource-extraction/lib": ["domain/src/modules/resource-extraction/lib/index.ts"],
-      "@moodle/module/resource-extraction/setup": ["domain/src/modules/resource-extraction/setup/index.ts"],
+      "@moodle/module/resource-ingestion": ["domain/src/modules/resource-ingestion/index.ts"],
+      "@moodle/module/resource-ingestion/core": ["domain/src/modules/resource-ingestion/core/index.ts"],
+      "@moodle/module/resource-ingestion/lib": ["domain/src/modules/resource-ingestion/lib/index.ts"],
+      "@moodle/module/resource-ingestion/setup": ["domain/src/modules/resource-ingestion/setup/index.ts"],
       "@moodle/module/resource-metadata-generation": ["domain/src/modules/resource-metadata-generation/index.ts"],
       "@moodle/module/resource-metadata-generation/core": ["domain/src/modules/resource-metadata-generation/core/index.ts"],
       "@moodle/module/resource-metadata-generation/lib": ["domain/src/modules/resource-metadata-generation/lib/index.ts"],
@@ -84,9 +83,9 @@
       "@moodle/sec-db-arango": ["sec/db/arango/src/index.ts"],
       "@moodle/sec-db-arango/migrate": ["sec/db/arango/src/migrate.ts"],
       "@moodle/sec-email-nodemailer": ["sec/email/nodemailer/src/index.ts"],
+      "@moodle/sec-resource-ingestion-default": ["sec/resource-ingestion/default/src/index.ts"],
       "@moodle/sec-resource-metadata-generation-openai": ["sec/resource-metadata-generation/openai/src/index.ts"],
-      "@moodle/sec-storage-local-fs": ["sec/storage/local-fs/src/index.ts"],
-      "sec-resource-extraction-default": ["sec/resource-extraction/default/src/index.ts"]
+      "@moodle/sec-storage-local-fs": ["sec/storage/local-fs/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

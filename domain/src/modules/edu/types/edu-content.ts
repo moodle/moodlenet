@@ -1,6 +1,5 @@
-import { d_u__d } from '@moodle/lib-types'
 import { contentLanguageCode, contentLicenseCode } from '../../content'
-import { asset } from '../../storage'
+import { asset, maybeAsset } from '../../storage'
 import { eduBloomCognitiveLevel, eduIscedFieldCode, eduIscedLevelCode, eduResourceTypeCode } from './edu-categories'
 
 export type eduResourceMeta = {
@@ -16,8 +15,8 @@ export type eduResourceMeta = {
 }
 
 export type eduResourceData = eduResourceMeta & {
-  asset: d_u__d<asset, 'type', 'external' | 'stored'>
-  image: asset
+  asset: asset
+  image: maybeAsset
 }
 
 export type bloomLearningOutcome = {
@@ -31,5 +30,5 @@ export type eduCollectionMeta = {
   description: string
 }
 export type eduCollectionData = eduCollectionMeta & {
-  image: asset
+  image: maybeAsset
 }

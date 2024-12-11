@@ -685,7 +685,7 @@ function _eduIscedFieldsSetup(): Omit<eduIscedFieldRecord, 'code'>[] {
     },
     {
       codePath: ['07', '2', '4'],
-      description: 'Mining and extraction',
+      description: 'Mining and ingestion',
     },
     {
       codePath: ['06', '1', '1'],

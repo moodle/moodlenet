@@ -1,13 +1,10 @@
 import { d_u, date_time_string } from '@moodle/lib-types'
 import { eduResourceData } from '../../edu/types/edu-content'
 
-export type aiAgentResourceAnalysisStatus = {
-  generationProcess: aiDataGenerationStatus<eduResourceData>
-}
+export type aiEduResourceDataGenerationStatus = aiDataGenerationStatus<eduResourceData>
 
 type aiDataGenerationStatus<dataType> = d_u<
   {
-    neverEnqueued: unknown
     enqueued: aiGenerationEnqueued
     ongoing: aiGenerationStarted
     aborted: aiGenerationEnded

@@ -1,7 +1,7 @@
 import { d_u, date_time_string, deep_partial_props, ok_ko } from '@moodle/lib-types'
-import { asset } from '../storage'
+import { maybeAsset } from '../storage'
 import { userAccountId } from '../user-account'
-import { profileImageType, profileInfoMeta, userProfileId } from '../user-profile'
+import { profileImageType, profileInfoMeta, userProfileId, userProfileIdSelect } from '../user-profile'
 import {
   contributorAccessLevel,
   currentMoodlenetSessionData,
@@ -59,7 +59,7 @@ export default interface MoodlenetDomain {
         updateMoodlenetContributorProfileInfoImage(_: {
           select: moodlenetContributorIdSelect
           type: profileImageType
-          image: asset
+          image: maybeAsset
           lastEditDate: date_time_string
         }): Promise<void>
         updateMoodlenetContributorAccess(_: {
@@ -91,17 +91,13 @@ export default interface MoodlenetDomain {
 }
 export type queryContributorFilter = d_u<{ access: { accessLevel: contributorAccessLevel[] } }, 'type'>
 
-export type moodlenetContributorIdSelect = d_u<
-  {
-    userProfileId: {
-      userProfileId: userProfileId
-    }
-    userAccountId: {
-      userAccountId: userAccountId
-    }
-    moodlenetContributorId: {
-      moodlenetContributorId: moodlenetContributorId
-    }
-  },
-  'by'
->
+export type moodlenetContributorIdSelect =
+  | userProfileIdSelect
+  | d_u<
+      {
+        moodlenetContributorId: {
+          moodlenetContributorId: moodlenetContributorId
+        }
+      },
+      'by'
+    >

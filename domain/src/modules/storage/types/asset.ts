@@ -6,11 +6,13 @@ import { contentCredits } from '../../content'
 
 export type externalAsset = { url: url_string; credits?: contentCredits }
 
+type noAsset = d_u<{ none: unknown }, 'type'>
+
+export type maybeAsset = asset | noAsset
 export type asset = d_u<
   {
     stored: storedAssetMeta
     external: externalAsset
-    none: unknown
   },
   'type'
 >
@@ -19,7 +21,7 @@ export type storedAssetMeta = fileMeta & {
   path: path
 }
 
-export const NONE_ASSET: asset = { type: 'none' }
+export const NONE_ASSET: noAsset = { type: 'none' }
 
 export type adoptAssetForm = d_u<
   {
@@ -32,10 +34,10 @@ export type adoptAssetForm = d_u<
   'type'
 >
 
-export type adoptAssetResponse<assetType extends asset['type'] = asset['type']> = d_u<
+export type adoptAssetResponse<assetType extends maybeAsset['type'] = maybeAsset['type']> = d_u<
   {
     assetSubmitted: unknown
-    done: { asset: d_u__d<asset, 'type', assetType> }
+    done: { asset: d_u__d<maybeAsset, 'type', assetType> }
     error: { message?: string }
   },
   'status'

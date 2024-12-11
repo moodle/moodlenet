@@ -195,7 +195,7 @@ app.listen(PORT, () => {
 //
 // FIXME: all this stuff below taken and adapted from react-app server code
 // SHAREDLIB
-// need to extract lib (cookies, access-session ... ) for all http primaries
+// need to ingest lib (cookies, access-session ... ) for all http primaries
 // check DEV-NOTES.md for more info
 const AUTH_COOKIE = 'moodle-auth'
 

@@ -22,6 +22,10 @@ import { coerce, literal, object, union } from 'zod'
 import { configurator } from './types'
 import { createDefaultDomainLoggerProvider } from './winston-logger'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
+import {
+  get_default_resource_ingestion_secondary_factory,
+  provideDefaultResourceIngestorSecEnv,
+} from '@moodle/sec-resource-ingestion-default'
 
 const cache: map<Promise<configuration>> = {}
 
@@ -85,7 +89,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
       const file_system_storage_sec_env: StorageDefaultSecEnv = {
         localFsStorageDirectory,
       }
-
+      const default_resource_ingestor_env = provideDefaultResourceIngestorSecEnv({ env: _process_env })
       const secondaryProviders: secondaryProvider[] = [
         // sec modules
         get_arango_persistence_factory(arango_db_env),
@@ -110,6 +114,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
           }
           return secondaryAdapter
         },
+        get_default_resource_ingestion_secondary_factory(default_resource_ingestor_env),
       ]
 
       const moduleCores: moduleCore<_any>[] = [
