@@ -26,6 +26,7 @@ import {
   get_default_resource_ingestion_secondary_factory,
   provideDefaultResourceIngestorSecEnv,
 } from '@moodle/sec-resource-ingestion-default'
+import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
 
 const cache: map<Promise<configuration>> = {}
 
@@ -126,6 +127,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         moodlenet_react_app_core,
         user_profile_core,
         storage_core,
+        resource_ingestion_core,
         {
           modName: 'env',
           service() {

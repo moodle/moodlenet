@@ -1,8 +1,9 @@
-import { url_string, url_string_schema } from '@moodle/lib-types'
+import { ok_ko, url_string, url_string_schema } from '@moodle/lib-types'
 import { ingestionOutcome } from '@moodle/module/resource-ingestion'
+import { asset, externalAsset } from '@moodle/module/storage'
 import ogs from 'open-graph-scraper'
 import puppeteer from 'puppeteer'
-import { tikaIngestor } from './tika-ingestor'
+import { tikaIngestion__gets__only__content } from './tika-ingestor__gets__only__content'
 // import { urlToLocalAsset } from '../util'
 
 // import _ogs from 'open-graph-scraper'
@@ -10,33 +11,40 @@ import { tikaIngestor } from './tika-ingestor'
 
 export async function puppeteerOgsUrlIngestor({
   url,
-  tikaUrl,
+  tikaServerUrl,
 }: {
   url: url_string
-  tikaUrl: string
+  tikaServerUrl: string
 }): Promise<ingestionOutcome> {
-  const [fromPuppeteer, fromOgs] = await Promise.all([puppeteerScrape({ url }), openGraphScrape({ url })])
-  if (!(fromPuppeteer || fromOgs)) {
-    return [false, { reason: 'couldNotIngest' }]
+  const [[puppeteerDone, puppeteerResponse], [ogsDone, ogsResponse]] = await Promise.all([
+    puppeteerScrape({ url }),
+    openGraphScrape({ url }),
+  ])
+  if (!(puppeteerDone || ogsDone)) {
+    return { outcome: 'failed', reason: { puppeteerResponse, ogsResponse } }
   }
-  const content = fromOgs?.content
-    ? fromOgs.content
-    : fromPuppeteer
-      ? await tikaIngestor({ tikaUrl, body: fromPuppeteer.pdf, mimeType: 'application/pdf' })
-      : null
+  const content =
+    (ogsDone && ogsResponse.content) ||
+    (puppeteerDone && (await tikaUrlContentIngestion({ tikaServerUrl, ...puppeteerResponse }))) ||
+    null
 
-  return [
-    true,
-    {
-      title: fromOgs?.title ?? fromPuppeteer?.title ?? null,
-      content,
-      image: fromOgs?.image ?? null,
-      ingestionKind: 'web page',
-    },
-  ]
+  const title = (ogsDone && ogsResponse.title) || (puppeteerDone && puppeteerResponse.title) || null
+  const externalAssetImage = (ogsDone && ogsResponse.image) || null
+
+  const image: asset | null = externalAssetImage ? { type: 'external', ...externalAssetImage } : null
+  return { outcome: 'succeed', title, content, image, ingestionKind: 'puppeteer+open-graph-scraper+tika' }
 }
 
-async function openGraphScrape({ url }: { url: url_string }): Promise<ingestionOutcome> {
+async function openGraphScrape({ url }: { url: url_string }): Promise<
+  ok_ko<
+    {
+      title: string | null
+      content: string
+      image: externalAsset | null
+    },
+    { error: { error: unknown }; couldNotGet: unknown }
+  >
+> {
   try {
     const { error, result } = await ogs({
       url,
@@ -44,24 +52,34 @@ async function openGraphScrape({ url }: { url: url_string }): Promise<ingestionO
       timeout: 10000,
     })
     if (error) {
-      return null
+      return [false, { reason: 'couldNotGet' }]
     }
     const imageUrl = await url_string_schema.parseAsync(result.ogImage?.[0]?.url).catch(() => null)
-    return {
+    const image: externalAsset | null = imageUrl && {
+      url: imageUrl,
+      credits: { owner: { url, name: result.ogSiteName ?? new URL(url).hostname } },
+    }
+    const ogsResult = {
       title: result.ogTitle ?? null,
       content: `${result.ogDescription ? `${result.ogDescription}\n` : ''}${result.ogLocale ? `locale:${result.ogLocale}` : ''}`,
-      image: imageUrl && {
-        type: 'external',
-        url: imageUrl,
-        credits: { owner: { url, name: result.ogSiteName ?? new URL(url).hostname } },
-      },
+      image,
     }
-  } catch {
-    return null
+    return [true, ogsResult]
+  } catch (error) {
+    return [false, { reason: 'error', error }]
   }
 }
 
-async function puppeteerScrape({ url }: { url: string }) {
+async function puppeteerScrape({ url }: { url: string }): Promise<
+  ok_ko<
+    {
+      title: string
+      pdf: Uint8Array
+      htmlContent: string
+    },
+    { error: { error: unknown } }
+  >
+> {
   try {
     const browser = await puppeteer.launch({ headless: true })
     const page = await browser.newPage()
@@ -73,8 +91,26 @@ async function puppeteerScrape({ url }: { url: string }) {
     const htmlContent = (await page.evaluate('() => document.documentElement.outerHTML')) as string
 
     await browser.close()
-    return { title, pdf, htmlContent }
-  } catch {
-    return null
+    const puppeteerResult = { title, pdf, htmlContent }
+    return [true, puppeteerResult]
+  } catch (error) {
+    return [false, { reason: 'error', error }]
   }
+}
+
+async function tikaUrlContentIngestion({
+  tikaServerUrl,
+  htmlContent,
+  pdf,
+}: {
+  tikaServerUrl: string
+  pdf: Uint8Array
+  htmlContent: string
+}): Promise<string | null> {
+  const pdfIngestion = await tikaIngestion__gets__only__content({ tikaServerUrl, body: pdf, mimeType: 'application/pdf' })
+  if (pdfIngestion.outcome === 'succeed') {
+    return pdfIngestion.content
+  }
+  const htmlIngestion = await tikaIngestion__gets__only__content({ tikaServerUrl, body: htmlContent, mimeType: 'text/html' })
+  return htmlIngestion.outcome === 'succeed' ? htmlIngestion.content : null
 }

@@ -10,10 +10,10 @@ import {
 } from '../../user-account/lib'
 import { createNewUserProfileData } from './lib/new-user-profile'
 
-type userProfilePrimary = UserProfileDomain['primary']['userProfile']
+type primary = UserProfileDomain['primary']['userProfile']
 export const user_profile_core: moduleCore<'userProfile'> = {
   modName: 'userProfile',
-  service(ctx) {
+  service(/* ctx */) {
     return {
       // async draftResourceIngestionOutcome({ eduResourceDraftId, userProfileIdSelect, ingestionOutcome }) {
       //   await ctx.write.setResourceIngestionStatus({
@@ -34,7 +34,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userProfile' })
             return { schemaConfigs: profileInfoPrimaryMsgSchemaConfigs }
           },
-        }
+        } satisfies primary['session']
       },
       async authenticated() {
         const authenticatedUserSession = await assert_authorizeAuthenticatedCurrentUserSession({ ctx }).then(
@@ -49,7 +49,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
           },
         )
         const userProfileId = authenticatedUserSession.userProfileRecord.id
-        const primaries: userProfilePrimary['authenticated'] = {
+        return {
           async createEduCollectionDraft({ eduCollectionMetaForm }) {
             const eduCollectionDraftId = await generateNanoId()
             const eduCollectionDraft: eduCollectionDraft = {
@@ -270,8 +270,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             }
             return [done, { userProfileId }]
           },
-        }
-        return primaries
+        } satisfies primary['authenticated']
       },
       async admin() {
         /* const adminUserSession =  */ await assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' }).then(
@@ -289,7 +288,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             }
             return [true, { userProfileRecord: userProfileResult.userProfileRecord }]
           },
-        }
+        } satisfies primary['admin']
       },
     }
   },

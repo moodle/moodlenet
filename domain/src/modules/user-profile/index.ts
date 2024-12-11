@@ -10,7 +10,7 @@ import {
   eduResourceMeta,
   eduResourceMetaForm,
 } from '../edu'
-import { eduResourceIngestionStatus, ingestionOutcome } from '../resource-ingestion'
+import { eduResourceIngestionStatus } from '../resource-ingestion'
 import { adoptAssetForm, adoptAssetResponse } from '../storage'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {

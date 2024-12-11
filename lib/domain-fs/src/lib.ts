@@ -6,7 +6,7 @@ import { join, resolve } from 'path'
 import { rimraf } from 'rimraf'
 import sanitize_filename from 'sanitize-filename'
 import sharp from 'sharp'
-import { Readable } from 'stream'
+import { finished, Readable } from 'stream'
 import { domainFsDirectories, fileMeta, tempFilePaths } from './types'
 
 export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
@@ -65,7 +65,9 @@ export async function getTempFileReadable({
   domainFsDirectories: domainFsDirectories
 }) {
   const { file } = getTempFilePaths({ tempId, domainFsDirectories })
-  return createReadStream(file)
+  const readable = createReadStream(file)
+  finished(readable, { error: true, readable: true }, () => deleteTempFile({ tempId, domainFsDirectories }))
+  return readable
 }
 
 export function getTempFilePaths({
@@ -80,7 +82,7 @@ export function getTempFilePaths({
   return { file, meta }
 }
 
-export async function deleteTemp({
+export async function deleteTempFile({
   tempId,
   domainFsDirectories,
 }: {
@@ -89,17 +91,6 @@ export async function deleteTemp({
 }) {
   const { file: temp_file_path } = getTempFilePaths({ tempId, domainFsDirectories })
   await rimraf(`${temp_file_path}*`, { maxRetries: 2 }).catch(() => null)
-}
-
-export async function getTempReadable({
-  tempId,
-  domainFsDirectories,
-}: {
-  tempId: string
-  domainFsDirectories: domainFsDirectories
-}) {
-  const { file: temp_file_path } = getTempFilePaths({ tempId, domainFsDirectories })
-  return createReadStream(temp_file_path)
 }
 
 export async function createTempFileReferenceNames({
@@ -165,7 +156,13 @@ export async function createUploadedTempFile({
   return { tempId, fileMeta }
 }
 
-export async function ensureTempWithMeta({ tempId, domainFsDirectories }: { tempId: string; domainFsDirectories: domainFsDirectories }) {
+export async function ensureTempWithMeta({
+  tempId,
+  domainFsDirectories,
+}: {
+  tempId: string
+  domainFsDirectories: domainFsDirectories
+}) {
   const ensuredTempFile = await ensureTemp({ tempId, domainFsDirectories })
   if (!ensuredTempFile) {
     return false
@@ -179,7 +176,13 @@ export async function ensureTempWithMeta({ tempId, domainFsDirectories }: { temp
   }
   return { ...ensuredTempFile, fileMeta }
 }
-export async function ensureTemp({ tempId, domainFsDirectories }: { tempId: string; domainFsDirectories: domainFsDirectories }) {
+export async function ensureTemp({
+  tempId,
+  domainFsDirectories,
+}: {
+  tempId: string
+  domainFsDirectories: domainFsDirectories
+}) {
   const paths = getTempFilePaths({ tempId, domainFsDirectories })
 
   const file = await stat(paths.file).catch(() => null)

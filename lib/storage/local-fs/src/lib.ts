@@ -5,9 +5,9 @@ import {
   resizeTempImage,
   useTempFileResult,
 } from '@moodle/lib-domain-fs'
-import { dirPath, path } from '@moodle/lib-types'
+import { dirPath, ok_ko, path } from '@moodle/lib-types'
 import { storedAssetMeta } from '@moodle/module/storage'
-import { mkdir, readdir, rename, symlink } from 'fs/promises'
+import { mkdir, readdir, rename, stat, symlink } from 'fs/promises'
 import { join, normalize, sep as os_path_separator } from 'path'
 import { rimraf } from 'rimraf'
 import { localStorageFsDirectories } from './types'
@@ -31,7 +31,7 @@ export async function createStoredAssetTempFileSymlink({
   expiresSeconds: number
   storedAssetMeta: Pick<storedAssetMeta, 'path' | 'name'>
   localStorageFsDirectories: localStorageFsDirectories
-}) {
+}): Promise<ok_ko<{ tempId: string }, { notFoundInStorage: unknown; error: { error: unknown } }>> {
   const { tempPaths, tempId } = await createTempFileReferenceNames({
     domainFsDirectories: localStorageFsDirectories,
     expiresSeconds,
@@ -41,9 +41,18 @@ export async function createStoredAssetTempFileSymlink({
     path: storedAssetMeta.path,
     localStorageFsDirectories,
   })
-  await symlink(storedAssetAbsolutePath, tempPaths.file)
 
-  return { tempId }
+  const targetStats = await stat(storedAssetAbsolutePath).catch(() => null)
+  if (!targetStats) {
+    return [false, { reason: 'notFoundInStorage' }]
+  }
+  try {
+    await symlink(storedAssetAbsolutePath, tempPaths.file)
+  } catch (error) {
+    return [false, { reason: 'error', error }]
+  }
+
+  return [true, { tempId }]
 }
 
 export function getDefaultLocalFsStorageDirectory({ domainFsDirectories }: { domainFsDirectories: domainFsDirectories }) {

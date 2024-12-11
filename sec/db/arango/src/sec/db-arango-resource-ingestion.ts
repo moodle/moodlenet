@@ -8,30 +8,28 @@ export function resource_ingestion_secondary_factory({ dbStruct }: { dbStruct: d
     const secondaryAdapter: secondaryAdapter = {
       resourceIngestion: {
         query: {
-          async engageEnqueuedDraftResourcesIngestion({ maxOngoingAmount }) {
+          async engageEnqueuedDraftResourcesIngestion({ parallelilsm }) {
             const cursor = await dbStruct.appData.db.query(aql<engagingResourceDraftIngestionRecord>`
 
-                FOR resourceDraftIngestion IN ${dbStruct.appData.coll.resourceDraftIngestion}
+                FOR eduResourceDraftIngestionDoc IN ${dbStruct.appData.coll.eduResourceDraftIngestion}
 
-                  FILTER  resourceDraftIngestion.current.status == 'enqueued'
-                        || resourceDraftIngestion.current.status == 'ongoing'
+                  FILTER  eduResourceDraftIngestionDoc.current.status == 'enqueued'
+                        || eduResourceDraftIngestionDoc.current.status == 'ongoing'
 
-                  SORT  resourceDraftIngestion.current.status DESC,
-                        resourceDraftIngestion.current.status.enqueueDate
+                  SORT  eduResourceDraftIngestionDoc.current.status DESC,
+                        eduResourceDraftIngestionDoc.current.status.enqueueDate
 
-                  LIMIT ${maxOngoingAmount}
+                  LIMIT ${parallelilsm}
 
-                  FILTER  resourceDraftIngestion.current.status == 'enqueued'
+                  FILTER  eduResourceDraftIngestionDoc.current.status == 'enqueued'
 
-                  UPDATE resourceDraftIngestion WITH {
+                  UPDATE eduResourceDraftIngestionDoc WITH {
                     current: {
                       status: 'ongoing'
                     }
-                  } IN ${dbStruct.appData.coll.resourceDraftIngestion}
+                  } IN ${dbStruct.appData.coll.eduResourceDraftIngestion}
 
-                  LIMIT ${maxOngoingAmount}
-
-                RETURN MOODLE::RESTORE_RECORD_ID(resourceDraftIngestion)
+                RETURN MOODLE::RESTORE_RECORD_ID(eduResourceDraftIngestionDoc)
             `)
             return cursor.all()
           },

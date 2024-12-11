@@ -59,7 +59,7 @@ export type ingestionOutcome = d_u<
   'outcome'
 >
 
-export type eduResourceIngestionRecord = {
+export type eduResourceDraftIngestionRecord = {
   id: `${userProfileId}#${eduResourceDraftId}`
   userProfileId: userProfileId
   eduResourceDraftId: eduResourceDraftId
@@ -67,6 +67,6 @@ export type eduResourceIngestionRecord = {
   asset: asset
 }
 
-export type engagingResourceDraftIngestionRecord = eduResourceIngestionRecord & {
+export type engagingResourceDraftIngestionRecord = eduResourceDraftIngestionRecord & {
   status: d_u__d<eduResourceIngestionStatus, 'status', 'ongoing'>
 }

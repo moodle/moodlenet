@@ -78,12 +78,11 @@ export function get_storage_default_secondary_factory({ localFsStorageDirectory 
       storage: {
         service: {
           async createStoredAssetTempFileReference({ storedAssetMeta, expiresSeconds }) {
-            const { tempId } = await createStoredAssetTempFileSymlink({
+            return createStoredAssetTempFileSymlink({
               expiresSeconds,
               localStorageFsDirectories,
               storedAssetMeta,
             })
-            return { tempId }
           },
         },
         query: {},

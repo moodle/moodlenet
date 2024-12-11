@@ -3,14 +3,14 @@ import { moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import {
   createUploadedTempFile,
-  deleteTemp,
+  deleteTempFile,
   domainFsDirectories,
+  fileMeta,
   getDomainFsDirectories,
   MOODLE_DEFAULT_HOME_DIR,
 } from '@moodle/lib-domain-fs'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
-import { fileMeta } from '@moodle/lib-domain-fs'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
@@ -169,7 +169,7 @@ const router = express
           )
         },
         _removeFile(req, file, callback) {
-          deleteTemp({
+          deleteTempFile({
             domainFsDirectories: req.moodleDirs,
             tempId: file.moodleUploaded.tempId,
           }).then(() => callback(null), callback)

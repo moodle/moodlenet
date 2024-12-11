@@ -7,7 +7,7 @@ import { contentLanguageRecord, contentLicenseRecord } from '@moodle/module/cont
 import { userAccountRecord } from '@moodle/module/user-account'
 import { record_doc } from '../lib/key-id-mapping'
 import { moodlenetContributorRecord } from '@moodle/module/moodlenet'
-import { resourceDraftIngestionRecord } from '@moodle/module/resource-ingestion'
+import { eduResourceDraftIngestionRecord } from '@moodle/module/resource-ingestion'
 
 export function getDbStruct(databaseConnections: databaseConnections) {
   const baseConnectionConfig = {
@@ -43,7 +43,8 @@ export function getDbStruct(databaseConnections: databaseConnections) {
         contentLicense: appData_db.collection<record_doc<contentLicenseRecord, 'code'>>('contentLicense'),
         contributor: appData_db.collection<record_doc<moodlenetContributorRecord>>('contributor'),
         userProfile: appData_db.collection<record_doc<userProfileRecord>>('userProfile'),
-        resourceDraftIngestion: appData_db.collection<record_doc<resourceDraftIngestionRecord>>('resourceDraftIngestion'),
+        eduResourceDraftIngestion:
+          appData_db.collection<record_doc<eduResourceDraftIngestionRecord>>('eduResourceDraftIngestion'),
       },
     },
     identity: {

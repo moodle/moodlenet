@@ -26,14 +26,13 @@ export const resource_ingestion_core: moduleCore<'resourceIngestion'> = {
       } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'resourceIngestion' })
 
       const engagedDraftResourceIngestions =
-        await ctx.mod.secondary.userProfile.service.engageEnqueuedDraftResourcesIngestion({
-          maxOngoingAmount: ingestionParallelism.parallelism,
+        await ctx.mod.secondary.resourceIngestion.query.engageEnqueuedDraftResourcesIngestion({
+          parallelilsm: ingestionParallelism.parallelism,
         })
 
       engagedDraftResourceIngestions.forEach(({ asset, attempt, eduResourceDraftId, userProfileId }) => {
         ctx.mod.secondary.resourceIngestion.service.ingestResource({
           asset,
-          attemptsLeft: ingestionParallelism.attempts - attempt,
           ingestionContext: {
             type: 'draft',
             eduResourceDraftId,

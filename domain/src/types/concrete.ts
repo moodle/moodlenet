@@ -71,7 +71,7 @@ export type watchContext<mod extends moodleModuleName = never> = coreContext<mod
 
 export type secondaryContext = baseContext & {
   domainFsDirectories: domainFsDirectories
-  // emit: modEmitter<mod>
+  // emit: modEmitter<moodleModuleName>?
 }
 // & { query: all secondary reads }?
 //   | track<'primary'>

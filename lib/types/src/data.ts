@@ -1,7 +1,10 @@
 import { ReactElement } from 'react'
 import _slugify from 'slugify'
-import { BRAND, intersection, number, object, string, ZodNullable, ZodSchema } from 'zod'
-import { _any, d_u } from './map'
+import { BRAND, number, object, string, ZodNullable, ZodSchema } from 'zod'
+import { d_u } from './map'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type _any = any
+export type _any_k = keyof _any
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type _other_string = string & {}
@@ -10,12 +13,11 @@ export type promise_or_value<t> = t | Promise<t>
 
 export type path = string[]
 
-
 export type jsonDiff = unknown
 
-export type intersection<types extends _any[]> = pretty<
-  types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
->
+export type union<types extends _any[]> = types extends [infer t, ...infer rest] ? t | intersection<rest> : unknown
+export type intersection<types extends _any[]> = types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
+
 export function unreachable_never(_: never, message?: string): never {
   throw new TypeError(`never [${JSON.stringify(_, null, 2)}]${message ? `: ${message}` : ''}`)
 }

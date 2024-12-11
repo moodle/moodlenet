@@ -33,9 +33,7 @@ export default interface ResourceIngestionDomain {
       }
       sync: unknown
       query: {
-        engageEnqueuedDraftResourcesIngestion(_: {
-          maxOngoingAmount: number
-        }): Promise<engagingResourceDraftIngestionRecord[]>
+        engageEnqueuedDraftResourcesIngestion(_: { parallelilsm: number }): Promise<engagingResourceDraftIngestionRecord[]>
       }
       write: unknown
     }

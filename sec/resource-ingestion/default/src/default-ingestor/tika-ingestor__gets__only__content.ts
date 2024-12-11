@@ -1,16 +1,16 @@
 import { ingestionOutcome } from '@moodle/module/resource-ingestion'
 import { fetch } from 'undici'
 
-export async function tikaIngestor({
-  tikaUrl,
+export async function tikaIngestion__gets__only__content({
+  tikaServerUrl,
   body,
   mimeType,
 }: {
-  tikaUrl: string
+  tikaServerUrl: string
   mimeType: string
   body: ArrayBuffer | AsyncIterable<Uint8Array> | Blob | Iterable<Uint8Array> | NodeJS.ArrayBufferView | string
 }): Promise<ingestionOutcome> {
-  const contentResp = await fetch(tikaUrl, {
+  const contentResp = await fetch(tikaServerUrl, {
     method: 'PUT',
     body,
     headers: {
@@ -21,8 +21,11 @@ export async function tikaIngestor({
   })
   if (contentResp.status !== 200) {
     // throw new Error(`Tika failed with status ${contentResp.status}`)
-    return
+    return {
+      outcome: 'failed',
+      reason: { message: `Tika failed with status ${contentResp.status}`, text: await contentResp.text() },
+    }
   }
   const content = await contentResp.text()
-  return content
+  return { outcome: 'succeed', content, image: null, ingestionKind: `tika ingestion of ${mimeType} file type`, title: null }
 }

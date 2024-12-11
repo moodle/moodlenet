@@ -1,2 +1,2 @@
 export * from './default-env-provider'
-export * from './resource-ingestion-sec-provider'
+export * from './default-resource-ingestion-secondary-factory'

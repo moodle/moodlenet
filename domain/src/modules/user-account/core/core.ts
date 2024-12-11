@@ -35,7 +35,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             const userSession = await validateCurrentUserSession({ ctx })
             return { userSession }
           },
-        }
+        } satisfies primary['anyUser']
       },
 
       //get admin(){ check () return { ... } }
@@ -91,7 +91,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             }
             return [true, { adminUserAccountId }]
           },
-        }
+        } satisfies primary['admin']
       },
       async signedTokenAccess() {
         return {
@@ -195,7 +195,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             })
             return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
           },
-        }
+        } satisfies primary['signedTokenAccess']
       },
       async unauthenticated() {
         return {
@@ -296,14 +296,14 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             })
             return
           },
-        }
+        } satisfies primary['unauthenticated']
       },
 
       async authenticated() {
         const authenticatedSession = await assert_authorizeAuthenticatedCurrentUserSession({ ctx })
         const userAccountId = authenticatedSession.user.id
 
-        const authenticatedPrimary: primary['authenticated'] = {
+        return {
           async invalidateSession(/* {sessionToken} */) {
             // TODO implement session_token invalidation
             //! -------------------------------------
@@ -371,8 +371,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             assert(found, `authenticated user ${authenticatedSession.user.id}} not found`)
             return userAccountRecord
           },
-        }
-        return authenticatedPrimary
+        } satisfies primary['authenticated']
       },
     }
     async function fetchPrimarySchemas() {

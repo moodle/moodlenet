@@ -1,26 +1,25 @@
-import { getReadableLocalAsset } from '@moodle/lib-storage-local-fs'
-import { ingestionOutcome } from '@moodle/module/resource-ingestion'
-import { asset } from '@moodle/module/storage'
-import externalAssetIngestor from './puppeteer-ogs-url-ingestor'
+import { ingestor } from '../types'
+import { puppeteerOgsUrlIngestor } from './puppeteer-ogs-url-ingestor'
+import { tikaIngestion__gets__only__content } from './tika-ingestor__gets__only__content'
 
-export async function tikaIngestAsset({ tikaUrl, asset }: { tikaUrl: string; asset: asset }): Promise<ingestionOutcome> {
-  if (asset.type === 'external') {
-    return externalAssetIngestor({ asset, tikaUrl })
+export const defaultIngestor: ingestor = async ({ env, object }) => {
+  if (object.type === 'url') {
+    return puppeteerOgsUrlIngestor({ url: object.url, tikaServerUrl: env.tikaServerUrl })
   }
 
+  const tikaIngestion = await tikaIngestion__gets__only__content({
+    tikaServerUrl: env.tikaServerUrl,
+    body: object.readable,
+    mimeType: object.mimetype,
+  })
+  if (tikaIngestion.outcome === 'failed') {
+    return tikaIngestion
+  }
   return {
     outcome: 'succeed',
-    result: [
-      {
-        title: asset.name,
-        content: await tikaIngest({
-          tikaUrl,
-          body: await getReadableLocalAsset(asset),
-          mimeType: asset.mimetype,
-        }),
-        image: null,
-        ingestionKind: `${asset.mimetype} file type`,
-      },
-    ],
+    title: object.name,
+    content: tikaIngestion.content,
+    image: null,
+    ingestionKind: `${object.mimetype} file type`,
   }
 }
