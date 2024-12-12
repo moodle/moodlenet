@@ -4,10 +4,7 @@ import { omit } from 'lodash'
 import UserProfileDomain, { eduCollectionDraft, eduResourceDraft } from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
 import { maybeAsset, NONE_ASSET } from '../../storage'
-import {
-  assert_authorizeAuthenticatedCurrentUserSession,
-  assert_authorizeCurrentUserSessionWithRole,
-} from '../../user-account/lib'
+import { assert_authorizeAuthenticatedCurrentUserSession } from '../../user-account/lib'
 import { createNewUserProfileData } from './lib/new-user-profile'
 
 type primary = UserProfileDomain['primary']['userProfile']
@@ -37,18 +34,9 @@ export const user_profile_core: moduleCore<'userProfile'> = {
         } satisfies primary['session']
       },
       async authenticated() {
-        const authenticatedUserSession = await assert_authorizeAuthenticatedCurrentUserSession({ ctx }).then(
-          async authenticatedUser => {
-            const userProfileId = authenticatedUser.profile.id
-            const [found, userProfileResult] = await ctx.mod.secondary.userProfile.query.getUserProfile({
-              by: 'userProfileId',
-              userProfileId,
-            })
-            assertWithErrorXxx(found, 'Not Found', 'authenticated userProfileRecord not found')
-            return userProfileResult
-          },
-        )
-        const userProfileId = authenticatedUserSession.userProfileRecord.id
+        const authenticatedUserSession = await assert_authorizeAuthenticatedCurrentUserSession({ ctx })
+        const userProfileId = authenticatedUserSession.profile.id
+
         return {
           async createEduCollectionDraft({ eduCollectionMetaForm }) {
             const eduCollectionDraftId = await generateNanoId()
@@ -89,9 +77,6 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             return [done, _void]
           },
           async applyEduResourceDraftImage({ eduResourceDraftId, applyImageForm: { resourceImageForm: adoptAssetForm } }) {
-            const {
-              userProfileRecord: { id: userProfileId },
-            } = authenticatedUserSession
             if (adoptAssetForm.type === 'external') {
               const asset: maybeAsset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
               const [done /* , result */] = await ctx.write.updateDraftImage({
@@ -145,9 +130,6 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             eduCollectionDraftId,
             applyImageForm: { resourceImageForm: adoptAssetForm },
           }) {
-            const {
-              userProfileRecord: { id: userProfileId },
-            } = authenticatedUserSession
             if (adoptAssetForm.type === 'external') {
               const asset: maybeAsset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
               const [done /* , result */] = await ctx.write.updateDraftImage({
@@ -168,9 +150,6 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             return { adoptAssetResponse, userProfileId }
           },
           async createEduResourceDraft({ newResourceAsset, eduResourceMeta }) {
-            const {
-              userProfileRecord: { id: userProfileId },
-            } = authenticatedUserSession
             const eduResourceDraftId = await generateNanoId()
             const asset =
               newResourceAsset.type === 'external'
@@ -229,7 +208,6 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             return [true, { eduResourceDraftId }]
           },
           async useTempImageAsProfileImage({ useProfileImageForm: { type, adoptAssetForm } }) {
-            const { userProfileRecord } = authenticatedUserSession
             if (adoptAssetForm.type === 'external') {
               const asset: maybeAsset = { type: 'external', url: adoptAssetForm.url, credits: adoptAssetForm.credits }
               const [done /* , result */] = await ctx.write.updateProfileImage({
@@ -242,20 +220,19 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             }
             const adoptAssetResponse = await ctx.write.useTempImageInProfile({
               type,
-              userProfileId: userProfileRecord.id,
+              userProfileId,
               adoptAssetForm,
             })
-            // await ctx.write.updatePartialProfileInfo({
-            //   userProfileId: id,
-            //   partialProfileInfo: as === 'avatar' ? { avatar: asset } : as === 'background' ? { background: asset } : {},
-            // })
             return { adoptAssetResponse, userProfileId }
           },
           async getMyUserRecords() {
-            const { userProfileRecord } = authenticatedUserSession
+            const [myUserProfileFound, userProfileResult] = await fetchMyUserProfile()
+
+            assertWithErrorXxx(myUserProfileFound, 'Not Found', 'authenticated userProfileRecord not found')
+
             const userAccontRecord = await ctx.forward.userAccount.authenticated.getMyUserAccountRecord()
             return {
-              userProfileRecord: omit(userProfileRecord, 'userAccount'),
+              userProfileRecord: omit(userProfileResult.userProfileRecord, 'userAccount'),
               userAccountRecord: omit(userAccontRecord, 'displayName'),
             }
           },
@@ -271,25 +248,32 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             return [done, { userProfileId }]
           },
         } satisfies primary['authenticated']
-      },
-      async admin() {
-        /* const adminUserSession =  */ await assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' }).then(
-          async authenticatedAdminUser => {
-            return authenticatedAdminUser
-          },
-        )
 
-        return {
-          async byId(get) {
-            const [found, userProfileResult] = await ctx.mod.secondary.userProfile.query.getUserProfile({ ...get })
-
-            if (!found) {
-              return [false, { reason: 'notFound' }]
-            }
-            return [true, { userProfileRecord: userProfileResult.userProfileRecord }]
-          },
-        } satisfies primary['admin']
+        function fetchMyUserProfile() {
+          return ctx.mod.secondary.userProfile.query.getUserProfile({
+            by: 'userProfileId',
+            userProfileId,
+          })
+        }
       },
+      // async admin() {
+      //   /* const adminUserSession =  */ await assert_authorizeCurrentUserSessionWithRole({ ctx, role: 'admin' }).then(
+      //     async authenticatedAdminUser => {
+      //       return authenticatedAdminUser
+      //     },
+      //   )
+
+      //   return {
+      //     async byId(get) {
+      //       const [found, userProfileResult] = await ctx.mod.secondary.userProfile.query.getUserProfile({ ...get })
+
+      //       if (!found) {
+      //         return [false, { reason: 'notFound' }]
+      //       }
+      //       return [true, { userProfileRecord: userProfileResult.userProfileRecord }]
+      //     },
+      //   } satisfies primary['admin']
+      // },
     }
   },
   watch(ctx) {

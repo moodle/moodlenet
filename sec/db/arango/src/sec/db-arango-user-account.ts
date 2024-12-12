@@ -91,7 +91,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
           },
         },
         query: {
-          async userBy(q) {
+          async findUser(q) {
             return q.by === 'email'
               ? getUserByEmail({ email: q.email, dbStruct })
               : getUserById({ userAccountId: q.userAccountId, dbStruct })

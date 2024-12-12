@@ -5,9 +5,7 @@ export * from './types'
   export default interface UserNotificationDomain {
     event: { userNotification: unknown }
     service: { userNotification: unknown }
-    primary: {
-      userNotification: unknown
-    }
+    primary: { userNotification: unknown }
     secondary: {
       userNotification: {
         write?: unknown

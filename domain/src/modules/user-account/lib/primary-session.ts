@@ -93,7 +93,7 @@ export async function generateSessionForUserAccountId({
   ctx: Pick<baseContext, 'mod'>
   userAccountId: userAccountId
 }): Promise<ok_ko<{ userSessionToken: signed_expire_token }, { userNotFound: unknown; profileNotFound: unknown }>> {
-  const [, userAccountRecord] = await ctx.mod.secondary.userAccount.query.userBy({ by: 'id', userAccountId })
+  const [, userAccountRecord] = await ctx.mod.secondary.userAccount.query.findUser({ by: 'id', userAccountId })
   if (!userAccountRecord) {
     return [false, { reason: 'userNotFound' }]
   }

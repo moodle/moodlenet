@@ -128,7 +128,7 @@ export default interface userAccountDomain {
           inactiveNotificationSent: boolean
         }): Promise<{ inactiveUsers: userAccountRecord[] }>
 
-        userBy(
+        findUser(
           _: d_u<{ email: { email: email_address }; id: { userAccountId: userAccountId } }, 'by'>,
         ): Promise<ok_ko<userAccountRecord>>
 

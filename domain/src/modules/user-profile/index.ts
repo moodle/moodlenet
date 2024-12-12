@@ -105,18 +105,19 @@ export default interface UserProfileDomain {
         }): Promise<ok_ko<eduResourceDraft, { notFound: unknown }>>
         //
       }
-      admin: {
-        byId(_: userProfileIdSelect): Promise<
-          ok_ko<
-            {
-              userProfileRecord: userProfileRecord
-            },
-            {
-              notFound: unknown
-            }
-          >
-        >
-      }
+      // admin: {
+      //   // FIXME: possibly move to moodlenet, using contributorIdSelect ?
+      //   byId(_: userProfileIdSelect): Promise<
+      //     ok_ko<
+      //       {
+      //         userProfileRecord: userProfileRecord
+      //       },
+      //       {
+      //         notFound: unknown
+      //       }
+      //     >
+      //   >
+      // }
     }
   }
   secondary: {

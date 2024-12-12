@@ -47,7 +47,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
         const adminUserAccountId = adminUserSession.user.id
         return {
           async editUserRoles({ userAccountId, role, action }) {
-            const [found, user] = await ctx.mod.secondary.userAccount.query.userBy({ by: 'id', userAccountId })
+            const [found, user] = await ctx.mod.secondary.userAccount.query.findUser({ by: 'id', userAccountId })
             if (!found) {
               return [false, { reason: 'userNotFound' }]
             }
@@ -111,7 +111,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               return [false, { reason: 'invalidToken' }]
             }
             const { validatedSignedTokenData } = validation
-            const [, foundSameEmailUser] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [, foundSameEmailUser] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'email',
               email: validatedSignedTokenData.email,
             })
@@ -149,7 +149,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             }
 
             const { validatedSignedTokenData } = validation
-            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'email',
               email: validatedSignedTokenData.email,
             })
@@ -177,7 +177,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             }
             const { validatedSignedTokenData } = validation
 
-            const [user] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [user] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'id',
               userAccountId: validatedSignedTokenData.userAccountId,
             })
@@ -202,7 +202,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           async signupRequest({ signupForm, redirectUrl }) {
             const schemas = await fetchPrimarySchemas()
             const { displayName, email, password } = schemas.signupSchema.parse(signupForm)
-            const [found] = await ctx.mod.secondary.userAccount.query.userBy({ by: 'email', email })
+            const [found] = await ctx.mod.secondary.userAccount.query.findUser({ by: 'email', email })
             if (found) {
               return [false, { reason: 'userWithSameEmailExists' }]
             }
@@ -238,7 +238,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           },
 
           async login({ loginForm }) {
-            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'email',
               email: loginForm.email,
             })
@@ -268,7 +268,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               configs: { tokenExpireTime: userSelfDeletion },
             } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userAccount' })
 
-            const [, user] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [, user] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'email',
               email: declaredOwnEmail,
             })
@@ -335,7 +335,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           },
 
           async changePassword({ currentPassword, newPassword }) {
-            const [, user] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [, user] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'id',
               userAccountId,
             })
@@ -364,7 +364,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             return [true, { userAccountId }]
           },
           async getMyUserAccountRecord() {
-            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'id',
               userAccountId: authenticatedSession.user.id,
             })
@@ -428,7 +428,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
     const sysAdminInfo = await ctx.mod.secondary.env.query.getSysAdminInfo()
     ctx.log('debug', `Checking if sysAdmin user exists: `, { sysAdminInfo })
 
-    const [found] = await ctx.mod.secondary.userAccount.query.userBy({
+    const [found] = await ctx.mod.secondary.userAccount.query.findUser({
       by: 'email',
       email: sysAdminInfo.email,
     })
