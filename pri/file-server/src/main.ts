@@ -29,7 +29,7 @@ const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(
   process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR,
 )
 
-const requestTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
+const reqHttpTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -52,19 +52,18 @@ declare global {
 }
 
 const app = express()
-const trnspClient = http_bind.client()
+const trnspClient = http_bind.getHttpBinderDispatcher({ reqHttpTarget })
 console.log('moodle-fs-file-server started')
 app.use(cookieParser()).use(async (req, _res, next) => {
-  const primarySession = await getPrimarySession(req)
+  const primarySession = getPrimarySession(req)
   const ap = createMoodleDomainProxy({
     ctrl({ domainMsg }) {
-      return trnspClient(
-        {
+      return trnspClient({
+        domainAccess: {
           ...domainMsg,
           primarySession,
         },
-        requestTarget,
-      )
+      })
     },
   })
 
@@ -113,7 +112,8 @@ const router = express
     const { userSession } = await req.moodlePrimary.userAccount.anyUser.getUserSession()
 
     if (userSession.type !== 'authenticated') {
-      return res.status(401).send('UNAUTHORIZED')
+      res.status(401).send('UNAUTHORIZED')
+      return
     }
     const {
       configs: { uploadMaxSize, uploadedTempFileMaxRetentionSeconds: tempFileMaxRetentionSeconds },
@@ -199,7 +199,7 @@ app.listen(PORT, () => {
 // check DEV-NOTES.md for more info
 const AUTH_COOKIE = 'moodle-auth'
 
-async function getPrimarySession(req: express.Request) {
+function getPrimarySession(req: express.Request) {
   const { headers } = middlewareHeaders(req)
   const xHost = headers.get('x-host')
   // const xPort = headers.get('x-port')
@@ -211,7 +211,7 @@ async function getPrimarySession(req: express.Request) {
   const ua = userAgent({ headers: headers })
   assert(xHost, 'x-host not found in headers')
   const userSession: primarySession = {
-    id: await generateUlid({ onDate: date_time_string('now') }),
+    id: generateUlid({ onDate: date_time_string('now') }),
     domain: xHost,
     token: getAuthTokenCookie(req).sessionToken,
     app: {

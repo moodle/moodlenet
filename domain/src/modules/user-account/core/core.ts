@@ -435,7 +435,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
 
     if (!found) {
       const { passwordHash } = await ctx.mod.secondary.crypto.service.hashPassword({
-        plainPassword: __redacted__(await generateNanoId({ length: 20 })),
+        plainPassword: __redacted__(generateNanoId({ length: 20 })),
       })
       const newUser = await createNewUserAccountRecordData({
         displayName: 'Admin',

@@ -1,6 +1,5 @@
 import { d_u, pretty } from '@moodle/lib-types'
 import { userAccountNotifications } from '../../user-account'
-export type enqueueFailDetails = unknown
 
 export type userNotification = d_u<
   {

@@ -135,7 +135,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
                 return
               }
               const { userProfileRecord } = payload
-              const id = await generateNanoId()
+              const id = generateNanoId()
               const { configs } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
               await ctx.write.createMoodlenetContributor({
                 moodlenetContributorRecord: {

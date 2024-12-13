@@ -15,4 +15,7 @@ export type domainAccess = domainMsg & {
 }
 
 export type domainEndpoint = path
-export type messageDispatcher = (_: { domainAccess: domainAccess }) => Promise<_any>
+
+export type binderDispatcher = (_: { domainAccess: domainAccess }) => Promise<_any>
+
+export type binderReceiver = (_: { binderDispatcher: binderDispatcher }) => void

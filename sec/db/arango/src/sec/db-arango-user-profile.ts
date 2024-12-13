@@ -75,16 +75,14 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               dbStruct,
               userProfileIdSelect,
               apply: aql`
-                REPLACE MERGE_RECURSIVE(userProfileDoc, {
-                                                          info: {
-                                                            [${type}]: null
-                                                          }
-                                                        }, {
-                                                          info: {
-                                                            lastEditDate: ${lastEditDate},
-                                                            [${type}]: ${image}
-                                                          }
-                                                        }) IN ${dbStruct.appData.coll.userProfile}`,
+                UPDATE userProfileDoc WITH {
+                                              info: MERGE(  UNSET(userProfileDoc.info, ${type}),
+                                                            {
+                                                              lastEditDate: ${lastEditDate},
+                                                              [${type}]: ${image}
+                                                            }
+                                                          )
+                                            } IN ${dbStruct.appData.coll.userProfile}`,
             })
             const updateDone = !!updateResult
             return [updateDone, _void]
@@ -97,7 +95,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 FILTER ${eduResourceDraftId} IN userProfileDoc.myDrafts.eduResource[*].draftId
                 UPDATE userProfileDoc WITH {
                   myDrafts: {
-                    eduResource: FOR draft IN userProfileDoc.myDrafts.eduResource
+                    eduResource: (FOR draft IN userProfileDoc.myDrafts.eduResource
                                           RETURN draft.draftId == ${eduResourceDraftId}
                                                   ? MERGE( draft, {
                                                                     data:  {
@@ -106,7 +104,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                                                                       }),
                                                                     },
                                                                   })
-                                                  : draft
+                                                  : draft)
                   }
                 } IN ${dbStruct.appData.coll.userProfile}
               `,
@@ -122,7 +120,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 FILTER ${draftId} IN userProfileDoc.myDrafts[${draftType}][*].draftId
                 UPDATE userProfileDoc WITH {
                   myDrafts: {
-                    [${draftType}]: FOR draft IN userProfileDoc.myDrafts[${draftType}]
+                    [${draftType}]: (FOR draft IN userProfileDoc.myDrafts[${draftType}]
                                       RETURN draft.draftId == ${draftId}
                                               ? MERGE(draft,{
                                                               lastEditDate: ${lastEditDate},
@@ -130,7 +128,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                                                                 image: ${image}
                                                               }),
                                                             })
-                                              : draft
+                                              : draft)
                   }
                 } IN ${dbStruct.appData.coll.userProfile}
               `,
@@ -146,13 +144,13 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 FILTER ${draftId} IN userProfileDoc.myDrafts[${meta.type}][*].draftId
                 UPDATE userProfileDoc WITH {
                   myDrafts: {
-                    [${meta.type}]: FOR draft IN userProfileDoc.myDrafts[${meta.type}]
+                    [${meta.type}]: (FOR draft IN userProfileDoc.myDrafts[${meta.type}]
                                       RETURN draft.draftId == ${draftId}
-                                              ? MERGE(draft, {
+                                              ? MERGE_RECURSIVE(draft, {
                                                                 lastEditDate: ${lastEditDate},
                                                                 data: ${meta.data}
                                                               })
-                                              : draft
+                                              : draft)
                   }
                 } IN ${dbStruct.appData.coll.userProfile}
               `,

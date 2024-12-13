@@ -22,11 +22,11 @@ import { coerce, literal, object, union } from 'zod'
 import { configurator } from './types'
 import { createDefaultDomainLoggerProvider } from './winston-logger'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
-import {
-  get_default_resource_ingestion_secondary_factory,
-  provideDefaultResourceIngestorSecEnv,
-} from '@moodle/sec-resource-ingestion-default'
-import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
+// import {
+//   get_default_resource_ingestion_secondary_factory,
+//   provideDefaultResourceIngestorSecEnv,
+// } from '@moodle/sec-resource-ingestion-default'
+// import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
 
 const cache: map<Promise<configuration>> = {}
 
@@ -90,7 +90,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
       const file_system_storage_sec_env: StorageDefaultSecEnv = {
         localFsStorageDirectory,
       }
-      const default_resource_ingestor_env = provideDefaultResourceIngestorSecEnv({ env: _process_env })
+      // const default_resource_ingestor_env = provideDefaultResourceIngestorSecEnv({ env: _process_env })
       const secondaryProviders: secondaryProvider[] = [
         // sec modules
         get_arango_persistence_factory(arango_db_env),
@@ -115,7 +115,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
           }
           return secondaryAdapter
         },
-        get_default_resource_ingestion_secondary_factory(default_resource_ingestor_env),
+        // get_default_resource_ingestion_secondary_factory(default_resource_ingestor_env),
       ]
 
       const moduleCores: moduleCore<_any>[] = [
@@ -127,7 +127,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         moodlenet_react_app_core,
         user_profile_core,
         storage_core,
-        resource_ingestion_core,
+        // resource_ingestion_core,
         {
           modName: 'env',
           service() {

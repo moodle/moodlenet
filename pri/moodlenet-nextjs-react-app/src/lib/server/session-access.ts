@@ -14,7 +14,7 @@ import { appRoute, appRoutes } from '../common/appRoutes'
 import { getAuthTokenCookie } from './auth'
 const MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL
 
-const requestTarget = MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
+const reqHttpTarget = MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
 export const access = {
   get primary(): moodlePrimary {
@@ -28,8 +28,8 @@ function _domainAccess(): MoodleDomain {
   if (_existing_current_moodle_domain_store) {
     return _existing_current_moodle_domain_store.moodle_domain
   }
-  const trnspClient = http_bind.client()
-  const primarySessionPromise = getPrimarySession()
+  const binderDispatcher = http_bind.getHttpBinderDispatcher({ reqHttpTarget })
+  const primarySession = getPrimarySession()
   const cache = new Map<string, _any>()
   const { hash } = hasher({
     coerce: false,
@@ -44,23 +44,17 @@ function _domainAccess(): MoodleDomain {
   })
   const moodle_domain = createMoodleDomainProxy({
     async ctrl({ domainMsg }) {
-      const domainMsgHash = hash(domainMsg)
+      const domainMsgHashingObject = { domainMsg, primarySessionId: primarySession.id }
+      const domainMsgHash = hash(domainMsgHashingObject)
       // console.log(cache.has(domainMsgHash) ? `${domainMsgHash}**cache**  ` : '--fetch--  ', domainMsg.endpoint.join('.'))
       if (!cache.has(domainMsgHash)) {
         cache.set(
           domainMsgHash,
-          new Promise((resolve, reject) => {
-            primarySessionPromise
-              .then(async primarySession =>
-                trnspClient(
-                  {
-                    ...domainMsg,
-                    primarySession,
-                  },
-                  requestTarget,
-                ),
-              )
-              .then(resolve, reject)
+          binderDispatcher({
+            domainAccess: {
+              ...domainMsg,
+              primarySession,
+            },
           }),
         )
       }
@@ -121,7 +115,7 @@ export async function getAdminUserSessionOrRedirect(path = '/') {
   return authenticatedUserSession
 }
 
-async function getPrimarySession() {
+function getPrimarySession() {
   //FIXME: why is it here inside ?
   i18next.init({
     // ns: ['common', 'moduleA'],
@@ -140,7 +134,7 @@ async function getPrimarySession() {
   const ua = userAgent({ headers: _headers })
   assert(xHost, 'x-host not found in headers')
   const primarySession: primarySession = {
-    id: await generateUlid({ onDate: date_time_string('now') }),
+    id: generateUlid({ onDate: date_time_string('now') }),
     token: getAuthTokenCookie().sessionToken,
     app: {
       name: 'moodlenetWebapp',

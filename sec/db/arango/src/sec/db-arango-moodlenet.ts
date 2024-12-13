@@ -38,7 +38,8 @@ export function moodlenet_secondary_factory({ dbStruct }: { dbStruct: dbStruct }
                 FILTER moodlenetContributorDoc.access == 'public'
                 ${aqlSort}
                 LIMIT ${skip},${limit}
-                return MOODLE::RESTORE_RECORD_ID(moodlenetContributorDoc)
+                // contributors
+                RETURN MOODLE::RESTORE_RECORD_ID(moodlenetContributorDoc)
               `)
             const moodlenetContributorRecords = await cursor.all()
             return { moodlenetContributorRecords }

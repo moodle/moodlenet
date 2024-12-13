@@ -1,5 +1,5 @@
 # Dev notes
-
+https://stoplight.io/open-source/spectral
 https://immerjs.github.io/immer/
 
 ## TODO

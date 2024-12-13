@@ -3,8 +3,8 @@ import { userAccountRecord } from '../../../user-account'
 import { userProfileRecord } from '../../types'
 import { NONE_ASSET } from '../../../storage'
 
-export async function createNewUserProfileData({ newUser }: { newUser: userAccountRecord }): Promise<userProfileRecord> {
-  const userProfileId = await generateNanoId()
+export function createNewUserProfileData({ newUser }: { newUser: userAccountRecord }): userProfileRecord {
+  const userProfileId = generateNanoId()
   const userProfileRecord: userProfileRecord = {
     id: userProfileId,
     userAccount: {

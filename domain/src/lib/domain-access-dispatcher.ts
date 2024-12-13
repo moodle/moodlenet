@@ -10,7 +10,7 @@ import {
   eventContext,
   Logger,
   loggerProvider,
-  messageDispatcher,
+  binderDispatcher,
   modPrimary,
   moduleCore,
   moodleModuleName,
@@ -34,7 +34,7 @@ export type configuration = {
   domainFsDirectories: domainFsDirectories
 }
 export type domainAccessDispatcherProviderDeps = configuration & {
-  feedbackDispatcher: messageDispatcher
+  feedbackDispatcher: binderDispatcher
 }
 
 export function mergeSecondaryAdapters(adapters: secondaryAdapter[]): moodleSecondary {
@@ -52,7 +52,7 @@ export function provideDomainAccessDispatcher({
   start_background_processes,
   feedbackDispatcher,
   domainFsDirectories,
-}: domainAccessDispatcherProviderDeps): messageDispatcher {
+}: domainAccessDispatcherProviderDeps): binderDispatcher {
   return async ({ domainAccess: current_domainAccess }) => {
     // console.dir(current_domainAccess.endpoint)
     const [currentDomainAccessLayer, currentDomainAccessModuleName] = current_domainAccess.endpoint as [
@@ -73,7 +73,7 @@ export function provideDomainAccessDispatcher({
       current_domainAccess,
     )
     const { log } = currentDomainAccessContext
-    // mainLogger('debug', 'messageDispatcher:', {
+    // mainLogger('debug', 'binderDispatcher:', {
     //   endpoint: current_domainAccess.endpoint,
     //   ctx_track: current_domainAccess.ctx_track,
     //   from: current_domainAccess.from,
@@ -234,7 +234,7 @@ export function provideDomainAccessDispatcher({
     domainFsDirectories: domainFsDirectories,
     current_domainAccess?: domainAccess,
   ) {
-    const id = await generateUlid({ onDate: date_time_string('now') })
+    const id = generateUlid({ onDate: date_time_string('now') })
 
     const moodleDomainProxy = createMoodleDomainProxy({
       ctrl({ domainMsg: { endpoint, payload } }) {

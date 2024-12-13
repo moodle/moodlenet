@@ -3,7 +3,7 @@ import { moodlenetContributorIdSelect, moodlenetContributorRecord } from '@moodl
 import { aql } from 'arangojs'
 import { AqlQuery, literal } from 'arangojs/aql'
 import { dbStruct } from '../../db-structure'
-import { getUserProfileByIdSelectAql } from '../user-profile-db'
+import { getMaybeUserProfileByIdSelectAql } from '../user-profile-db'
 
 export async function overMoodlenetContributor({
   dbStruct,
@@ -16,32 +16,30 @@ export async function overMoodlenetContributor({
   select: moodlenetContributorIdSelect
   returns?: 'moodlenetContributorDoc' | 'OLD' | 'NEW'
 }): Promise<moodlenetContributorRecord | null> {
-  const getContributorAql = getContributorByIdSelectAql(select, dbStruct)
-  if (!getContributorAql) {
-    return null
-  }
+  const getMaybeContributorAql = getMaybeContributorByIdSelectAql(select, dbStruct)
   const cursor = await dbStruct.appData.db.query(aql<moodlenetContributorRecord>`
-      ${getContributorAql}
+      LET moodlenetContributorDoc = ${getMaybeContributorAql}
+      FILTER moodlenetContributorDoc != null
       ${apply}
-      return MOODLE::RESTORE_RECORD_ID(${literal(returns)})
+      // overMoodlenetContributor
+      RETURN MOODLE::RESTORE_RECORD_ID(${literal(returns)})
     `)
 
   const [m_moodlenetContributorRecord] = await cursor.all()
   return m_moodlenetContributorRecord ?? null
 }
 
-
-function getContributorByIdSelectAql(select: moodlenetContributorIdSelect, dbStruct: dbStruct) {
+function getMaybeContributorByIdSelectAql(select: moodlenetContributorIdSelect, dbStruct: dbStruct) {
   return select.by === 'moodlenetContributorId'
-    ? aql`LET moodlenetContributorDoc = DOCUMENT(${dbStruct.appData.coll.contributor}, ${select.moodlenetContributorId})
-            FILTER moodlenetContributorDoc !== null`
+    ? aql`(DOCUMENT(${dbStruct.appData.coll.contributor}, ${select.moodlenetContributorId}))`
     : select.by === 'userAccountId' || select.by === 'userProfileId'
-      ? aql`
-        LET userProfileDoc = (${getUserProfileByIdSelectAql(select, dbStruct)})
-        FILTER userProfileDoc !== null
-        FOR moodlenetContributorDoc IN ${dbStruct.appData.coll.contributor}
-          FILTER moodlenetContributorDoc.userProfile.id == userProfileDoc._key
-          LIMIT 1
+      ? aql`( ( FOR userProfileDoc IN [${getMaybeUserProfileByIdSelectAql(select, dbStruct)}]
+                  FILTER userProfileDoc != null
+                  RETURN ( FOR moodlenetContributorDoc IN ${dbStruct.appData.coll.contributor}
+                    FILTER moodlenetContributorDoc.userProfile.id == userProfileDoc._key
+                    LIMIT 1
+                    RETURN moodlenetContributorDoc )[0]
+              )[0])
         `
       : unreachable_never(select)
 }

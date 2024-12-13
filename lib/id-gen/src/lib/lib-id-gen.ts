@@ -10,12 +10,12 @@ export type id_type = d_u<
   'type'
 >
 const globalMonoUlid = ulidx.monotonicFactory()
-export async function generateUlid({ onDate }: { onDate: Date | number | string }) {
+export function generateUlid({ onDate }: { onDate: Date | number | string }) {
   const date = new Date(onDate)
   return globalMonoUlid(date.valueOf())
 }
 
-export async function generateNanoId(opts?: { alpabet?: string; length?: number }) {
+export function generateNanoId(opts?: { alpabet?: string; length?: number }) {
   const id = customAlphabet(
     opts?.alpabet || `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`,
     8,
@@ -23,7 +23,7 @@ export async function generateNanoId(opts?: { alpabet?: string; length?: number 
   return id
 }
 
-export async function generateId(id_type: id_type) {
+export function generateId(id_type: id_type) {
   switch (id_type.type) {
     case 'alphanumeric':
       return generateNanoId({ length: id_type.length })

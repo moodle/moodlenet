@@ -1,7 +1,7 @@
 import { provideDomainAccessDispatcher } from '@moodle/domain/lib'
-import { mainMessageDispatcher as feedbackLoopMessageDispatcherProvider } from './types'
+import { mainBinderDispatcher as feedbackLoopBinderDispatcherProvider } from './types'
 
-const feedbackLoopMessageDispatcherProvider: feedbackLoopMessageDispatcherProvider = async ({
+const feedbackLoopBinderDispatcherProvider: feedbackLoopBinderDispatcherProvider = async ({
   configuration,
   domainAccess: currentDomainAccess,
 }) => {
@@ -22,4 +22,4 @@ const feedbackLoopMessageDispatcherProvider: feedbackLoopMessageDispatcherProvid
     feedbackDispatcher,
   })({ domainAccess: currentDomainAccess })
 }
-export default feedbackLoopMessageDispatcherProvider
+export default feedbackLoopBinderDispatcherProvider

@@ -103,7 +103,7 @@ export async function createTempFileReferenceNames({
   expiresSeconds: number
 }) {
   const sanitizedFilename = sanitizeFilename(fileName)
-  const ulid = await generateUlid({ onDate: new Date().valueOf() + expiresSeconds * 1000 })
+  const ulid = generateUlid({ onDate: new Date().valueOf() + expiresSeconds * 1000 })
   const tempId = `${ulid}_${sanitizedFilename}`
   const tempPaths = getTempFilePaths({ tempId, domainFsDirectories })
   return { tempPaths, tempId, sanitizedFilename }

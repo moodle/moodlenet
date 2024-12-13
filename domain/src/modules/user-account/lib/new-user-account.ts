@@ -20,7 +20,7 @@ export async function createNewUserAccountRecordData({
   creationDate,
   lastLogin,
 }: CreateNewUserAccountRecordDataArg): Promise<userAccountRecord> {
-  const id = await generateNanoId()
+  const id = generateNanoId()
   return {
     id,
     creationDate,

@@ -42,7 +42,7 @@ export default function MainResourceCard(props: mainResourceCardProps) {
   const { t } = useTranslation()
   const { actions, activity, eduResourceData, hookFormHandle, references, publishCheck, shouldShowErrors } = props
   const [resourceUrl] = useAssetUrl(eduResourceData?.asset)
-
+  console.log({ eduResourceData })
   const uploadResourceHandler = useAssetUploader('file', null, actions.saveNewResourceAsset, { nonNullable: true })
   const { state: resourceUploaderState, submit: resourceUploaderSubmit } = uploadResourceHandler
   if (resourceUploaderState.type === 'selected') {

@@ -1,9 +1,9 @@
 import { secondaryProvider } from '@moodle/domain'
-import { defaultResourceIngestorEnv, ingestionObject } from './types'
+import { getTempFileReadable } from '@moodle/lib-domain-fs'
 import { unreachable_never } from '@moodle/lib-types'
-import { createStoredAssetTempReadable } from '@moodle/module/storage/lib'
-import { ingestExternalAsset } from './ingest-url'
 import { ingestReadable } from './ingest-readable'
+import { ingestExternalAsset } from './ingest-url'
+import { defaultResourceIngestorEnv, ingestionObject } from './types'
 
 export function get_default_resource_ingestion_secondary_factory(env: defaultResourceIngestorEnv): secondaryProvider {
   return secondaryContext => {
@@ -17,18 +17,23 @@ export function get_default_resource_ingestion_secondary_factory(env: defaultRes
                   ? { type: 'url', url: asset.url }
                   : asset.type === 'stored'
                     ? await (async asset => {
-                        const [storedAssetTempReadableCreated, storedAssetTempReadableResult] =
-                          await createStoredAssetTempReadable({
+                        const [tmpAssetReferenceCreated, tmpAssetReferenceResult] =
+                          await secondaryContext.mod.secondary.storage.service.createStoredAssetTempFileReference({
                             expiresSeconds: 300,
                             storedAssetMeta: asset,
-                            secondaryContext,
                           })
-                        if (!storedAssetTempReadableCreated) {
-                          throw storedAssetTempReadableResult
+                        if (!tmpAssetReferenceCreated) {
+                          throw tmpAssetReferenceResult
                         }
+
+                        const readable = await getTempFileReadable({
+                          tempId: tmpAssetReferenceResult.tempId,
+                          domainFsDirectories: secondaryContext.domainFsDirectories,
+                        })
+
                         const ingestionObject: ingestionObject = {
                           type: 'readable',
-                          readable: storedAssetTempReadableResult.readable,
+                          readable,
                           mimetype: asset.mimetype,
                           name: asset.name,
                         }

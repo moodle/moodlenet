@@ -39,7 +39,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
 
         return {
           async createEduCollectionDraft({ eduCollectionMetaForm }) {
-            const eduCollectionDraftId = await generateNanoId()
+            const eduCollectionDraftId = generateNanoId()
             const eduCollectionDraft: eduCollectionDraft = {
               draftId: eduCollectionDraftId,
               created: ctx.now,
@@ -150,7 +150,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             return { adoptAssetResponse, userProfileId }
           },
           async createEduResourceDraft({ newResourceAsset, eduResourceMeta }) {
-            const eduResourceDraftId = await generateNanoId()
+            const eduResourceDraftId = generateNanoId()
             const asset =
               newResourceAsset.type === 'external'
                 ? newResourceAsset
@@ -316,7 +316,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               if (!created) {
                 return
               }
-              ctx.write.createUserProfile({ userProfileRecord: await createNewUserProfileData({ newUser }) })
+              ctx.write.createUserProfile({ userProfileRecord: createNewUserProfileData({ newUser }) })
             },
 
             async setUserRoles([[done, result], { userAccountId }]) {

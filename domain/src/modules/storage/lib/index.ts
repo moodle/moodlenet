@@ -1,8 +1,6 @@
-import { getTempFileReadable, useTempFileResult } from '@moodle/lib-domain-fs'
-import { _any, d_u__d, ok_ko, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
-import { Readable } from 'stream'
-import { secondaryContext } from '../../../types'
-import { adoptAssetResponse, maybeAsset, storedAssetMeta } from '../types'
+import { useTempFileResult } from '@moodle/lib-domain-fs'
+import { _any, d_u__d, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
+import { adoptAssetResponse, maybeAsset } from '../types'
 
 // export function newFsFileRelativePath(filename: string, date = ctx.now) {
 //   return [
@@ -48,27 +46,4 @@ export async function useTempFileResult_to_adoptAssetResponse(
         status: 'error',
         message: result.reason,
       }
-}
-
-export async function createStoredAssetTempReadable({
-  secondaryContext,
-  storedAssetMeta,
-  expiresSeconds,
-}: {
-  storedAssetMeta: Pick<storedAssetMeta, 'path' | 'name'>
-  secondaryContext: secondaryContext
-  expiresSeconds: number
-}): Promise<ok_ko<{ tempId: string; readable: Readable }, { notFoundInStorage: unknown; error: { error: unknown } }>> {
-  const [tmpAssetReferenceCreated, tmpAssetReferenceResult] =
-    await secondaryContext.mod.secondary.storage.service.createStoredAssetTempFileReference({
-      expiresSeconds,
-      storedAssetMeta,
-    })
-  if (!tmpAssetReferenceCreated) {
-    return [false, tmpAssetReferenceResult]
-  }
-  const { tempId } = tmpAssetReferenceResult
-  const readable = await getTempFileReadable({ tempId, domainFsDirectories: secondaryContext.domainFsDirectories })
-
-  return [true, { tempId, readable }]
 }

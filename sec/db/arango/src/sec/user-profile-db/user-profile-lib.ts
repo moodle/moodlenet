@@ -15,10 +15,10 @@ export async function overUserProfileById({
   apply?: AqlQuery
   returns?: 'userProfileDoc' | 'OLD' | 'NEW' // | _other_string
 }): Promise<userProfileRecord | null> {
-  const getUserProfileAql = getUserProfileByIdSelectAql(userProfileIdSelect, dbStruct)
+  const getUserProfileAql = getMaybeUserProfileByIdSelectAql(userProfileIdSelect, dbStruct)
 
   const cursor = await dbStruct.appData.db.query(aql<userProfileRecord>`
-      ${getUserProfileAql}
+      LET userProfileDoc = ${getUserProfileAql}
       ${apply}
       RETURN MOODLE::RESTORE_RECORD_ID(${literal(returns)})
     `)
@@ -26,14 +26,16 @@ export async function overUserProfileById({
   return userProfile ?? null
 }
 
-export function getUserProfileByIdSelectAql(userProfileIdSelect: userProfileIdSelect, dbStruct: dbStruct) {
+export function getMaybeUserProfileByIdSelectAql(userProfileIdSelect: userProfileIdSelect, dbStruct: dbStruct) {
   return userProfileIdSelect.by === 'userProfileId'
-    ? aql`LET userProfileDoc = DOCUMENT(${dbStruct.appData.coll.userProfile}, ${userProfileIdSelect.userProfileId})
-            FILTER userProfileDoc != null`
-    : userProfileIdSelect.by === 'userAccountId'
-      ? aql`FOR userProfileDoc IN ${dbStruct.appData.coll.userProfile}
+    ? aql`(DOCUMENT(${dbStruct.appData.coll.userProfile}, ${userProfileIdSelect.userProfileId}))`
+    : // aql`FOR userProfileDoc IN [DOCUMENT(${dbStruct.appData.coll.userProfile}, ${userProfileIdSelect.userProfileId})]
+      //       FILTER userProfileDoc != null`
+      userProfileIdSelect.by === 'userAccountId'
+      ? aql`((FOR userProfileDoc IN ${dbStruct.appData.coll.userProfile}
                 FILTER userProfileDoc.userAccount.id == ${userProfileIdSelect.userAccountId}
-                LIMIT 1`
+                LIMIT 1
+                RETURN userProfileDoc)[0])`
       : unreachable_never(userProfileIdSelect)
 }
 
