@@ -33,44 +33,40 @@ export type configuration = {
   loggerProvider: loggerProvider
   domainFsDirectories: domainFsDirectories
 }
-export type domainAccessDispatcherProviderDeps = configuration & {
-  feedbackDispatcher: binderDispatcher
+export type domainAccessDispatcherProviderDeps = {
+  configuration: configuration
+  loopbackDispatcher: binderDispatcher
 }
 
 export function mergeSecondaryAdapters(adapters: secondaryAdapter[]): moodleSecondary {
   return merge({}, ...adapters)
 }
-export function mergePrimaryImplementations(primaryImpls: modPrimary<_any>[]): moodlePrimary {
+export function mergeCoreImplementations(primaryImpls: modPrimary<_any>[]): moodlePrimary {
   return merge({}, ...primaryImpls)
 }
 
 export function provideDomainAccessDispatcher({
-  domain,
-  moduleCores,
-  secondaryProviders,
-  loggerProvider,
-  start_background_processes,
-  feedbackDispatcher,
-  domainFsDirectories,
+  configuration,
+  loopbackDispatcher,
 }: domainAccessDispatcherProviderDeps): binderDispatcher {
-  return async ({ domainAccess: current_domainAccess }) => {
+  return async function thisDispatcher({ domainAccess: currentDomainAccess }) {
     // console.dir(current_domainAccess.endpoint)
-    const [currentDomainAccessLayer, currentDomainAccessModuleName] = current_domainAccess.endpoint as [
+    const [currentDomainAccessLayer, currentDomainAccessModuleName] = currentDomainAccess.endpoint as [
       domainLayer | undefined,
       moodleModuleName | undefined,
     ]
     if (!(currentDomainAccessLayer && currentDomainAccessModuleName)) {
       throw TypeError(`endpoint layer and module is required`)
     }
-    if (currentDomainAccessLayer === 'primary' && !current_domainAccess.primarySession) {
+    if (currentDomainAccessLayer === 'primary' && !currentDomainAccess.primarySession) {
       throw TypeError(`primary layer requires primarySession`)
     }
 
     const currentDomainAccessContext = await generateAccessContext(
       currentDomainAccessLayer,
       currentDomainAccessModuleName,
-      domainFsDirectories,
-      current_domainAccess,
+      configuration.domainFsDirectories,
+      currentDomainAccess,
     )
     const { log } = currentDomainAccessContext
     // mainLogger('debug', 'binderDispatcher:', {
@@ -80,16 +76,16 @@ export function provideDomainAccessDispatcher({
     //   primarySessionId: current_domainAccess.primarySession?.id,
     //   accessContextId: currentDomainAccessContext.id,
     // })
-    if (start_background_processes) {
+    if (configuration.start_background_processes) {
       await Promise.all(
-        moduleCores.map(async ({ modName, startBackgroundProcess }) => {
+        configuration.moduleCores.map(async ({ modName, startBackgroundProcess }) => {
           if (!startBackgroundProcess) {
             return
           }
           const backgroundContext = await generateAccessContext(
             'background',
             modName as moodleModuleName,
-            domainFsDirectories,
+            configuration.domainFsDirectories,
           )
           return startBackgroundProcess(backgroundContext)
         }),
@@ -97,8 +93,8 @@ export function provideDomainAccessDispatcher({
     }
 
     if (currentDomainAccessLayer === 'primary') {
-      const domainPrimary = mergePrimaryImplementations(
-        moduleCores.map(({ modName, primary }) => {
+      const domainPrimary = mergeCoreImplementations(
+        configuration.moduleCores.map(({ modName, primary }) => {
           return modName === currentDomainAccessModuleName
             ? {
                 [modName]: primary(currentDomainAccessContext),
@@ -108,15 +104,15 @@ export function provideDomainAccessDispatcher({
       )
       const primaryResult = await dispatchDomainMsg(
         { primary: domainPrimary },
-        current_domainAccess,
+        currentDomainAccess,
         currentDomainAccessContext.log,
       )
       triggerWatchers({ result: primaryResult })
 
       return primaryResult
     } else if (currentDomainAccessLayer === 'service') {
-      const domainService = mergePrimaryImplementations(
-        moduleCores.map(({ modName, service }) => {
+      const domainService = mergeCoreImplementations(
+        configuration.moduleCores.map(({ modName, service }) => {
           return modName === currentDomainAccessModuleName
             ? {
                 [modName]: service(currentDomainAccessContext),
@@ -126,7 +122,7 @@ export function provideDomainAccessDispatcher({
       )
       const serviceResult = await dispatchDomainMsg(
         { service: domainService },
-        current_domainAccess,
+        currentDomainAccess,
         currentDomainAccessContext.log,
       )
       triggerWatchers({ result: serviceResult })
@@ -134,32 +130,32 @@ export function provideDomainAccessDispatcher({
       return serviceResult
     } else if (currentDomainAccessLayer === 'event') {
       Promise.allSettled(
-        moduleCores.map(async ({ modName, event }) => {
+        configuration.moduleCores.map(async ({ modName, event }) => {
           if (!event) {
             return
           }
           const eventAccessContext = await generateAccessContext(
             'event',
             modName as moodleModuleName,
-            domainFsDirectories,
-            current_domainAccess,
+            configuration.domainFsDirectories,
+            currentDomainAccess,
           )
           const eventListener = event(eventAccessContext)
-          return dispatchDomainMsg({ event: eventListener }, current_domainAccess, eventAccessContext.log, {
+          return dispatchDomainMsg({ event: eventListener }, currentDomainAccess, eventAccessContext.log, {
             graceful: true,
           })
         }),
-      ).catch(error => log('critical', { domainAccess: current_domainAccess }, error))
+      ).catch(error => log('critical', { domainAccess: currentDomainAccess }, error))
     } else if (currentDomainAccessLayer === 'secondary') {
       const secondary = mergeSecondaryAdapters(
-        secondaryProviders.map(provideSecondary => provideSecondary(currentDomainAccessContext)),
+        configuration.secondaryProviders.map(provideSecondary => provideSecondary(currentDomainAccessContext)),
       )
 
-      const secondaryResult = await dispatchDomainMsg({ secondary }, current_domainAccess, currentDomainAccessContext.log)
+      const secondaryResult = await dispatchDomainMsg({ secondary }, currentDomainAccess, currentDomainAccessContext.log)
       triggerWatchers({ result: secondaryResult })
       return secondaryResult
     } else {
-      log('error', { current_domainAccess })
+      log('error', { current_domainAccess: currentDomainAccess })
       throw TypeError(`cannot handle layer [${currentDomainAccessLayer}] here`)
     }
 
@@ -207,90 +203,102 @@ export function provideDomainAccessDispatcher({
     }
     function triggerWatchers({ result }: { result: _any }) {
       return Promise.allSettled(
-        moduleCores.map(async ({ modName, watch }) => {
+        configuration.moduleCores.map(async ({ modName, watch }) => {
           if (!watch) {
             return
           }
-          const watchContext = await generateAccessContext('watch', modName, domainFsDirectories, current_domainAccess)
+          const watchContext = await generateAccessContext(
+            'watch',
+            modName,
+            configuration.domainFsDirectories,
+            currentDomainAccess,
+          )
           const watcher = watch(watchContext)
           // mainLogger('debug', `triggerWatchers`, current_domainAccess.endpoint, maybe_watchImpl)
           return dispatchDomainMsg(
             watcher,
             {
-              ...current_domainAccess,
-              payload: [result, current_domainAccess.payload],
+              ...currentDomainAccess,
+              payload: [result, currentDomainAccess.payload],
             },
             watchContext.log,
             { graceful: true },
-          )
+          ).catch(error => watchContext.log('critical', { error, stack: error.stack }))
         }),
-      ).catch(error => log('critical', { domainAccess: current_domainAccess }, error))
+      ) //.catch(error => log('critical', { domainAccess: currentDomainAccess }, error))
     }
-  }
 
-  async function generateAccessContext<modName extends moodleModuleName, layer extends domainLayer>(
-    contextLayer: layer,
-    moduleName: modName,
-    domainFsDirectories: domainFsDirectories,
-    current_domainAccess?: domainAccess,
-  ) {
-    const id = generateUlid({ onDate: date_time_string('now') })
+    async function generateAccessContext<modName extends moodleModuleName, layer extends domainLayer>(
+      contextLayer: layer,
+      moduleName: modName,
+      domainFsDirectories: domainFsDirectories,
+      current_domainAccess?: domainAccess,
+    ) {
+      const id = generateUlid({ onDate: date_time_string('now') })
 
-    const moodleDomainProxy = createMoodleDomainProxy({
-      ctrl({ domainMsg: { endpoint, payload } }) {
-        const ctx_track: ctxTrack = {
-          ctxId: id,
-          module: moduleName,
-          layer: contextLayer,
-        }
-        return feedbackDispatcher({
-          domainAccess: {
+      const moodleDomainProxy = createMoodleDomainProxy({
+        ctrl({ domainMsg: { endpoint, payload } }) {
+          const ctx_track: ctxTrack = {
+            ctxId: id,
+            module: moduleName,
+            layer: contextLayer,
+          }
+          const loopbackDomainAccess: domainAccess = {
             endpoint,
             payload,
             callerContext: ctx_track,
             originEndpoint: current_domainAccess?.endpoint,
             primarySession: current_domainAccess?.primarySession,
-          },
-        })
-      },
-    })
+          }
+          const [loopbackDomainAccessLayer] = endpoint as [domainLayer | undefined]
+          const dispatcher =
+            loopbackDomainAccessLayer === 'event' ||
+            loopbackDomainAccessLayer === 'watch' ||
+            loopbackDomainAccessLayer === 'primary' ||
+            loopbackDomainAccessLayer === 'service'
+              ? thisDispatcher
+              : loopbackDispatcher
+          return dispatcher({ domainAccess: loopbackDomainAccess })
+        },
+      })
 
-    const callerContext = current_domainAccess?.callerContext
-    const originEndpoint = current_domainAccess?.originEndpoint
-    const endpoint = current_domainAccess?.endpoint
-    const primarySessionId = current_domainAccess?.primarySession?.id
-    const log: Logger = (level, ...args) =>
-      loggerProvider({
-        domain,
+      const callerContext = current_domainAccess?.callerContext
+      const originEndpoint = current_domainAccess?.originEndpoint
+      const endpoint = current_domainAccess?.endpoint
+      const primarySessionId = current_domainAccess?.primarySession?.id
+      const log: Logger = (level, ...args) =>
+        configuration.loggerProvider({
+          domain: configuration.domain,
+          id,
+          moduleName,
+          originEndpoint,
+          callerContext,
+          contextLayer,
+          endpoint,
+          primarySessionId,
+        })(level, ...args.map(__redact__))
+      const accessContext: backgroundContext<modName> &
+        primaryContext<modName> &
+        eventContext<modName> &
+        watchContext<modName> &
+        secondaryContext = {
         id,
+        domain: configuration.domain,
         moduleName,
-        originEndpoint,
-        callerContext,
-        contextLayer,
-        endpoint,
-        primarySessionId,
-      })(level, ...args.map(__redact__))
-    const accessContext: backgroundContext<modName> &
-      primaryContext<modName> &
-      eventContext<modName> &
-      watchContext<modName> &
-      secondaryContext = {
-      id,
-      domain,
-      moduleName,
-      domainFsDirectories,
-      now: date_time_string('now'),
-      track: callerContext,
-      from: originEndpoint,
-      session: current_domainAccess?.primarySession as primarySession, // HACK : could be undefined - but this is a one-fit-all-context ;)
-      emit: moodleDomainProxy.event,
-      forward: moodleDomainProxy.primary,
-      mod: moodleDomainProxy,
-      write: moodleDomainProxy.secondary[moduleName].write,
-      sync: moodleDomainProxy.secondary[moduleName].sync,
-      log,
+        domainFsDirectories,
+        now: date_time_string('now'),
+        track: callerContext,
+        from: originEndpoint,
+        session: current_domainAccess?.primarySession as primarySession, // HACK : could be undefined - but this is a one-fit-all-context ;)
+        emit: moodleDomainProxy.event,
+        forward: moodleDomainProxy.primary,
+        mod: moodleDomainProxy,
+        write: moodleDomainProxy.secondary[moduleName].write,
+        sync: moodleDomainProxy.secondary[moduleName].sync,
+        log,
+      }
+      return accessContext
     }
-    return accessContext
   }
 }
 
