@@ -79,7 +79,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             return [!!updated, _void]
           },
           async setUserRoles({ userAccountId, roles }) {
-            const updatedUserRoles_cursor = await dbStruct.identity.db.query<userAccountRecord>(`
+           const updatedUserRoles_cursor = await dbStruct.identity.db.query<userAccountRecord>(aql`
                 FOR userAccountDoc IN ${dbStruct.identity.coll.userAccount}
                 FILTER userAccountDoc._key == ${userAccountId}
                 LIMIT 1

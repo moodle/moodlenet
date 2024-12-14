@@ -15,7 +15,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               userProfileIdSelect: { by: 'userAccountId', userAccountId: userAccountExcerpt.id },
               dbStruct,
               apply: aql`UPDATE userProfileDoc WITH {
-                userAccount: userAccountExcerpt
+                userAccount: ${userAccountExcerpt}
               } IN ${dbStruct.appData.coll.userProfile}`,
             })
             if (!userProfileDoc) {
