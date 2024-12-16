@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/component-library",
-  "version": "0.9.1",
+  "version": "0.9.4",
   "publishConfig": {
     "access": "public"
   },
@@ -92,14 +92,14 @@
     "react-dom": "18.3.1"
   },
   "dependencies": {
-    "@react-email/button": "^0.0.15",
-    "@react-email/container": "^0.0.12",
-    "@react-email/head": "^0.0.9",
-    "@react-email/html": "^0.0.8",
-    "@react-email/img": "^0.0.8",
-    "@react-email/preview": "^0.0.9",
-    "@react-email/section": "^0.0.12",
-    "@react-email/text": "^0.0.8",
+    "@react-email/button": "0.0.15",
+    "@react-email/container": "0.0.12",
+    "@react-email/head": "0.0.9",
+    "@react-email/html": "0.0.8",
+    "@react-email/img": "0.0.8",
+    "@react-email/preview": "0.0.9",
+    "@react-email/section": "0.0.12",
+    "@react-email/text": "0.0.8",
     "@types/lodash": "4.14.198",
     "lodash": "4.17.21",
     "lottie-react": "2.4.0"
