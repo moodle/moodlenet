@@ -47,7 +47,7 @@ export const mainLogger = winston.createLogger({
         winston.format.timestamp(),
         winston.format.colorize({ colors, message: false }),
         winston.format.printf(({ level, message, pkgId, timestamp }) => {
-          return `${timestamp} [${level}] [${label(pkgId)}]: ${message}`
+          return `${timestamp} [${level}] [${label(pkgId as PkgIdentifier)}]: ${message}`
         }),
       ),
     }),
@@ -67,7 +67,7 @@ mainLoggerConfigs?.file &&
           winston.format.timestamp(),
           winston.format.uncolorize(),
           winston.format.printf(({ level, message, pkgId, timestamp }) => {
-            return `${timestamp} [${level}] [${label(pkgId)}]: ${message}`
+            return `${timestamp} [${level}] [${label(pkgId as PkgIdentifier)}]: ${message}`
           }),
         ),
       }),
