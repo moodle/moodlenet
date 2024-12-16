@@ -9,7 +9,7 @@ installing moodlenet@${myPkgJson.version} core packages in ${installDir}
 may take some time...
 `)
 
-await execa('npm', ['install'], {
+await execa('npm', ['install', '--legacy-peer-deps'], {
   cwd: installDir,
   stdout: process.stdout,
 }).catch(err => {
