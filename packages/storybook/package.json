@@ -32,7 +32,7 @@
     "@moodlenet/mn-central-jira-simple-moderations": "*",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
-    "@react-email/render": "^0.0.12",
+    "@react-email/render": "0.0.12",
     "@storybook/addon-actions": "7.4.2",
     "@storybook/addon-essentials": "7.4.2",
     "@storybook/addon-interactions": "7.4.2",
