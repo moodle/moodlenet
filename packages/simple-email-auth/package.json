@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/simple-email-auth",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "publishConfig": {
     "access": "public"
   },
@@ -34,8 +34,8 @@
   "repository": "https://github.com/moodle/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
-    "@moodlenet/component-library": "^0.9.3",
-    "@moodlenet/key-value-store": "^0.9.3",
+    "@moodlenet/component-library": "0.9.4",
+    "@moodlenet/key-value-store": "0.9.4",
     "dot": "1.1.3",
     "formik": "2.2.9",
     "yup": "0.32.11"
@@ -43,24 +43,24 @@
   "peerDependencies": {
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
-    "@moodlenet/arangodb": "^0.9.3",
-    "@moodlenet/core": "^0.9.3",
-    "@moodlenet/crypto": "^0.9.3",
-    "@moodlenet/email-service": "^0.9.3",
-    "@moodlenet/http-server": "^0.9.3",
-    "@moodlenet/organization": "^0.9.3",
-    "@moodlenet/react-app": "^0.9.3",
-    "@moodlenet/web-user": "^0.9.3"
+    "@moodlenet/arangodb": "0.9.4",
+    "@moodlenet/core": "0.9.4",
+    "@moodlenet/crypto": "0.9.4",
+    "@moodlenet/email-service": "0.9.4",
+    "@moodlenet/http-server": "0.9.4",
+    "@moodlenet/organization": "0.9.4",
+    "@moodlenet/react-app": "0.9.4",
+    "@moodlenet/web-user": "0.9.4"
   },
   "devDependencies": {
-    "@moodlenet/arangodb": "^0.9.3",
-    "@moodlenet/core": "^0.9.3",
-    "@moodlenet/crypto": "^0.9.3",
-    "@moodlenet/email-service": "^0.9.3",
-    "@moodlenet/http-server": "^0.9.3",
-    "@moodlenet/organization": "^0.9.3",
-    "@moodlenet/react-app": "^0.9.3",
-    "@moodlenet/web-user": "^0.9.3",
+    "@moodlenet/arangodb": "0.9.4",
+    "@moodlenet/core": "0.9.4",
+    "@moodlenet/crypto": "0.9.4",
+    "@moodlenet/email-service": "0.9.4",
+    "@moodlenet/http-server": "0.9.4",
+    "@moodlenet/organization": "0.9.4",
+    "@moodlenet/react-app": "0.9.4",
+    "@moodlenet/web-user": "0.9.4",
     "@mui/icons-material": "5.14.9",
     "@mui/material": "5.14.9",
     "@storybook/addon-actions": "7.4.2",
