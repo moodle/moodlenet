@@ -1,4 +1,4 @@
-import { http_bind } from '@moodle/bindings-node'
+import { http_bind } from '@moodle/bindings-http'
 import { moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import {

@@ -1,4 +1,4 @@
-import { http_bind } from '@moodle/bindings-node'
+import { http_bind } from '@moodle/bindings-http'
 import { binderReceiver } from '@moodle/domain'
 
 const MOODLE_HTTP_BINDER_RECEIVER_PORT = parseInt(process.env.MOODLE_HTTP_BINDER_RECEIVER_PORT ?? '8000')
