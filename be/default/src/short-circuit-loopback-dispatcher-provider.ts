@@ -3,12 +3,9 @@ import { loopbackDispatcherProvider } from './types'
 
 const shortCircuitLoopbackDispatcherProvider: loopbackDispatcherProvider = async ({ configuration }) => {
   const shortCircuitLoopbackDispatcher = provideDomainAccessDispatcher({
-    configuration: {
-      ...configuration,
-      start_background_processes: false,
-    },
-    loopbackDispatcher({ domainAccess: loopbackDomainAccess }) {
-      return shortCircuitLoopbackDispatcher({ domainAccess: loopbackDomainAccess })
+    configuration,
+    loopbackDispatcher({ domainAccess }) {
+      return shortCircuitLoopbackDispatcher({ domainAccess })
     },
   })
 

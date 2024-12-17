@@ -54,6 +54,7 @@ function _domainAccess(): MoodleDomain {
             binderDispatcher({
               domainAccess: {
                 ...domainMsg,
+                domain: primarySession.domain,
                 primarySession,
               },
             }),

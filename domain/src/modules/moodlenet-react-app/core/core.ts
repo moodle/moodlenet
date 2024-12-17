@@ -6,7 +6,7 @@ import { accessWebappContributorAccessData, contributorRecordToWebappContributor
 
 type primary = moodlePrimary['moodlenetReactApp']
 export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
-  modName: 'moodlenetReactApp',
+  moduleName: 'moodlenetReactApp',
   service() {
     return
   },

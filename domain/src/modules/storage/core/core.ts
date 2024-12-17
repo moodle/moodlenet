@@ -2,7 +2,7 @@ import { moduleCore } from '../../../types'
 
 const ONE_MINUTE = 60 * 1000
 export const storage_core: moduleCore<'storage'> = {
-  modName: 'storage',
+  moduleName: 'storage',
   service() {
     return
   },

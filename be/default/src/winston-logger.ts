@@ -79,7 +79,7 @@ ${timestamp} [${level}]
   context           : ${contextLayer} # ${id}
   endpoint          : ${(endpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
   primarySessionId  : ${primarySessionId ?? NOT_AVAILABLE_CHAR}
-  callerContext     : ${callerContext ? `${callerContext.layer}.${callerContext.module} # ${callerContext.ctxId}` : NOT_AVAILABLE_CHAR}
+  callerContext     : ${callerContext ? `${callerContext.layer}.${callerContext.moduleName} # ${callerContext.ctxId}` : NOT_AVAILABLE_CHAR}
   originEndpoint    : ${(originEndpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
 
 ${message}

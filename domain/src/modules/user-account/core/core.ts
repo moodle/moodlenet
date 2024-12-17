@@ -13,7 +13,7 @@ import {
 
 type primary = userAccountDomain['primary']['userAccount']
 export const userAccount_core: moduleCore<'userAccount'> = {
-  modName: 'userAccount',
+  moduleName: 'userAccount',
   service(ctx) {
     return {
       async generateUserSessionToken({ userAccountId }) {
@@ -424,7 +424,6 @@ export const userAccount_core: moduleCore<'userAccount'> = {
     }
   },
   async startBackgroundProcess(ctx) {
-    ctx.log('debug', 'Starting background process userAccount')
     const sysAdminInfo = await ctx.mod.secondary.env.query.getSysAdminInfo()
     ctx.log('debug', `Checking if sysAdmin user exists: `, { sysAdminInfo })
 

@@ -1,7 +1,7 @@
 import { moduleCore } from '../../../types'
 
 export const edu_core: moduleCore<'edu'> = {
-  modName: 'edu',
+  moduleName: 'edu',
   service() {
     return
   },

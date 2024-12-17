@@ -1,5 +1,5 @@
 import { moduleCore, moodleModuleName, secondaryAdapter, secondaryProvider, sys_admin_info } from '@moodle/domain'
-import { configuration, deploymentInfoFromUrlString } from '@moodle/domain/lib'
+import { configuration, deploymentInfoFromUrlString, startBackgroundProcesses } from '@moodle/domain/lib'
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { edu_core } from '@moodle/module/edu/core'
@@ -19,7 +19,7 @@ import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
 import * as path from 'path'
 import { coerce, literal, object, union } from 'zod'
-import { configurator } from './types'
+import { configurator, configuratorResult, loggerConfigs } from './types'
 import { createDefaultDomainLoggerProvider } from './winston-logger'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
 // import {
@@ -28,21 +28,18 @@ import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
 // } from '@moodle/sec-resource-ingestion-default'
 // import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
 
-const cache: map<Promise<configuration>> = {}
+const cache: map<Promise<configuratorResult>> = {}
 
-export const default_configurator: configurator = async ({ domainAccess, loggerConfigs }) => {
-  if (!domainAccess.primarySession?.domain) {
-    throw new Error('domainAccess.primarySession.domain is required')
-  }
-  const domainName = domainAccess.primarySession.domain
+export const default_configurator: configurator = async ({ domainName, loopbackDispatcherProvider }) => {
   // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
   if (!cache[domainName]) {
-    cache[domainName] = new Promise<configuration>(promiseResolveConfiguration => {
+    cache[domainName] = new Promise<configuratorResult>(promiseResolveConfiguration => {
       const MOODLE_HOME_DIR = path.resolve(process.cwd(), process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
       const domainFsDirectories = getDomainFsDirectories({
         homeDir: MOODLE_HOME_DIR,
         domainName,
       })
+      const loggerConfigs: loggerConfigs = {consoleLevel:'debug'}
 
       dotenvExpand(dotenv.config({ path: path.join(domainFsDirectories.currentDomainDir, '.env'), override: true }))
       console.debug({ currentDomainDir: domainFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
@@ -129,7 +126,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         storage_core,
         // resource_ingestion_core,
         {
-          modName: 'env',
+          moduleName: 'env',
           service() {
             return
           },
@@ -157,29 +154,31 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         },
       ]
 
-      let do_start_background_processes = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
-      migrateArangoDB({
-        databaseConnections: arango_db_env.database_connections,
-        log: loggerProvider({
-          domain: domainName,
-          contextLayer: 'secondary',
-          id: 'migration',
-          moduleName: 'sec-arangodb' as moodleModuleName,
-        }),
-      }).then(() => {
-        const configuration: configuration = {
-          moduleCores,
-          secondaryProviders,
-          loggerProvider,
-          domain: domainName,
-          domainFsDirectories,
-          get start_background_processes() {
-            const resp = do_start_background_processes
-            do_start_background_processes = false
-            return resp
-          },
+      const configuration: configuration = {
+        moduleCores,
+        secondaryProviders,
+        loggerProvider,
+        domain: domainName,
+        domainFsDirectories,
+      }
+      loopbackDispatcherProvider({ configuration }).then(async loopbackDispatcher => {
+        const background_processesor = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
+        if (background_processesor) {
+          await migrateArangoDB({
+            databaseConnections: arango_db_env.database_connections,
+            log: loggerProvider({
+              domain: domainName,
+              contextLayer: 'secondary',
+              id: 'migration',
+              moduleName: 'sec-arangodb' as moodleModuleName,
+            }),
+          })
+          await startBackgroundProcesses({
+            configuration,
+            loopbackDispatcher,
+          })
         }
-        promiseResolveConfiguration(configuration)
+        promiseResolveConfiguration({ configuration, loopbackDispatcher })
       })
     }).catch(e => {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete

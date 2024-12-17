@@ -30,7 +30,7 @@ export type contextModuleAccess = {
 
 export type ctxTrack = {
   layer: domainLayer
-  module: moodleModuleName
+  moduleName: moodleModuleName
   ctxId: ctxId
 }
 
@@ -47,26 +47,26 @@ export type baseContext = contextInfo & {
   mod: contextModuleAccess //FIXME: access to other-modules secondary should not be available in primaryContext
 }
 
-export type modSecondary<mod extends moodleModuleName = never> = Pick<moodleSecondary, mod>[mod]
-export type modEmitter<mod extends moodleModuleName = never> = Pick<moodleEvent, mod>[mod]
-type coreContext<mod extends moodleModuleName = never> = baseContext & {
-  write: modSecondary<mod>['write']
-  emit: modEmitter<mod>
+export type modSecondary<moduleName extends moodleModuleName = never> = Pick<moodleSecondary, moduleName>[moduleName]
+export type modEmitter<moduleName extends moodleModuleName = never> = Pick<moodleEvent, moduleName>[moduleName]
+type coreContext<moduleName extends moodleModuleName = never> = baseContext & {
+  write: modSecondary<moduleName>['write']
+  emit: modEmitter<moduleName>
 }
-export type backgroundContext<mod extends moodleModuleName = never> = coreContext<mod>
+export type backgroundContext<moduleName extends moodleModuleName = never> = coreContext<moduleName>
 
-export type primaryContext<mod extends moodleModuleName = never> = coreContext<mod> & {
+export type primaryContext<moduleName extends moodleModuleName = never> = coreContext<moduleName> & {
   forward: moodlePrimary
   session: primarySession
   moduleName: moodleModuleName
 } // & p_track<'primary'>
 
-export type serviceContext<mod extends moodleModuleName = never> = coreContext<mod>
+export type serviceContext<moduleName extends moodleModuleName = never> = coreContext<moduleName>
 
-export type eventContext<mod extends moodleModuleName = never> = coreContext<mod> // & track<'primary'> | track<'background'>
+export type eventContext<moduleName extends moodleModuleName = never> = coreContext<moduleName> // & track<'primary'> | track<'background'>
 
-export type watchContext<mod extends moodleModuleName = never> = coreContext<mod> & {
-  sync: modSecondary<mod>['sync']
+export type watchContext<moduleName extends moodleModuleName = never> = coreContext<moduleName> & {
+  sync: modSecondary<moduleName>['sync']
 } // & track<'primary'> | track<'secondary'>
 
 export type secondaryContext = baseContext & {
@@ -82,23 +82,23 @@ export type secondaryContext = baseContext & {
 export type secondaryProvider = (secondaryContext: secondaryContext) => secondaryAdapter
 export type secondaryAdapter = deep_partial<moodleSecondary>
 
-export type moduleCore<mod extends moodleModuleName = never> = {
-  modName: mod
-  primary(primaryContext: primaryContext<mod>): {
-    [channel in keyof modPrimary<mod>[mod]]: () => Promise<modPrimary<mod>[mod][channel]>
+export type moduleCore<moduleName extends moodleModuleName = never> = {
+  moduleName: moduleName
+  primary(primaryContext: primaryContext<moduleName>): {
+    [channel in keyof modPrimary<moduleName>[moduleName]]: () => Promise<modPrimary<moduleName>[moduleName][channel]>
   }
-  service: (serviceContext: serviceContext<mod>) => modService<mod>[mod]
-  event?: (eventContext: eventContext<mod>) => eventListener
-  watch?: (watchContext: watchContext<mod>) => watcher
-  startBackgroundProcess?: (bgContext: backgroundContext<mod>) => void | Promise<void>
+  service: (serviceContext: serviceContext<moduleName>) => modService<moduleName>[moduleName]
+  event?: (eventContext: eventContext<moduleName>) => eventListener
+  watch?: (watchContext: watchContext<moduleName>) => watcher
+  startBackgroundProcess?: (bgContext: backgroundContext<moduleName>) => void | Promise<void>
 }
 
-export type modPrimary<mod extends moodleModuleName = never> = {
-  [_ in mod]: moodlePrimary[mod]
+export type modPrimary<moduleName extends moodleModuleName = never> = {
+  [_ in moduleName]: moodlePrimary[moduleName]
 }
 
-export type modService<mod extends moodleModuleName = never> = {
-  [_ in mod]: moodleService[mod]
+export type modService<moduleName extends moodleModuleName = never> = {
+  [_ in moduleName]: moodleService[moduleName]
 }
 
 export type eventListener = deep_partial<moodleEvent>

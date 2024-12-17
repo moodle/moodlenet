@@ -9,6 +9,7 @@ export type domainMsg = {
   payload: _any
 }
 export type domainAccess = domainMsg & {
+  domain: string
   primarySession?: primarySession
   callerContext?: ctxTrack
   originEndpoint?: path

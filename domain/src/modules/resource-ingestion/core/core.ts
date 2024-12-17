@@ -2,7 +2,7 @@ import { unreachable_never } from '@moodle/lib-types'
 import { moduleCore } from '../../../types'
 
 export const resource_ingestion_core: moduleCore<'resourceIngestion'> = {
-  modName: 'resourceIngestion',
+  moduleName: 'resourceIngestion',
   primary(ctx) {
     return {
       async session() {

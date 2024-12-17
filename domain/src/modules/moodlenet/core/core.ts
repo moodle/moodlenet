@@ -6,7 +6,7 @@ import { moduleCore } from '../../../types'
 import { assert_authorizeCurrentUserSessionWithRole, validate_currentUserSessionInfo } from '../../user-account/lib'
 
 export const moodlenet_core: moduleCore<'moodlenet'> = {
-  modName: 'moodlenet',
+  moduleName: 'moodlenet',
   service() {
     return
   },
@@ -115,7 +115,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
               }
               await ctx.write.updateMoodlenetContributorProfileInfoMeta({
                 select: payload.userProfileIdSelect,
-                profileInfoMeta:payload.profileInfoMeta,
+                profileInfoMeta: payload.profileInfoMeta,
                 lastEditDate: payload.lastEditDate,
               })
             },
@@ -125,10 +125,10 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
               }
               await ctx.write.updateMoodlenetContributorProfileInfoImage({
                 select: payload.userProfileIdSelect,
-                image:payload.image,
-                type:payload.type,
-          lastEditDate: payload.lastEditDate
-        })
+                image: payload.image,
+                type: payload.type,
+                lastEditDate: payload.lastEditDate,
+              })
             },
             async createUserProfile([[created], payload]) {
               if (!created) {

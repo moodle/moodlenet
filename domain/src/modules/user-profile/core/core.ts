@@ -9,7 +9,7 @@ import { createNewUserProfileData } from './lib/new-user-profile'
 
 type primary = UserProfileDomain['primary']['userProfile']
 export const user_profile_core: moduleCore<'userProfile'> = {
-  modName: 'userProfile',
+  moduleName: 'userProfile',
   service(/* ctx */) {
     return {
       // async draftResourceIngestionOutcome({ eduResourceDraftId, userProfileIdSelect, ingestionOutcome }) {

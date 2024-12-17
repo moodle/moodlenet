@@ -61,6 +61,7 @@ app.use(cookieParser()).use(async (req, _res, next) => {
       return trnspClient({
         domainAccess: {
           ...domainMsg,
+          domain: primarySession.domain,
           primarySession,
         },
       })
