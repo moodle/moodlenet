@@ -102,7 +102,7 @@ export const LearningOutcomes: FC<LearningOutcomesProps> = ({
 
   const [searchText, setSearchText] = useState('')
 
-  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement>[] = enabledCategories.eduBloomCognitives.map(() =>
+  const learningOutcomeCategoriesRefs: RefObject<HTMLDivElement | null>[] = enabledCategories.eduBloomCognitives.map(() =>
     createRef(),
   )
 

@@ -98,7 +98,7 @@ const xport = async (phase, context) => {
   }
   config.experimental = {
     externalDir: true,
-    instrumentationHook: true,
+    // instrumentationHook: true,
     typedRoutes: true,
     turbo: {
       rules: {

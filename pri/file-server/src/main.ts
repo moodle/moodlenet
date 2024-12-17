@@ -204,10 +204,8 @@ function getPrimarySession(req: express.Request) {
   const xHost = headers.get('x-host')
   // const xPort = headers.get('x-port')
   const xProto = headers.get('x-proto') ?? 'http'
-  const xClientIp = headers.get('x-client-ip') ?? undefined
   const xUrl = headers.get('x-url') ?? undefined
   const xMode = headers.get('x-mode') ?? undefined
-  const xGeo = JSON.parse(headers.get('x-geo') ?? '{}')
   const ua = userAgent({ headers: headers })
   assert(xHost, 'x-host not found in headers')
   const userSession: primarySession = {
@@ -223,7 +221,6 @@ function getPrimarySession(req: express.Request) {
       secure: xProto === 'https',
       mode: xMode,
       url: xUrl,
-      clientIp: xClientIp,
       ua: {
         name: ua.ua,
         isBot: ua.isBot,
@@ -239,7 +236,6 @@ function getPrimarySession(req: express.Request) {
         type: 'browser',
         version: ua.browser.version,
         name: ua.browser.name,
-        geo: xGeo,
         cpu: ua.cpu,
         device: ua.device,
         engine: ua.engine,
@@ -267,11 +263,9 @@ export function middlewareHeaders(request: express.Request) {
   const urlPathname = request.path
   const urlProto = (headers.get('X-Forwarded-Proto') || request.protocol).toLowerCase()
   const xUrl = request.url.toString()
-  const xClientIp = headers.get('X-Forwarded-For') || request.ip || 'unknown'
 
   // FIXME: find how to get 'mode' and 'geo' in expressjs
   const xMode = null // request.mode
-  const xGeo = JSON.stringify(/* request.geo */ null || {})
 
   const xSearch = Object.entries(request.query ?? {})
     .map(([k, v]) => `${k}=${v}`)
@@ -281,9 +275,7 @@ export function middlewareHeaders(request: express.Request) {
   // or simply implement some utility functins for accessing these  custom data in server-components|actions
 
   xMode ? headers.set('x-mode', xMode) : headers.delete('x-mode')
-  headers.set('x-geo', xGeo)
   headers.set('x-url', xUrl)
-  headers.set('x-client-ip', xClientIp)
   headers.set('x-host', urlHost)
   headers.set('x-proto', urlProto)
   headers.set('x-port', urlPort)

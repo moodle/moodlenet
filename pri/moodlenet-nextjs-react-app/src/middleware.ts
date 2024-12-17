@@ -12,9 +12,7 @@ export async function middleware(request: NextRequest) {
   // url.port = urlPort
 
   const xUrl = request.nextUrl.toString()
-  const xClientIp = request.headers.get('X-Forwarded-For') || request.ip || 'unknown'
   const xMode = request.mode
-  const xGeo = JSON.stringify(request.geo || {})
   const xSearch = request.nextUrl.search.replace(/^\?/, '')
 
   //! NOTE:  consider this https://www.npmjs.com/package/next-extra ! (or maybe others)
@@ -22,9 +20,7 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next({
     headers: {
       'x-mode': xMode,
-      'x-geo': xGeo,
       'x-url': xUrl,
-      'x-client-ip': xClientIp,
       'x-host': urlHost,
       'x-proto': urlProto,
       'x-port': urlPort,

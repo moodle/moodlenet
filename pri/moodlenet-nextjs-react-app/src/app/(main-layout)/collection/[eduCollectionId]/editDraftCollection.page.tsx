@@ -1,7 +1,7 @@
 // import CollectionClient from './collection.client'
 
 import { access, getAuthenticatedUserSessionOrRedirectToLogin } from '../../../../lib/server/session-access'
-import { params } from '../../../../lib/server/types'
+import { pageProps, paramRequired } from '../../../../lib/server/page-props'
 import { CollectionPage, collectionPageProps } from '../../../../ui/pages/Collection/Collection'
 import { Fallback } from '../../../../ui/pages/Fallback/Fallback'
 import {
@@ -9,12 +9,9 @@ import {
   editEduCollectionDraftForId,
 } from '../eduCollection-actions.server'
 
-export default async function EditDraftCollectionPage({
-  params: { eduCollectionId },
-}: {
-  params: params<'eduCollectionId'>
-}) {
+export default async function EditDraftCollectionPage({ params }: pageProps<{ eduCollectionId: string }>) {
   await getAuthenticatedUserSessionOrRedirectToLogin()
+  const eduCollectionId = await paramRequired('eduCollectionId', params)
   const [found, myEduCollectionDraft] = await access.primary.userProfile.authenticated.getEduCollectionDraft({
     eduCollectionDraftId: eduCollectionId,
   })

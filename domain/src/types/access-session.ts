@@ -20,7 +20,7 @@ type protocols = {
     secure: boolean
     mode?: string
     url?: string
-    clientIp?: string
+    // clientIp?: string // https://github.com/vercel/next.js/pull/68379
     ua: {
       name: string
       isBot?: boolean
@@ -56,11 +56,11 @@ export type browserPlatform = {
   cpu?: {
     architecture?: string
   }
-  geo?: {
-    city?: string
-    country?: string
-    region?: string
-  }
+  // geo?: { // https://github.com/vercel/next.js/pull/68379
+  //   city?: string
+  //   country?: string
+  //   region?: string
+  // }
 }
 
 export interface NodeJsPlatform {

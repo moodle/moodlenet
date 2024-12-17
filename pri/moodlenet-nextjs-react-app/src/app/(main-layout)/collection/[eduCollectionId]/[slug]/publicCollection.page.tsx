@@ -1,12 +1,12 @@
 // import CollectionClient from './collection.client'
 
-import { params } from '../../../../../lib/server/types'
+import { pageProps, paramRequired } from '../../../../../lib/server/page-props'
 
-export default async function PublicCollectionPage({
-  params: { eduCollectionId, slug },
-}: {
-  params: params<'eduCollectionId' | 'slug'>
-}) {
+export default async function PublicCollectionPage({ params }: pageProps<{ eduCollectionId: string; slug: string }>) {
+  const [eduCollectionId, slug] = await Promise.all([
+    paramRequired('eduCollectionId', params),
+    paramRequired('slug', params),
+  ])
   return (
     <div>
       <pre>VIEW PUBLIC COLLECTION {JSON.stringify({ eduCollectionId, slug }, null, 2)}</pre>

@@ -18,7 +18,7 @@ export type DropdownProps = SelectorProps & {
   highlight?: boolean
   multilines?: boolean
   noBorder?: boolean
-  divRef?: React.RefObject<HTMLDivElement>
+  divRef?: React.RefObject<HTMLDivElement | null>
   abbr?: string
   position?: { top?: number; bottom?: number }
   dropdownButton?: ReactNode
