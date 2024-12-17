@@ -54,6 +54,12 @@
       "iconColour": "#fff241",
       "background": "#fff241",
       "opacity": 80
+    },
+    "FUTURE": {
+      "foreground": "#000000",
+      "iconColour": "#155629",
+      "background": "#155629",
+      "opacity": 80
     }
   },
   "todo-tree.general.tags": [
@@ -86,7 +92,9 @@
     "MAKE_SHARED_LIB",
     "MAKE_SHARED_LIB",
     "NEED_SHARED_LIB",
-    "SHARED_LIB_NEEDED"
+    "SHARED_LIB_NEEDED",
+    //
+    "FUTURE"
   ],
   "todo-tree.general.tagGroups": {
     "FIXME": ["FIXME", "FIXIT", "FIX"],

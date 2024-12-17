@@ -7,7 +7,7 @@ export type primarySession = {
   domain: string
   protocol: d_u<protocols, 'type'>
   app: { name: moodleApp; version: string }
-  // NOTE: ? make it `modTokens: { [app_name:string]?: string | null  }`
+  // FUTURE: make it `modTokens: { [app_name:string]?: string | null  }`
   token: signed_token | null
   platforms: {
     stored: platform

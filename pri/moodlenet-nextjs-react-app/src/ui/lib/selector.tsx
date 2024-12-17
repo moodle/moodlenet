@@ -65,8 +65,6 @@ export const Selector = forwardRef<HTMLSelectElement, SelectorProps>((props, for
   } = props
   const { multiple } = props
 
-  // REVIEW: value and defaultValue should can't be null in <select>, so we cast null to undefined. However, should we cast blanks ('') too ?
-  // REVIEW: I bet no, as '' could be a valid value, but there's this quirk that <select>.value is '' when nothing is selected
   const value = ___temp___value ?? undefined
   const defaultValue = ___temp___defaultValue ?? undefined
 

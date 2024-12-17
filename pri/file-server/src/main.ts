@@ -265,7 +265,7 @@ export function middlewareHeaders(request: express.Request) {
   const urlProto = (headers.get('X-Forwarded-Proto') || request.protocol).toLowerCase()
   const xUrl = request.url.toString()
 
-  // FIXME: find how to get 'mode' and 'geo' in expressjs
+  // FIXME: find how to get 'mode' in expressjs
   const xMode = null // request.mode
 
   const xSearch = Object.entries(request.query ?? {})

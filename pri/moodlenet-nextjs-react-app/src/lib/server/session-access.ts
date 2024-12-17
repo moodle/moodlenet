@@ -93,7 +93,6 @@ function _domainAccess(): MoodleDomain {
   //   }
   // }
 
-  return moodle_domain
 }
 
 export async function getAuthenticatedUserSessionOrRedirectToLogin() {
