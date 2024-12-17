@@ -1,5 +1,5 @@
 import { generateUlid } from '@moodle/lib-id-gen'
-import { __redact__, _any, date_time_string } from '@moodle/lib-types'
+import { __redact__, _any, date_time_string, unreachable_never } from '@moodle/lib-types'
 import { merge } from 'lodash'
 import {
   backgroundContext,
@@ -80,7 +80,11 @@ export function provideDomainAccessDispatcher({
   const { domainFsDirectories, loggerProvider, domain } = configuration
   return async ({ domainAccess }) => {
     // console.dir(current_domainAccess.endpoint)
-    const [domainLayer, moduleName] = domainAccess.endpoint as [domainLayer | undefined, moodleModuleName | undefined]
+    const domainLayer = domainAccess.endpoint[0] as domainLayer | undefined
+    if (domainLayer === 'background') {
+      throw TypeError(`cannot handle layer [${domainLayer}] here`)
+    }
+    const moduleName = domainAccess.endpoint[domainLayer === 'watch' ? 2 : 1] as moodleModuleName | undefined
     if (!(domainLayer && moduleName)) {
       throw TypeError(`endpoint layer and module is required`)
     }
@@ -117,7 +121,7 @@ export function provideDomainAccessDispatcher({
         }),
       )
       const primaryResult = await dispatchDomainMsg({ primary: domainPrimary }, domainAccess, currentDomainAccessContext.log)
-      triggerWatchers({ result: primaryResult })
+      loopbackWatch({ result: primaryResult })
 
       return primaryResult
     } else if (domainLayer === 'service') {
@@ -131,9 +135,17 @@ export function provideDomainAccessDispatcher({
         }),
       )
       const serviceResult = await dispatchDomainMsg({ service: domainService }, domainAccess, currentDomainAccessContext.log)
-      triggerWatchers({ result: serviceResult })
+      loopbackWatch({ result: serviceResult })
 
       return serviceResult
+    } else if (domainLayer === 'secondary') {
+      const secondary = mergeSecondaryAdapters(
+        configuration.secondaryProviders.map(provideSecondary => provideSecondary(currentDomainAccessContext)),
+      )
+
+      const secondaryResult = await dispatchDomainMsg({ secondary }, domainAccess, currentDomainAccessContext.log)
+      loopbackWatch({ result: secondaryResult })
+      return secondaryResult
     } else if (domainLayer === 'event') {
       Promise.allSettled(
         configuration.moduleCores.map(async ({ moduleName, event }) => {
@@ -150,22 +162,37 @@ export function provideDomainAccessDispatcher({
             loopbackDispatcher,
           })
           const eventListener = event(eventAccessContext)
-          return dispatchDomainMsg({ event: eventListener }, domainAccess, eventAccessContext.log, {
+          const [_, ...restEndpoint] = domainAccess.endpoint
+          return dispatchDomainMsg(eventListener, { ...domainAccess, endpoint: restEndpoint }, eventAccessContext.log, {
             graceful: true,
           })
         }),
       ).catch(error => log('critical', { domainAccess }, error))
-    } else if (domainLayer === 'secondary') {
-      const secondary = mergeSecondaryAdapters(
-        configuration.secondaryProviders.map(provideSecondary => provideSecondary(currentDomainAccessContext)),
-      )
-
-      const secondaryResult = await dispatchDomainMsg({ secondary }, domainAccess, currentDomainAccessContext.log)
-      triggerWatchers({ result: secondaryResult })
-      return secondaryResult
+    } else if (domainLayer === 'watch') {
+      return Promise.allSettled(
+        configuration.moduleCores.map(async ({ moduleName, watch }) => {
+          if (!watch) {
+            return
+          }
+          const watchAccessContext = await generateAccessContext({
+            contextLayer: 'watch',
+            moduleName,
+            domainFsDirectories,
+            domainAccess,
+            domain,
+            loggerProvider,
+            loopbackDispatcher,
+          })
+          const watcher = watch(watchAccessContext)
+          // mainLogger('debug', `triggerWatchers`, current_domainAccess.endpoint, maybe_watchImpl)
+          const [_, ...restEndpoint] = domainAccess.endpoint
+          return dispatchDomainMsg(watcher, { ...domainAccess, endpoint: restEndpoint }, watchAccessContext.log, {
+            graceful: true,
+          }).catch(error => watchAccessContext.log('critical', { error, stack: error.stack }))
+        }),
+      ) //.catch(error => log('critical', { domainAccess: currentDomainAccess }, error))
     } else {
-      log('error', { current_domainAccess: domainAccess })
-      throw TypeError(`cannot handle layer [${domainLayer}] here`)
+      unreachable_never(domainLayer, `unknown handle layer [${domainLayer}]`)
     }
 
     async function dispatchDomainMsg(
@@ -203,41 +230,27 @@ export function provideDomainAccessDispatcher({
 
         throw TypeError(err_msg)
       }
+      // logMessage('debug', '===========================> payload', domainMsg.payload ?? 'NONE')
       const endpointResponse = await endpoint(domainMsg.payload).catch((error: unknown) => {
         logMessage('error', domainMsg.endpoint.join('/'), { error })
         throw error
       })
-      //logMessage('debug', ':)', { payload: domainMsg.payload ?? null, response: endpointResponse })
+      //logMessage('debug', '===========================> response', endpointResponse ?? 'NONE')
       return endpointResponse
     }
-    function triggerWatchers({ result }: { result: _any }) {
-      return Promise.allSettled(
-        configuration.moduleCores.map(async ({ moduleName, watch }) => {
-          if (!watch) {
-            return
-          }
-          const watchContext = await generateAccessContext({
-            contextLayer: 'watch',
-            moduleName,
-            domainFsDirectories,
-            domainAccess,
-            domain,
-            loggerProvider,
-            loopbackDispatcher,
-          })
-          const watcher = watch(watchContext)
-          // mainLogger('debug', `triggerWatchers`, current_domainAccess.endpoint, maybe_watchImpl)
-          return dispatchDomainMsg(
-            watcher,
-            {
-              ...domainAccess,
-              payload: [result, domainAccess.payload],
-            },
-            watchContext.log,
-            { graceful: true },
-          ).catch(error => watchContext.log('critical', { error, stack: error.stack }))
-        }),
-      ) //.catch(error => log('critical', { domainAccess: currentDomainAccess }, error))
+
+    function loopbackWatch({ result }: { result: _any }) {
+      // REVIEW: shall watchers be able to watch really everything? it gets very chatty !
+      // REVIEW:   maybe watch only `secondary.write|queue|service.*`, `primary.*.*`
+      // REVIEW:   avoiding at least `query` & `sync` (`sync` definitely not needed)
+
+      const watchDomainAccess: domainAccess = {
+        ...domainAccess,
+        endpoint: ['watch', ...domainAccess.endpoint],
+        payload: [result, domainAccess.payload],
+      }
+
+      loopbackDispatcher({ domainAccess: watchDomainAccess })
     }
   }
 }
