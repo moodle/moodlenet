@@ -39,7 +39,7 @@ export function getHttpBinderDispatcher({
 
     const body = _serial(accessBody)
     // console.log('http client', { url: url.href, endpoint })
-    const reply = await fetch(url, {
+    const replyPromise = fetch(url, {
       method: 'POST',
       body,
       dispatcher,
@@ -63,7 +63,7 @@ export function getHttpBinderDispatcher({
         throw e
       })
 
-    return reply
+    return domainAccess.async ? void 0 : replyPromise
   }
 }
 
@@ -84,7 +84,7 @@ export function getHttpBinderReceiver({ port, basePath }: srv_cfg): binderReceiv
         ...endpointless_domain_access,
         endpoint: req.url.replace(/^\//, '').split('/'),
       }
-      const reply = await binderDispatcher({ domainAccess: domainAccess })
+      const replyPromise = binderDispatcher({ domainAccess: domainAccess })
         .catch(e => {
           console.error(e)
           throw e
@@ -98,8 +98,11 @@ export function getHttpBinderReceiver({ port, basePath }: srv_cfg): binderReceiv
             return e instanceof Error ? { name: e.name, message: e.message, stack: e.stack } : { error: String(e) }
           }
         })
-      const replyStr = _serial(reply)
-      res.send(replyStr)
+
+      // endpointless_domain_access.async && replyPromise.then(reply => console.log('received reply of async request', reply))
+      // endpointless_domain_access.async && console.log('sending response for async request')
+      res.send(endpointless_domain_access.async ? void 0 : _serial(await replyPromise))
+      // endpointless_domain_access.async && console.log('sent response for async request')
     })
     app.use(basePath, router)
     return new Promise<void>((resolve /* , reject */) => {

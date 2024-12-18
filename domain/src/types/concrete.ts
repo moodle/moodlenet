@@ -1,8 +1,8 @@
+import { domainFsDirectories } from '@moodle/lib-domain-fs'
 import { any_function, date_time_string, deep_partial, path } from '@moodle/lib-types'
 import { MoodleDomain } from '../moodle-domain'
 import { primarySession } from './access-session'
 import { Logger } from './log'
-import { domainFsDirectories } from '@moodle/lib-domain-fs'
 
 export type moodleModuleName = keyof moodlePrimary & keyof moodleSecondary & keyof moodleEvent & keyof moodleService
 export type moodlePrimary = MoodleDomain['primary']
@@ -20,10 +20,10 @@ export type domainLayer = 'primary' | 'service' | 'secondary' | 'background' | '
 //   track: { [req in ctx_type]: ctx_id }
 // }
 
-//FIXME: probably, any inter-module access should be only by primary
+//CHECK: probably, any inter-module access should be only by primary
 export type contextModuleAccess = {
   secondary: {
-    [modName in keyof moodleSecondary]: Pick<moodleSecondary[modName], 'query' | 'service'> //FIX: remove service if service below enough (must move `(crypto|userAccount).secondary.services` to '(crypto|userAccount).services`)
+    [modName in keyof moodleSecondary]: Pick<moodleSecondary[modName], 'query' | 'service'> //CHECK: remove service if service below enough (must move `(crypto|userAccount).secondary.services` to '(crypto|userAccount).services`)
   }
   service: moodleService
 }
@@ -38,26 +38,31 @@ export type contextInfo = {
   id: ctxId
   domain: string
   now: date_time_string
-  track?: ctxTrack
-  from?: path
+  track?: ctxTrack // CHECK: track and from may be unified ?
+  from?: path //      CHECK: track and from may be unified ?
 }
 
 export type baseContext = contextInfo & {
+  // TODO: to keep serializable context separate
+  // info: contextInfo
+  // TODO: though `primaryContext.primarySession` should be serilaized too 🤔
   log: Logger
-  mod: contextModuleAccess //FIXME: access to other-modules secondary should not be available in primaryContext
+  mod: contextModuleAccess //CHECK: should access to other-modules secondary be available in primaryContext ?
 }
 
 export type modSecondary<moduleName extends moodleModuleName = never> = Pick<moodleSecondary, moduleName>[moduleName]
 export type modEmitter<moduleName extends moodleModuleName = never> = Pick<moodleEvent, moduleName>[moduleName]
+
 type coreContext<moduleName extends moodleModuleName = never> = baseContext & {
   write: modSecondary<moduleName>['write']
   emit: modEmitter<moduleName>
+  async: asyncSend
 }
 export type backgroundContext<moduleName extends moodleModuleName = never> = coreContext<moduleName>
 
 export type primaryContext<moduleName extends moodleModuleName = never> = coreContext<moduleName> & {
   forward: moodlePrimary
-  session: primarySession
+  primarySession: primarySession
   moduleName: moodleModuleName
 } // & p_track<'primary'>
 
@@ -119,3 +124,8 @@ export type layerWatcher<layer extends 'secondary' | 'primary'> = {
     }
   }
 }
+
+export type asyncSend = <endpoint_fn extends any_function>(
+  endpoint_fn: endpoint_fn,
+  payload: Parameters<endpoint_fn>[0],
+) => Promise<void>

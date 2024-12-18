@@ -8,7 +8,7 @@ import {
 import { EmailLayoutContentProps, layoutEmail } from '@moodle/lib-email-templates/org'
 import { _void, email_address, ok_ko } from '@moodle/lib-types'
 import { OrgInfo } from '@moodle/module/org'
-import { userNotification } from '@moodle/module/user-notification'
+import { userMessage } from '@moodle/module/user-notification'
 import { send } from '../lib'
 import { NodemailerSecEnv } from '../types'
 
@@ -17,7 +17,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
     const secondaryAdapter: secondaryAdapter = {
       userNotification: {
         service: {
-          async enqueueNotificationToUser({ data }) {
+          async sendMessageToUser({ data }) {
             const deps = await layoutDeps()
             const [ok, content] = await getEmailLayoutProps({ data, orgInfo: deps.orgInfo })
             if (!ok) {
@@ -59,7 +59,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
       data,
       orgInfo,
     }: {
-      data: userNotification
+      data: userMessage
       orgInfo: OrgInfo
     }): Promise<
       ok_ko<

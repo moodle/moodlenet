@@ -111,8 +111,11 @@ export const time_string_schema = string().trim().time().brand<typeof time_strin
 // // export const time_duration_string_brand = Symbol('time_duration_string_brand')
 // export type time_duration_string = z.infer< typeof time_duration_string_schema> // ISO 8601
 export declare const time_duration_string_brand: unique symbol
-export type time_duration_string = branded<string, typeof time_duration_string_brand> // ISO 8601
+export type time_duration_string = branded<string, typeof time_duration_string_brand> // ISO 8601 https://www.digi.com/resources/documentation/digidocs/90001488-13/reference/r_iso_8601_duration_format.htm
 export const time_duration_string_schema = string().trim().duration().brand<typeof time_duration_string_brand>()
+export function time_duration(duration: string): time_duration_string {
+  return time_duration_string_schema.parse(duration)
+}
 
 // // export const signed_token_brand = Symbol('signed_token_brand')
 // export type signed_token = z.infer< typeof signed_token_schema> // .. JWT

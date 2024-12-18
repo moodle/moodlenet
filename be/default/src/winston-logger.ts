@@ -70,6 +70,7 @@ function ctxString({
   callerContext,
   primarySessionId,
   endpoint,
+  async,
 }: extended_loggerContext) {
   const NOT_AVAILABLE_CHAR = '~'
   return `
@@ -81,6 +82,7 @@ ${timestamp} [${level}]
   primarySessionId  : ${primarySessionId ?? NOT_AVAILABLE_CHAR}
   callerContext     : ${callerContext ? `${callerContext.layer}.${callerContext.moduleName} # ${callerContext.ctxId}` : NOT_AVAILABLE_CHAR}
   originEndpoint    : ${(originEndpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
+  async             : ${JSON.stringify(async ?? false)}
 
 ${message}
 

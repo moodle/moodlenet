@@ -6,16 +6,16 @@ import { hasUserSessionRole, getUserSessionInfo } from './user-session'
 
 // System Session
 export type sessionLibDep = {
-  ctx: Pick<primaryContext, 'session' | 'mod'>
+  ctx: Pick<primaryContext, 'primarySession' | 'mod'>
 }
 export type sessionLibDepWithRole = sessionLibDep & { role: userRole }
 
 export async function validateCurrentUserSession({ ctx }: sessionLibDep) {
-  if (!ctx.session.token) {
+  if (!ctx.primarySession.token) {
     return guest_session
   }
   const [valid, validation] = await ctx.mod.secondary.crypto.service.validateSignedToken({
-    token: ctx.session.token,
+    token: ctx.primarySession.token,
     module: 'userAccount',
     type: 'userSession',
   })

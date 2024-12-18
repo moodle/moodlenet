@@ -22,6 +22,9 @@ export const userAccount_core: moduleCore<'userAccount'> = {
     }
   },
   primary(ctx) {
+    // ctx.enqueue.setUserPassword({ newPasswordHash:'',userAccountId:''},{
+    //   delay:time_duration('P3D')
+    // })
     return {
       async anyUser() {
         return {
@@ -225,7 +228,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
                 passwordHash,
               },
             })
-            ctx.mod.secondary.userNotification.service.enqueueNotificationToUser({
+            await ctx.async(ctx.mod.secondary.userNotification.service.sendMessageToUser, {
               data: {
                 module: 'userAccount',
                 type: 'signupWithEmailConfirmation',
@@ -286,7 +289,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               },
             })
 
-            ctx.mod.secondary.userNotification.service.enqueueNotificationToUser({
+            await ctx.async(ctx.mod.secondary.userNotification.service.sendMessageToUser, {
               data: {
                 module: 'userAccount',
                 type: 'resetPasswordRequest',
@@ -323,7 +326,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               },
             })
 
-            ctx.mod.secondary.userNotification.service.enqueueNotificationToUser({
+            await ctx.async(ctx.mod.secondary.userNotification.service.sendMessageToUser, {
               data: {
                 module: 'userAccount',
                 type: 'deleteAccountRequest',
@@ -391,7 +394,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               if (!done) {
                 return
               }
-              ctx.mod.secondary.userNotification.service.enqueueNotificationToUser({
+              await ctx.async(ctx.mod.secondary.userNotification.service.sendMessageToUser, {
                 data: { module: 'userAccount', type: 'passwordChanged', toUserAccountId: userAccountId },
               })
             },

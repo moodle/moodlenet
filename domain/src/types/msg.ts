@@ -13,7 +13,12 @@ export type domainAccess = domainMsg & {
   primarySession?: primarySession
   callerContext?: ctxTrack
   originEndpoint?: path
+  async?: boolean //| asyncOptions
 }
+
+// export type asyncOptions = {
+//   delay?: time_duration_string
+// }
 
 export type domainEndpoint = path
 

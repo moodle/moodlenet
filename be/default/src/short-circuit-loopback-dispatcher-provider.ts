@@ -4,8 +4,10 @@ import { loopbackDispatcherProvider } from './types'
 const shortCircuitLoopbackDispatcherProvider: loopbackDispatcherProvider = async ({ configuration }) => {
   const shortCircuitLoopbackDispatcher = provideDomainAccessDispatcher({
     configuration,
-    loopbackDispatcher({ domainAccess }) {
-      return shortCircuitLoopbackDispatcher({ domainAccess })
+    async loopbackDispatcher({ domainAccess }) {
+      const promise = shortCircuitLoopbackDispatcher({ domainAccess })
+
+      return domainAccess.async ? void 0 : promise
     },
   })
 
