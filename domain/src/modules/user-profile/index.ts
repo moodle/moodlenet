@@ -11,7 +11,7 @@ import {
   eduResourceMetaForm,
 } from '../edu'
 import { eduResourceIngestionStatus } from '../resource-ingestion'
-import { adoptAssetForm, adoptAssetResponse } from '../storage'
+import { adoptAssetForm, adoptAssetResult } from '../storage'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {
   UserProfilePrimaryMsgSchemaConfigs,
@@ -56,7 +56,7 @@ export default interface UserProfileDomain {
       authenticated: {
         useTempImageAsProfileImage(_: {
           useProfileImageForm: useProfileImageForm
-        }): Promise<{ adoptAssetResponse: adoptAssetResponse; userProfileId: userProfileId }>
+        }): Promise<{ adoptAssetResult: adoptAssetResult; userProfileId: userProfileId }>
         editProfileInfoMeta(_: { profileInfoMeta: profileInfoMeta }): Promise<
           ok_ko<
             { userProfileId: userProfileId },
@@ -82,7 +82,7 @@ export default interface UserProfileDomain {
         applyEduCollectionDraftImage(_: {
           eduCollectionDraftId: eduCollectionDraftId
           applyImageForm: eduCollectionApplyImageForm
-        }): Promise<{ adoptAssetResponse: adoptAssetResponse; userProfileId: userProfileId }>
+        }): Promise<{ adoptAssetResult: adoptAssetResult; userProfileId: userProfileId }>
         getEduCollectionDraft(_: {
           eduCollectionDraftId: eduCollectionDraftId
         }): Promise<ok_ko<eduCollectionDraft, { notFound: unknown }>>
@@ -99,7 +99,7 @@ export default interface UserProfileDomain {
         applyEduResourceDraftImage(_: {
           eduResourceDraftId: eduResourceDraftId
           applyImageForm: eduResourceApplyImageForm
-        }): Promise<{ adoptAssetResponse: adoptAssetResponse; userProfileId: userProfileId }>
+        }): Promise<{ adoptAssetResult: adoptAssetResult; userProfileId: userProfileId }>
         getEduResourceDraft(_: {
           eduResourceDraftId: eduResourceDraftId
         }): Promise<ok_ko<eduResourceDraft, { notFound: unknown }>>
@@ -155,7 +155,7 @@ export default interface UserProfileDomain {
           resourceDraftId: eduResourceDraftId
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'tempFile'>
-        }): Promise<d_u__d<adoptAssetResponse<'stored'>, 'status', 'done' | 'error'>>
+        }): Promise<d_u__d<adoptAssetResult<'stored'>, 'status', 'done' | 'error'>>
         createDraft(_: {
           userProfileIdSelect: userProfileIdSelect
           draft: d_u<
@@ -200,13 +200,13 @@ export default interface UserProfileDomain {
           type: profileImageType
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'tempFile' | 'none'>
-        }): Promise<d_u__d<adoptAssetResponse<'stored' | 'none'>, 'status', 'done' | 'error'>>
+        }): Promise<d_u__d<adoptAssetResult<'stored' | 'none'>, 'status', 'done' | 'error'>>
         useTempImageInDraft(_: {
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'tempFile' | 'none'>
           draftId: draftId
           draftType: 'eduResource' | 'eduCollection'
-        }): Promise<d_u__d<adoptAssetResponse<'stored' | 'none'>, 'status', 'done' | 'error'>>
+        }): Promise<d_u__d<adoptAssetResult<'stored' | 'none'>, 'status', 'done' | 'error'>>
         /*  updatePartialUserProfile(_: {
           userProfileId: userProfileId
           partialUserProfile: deep_partial_props<userProfileRecord>

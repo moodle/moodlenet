@@ -6,7 +6,7 @@ import {
   signupEmailConfirmationEmail,
 } from '@moodle/lib-email-templates/user-account'
 import { EmailLayoutContentProps, layoutEmail } from '@moodle/lib-email-templates/org'
-import { _void, email_address, ok_ko } from '@moodle/lib-types'
+import { _any, _void, email_address, ok_ko } from '@moodle/lib-types'
 import { OrgInfo } from '@moodle/module/org'
 import { userMessage } from '@moodle/module/user-notification'
 import { send } from '../lib'
@@ -29,6 +29,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
               orgInfo: deps.orgInfo,
               receiverEmail: content.receiverEmail,
             })
+            await new Promise<void>(resolve => setTimeout(resolve, 5000))
             await send({
               to: content.receiverEmail,
               body,
@@ -36,6 +37,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
               env,
               sender: env.sender,
             })
+
             return [true, _void]
           },
         },

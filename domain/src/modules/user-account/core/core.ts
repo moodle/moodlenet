@@ -412,13 +412,13 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               if (!done || typeof displayName !== 'string') {
                 return
               }
-              const [found, response] = await ctx.mod.secondary.userProfile.query.getUserProfile(userProfileIdSelect)
+              const [found, result] = await ctx.mod.secondary.userProfile.query.getUserProfile(userProfileIdSelect)
               if (!found) {
                 return
               }
               await ctx.sync.userDisplayname({
                 displayName,
-                userAccountId: response.userProfileRecord.userAccount.id,
+                userAccountId: result.userProfileRecord.userAccount.id,
               })
             },
           },

@@ -1,6 +1,6 @@
 import { useTempFileResult } from '@moodle/lib-domain-fs'
 import { _any, d_u__d, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
-import { adoptAssetResponse, maybeAsset } from '../types'
+import { adoptAssetResult, maybeAsset } from '../types'
 
 // export function newFsFileRelativePath(filename: string, date = ctx.now) {
 //   return [
@@ -26,9 +26,9 @@ export function getAssetUrl<_asset extends maybeAsset>(
         : unreachable_never(asset)
 }
 
-export async function useTempFileResult_to_adoptAssetResponse(
+export async function useTempFileResult_to_adoptAssetResult(
   p_useTempFileResult: useTempFileResult | Promise<useTempFileResult>,
-): Promise<d_u__d<adoptAssetResponse<'stored'>, 'status', 'done' | 'error'>> {
+): Promise<d_u__d<adoptAssetResult<'stored'>, 'status', 'done' | 'error'>> {
   const [done, result] = await p_useTempFileResult
   return done
     ? {

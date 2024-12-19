@@ -1,5 +1,5 @@
 import { _nullish, d_u, d_u__d, isNotNullish, unreachable_never, url_string } from '@moodle/lib-types'
-import { adoptAssetForm, adoptAssetResponse, adoptAssetService, externalAsset, asset } from '@moodle/module/storage'
+import { adoptAssetForm, adoptAssetResult, adoptAssetService, externalAsset, asset } from '@moodle/module/storage'
 import { maybeAsset, NONE_ASSET } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
 import { DOMAttributes, useCallback, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
@@ -98,7 +98,7 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
     }
     const _adoptAssetService = adoptAssetService
     dispatch({ type: 'submit' })
-    ;(async (): Promise<adoptAssetForm | 'upload error'> => {
+    ;;(async (): Promise<adoptAssetForm | 'upload error'> => {
       if (state.selection.type !== 'file') {
         dispatch({ type: 'uploadStatus', status: 'noUpload' })
         return state.selection.type === 'external'
@@ -160,13 +160,13 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
       .then(adoptAssetForm => {
         return adoptAssetForm === 'upload error'
           ? Promise.reject('upload error')
-          : (_adoptAssetService as adoptAssetService)(adoptAssetForm).catch<adoptAssetResponse>(err => ({
+          : (_adoptAssetService as adoptAssetService)(adoptAssetForm).catch<adoptAssetResult>(err => ({
               status: 'error',
               message: String(err),
             }))
       })
-      .then(adoptAssetResponse => {
-        dispatch({ type: 'actionResponse', ...adoptAssetResponse })
+      .then(adoptAssetResult => {
+        dispatch({ type: 'actionResponse', ...adoptAssetResult })
       })
       .finally(() => setUploadingHandler(null))
   }, [state.type, state.selection, adoptAssetService, opts?.nonNullable, filetoreHttp.href, assetType])
@@ -423,7 +423,7 @@ function selectionEqualsAsset(selection: selection, asset: maybeAsset) {
   return areBothNone || areSameExternal
 }
 // Actions
-export type actionResponse = { status: 'waitingForUpload' } | adoptAssetResponse
+export type actionResponse = { status: 'waitingForUpload' } | adoptAssetResult
 
 export type uploadStatus =
   | uploadStatus_error
@@ -455,7 +455,7 @@ type fileUploaderAction = d_u<
     // reset: { asset?: asset[] }
     select: { selection: selection }
     submit: unknown
-    actionResponse: adoptAssetResponse
+    actionResponse: adoptAssetResult
     uploadStatus: uploadStatus
     // abortUpload: unknown
   },

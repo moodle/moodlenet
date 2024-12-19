@@ -1,12 +1,12 @@
 import { _any, _nullish } from '@moodle/lib-types'
-import { adoptAssetResponse } from '@moodle/module/storage'
+import { adoptAssetResult } from '@moodle/module/storage'
 import { createSafeActionClient, SafeActionResult } from 'next-safe-action'
 
 export const defaultSafeActionClient = createSafeActionClient()
 
-export async function safeActionResult_to_adoptAssetResponse(
-  p: Promise<SafeActionResult<_any, _any, _any, _any, _any, adoptAssetResponse | void> | _nullish>,
-): Promise<adoptAssetResponse> {
+export async function safeActionResult_to_adoptAssetResult(
+  p: Promise<SafeActionResult<_any, _any, _any, _any, _any, adoptAssetResult | void> | _nullish>,
+): Promise<adoptAssetResult> {
   const result = await p
   if (!result) {
     return { status: 'assetSubmitted' }

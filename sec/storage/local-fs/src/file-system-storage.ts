@@ -8,7 +8,7 @@ import {
   useTempFileAsWebImage,
 } from '@moodle/lib-storage-local-fs'
 import { domainFs } from '@moodle/module/storage'
-import { useTempFileResult_to_adoptAssetResponse } from '@moodle/module/storage/lib'
+import { useTempFileResult_to_adoptAssetResult } from '@moodle/module/storage/lib'
 import { StorageDefaultSecEnv } from './types'
 
 export function get_storage_default_secondary_factory({ localFsStorageDirectory }: StorageDefaultSecEnv): secondaryProvider {
@@ -33,7 +33,7 @@ export function get_storage_default_secondary_factory({ localFsStorageDirectory 
               configs: { webImageResizes },
             } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
             const maxSizePixel = webImageResizes[as === 'avatar' ? 'medium' : 'large']
-            return useTempFileResult_to_adoptAssetResponse(
+            return useTempFileResult_to_adoptAssetResult(
               useTempFileAsWebImage({
                 localStorageFsDirectories,
                 maxSizePixel,
@@ -46,7 +46,7 @@ export function get_storage_default_secondary_factory({ localFsStorageDirectory 
             const resourceDraftAssetPath =
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               domainFs.file.userProfile[userProfileId]!.drafts.eduResource[resourceDraftId]!.asset()
-            return useTempFileResult_to_adoptAssetResponse(
+            return useTempFileResult_to_adoptAssetResult(
               useTempFile({
                 localStorageFsDirectories,
                 path: resourceDraftAssetPath,
@@ -64,7 +64,7 @@ export function get_storage_default_secondary_factory({ localFsStorageDirectory 
             const {
               configs: { webImageResizes },
             } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
-            return useTempFileResult_to_adoptAssetResponse(
+            return useTempFileResult_to_adoptAssetResult(
               useTempFileAsWebImage({
                 localStorageFsDirectories,
                 maxSizePixel: webImageResizes.large,

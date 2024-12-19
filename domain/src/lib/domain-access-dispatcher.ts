@@ -232,12 +232,12 @@ export function provideDomainAccessDispatcher({
         throw TypeError(err_msg)
       }
       // logMessage('debug', '😉 ===========================> payload', domainMsg.payload ?? 'NONE')
-      const endpointResponse = await endpoint(domainMsg.payload).catch((error: unknown) => {
+      const endpointOutcome = await endpoint(domainMsg.payload).catch((error: unknown) => {
         logMessage('error', domainMsg.endpoint.join('/'), { error })
         throw error
       })
-      // logMessage('debug', '😉 ===========================> response', endpointResponse ?? 'NONE')
-      return endpointResponse
+      // logMessage('debug', '😉 ===========================> outcome', endpointOutcome ?? 'NONE')
+      return endpointOutcome
     }
 
     function loopbackWatch({ result }: { result: _any }) {
@@ -249,6 +249,7 @@ export function provideDomainAccessDispatcher({
         ...domainAccess,
         endpoint: ['watch', ...domainAccess.endpoint],
         payload: [result, domainAccess.payload],
+        async: false,
       }
 
       loopbackDispatcher({ domainAccess: watchDomainAccess })
@@ -275,12 +276,12 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
 }) {
   const id = generateUlid({ onDate: date_time_string('now') })
 
-  function getMoodleDomainProxy(async?: boolean | undefined /* | asyncOptions */) {
+  function getLoopbackProxy(async?: boolean | undefined /* | asyncOptions */) {
     return createMoodleDomainProxy({
       ctrl({ domainMsg: { endpoint, payload } }) {
         const ctx_track: ctxTrack = {
           ctxId: id,
-          moduleName: moduleName,
+          moduleName,
           layer: contextLayer,
         }
         const loopbackDomainAccess: domainAccess = {
@@ -296,7 +297,8 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
       },
     })
   }
-  const syncProxy = getMoodleDomainProxy()
+  const syncProxy = getLoopbackProxy()
+  const asyncProxy = getLoopbackProxy(true)
 
   const callerContext = currentDomainAccess?.callerContext
   const originEndpoint = currentDomainAccess?.originEndpoint
@@ -307,7 +309,7 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     loggerProvider({
       domain,
       id,
-      moduleName: moduleName,
+      moduleName,
       originEndpoint,
       callerContext,
       contextLayer,
@@ -322,13 +324,13 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     secondaryContext = {
     id,
     domain,
-    moduleName: moduleName,
+    moduleName,
     domainFsDirectories,
     now: date_time_string('now'),
     track: callerContext,
     from: originEndpoint,
     primarySession: currentDomainAccess?.primarySession as primarySession, // HACK : could be undefined - but this is a one-fit-all-context 😉
-    emit: syncProxy.event,
+    emit: asyncProxy.event,
     forward: syncProxy.primary,
     mod: syncProxy,
     write: syncProxy.secondary[moduleName].write,
@@ -338,9 +340,10 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
       const endopint = getProxyFnPath(endopint_fn_proxy)
       const fn = endopint.reduce(
         (currProp, currPathSegment) => currProp?.[currPathSegment],
-        getMoodleDomainProxy(true /*asyncOptions */) as _any,
+        asyncProxy as _any,
+        // getLoopbackProxy(true /*asyncOptions */) as _any,
       )
-      assert(typeof fn === 'function', `not a function: ${endopint.join('/')}`)
+      assert(typeof fn === 'function', `ctx.async: endpoint[${endopint.join('.')}] fn is not a function`)
       await fn(payload)
     },
   }

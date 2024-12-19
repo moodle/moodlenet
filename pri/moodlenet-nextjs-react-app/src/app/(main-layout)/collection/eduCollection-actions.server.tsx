@@ -9,7 +9,7 @@ import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { redirect, RedirectType } from 'next/navigation'
 import { appRoutes } from '../../../lib/common/appRoutes'
-import { defaultSafeActionClient, safeActionResult_to_adoptAssetResponse } from '../../../lib/server/safe-action'
+import { defaultSafeActionClient, safeActionResult_to_adoptAssetResult } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
 
 export async function getEduCollectionMetaSchema() {
@@ -71,13 +71,13 @@ export async function getEduCollectionDraftImageForIdadoptAssetService({
             eduCollectionDraftId,
             applyImageForm,
           })
-          .then(({ adoptAssetResponse }) => {
+          .then(({ adoptAssetResult }) => {
             revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
 
-            return adoptAssetResponse
+            return adoptAssetResult
           }),
       )
-    return safeActionResult_to_adoptAssetResponse(applyEduCollectionDraftImageAction({ resourceImageForm: adoptAssetForm }))
+    return safeActionResult_to_adoptAssetResult(applyEduCollectionDraftImageAction({ resourceImageForm: adoptAssetForm }))
   }
 }
 

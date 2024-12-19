@@ -161,7 +161,7 @@ export const default_configurator: configurator = async ({ domainName, loopbackD
         domain: domainName,
         domainFsDirectories,
       }
-      loopbackDispatcherProvider({ configuration }).then(async loopbackDispatcher => {
+      loopbackDispatcherProvider({ configuration }).then(async ({ loopbackDispatcher }) => {
         const background_processesor = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
         if (background_processesor) {
           await migrateArangoDB({

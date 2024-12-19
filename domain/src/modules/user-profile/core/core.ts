@@ -86,15 +86,15 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 lastEditDate: ctx.now,
                 draftType: 'eduResource',
               })
-              return { userProfileId, adoptAssetResponse: done ? { status: 'done', asset } : { status: 'error' } }
+              return { userProfileId, adoptAssetResult: done ? { status: 'done', asset } : { status: 'error' } }
             }
-            const adoptAssetResponse = await ctx.write.useTempImageInDraft({
+            const adoptAssetResult = await ctx.write.useTempImageInDraft({
               draftType: 'eduResource',
               draftId: eduResourceDraftId,
               userProfileId,
               adoptAssetForm,
             })
-            return { adoptAssetResponse, userProfileId }
+            return { adoptAssetResult, userProfileId }
           },
           async editEduResourceDraft({ eduResourceDraftId, eduResourceMetaForm }) {
             const [done] = await ctx.write.updateDraftMeta({
@@ -109,22 +109,22 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             return [done, _void]
           },
           async getEduCollectionDraft({ eduCollectionDraftId }) {
-            const response = await ctx.mod.secondary.userProfile.query.getDraft({
+            const result = await ctx.mod.secondary.userProfile.query.getDraft({
               userProfileIdSelect: { by: 'userProfileId', userProfileId },
               draftType: 'eduCollection',
               draftId: eduCollectionDraftId,
             })
 
-            return response
+            return result
           },
           async getEduResourceDraft({ eduResourceDraftId }) {
-            const response = await ctx.mod.secondary.userProfile.query.getDraft({
+            const result = await ctx.mod.secondary.userProfile.query.getDraft({
               userProfileIdSelect: { by: 'userProfileId', userProfileId },
               draftId: eduResourceDraftId,
               draftType: 'eduResource',
             })
 
-            return response
+            return result
           },
           async applyEduCollectionDraftImage({
             eduCollectionDraftId,
@@ -139,15 +139,15 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 lastEditDate: ctx.now,
                 draftType: 'eduCollection',
               })
-              return { userProfileId, adoptAssetResponse: done ? { status: 'done', asset } : { status: 'error' } }
+              return { userProfileId, adoptAssetResult: done ? { status: 'done', asset } : { status: 'error' } }
             }
-            const adoptAssetResponse = await ctx.write.useTempImageInDraft({
+            const adoptAssetResult = await ctx.write.useTempImageInDraft({
               draftType: 'eduCollection',
               draftId: eduCollectionDraftId,
               userProfileId,
               adoptAssetForm,
             })
-            return { adoptAssetResponse, userProfileId }
+            return { adoptAssetResult, userProfileId }
           },
           async createEduResourceDraft({ newResourceAsset, eduResourceMeta }) {
             const eduResourceDraftId = generateNanoId()
@@ -216,14 +216,14 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 type,
                 image: asset,
               })
-              return { userProfileId, adoptAssetResponse: done ? { status: 'done', asset } : { status: 'error' } }
+              return { userProfileId, adoptAssetResult: done ? { status: 'done', asset } : { status: 'error' } }
             }
-            const adoptAssetResponse = await ctx.write.useTempImageInProfile({
+            const adoptAssetResult = await ctx.write.useTempImageInProfile({
               type,
               userProfileId,
               adoptAssetForm,
             })
-            return { adoptAssetResponse, userProfileId }
+            return { adoptAssetResult, userProfileId }
           },
           async getMyUserRecords() {
             const [myUserProfileFound, userProfileResult] = await fetchMyUserProfile()
@@ -281,11 +281,11 @@ export const user_profile_core: moduleCore<'userProfile'> = {
       secondary: {
         userProfile: {
           write: {
-            async useTempImageInProfile([adoptAssetResponse, { userProfileId: id, type }]) {
-              if (adoptAssetResponse.status === 'error') {
+            async useTempImageInProfile([adoptAssetResult, { userProfileId: id, type }]) {
+              if (adoptAssetResult.status === 'error') {
                 return
               }
-              const asset = adoptAssetResponse.asset
+              const asset = adoptAssetResult.asset
               await ctx.write.updateProfileImage({
                 userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
                 lastEditDate: ctx.now,
@@ -293,11 +293,11 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 image: asset,
               })
             },
-            async useTempImageInDraft([adoptAssetResponse, { userProfileId: id, draftId, draftType }]) {
-              if (adoptAssetResponse.status === 'error') {
+            async useTempImageInDraft([adoptAssetResult, { userProfileId: id, draftId, draftType }]) {
+              if (adoptAssetResult.status === 'error') {
                 return
               }
-              const asset = adoptAssetResponse.asset
+              const asset = adoptAssetResult.asset
               await ctx.write.updateDraftImage({
                 userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
                 draftId,
@@ -311,8 +311,8 @@ export const user_profile_core: moduleCore<'userProfile'> = {
         userAccount: {
           write: {
             //REVIEW - this userAccount should emit an event and catch it here in userprofile
-            async saveNewUser([[created, resp], { newUser }]) {
-              ctx.log('debug', 'user-profile watch saveNewUser', { created, resp, newUser })
+            async saveNewUser([[created, result], { newUser }]) {
+              ctx.log('debug', 'user-profile watch saveNewUser', { created, result, newUser })
               if (!created) {
                 return
               }

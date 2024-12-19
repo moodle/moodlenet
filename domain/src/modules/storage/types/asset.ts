@@ -34,7 +34,7 @@ export type adoptAssetForm = d_u<
   'type'
 >
 
-export type adoptAssetResponse<assetType extends maybeAsset['type'] = maybeAsset['type']> = d_u<
+export type adoptAssetResult<assetType extends maybeAsset['type'] = maybeAsset['type']> = d_u<
   {
     assetSubmitted: unknown
     done: { asset: d_u__d<maybeAsset, 'type', assetType> }
@@ -45,7 +45,7 @@ export type adoptAssetResponse<assetType extends maybeAsset['type'] = maybeAsset
 
 export type adoptAssetService<accepts extends adoptAssetForm['type'] = adoptAssetForm['type']> = (
   adoptAssetForm: d_u__d<adoptAssetForm, 'type', accepts>,
-) => Promise<adoptAssetResponse>
+) => Promise<adoptAssetResult>
 
 export const adoptTempFileFormSchema = object({
   type: literal('tempFile'),

@@ -38,25 +38,24 @@ export function getHttpBinderDispatcher({
           )
 
     const body = _serial(accessBody)
-    // console.log('http client', { url: url.href, endpoint })
     const replyPromise = fetch(url, {
       method: 'POST',
       body,
       dispatcher,
       headers: { 'Content-Type': PROTOCOL_CONTENT_TYPE },
     })
-      .then(async response => {
-        const is2xx = response.status >= 200 && response.status < 300
-        const jsonBodyStrUtf8 = await response.text()
+      .then(async httpResponse => {
+        const is2xx = httpResponse.status >= 200 && httpResponse.status < 300
+        const jsonBodyStrUtf8 = await httpResponse.text()
         if (is2xx) {
           const jsonBody = _parse(jsonBodyStrUtf8)
           return jsonBody
         }
-        if (isCodeXxx(response.status)) {
+        if (isCodeXxx(httpResponse.status)) {
           const jsonBody = _parse(jsonBodyStrUtf8)
-          throw new ErrorXxx(response.status as status_code_xxx, jsonBody?.details)
+          throw new ErrorXxx(httpResponse.status as status_code_xxx, jsonBody?.details)
         }
-        throw new Error(`Server error: ${response.status}\n ${jsonBodyStrUtf8}`)
+        throw new Error(`Server error: ${httpResponse.status}\n ${jsonBodyStrUtf8}`)
       })
       .catch(e => {
         console.error(e)
@@ -71,44 +70,65 @@ type srv_cfg = {
   port: number
   basePath: string
 }
-export function getHttpBinderReceiver({ port, basePath }: srv_cfg): binderReceiver {
-  return function ({ binderDispatcher }) {
-    const app = express()
-    app.use(express.text({ defaultCharset: 'utf-8' }))
-    // console.log('http server', { basePath })
-    const router = express.Router().use(async (req, res) => {
-      res.setHeader('Content-Type', PROTOCOL_CONTENT_TYPE)
-      // console.log('http server', { url: req.url })
-      const endpointless_domain_access: Omit<domainAccess, 'endpoint'> = _parse(req.body)
-      const domainAccess: domainAccess = {
-        ...endpointless_domain_access,
-        endpoint: req.url.replace(/^\//, '').split('/'),
-      }
-      const replyPromise = binderDispatcher({ domainAccess: domainAccess })
-        .catch(e => {
-          console.error(e)
-          throw e
-        })
-        .catch(e => {
-          if (e instanceof ErrorXxx) {
-            res.status(e.errorXxx.code)
-            return { details: e.errorXxx.details }
-          } else {
-            res.status(500)
-            return e instanceof Error ? { name: e.name, message: e.message, stack: e.stack } : { error: String(e) }
-          }
-        })
+type httpBinderReceiverHandle = {
+  binderReceiver: binderReceiver
+  drain: () => Promise<void>
+}
 
-      // endpointless_domain_access.async && replyPromise.then(reply => console.log('received reply of async request', reply))
-      // endpointless_domain_access.async && console.log('sending response for async request')
-      res.send(endpointless_domain_access.async ? void 0 : _serial(await replyPromise))
-      // endpointless_domain_access.async && console.log('sent response for async request')
-    })
-    app.use(basePath, router)
-    return new Promise<void>((resolve /* , reject */) => {
-      app.listen(port, resolve)
-    })
+export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promise<httpBinderReceiverHandle> {
+  const replyPromises: Promise<unknown>[] = []
+  let binderDispatcher: binderDispatcher = async () => {
+    throw new ErrorXxx('Service Unavailable')
   }
+
+  const app = express()
+  app.use(express.text({ defaultCharset: 'utf-8' }))
+  const router = express.Router().use(async (req, res) => {
+    res.setHeader('Content-Type', PROTOCOL_CONTENT_TYPE)
+    const endpointless_domain_access: Omit<domainAccess, 'endpoint'> = _parse(req.body)
+    const domainAccess: domainAccess = {
+      ...endpointless_domain_access,
+      endpoint: req.url.replace(/^\//, '').split('/'),
+    }
+    const replyPromise = binderDispatcher({ domainAccess: domainAccess })
+      .catch(e => {
+        console.error(e)
+        throw e
+      })
+      .catch(e => {
+        if (e instanceof ErrorXxx) {
+          res.status(e.errorXxx.code)
+          return { details: e.errorXxx.details }
+        } else {
+          res.status(500)
+          return e instanceof Error ? { name: e.name, message: e.message, stack: e.stack } : { error: String(e) }
+        }
+      })
+
+    replyPromises.push(replyPromise)
+    replyPromise.finally(() => replyPromises.splice(replyPromises.indexOf(replyPromise), 1))
+    res.send(endpointless_domain_access.async ? void 0 : _serial(await replyPromise))
+  })
+  app.use(basePath, router)
+
+  return new Promise<void>((resolve /* , reject */) => {
+    app.listen(port, () => {
+      console.log(`http receiver listening on port ${port}`)
+      resolve()
+    })
+  }).then<httpBinderReceiverHandle>(() => {
+    return {
+      async drain() {
+        console.log('draining http receiver', replyPromises.length)
+        await Promise.all(replyPromises)
+        console.log('++ drained http receiver')
+        return
+      },
+      binderReceiver(_) {
+        binderDispatcher = _.binderDispatcher
+      },
+    }
+  })
 }
 const _VOID_VALUE_ = '\u0000'
 

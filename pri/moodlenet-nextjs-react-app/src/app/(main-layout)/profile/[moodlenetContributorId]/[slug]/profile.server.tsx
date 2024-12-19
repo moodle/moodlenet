@@ -7,7 +7,7 @@ import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { appRoutes } from '../../../../../lib/common/appRoutes'
-import { defaultSafeActionClient, safeActionResult_to_adoptAssetResponse } from '../../../../../lib/server/safe-action'
+import { defaultSafeActionClient, safeActionResult_to_adoptAssetResult } from '../../../../../lib/server/safe-action'
 import { access } from '../../../../../lib/server/session-access'
 
 export async function getEditProfileInfoSchema() {
@@ -47,11 +47,11 @@ export async function getApplyMyProfileImageadoptAssetService(type: profileImage
       .action(async ({ parsedInput: { type, adoptAssetForm } }) => {
         return access.primary.userProfile.authenticated
           .useTempImageAsProfileImage({ useProfileImageForm: { type, adoptAssetForm } })
-          .then(({ adoptAssetResponse, userProfileId }) => {
+          .then(({ adoptAssetResult, userProfileId }) => {
             revalidatePath(appRoutes(`/profile/${userProfileId}/`))
-            return adoptAssetResponse
+            return adoptAssetResult
           })
       })
-    return safeActionResult_to_adoptAssetResponse(applyMyProfileImageAction({ type, adoptAssetForm }))
+    return safeActionResult_to_adoptAssetResult(applyMyProfileImageAction({ type, adoptAssetForm }))
   }
 }

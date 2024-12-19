@@ -9,7 +9,7 @@ import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { appRoutes } from '../../../lib/common/appRoutes'
-import { defaultSafeActionClient, safeActionResult_to_adoptAssetResponse } from '../../../lib/server/safe-action'
+import { defaultSafeActionClient, safeActionResult_to_adoptAssetResult } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
 
 export async function getCreateNewEduResourceSchema() {
@@ -32,7 +32,7 @@ export async function getCreateNewEduResourceDraft(): Promise<adoptAssetService<
           redirect(appRoutes(`/resource/${result.eduResourceDraftId}`))
         }),
       )
-    return safeActionResult_to_adoptAssetResponse(createNewEduResourceDraftImageAction({ newResourceAsset }))
+    return safeActionResult_to_adoptAssetResult(createNewEduResourceDraftImageAction({ newResourceAsset }))
   }
 }
 
@@ -83,13 +83,13 @@ export async function getEduResourceDraftImageForIdAdoptAssetService({
             eduResourceDraftId,
             applyImageForm,
           })
-          .then(({ adoptAssetResponse }) => {
+          .then(({ adoptAssetResult }) => {
             revalidatePath(appRoutes(`/resource/${eduResourceDraftId}`))
 
-            return adoptAssetResponse
+            return adoptAssetResult
           }),
       )
-    return safeActionResult_to_adoptAssetResponse(applyEduResourceDraftImageAction({ resourceImageForm }))
+    return safeActionResult_to_adoptAssetResult(applyEduResourceDraftImageAction({ resourceImageForm }))
   }
 }
 
