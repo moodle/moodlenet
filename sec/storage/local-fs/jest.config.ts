@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: '@moodle/sec-storage-local-fs',
+  displayName: 'sec-storage-local-fs',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

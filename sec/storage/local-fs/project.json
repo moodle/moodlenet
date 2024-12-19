@@ -1,9 +1,9 @@
 {
-  "name": "@moodle/sec-storage-local-fs",
+  "name": "sec-storage-local-fs",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "sec/storage/local-fs/src",
   "projectType": "library",
   "tags": [],
-  "// targets": "to see all targets run: nx show project @moodle/sec-storage-local-fs --web",
+  "// targets": "to see all targets run: nx show project sec-storage-local-fs --web",
   "targets": {}
 }
