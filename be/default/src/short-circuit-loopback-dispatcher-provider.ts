@@ -1,8 +1,8 @@
-import { provideDomainAccessDispatcher } from '@moodle/domain/lib'
-import { loopbackProvider } from './types'
-import { promise as fastQueuePromise, queueAsPromised } from 'fastq'
+import { binderDispatcher, domainAccess } from '@moodle/domain'
+import { accessDomain } from '@moodle/domain/lib'
 import { map } from '@moodle/lib-types'
-import { domainAccess } from '@moodle/domain'
+import { promise as fastQueuePromise, queueAsPromised } from 'fastq'
+import { loopbackProvider } from './types'
 
 const DEFAULT_QUEUE_CONCURRENCY = 1
 
@@ -10,33 +10,23 @@ const shortCircuitLoopbackProvider: loopbackProvider = async () => {
   const queues: map<queueAsPromised<{ domainAccess: domainAccess }>> = {}
   const syncs: Promise<unknown>[] = []
   return {
-    async drain() {
-      const drainPromises = [...syncs, ...Object.values(queues).map(q => q.drained())]
-      console.log(
-        `draining short circuit
-syncs: ${syncs.length}
-${Object.entries(queues)
-  .map(([name, q]) => console.log(name, q.length()))
-  .join('\n')}`,
-      )
-
-      await Promise.all(drainPromises)
-      console.log('++ drained short circuit loopback')
-    },
+    drain,
     async loopbackDispatcherProvider({ configuration }) {
-      const shortCircuitLoopbackDispatcher = provideDomainAccessDispatcher({
-        configuration,
-        async loopbackDispatcher({ domainAccess }) {
-          if (domainAccess.async) {
-            enqueue({ enqueueDomainAccess: domainAccess })
-            return
-          }
-          const syncResultPromise = shortCircuitLoopbackDispatcher({ domainAccess })
-          syncs.push(syncResultPromise)
-          syncResultPromise.finally(() => syncs.splice(syncs.indexOf(syncResultPromise), 1))
-          return syncResultPromise
-        },
-      })
+      const shortCircuitLoopbackDispatcher: binderDispatcher = ({ domainAccess }) =>
+        accessDomain({
+          domainAccess,
+          configuration,
+          async loopbackDispatcher({ domainAccess }) {
+            if (domainAccess.async) {
+              enqueue({ enqueueDomainAccess: domainAccess })
+              return
+            }
+            const syncResultPromise = shortCircuitLoopbackDispatcher({ domainAccess })
+            syncs.push(syncResultPromise)
+            syncResultPromise.finally(() => syncs.splice(syncs.indexOf(syncResultPromise), 1))
+            return syncResultPromise
+          },
+        })
 
       return {
         loopbackDispatcher: shortCircuitLoopbackDispatcher,
@@ -49,11 +39,11 @@ ${Object.entries(queues)
           queues[queueName] = fastQueuePromise(async ({ domainAccess }) => {
             console.log('pulled from queue')
 
-            const dispatcher = provideDomainAccessDispatcher({
+            return accessDomain({
+              domainAccess,
               configuration,
               loopbackDispatcher: shortCircuitLoopbackDispatcher,
             })
-            return dispatcher({ domainAccess })
           }, DEFAULT_QUEUE_CONCURRENCY)
         }
 
@@ -61,6 +51,18 @@ ${Object.entries(queues)
       }
     },
   }
+  async function drain() {
+    const drainPromises = [...syncs, ...Object.values(queues).map(q => q.drained())]
+    console.log(
+      `draining short circuit
+syncs: ${syncs.length}
+${Object.entries(queues)
+  .map(([name, q]) => console.log(name, q.length()))
+  .join('\n')}`,
+    )
+
+    await Promise.all(drainPromises)
+    console.log('++ drained short circuit loopback')
+  }
 }
 export default shortCircuitLoopbackProvider
-
