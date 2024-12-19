@@ -151,7 +151,7 @@ export default interface UserProfileDomain {
           eduResourceDraftId: eduResourceDraftId
           resourceIngestionStatus: eduResourceIngestionStatus
         }): Promise<void>
-        useTempFileAsResourceDraftAsset(_: {
+        useTempFileAsNewResourceDraftAsset(_: {
           resourceDraftId: eduResourceDraftId
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'tempFile'>

@@ -53,14 +53,12 @@ type draftEduCollectionEduResourceRef = d_u<
   'type'
 >
 
-export type eduResourceDraft = draft<
-  eduResourceData & {
-    assetProcess: {
-      resourceIngestionStatus: { status: 'neverEnqueued' } | eduResourceIngestionStatus
-      aiAnalysis: { status: 'neverEnqueued' } | aiEduResourceDataGenerationStatus
-    }
-  }
->
+export type _____assetProcess = {
+  resourceIngestionStatus: { status: 'neverEnqueued' } | eduResourceIngestionStatus
+  aiAnalysis: { status: 'neverEnqueued' } | aiEduResourceDataGenerationStatus
+}
+
+export type eduResourceDraft = draft<eduResourceData>
 
 type myDrafts = {
   eduResource: eduResourceDraft[]

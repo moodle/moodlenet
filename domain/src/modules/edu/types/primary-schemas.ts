@@ -150,7 +150,6 @@ export function getEduPrimarySchemas(
 
   const createNewEduResourceDraftSchema = object({
     newResourceAsset: adoptValuedAssetFormSchema,
-    eduResourceMeta: eduResourceMetaSchema.nullable().optional(),
   })
 
   return {

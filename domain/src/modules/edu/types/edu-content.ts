@@ -29,6 +29,7 @@ export type eduCollectionMeta = {
   title: string
   description: string
 }
+
 export type eduCollectionData = eduCollectionMeta & {
   image: maybeAsset
 }

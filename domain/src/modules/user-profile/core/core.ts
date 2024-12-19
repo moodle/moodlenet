@@ -1,11 +1,11 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
 import { _void } from '@moodle/lib-types'
 import { omit } from 'lodash'
-import UserProfileDomain, { eduCollectionDraft, eduResourceDraft } from '..'
+import UserProfileDomain, { eduCollectionDraft } from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
 import { maybeAsset, NONE_ASSET } from '../../storage'
 import { assert_authorizeAuthenticatedCurrentUserSession } from '../../user-account/lib'
-import { createNewUserProfileData } from './lib/new-user-profile'
+import { createNewDraftResourceDraftData, createNewUserProfileData } from './lib/data'
 
 type primary = UserProfileDomain['primary']['userProfile']
 export const user_profile_core: moduleCore<'userProfile'> = {
@@ -149,63 +149,31 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             })
             return { adoptAssetResult, userProfileId }
           },
-          async createEduResourceDraft({ newResourceAsset, eduResourceMeta }) {
+          async createEduResourceDraft({ newResourceAsset }) {
             const eduResourceDraftId = generateNanoId()
-            const asset =
-              newResourceAsset.type === 'external'
-                ? newResourceAsset
-                : await ctx.write
-                    .useTempFileAsResourceDraftAsset({
-                      adoptAssetForm: newResourceAsset,
-                      resourceDraftId: eduResourceDraftId,
-                      userProfileId,
-                    })
-                    .then(result =>
-                      result.status === 'done'
-                        ? result.asset
-                        : ({ type: 'save asset error', message: result.message } as const),
-                    )
+            if (newResourceAsset.type === 'tempFile') {
+              const result = await ctx.write.useTempFileAsNewResourceDraftAsset({
+                adoptAssetForm: newResourceAsset,
+                resourceDraftId: eduResourceDraftId,
+                userProfileId,
+              })
 
-            if (asset.type === 'save asset error') {
-              return [false, _void /* , { reason: asset.message } */]
+              return result.status === 'error' ? [false, _void] : [true, { eduResourceDraftId }]
             }
-
-            const eduResourceDraft: eduResourceDraft = {
-              draftId: eduResourceDraftId,
+            const eduResourceDraft = createNewDraftResourceDraftData({
+              asset: newResourceAsset,
               created: ctx.now,
-              lastEditDate: ctx.now,
-              data: {
-                title: '',
-                description: '',
-                asset,
-                assetProcess: {
-                  aiAnalysis: { status: 'neverEnqueued' },
-                  resourceIngestionStatus: { status: 'neverEnqueued' },
-                },
-                bloomLearningOutcomes: [],
-                image: NONE_ASSET,
-                iscedField: null,
-                iscedLevel: null,
-                language: null,
-                license: null,
-                type: null,
-                publicationDate: null,
-                ...eduResourceMeta,
-              },
-            }
+              eduResourceDraftId,
+            })
 
-            const [done /* , result */] = await ctx.write.createDraft({
+            const [done] = await ctx.write.createDraft({
               userProfileIdSelect: { by: 'userProfileId', userProfileId },
               draft: {
                 type: 'eduResource',
                 data: eduResourceDraft,
               },
             })
-
-            if (!done) {
-              return [false, _void /* , { reason: 'unknown' } */]
-            }
-            return [true, { eduResourceDraftId }]
+            return done ? [true, { eduResourceDraftId }] : [false, _void]
           },
           async useTempImageAsProfileImage({ useProfileImageForm: { type, adoptAssetForm } }) {
             if (adoptAssetForm.type === 'external') {
@@ -281,30 +249,64 @@ export const user_profile_core: moduleCore<'userProfile'> = {
       secondary: {
         userProfile: {
           write: {
+            async useTempFileAsNewResourceDraftAsset([adoptAssetResult, { resourceDraftId, userProfileId }]) {
+              if (adoptAssetResult.status === 'error') {
+                // ctx.log('warn', 'useTempFileAsNewResourceDraftAsset: adoptAssetResult error', adoptAssetResult)
+                return
+              }
+              const eduResourceDraftData = createNewDraftResourceDraftData({
+                asset: adoptAssetResult.asset,
+                created: ctx.now,
+                eduResourceDraftId: resourceDraftId,
+              })
+
+              const [done, createDraftResult] = await ctx.write.createDraft({
+                userProfileIdSelect: { by: 'userProfileId', userProfileId },
+                draft: {
+                  type: 'eduResource',
+                  data: eduResourceDraftData,
+                },
+              })
+
+              if (!done) {
+                ctx.log('warn', 'could not create resource draft', createDraftResult)
+                // TODO: delete resource asset file
+              }
+            },
             async useTempImageInProfile([adoptAssetResult, { userProfileId: id, type }]) {
               if (adoptAssetResult.status === 'error') {
+                // ctx.log('warn', 'useTempImageInProfile: adoptAssetResult error', adoptAssetResult)
                 return
               }
               const asset = adoptAssetResult.asset
-              await ctx.write.updateProfileImage({
+              const [done, updateResult] = await ctx.write.updateProfileImage({
                 userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
                 lastEditDate: ctx.now,
                 type,
                 image: asset,
               })
+              if (!done) {
+                ctx.log('warn', 'could not update profile image', updateResult)
+                // TODO: delete resource asset fil. ( and set image to none ? )
+              }
             },
             async useTempImageInDraft([adoptAssetResult, { userProfileId: id, draftId, draftType }]) {
               if (adoptAssetResult.status === 'error') {
+                ctx.log('warn', 'useTempImageInDraft: adoptAssetResult error', adoptAssetResult)
                 return
               }
               const asset = adoptAssetResult.asset
-              await ctx.write.updateDraftImage({
+              const [done, updateResult] = await ctx.write.updateDraftImage({
                 userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
                 draftId,
                 image: asset,
                 lastEditDate: ctx.now,
                 draftType,
               })
+              if (!done) {
+                ctx.log('warn', 'could not update draft image', updateResult)
+                // TODO: delete resource asset file. ( and set image to none ? )
+              }
             },
           },
         },
@@ -316,16 +318,24 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               if (!created) {
                 return
               }
-              ctx.write.createUserProfile({ userProfileRecord: createNewUserProfileData({ newUser }) })
+              const [done, createResult] = await ctx.write.createUserProfile({
+                userProfileRecord: createNewUserProfileData({ newUser }),
+              })
+              if (!done) {
+                ctx.log('critical', 'could not create user profile', createResult)
+              }
             },
 
-            async setUserRoles([[done, result], { userAccountId }]) {
-              if (!done) {
+            async setUserRoles([[newRolesSet, result], { userAccountId }]) {
+              if (!newRolesSet) {
                 return
               }
-              await ctx.sync.userAccountExcerpt({
+              const [done, updateResult] = await ctx.sync.userAccountExcerpt({
                 userAccountExcerpt: { id: userAccountId, roles: result.newRoles },
               })
+              if (!done) {
+                ctx.log('critical', 'could not update user roles', updateResult)
+              }
             },
           },
         },
