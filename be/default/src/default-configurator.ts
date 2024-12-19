@@ -9,7 +9,7 @@ import { org_core } from '@moodle/module/org/core'
 import { storage_core } from '@moodle/module/storage/core'
 import { userAccount_core } from '@moodle/module/user-account/core'
 import { user_profile_core } from '@moodle/module/user-profile/core'
-import { CryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
+import { cryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
 import { ArangoDbSecEnv, get_arango_persistence_factory, provideArangoDbSecEnv } from '@moodle/sec-db-arango'
 import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
 import { get_nodemailer_secondary_factory, NodemailerSecEnv, provideNodemailerSecEnv } from '@moodle/sec-email-nodemailer'
@@ -74,7 +74,7 @@ export const default_configurator: configurator = async ({ domainName, loopbackD
           MOODLE_ARANGODB_DOMAIN_NAME: domainName,
         },
       })
-      const crypto_env: CryptoDefaultEnv = provideCryptoDefaultEnv({
+      const crypto_env: cryptoDefaultEnv = provideCryptoDefaultEnv({
         env: { ..._process_env, MOODLE_CRYPTO_PRIVATE_KEY, MOODLE_CRYPTO_PUBLIC_KEY },
       })
       const nodemailer_env: NodemailerSecEnv = provideNodemailerSecEnv({
