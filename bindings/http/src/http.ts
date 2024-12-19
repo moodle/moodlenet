@@ -76,7 +76,7 @@ type httpBinderReceiverHandle = {
 }
 
 export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promise<httpBinderReceiverHandle> {
-  const replyPromises: Promise<unknown>[] = []
+  const pendingReplyPromises: Promise<unknown>[] = []
   let binderDispatcher: binderDispatcher = async () => {
     throw new ErrorXxx('Service Unavailable')
   }
@@ -105,8 +105,8 @@ export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promis
         }
       })
 
-    replyPromises.push(replyPromise)
-    replyPromise.finally(() => replyPromises.splice(replyPromises.indexOf(replyPromise), 1))
+    pendingReplyPromises.push(replyPromise)
+    replyPromise.finally(() => pendingReplyPromises.splice(pendingReplyPromises.indexOf(replyPromise), 1))
     res.send(endpointless_domain_access.async ? void 0 : _serial(await replyPromise))
   })
   app.use(basePath, router)
@@ -119,10 +119,9 @@ export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promis
   }).then<httpBinderReceiverHandle>(() => {
     return {
       async drain() {
-        console.log('draining http receiver', replyPromises.length)
-        await Promise.all(replyPromises)
-        console.log('++ drained http receiver')
-        return
+        console.log(`draining http receiver [#${pendingReplyPromises.length}] pending replies ...`)
+        await Promise.all(pendingReplyPromises)
+        console.log('drained http receiver pending replies')
       },
       binderReceiver(_) {
         binderDispatcher = _.binderDispatcher

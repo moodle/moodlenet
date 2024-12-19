@@ -23,9 +23,9 @@ const shortCircuitLoopbackProvider: loopbackProvider = async () => {
       }
     },
     async drain() {
-      console.log(`draining short circuit loopback pending: ${pendingPromises.length}`)
+      console.log(`draining short circuit loopback [#${pendingPromises.length}] pending replies ...`)
       await Promise.all(pendingPromises)
-      console.log('drained short circuit loopback pending')
+      console.log('drained short circuit loopback pending replies')
     },
   }
 }
