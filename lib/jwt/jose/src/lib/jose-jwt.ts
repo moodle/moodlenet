@@ -7,6 +7,7 @@ import {
 import * as iso8601duration from 'iso8601-duration'
 import * as jose from 'jose'
 import { joseOpts } from './types'
+import assert from 'assert'
 
 export async function getJoseKeys(opts: joseOpts) {
   if (opts.type !== 'PKCS8') {
@@ -17,7 +18,7 @@ export async function getJoseKeys(opts: joseOpts) {
   }
 
   const [privateKeyLike, publicKeyLike] = await Promise.all([
-    jose.importPKCS8(opts.privateKeyStr, opts.alg),
+    opts.privateKeyStr ? jose.importPKCS8(opts.privateKeyStr, opts.alg) : null,
     jose.importSPKI(opts.publicKeyStr, opts.alg),
   ])
 
@@ -25,7 +26,7 @@ export async function getJoseKeys(opts: joseOpts) {
     private: privateKeyLike,
     public: publicKeyLike,
   }
-  const jwk = await jose.exportJWK(privateKeyLike)
+  const jwk = privateKeyLike && (await jose.exportJWK(privateKeyLike))
   return { jwk, keyLikes }
 }
 
@@ -86,6 +87,7 @@ export async function sign<payload>({
   opts?: jose.SignOptions
 }) {
   const { /* jwk, */ keyLikes } = await getJoseKeys(joseOpts)
+  assert(keyLikes.private, 'cannot sign without access to privateKey')
   const _payload: JwtStdClaims & payload = { ...(payload as _any) }
   if (stdClaims.scope !== undefined) {
     _payload.scope = [stdClaims.scope].flat().join(' ')
@@ -93,12 +95,8 @@ export async function sign<payload>({
 
   const [expireTimeSecs, expireDateStr] = expirations(expiresIn)
 
-  const [notBeforeTimeSecs, notBeforeDateStr] = notBefore
-    ? expirations(notBefore)
-    : ([null, null, null] as const)
-  const signingJwt = new jose.SignJWT(_payload)
-    .setProtectedHeader({ alg: joseOpts.alg })
-    .setExpirationTime(expireTimeSecs)
+  const [notBeforeTimeSecs, notBeforeDateStr] = notBefore ? expirations(notBefore) : ([null, null, null] as const)
+  const signingJwt = new jose.SignJWT(_payload).setProtectedHeader({ alg: joseOpts.alg }).setExpirationTime(expireTimeSecs)
 
   if (stdClaims.issuer !== undefined) {
     signingJwt.setIssuer(stdClaims.issuer)

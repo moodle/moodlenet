@@ -217,7 +217,10 @@ export async function accessDomain({
       }
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return channelProp?.[endpointName!]
-    })(domainMsg, impl)
+    })(domainMsg, impl).catch((error: unknown) => {
+      logMessage('error', { error })
+      throw error
+    })
 
     if (typeof endpoint !== 'function') {
       const err_msg = `
@@ -233,7 +236,7 @@ export async function accessDomain({
     }
     // logMessage('debug', '😉 ===========================> payload', domainMsg.payload ?? 'NONE')
     const endpointOutcome = await endpoint(domainMsg.payload).catch((error: unknown) => {
-      logMessage('error', domainMsg.endpoint.join('/'), { error })
+      logMessage('error', { error })
       throw error
     })
     // logMessage('debug', '😉 ===========================> outcome', endpointOutcome ?? 'NONE')
