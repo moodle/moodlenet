@@ -33,13 +33,13 @@ const cache: map<Promise<configuratorResult>> = {}
 export const default_configurator: configurator = async ({ domainName, loopbackDispatcherProvider }) => {
   // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
   if (!cache[domainName]) {
-    cache[domainName] = new Promise<configuratorResult>(promiseResolveConfiguration => {
+    cache[domainName] = new Promise<configuratorResult>(resolveConfigurationPromise => {
       const MOODLE_HOME_DIR = path.resolve(process.cwd(), process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
       const domainFsDirectories = getDomainFsDirectories({
         homeDir: MOODLE_HOME_DIR,
         domainName,
       })
-      const loggerConfigs: loggerConfigs = {consoleLevel:'debug'}
+      const loggerConfigs: loggerConfigs = { consoleLevel: 'debug' }
 
       dotenvExpand(dotenv.config({ path: path.join(domainFsDirectories.currentDomainDir, '.env'), override: true }))
       console.debug({ currentDomainDir: domainFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
@@ -162,8 +162,8 @@ export const default_configurator: configurator = async ({ domainName, loopbackD
         domainFsDirectories,
       }
       loopbackDispatcherProvider({ configuration }).then(async ({ loopbackDispatcher }) => {
-        const background_processesor = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
-        if (background_processesor) {
+        const background_processe = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
+        if (background_processe) {
           await migrateArangoDB({
             databaseConnections: arango_db_env.database_connections,
             log: loggerProvider({
@@ -173,12 +173,13 @@ export const default_configurator: configurator = async ({ domainName, loopbackD
               moduleName: 'sec-arangodb' as moodleModuleName,
             }),
           })
+
           await startBackgroundProcesses({
             configuration,
             loopbackDispatcher,
           })
         }
-        promiseResolveConfiguration({ configuration, loopbackDispatcher })
+        resolveConfigurationPromise({ configuration, loopbackDispatcher })
       })
     }).catch(e => {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete

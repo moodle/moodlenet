@@ -9,7 +9,7 @@ export async function createDatabases({ dbStruct }: { dbStruct: dbStruct }) {
   await dbStruct.sys_db.createDatabase(dbStruct.identity.db.name)
 
   await Promise.all(
-    [dbStruct.sys_db, dbStruct.appData.db, dbStruct.logs.db, dbStruct.identity.db].map(db =>
+    [dbStruct.sys_db, dbStruct.appData.db, dbStruct.services.db, dbStruct.identity.db].map(db =>
       db.createFunction(
         'MOODLE::RESTORE_RECORD_ID',
         `(doc) => ({

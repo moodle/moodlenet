@@ -48,7 +48,7 @@ export function provideArangoDbSecEnv({ env }: { env: map<unknown, env_keys> }):
   }
   const arangoDbSecEnv: ArangoDbSecEnv = {
     database_connections: {
-      logs: {
+      services: {
         ...baseArangoDbConnection,
         databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_logs`,
       },

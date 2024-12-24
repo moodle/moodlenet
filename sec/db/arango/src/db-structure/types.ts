@@ -9,7 +9,7 @@ export interface ArangoDbSecEnv {
 export type dbConnection = ArangoConnectionConfig
 
 export type databaseConnections = {
-  logs: dbConnection
+  services: dbConnection
   appData: dbConnection
   identity: dbConnection
 }
