@@ -8,8 +8,6 @@ import { userProfileRecord } from '@moodle/module/user-profile'
 import { Database } from 'arangojs'
 import { domain_record_doc } from '../lib/key-id-mapping'
 import { migrationRecord } from '../migrate/types'
-import { arangoDbJob } from '../services/lib'
-import { domainAccessJobData } from '../services/types'
 import { databaseConnections } from './types'
 
 export function getDbStruct(databaseConnections: databaseConnections) {
@@ -54,7 +52,6 @@ export function getDbStruct(databaseConnections: databaseConnections) {
       db: services_db,
       coll: {
         migrations: services_db.collection<migrationRecord>('migrations'),
-        domainAccessJobs: services_db.collection<arangoDbJob<domainAccessJobData>>('domainAccessJobs'),
       },
     },
   }

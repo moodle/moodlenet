@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'lib-jwt-jose',
+  displayName: 'lib-job-queues-arangodb',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
