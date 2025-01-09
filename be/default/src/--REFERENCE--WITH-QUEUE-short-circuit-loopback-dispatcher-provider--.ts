@@ -17,7 +17,7 @@ const shortCircuitLoopbackProvider: loopbackProvider = async () => {
           domainAccess,
           configuration,
           async loopbackDispatcher({ domainAccess }) {
-            if (domainAccess.async) {
+            if (domainAccess.enqueue) {
               enqueue({ enqueueDomainAccess: domainAccess })
               return
             }

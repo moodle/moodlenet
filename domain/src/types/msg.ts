@@ -13,7 +13,7 @@ export type domainAccess = domainMsg & {
   primarySession?: primarySession
   callerContext?: ctxTrack
   originEndpoint?: path
-  async?: boolean //| asyncOptions
+  enqueue?: boolean //| asyncOptions
 }
 
 // export type asyncOptions = {

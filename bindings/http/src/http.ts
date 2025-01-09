@@ -62,7 +62,7 @@ export function getHttpBinderDispatcher({
         throw e
       })
 
-    return domainAccess.async ? void 0 : replyPromise
+    return domainAccess.enqueue ? void 0 : replyPromise
   }
 }
 
@@ -107,7 +107,7 @@ export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promis
 
     pendingReplyPromises.push(replyPromise)
     replyPromise.finally(() => pendingReplyPromises.splice(pendingReplyPromises.indexOf(replyPromise), 1))
-    res.send(endpointless_domain_access.async ? void 0 : _serial(await replyPromise))
+    res.send(endpointless_domain_access.enqueue ? void 0 : _serial(await replyPromise))
   })
   app.use(basePath, router)
 

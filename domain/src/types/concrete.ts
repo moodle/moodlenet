@@ -56,7 +56,7 @@ export type modEmitter<moduleName extends moodleModuleName = never> = Pick<moodl
 type coreContext<moduleName extends moodleModuleName = never> = baseContext & {
   write: modSecondary<moduleName>['write']
   emit: modEmitter<moduleName>
-  async: asyncSend
+  enqueue: enqueueMessage
 }
 export type backgroundContext<moduleName extends moodleModuleName = never> = coreContext<moduleName>
 
@@ -125,7 +125,7 @@ export type layerWatcher<layer extends 'secondary' | 'primary'> = {
   }
 }
 
-export type asyncSend = <endpoint_fn extends any_function>(
+export type enqueueMessage = <endpoint_fn extends any_function>(
   endpoint_fn: endpoint_fn,
   payload: Parameters<endpoint_fn>[0],
 ) => Promise<void>

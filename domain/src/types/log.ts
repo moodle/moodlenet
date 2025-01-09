@@ -21,7 +21,7 @@ export type loggerContext = {
   endpoint?: domainEndpoint
   moduleName: moodleModuleName
 } & Pick<baseContext, 'domain' | 'id'> &
-  Pick<domainAccess, 'callerContext' | 'originEndpoint' | 'async'>
+  Pick<domainAccess, 'callerContext' | 'originEndpoint' | 'enqueue'>
 
 export type loggerProvider = (_: loggerContext) => Logger
 export type Logger = (level: LogSeverity, ..._: _any[]) => void

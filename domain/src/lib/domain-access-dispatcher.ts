@@ -252,7 +252,7 @@ export async function accessDomain({
       ...domainAccess,
       endpoint: ['watch', ...domainAccess.endpoint],
       payload: [result, domainAccess.payload],
-      async: false,
+      enqueue: false,
     }
 
     loopbackDispatcher({ domainAccess: watchDomainAccess })
@@ -278,7 +278,7 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
 }) {
   const id = generateUlid({ onDate: date_time_string('now') })
 
-  function getLoopbackProxy(async?: boolean | undefined /* | asyncOptions */) {
+  function getLoopbackProxy(enqueue?: boolean | undefined /* | asyncOptions */) {
     return createMoodleDomainProxy({
       ctrl({ domainMsg: { endpoint, payload } }) {
         const ctx_track: ctxTrack = {
@@ -293,19 +293,19 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
           callerContext: ctx_track,
           originEndpoint: currentDomainAccess?.endpoint,
           primarySession: currentDomainAccess?.primarySession,
-          async,
+          enqueue,
         }
         return loopbackDispatcher({ domainAccess: loopbackDomainAccess })
       },
     })
   }
   const syncProxy = getLoopbackProxy()
-  const asyncProxy = getLoopbackProxy(true)
+  const queueProxy = getLoopbackProxy(true)
 
   const callerContext = currentDomainAccess?.callerContext
   const originEndpoint = currentDomainAccess?.originEndpoint
   const endpoint = currentDomainAccess?.endpoint
-  const async = currentDomainAccess?.async
+  const enqueue = currentDomainAccess?.enqueue
   const primarySessionId = currentDomainAccess?.primarySession?.id
   const log: Logger = (level, ...args) =>
     loggerProvider({
@@ -315,7 +315,7 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
       originEndpoint,
       callerContext,
       contextLayer,
-      async,
+      enqueue,
       endpoint,
       primarySessionId,
     })(level, ...args.map(__redact__))
@@ -332,17 +332,17 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     track: callerContext,
     from: originEndpoint,
     primarySession: currentDomainAccess?.primarySession as primarySession, // HACK : could be undefined - but this is a one-fit-all-context 😉
-    emit: asyncProxy.event,
+    emit: syncProxy.event,
     forward: syncProxy.primary,
     mod: syncProxy,
     write: syncProxy.secondary[moduleName].write,
     sync: syncProxy.secondary[moduleName].sync,
     log,
-    async async(endopint_fn_proxy, payload /*, asyncOptions=true: true | asyncOptions*/) {
+    async enqueue(endopint_fn_proxy, payload /*, asyncOptions=true: true | asyncOptions*/) {
       const endopint = getProxyFnPath(endopint_fn_proxy)
       const fn = endopint.reduce(
         (currProp, currPathSegment) => currProp?.[currPathSegment],
-        asyncProxy as _any,
+        queueProxy as _any,
         // getLoopbackProxy(true /*asyncOptions */) as _any,
       )
       assert(typeof fn === 'function', `ctx.async: endpoint[${endopint.join('.')}] fn is not a function`)
