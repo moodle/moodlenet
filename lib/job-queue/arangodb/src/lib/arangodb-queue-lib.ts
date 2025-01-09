@@ -11,6 +11,11 @@ import {
   jobStatus,
 } from './types'
 
+export async function createJobCollection<jobData>({ jobCollection }: { jobCollection: jobCollection<jobData> }) {
+  await jobCollection.create({ cacheEnabled: true })
+  //await jobCollection.ensureIndex({ type: 'persistent', fields: ['xxx.yyy'] })
+}
+
 export function getLastExecutionOutcome({ executionOutcomes }: Pick<arangoDbJob<unknown>, 'executionOutcomes'>) {
   return executionOutcomes[0]
 }
