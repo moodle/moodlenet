@@ -20,7 +20,12 @@ import { storage_core } from '@moodle/module/storage/core'
 import { userAccount_core } from '@moodle/module/user-account/core'
 import { user_profile_core } from '@moodle/module/user-profile/core'
 import { cryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
-import { ArangoDbSecEnv, get_arango_persistence_factory, provideArangoDbSecEnv } from '@moodle/sec-db-arango'
+import {
+  ArangoDbSecEnv,
+  arangoQueueServiceWorkers,
+  get_arango_persistence_factory,
+  provideArangoDbSecEnv,
+} from '@moodle/sec-db-arango'
 import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
 import { get_nodemailer_secondary_factory, NodemailerSecEnv, provideNodemailerSecEnv } from '@moodle/sec-email-nodemailer'
 import { get_storage_default_secondary_factory, StorageDefaultSecEnv } from '@moodle/sec-storage-local-fs'
@@ -30,6 +35,7 @@ import { readFileSync } from 'fs'
 import * as path from 'path'
 import { coerce, literal, object, union } from 'zod'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
+import assert from 'assert'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
 //   provideDefaultResourceIngestorSecEnv,
@@ -183,6 +189,7 @@ export async function configurator({ domainName }: { domainName: string }) {
 
       type jobData = { domainAccess: domainAccess }
 
+      const queueServiceWorkers = arangoQueueServiceWorkers({ dbStruct: arango_persistence.dbStruct })
       const queueServiceCluster = provideQueueServiceCluster<jobData>()
 
       const loopbackDispatcher: binderDispatcher = async ({ domainAccess }) => {
@@ -191,6 +198,7 @@ export async function configurator({ domainName }: { domainName: string }) {
           const queueService = await queueServiceCluster.get({
             async getConfig() {
               return {
+                workers: queueServiceWorkers,
                 async executeJob({ job: { executionOutcomes, jobData } }) {
                   if (executionOutcomes.length > 2) {
                     return {
@@ -231,7 +239,9 @@ export async function configurator({ domainName }: { domainName: string }) {
             },
             jobName,
           })
-          await queueService.enqueue({ enqueueDate: date_time_string('now'), jobData: { domainAccess } })
+          const jobId = domainAccess.callerContext?.ctxId
+          assert(jobId, 'domainAccess must have a callerContext for enqueuing a message')
+          await queueService.enqueue({ jobId, enqueueDate: date_time_string('now'), jobData: { domainAccess } })
           return
         }
         const accessResultPromise = accessDomain({ domainAccess, configuration, loopbackDispatcher })

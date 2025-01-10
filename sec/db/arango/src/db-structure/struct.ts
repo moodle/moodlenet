@@ -1,5 +1,5 @@
 import { domainAccess, modConfigName, ModConfigs } from '@moodle/domain'
-import { arangoDbJob } from '@moodle/lib-job-queue-arangodb'
+import { job } from '@moodle/lib-job-queue-arangodb'
 import { contentLanguageRecord, contentLicenseRecord } from '@moodle/module/content'
 import { eduBloomCognitiveRecord, eduIscedFieldRecord, eduIscedLevelRecord, eduResourceTypeRecord } from '@moodle/module/edu'
 import { moodlenetContributorRecord } from '@moodle/module/moodlenet'
@@ -53,7 +53,7 @@ export function getDbStruct(databaseConnections: databaseConnections) {
       db: services_db,
       coll: {
         migrations: services_db.collection<migrationRecord>('migrations'),
-        domainAccessJob: services_db.collection<arangoDbJob<{ domainAccess: domainAccess }>>('domainAccessJob'),
+        domainAccessJob: services_db.collection<job<{ domainAccess: domainAccess }>>('domainAccessJob'),
       },
     },
   }

@@ -1,10 +1,18 @@
-import { date_time_string, map } from '@moodle/lib-types'
-import { consumeJob, enqueueJob, fetchAndEngageSomeEnqueuedJobs, restoreTimedoutJobs } from './arangodb-queue-lib'
-import { executeJob, jobCollection, jobConfig, pendingConsumptionObject } from './types'
+import { date_time_string, date_time_string_schema, map } from '@moodle/lib-types'
+import moment from 'moment'
+import {
+  consumptionResult,
+  executeJob,
+  executionOutcome,
+  job,
+  jobConfig,
+  pendingConsumptionObject,
+  queueServiceWorkers,
+} from './types'
 
 export type queueServiceConfig<jobData> = {
+  workers: queueServiceWorkers<jobData>
   executeJob: executeJob<jobData>
-  jobCollection: jobCollection<jobData>
   jobConfig: jobConfig
 }
 
@@ -36,7 +44,11 @@ export function provideQueueServiceCluster<jobData>() {
 }
 
 export type queueService<jobData> = ReturnType<typeof provideQueueService<jobData>>
-export function provideQueueService<jobData>({ executeJob, jobCollection, jobConfig }: queueServiceConfig<jobData>) {
+export function provideQueueService<jobData>({
+  workers: { enqueueJob, fetchAndEngageSomeEnqueuedJobs, reEnqueueTimedoutInProgressJobs, updateJob },
+  executeJob,
+  jobConfig,
+}: queueServiceConfig<jobData>) {
   const { jobName, parallelism, progressTimeoutSecs, schedulerTimeoutSecs } = jobConfig
   const pendingConsumptionObjects: pendingConsumptionObject<jobData>[] = []
   let consumeBatch_scheduler: NodeJS.Timeout | undefined
@@ -46,19 +58,32 @@ export function provideQueueService<jobData>({ executeJob, jobCollection, jobCon
 
   return {
     pendingConsumptionObjects,
-    stopAndDrain() {
-      stopSchedulers()
-      return drainPending()
-    },
-    startProcesses() {
-      consumeBatch()
-      restoreTimedouts_scheduler = setTimeout(() => {
-        restoreTimedoutJobs({ jobName, jobCollection, timeoutSecs: progressTimeoutSecs }).finally(() =>
-          restoreTimedouts_scheduler?.refresh(),
-        )
-      }, progressTimeoutSecs * 1000)
-    },
+    stopAndDrain,
+    startProcesses,
     enqueue,
+  }
+  function stopAndDrain() {
+    stopSchedulers()
+    return drainPending()
+  }
+  function startProcesses() {
+    consumeBatch()
+    restoreTimedouts_scheduler = setTimeout(() => {
+      const timeoutOutcome: executionOutcome = {
+        date: date_time_string('now'),
+        result: 'failed',
+        reason: 'timeout',
+        timeoutSecs: progressTimeoutSecs,
+      }
+
+      const lastEngagedDateBefore = date_time_string_schema.parse(
+        moment(date_time_string('now')).subtract(progressTimeoutSecs, 'seconds').toISOString(),
+      )
+
+      reEnqueueTimedoutInProgressJobs({ jobName, lastEngagedDateBefore, timeoutOutcome }).finally(() =>
+        restoreTimedouts_scheduler?.refresh(),
+      )
+    }, progressTimeoutSecs * 1000)
   }
 
   function stopSchedulers() {
@@ -67,22 +92,25 @@ export function provideQueueService<jobData>({ executeJob, jobCollection, jobCon
     clearTimeout(restoreTimedouts_scheduler)
   }
 
-  function enqueue({
-    jobData,
-    enqueueDate,
-    id,
-  }: {
-    jobData: jobData
-    enqueueDate: date_time_string
-    id?: string | undefined
-  }) {
-    return enqueueJob<jobData>({
-      jobName: jobConfig.jobName,
-      jobData,
+  function enqueue({ jobData, enqueueDate, jobId }: { jobData: jobData; enqueueDate: date_time_string; jobId: string }) {
+    const job: job<jobData> = {
+      id: jobId,
+      name: jobName,
+      status: 'enqueued',
       enqueueDate,
-      id,
-      jobCollection,
+      retryOnDate: enqueueDate,
+      executionOutcomes: [],
+      lastEngagedDate: null,
+      jobData,
+    }
+
+    return enqueueJob({
+      job,
     })
+  }
+
+  function drainPending() {
+    return Promise.all([...pendingConsumptionObjects.map(({ pendingConsumptionPromise }) => pendingConsumptionPromise)])
   }
 
   async function consumeBatch() {
@@ -98,24 +126,19 @@ export function provideQueueService<jobData>({ executeJob, jobCollection, jobCon
 
     new Promise(resolve => {
       fetchAndEngageSomeEnqueuedJobs({
-        jobCollection,
         jobName,
         amount,
-        parallelism,
-      }).then(jobDocs => {
-        console.log('2 consumeBatch', { jobDocs: jobDocs.length })
+      }).then(jobs => {
+        console.log('2 consumeBatch', { jobs: jobs.length })
         resolve(
           Promise.all(
-            jobDocs.map(jobDoc => {
+            jobs.map(job => {
               const pendingConsumptionPromise = consumeJob({
-                jobDoc,
-                jobCollection,
-                executeJob,
-                jobConfig: { progressTimeoutSecs },
+                job,
               })
               const pendingConsumptionObject: pendingConsumptionObject<jobData> = {
                 pendingConsumptionPromise,
-                jobDoc,
+                job: job,
                 jobConfig,
               }
               pendingConsumptionObjects.push(pendingConsumptionObject)
@@ -141,7 +164,40 @@ export function provideQueueService<jobData>({ executeJob, jobCollection, jobCon
       })
     })
   }
-  function drainPending() {
-    return Promise.all([...pendingConsumptionObjects.map(({ pendingConsumptionPromise }) => pendingConsumptionPromise)])
+
+  async function consumeJob({ job }: { job: job<jobData> }) {
+    const executionOutcome = await Promise.race([
+      executeJob({ job }).catch<executionOutcome>(
+        error =>
+          ({
+            date: date_time_string('now'),
+            result: 'failed',
+            reason: 'unhandledError',
+            error,
+          }) satisfies executionOutcome,
+      ),
+      new Promise<executionOutcome>((_resolve, reject) =>
+        setTimeout(
+          () =>
+            reject({
+              result: 'failed',
+              reason: 'timeout',
+              timeoutSecs: progressTimeoutSecs,
+              date: date_time_string('now'),
+            } satisfies executionOutcome),
+          progressTimeoutSecs * 1000,
+        ),
+      ),
+    ])
+
+    const m_updatedJob = await updateJob({
+      job,
+      executionOutcome,
+    })
+    if (!m_updatedJob) {
+      return null
+    }
+    const consumptionResult: consumptionResult<jobData> = { updatedJob: m_updatedJob, executionOutcome }
+    return consumptionResult
   }
 }

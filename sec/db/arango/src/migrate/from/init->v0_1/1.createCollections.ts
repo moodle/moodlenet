@@ -1,4 +1,3 @@
-import { createJobCollection } from '@moodle/lib-job-queue-arangodb'
 import { dbStruct } from '../../../db-structure'
 // import { removePropOnInsert } from '../lib/id'
 
@@ -31,5 +30,5 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   await dbStruct.appData.coll.eduResourceType.create({ cacheEnabled: true })
 
   // services
-  await createJobCollection({ jobCollection: dbStruct.services.coll.domainAccessJob })
+  await dbStruct.services.coll.domainAccessJob.create({ cacheEnabled: true })
 }

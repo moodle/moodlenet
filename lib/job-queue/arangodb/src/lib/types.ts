@@ -1,6 +1,4 @@
 import { d_u, date_time_string } from '@moodle/lib-types'
-import { DocumentCollection } from 'arangojs/collection'
-import { Document } from 'arangojs/documents'
 
 export type jobConfig = {
   jobName: string
@@ -9,10 +7,8 @@ export type jobConfig = {
   schedulerTimeoutSecs: number
 }
 
-export type jobCollection<jobData> = DocumentCollection<arangoDbJob<jobData>>
-
-export type arangoDbJobDocument<jobData> = Document<arangoDbJob<jobData>>
-export type arangoDbJob<jobData> = {
+export type job<jobData> = {
+  id: string
   name: string
   jobData: jobData
   status: jobStatus
@@ -56,14 +52,38 @@ export type executionOutcome = {
   },
   'result'
 >
-export type executeJob<jobData> = (_: { job: arangoDbJobDocument<jobData> }) => Promise<executionOutcome>
+export type executeJob<jobData> = (_: { job: job<jobData> }) => Promise<executionOutcome>
 export type consumptionResult<jobData> = {
   executionOutcome: executionOutcome
-  newJobDoc: arangoDbJobDocument<jobData>
+  updatedJob: job<jobData>
 }
 
 export type pendingConsumptionObject<jobData> = {
-  pendingConsumptionPromise: Promise<consumptionResult<jobData>>
-  jobDoc: arangoDbJobDocument<jobData>
+  pendingConsumptionPromise: Promise<consumptionResult<jobData> | null>
+  job: job<jobData>
   jobConfig: jobConfig
 }
+
+// service workers
+
+export type queueServiceWorkers<jobData> = {
+  enqueueJob: enqueueJob<jobData>
+  fetchAndEngageSomeEnqueuedJobs: fetchAndEngageSomeEnqueuedJobs<jobData>
+  updateJob: updateJob<jobData>
+  reEnqueueTimedoutInProgressJobs: reEnqueueTimedoutInProgressJobs<jobData>
+}
+
+export type enqueueJob<jobData> = (_: { job: job<jobData> }) => Promise<void>
+
+export type updateJob<jobData> = (_: {
+  job: job<jobData>
+  executionOutcome: executionOutcome
+}) => Promise<job<jobData> | null>
+
+export type reEnqueueTimedoutInProgressJobs<jobData> = (_: {
+  jobName: string
+  lastEngagedDateBefore: date_time_string
+  timeoutOutcome: executionOutcome
+}) => Promise<job<jobData>[]>
+
+export type fetchAndEngageSomeEnqueuedJobs<jobData> = (_: { jobName: string; amount: number }) => Promise<job<jobData>[]>
