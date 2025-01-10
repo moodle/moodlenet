@@ -37,12 +37,12 @@ export async function enqueueJob<jobData>({
     {
       _key: id ?? undefined,
       name: jobName,
-      jobData,
       status: 'enqueued',
       enqueueDate,
       retryOnDate: enqueueDate,
       executionOutcomes: [],
       lastEngagedDate: null,
+      jobData,
     },
     { returnNew: true },
   )
@@ -211,16 +211,16 @@ export async function upsertJobDocument<jobData>({
     executionOutcomes: [...jobDoc.executionOutcomes, executionOutcome],
   }
 
-  const cursor = await jobCollection.database.query(aql<arangoDbJobDocument<jobData>>`
-                UPSERT jobDoc
+  const cursor = await jobCollection.database.query<arangoDbJobDocument<jobData>>(aql`
+      UPSERT { _key: ${jobDoc._key} }
 
-                INSERT ${updatedJob}
-                REPLACE ${updatedJob}
+      INSERT ${updatedJob}
+      REPLACE ${updatedJob}
 
-                IN ${jobCollection}
+      IN ${jobCollection}
 
-                RETURN NEW
-            `)
+      RETURN NEW
+  `)
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return (await cursor.all())[0]!

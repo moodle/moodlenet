@@ -44,7 +44,7 @@ export type executionOutcome = {
   date: date_time_string
 } & d_u<
   {
-    done: unknown
+    done: { outcome: unknown }
     failed: d_u<
       {
         applicative: { details: unknown; followUp: failedExecutionFollowup }

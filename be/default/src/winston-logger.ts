@@ -1,11 +1,18 @@
-import { logLevelColors, logLevelMap, loggerContext, loggerProvider } from '@moodle/domain'
+import { LogSeverity, logLevelColors, logLevelMap, loggerContext, loggerProvider } from '@moodle/domain'
 import { _any } from '@moodle/lib-types'
 import { inspect } from 'util'
 import winston from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
-import { loggerConfigs } from './types'
 
-export function createDefaultDomainLoggerProvider({ loggerConfigs }: { loggerConfigs: loggerConfigs }): {
+export type winstonLoggerConfigs = {
+  consoleLevel?: LogSeverity
+  file?: {
+    path: string
+    level: string
+  }
+}
+
+export function createWinstonDomainLoggerProvider({ loggerConfigs }: { loggerConfigs: winstonLoggerConfigs }): {
   loggerProvider: loggerProvider
 } {
   const winstonLogger = winston.createLogger({

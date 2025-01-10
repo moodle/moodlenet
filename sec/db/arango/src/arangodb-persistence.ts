@@ -15,9 +15,9 @@ import { content_secondary_factory } from './sec/db-arango-content'
 import { resource_ingestion_secondary_factory } from './sec/db-arango-resource-ingestion'
 export type { ArangoDbSecEnv } from './db-structure'
 
-export function get_arango_persistence_factory(env: ArangoDbSecEnv): secondaryProvider {
+export function get_arango_persistence_factory(env: ArangoDbSecEnv) {
   const dbStruct = getDbStruct(env.database_connections)
-  return secondaryContext => {
+  const secondaryProvider: secondaryProvider = secondaryContext => {
     const secondaryAdapter = mergeSecondaryAdapters([
       moodlenet_secondary_factory({ dbStruct })(secondaryContext),
       org_secondary_factory({ dbStruct })(secondaryContext),
@@ -32,4 +32,5 @@ export function get_arango_persistence_factory(env: ArangoDbSecEnv): secondaryPr
     ])
     return secondaryAdapter
   }
+  return { secondaryProvider, dbStruct }
 }

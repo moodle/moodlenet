@@ -1,7 +1,17 @@
-import { moduleCore, moodleModuleName, secondaryAdapter, secondaryProvider, sys_admin_info } from '@moodle/domain'
-import { configuration, deploymentInfoFromUrlString, startBackgroundProcesses } from '@moodle/domain/lib'
+import {
+  binderDispatcher,
+  domainAccess,
+  moduleCore,
+  moodleModuleName,
+  secondaryAdapter,
+  secondaryProvider,
+  sys_admin_info,
+} from '@moodle/domain'
+import { accessDomain, configuration, deploymentInfoFromUrlString, startBackgroundProcesses } from '@moodle/domain/lib'
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
-import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
+import { provideQueueServiceCluster } from '@moodle/lib-job-queue-arangodb'
+import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
+import { _any, date_time_string, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { edu_core } from '@moodle/module/edu/core'
 import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
 import { moodlenet_core } from '@moodle/module/moodlenet/core'
@@ -19,9 +29,7 @@ import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
 import * as path from 'path'
 import { coerce, literal, object, union } from 'zod'
-import { configurator, configuratorResult, loggerConfigs } from './types'
-import { createDefaultDomainLoggerProvider } from './winston-logger'
-import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
+import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
 //   provideDefaultResourceIngestorSecEnv,
@@ -29,8 +37,18 @@ import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
 // import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
 
 const cache: map<Promise<configuratorResult>> = {}
+type configuratorResult = {
+  configuration: configuration
+  loopbackDispatcher: binderDispatcher
+  stopAndDrain: () => Promise<void>
+}
 
-export const default_configurator: configurator = async ({ domainName, loopbackDispatcherProvider }) => {
+export async function configuratorDrain() {
+  const configs = await Promise.all(Object.values(cache))
+  return Promise.allSettled(configs.map(({ stopAndDrain }) => stopAndDrain()))
+}
+
+export async function configurator({ domainName }: { domainName: string }) {
   // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
   if (!cache[domainName]) {
     cache[domainName] = new Promise<configuratorResult>(resolveConfigurationPromise => {
@@ -39,12 +57,12 @@ export const default_configurator: configurator = async ({ domainName, loopbackD
         homeDir: MOODLE_HOME_DIR,
         domainName,
       })
-      const loggerConfigs: loggerConfigs = { consoleLevel: 'debug' }
+      const loggerConfigs: winstonLoggerConfigs = { consoleLevel: 'debug' }
 
       dotenvExpand(dotenv.config({ path: path.join(domainFsDirectories.currentDomainDir, '.env'), override: true }))
       console.debug({ currentDomainDir: domainFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
 
-      const { loggerProvider } = createDefaultDomainLoggerProvider({ loggerConfigs })
+      const { loggerProvider } = createWinstonDomainLoggerProvider({ loggerConfigs })
 
       const isDev = process.env.NODE_ENV === 'development'
 
@@ -88,9 +106,10 @@ export const default_configurator: configurator = async ({ domainName, loopbackD
         localFsStorageDirectory,
       }
       // const default_resource_ingestor_env = provideDefaultResourceIngestorSecEnv({ env: _process_env })
+      const arango_persistence = get_arango_persistence_factory(arango_db_env)
       const secondaryProviders: secondaryProvider[] = [
         // sec modules
-        get_arango_persistence_factory(arango_db_env),
+        arango_persistence.secondaryProvider,
         get_default_crypto_secondarys_factory(crypto_env),
         get_nodemailer_secondary_factory(nodemailer_env),
         get_storage_default_secondary_factory(file_system_storage_sec_env),
@@ -153,7 +172,6 @@ export const default_configurator: configurator = async ({ domainName, loopbackD
           },
         },
       ]
-
       const configuration: configuration = {
         moduleCores,
         secondaryProviders,
@@ -161,26 +179,93 @@ export const default_configurator: configurator = async ({ domainName, loopbackD
         domain: domainName,
         domainFsDirectories,
       }
-      loopbackDispatcherProvider({ configuration }).then(async ({ loopbackDispatcher }) => {
-        const background_processe = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
-        if (background_processe) {
-          await migrateArangoDB({
-            databaseConnections: arango_db_env.database_connections,
-            log: loggerProvider({
-              domain: domainName,
-              contextLayer: 'secondary',
-              id: 'migration',
-              moduleName: 'sec-arangodb' as moodleModuleName,
-            }),
-          })
+      const pendingPromises: Promise<unknown>[] = []
 
-          await startBackgroundProcesses({
-            configuration,
-            loopbackDispatcher,
+      type jobData = { domainAccess: domainAccess }
+
+      const queueServiceCluster = provideQueueServiceCluster<jobData>()
+
+      const loopbackDispatcher: binderDispatcher = async ({ domainAccess }) => {
+        if (domainAccess.enqueue) {
+          const jobName = domainAccess.endpoint.join('.')
+          const queueService = await queueServiceCluster.get({
+            async getConfig() {
+              return {
+                async executeJob({ job: { executionOutcomes, jobData } }) {
+                  if (executionOutcomes.length > 2) {
+                    return {
+                      result: 'failed',
+                      reason: 'applicative',
+                      date: date_time_string('now'),
+                      details: 'Too many retries',
+                      followUp: {
+                        action: 'abort',
+                      },
+                    } as const
+                  }
+                  return loopbackDispatcher({ domainAccess: { ...jobData.domainAccess, enqueue: false } })
+                    .then(outcome => {
+                      return {
+                        result: 'done',
+                        outcome,
+                        date: date_time_string('now'),
+                      } as const
+                    })
+                    .catch(error => {
+                      return {
+                        result: 'failed',
+                        reason: 'unhandledError',
+                        date: date_time_string('now'),
+                        error,
+                      } as const
+                    })
+                },
+                jobCollection: arango_persistence.dbStruct.services.coll.domainAccessJob,
+                jobConfig: {
+                  jobName,
+                  parallelism: 3,
+                  progressTimeoutSecs: 30,
+                  schedulerTimeoutSecs: 30,
+                },
+              }
+            },
+            jobName,
           })
+          await queueService.enqueue({ enqueueDate: date_time_string('now'), jobData: { domainAccess } })
+          return
         }
-        resolveConfigurationPromise({ configuration, loopbackDispatcher })
+        const accessResultPromise = accessDomain({ domainAccess, configuration, loopbackDispatcher })
+        pendingPromises.push(accessResultPromise)
+        accessResultPromise.finally(() => pendingPromises.splice(pendingPromises.indexOf(accessResultPromise), 1))
+        return accessResultPromise
+        // return shortCircuitLoopbackDispatcher({ configuration, domainAccess })
+      }
+
+      const background_process_promise =
+        env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
+          ? migrateArangoDB({
+              databaseConnections: arango_db_env.database_connections,
+              log: loggerProvider({
+                domain: domainName,
+                contextLayer: 'secondary',
+                id: 'migration',
+                moduleName: 'sec-arangodb' as moodleModuleName,
+              }),
+            }).then(() =>
+              startBackgroundProcesses({
+                configuration,
+                loopbackDispatcher,
+              }),
+            )
+          : Promise.resolve()
+      background_process_promise.then(() => {
+        resolveConfigurationPromise({ configuration, loopbackDispatcher, stopAndDrain })
       })
+      async function stopAndDrain() {
+        console.log(`draining [#${pendingPromises.length}] pending replies ...`)
+        await Promise.allSettled(pendingPromises.concat([queueServiceCluster.stopAndDrainAll()]))
+        console.log('drained pending replies')
+      }
     }).catch(e => {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete cache[domainName]
@@ -190,5 +275,3 @@ export const default_configurator: configurator = async ({ domainName, loopbackD
 
   return cache[domainName]
 }
-
-export default default_configurator

@@ -1,32 +1,32 @@
-import { binderDispatcher } from '@moodle/domain'
-import { accessDomain } from '@moodle/domain/lib'
-import { loopbackProvider } from './types'
+import { binderDispatcher, domainAccess } from '@moodle/domain'
+import { accessDomain, configuration } from '@moodle/domain/lib'
 
-const shortCircuitLoopbackProvider: loopbackProvider = async () => {
+export function shortCircuitLoopbackProvider() {
   const pendingPromises: Promise<unknown>[] = []
   return {
-    async loopbackDispatcherProvider({ configuration }) {
-      const shortCircuitLoopbackDispatcher: binderDispatcher = ({ domainAccess }) =>
-        accessDomain({
-          domainAccess,
-          configuration,
-          async loopbackDispatcher({ domainAccess }) {
-            const syncResultPromise = shortCircuitLoopbackDispatcher({ domainAccess })
-            pendingPromises.push(syncResultPromise)
-            syncResultPromise.finally(() => pendingPromises.splice(pendingPromises.indexOf(syncResultPromise), 1))
-            return syncResultPromise
-          },
-        })
-
-      return {
-        loopbackDispatcher: shortCircuitLoopbackDispatcher,
+    async shortCircuitLoopbackDispatcher({
+      configuration,
+      domainAccess,
+    }: {
+      configuration: configuration
+      domainAccess: domainAccess
+    }) {
+      const shortCircuit: binderDispatcher = async ({ domainAccess }) => {
+        const syncResultPromise = shortCircuit({ domainAccess })
+        pendingPromises.push(syncResultPromise)
+        syncResultPromise.finally(() => pendingPromises.splice(pendingPromises.indexOf(syncResultPromise), 1))
+        return syncResultPromise
       }
+      return accessDomain({
+        domainAccess,
+        configuration,
+        loopbackDispatcher: shortCircuit,
+      })
     },
-    async drain() {
+    async shortCircuitLoopbackDispatcherDrain() {
       console.log(`draining short circuit loopback [#${pendingPromises.length}] pending replies ...`)
       await Promise.all(pendingPromises)
       console.log('drained short circuit loopback pending replies')
     },
   }
 }
-export default shortCircuitLoopbackProvider
