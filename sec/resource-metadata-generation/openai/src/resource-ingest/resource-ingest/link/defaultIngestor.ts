@@ -4,6 +4,7 @@ import { tikaIngest } from '../../tikaIngest'
 import type { resourceIngestionMetadata } from '../types'
 import { urlToRpcFile } from '../util'
 import type { LinkIngestor } from './types'
+import * as timers from 'timers/promises'
 
 const ogs = _ogs as any as typeof _ogs.default
 
@@ -73,7 +74,7 @@ async function puppeteerScrape(
     const title = await page.title()
     page.emulateMediaType('screen')
     await page.goto(url, {})
-    await new Promise(r => setTimeout(r, 5000))
+    await timers.setTimeout(5000)
     const pdfBuffer = await page.pdf({ /* path: 'page.pdf', */ format: 'A4' })
     // const content: string = await page.evaluate('()=>document.body.outerHTML')
     const content = await tikaIngest({ file: pdfBuffer, mimeType: 'application/pdf' })

@@ -4,6 +4,7 @@ import { asset, externalAsset } from '@moodle/module/storage'
 import ogs from 'open-graph-scraper'
 import puppeteer from 'puppeteer'
 import { tikaIngestion__gets__only__content } from './tika-ingestor__gets__only__content'
+import * as timers from 'timers/promises'
 // import { urlToLocalAsset } from '../util'
 
 // import _ogs from 'open-graph-scraper'
@@ -86,7 +87,7 @@ async function puppeteerScrape({ url }: { url: string }): Promise<
     const title = await page.title()
     page.emulateMediaType('screen')
     await page.goto(url, {})
-    await new Promise(r => setTimeout(r, 5000))
+    await timers.setTimeout(5000)
     const pdf = await page.pdf({ /* path: 'page.pdf', */ format: 'A4' })
     const htmlContent = (await page.evaluate('() => document.documentElement.outerHTML')) as string
 

@@ -1,4 +1,5 @@
 import { moduleCore } from '../../../types'
+import * as timers from 'timers/promises'
 
 const ONE_MINUTE = 60 * 1000
 export const storage_core: moduleCore<'storage'> = {
@@ -13,7 +14,8 @@ export const storage_core: moduleCore<'storage'> = {
       ctx.write
         .deleteStaleTemp()
         .catch(e => ctx.log('warn', 'error deleteStaleTemp', e))
-        .then(() => setTimeout(delStales, ONE_MINUTE))
+        .then(() => timers.setTimeout(ONE_MINUTE))
+        .then(delStales)
     }
   },
   primary(ctx) {

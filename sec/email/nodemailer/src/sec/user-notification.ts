@@ -11,6 +11,7 @@ import { OrgInfo } from '@moodle/module/org'
 import { userMessage } from '@moodle/module/user-notification'
 import { send } from '../lib'
 import { NodemailerSecEnv } from '../types'
+import * as timers from 'timers/promises'
 
 export function user_notification_service_factory(env: NodemailerSecEnv): secondaryProvider {
   return ctx => {
@@ -29,7 +30,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
               orgInfo: deps.orgInfo,
               receiverEmail: content.receiverEmail,
             })
-            await new Promise<void>(resolve => setTimeout(resolve, 5000))
+            await timers.setTimeout(5000)
             await send({
               to: content.receiverEmail,
               body,
