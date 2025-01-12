@@ -9,7 +9,7 @@ import {
 } from '@moodle/domain'
 import { accessDomain, configuration, deploymentInfoFromUrlString, startBackgroundProcesses } from '@moodle/domain/lib'
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
-import { provideQueueServiceCluster } from '@moodle/lib-job-queue-arangodb'
+import { provideQueueServiceCluster } from '@moodle/lib-job-queue-service'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
 import { _any, date_time_string, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { edu_core } from '@moodle/module/edu/core'
@@ -261,12 +261,16 @@ export async function configurator({ domainName }: { domainName: string }) {
                 id: 'migration',
                 moduleName: 'sec-arangodb' as moodleModuleName,
               }),
-            }).then(() =>
-              startBackgroundProcesses({
-                configuration,
-                loopbackDispatcher,
-              }),
-            )
+            })
+              .then(() =>
+                startBackgroundProcesses({
+                  configuration,
+                  loopbackDispatcher,
+                }),
+              )
+              .then(() => {
+                queueServiceCluster.start()
+              })
           : Promise.resolve()
       background_process_promise.then(() => {
         resolveConfigurationPromise({ configuration, loopbackDispatcher, stopAndDrain })

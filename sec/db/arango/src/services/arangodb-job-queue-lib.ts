@@ -7,7 +7,7 @@ import {
   queueServiceWorkers,
   reEnqueueTimedoutInProgressJobs,
   updateJob,
-} from '@moodle/lib-job-queue-arangodb'
+} from '@moodle/lib-job-queue-service'
 import { date_time_string, unreachable_never } from '@moodle/lib-types'
 import { aql } from 'arangojs'
 import { literal } from 'arangojs/aql'

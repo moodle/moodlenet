@@ -1,9 +1,0 @@
-{
-  "name": "lib-job-queues-arangodb",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "lib/jwt/jose/src",
-  "projectType": "library",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project lib-job-queues-arangodb --web",
-  "targets": {}
-}

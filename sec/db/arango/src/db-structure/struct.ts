@@ -1,5 +1,5 @@
 import { domainAccess, modConfigName, ModConfigs } from '@moodle/domain'
-import { job } from '@moodle/lib-job-queue-arangodb'
+import { job } from '@moodle/lib-job-queue-service'
 import { contentLanguageRecord, contentLicenseRecord } from '@moodle/module/content'
 import { eduBloomCognitiveRecord, eduIscedFieldRecord, eduIscedLevelRecord, eduResourceTypeRecord } from '@moodle/module/edu'
 import { moodlenetContributorRecord } from '@moodle/module/moodlenet'
