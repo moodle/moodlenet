@@ -1,6 +1,7 @@
-import * as ulidx from 'ulidx'
-import { customAlphabet } from 'nanoid'
+//import { urlAlphabet } from 'nanoid'
 import { d_u } from '@moodle/lib-types'
+import { customAlphabet } from 'nanoid'
+import * as ulidx from 'ulidx'
 
 export type id_type = d_u<
   {
@@ -17,7 +18,8 @@ export function generateUlid({ onDate }: { onDate: Date | number | string }) {
 
 export function generateNanoId(opts?: { alpabet?: string; length?: number }) {
   const id = customAlphabet(
-    opts?.alpabet || `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`,
+    //opts?.alpabet || urlAlphabet,
+    opts?.alpabet || `useandom26T198340PX75pxJACKVERYMINDBUSHWOLFGQZbfghjklqvwyzrict`, // urlAlphabet except -_
     8,
   )(opts?.length)
   return id
