@@ -4,7 +4,7 @@ export type jobConfig = {
   jobName: string
   parallelism: number
   progressTimeoutSecs: number
-  schedulerTimeoutSecs: number
+  emptyQueueRescheduleSecs: number
 }
 
 export type job<jobData> = {
@@ -55,11 +55,11 @@ export type executionOutcome = {
 export type executeJob<jobData> = (_: { job: job<jobData> }) => Promise<executionOutcome>
 export type consumptionResult<jobData> = {
   executionOutcome: executionOutcome
-  updatedJob: job<jobData>
+  job: job<jobData>
 }
 
 export type pendingConsumptionObject<jobData> = {
-  pendingConsumptionPromise: Promise<consumptionResult<jobData> | null>
+  pendingConsumptionResultPromise: Promise<consumptionResult<jobData> | null>
   job: job<jobData>
   jobConfig: jobConfig
 }
@@ -75,10 +75,7 @@ export type queueServiceWorkers<jobData> = {
 
 export type enqueueJob<jobData> = (_: { job: job<jobData> }) => Promise<void>
 
-export type updateJob<jobData> = (_: {
-  job: job<jobData>
-  executionOutcome: executionOutcome
-}) => Promise<job<jobData> | null>
+export type updateJob<jobData> = (_: consumptionResult<jobData>) => Promise<job<jobData> | null>
 
 export type reEnqueueTimedoutInProgressJobs<jobData> = (_: {
   jobName: string
@@ -86,4 +83,8 @@ export type reEnqueueTimedoutInProgressJobs<jobData> = (_: {
   timeoutOutcome: executionOutcome
 }) => Promise<job<jobData>[]>
 
-export type fetchAndEngageSomeEnqueuedJobs<jobData> = (_: { jobName: string; amount: number }) => Promise<job<jobData>[]>
+export type fetchAndEngageSomeEnqueuedJobs<jobData> = (_: {
+  jobName: string
+  amount: number
+  engageDate: date_time_string
+}) => Promise<job<jobData>[]>

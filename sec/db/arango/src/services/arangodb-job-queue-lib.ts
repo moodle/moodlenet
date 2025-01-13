@@ -8,7 +8,7 @@ import {
   reEnqueueTimedoutInProgressJobs,
   updateJob,
 } from '@moodle/lib-job-queue-service'
-import { date_time_string, unreachable_never } from '@moodle/lib-types'
+import { unreachable_never } from '@moodle/lib-types'
 import { aql } from 'arangojs'
 import { literal } from 'arangojs/aql'
 import { DocumentCollection } from 'arangojs/collection'
@@ -16,7 +16,7 @@ import assert from 'assert'
 import { dbStruct } from '../db-structure'
 export type jobCollection<jobData> = DocumentCollection<Omit<job<jobData>, 'id'>>
 
-export function arangoQueueServiceWorkers({
+export function provideArangoQueueServiceWorkers({
   dbStruct,
 }: {
   dbStruct: dbStruct
@@ -53,8 +53,7 @@ export function arangoFetchAndEngageSomeEnqueuedJobs<jobData>({
 }: {
   jobCollection: jobCollection<jobData>
 }): fetchAndEngageSomeEnqueuedJobs<jobData> {
-  return async function ({ jobName, amount }) {
-    const now = date_time_string('now')
+  return async function ({ jobName, amount, engageDate }) {
     const cursor = await jobCollection.database.query(aql<job<jobData>>`
                 FOR job IN ${jobCollection}
 
@@ -77,7 +76,7 @@ export function arangoFetchAndEngageSomeEnqueuedJobs<jobData>({
 
                   UPDATE job WITH {
                     status: 'inProgress',
-                    lastEngagedDate: ${now}
+                    lastEngagedDate: ${engageDate}
                   } IN ${jobCollection}
 
                 RETURN ${aql_doc2job('NEW')}
