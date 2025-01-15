@@ -7,7 +7,6 @@ import * as org from '../modules/org'
 import * as storage from '../modules/storage'
 import * as edu from '../modules/edu'
 import * as userProfile from '../modules/user-profile'
-import * as resourceIngestion from '../modules/resource-ingestion'
 
 export type sys_admin_info = { email: email_address }
 
@@ -20,6 +19,6 @@ export interface ModConfigs {
   userProfile: userProfile.Configs
   storage: storage.Configs
   edu: edu.configs
-  resourceIngestion: resourceIngestion.Configs
+  //resourceIngestion: resourceIngestion.Configs
   // env: env.Configs
 }

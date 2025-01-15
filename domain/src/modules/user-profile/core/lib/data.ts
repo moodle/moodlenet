@@ -27,7 +27,7 @@ export function createNewUserProfileData({ newUser }: { newUser: userAccountReco
   }
   return userProfileRecord
 }
-export function createNewDraftResourceDraftData({
+export function createNewEduResourceDraftData({
   eduResourceDraftId,
   asset,
   partialEduResourceMeta,
@@ -42,10 +42,10 @@ export function createNewDraftResourceDraftData({
     draftId: eduResourceDraftId,
     created: created,
     lastEditDate: created,
-    // assetProcess: {
-    //   aiAnalysis: { status: 'neverEnqueued' },
-    //   resourceIngestionStatus: { status: 'neverEnqueued' },
-    // },
+    assetProcessStatus: {
+      aiGeneration: { status: 'neverEngaged' },
+      ingestion: { status: 'neverEngaged' },
+    },
     data: {
       title: '',
       description: '',

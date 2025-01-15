@@ -5,7 +5,7 @@ import UserProfileDomain, { eduCollectionDraft } from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
 import { maybeAsset, NONE_ASSET } from '../../storage'
 import { assert_authorizeAuthenticatedCurrentUserSession } from '../../user-account/lib'
-import { createNewDraftResourceDraftData, createNewUserProfileData } from './lib/data'
+import { createNewEduResourceDraftData, createNewUserProfileData } from './lib/data'
 
 type primary = UserProfileDomain['primary']['userProfile']
 export const user_profile_core: moduleCore<'userProfile'> = {
@@ -154,13 +154,13 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             if (newResourceAsset.type === 'tempFile') {
               const result = await ctx.write.useTempFileAsNewResourceDraftAsset({
                 adoptAssetForm: newResourceAsset,
-                resourceDraftId: eduResourceDraftId,
+                eduResourceDraftId: eduResourceDraftId,
                 userProfileId,
               })
 
               return result.status === 'error' ? [false, _void] : [true, { eduResourceDraftId }]
             }
-            const eduResourceDraft = createNewDraftResourceDraftData({
+            const eduResourceDraft = createNewEduResourceDraftData({
               asset: newResourceAsset,
               created: ctx.now,
               eduResourceDraftId,
@@ -247,14 +247,54 @@ export const user_profile_core: moduleCore<'userProfile'> = {
   watch(ctx) {
     return {
       secondary: {
+        resourceIngestion: {
+          write: {
+            async ingestResource([{ eduResourceIngestionOutcome }, payload]) {
+              if (payload.ingestionContext.type !== 'eduResourceDraft') {
+                return
+              }
+              const [found, draft] = await ctx.mod.secondary.userProfile.query.getDraft({
+                draftId: payload.ingestionContext.eduResourceDraftId,
+                draftType: 'eduResource',
+                userProfileIdSelect: { by: 'userProfileId', userProfileId: payload.ingestionContext.userProfileId },
+              })
+              if (!found) {
+                return
+              }
+              if (draft.assetProcessStatus.ingestion.status !== 'awaiting') {
+                ctx.log(
+                  'warn',
+                  `ingestResource outcome: userProfile's ${payload.ingestionContext.userProfileId} resource draft ${payload.ingestionContext.eduResourceDraftId} assetProcessStatus.ingestion not "awaiting" : [${draft.assetProcessStatus.ingestion.status}]`,
+                  draft,
+                )
+                return
+              }
+
+              await ctx.write.updateDraftResourceAssetProcessStatus({
+                userProfileIdSelect: { by: 'userProfileId', userProfileId: payload.ingestionContext.userProfileId },
+                eduResourceDraftId: payload.ingestionContext.eduResourceDraftId,
+                processType: 'ingestion',
+                processStatus: {
+                  ...draft.assetProcessStatus.ingestion,
+                  status: 'finished',
+                  finishDate: new Date().toISOString(),
+                  outcome: eduResourceIngestionOutcome,
+                },
+              })
+            },
+          },
+        },
         userProfile: {
           write: {
-            async useTempFileAsNewResourceDraftAsset([adoptAssetResult, { resourceDraftId, userProfileId }]) {
+            async useTempFileAsNewResourceDraftAsset([
+              adoptAssetResult,
+              { eduResourceDraftId: resourceDraftId, userProfileId },
+            ]) {
               if (adoptAssetResult.status === 'error') {
                 // ctx.log('warn', 'useTempFileAsNewResourceDraftAsset: adoptAssetResult error', adoptAssetResult)
                 return
               }
-              const eduResourceDraftData = createNewDraftResourceDraftData({
+              const eduResourceDraftData = createNewEduResourceDraftData({
                 asset: adoptAssetResult.asset,
                 created: ctx.now,
                 eduResourceDraftId: resourceDraftId,

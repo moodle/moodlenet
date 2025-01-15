@@ -3,8 +3,8 @@ import { contentLanguageCode, contentLicenseCode } from '../../content'
 import { eduIscedFieldCode, eduIscedLevelCode } from '../../edu'
 import { eduCollectionData, eduResourceData } from '../../edu/types/edu-content'
 import { moodlenetPublicEduResourceId } from '../../moodlenet/types/access-objects/eduResource'
-import { eduResourceIngestionStatus } from '../../resource-ingestion'
-import { aiEduResourceDataGenerationStatus } from '../../resource-metadata-generation'
+import { eduResourceIngestionOutcome } from '../../resource-ingestion'
+import { eduResourceAiGenerationOutcome } from '../../resource-metadata-generation'
 import { maybeAsset } from '../../storage'
 import { userAccountRecord } from '../../user-account'
 
@@ -53,12 +53,21 @@ type draftEduCollectionEduResourceRef = d_u<
   'type'
 >
 
-export type _____assetProcess = {
-  resourceIngestionStatus: { status: 'neverEnqueued' } | eduResourceIngestionStatus
-  aiAnalysis: { status: 'neverEnqueued' } | aiEduResourceDataGenerationStatus
+export type processStatus<data> = d_u<
+  {
+    neverEngaged: unknown
+    awaiting: { engageDate: date_time_string; jobId: string }
+    aborted: { engageDate: date_time_string; abortDate: date_time_string }
+    finished: { engageDate: date_time_string; finishDate: date_time_string; outcome: data }
+  },
+  'status'
+>
+export type assetProcessStatus = {
+  ingestion: processStatus<eduResourceIngestionOutcome>
+  aiGeneration: processStatus<eduResourceAiGenerationOutcome>
 }
 
-export type eduResourceDraft = draft<eduResourceData>
+export type eduResourceDraft = { assetProcessStatus: assetProcessStatus } & draft<eduResourceData>
 
 type myDrafts = {
   eduResource: eduResourceDraft[]

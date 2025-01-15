@@ -134,7 +134,7 @@ async function getPrimarySession() {
   const ua = userAgent({ headers: _headers })
   assert(xHost, 'x-host not found in headers')
   const primarySession: primarySession = {
-    id: generateUlid({ onDate: date_time_string('now') }),
+    id: generateUlid({ onDate: new Date().toISOString() }),
     token: (await getAuthTokenCookie()).sessionToken,
     app: {
       name: 'moodlenetWebapp',

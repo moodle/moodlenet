@@ -18,7 +18,7 @@ export async function migrate({ dbStruct }: { dbStruct: dbStruct }) {
   const migrationDoc: migrationRecord = {
     previous: 'null',
     current: VERSION,
-    date: date_time_string('now'),
+    date: new Date().toISOString(),
     meta: 'initialization',
   }
 

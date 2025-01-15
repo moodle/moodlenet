@@ -1,6 +1,6 @@
 import { domainFsDirectories } from '@moodle/lib-domain-fs'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { __redact__, _any, date_time_string, unreachable_never } from '@moodle/lib-types'
+import { __redact__, _any, unreachable_never } from '@moodle/lib-types'
 import assert from 'assert'
 import { merge } from 'lodash'
 import {
@@ -276,7 +276,7 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
   domain: string
   loopbackDispatcher: binderDispatcher
 }) {
-  const id = generateUlid({ onDate: date_time_string('now') })
+  const id = generateUlid({ onDate: new Date().toISOString() })
 
   function getLoopbackProxy(enqueue?: boolean | undefined /* | asyncOptions */) {
     return createMoodleDomainProxy({
@@ -300,7 +300,6 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     })
   }
   const syncProxy = getLoopbackProxy()
-  const queueProxy = getLoopbackProxy(true)
 
   const callerContext = currentDomainAccess?.callerContext
   const originEndpoint = currentDomainAccess?.originEndpoint
@@ -328,7 +327,7 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     domain,
     moduleName,
     domainFsDirectories,
-    now: date_time_string('now'),
+    now: new Date().toISOString(),
     track: callerContext,
     from: originEndpoint,
     primarySession: currentDomainAccess?.primarySession as primarySession, // HACK : could be undefined - but this is a one-fit-all-context 😉
@@ -338,12 +337,11 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     write: syncProxy.secondary[moduleName].write,
     sync: syncProxy.secondary[moduleName].sync,
     log,
-    async enqueue(endopint_fn_proxy, payload /*, asyncOptions=true: true | asyncOptions*/) {
+    async enqueue(endopint_fn_proxy, payload /*, asyncOptions = true*/) {
       const endopint = getProxyFnPath(endopint_fn_proxy)
       const fn = endopint.reduce(
         (currProp, currPathSegment) => currProp?.[currPathSegment],
-        queueProxy as _any,
-        // getLoopbackProxy(true /*asyncOptions */) as _any,
+        getLoopbackProxy(true /*asyncOptions */) as _any,
       )
       assert(typeof fn === 'function', `ctx.async: endpoint[${endopint.join('.')}] fn is not a function`)
       await fn(payload)

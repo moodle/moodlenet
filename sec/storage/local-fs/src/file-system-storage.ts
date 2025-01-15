@@ -42,7 +42,7 @@ export function get_storage_default_secondary_factory({ localFsStorageDirectory 
               }),
             )
           },
-          async useTempFileAsNewResourceDraftAsset({ adoptAssetForm, resourceDraftId, userProfileId }) {
+          async useTempFileAsNewResourceDraftAsset({ adoptAssetForm, eduResourceDraftId: resourceDraftId, userProfileId }) {
             const resourceDraftAssetPath =
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               domainFs.file.userProfile[userProfileId]!.drafts.eduResource[resourceDraftId]!.asset()

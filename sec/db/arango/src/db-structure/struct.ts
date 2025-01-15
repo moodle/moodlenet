@@ -3,7 +3,6 @@ import { job } from '@moodle/lib-job-queue-service'
 import { contentLanguageRecord, contentLicenseRecord } from '@moodle/module/content'
 import { eduBloomCognitiveRecord, eduIscedFieldRecord, eduIscedLevelRecord, eduResourceTypeRecord } from '@moodle/module/edu'
 import { moodlenetContributorRecord } from '@moodle/module/moodlenet'
-import { eduResourceDraftIngestionRecord } from '@moodle/module/resource-ingestion'
 import { userAccountRecord } from '@moodle/module/user-account'
 import { userProfileRecord } from '@moodle/module/user-profile'
 import { Database } from 'arangojs'
@@ -39,8 +38,6 @@ export function getDbStruct(databaseConnections: databaseConnections) {
         contentLicense: appData_db.collection<domain_record_doc<contentLicenseRecord, 'code'>>('contentLicense'),
         contributor: appData_db.collection<domain_record_doc<moodlenetContributorRecord>>('contributor'),
         userProfile: appData_db.collection<domain_record_doc<userProfileRecord>>('userProfile'),
-        eduResourceDraftIngestion:
-          appData_db.collection<domain_record_doc<eduResourceDraftIngestionRecord>>('eduResourceDraftIngestion'),
       },
     },
     identity: {

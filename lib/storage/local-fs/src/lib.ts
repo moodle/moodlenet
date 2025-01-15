@@ -12,15 +12,15 @@ import { join, normalize, sep as os_path_separator } from 'path'
 import { rimraf } from 'rimraf'
 import { localStorageFsDirectories } from './types'
 
-function absolutePathOf({
+function absoluteDirPathOf({
   path,
   localStorageFsDirectories,
 }: {
   path: path
   localStorageFsDirectories: localStorageFsDirectories
 }) {
-  const absolute_path = [localStorageFsDirectories.storageDir, ...path].join(os_path_separator)
-  return absolute_path
+  const absolute_dir_path = [localStorageFsDirectories.storageDir, ...path].join(os_path_separator)
+  return absolute_dir_path
 }
 
 export async function createStoredAssetTempFileSymlink({
@@ -37,11 +37,16 @@ export async function createStoredAssetTempFileSymlink({
     expiresSeconds,
     fileName: storedAssetMeta.name,
   })
-  const storedAssetAbsolutePath = absolutePathOf({
-    path: storedAssetMeta.path,
-    localStorageFsDirectories,
-  })
 
+  const storedAssetAbsolutePath = join(
+    absoluteDirPathOf({
+      path: storedAssetMeta.path,
+      localStorageFsDirectories,
+    }),
+    storedAssetMeta.name,
+  )
+
+  // console.log({ tempPaths, tempId, storedAssetAbsolutePath })
   const targetStats = await stat(storedAssetAbsolutePath).catch(() => null)
   if (!targetStats) {
     return [false, { reason: 'notFoundInStorage' }]
@@ -94,8 +99,8 @@ export async function createDir({
   dirPath: dirPath
   localStorageFsDirectories: localStorageFsDirectories
 }) {
-  const absolutePath = absolutePathOf({ path: dirPath, localStorageFsDirectories })
-  return mkdir(absolutePath, { recursive: true }).then(
+  const absoluteDirPath = absoluteDirPathOf({ path: dirPath, localStorageFsDirectories })
+  return mkdir(absoluteDirPath, { recursive: true }).then(
     () => true,
     () => false,
   )
@@ -114,11 +119,11 @@ export async function useTempFile({
   if (!ensuredTemp) {
     return [false, { reason: 'tempNotFound' }]
   }
-  const useInAbsolutePath = absolutePathOf({ path, localStorageFsDirectories: localStorageFsDirectories })
-  await rimraf(useInAbsolutePath, { maxRetries: 2 }).catch(() => null)
-  await mkdir(useInAbsolutePath, { recursive: true })
+  const useInAbsoluteDirPath = absoluteDirPathOf({ path, localStorageFsDirectories: localStorageFsDirectories })
+  await rimraf(useInAbsoluteDirPath, { maxRetries: 2 }).catch(() => null)
+  await mkdir(useInAbsoluteDirPath, { recursive: true })
 
-  const mvError = await rename(ensuredTemp.paths.file, join(useInAbsolutePath, ensuredTemp.fileMeta.name)).then(
+  const mvError = await rename(ensuredTemp.paths.file, join(useInAbsoluteDirPath, ensuredTemp.fileMeta.name)).then(
     () => false as const,
     e => String(e),
   )
@@ -138,15 +143,15 @@ export async function deleteStorageFile({
   path: path
   localStorageFsDirectories: localStorageFsDirectories
 }): Promise<void> {
-  const absolutePath = absolutePathOf({ path, localStorageFsDirectories: localStorageFsDirectories })
+  const absoluteDirPath = absoluteDirPathOf({ path, localStorageFsDirectories: localStorageFsDirectories })
   //_and_clean_upper_empty_dirs
   //TODO: ensure this check is enough to avoid climbing up too much !
-  if (normalize(localStorageFsDirectories.storageDir).startsWith(normalize(absolutePath))) {
+  if (normalize(localStorageFsDirectories.storageDir).startsWith(normalize(absoluteDirPath))) {
     return
   }
-  await rimraf(absolutePath, { maxRetries: 2 }).catch(() => null)
+  await rimraf(absoluteDirPath, { maxRetries: 2 }).catch(() => null)
   const parent_dir_path = path.slice(0, path.length - 1)
-  const parentDirAbsolutePath = absolutePathOf({
+  const parentDirAbsolutePath = absoluteDirPathOf({
     path: parent_dir_path,
     localStorageFsDirectories: localStorageFsDirectories,
   })

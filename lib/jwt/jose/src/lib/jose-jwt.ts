@@ -8,6 +8,7 @@ import * as iso8601duration from 'iso8601-duration'
 import * as jose from 'jose'
 import { joseOpts } from './types'
 import assert from 'assert'
+import moment from 'moment'
 
 export async function getJoseKeys(opts: joseOpts) {
   if (opts.type !== 'PKCS8') {
@@ -127,10 +128,8 @@ function expirations(
       ? duration
       : iso8601duration.toSeconds(iso8601duration.parse(duration))
 
-  const toDate = new Date(new Date().getTime() + durationInSecs * 1000)
-  const toDateStr = date_time_string(toDate)
-
-  return [toDate.getTime() / 1000, toDateStr, toDate]
+ const toDate = moment().add(durationInSecs, 'seconds').toDate()
+ return [toDate.getTime() / 1000, toDate.toISOString(), toDate]
 }
 type JwtStdClaims = {
   audience?: string | string[]

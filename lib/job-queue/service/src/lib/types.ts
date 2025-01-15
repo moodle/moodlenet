@@ -29,9 +29,9 @@ export type jobStatus = 'enqueued' | 'inProgress' | 'aborted' | 'done'
 export type failedExecutionFollowup = d_u<
   {
     retry: {
-      onDate: date_time_string
+      fromDate: date_time_string
     }
-    abort: unknown
+    abort: { details?: unknown }
   },
   'action'
 >
@@ -41,9 +41,11 @@ export type executionOutcome = {
 } & d_u<
   {
     done: { outcome: unknown }
-    failed: d_u<
+    failed: {
+      followUp: failedExecutionFollowup
+    } & d_u<
       {
-        applicative: { details: unknown; followUp: failedExecutionFollowup }
+        applicative: { details: unknown }
         unhandledError: { error: unknown }
         timeout: { timeoutSecs: number }
       },

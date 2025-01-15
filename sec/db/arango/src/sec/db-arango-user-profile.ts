@@ -4,6 +4,8 @@ import { aql } from 'arangojs'
 import { dbStruct } from '../db-structure'
 import { save_id_to_key } from '../lib/key-id-mapping'
 import { getDraft, overUserProfileById } from './user-profile-db'
+import { assetProcessStatus } from '@moodle/module/user-profile'
+import { literal } from 'arangojs/aql'
 
 export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
   return (/* secondaryCtx */) => {
@@ -75,19 +77,25 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               dbStruct,
               userProfileIdSelect,
               apply: aql`
-                UPDATE userProfileDoc WITH {
-                                              info: MERGE(  UNSET(userProfileDoc.info, ${type}),
-                                                            {
-                                                              lastEditDate: ${lastEditDate},
-                                                              [${type}]: ${image}
-                                                            }
-                                                          )
+                UPDATE userProfileDoc  WITH {
+                                              info: MERGE(
+                                                          UNSET(userProfileDoc.info, ${type}),
+                                                          {
+                                                            lastEditDate: ${lastEditDate},
+                                                            [${type}]: ${image}
+                                                          })
                                             } IN ${dbStruct.appData.coll.userProfile}`,
             })
             const updateDone = !!updateResult
             return [updateDone, _void]
           },
-          async updateDraftResourceIngestionStatus({ eduResourceDraftId, resourceIngestionStatus, userProfileIdSelect }) {
+          async updateDraftResourceAssetProcessStatus({
+            eduResourceDraftId,
+            processStatus,
+            processType,
+            userProfileIdSelect,
+          }) {
+            const processType_propName: keyof assetProcessStatus = processType
             const updateResult = await overUserProfileById({
               dbStruct,
               userProfileIdSelect,
@@ -95,20 +103,23 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 FILTER ${eduResourceDraftId} IN userProfileDoc.myDrafts.eduResource[*].draftId
                 UPDATE userProfileDoc WITH {
                   myDrafts: {
-                    eduResource: (FOR draft IN userProfileDoc.myDrafts.eduResource
-                                          RETURN draft.draftId == ${eduResourceDraftId}
-                                                  ? MERGE( draft, {
-                                                                    data:  {
-                                                                      assetProcess: MERGE( UNSET(draft.data.assetProcess, 'resourceIngestionStatus'),{
-                                                                        resourceIngestionStatus: ${resourceIngestionStatus},
-                                                                      }),
-                                                                    },
-                                                                  })
-                                                  : draft)
+                    eduResource: (  FOR draft IN userProfileDoc.myDrafts.eduResource
+                                      RETURN draft.draftId == ${eduResourceDraftId}
+                                        ? MERGE(
+                                                draft,
+                                                {
+                                                  assetProcessStatus: MERGE(
+                                                                        UNSET(draft.assetProcessStatus, ${processType_propName}),
+                                                                        {
+                                                                          ${literal(processType_propName)}: ${processStatus},
+                                                                        })
+                                                })
+                                        : draft )
                   }
                 } IN ${dbStruct.appData.coll.userProfile}
               `,
             })
+
             const updateDone = !!updateResult
             return [updateDone, _void]
           },
@@ -122,12 +133,14 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                   myDrafts: {
                     [${draftType}]: (FOR draft IN userProfileDoc.myDrafts[${draftType}]
                                       RETURN draft.draftId == ${draftId}
-                                              ? MERGE(draft,{
-                                                              lastEditDate: ${lastEditDate},
-                                                              data: MERGE( UNSET(draft.data, 'image'), {
-                                                                image: ${image}
-                                                              }),
-                                                            })
+                                              ? MERGE(
+                                                      draft,
+                                                      {
+                                                        lastEditDate: ${lastEditDate},
+                                                        data: MERGE( UNSET(draft.data, 'image'), {
+                                                          image: ${image}
+                                                        }),
+                                                      })
                                               : draft)
                   }
                 } IN ${dbStruct.appData.coll.userProfile}
@@ -146,10 +159,12 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                   myDrafts: {
                     [${meta.type}]: (FOR draft IN userProfileDoc.myDrafts[${meta.type}]
                                       RETURN draft.draftId == ${draftId}
-                                              ? MERGE_RECURSIVE(draft, {
-                                                                lastEditDate: ${lastEditDate},
-                                                                data: ${meta.data}
-                                                              })
+                                              ? MERGE_RECURSIVE(
+                                                                draft,
+                                                                {
+                                                                  lastEditDate: ${lastEditDate},
+                                                                  data: ${meta.data}
+                                                                })
                                               : draft)
                   }
                 } IN ${dbStruct.appData.coll.userProfile}

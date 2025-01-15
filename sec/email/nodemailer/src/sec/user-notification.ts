@@ -6,7 +6,7 @@ import {
   signupEmailConfirmationEmail,
 } from '@moodle/lib-email-templates/user-account'
 import { EmailLayoutContentProps, layoutEmail } from '@moodle/lib-email-templates/org'
-import { _any, _void, email_address, ok_ko } from '@moodle/lib-types'
+import { _void, email_address, ok_ko } from '@moodle/lib-types'
 import { OrgInfo } from '@moodle/module/org'
 import { userMessage } from '@moodle/module/user-notification'
 import { send } from '../lib'

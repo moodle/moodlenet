@@ -12,7 +12,7 @@ export const defaultIngestor: ingestor = async ({ env, object }) => {
     body: object.readable,
     mimeType: object.mimetype,
   })
-  if (tikaIngestion.outcome === 'failed') {
+  if (tikaIngestion.outcome === 'undoable') {
     return tikaIngestion
   }
   return {
@@ -20,6 +20,6 @@ export const defaultIngestor: ingestor = async ({ env, object }) => {
     title: object.name,
     content: tikaIngestion.content,
     image: null,
-    ingestionKind: `${object.mimetype} file type`,
+    ingestionImpl: tikaIngestion.ingestionImpl,
   }
 }

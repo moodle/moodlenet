@@ -9,7 +9,7 @@ export function get_default_resource_ingestion_secondary_factory(env: defaultRes
   return secondaryContext => {
     return {
       resourceIngestion: {
-        service: {
+        write: {
           async ingestResource({ asset /* , ingestionContext */ }) {
             try {
               const object: ingestionObject =
@@ -41,13 +41,27 @@ export function get_default_resource_ingestion_secondary_factory(env: defaultRes
                       })(asset)
                     : unreachable_never(asset)
 
-              return object.type === 'readable'
+              const eduResourceIngestionOutcome = await (object.type === 'readable'
                 ? ingestReadable({ object, env })
                 : object.type === 'url'
                   ? ingestExternalAsset({ object, env })
-                  : unreachable_never(object)
+                  : unreachable_never(object))
+
+              return {
+                eduResourceIngestionOutcome: {
+                  ...eduResourceIngestionOutcome,
+                  ingestionImpl: `default_resource_ingestion_secondary: ${eduResourceIngestionOutcome.ingestionImpl}`,
+                },
+              }
             } catch (error) {
-              return { outcome: 'failed', reason: { error } }
+              return {
+                eduResourceIngestionOutcome: {
+                  outcome: 'undoable',
+                  ingestionImpl: 'default_resource_ingestion_secondary',
+                  details: { error },
+                  reason: String(error),
+                },
+              }
             }
           },
         },

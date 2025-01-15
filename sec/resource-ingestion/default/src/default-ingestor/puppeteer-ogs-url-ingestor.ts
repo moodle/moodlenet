@@ -1,15 +1,16 @@
 import { ok_ko, url_string, url_string_schema } from '@moodle/lib-types'
-import { ingestionOutcome } from '@moodle/module/resource-ingestion'
+import { eduResourceIngestionOutcome as ingestionOutcome } from '@moodle/module/resource-ingestion'
 import { asset, externalAsset } from '@moodle/module/storage'
 import ogs from 'open-graph-scraper'
 import puppeteer from 'puppeteer'
-import { tikaIngestion__gets__only__content } from './tika-ingestor__gets__only__content'
 import * as timers from 'timers/promises'
+import { tikaIngestion__gets__only__content } from './tika-ingestor__gets__only__content'
 // import { urlToLocalAsset } from '../util'
 
 // import _ogs from 'open-graph-scraper'
 // const ogs = _ogs as any as typeof _ogs.default
 
+const ingestionImpl = 'puppeteerOgsUrlIngestor'
 export async function puppeteerOgsUrlIngestor({
   url,
   tikaServerUrl,
@@ -22,7 +23,7 @@ export async function puppeteerOgsUrlIngestor({
     openGraphScrape({ url }),
   ])
   if (!(puppeteerDone || ogsDone)) {
-    return { outcome: 'failed', reason: { puppeteerResponse, ogsResponse } }
+    return { outcome: 'undoable', details: { puppeteerResponse, ogsResponse }, ingestionImpl, reason: 'could not get any' }
   }
   const content =
     (ogsDone && ogsResponse.content) ||
@@ -33,7 +34,7 @@ export async function puppeteerOgsUrlIngestor({
   const externalAssetImage = (ogsDone && ogsResponse.image) || null
 
   const image: asset | null = externalAssetImage ? { type: 'external', ...externalAssetImage } : null
-  return { outcome: 'succeed', title, content, image, ingestionKind: 'puppeteer+open-graph-scraper+tika' }
+  return { outcome: 'succeed', title, content, image, ingestionImpl: 'puppeteer+open-graph-scraper+tika' }
 }
 
 async function openGraphScrape({ url }: { url: url_string }): Promise<

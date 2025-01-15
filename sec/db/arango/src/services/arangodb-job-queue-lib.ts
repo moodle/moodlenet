@@ -132,7 +132,7 @@ export function updateJob<jobData>({ jobCollection }: { jobCollection: jobCollec
       executionOutcome.result === 'failed' &&
       executionOutcome.reason === 'applicative' &&
       executionOutcome.followUp.action === 'retry'
-        ? executionOutcome.followUp.onDate
+        ? executionOutcome.followUp.fromDate
         : job.retryOnDate
 
     const updatedJob: job<jobData> = {

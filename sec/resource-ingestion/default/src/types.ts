@@ -1,5 +1,5 @@
 import { d_u, d_u__d, mimetype, url_string } from '@moodle/lib-types'
-import { ingestionOutcome } from '@moodle/module/resource-ingestion'
+import { eduResourceIngestionOutcome } from '@moodle/module/resource-ingestion'
 import { Readable } from 'stream'
 
 export type defaultResourceIngestorEnv = {
@@ -17,4 +17,4 @@ export type ingestionObject = d_u<
 export type ingestor<type extends ingestionObject['type'] = ingestionObject['type']> = (fileIngestorArgs: {
   object: d_u__d<ingestionObject, 'type', type>
   env: defaultResourceIngestorEnv
-}) => Promise<ingestionOutcome>
+}) => Promise<eduResourceIngestionOutcome>

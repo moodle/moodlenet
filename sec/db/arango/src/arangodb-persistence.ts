@@ -12,7 +12,6 @@ import {
 import { env_secondary_factory } from './sec/env-arango-db'
 import { edu_secondary_factory } from './sec/db-arango-edu'
 import { content_secondary_factory } from './sec/db-arango-content'
-import { resource_ingestion_secondary_factory } from './sec/db-arango-resource-ingestion'
 export type { ArangoDbSecEnv } from './db-structure'
 
 export function get_arango_persistence_factory(env: ArangoDbSecEnv) {
@@ -28,7 +27,6 @@ export function get_arango_persistence_factory(env: ArangoDbSecEnv) {
       storage_secondary_factory({ dbStruct })(secondaryContext),
       edu_secondary_factory({ dbStruct })(secondaryContext),
       content_secondary_factory({ dbStruct })(secondaryContext),
-      resource_ingestion_secondary_factory({ dbStruct })(secondaryContext),
     ])
     return secondaryAdapter
   }

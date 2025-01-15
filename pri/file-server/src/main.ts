@@ -154,7 +154,7 @@ const router = express
               size: file.size,
               uploaded: {
                 primarySessionId: req.moodlePrimarySession.id,
-                date: date_time_string('now'),
+                date: new Date().toISOString(),
                 original: {
                   name: file.originalname,
                 },
@@ -210,7 +210,7 @@ function getPrimarySession(req: express.Request) {
   const ua = userAgent({ headers: headers })
   assert(xHost, 'x-host not found in headers')
   const userSession: primarySession = {
-    id: generateUlid({ onDate: date_time_string('now') }),
+    id: generateUlid({ onDate: new Date().toISOString() }),
     domain: xHost,
     token: getAuthTokenCookie(req).sessionToken,
     app: {

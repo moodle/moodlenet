@@ -1,25 +1,16 @@
-import { d_u, date_time_string } from '@moodle/lib-types'
-import { eduResourceData } from '../../edu/types/edu-content'
+import { d_u } from '@moodle/lib-types'
+import { eduResourceMeta } from '../../edu/types/edu-content'
+import { maybeAsset } from '../../storage'
 
-export type aiEduResourceDataGenerationStatus = aiDataGenerationStatus<eduResourceData>
-
-type aiDataGenerationStatus<dataType> = d_u<
+export type eduResourceAiGenerationSucceed = { eduResourceData: { meta: eduResourceMeta; image: maybeAsset } }
+export type eduResourceAiGenerationUndoable = { reason: string }
+export type eduResourceAiGenerationOutcome = {
+  aiImpl: string
+  details?: unknown
+} & d_u<
   {
-    enqueued: aiGenerationEnqueued
-    ongoing: aiGenerationStarted
-    aborted: aiGenerationEnded
-    generated: aiGenerationEnded & { data: dataType }
-    error: aiGenerationEnded & { message: string }
+    undoable: eduResourceAiGenerationUndoable
+    succeed: eduResourceAiGenerationSucceed
   },
-  'status'
+  'outcome'
 >
-type aiGenerationEnqueued = {
-  enqueueDate: date_time_string
-  attempt: number
-}
-type aiGenerationStarted = aiGenerationEnqueued & {
-  startDate: date_time_string
-}
-type aiGenerationEnded = aiGenerationStarted & {
-  endDate: date_time_string
-}

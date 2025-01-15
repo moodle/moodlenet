@@ -18,7 +18,7 @@ import {
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 import { provideQueueService, queueService } from '@moodle/lib-job-queue-service'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
-import { _any, date_time_string, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
+import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { edu_core } from '@moodle/module/edu/core'
 import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
 import { moodlenet_core } from '@moodle/module/moodlenet/core'
@@ -41,9 +41,16 @@ import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
 import { executionOutcome } from 'lib/job-queue/service/src/lib/types'
+import moment from 'moment'
 import * as path from 'path'
 import { coerce, literal, object, union } from 'zod'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
+import { appDeployments } from 'domain/src/modules/env'
+import {
+  get_default_resource_ingestion_secondary_factory,
+  provideDefaultResourceIngestorSecEnv,
+} from '@moodle/sec-resource-ingestion-default'
+import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
 //   provideDefaultResourceIngestorSecEnv,
@@ -97,20 +104,20 @@ export async function configurator({ domainName }: { domainName: string }) {
       console.info(`configuring domain [${domainName}] env:`, { MOODLE_HOME_DIR, ...env })
       const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `private.key`), 'utf8')
       const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `public.key`), 'utf8')
-      const _process_env = process.env as _any
+      const domain_process_env = process.env as _any
 
       const arango_db_env: ArangoDbSecEnv = provideArangoDbSecEnv({
         env: {
-          ..._process_env,
+          ...domain_process_env,
           MOODLE_ARANGODB_ISDEV: `${isDev}`,
           MOODLE_ARANGODB_DOMAIN_NAME: domainName,
         },
       })
       const crypto_env: cryptoDefaultEnv = provideCryptoDefaultEnv({
-        env: { ..._process_env, MOODLE_CRYPTO_PRIVATE_KEY, MOODLE_CRYPTO_PUBLIC_KEY },
+        env: { ...domain_process_env, MOODLE_CRYPTO_PRIVATE_KEY, MOODLE_CRYPTO_PUBLIC_KEY },
       })
       const nodemailer_env: NodemailerSecEnv = provideNodemailerSecEnv({
-        env: _process_env,
+        env: domain_process_env,
       })
       const sys_admin_info: sys_admin_info = {
         email: env.MOODLE_SYS_ADMIN_EMAIL,
@@ -119,7 +126,12 @@ export async function configurator({ domainName }: { domainName: string }) {
       const file_system_storage_sec_env: StorageDefaultSecEnv = {
         localFsStorageDirectory,
       }
-      // const default_resource_ingestor_env = provideDefaultResourceIngestorSecEnv({ env: _process_env })
+
+      const appDeployments: appDeployments = {
+        moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
+        filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
+      }
+      const default_resource_ingestor_env = provideDefaultResourceIngestorSecEnv({ env: domain_process_env })
       const arango_persistence = get_arango_persistence_factory(arango_db_env)
       const secondaryProviders: secondaryProvider[] = [
         // sec modules
@@ -132,10 +144,7 @@ export async function configurator({ domainName }: { domainName: string }) {
             env: {
               query: {
                 async deployments() {
-                  return {
-                    moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
-                    filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
-                  }
+                  return appDeployments
                 },
                 async getSysAdminInfo() {
                   return sys_admin_info
@@ -145,7 +154,7 @@ export async function configurator({ domainName }: { domainName: string }) {
           }
           return secondaryAdapter
         },
-        // get_default_resource_ingestion_secondary_factory(default_resource_ingestor_env),
+        get_default_resource_ingestion_secondary_factory(default_resource_ingestor_env),
       ]
 
       const moduleCores: moduleCore<_any>[] = [
@@ -157,7 +166,7 @@ export async function configurator({ domainName }: { domainName: string }) {
         moodlenet_react_app_core,
         user_profile_core,
         storage_core,
-        // resource_ingestion_core,
+        resource_ingestion_core,
         {
           moduleName: 'env',
           service() {
@@ -175,16 +184,13 @@ export async function configurator({ domainName }: { domainName: string }) {
               async application() {
                 return {
                   async deployments() {
-                    return {
-                      moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
-                      filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
-                    }
+                    return appDeployments
                   },
                 }
               },
             }
           },
-        },
+        } satisfies moduleCore<'env'>,
       ]
       const configuration: configuration = {
         moduleCores,
@@ -193,7 +199,7 @@ export async function configurator({ domainName }: { domainName: string }) {
         domain: domainName,
         domainFsDirectories,
       }
-      const pendingPromises: Promise<unknown>[] = []
+      const pendingAccessResultPromises: Promise<unknown>[] = []
 
       type jobData = { domainAccess: domainAccess }
 
@@ -201,48 +207,63 @@ export async function configurator({ domainName }: { domainName: string }) {
       const _queue_moodleDomain_proxy = createMoodleDomainProxy({ ctrl: async () => null })
       const getJobName = (path: string[]) => path.join('.')
 
-      const queueServices = [_queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser].reduce<
-        map<queueService<jobData>>
-      >((_, proxyFn) => {
+      const queueServices = [
+        _queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser,
+        _queue_moodleDomain_proxy.secondary.resourceIngestion.write.ingestResource,
+      ].reduce<map<queueService<jobData>>>((_, proxyFn) => {
         const path = getProxyFnPath(proxyFn)
         const jobName = getJobName(path)
+        // const jobIs = {
+        //   sendMessageToUser: proxyFn === _queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser,
+        //   ingestResource: proxyFn === _queue_moodleDomain_proxy.secondary.resourceIngestion.write.ingestResource,
+        // }
+
+        const queueService = provideQueueService<jobData>({
+          workers: arangoQueueServiceWorkers,
+          async executeJob({
+            job: {
+              executionOutcomes,
+              jobData: { domainAccess },
+            },
+          }) {
+            return loopbackDispatcher({ domainAccess: { ...domainAccess, enqueue: false } })
+              .then<executionOutcome>(outcome => ({
+                result: 'done',
+                outcome,
+                date: new Date().toISOString(),
+              }))
+              .catch<executionOutcome>(error => ({
+                result: 'failed',
+                reason: 'unhandledError',
+                date: new Date().toISOString(),
+                error,
+                followUp:
+                  executionOutcomes.length > 2
+                    ? {
+                        action: 'abort',
+                        details: 'too many retries',
+                      }
+                    : {
+                        action: 'retry',
+                        fromDate: moment().add(5, 'seconds').toISOString(),
+                      },
+              }))
+          },
+          jobConfig: {
+            jobName,
+            parallelism: 1,
+            progressTimeoutSecs: 30,
+            emptyQueueRescheduleSecs: 30,
+          },
+        })
+
+        queueService.serviceEmitter.on('error', (context, error) => {
+          console.error(`queue service error [${jobName}]`, { context, error })
+        })
 
         return {
           ..._,
-          [jobName]: provideQueueService<jobData>({
-            workers: arangoQueueServiceWorkers,
-            async executeJob({ job: { executionOutcomes, jobData } }) {
-              if (executionOutcomes.length > 2) {
-                return {
-                  result: 'failed',
-                  reason: 'applicative',
-                  date: date_time_string('now'),
-                  details: 'Too many retries',
-                  followUp: {
-                    action: 'abort',
-                  },
-                }
-              }
-              return loopbackDispatcher({ domainAccess: { ...jobData.domainAccess, enqueue: false } })
-                .then<executionOutcome>(outcome => ({
-                  result: 'done',
-                  outcome,
-                  date: date_time_string('now'),
-                }))
-                .catch<executionOutcome>(error => ({
-                  result: 'failed',
-                  reason: 'unhandledError',
-                  date: date_time_string('now'),
-                  error,
-                }))
-            },
-            jobConfig: {
-              jobName,
-              parallelism: 3,
-              progressTimeoutSecs: 30,
-              emptyQueueRescheduleSecs: 30,
-            },
-          }),
+          [jobName]: queueService,
         }
       }, {})
 
@@ -253,12 +274,14 @@ export async function configurator({ domainName }: { domainName: string }) {
           assert(jobId, 'domainAccess must have a callerContext for enqueuing a message')
           const queueService = queueServices[jobName]
           assert(queueService, `queueService for jobName [${jobName}] not found`)
-          await queueService.enqueue({ jobId, enqueueDate: date_time_string('now'), jobData: { domainAccess } })
+          await queueService.enqueue({ jobId, enqueueDate: new Date().toISOString(), jobData: { domainAccess } })
           return
         }
         const accessResultPromise = accessDomain({ domainAccess, configuration, loopbackDispatcher })
-        pendingPromises.push(accessResultPromise)
-        accessResultPromise.finally(() => pendingPromises.splice(pendingPromises.indexOf(accessResultPromise), 1))
+        pendingAccessResultPromises.push(accessResultPromise)
+        accessResultPromise.finally(() =>
+          pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(accessResultPromise), 1),
+        )
         return accessResultPromise
         // return shortCircuitLoopbackDispatcher({ configuration, domainAccess })
       }
@@ -280,26 +303,16 @@ export async function configurator({ domainName }: { domainName: string }) {
                   loopbackDispatcher,
                 }),
               )
-              .then(() =>
-                Promise.all(
-                  Object.entries(queueServices).map(([jobName, { startProcesses }]) =>
-                    startProcesses({
-                      onError: context => error => {
-                        console.error(`queue service error [${jobName}]`, { context, error })
-                      },
-                    }),
-                  ),
-                ),
-              )
+              .then(() => Promise.all(Object.values(queueServices).map(({ startProcesses }) => startProcesses())))
           : Promise.resolve()
       background_process_promise.then(() => {
         resolveConfigurationPromise({ configuration, loopbackDispatcher, stopAndDrain })
       })
       async function stopAndDrain() {
-        console.log(`draining [#${pendingPromises.length}] pending replies ...`)
+        console.log(`draining [#${pendingAccessResultPromises.length}] pending replies ...`)
         await Promise.allSettled([
           ...Object.values(queueServices).map(({ stopAndDrain }) => stopAndDrain()),
-          ...pendingPromises,
+          ...pendingAccessResultPromises,
         ])
         console.log('drained pending replies')
       }

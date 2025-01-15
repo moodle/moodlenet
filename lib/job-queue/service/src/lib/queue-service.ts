@@ -1,5 +1,8 @@
-import { d_u, date_time_string, date_time_string_schema } from '@moodle/lib-types'
+import { d_u, date_time_string } from '@moodle/lib-types'
+import EventEmitter from 'events'
 import moment from 'moment'
+import timers from 'timers/promises'
+import TypedEmitter from 'typed-emitter'
 import {
   consumptionResult,
   executeJob,
@@ -15,6 +18,19 @@ export type queueServiceConfig<jobData> = {
   executeJob: executeJob<jobData>
   jobConfig: jobConfig
 }
+export type serviceContext<jobData> = d_u<
+  {
+    enqueueJob: unknown
+    updateJob: { consumptionResult: consumptionResult<jobData> }
+    reEnqueueTimedoutInProgressJobs: unknown
+    fetchAndEngageSomeEnqueuedJobs: unknown
+  },
+  'type'
+>
+export type serviceEmitter<jobData> = TypedEmitter<{
+  error: (context: serviceContext<jobData>, error: unknown) => void
+  message: (body: string, from: string) => void
+}>
 
 // REMOVE_ME============> export function provideQueueServiceCluster<jobData>() {
 //   type job_name = string
@@ -54,9 +70,11 @@ export function provideQueueService<jobData>({
   const pendingConsumptionObjects: pendingConsumptionObject<jobData>[] = []
   let consume_scheduler: NodeJS.Timeout | undefined
   let restoreTimedouts_scheduler: NodeJS.Timeout | undefined
+  const serviceEmitter = new EventEmitter() as serviceEmitter<jobData>
 
   return {
     pendingConsumptionObjects,
+    serviceEmitter,
     stopAndDrain,
     startProcesses,
     enqueue,
@@ -66,35 +84,30 @@ export function provideQueueService<jobData>({
     return drainPending()
   }
 
-  type errorContext = d_u<
-    {
-      updateJob: { consumptionResult: consumptionResult<jobData> }
-      reEnqueueTimedoutInProgressJobs: unknown
-      fetchAndEngageSomeEnqueuedJobs: unknown
-    },
-    'type'
-  >
-  type withErrorHandler = {
-    onError: (errorContext: errorContext) => (error: unknown) => void
+  function emitError(errorContext: serviceContext<jobData>) {
+    return (error: unknown) => serviceEmitter.emit('error', errorContext, error)
   }
 
-  function startProcesses(withErrorHandler: withErrorHandler) {
-    consumeProcess(withErrorHandler)
+  function startProcesses() {
+    console.log(`starting processes for ${jobName}`)
+    consumeProcess()
     restoreTimedouts_scheduler = setTimeout(() => {
       const timeoutOutcome: executionOutcome = {
-        date: date_time_string('now'),
+        date: new Date().toISOString(),
         result: 'failed',
         reason: 'timeout',
         timeoutSecs: progressTimeoutSecs,
+        followUp: {
+          action: 'retry',
+          fromDate: new Date().toISOString(),
+        },
       }
 
-      const lastEngagedDateBefore = date_time_string_schema.parse(
-        moment(date_time_string('now')).subtract(progressTimeoutSecs, 'seconds').toISOString(),
-      )
+      const lastEngagedDateBefore = moment().subtract(progressTimeoutSecs, 'seconds').toISOString()
 
       reEnqueueTimedoutInProgressJobs({ jobName, lastEngagedDateBefore, timeoutOutcome })
         .catch(
-          withErrorHandler.onError({
+          emitError({
             type: 'reEnqueueTimedoutInProgressJobs',
           }),
         )
@@ -120,9 +133,9 @@ export function provideQueueService<jobData>({
       jobData,
     }
 
-    return enqueueJob({
-      job,
-    })
+    const enqueuePromise = enqueueJob({ job })
+    enqueuePromise.catch(emitError({ type: 'enqueueJob' }))
+    return enqueuePromise
   }
 
   function drainPending() {
@@ -133,7 +146,7 @@ export function provideQueueService<jobData>({
     ])
   }
 
-  function consumeProcess(withErrorHandler: withErrorHandler) {
+  function consumeProcess() {
     const amount = parallelism - pendingConsumptionObjects.length
     // console.log('1 consume', {
     //   amount,
@@ -144,7 +157,7 @@ export function provideQueueService<jobData>({
       return
     }
 
-    const engageDate = date_time_string('now')
+    const engageDate = new Date().toISOString()
     fetchAndEngageSomeEnqueuedJobs({
       jobName,
       amount,
@@ -154,7 +167,7 @@ export function provideQueueService<jobData>({
         // console.log('2 consume', { jobs: jobs.length })
         if (jobs.length === 0) {
           clearTimeout(consume_scheduler)
-          consume_scheduler = setTimeout(() => consumeProcess(withErrorHandler), emptyQueueRescheduleSecs * 1000)
+          consume_scheduler = setTimeout(() => consumeProcess(), emptyQueueRescheduleSecs * 1000)
           return
         }
         jobs.map(job => {
@@ -170,7 +183,7 @@ export function provideQueueService<jobData>({
 
           return pendingConsumptionResultPromise.then(consumptionResult => {
             updateJob(consumptionResult).catch(
-              withErrorHandler.onError({
+              emitError({
                 type: 'updateJob',
                 consumptionResult,
               }),
@@ -178,37 +191,36 @@ export function provideQueueService<jobData>({
             const pendingConsumptionIndex = pendingConsumptionObjects.indexOf(pendingConsumptionObject)
             // console.log('2.5 consume awaitingBatch finally', { pendingConsumptionIndex })
             pendingConsumptionObjects.splice(pendingConsumptionIndex, 1)
-            consumeProcess(withErrorHandler)
+            consumeProcess()
             return consumptionResult
           })
         })
       })
-      .catch(withErrorHandler.onError({ type: 'fetchAndEngageSomeEnqueuedJobs' }))
+      .catch(emitError({ type: 'fetchAndEngageSomeEnqueuedJobs' }))
   }
 
   async function execute({ job }: { job: job<jobData> }) {
     const executionOutcome = await Promise.race([
-      executeJob({ job }).catch<executionOutcome>(
-        error =>
-          ({
-            date: date_time_string('now'),
-            result: 'failed',
-            reason: 'unhandledError',
-            error,
-          }) satisfies executionOutcome,
-      ),
-      new Promise<executionOutcome>((_resolve, reject) =>
-        setTimeout(
-          () =>
-            reject({
-              result: 'failed',
-              reason: 'timeout',
-              timeoutSecs: progressTimeoutSecs,
-              date: date_time_string('now'),
-            } satisfies executionOutcome),
-          progressTimeoutSecs * 1000,
-        ),
-      ),
+      executeJob({ job }).catch<executionOutcome>(error => ({
+        date: new Date().toISOString(),
+        result: 'failed',
+        reason: 'unhandledError',
+        error,
+        followUp: {
+          action: 'retry',
+          fromDate: new Date().toISOString(),
+        },
+      })),
+      timers.setTimeout(progressTimeoutSecs * 1000).then<executionOutcome>(() => ({
+        result: 'failed',
+        reason: 'timeout',
+        timeoutSecs: progressTimeoutSecs,
+        date: new Date().toISOString(),
+        followUp: {
+          action: 'retry',
+          fromDate: new Date().toISOString(),
+        },
+      })),
     ])
     const consumptionResult: consumptionResult<jobData> = { job, executionOutcome }
 

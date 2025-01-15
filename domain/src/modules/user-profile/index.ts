@@ -10,7 +10,6 @@ import {
   eduResourceMeta,
   eduResourceMetaForm,
 } from '../edu'
-import { eduResourceIngestionStatus } from '../resource-ingestion'
 import { adoptAssetForm, adoptAssetResult } from '../storage'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {
@@ -20,6 +19,7 @@ import {
   eduCollectionDraftId,
   eduResourceDraft,
   eduResourceDraftId,
+  processStatus,
   profileImageType,
   profileInfo,
   profileInfoMeta,
@@ -28,6 +28,8 @@ import {
   userProfileId,
   userProfileRecord,
 } from './types'
+import { eduResourceIngestionOutcome } from '../resource-ingestion'
+import { eduResourceAiGenerationOutcome } from '../resource-metadata-generation'
 export * from './types'
 
 export type userProfileIdSelect = d_u<
@@ -37,15 +39,7 @@ export type userProfileIdSelect = d_u<
 
 export default interface UserProfileDomain {
   event: { userProfile: unknown }
-  service: {
-    userProfile: {
-      // draftResourceIngestionOutcome(_: {
-      //   userProfileIdSelect: userProfileIdSelect
-      //   eduResourceDraftId: eduResourceDraftId
-      //   ingestionOutcome: ingestionOutcome
-      // }): Promise<void>
-    }
-  }
+  service: { userProfile: unknown }
   primary: {
     userProfile: {
       session: {
@@ -146,13 +140,8 @@ export default interface UserProfileDomain {
         >
       }
       write: {
-        setResourceIngestionStatus(_: {
-          userProfileIdSelect: userProfileIdSelect
-          eduResourceDraftId: eduResourceDraftId
-          resourceIngestionStatus: eduResourceIngestionStatus
-        }): Promise<void>
         useTempFileAsNewResourceDraftAsset(_: {
-          resourceDraftId: eduResourceDraftId
+          eduResourceDraftId: eduResourceDraftId
           userProfileId: userProfileId
           adoptAssetForm: d_u__d<adoptAssetForm, 'type', 'tempFile'>
         }): Promise<d_u__d<adoptAssetResult<'stored'>, 'status', 'done' | 'error'>>
@@ -166,11 +155,18 @@ export default interface UserProfileDomain {
             'type'
           >
         }): Promise<ok_ko<void>>
-        updateDraftResourceIngestionStatus(_: {
-          eduResourceDraftId: eduResourceDraftId
-          userProfileIdSelect: userProfileIdSelect
-          resourceIngestionStatus: eduResourceIngestionStatus
-        }): Promise<ok_ko<void>>
+        updateDraftResourceAssetProcessStatus(
+          _: {
+            eduResourceDraftId: eduResourceDraftId
+            userProfileIdSelect: userProfileIdSelect
+          } & d_u<
+            {
+              ingestion: { processStatus: processStatus<eduResourceIngestionOutcome> }
+              aiGeneration: { processStatus: processStatus<eduResourceAiGenerationOutcome> }
+            },
+            'processType'
+          >,
+        ): Promise<ok_ko<void>>
         updateDraftMeta(_: {
           userProfileIdSelect: userProfileIdSelect
           draftId: draftId

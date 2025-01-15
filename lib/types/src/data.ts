@@ -2,6 +2,8 @@ import { ReactElement } from 'react'
 import _slugify from 'slugify'
 import { BRAND, number, object, string, ZodNullable, ZodSchema } from 'zod'
 import { d_u } from './map'
+import type {} from 'moment'
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type _any = any
 export type _any_k = keyof _any
@@ -67,10 +69,6 @@ export function __redacted_schema__<schema extends ZodSchema>(schema: schema) {
   }).brand<typeof __redacted__brand>()
 }
 
-export function date_time_string(date: Date | 'now'): date_time_string {
-  const _date = date === 'now' ? new Date() : date
-  return _date.toISOString() as date_time_string
-}
 export const single_line_string_schema = string().regex(/^[^\r\n]*$/gi)
 
 // // export const url_string_brand = Symbol('url_string_brand')
@@ -95,6 +93,18 @@ export const url_path_string_schema = string().trim().pipe(single_line_string_sc
 export declare const date_time_string_brand: unique symbol
 export type date_time_string = branded<string, typeof date_time_string_brand> // ISO 8601
 export const date_time_string_schema = string().trim().datetime().brand<typeof date_time_string_brand>()
+
+declare global {
+  interface Date {
+    toISOString(): date_time_string
+  }
+}
+
+declare module 'moment' {
+  interface Moment {
+    toISOString(keepOffset?: boolean): date_time_string
+  }
+}
 
 // // export const date_string_brand = Symbol('date_string_brand')
 // export type date_string = z.infer< typeof date_string_schema> // ISO 8601
