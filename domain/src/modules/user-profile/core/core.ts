@@ -246,6 +246,44 @@ export const user_profile_core: moduleCore<'userProfile'> = {
   },
   watch(ctx) {
     return {
+      enqueue: {
+        resourceIngestion: {
+          write: {
+            async ingestResource({ ingestionContext }) {
+              console.log('ingestResource queue watch', { ingestionContext })
+              if (ingestionContext.type !== 'eduResourceDraft') {
+                return
+              }
+              const [found, draft] = await ctx.mod.secondary.userProfile.query.getDraft({
+                draftId: ingestionContext.eduResourceDraftId,
+                draftType: 'eduResource',
+                userProfileIdSelect: { by: 'userProfileId', userProfileId: ingestionContext.userProfileId },
+              })
+              if (!found) {
+                return
+              }
+              if (draft.assetProcessStatus.ingestion.status !== 'neverEngaged') {
+                ctx.log(
+                  'warn',
+                  `ingestResource enqueued: userProfile's ${ingestionContext.userProfileId} resource draft ${ingestionContext.eduResourceDraftId} assetProcessStatus.ingestion not "neverEngaged" : [${draft.assetProcessStatus.ingestion.status}]`,
+                  draft,
+                )
+                return
+              }
+
+              await ctx.write.updateDraftResourceAssetProcessStatus({
+                userProfileIdSelect: { by: 'userProfileId', userProfileId: ingestionContext.userProfileId },
+                eduResourceDraftId: ingestionContext.eduResourceDraftId,
+                processType: 'ingestion',
+                processStatus: {
+                  status: 'awaiting',
+                  engageDate: new Date().toISOString(),
+                },
+              })
+            },
+          },
+        },
+      },
       secondary: {
         resourceIngestion: {
           write: {

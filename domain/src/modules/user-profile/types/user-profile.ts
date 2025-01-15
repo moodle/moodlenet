@@ -56,7 +56,7 @@ type draftEduCollectionEduResourceRef = d_u<
 export type processStatus<data> = d_u<
   {
     neverEngaged: unknown
-    awaiting: { engageDate: date_time_string; jobId: string }
+    awaiting: { engageDate: date_time_string }
     aborted: { engageDate: date_time_string; abortDate: date_time_string }
     finished: { engageDate: date_time_string; finishDate: date_time_string; outcome: data }
   },

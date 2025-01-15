@@ -338,13 +338,24 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     sync: syncProxy.secondary[moduleName].sync,
     log,
     async enqueue(endopint_fn_proxy, payload /*, asyncOptions = true*/) {
-      const endopint = getProxyFnPath(endopint_fn_proxy)
-      const fn = endopint.reduce(
+      const queueEndpoint = getProxyFnPath(endopint_fn_proxy)
+      const fn = queueEndpoint.reduce(
         (currProp, currPathSegment) => currProp?.[currPathSegment],
         getLoopbackProxy(true /*asyncOptions */) as _any,
       )
-      assert(typeof fn === 'function', `ctx.async: endpoint[${endopint.join('.')}] fn is not a function`)
+      assert(typeof fn === 'function', `ctx.async: endpoint[${queueEndpoint.join('.')}] fn is not a function`)
       await fn(payload)
+      const qwatchEndpoint = queueEndpoint.slice()
+      qwatchEndpoint.splice(0, 1, 'watch', 'enqueue')
+      // console.log({ queueEndpoint, qwatchEndpoint, payload })
+      loopbackDispatcher({
+        domainAccess: {
+          ...currentDomainAccess,
+          domain,
+          endpoint: qwatchEndpoint,
+          payload,
+        },
+      })
     },
   }
   return accessContext

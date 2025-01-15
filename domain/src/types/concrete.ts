@@ -110,6 +110,7 @@ export type eventListener = deep_partial<moodleEvent>
 export type watcher = deep_partial<{
   secondary: layerWatcher<'secondary'>
   primary: layerWatcher<'primary'>
+  enqueue: layerQWatcher<'secondary'>
 }>
 
 //REVIEW: try to free it from rigid layer/channel/endpoint structure (?)
@@ -119,6 +120,17 @@ export type layerWatcher<layer extends 'secondary' | 'primary'> = {
       [endpoint in keyof MoodleDomain[layer][layer_mod][channel]]: MoodleDomain[layer][layer_mod][channel][endpoint] extends infer endpoint_fn
         ? endpoint_fn extends any_function
           ? ([outcome, payload]: [Awaited<ReturnType<endpoint_fn>>, Parameters<endpoint_fn>[0]]) => Promise<void>
+          : never
+        : never
+    }
+  }
+}
+export type layerQWatcher<layer extends 'secondary'> = {
+  [layer_mod in keyof MoodleDomain[layer]]: {
+    [channel in keyof MoodleDomain[layer][layer_mod]]: {
+      [endpoint in keyof MoodleDomain[layer][layer_mod][channel]]: MoodleDomain[layer][layer_mod][channel][endpoint] extends infer endpoint_fn
+        ? endpoint_fn extends any_function
+          ? (payload: Parameters<endpoint_fn>[0]) => Promise<void>
           : never
         : never
     }
