@@ -207,6 +207,29 @@ export async function configurator({ domainName }: { domainName: string }) {
       const _queue_moodleDomain_proxy = createMoodleDomainProxy({ ctrl: async () => null })
       const getJobName = (path: string[]) => path.join('.')
 
+      const shortcircuitLoopbackDispatcher: binderDispatcher = async ({ domainAccess }) => {
+        if (domainAccess.enqueue) {
+          const jobName = getJobName(domainAccess.endpoint)
+          const jobId = domainAccess.callerContext?.ctxId
+          assert(jobId, 'domainAccess must have a callerContext for enqueuing a message')
+          const queueService = queueServices[jobName]
+          assert(queueService, `queueService for jobName [${jobName}] not found`)
+          await queueService.enqueue({ jobId, enqueueDate: new Date().toISOString(), jobData: { domainAccess } })
+          return
+        }
+        const accessResultPromise = accessDomain({
+          domainAccess,
+          configuration,
+          loopbackDispatcher: shortcircuitLoopbackDispatcher,
+        })
+        pendingAccessResultPromises.push(accessResultPromise)
+        accessResultPromise.finally(() =>
+          pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(accessResultPromise), 1),
+        )
+        return accessResultPromise
+        // return shortCircuitLoopbackDispatcher({ configuration, domainAccess })
+      }
+
       const queueServices = [
         _queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser,
         _queue_moodleDomain_proxy.secondary.resourceIngestion.write.ingestResource,
@@ -226,7 +249,7 @@ export async function configurator({ domainName }: { domainName: string }) {
               jobData: { domainAccess },
             },
           }) {
-            return loopbackDispatcher({ domainAccess: { ...domainAccess, enqueue: false } })
+            return shortcircuitLoopbackDispatcher({ domainAccess: { ...domainAccess, enqueue: false } })
               .then<executionOutcome>(outcome => ({
                 result: 'done',
                 outcome,
@@ -241,7 +264,7 @@ export async function configurator({ domainName }: { domainName: string }) {
                   executionOutcomes.length > 2
                     ? {
                         action: 'abort',
-                        details: 'too many retries',
+                        details: 'Too many retries',
                       }
                     : {
                         action: 'retry',
@@ -267,25 +290,6 @@ export async function configurator({ domainName }: { domainName: string }) {
         }
       }, {})
 
-      const loopbackDispatcher: binderDispatcher = async ({ domainAccess }) => {
-        if (domainAccess.enqueue) {
-          const jobName = getJobName(domainAccess.endpoint)
-          const jobId = domainAccess.callerContext?.ctxId
-          assert(jobId, 'domainAccess must have a callerContext for enqueuing a message')
-          const queueService = queueServices[jobName]
-          assert(queueService, `queueService for jobName [${jobName}] not found`)
-          await queueService.enqueue({ jobId, enqueueDate: new Date().toISOString(), jobData: { domainAccess } })
-          return
-        }
-        const accessResultPromise = accessDomain({ domainAccess, configuration, loopbackDispatcher })
-        pendingAccessResultPromises.push(accessResultPromise)
-        accessResultPromise.finally(() =>
-          pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(accessResultPromise), 1),
-        )
-        return accessResultPromise
-        // return shortCircuitLoopbackDispatcher({ configuration, domainAccess })
-      }
-
       const background_process_promise =
         env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
           ? migrateArangoDB({
@@ -300,13 +304,13 @@ export async function configurator({ domainName }: { domainName: string }) {
               .then(() =>
                 startBackgroundProcesses({
                   configuration,
-                  loopbackDispatcher,
+                  loopbackDispatcher: shortcircuitLoopbackDispatcher,
                 }),
               )
               .then(() => Promise.all(Object.values(queueServices).map(({ startProcesses }) => startProcesses())))
           : Promise.resolve()
       background_process_promise.then(() => {
-        resolveConfigurationPromise({ configuration, loopbackDispatcher, stopAndDrain })
+        resolveConfigurationPromise({ configuration, loopbackDispatcher: shortcircuitLoopbackDispatcher, stopAndDrain })
       })
       async function stopAndDrain() {
         console.log(`draining [#${pendingAccessResultPromises.length}] pending replies ...`)

@@ -134,7 +134,7 @@ export function provideQueueService<jobData>({
     }
 
     const enqueuePromise = enqueueJob({ job })
-    enqueuePromise.catch(emitError({ type: 'enqueueJob' }))
+    enqueuePromise.then(() => consumeProcess()).catch(emitError({ type: 'enqueueJob' }))
     return enqueuePromise
   }
 

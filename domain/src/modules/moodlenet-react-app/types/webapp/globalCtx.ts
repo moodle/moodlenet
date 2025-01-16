@@ -2,7 +2,7 @@ import { AllSchemaConfigs } from '../../../../types'
 import { contentLanguageRecord, contentLicenseRecord } from '../../../content'
 import { eduBloomCognitiveRecord, eduIscedFieldRecord, eduIscedLevelRecord, eduResourceTypeRecord } from '../../../edu'
 import { DeploymentInfo } from '../../../env'
-import { pointSystem } from '../../../moodlenet'
+import { currentMoodlenetSessionData, pointSystem } from '../../../moodlenet'
 
 export type webappGlobals = {
   filestoreHttpDeployment: DeploymentInfo
@@ -10,6 +10,7 @@ export type webappGlobals = {
   pointSystem: pointSystem
   moodlenetCategories: moodlenetCategories
   serverTimeMs: number
+  currentMoodlenetSessionData: currentMoodlenetSessionData
 }
 
 export type moodlenetCategories = {

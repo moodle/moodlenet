@@ -386,40 +386,42 @@ export const userAccount_core: moduleCore<'userAccount'> = {
   },
   watch(ctx) {
     return {
-      secondary: {
-        userAccount: {
-          write: {
-            async setUserPassword([[done], { userAccountId }]) {
-              //FIXME: put quite all notification sends as reaction to some atomic event (just like in the case of password change here)
-              if (!done) {
-                return
-              }
-              await ctx.enqueue(ctx.mod.secondary.userNotification.service.sendMessageToUser, {
-                data: { module: 'userAccount', type: 'passwordChanged', toUserAccountId: userAccountId },
-              })
+      result: {
+        secondary: {
+          userAccount: {
+            write: {
+              async setUserPassword([[done], { userAccountId }]) {
+                //FIXME: put quite all notification sends as reaction to some atomic event (just like in the case of password change here)
+                if (!done) {
+                  return
+                }
+                await ctx.enqueue(ctx.mod.secondary.userNotification.service.sendMessageToUser, {
+                  data: { module: 'userAccount', type: 'passwordChanged', toUserAccountId: userAccountId },
+                })
+              },
             },
           },
-        },
-        userProfile: {
-          write: {
-            async updateProfileInfoMeta([
-              [done],
-              {
-                userProfileIdSelect,
-                profileInfoMeta: { displayName },
+          userProfile: {
+            write: {
+              async updateProfileInfoMeta([
+                [done],
+                {
+                  userProfileIdSelect,
+                  profileInfoMeta: { displayName },
+                },
+              ]) {
+                if (!done || typeof displayName !== 'string') {
+                  return
+                }
+                const [found, result] = await ctx.mod.secondary.userProfile.query.getUserProfile(userProfileIdSelect)
+                if (!found) {
+                  return
+                }
+                await ctx.sync.userDisplayname({
+                  displayName,
+                  userAccountId: result.userProfileRecord.userAccount.id,
+                })
               },
-            ]) {
-              if (!done || typeof displayName !== 'string') {
-                return
-              }
-              const [found, result] = await ctx.mod.secondary.userProfile.query.getUserProfile(userProfileIdSelect)
-              if (!found) {
-                return
-              }
-              await ctx.sync.userDisplayname({
-                displayName,
-                userAccountId: result.userProfileRecord.userAccount.id,
-              })
             },
           },
         },

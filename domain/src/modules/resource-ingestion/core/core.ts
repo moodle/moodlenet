@@ -18,22 +18,24 @@ export const resource_ingestion_core: moduleCore<'resourceIngestion'> = {
   service: () => null,
   // async startBackgroundProcess(ctx) {},
   watch: ctx => ({
-    secondary: {
-      userProfile: {
-        write: {
-          async useTempFileAsNewResourceDraftAsset([outcome, { eduResourceDraftId, userProfileId }]) {
-            if (outcome.status !== 'done') {
-              return
-            }
+    result: {
+      secondary: {
+        userProfile: {
+          write: {
+            async useTempFileAsNewResourceDraftAsset([outcome, { eduResourceDraftId, userProfileId }]) {
+              if (outcome.status !== 'done') {
+                return
+              }
 
-            await ctx.enqueue(ctx.write.ingestResource, {
-              asset: outcome.asset,
-              ingestionContext: {
-                type: 'eduResourceDraft',
-                userProfileId,
-                eduResourceDraftId,
-              },
-            })
+              await ctx.enqueue(ctx.write.ingestResource, {
+                asset: outcome.asset,
+                ingestionContext: {
+                  type: 'eduResourceDraft',
+                  userProfileId,
+                  eduResourceDraftId,
+                },
+              })
+            },
           },
         },
       },

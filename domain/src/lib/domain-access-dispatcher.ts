@@ -1,6 +1,6 @@
 import { domainFsDirectories } from '@moodle/lib-domain-fs'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { __redact__, _any, unreachable_never } from '@moodle/lib-types'
+import { __redact__, _any, d_u, unreachable_never } from '@moodle/lib-types'
 import assert from 'assert'
 import { merge } from 'lodash'
 import {
@@ -9,7 +9,6 @@ import {
   ctxTrack,
   domainAccess,
   domainLayer,
-  domainMsg,
   eventContext,
   Logger,
   loggerProvider,
@@ -85,7 +84,7 @@ export async function accessDomain({
   if (domainLayer === 'background') {
     throw TypeError(`won't handle background layer here`)
   }
-  const moduleName = domainAccess.endpoint[domainLayer === 'watch' ? 2 : 1] as moodleModuleName | undefined
+  const moduleName = domainAccess.endpoint[domainLayer === 'watch' ? 3 : 1] as moodleModuleName | undefined
   if (!(domainLayer && moduleName)) {
     throw TypeError(`endpoint layer and module is required`)
   }
@@ -102,7 +101,10 @@ export async function accessDomain({
     loggerProvider,
     loopbackDispatcher,
   })
-  const { log } = currentDomainAccessContext
+  // const { log } = currentDomainAccessContext
+  // domainAccess.endpoint[0] === 'watch' &&
+  //   domainAccess.endpoint.join(',').includes('useTempFileAsNewResourceDraftAsset') &&
+  //   log('debug', '***', { domainAccess })
   // mainLogger('debug', 'binderDispatcher:', {
   //   endpoint: current_domainAccess.endpoint,
   //   ctx_track: current_domainAccess.ctx_track,
@@ -121,8 +123,10 @@ export async function accessDomain({
           : {}
       }),
     )
-    const primaryResult = await dispatchDomainMsg({ primary: domainPrimary }, domainAccess, currentDomainAccessContext.log)
-    loopbackWatch({ result: primaryResult })
+    const primaryResult = await dispatchDomainMsg({ primary: domainPrimary }, domainAccess, currentDomainAccessContext.log, {
+      optionalDispatch: false,
+      watchable: true,
+    })
 
     return primaryResult
   } else if (domainLayer === 'service') {
@@ -135,8 +139,10 @@ export async function accessDomain({
           : {}
       }),
     )
-    const serviceResult = await dispatchDomainMsg({ service: domainService }, domainAccess, currentDomainAccessContext.log)
-    loopbackWatch({ result: serviceResult })
+    const serviceResult = await dispatchDomainMsg({ service: domainService }, domainAccess, currentDomainAccessContext.log, {
+      optionalDispatch: false,
+      watchable: false,
+    })
 
     return serviceResult
   } else if (domainLayer === 'secondary') {
@@ -144,8 +150,10 @@ export async function accessDomain({
       configuration.secondaryProviders.map(provideSecondary => provideSecondary(currentDomainAccessContext)),
     )
 
-    const secondaryResult = await dispatchDomainMsg({ secondary }, domainAccess, currentDomainAccessContext.log)
-    loopbackWatch({ result: secondaryResult })
+    const secondaryResult = await dispatchDomainMsg({ secondary }, domainAccess, currentDomainAccessContext.log, {
+      optionalDispatch: false,
+      watchable: true,
+    })
     return secondaryResult
   } else if (domainLayer === 'event') {
     Promise.allSettled(
@@ -165,10 +173,11 @@ export async function accessDomain({
         const eventListener = event(eventAccessContext)
         const [_, ...restEndpoint] = domainAccess.endpoint
         return dispatchDomainMsg(eventListener, { ...domainAccess, endpoint: restEndpoint }, eventAccessContext.log, {
-          graceful: true,
+          watchable: false,
+          optionalDispatch: true,
         })
       }),
-    ).catch(error => log('critical', { domainAccess }, error))
+    ) //.catch(error => log('critical', { domainAccess }, error))
   } else if (domainLayer === 'watch') {
     return Promise.allSettled(
       configuration.moduleCores.map(async ({ moduleName, watch }) => {
@@ -186,10 +195,16 @@ export async function accessDomain({
         })
         const watcher = watch(watchAccessContext)
         // mainLogger('debug', `triggerWatchers`, current_domainAccess.endpoint, maybe_watchImpl)
-        const [_, ...restEndpoint] = domainAccess.endpoint
-        return dispatchDomainMsg(watcher, { ...domainAccess, endpoint: restEndpoint }, watchAccessContext.log, {
-          graceful: true,
-        }).catch(error => watchAccessContext.log('critical', { error, stack: error.stack }))
+        const [_, watchType, ...restEndpoint] = domainAccess.endpoint
+
+        const watcherLayer = watchType === 'result' || watchType === 'enqueue' ? watcher[watchType] : undefined
+        if (!watcherLayer) {
+          return
+        }
+        return dispatchDomainMsg(watcherLayer, { ...domainAccess, endpoint: restEndpoint }, watchAccessContext.log, {
+          watchable: false,
+          optionalDispatch: true,
+        }) //.catch(error => watchAccessContext.log('critical', { error, stack: error.stack }))
       }),
     ) //.catch(error => log('critical', { domainAccess: currentDomainAccess }, error))
   } else {
@@ -198,16 +213,16 @@ export async function accessDomain({
 
   async function dispatchDomainMsg(
     impl: _any, // primaryImpl | secondaryAdapter | eventImpl | watchImpl
-    domainMsg: domainMsg,
+    domainAccess: domainAccess,
     logMessage: Logger,
-    opts?: { graceful?: boolean },
+    opts: { watchable: boolean; optionalDispatch: boolean },
   ) {
     // mainLogger('debug', `dispatchMsg`, domainMsg.endpoint, domainMsg.payload)
     // const endpoint = domainMsg.endpoint.reduce((currProp, currPathSegment) => currProp?.[currPathSegment], impl)
-    const endpoint = await (async (_domainMsg, _impl) => {
-      const [layer, moduleName, channelName, endpointName] = _domainMsg.endpoint
+    const [layer, moduleName, channelName, endpointName] = domainAccess.endpoint
+    const endpointPromise = (async () => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const channelProp = _impl[layer!]?.[moduleName!]?.[channelName!]
+      const channelProp = impl[layer!]?.[moduleName!]?.[channelName!]
       if (!channelProp) {
         return
       }
@@ -217,45 +232,42 @@ export async function accessDomain({
       }
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return channelProp?.[endpointName!]
-    })(domainMsg, impl).catch((error: unknown) => {
-      logMessage('error', { error })
+    })()
+    endpointPromise.catch((error: unknown) => {
+      logMessage('error', 'Error while getting domainAccess endpoint', { error, domainAccess })
       throw error
     })
-
+    const endpoint = await endpointPromise
     if (typeof endpoint !== 'function') {
       const err_msg = `
-      NOT IMPLEMENTED: ${domainMsg.endpoint.join('/')}
+      NOT IMPLEMENTED: ${domainAccess.endpoint.join('/')}
       FOUND: ${endpoint}
       `
-      if (opts?.graceful) {
+      if (opts.optionalDispatch) {
         return
       }
       logMessage('warn', err_msg, endpoint)
 
       throw TypeError(err_msg)
     }
+    // domainMsg.endpoint.join('/').includes('nges') &&
     // logMessage('debug', '😉 ===========================> payload', domainMsg.payload ?? 'NONE')
-    const endpointOutcome = await endpoint(domainMsg.payload).catch((error: unknown) => {
-      logMessage('error', { error })
-      throw error
+    const endpointResultPromise = endpoint(domainAccess.payload)
+    endpointResultPromise.then((endpointResult: unknown) => {
+      if (!opts.watchable) {
+        return
+      }
+      loopbackWatch(loopbackDispatcher, {
+        type: 'result',
+        domainAccess,
+        result: endpointResult,
+      })
     })
+
+    // domainMsg.endpoint.join('/').includes('nges') &&
     // logMessage('debug', '😉 ===========================> outcome', endpointOutcome ?? 'NONE')
-    return endpointOutcome
-  }
 
-  function loopbackWatch({ result }: { result: _any }) {
-    // REVIEW: shall watchers be able to watch really everything? it gets very chatty !
-    // REVIEW:   maybe watch only `secondary.write|queue|service.*`, `primary.*.*`
-    // REVIEW:   avoiding at least `query` & `sync` (`sync` definitely not needed)
-
-    const watchDomainAccess: domainAccess = {
-      ...domainAccess,
-      endpoint: ['watch', ...domainAccess.endpoint],
-      payload: [result, domainAccess.payload],
-      enqueue: false,
-    }
-
-    loopbackDispatcher({ domainAccess: watchDomainAccess })
+    return endpointResultPromise
   }
 }
 
@@ -280,7 +292,7 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
 
   function getLoopbackProxy(enqueue?: boolean | undefined /* | asyncOptions */) {
     return createMoodleDomainProxy({
-      ctrl({ domainMsg: { endpoint, payload } }) {
+      async ctrl({ domainMsg: { endpoint, payload } }) {
         const ctx_track: ctxTrack = {
           ctxId: id,
           moduleName,
@@ -295,7 +307,16 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
           primarySession: currentDomainAccess?.primarySession,
           enqueue,
         }
-        return loopbackDispatcher({ domainAccess: loopbackDomainAccess })
+
+        const result = await loopbackDispatcher({ domainAccess: loopbackDomainAccess })
+        if (enqueue) {
+          loopbackWatch(loopbackDispatcher, {
+            type: 'enqueue',
+            domainAccess: loopbackDomainAccess,
+          })
+          return
+        }
+        return result
       },
     })
   }
@@ -338,6 +359,7 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     sync: syncProxy.secondary[moduleName].sync,
     log,
     async enqueue(endopint_fn_proxy, payload /*, asyncOptions = true*/) {
+      assert(currentDomainAccess, `ctx.async: needs a currentDomainAccess to enqueue a message`)
       const queueEndpoint = getProxyFnPath(endopint_fn_proxy)
       const fn = queueEndpoint.reduce(
         (currProp, currPathSegment) => currProp?.[currPathSegment],
@@ -345,18 +367,27 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
       )
       assert(typeof fn === 'function', `ctx.async: endpoint[${queueEndpoint.join('.')}] fn is not a function`)
       await fn(payload)
-      const qwatchEndpoint = queueEndpoint.slice()
-      qwatchEndpoint.splice(0, 1, 'watch', 'enqueue')
       // console.log({ queueEndpoint, qwatchEndpoint, payload })
-      loopbackDispatcher({
-        domainAccess: {
-          ...currentDomainAccess,
-          domain,
-          endpoint: qwatchEndpoint,
-          payload,
-        },
-      })
     },
   }
   return accessContext
+}
+function loopbackWatch(
+  loopbackDispatcher: binderDispatcher,
+  watching: { domainAccess: domainAccess } & d_u<{ result: { result: _any }; enqueue: unknown }, 'type'>,
+) {
+  const watchEndpoint = ['watch', watching.type, ...watching.domainAccess.endpoint]
+
+  // REVIEW: shall watchers be able to watch really everything? it gets very chatty !
+  // REVIEW:   maybe watch only `secondary.write|queue|service.*`, `primary.*.*`
+  // REVIEW:   avoiding at least `query` & `sync` (`sync` definitely not needed)
+
+  const watchDomainAccess: domainAccess = {
+    ...watching.domainAccess,
+    endpoint: watchEndpoint,
+    payload: watching.type === 'enqueue' ? watching.domainAccess.payload : [watching.result, watching.domainAccess.payload],
+    enqueue: false, // maybe true by default
+  }
+
+  return loopbackDispatcher({ domainAccess: watchDomainAccess })
 }

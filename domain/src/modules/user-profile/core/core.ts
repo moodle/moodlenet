@@ -196,7 +196,10 @@ export const user_profile_core: moduleCore<'userProfile'> = {
           async getMyUserRecords() {
             const [myUserProfileFound, userProfileResult] = await fetchMyUserProfile()
 
-            assertWithErrorXxx(myUserProfileFound, 'Not Found', 'authenticated userProfileRecord not found')
+            assertWithErrorXxx(myUserProfileFound, 'Not Found', {
+              message: `seemingly authenticated session, but couldn't find userProfileRecord for userProfileId: ${userProfileId}`,
+              authenticatedUserSession,
+            })
 
             const userAccontRecord = await ctx.forward.userAccount.authenticated.getMyUserAccountRecord()
             return {
@@ -247,173 +250,176 @@ export const user_profile_core: moduleCore<'userProfile'> = {
   watch(ctx) {
     return {
       enqueue: {
-        resourceIngestion: {
-          write: {
-            async ingestResource({ ingestionContext }) {
-              console.log('ingestResource queue watch', { ingestionContext })
-              if (ingestionContext.type !== 'eduResourceDraft') {
-                return
-              }
-              const [found, draft] = await ctx.mod.secondary.userProfile.query.getDraft({
-                draftId: ingestionContext.eduResourceDraftId,
-                draftType: 'eduResource',
-                userProfileIdSelect: { by: 'userProfileId', userProfileId: ingestionContext.userProfileId },
-              })
-              if (!found) {
-                return
-              }
-              if (draft.assetProcessStatus.ingestion.status !== 'neverEngaged') {
-                ctx.log(
-                  'warn',
-                  `ingestResource enqueued: userProfile's ${ingestionContext.userProfileId} resource draft ${ingestionContext.eduResourceDraftId} assetProcessStatus.ingestion not "neverEngaged" : [${draft.assetProcessStatus.ingestion.status}]`,
-                  draft,
-                )
-                return
-              }
+        secondary: {
+          resourceIngestion: {
+            write: {
+              async ingestResource({ ingestionContext }) {
+                if (ingestionContext.type !== 'eduResourceDraft') {
+                  return
+                }
+                const [found, draft] = await ctx.mod.secondary.userProfile.query.getDraft({
+                  draftId: ingestionContext.eduResourceDraftId,
+                  draftType: 'eduResource',
+                  userProfileIdSelect: { by: 'userProfileId', userProfileId: ingestionContext.userProfileId },
+                })
+                if (!found) {
+                  return
+                }
+                if (draft.assetProcessStatus.ingestion.status !== 'neverEngaged') {
+                  ctx.log(
+                    'warn',
+                    `ingestResource enqueued: userProfile's ${ingestionContext.userProfileId} resource draft ${ingestionContext.eduResourceDraftId} assetProcessStatus.ingestion not "neverEngaged" : [${draft.assetProcessStatus.ingestion.status}]`,
+                    draft,
+                  )
+                  return
+                }
 
-              await ctx.write.updateDraftResourceAssetProcessStatus({
-                userProfileIdSelect: { by: 'userProfileId', userProfileId: ingestionContext.userProfileId },
-                eduResourceDraftId: ingestionContext.eduResourceDraftId,
-                processType: 'ingestion',
-                processStatus: {
-                  status: 'awaiting',
-                  engageDate: new Date().toISOString(),
-                },
-              })
+                await ctx.write.updateDraftResourceAssetProcessStatus({
+                  userProfileIdSelect: { by: 'userProfileId', userProfileId: ingestionContext.userProfileId },
+                  eduResourceDraftId: ingestionContext.eduResourceDraftId,
+                  processType: 'ingestion',
+                  processStatus: {
+                    status: 'awaiting',
+                    engageDate: new Date().toISOString(),
+                  },
+                })
+              },
             },
           },
         },
       },
-      secondary: {
-        resourceIngestion: {
-          write: {
-            async ingestResource([{ eduResourceIngestionOutcome }, payload]) {
-              if (payload.ingestionContext.type !== 'eduResourceDraft') {
-                return
-              }
-              const [found, draft] = await ctx.mod.secondary.userProfile.query.getDraft({
-                draftId: payload.ingestionContext.eduResourceDraftId,
-                draftType: 'eduResource',
-                userProfileIdSelect: { by: 'userProfileId', userProfileId: payload.ingestionContext.userProfileId },
-              })
-              if (!found) {
-                return
-              }
-              if (draft.assetProcessStatus.ingestion.status !== 'awaiting') {
-                ctx.log(
-                  'warn',
-                  `ingestResource outcome: userProfile's ${payload.ingestionContext.userProfileId} resource draft ${payload.ingestionContext.eduResourceDraftId} assetProcessStatus.ingestion not "awaiting" : [${draft.assetProcessStatus.ingestion.status}]`,
-                  draft,
-                )
-                return
-              }
+      result: {
+        secondary: {
+          resourceIngestion: {
+            write: {
+              async ingestResource([{ eduResourceIngestionOutcome }, payload]) {
+                if (payload.ingestionContext.type !== 'eduResourceDraft') {
+                  return
+                }
+                const [found, draft] = await ctx.mod.secondary.userProfile.query.getDraft({
+                  draftId: payload.ingestionContext.eduResourceDraftId,
+                  draftType: 'eduResource',
+                  userProfileIdSelect: { by: 'userProfileId', userProfileId: payload.ingestionContext.userProfileId },
+                })
+                if (!found) {
+                  return
+                }
+                if (draft.assetProcessStatus.ingestion.status !== 'awaiting') {
+                  ctx.log(
+                    'warn',
+                    `ingestResource outcome: userProfile's ${payload.ingestionContext.userProfileId} resource draft ${payload.ingestionContext.eduResourceDraftId} assetProcessStatus.ingestion not "awaiting" : [${draft.assetProcessStatus.ingestion.status}]`,
+                    draft,
+                  )
+                  return
+                }
 
-              await ctx.write.updateDraftResourceAssetProcessStatus({
-                userProfileIdSelect: { by: 'userProfileId', userProfileId: payload.ingestionContext.userProfileId },
-                eduResourceDraftId: payload.ingestionContext.eduResourceDraftId,
-                processType: 'ingestion',
-                processStatus: {
-                  ...draft.assetProcessStatus.ingestion,
-                  status: 'finished',
-                  finishDate: new Date().toISOString(),
-                  outcome: eduResourceIngestionOutcome,
-                },
-              })
+                await ctx.write.updateDraftResourceAssetProcessStatus({
+                  userProfileIdSelect: { by: 'userProfileId', userProfileId: payload.ingestionContext.userProfileId },
+                  eduResourceDraftId: payload.ingestionContext.eduResourceDraftId,
+                  processType: 'ingestion',
+                  processStatus: {
+                    ...draft.assetProcessStatus.ingestion,
+                    status: 'finished',
+                    finishDate: new Date().toISOString(),
+                    outcome: eduResourceIngestionOutcome,
+                  },
+                })
+              },
             },
           },
-        },
-        userProfile: {
-          write: {
-            async useTempFileAsNewResourceDraftAsset([
-              adoptAssetResult,
-              { eduResourceDraftId: resourceDraftId, userProfileId },
-            ]) {
-              if (adoptAssetResult.status === 'error') {
-                // ctx.log('warn', 'useTempFileAsNewResourceDraftAsset: adoptAssetResult error', adoptAssetResult)
-                return
-              }
-              const eduResourceDraftData = createNewEduResourceDraftData({
-                asset: adoptAssetResult.asset,
-                created: ctx.now,
-                eduResourceDraftId: resourceDraftId,
-              })
+          userProfile: {
+            write: {
+              async useTempFileAsNewResourceDraftAsset([
+                adoptAssetResult,
+                { eduResourceDraftId: resourceDraftId, userProfileId },
+              ]) {
+                if (adoptAssetResult.status === 'error') {
+                  // ctx.log('warn', 'useTempFileAsNewResourceDraftAsset: adoptAssetResult error', adoptAssetResult)
+                  return
+                }
+                const eduResourceDraftData = createNewEduResourceDraftData({
+                  asset: adoptAssetResult.asset,
+                  created: ctx.now,
+                  eduResourceDraftId: resourceDraftId,
+                })
 
-              const [done, createDraftResult] = await ctx.write.createDraft({
-                userProfileIdSelect: { by: 'userProfileId', userProfileId },
-                draft: {
-                  type: 'eduResource',
-                  data: eduResourceDraftData,
-                },
-              })
+                const [done, createDraftResult] = await ctx.write.createDraft({
+                  userProfileIdSelect: { by: 'userProfileId', userProfileId },
+                  draft: {
+                    type: 'eduResource',
+                    data: eduResourceDraftData,
+                  },
+                })
 
-              if (!done) {
-                ctx.log('warn', 'could not create resource draft', createDraftResult)
-                // TODO: delete resource asset file
-              }
-            },
-            async useTempImageInProfile([adoptAssetResult, { userProfileId: id, type }]) {
-              if (adoptAssetResult.status === 'error') {
-                // ctx.log('warn', 'useTempImageInProfile: adoptAssetResult error', adoptAssetResult)
-                return
-              }
-              const asset = adoptAssetResult.asset
-              const [done, updateResult] = await ctx.write.updateProfileImage({
-                userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
-                lastEditDate: ctx.now,
-                type,
-                image: asset,
-              })
-              if (!done) {
-                ctx.log('warn', 'could not update profile image', updateResult)
-                // TODO: delete resource asset fil. ( and set image to none ? )
-              }
-            },
-            async useTempImageInDraft([adoptAssetResult, { userProfileId: id, draftId, draftType }]) {
-              if (adoptAssetResult.status === 'error') {
-                ctx.log('warn', 'useTempImageInDraft: adoptAssetResult error', adoptAssetResult)
-                return
-              }
-              const asset = adoptAssetResult.asset
-              const [done, updateResult] = await ctx.write.updateDraftImage({
-                userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
-                draftId,
-                image: asset,
-                lastEditDate: ctx.now,
-                draftType,
-              })
-              if (!done) {
-                ctx.log('warn', 'could not update draft image', updateResult)
-                // TODO: delete resource asset file. ( and set image to none ? )
-              }
+                if (!done) {
+                  ctx.log('warn', 'could not create resource draft', createDraftResult)
+                  // TODO: delete resource asset file
+                }
+              },
+              async useTempImageInProfile([adoptAssetResult, { userProfileId: id, type }]) {
+                if (adoptAssetResult.status === 'error') {
+                  // ctx.log('warn', 'useTempImageInProfile: adoptAssetResult error', adoptAssetResult)
+                  return
+                }
+                const asset = adoptAssetResult.asset
+                const [done, updateResult] = await ctx.write.updateProfileImage({
+                  userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
+                  lastEditDate: ctx.now,
+                  type,
+                  image: asset,
+                })
+                if (!done) {
+                  ctx.log('warn', 'could not update profile image', updateResult)
+                  // TODO: delete resource asset fil. ( and set image to none ? )
+                }
+              },
+              async useTempImageInDraft([adoptAssetResult, { userProfileId: id, draftId, draftType }]) {
+                if (adoptAssetResult.status === 'error') {
+                  ctx.log('warn', 'useTempImageInDraft: adoptAssetResult error', adoptAssetResult)
+                  return
+                }
+                const asset = adoptAssetResult.asset
+                const [done, updateResult] = await ctx.write.updateDraftImage({
+                  userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
+                  draftId,
+                  image: asset,
+                  lastEditDate: ctx.now,
+                  draftType,
+                })
+                if (!done) {
+                  ctx.log('warn', 'could not update draft image', updateResult)
+                  // TODO: delete resource asset file. ( and set image to none ? )
+                }
+              },
             },
           },
-        },
-        userAccount: {
-          write: {
-            //REVIEW - this userAccount should emit an event and catch it here in userprofile
-            async saveNewUser([[created, result], { newUser }]) {
-              ctx.log('debug', 'user-profile watch saveNewUser', { created, result, newUser })
-              if (!created) {
-                return
-              }
-              const [done, createResult] = await ctx.write.createUserProfile({
-                userProfileRecord: createNewUserProfileData({ newUser }),
-              })
-              if (!done) {
-                ctx.log('critical', 'could not create user profile', createResult)
-              }
-            },
+          userAccount: {
+            write: {
+              //REVIEW - this userAccount should emit an event and catch it here in userprofile
+              async saveNewUser([[created, result], { newUser }]) {
+                ctx.log('debug', 'user-profile watch saveNewUser', { created, result, newUser })
+                if (!created) {
+                  return
+                }
+                const [done, createResult] = await ctx.write.createUserProfile({
+                  userProfileRecord: createNewUserProfileData({ newUser }),
+                })
+                if (!done) {
+                  ctx.log('critical', 'could not create user profile', createResult)
+                }
+              },
 
-            async setUserRoles([[newRolesSet, result], { userAccountId }]) {
-              if (!newRolesSet) {
-                return
-              }
-              const [done, updateResult] = await ctx.sync.userAccountExcerpt({
-                userAccountExcerpt: { id: userAccountId, roles: result.newRoles },
-              })
-              if (!done) {
-                ctx.log('critical', 'could not update user roles', updateResult)
-              }
+              async setUserRoles([[newRolesSet, result], { userAccountId }]) {
+                if (!newRolesSet) {
+                  return
+                }
+                const [done, updateResult] = await ctx.sync.userAccountExcerpt({
+                  userAccountExcerpt: { id: userAccountId, roles: result.newRoles },
+                })
+                if (!done) {
+                  ctx.log('critical', 'could not update user roles', updateResult)
+                }
+              },
             },
           },
         },
