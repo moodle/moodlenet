@@ -43,6 +43,12 @@
       "background": "#ff00ff",
       "opacity": 90
     },
+    "SECURITY": {
+      "foreground": "#000000",
+      "iconColour": "#ff004c",
+      "background": "#ff004c",
+      "opacity": 90
+    },
     "NOTE": {
       "foreground": "#000000",
       "iconColour": "#41c9ff",
@@ -90,18 +96,20 @@
     "SHAREDLIB",
     "SHARED_LIB",
     "MAKE_SHARED_LIB",
-    "MAKE_SHARED_LIB",
     "NEED_SHARED_LIB",
     "SHARED_LIB_NEEDED",
     //
-    "FUTURE"
+    "FUTURE",
+    //
+    "SECURITY"
   ],
   "todo-tree.general.tagGroups": {
     "FIXME": ["FIXME", "FIXIT", "FIX"],
     "NOTE": ["NOTE", "NOTICE"],
     "CHECK": ["CHECK", "CHECKOUT", "BEWARE"],
     "CREDITS": ["CREDITS", "CREDIT", "THANKS", "THANK"],
-    "SHAREDLIB": ["SHAREDLIB", "SHARED_LIB", "MAKE_SHARED_LIB", "NEED_SHARED_LIB", "SHARED_LIB_NEEDED"]
+    "SHAREDLIB": ["SHAREDLIB", "SHARED_LIB", "MAKE_SHARED_LIB", "NEED_SHARED_LIB", "SHARED_LIB_NEEDED"],
+    "SECURITY": []
   },
   "typescript.preferences.importModuleSpecifier": "project-relative",
   "workbench.colorCustomizations": {

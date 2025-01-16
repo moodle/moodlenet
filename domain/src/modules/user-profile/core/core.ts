@@ -260,7 +260,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 const [found, draft] = await ctx.mod.secondary.userProfile.query.getDraft({
                   draftId: ingestionContext.eduResourceDraftId,
                   draftType: 'eduResource',
-                  userProfileIdSelect: { by: 'userProfileId', userProfileId: ingestionContext.userProfileId },
+                  userProfileIdSelect: ingestionContext.userProfileIdSelect,
                 })
                 if (!found) {
                   return
@@ -268,14 +268,15 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 if (draft.assetProcessStatus.ingestion.status !== 'neverEngaged') {
                   ctx.log(
                     'warn',
-                    `ingestResource enqueued: userProfile's ${ingestionContext.userProfileId} resource draft ${ingestionContext.eduResourceDraftId} assetProcessStatus.ingestion not "neverEngaged" : [${draft.assetProcessStatus.ingestion.status}]`,
+                    `ingestResource enqueued: userProfile's resource draft assetProcessStatus.ingestion not "neverEngaged" : [${draft.assetProcessStatus.ingestion.status}]`,
                     draft,
+                    ingestionContext,
                   )
                   return
                 }
 
                 await ctx.write.updateDraftResourceAssetProcessStatus({
-                  userProfileIdSelect: { by: 'userProfileId', userProfileId: ingestionContext.userProfileId },
+                  userProfileIdSelect: ingestionContext.userProfileIdSelect,
                   eduResourceDraftId: ingestionContext.eduResourceDraftId,
                   processType: 'ingestion',
                   processStatus: {
@@ -299,7 +300,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 const [found, draft] = await ctx.mod.secondary.userProfile.query.getDraft({
                   draftId: payload.ingestionContext.eduResourceDraftId,
                   draftType: 'eduResource',
-                  userProfileIdSelect: { by: 'userProfileId', userProfileId: payload.ingestionContext.userProfileId },
+                  userProfileIdSelect: payload.ingestionContext.userProfileIdSelect,
                 })
                 if (!found) {
                   return
@@ -307,14 +308,15 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 if (draft.assetProcessStatus.ingestion.status !== 'awaiting') {
                   ctx.log(
                     'warn',
-                    `ingestResource outcome: userProfile's ${payload.ingestionContext.userProfileId} resource draft ${payload.ingestionContext.eduResourceDraftId} assetProcessStatus.ingestion not "awaiting" : [${draft.assetProcessStatus.ingestion.status}]`,
+                    `ingestResource outcome: userProfile's  resource draft assetProcessStatus.ingestion not "awaiting" : [${draft.assetProcessStatus.ingestion.status}]`,
                     draft,
+                    payload.ingestionContext,
                   )
                   return
                 }
 
                 await ctx.write.updateDraftResourceAssetProcessStatus({
-                  userProfileIdSelect: { by: 'userProfileId', userProfileId: payload.ingestionContext.userProfileId },
+                  userProfileIdSelect: payload.ingestionContext.userProfileIdSelect,
                   eduResourceDraftId: payload.ingestionContext.eduResourceDraftId,
                   processType: 'ingestion',
                   processStatus: {

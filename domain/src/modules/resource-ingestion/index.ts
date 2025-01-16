@@ -1,6 +1,6 @@
 import { d_u } from '@moodle/lib-types'
 import { asset } from '../storage'
-import { eduResourceDraftId, userProfileId } from '../user-profile'
+import { eduResourceDraftId, userProfileIdSelect } from '../user-profile'
 import { eduResourceIngestionOutcome } from './types'
 
 export * from './types'
@@ -25,7 +25,7 @@ export default interface ResourceIngestionDomain {
             {
               eduResourceDraft: {
                 eduResourceDraftId: eduResourceDraftId
-                userProfileId: userProfileId
+                userProfileIdSelect: userProfileIdSelect
               }
             },
             'type'

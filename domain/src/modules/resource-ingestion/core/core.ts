@@ -22,20 +22,34 @@ export const resource_ingestion_core: moduleCore<'resourceIngestion'> = {
       secondary: {
         userProfile: {
           write: {
-            async useTempFileAsNewResourceDraftAsset([outcome, { eduResourceDraftId, userProfileId }]) {
-              if (outcome.status !== 'done') {
+            async createDraft([[created], { draft, userProfileIdSelect }]) {
+              if (!created || draft.type !== 'eduResource') {
                 return
               }
 
               await ctx.enqueue(ctx.write.ingestResource, {
-                asset: outcome.asset,
+                asset: draft.data.data.asset,
                 ingestionContext: {
                   type: 'eduResourceDraft',
-                  userProfileId,
-                  eduResourceDraftId,
+                  userProfileIdSelect,
+                  eduResourceDraftId: draft.data.draftId,
                 },
               })
             },
+            // async useTempFileAsNewResourceDraftAsset([outcome, { eduResourceDraftId, userProfileId }]) {
+            //   if (outcome.status !== 'done') {
+            //     return
+            //   }
+
+            //   await ctx.enqueue(ctx.write.ingestResource, {
+            //     asset: outcome.asset,
+            //     ingestionContext: {
+            //       type: 'eduResourceDraft',
+            //       userProfileIdSelect: { by: 'userProfileId', userProfileId },
+            //       eduResourceDraftId,
+            //     },
+            //   })
+            // },
           },
         },
       },

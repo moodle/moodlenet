@@ -26,9 +26,8 @@ export async function puppeteerOgsUrlIngestor({
     return { outcome: 'undoable', details: { puppeteerResponse, ogsResponse }, ingestionImpl, reason: 'could not get any' }
   }
   const content =
-    (ogsDone && ogsResponse.content) ||
-    (puppeteerDone && (await tikaUrlContentIngestion({ tikaServerUrl, ...puppeteerResponse }))) ||
-    null
+    ((ogsDone && ogsResponse.content) || '') +
+      ((puppeteerDone && (await tikaUrlContentIngestion({ tikaServerUrl, ...puppeteerResponse }))) || '') || null
 
   const title = (ogsDone && ogsResponse.title) || (puppeteerDone && puppeteerResponse.title) || null
   const externalAssetImage = (ogsDone && ogsResponse.image) || null
@@ -59,7 +58,10 @@ async function openGraphScrape({ url }: { url: url_string }): Promise<
     const imageUrl = await url_string_schema.parseAsync(result.ogImage?.[0]?.url).catch(() => null)
     const image: externalAsset | null = imageUrl && {
       url: imageUrl,
-      credits: { owner: { url, name: result.ogSiteName ?? new URL(url).hostname } },
+      credits: {
+        owner: { url, name: result.ogSiteName ?? new URL(url).hostname },
+        provider: { url, name: new URL(url).hostname },
+      },
     }
     const ogsResult = {
       title: result.ogTitle ?? null,
@@ -77,25 +79,41 @@ async function puppeteerScrape({ url }: { url: string }): Promise<
     {
       title: string
       pdf: Uint8Array
-      htmlContent: string
+      htmlContent: string | null
     },
     { error: { error: unknown } }
   >
 > {
   try {
-    const browser = await puppeteer.launch({ headless: true })
+    // SECURITY: was getting the following error from puppeteer.launch:
+    // FIXME
+    //
+    //        puppeteerScrape Error Error: Failed to launch the browser process!
+    //        [191475:191475:0116/152906.889005:FATAL:zygote_host_impl_linux.cc(128)]
+    //        No usable sandbox! If you are running on Ubuntu 23.10+
+    //        or another Linux distro that has disabled unprivileged user namespaces with AppArmor,
+    //        see https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md.
+    //        Otherwise see https://chromium.googlesource.com/chromium/src/+/main/docs/linux/suid_sandbox_development.md
+    //        for more information on developing with the (older) SUID sandbox.
+    //        If you want to live dangerously and need an immediate workaround, you can try using --no-sandbox.
+    //
+    // added `args: ['--no-sandbox', '--disable-setuid-sandbox']` but not sure about security implications
+    // https://stackoverflow.com/a/62348133/1455910
+
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] })
     const page = await browser.newPage()
     const title = await page.title()
     page.emulateMediaType('screen')
     await page.goto(url, {})
     await timers.setTimeout(5000)
     const pdf = await page.pdf({ /* path: 'page.pdf', */ format: 'A4' })
-    const htmlContent = (await page.evaluate('() => document.documentElement.outerHTML')) as string
-
+    const _mHtmlContent = await page.evaluate('() => document.documentElement.outerHTML')
+    const htmlContent = typeof _mHtmlContent === 'string' ? _mHtmlContent : null
     await browser.close()
     const puppeteerResult = { title, pdf, htmlContent }
     return [true, puppeteerResult]
   } catch (error) {
+    console.error('puppeteerScrape Error', error)
     return [false, { reason: 'error', error }]
   }
 }
@@ -107,11 +125,14 @@ async function tikaUrlContentIngestion({
 }: {
   tikaServerUrl: string
   pdf: Uint8Array
-  htmlContent: string
+  htmlContent: string | null
 }): Promise<string | null> {
   const pdfIngestion = await tikaIngestion__gets__only__content({ tikaServerUrl, body: pdf, mimeType: 'application/pdf' })
   if (pdfIngestion.outcome === 'succeed') {
     return pdfIngestion.content
+  }
+  if (htmlContent === null) {
+    return null
   }
   const htmlIngestion = await tikaIngestion__gets__only__content({ tikaServerUrl, body: htmlContent, mimeType: 'text/html' })
   return htmlIngestion.outcome === 'succeed' ? htmlIngestion.content : null
