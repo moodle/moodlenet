@@ -1,5 +1,5 @@
 import { d_u, ok_ko } from '@moodle/lib-types'
-import { currentMoodlenetSessionData, moodlenetContributorId } from '../moodlenet/types'
+import { moodlenetContributorId } from '../moodlenet/types'
 import { profileInfo } from '../user-profile'
 import type { landingLayoutProps, Layouts, moodlenetCategories, webappContributorAccessData, webappGlobals } from './types'
 import { PageLayouts } from './types/layouts/page'
@@ -11,9 +11,6 @@ export default interface MoodlenetReactAppDomain {
   service: { moodlenetReactApp: unknown }
   primary: {
     moodlenetReactApp: {
-      session: {
-        data(): Promise<currentMoodlenetSessionData>
-      }
       props: {
         allLayouts(): Promise<Layouts>
         rootLayout(): Promise<{ webappGlobalCtx: webappGlobals }>

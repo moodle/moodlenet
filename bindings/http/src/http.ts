@@ -58,7 +58,7 @@ export function getHttpBinderDispatcher({
         throw new Error(`Server error: ${httpResponse.status}\n ${jsonBodyStrUtf8}`)
       })
       .catch(e => {
-        console.error(e)
+        console.error('HttpBinderDispatcher', e)
         throw e
       })
 
@@ -92,7 +92,7 @@ export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promis
     }
     const replyPromise = binderDispatcher({ domainAccess: domainAccess })
       .catch(e => {
-        console.error(e)
+        console.error('HttpBinderReceiver', e)
         throw e
       })
       .catch(e => {

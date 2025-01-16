@@ -12,10 +12,13 @@ export async function createDatabases({ dbStruct }: { dbStruct: dbStruct }) {
     [dbStruct.sys_db, dbStruct.appData.db, dbStruct.services.db, dbStruct.identity.db].map(db =>
       db.createFunction(
         'MOODLE::RESTORE_RECORD_ID',
-        `(doc) => ({
-          ...Object.fromEntries(Object.entries(doc).filter(([prop]) => !prop.startsWith('_'))),
+        `(doc) => !doc ? null : {
+          ...Object.fromEntries(
+                Object.entries(doc)
+                  .filter(([prop]) => !prop.startsWith('_'))
+                ),
           [doc._key_prop]: doc._key
-        })`,
+        }`,
       ),
     ),
   )

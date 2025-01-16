@@ -26,7 +26,7 @@ export default interface MoodlenetDomain {
           pointSystem: pointSystem
           eduPublishPrimaryMsgSchemaConfigOverrides: moodlenetEduPublishPrimaryMsgSchemaConfigOverrides
         }>
-        getMySessionUserRecords(): Promise<currentMoodlenetSessionData>
+        getMyCurrentMoodlenetSessionData(): Promise<currentMoodlenetSessionData>
       }
       admin: {
         updatePartialMoodlenetInfo({

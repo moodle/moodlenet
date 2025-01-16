@@ -2,7 +2,7 @@ import { http_bind } from '@moodle/bindings-http'
 import { MoodleDomain, moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { _any, date_time_string, map } from '@moodle/lib-types'
+import { _any, map } from '@moodle/lib-types'
 import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/user-account/lib'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
@@ -50,14 +50,29 @@ function _domainAccess(): MoodleDomain {
       if (!cache.has(domainMsgHash)) {
         cache.set(
           domainMsgHash,
-          primarySessionPromise.then(primarySession =>
-            binderDispatcher({
-              domainAccess: {
-                ...domainMsg,
-                domain: primarySession.domain,
-                primarySession,
-              },
-            }),
+          primarySessionPromise.then(
+            primarySession =>
+              binderDispatcher({
+                domainAccess: {
+                  ...domainMsg,
+                  domain: primarySession.domain,
+                  primarySession,
+                },
+              }),
+            // .catch(error => {
+            //   if (isErrorXxx(error)) {
+            //     if (error.errorXxx.desc === 'Forbidden') {
+            //       forbidden()
+            //     }
+            //     if (error.errorXxx.desc === 'Unauthorized') {
+            //       unauthorized()
+            //     }
+            //     if (error.errorXxx.desc === 'Not Found') {
+            //       notFound()
+            //     }
+            //   }
+            //   throw error
+            // }),
           ),
         )
       }
@@ -92,7 +107,6 @@ function _domainAccess(): MoodleDomain {
   //       })
   //   }
   // }
-
 }
 
 export async function getAuthenticatedUserSessionOrRedirectToLogin() {

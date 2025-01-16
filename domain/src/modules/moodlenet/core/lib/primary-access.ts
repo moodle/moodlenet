@@ -38,7 +38,7 @@ export async function accessMoodlenetContributor({
   if (moodlenetContributorRecord.access === 'protected' && !its_me_or_admin) {
     return [false, { reason: 'notAllowed' }]
   }
-  const myUserRecords = await ctx.forward.moodlenet.session.getMySessionUserRecords()
+  const myUserRecords = await ctx.forward.moodlenet.session.getMyCurrentMoodlenetSessionData()
   const me = myUserRecords.type === 'authenticated' ? myUserRecords.moodlenetContributorRecord : null
   const accessObj = contributorRecordToContributorAccessObject({ moodlenetContributorRecord, me })
   return [true, accessObj]

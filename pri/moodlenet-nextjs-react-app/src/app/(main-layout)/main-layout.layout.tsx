@@ -16,7 +16,6 @@ import {
 } from './main-layout.client'
 
 import { filterOutFalsies, webSlug } from '@moodle/lib-types'
-import { appRoute, appRoutes } from '../../lib/common/appRoutes'
 import { access } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
 import './main-layout.style.scss'

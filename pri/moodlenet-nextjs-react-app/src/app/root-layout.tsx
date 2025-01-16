@@ -3,9 +3,13 @@ import { defaultStyle } from '../ui/lib/color-style'
 import { GlobalContextProvider } from '../lib/client/globalContextProvider'
 import './root-layout.scss'
 import { access } from '../lib/server/session-access'
+import { redirect } from 'next/navigation'
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const { webappGlobalCtx } = await access.primary.moodlenetReactApp.props.rootLayout()
+  const { webappGlobalCtx } = await access.primary.moodlenetReactApp.props.rootLayout().catch(() => {
+    redirect('/-/api/unset-auth-token')
+  })
+
   return (
     <html lang="en">
       <body>
