@@ -13,7 +13,7 @@ export default interface MoodlenetReactAppDomain {
     moodlenetReactApp: {
       props: {
         allLayouts(): Promise<Layouts>
-        rootLayout(): Promise<{ webappGlobalCtx: webappGlobals }>
+        rootLayout(): Promise<ok_ko<{ webappGlobalCtx: webappGlobals }, { cleanupSession: unknown }>>
         mainLayout(): Promise<{
           session: d_u<
             {

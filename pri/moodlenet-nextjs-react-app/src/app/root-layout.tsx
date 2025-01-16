@@ -1,14 +1,21 @@
+import { unreachable_never } from '@moodle/lib-types'
+import { redirect, RedirectType } from 'next/navigation'
 import type { PropsWithChildren } from 'react'
-import { defaultStyle } from '../ui/lib/color-style'
 import { GlobalContextProvider } from '../lib/client/globalContextProvider'
+import { access, getCurrentUrl } from '../lib/server/session-access'
+import { defaultStyle } from '../ui/lib/color-style'
 import './root-layout.scss'
-import { access } from '../lib/server/session-access'
-import { redirect } from 'next/navigation'
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const { webappGlobalCtx } = await access.primary.moodlenetReactApp.props.rootLayout().catch(() => {
-    redirect('/-/api/unset-auth-token')
-  })
+  const [ok, rootPropsResult] = await access.primary.moodlenetReactApp.props.rootLayout()
+  if (!ok) {
+    if (rootPropsResult.reason === 'cleanupSession') {
+      redirect(`/-/api/cleanup-session?redirectBackTo=${await getCurrentUrl()}`, RedirectType.replace)
+    } else {
+      unreachable_never(rootPropsResult.reason, `RootLayout: unknown reason: ${rootPropsResult.reason}`)
+    }
+  }
+  const { webappGlobalCtx } = rootPropsResult
 
   return (
     <html lang="en">

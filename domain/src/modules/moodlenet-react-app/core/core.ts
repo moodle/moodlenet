@@ -1,5 +1,5 @@
 import { fetchAllSchemaConfigs } from '../../../lib'
-import { moduleCore, moodlePrimary } from '../../../types'
+import { isErrorXxx, moduleCore, moodlePrimary } from '../../../types'
 import { validate_currentUserSessionInfo } from '../../user-account/lib'
 import { landingLayoutProps, suggestedContent } from '../types/webapp/pageProps/landing'
 import { accessWebappContributorAccessData, contributorRecordToWebappContributorAccessData } from './lib'
@@ -25,20 +25,34 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
             const { moodlenetCategories } = await ctx.mod.secondary.moodlenetReactApp.query.moodlenetCategories()
             const { filestoreHttp } = await ctx.forward.env.application.deployments()
             const allSchemaConfigs = await fetchAllSchemaConfigs({ primary: ctx.forward })
-            const currentMoodlenetSessionData = await ctx.forward.moodlenet.session.getMyCurrentMoodlenetSessionData()
+            const currentMoodlenetSessionData = await ctx.forward.moodlenet.session
+              .getMyCurrentMoodlenetSessionData()
+              .catch(error => {
+                if (!isErrorXxx(error)) {
+                  throw error
+                }
+                return 'cleanupSession' as const
+              })
 
-            return {
-              webappGlobalCtx: {
-                allSchemaConfigs,
-                filestoreHttpDeployment: filestoreHttp,
-                currentMoodlenetSessionData,
-                // session,
-                pointSystem: moodlenetConfigs.pointSystem,
-                // moodlenetSiteInfo: moodlenetConfigs.info,
-                moodlenetCategories,
-                serverTimeMs: Date.now(),
-              },
+            if (currentMoodlenetSessionData === 'cleanupSession') {
+              return [false, { reason: currentMoodlenetSessionData }]
             }
+
+            return [
+              true,
+              {
+                webappGlobalCtx: {
+                  allSchemaConfigs,
+                  filestoreHttpDeployment: filestoreHttp,
+                  currentMoodlenetSessionData,
+                  // session,
+                  pointSystem: moodlenetConfigs.pointSystem,
+                  // moodlenetSiteInfo: moodlenetConfigs.info,
+                  moodlenetCategories,
+                  serverTimeMs: Date.now(),
+                },
+              },
+            ]
           },
           async mainLayout() {
             const [session, layouts] = await Promise.all([

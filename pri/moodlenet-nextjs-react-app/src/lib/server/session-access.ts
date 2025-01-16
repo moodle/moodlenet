@@ -2,7 +2,7 @@ import { http_bind } from '@moodle/bindings-http'
 import { MoodleDomain, moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { _any, map } from '@moodle/lib-types'
+import { _any, _nullish, map } from '@moodle/lib-types'
 import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/user-account/lib'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
@@ -15,6 +15,7 @@ import { getAuthTokenCookie } from './auth'
 const MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL
 
 const reqHttpTarget = MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
+
 
 export const access = {
   get primary(): moodlePrimary {
@@ -109,6 +110,10 @@ function _domainAccess(): MoodleDomain {
   // }
 }
 
+export async function getCurrentUrl() {
+  const currentUrl = (await headers()).get('x-pathname') as appRoute
+  return currentUrl
+}
 export async function getAuthenticatedUserSessionOrRedirectToLogin() {
   const { userSession: maybe_authenticatedUserSession } = await access.primary.userAccount.anyUser.getUserSession()
   if (isAuthenticatedUserSession(maybe_authenticatedUserSession)) {
@@ -117,7 +122,7 @@ export async function getAuthenticatedUserSessionOrRedirectToLogin() {
 
   const loginUrl = appRoutes('/login', {
     q: {
-      redirect: ((await headers()).get('x-pathname') as appRoute) ?? appRoutes('/'),
+      redirect: await getCurrentUrl(),
     },
   })
   redirect(loginUrl, RedirectType.replace)
