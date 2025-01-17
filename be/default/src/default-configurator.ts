@@ -1,22 +1,13 @@
 import {
   binderDispatcher,
-  domainAccess,
   moduleCore,
   moodleModuleName,
   secondaryAdapter,
   secondaryProvider,
   sys_admin_info,
 } from '@moodle/domain'
-import {
-  accessDomain,
-  configuration,
-  createMoodleDomainProxy,
-  deploymentInfoFromUrlString,
-  getProxyFnPath,
-  startBackgroundProcesses,
-} from '@moodle/domain/lib'
+import { accessDomain, configuration, deploymentInfoFromUrlString, startBackgroundProcesses } from '@moodle/domain/lib'
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
-import { provideQueueService, queueService } from '@moodle/lib-job-queue-service'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { edu_core } from '@moodle/module/edu/core'
@@ -46,11 +37,9 @@ import { appDeployments } from 'domain/src/modules/env'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
-import { executionOutcome } from 'lib/job-queue/service/src/lib/types'
-import moment from 'moment'
 import * as path from 'path'
-import timers from 'timers/promises'
 import { coerce, literal, object, union } from 'zod'
+import { createQueueServices, getJobName } from './assets/q'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
@@ -58,7 +47,7 @@ import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winst
 // } from '@moodle/sec-resource-ingestion-default'
 // import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
 
-const cache: map<Promise<configuratorResult>> = {}
+export const cache: map<Promise<configuratorResult>> = {}
 type configuratorResult = {
   configuration: configuration
   loopbackDispatcher: binderDispatcher
@@ -202,18 +191,12 @@ export async function configurator({ domainName }: { domainName: string }) {
       }
       const pendingAccessResultPromises: Promise<unknown>[] = []
 
-      type jobData = { domainAccess: domainAccess }
-
-      const arangoQueueServiceWorkers = provideArangoQueueServiceWorkers({ dbStruct: arango_persistence.dbStruct })
-      const _queue_moodleDomain_proxy = createMoodleDomainProxy({ ctrl: async () => null })
-      const getJobName = (path: string[]) => path.join('.')
-
       const shortcircuitLoopbackDispatcher: binderDispatcher = async ({ domainAccess }) => {
         if (domainAccess.enqueue) {
           const jobName = getJobName(domainAccess.endpoint)
           const jobId = domainAccess.callerContext?.ctxId
           assert(jobId, 'domainAccess must have a callerContext for enqueuing a message')
-          const queueService = queueServices[jobName]
+          const queueService = queues.services[jobName]
           assert(queueService, `queueService for jobName [${jobName}] not found`)
           await queueService.enqueue({ jobId, enqueueDate: new Date().toISOString(), jobData: { domainAccess } })
           return
@@ -230,79 +213,12 @@ export async function configurator({ domainName }: { domainName: string }) {
         return accessResultPromise
         // return shortCircuitLoopbackDispatcher({ configuration, domainAccess })
       }
+      const arangoQueueServiceWorkers = provideArangoQueueServiceWorkers({ dbStruct: arango_persistence.dbStruct })
 
-      const queueServices = [
-        _queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser,
-        _queue_moodleDomain_proxy.secondary.resourceIngestion.write.ingestResource,
-      ].reduce<map<queueService<jobData>>>((_, proxyFn) => {
-        // const jobIs = {
-        //   sendMessageToUser: proxyFn === _queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser,
-        //   ingestResource: proxyFn === _queue_moodleDomain_proxy.secondary.resourceIngestion.write.ingestResource,
-        // }
-        const path = getProxyFnPath(proxyFn)
-        const jobName = getJobName(path)
-        const jobConfig = {
-          jobName,
-          parallelism: 1,
-          progressTimeoutSecs: 30,
-          emptyQueueRescheduleSecs: 30,
-        }
-
-        const queueService = provideQueueService<jobData>({
-          workers: arangoQueueServiceWorkers,
-          async executeJob({
-            job: {
-              executionOutcomes,
-              jobData: { domainAccess },
-            },
-          }) {
-            return Promise.race([
-              shortcircuitLoopbackDispatcher({ domainAccess: { ...domainAccess, enqueue: false } })
-                .then<executionOutcome>(outcome => ({
-                  result: 'done',
-                  outcome,
-                  date: new Date().toISOString(),
-                }))
-                .catch<executionOutcome>(error => ({
-                  result: 'failed',
-                  reason: 'unhandledError',
-                  date: new Date().toISOString(),
-                  error,
-                  followUp:
-                    executionOutcomes.length > 2
-                      ? {
-                          action: 'abort',
-                          details: 'Too many retries',
-                        }
-                      : {
-                          action: 'retry',
-                          fromDate: moment().add(5, 'seconds').toISOString(),
-                        },
-                })),
-              timers.setTimeout(jobConfig.progressTimeoutSecs * 1000).then<executionOutcome>(() => ({
-                result: 'failed',
-                reason: 'timeout',
-                timeoutSecs: jobConfig.progressTimeoutSecs,
-                date: new Date().toISOString(),
-                followUp: {
-                  action: 'retry',
-                  fromDate: new Date().toISOString(),
-                },
-              })),
-            ])
-          },
-          jobConfig,
-        })
-
-        queueService.serviceEmitter.on('error', (context, error) => {
-          console.error(`queue service error [${jobName}]`, { context, error })
-        })
-
-        return {
-          ..._,
-          [jobName]: queueService,
-        }
-      }, {})
+      const queues = createQueueServices({
+        binderDispatcher: shortcircuitLoopbackDispatcher,
+        queueServiceWorkers: arangoQueueServiceWorkers,
+      })
 
       const background_process_promise =
         env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
@@ -321,17 +237,14 @@ export async function configurator({ domainName }: { domainName: string }) {
                   loopbackDispatcher: shortcircuitLoopbackDispatcher,
                 }),
               )
-              .then(() => Promise.all(Object.values(queueServices).map(({ startProcesses }) => startProcesses())))
+              .then(() => queues.startAll())
           : Promise.resolve()
       background_process_promise.then(() => {
         resolveConfigurationPromise({ configuration, loopbackDispatcher: shortcircuitLoopbackDispatcher, stopAndDrain })
       })
       async function stopAndDrain() {
         console.log(`draining [#${pendingAccessResultPromises.length}] pending replies ...`)
-        await Promise.allSettled([
-          ...Object.values(queueServices).map(({ stopAndDrain }) => stopAndDrain()),
-          ...pendingAccessResultPromises,
-        ])
+        await Promise.allSettled([queues.stopAndDrainAll(), ...pendingAccessResultPromises])
         console.log('drained pending replies')
       }
     }).catch(e => {
