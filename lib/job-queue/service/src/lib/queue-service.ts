@@ -1,7 +1,6 @@
 import { d_u, date_time_string } from '@moodle/lib-types'
 import EventEmitter from 'events'
 import moment from 'moment'
-import timers from 'timers/promises'
 import TypedEmitter from 'typed-emitter'
 import {
   consumptionResult,
@@ -31,33 +30,6 @@ export type serviceEmitter<jobData> = TypedEmitter<{
   error: (context: serviceContext<jobData>, error: unknown) => void
   message: (body: string, from: string) => void
 }>
-
-// REMOVE_ME============> export function provideQueueServiceCluster<jobData>() {
-//   type job_name = string
-//   const services: map<queueService<jobData>, job_name> = {}
-//   return { get, stopAndDrainAll }
-//   async function get({
-//     jobName,
-//     getConfig,
-//     noAutoStart,
-//   }: {
-//     jobName: job_name
-//     getConfig: () => Promise<queueServiceConfig<jobData>>
-//     noAutoStart?: boolean
-//   }) {
-//     if (!services[jobName]) {
-//       const config = await getConfig()
-//       services[jobName] = provideQueueService<jobData>(config)
-//       if (!noAutoStart) {
-//         services[jobName].startProcesses()
-//       }
-//     }
-//     return services[jobName]
-//   }
-//   function stopAndDrainAll() {
-//     return Promise.all(Object.values(services).map(({ stopAndDrain }) => stopAndDrain()))
-//   }
-// }
 
 export type queueService<jobData> = ReturnType<typeof provideQueueService<jobData>>
 
@@ -89,8 +61,6 @@ export function provideQueueService<jobData>({
   }
 
   function startProcesses() {
-    console.log(`starting processes for ${jobName}`)
-    consumeProcess()
     restoreTimedouts_scheduler = setTimeout(() => {
       const timeoutOutcome: executionOutcome = {
         date: new Date().toISOString(),
@@ -148,11 +118,7 @@ export function provideQueueService<jobData>({
 
   function consumeProcess() {
     const amount = parallelism - pendingConsumptionObjects.length
-    // console.log('1 consume', {
-    //   amount,
-    //   parallelism,
-    //   pendingConsumptionObjectsLength: pendingConsumptionObjects.length,
-    // })
+
     if (amount < 1) {
       return
     }
@@ -164,64 +130,43 @@ export function provideQueueService<jobData>({
       engageDate,
     })
       .then(jobs => {
-        // console.log('2 consume', { jobs: jobs.length })
         if (jobs.length === 0) {
           clearTimeout(consume_scheduler)
           consume_scheduler = setTimeout(() => consumeProcess(), emptyQueueRescheduleSecs * 1000)
           return
         }
-        jobs.map(job => {
-          const pendingConsumptionResultPromise = execute({ job })
-
-          const pendingConsumptionObject: pendingConsumptionObject<jobData> = {
-            pendingConsumptionResultPromise,
-            job,
-            jobConfig,
-          }
-
-          pendingConsumptionObjects.push(pendingConsumptionObject)
-
-          return pendingConsumptionResultPromise.then(consumptionResult => {
-            updateJob(consumptionResult).catch(
-              emitError({
-                type: 'updateJob',
-                consumptionResult,
-              }),
-            )
-            const pendingConsumptionIndex = pendingConsumptionObjects.indexOf(pendingConsumptionObject)
-            // console.log('2.5 consume awaitingBatch finally', { pendingConsumptionIndex })
-            pendingConsumptionObjects.splice(pendingConsumptionIndex, 1)
-            consumeProcess()
-            return consumptionResult
-          })
-        })
+        jobs.map(consumeJob)
       })
       .catch(emitError({ type: 'fetchAndEngageSomeEnqueuedJobs' }))
   }
 
+  function consumeJob(job: job<jobData>): Promise<consumptionResult<jobData>> {
+    const pendingConsumptionResultPromise = execute({ job })
+
+    const pendingConsumptionObject: pendingConsumptionObject<jobData> = {
+      pendingConsumptionResultPromise,
+      job,
+      jobConfig,
+    }
+
+    pendingConsumptionObjects.push(pendingConsumptionObject)
+
+    return pendingConsumptionResultPromise.then(consumptionResult => {
+      updateJob(consumptionResult).catch(
+        emitError({
+          type: 'updateJob',
+          consumptionResult,
+        }),
+      )
+      const pendingConsumptionIndex = pendingConsumptionObjects.indexOf(pendingConsumptionObject)
+      pendingConsumptionObjects.splice(pendingConsumptionIndex, 1)
+      consumeProcess()
+      return consumptionResult
+    })
+  }
+
   async function execute({ job }: { job: job<jobData> }) {
-    const executionOutcome = await Promise.race([
-      executeJob({ job }).catch<executionOutcome>(error => ({
-        date: new Date().toISOString(),
-        result: 'failed',
-        reason: 'unhandledError',
-        error,
-        followUp: {
-          action: 'retry',
-          fromDate: new Date().toISOString(),
-        },
-      })),
-      timers.setTimeout(progressTimeoutSecs * 1000).then<executionOutcome>(() => ({
-        result: 'failed',
-        reason: 'timeout',
-        timeoutSecs: progressTimeoutSecs,
-        date: new Date().toISOString(),
-        followUp: {
-          action: 'retry',
-          fromDate: new Date().toISOString(),
-        },
-      })),
-    ])
+    const executionOutcome = await executeJob({ job })
     const consumptionResult: consumptionResult<jobData> = { job, executionOutcome }
 
     return consumptionResult

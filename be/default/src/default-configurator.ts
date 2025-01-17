@@ -23,6 +23,7 @@ import { edu_core } from '@moodle/module/edu/core'
 import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
 import { moodlenet_core } from '@moodle/module/moodlenet/core'
 import { org_core } from '@moodle/module/org/core'
+import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
 import { storage_core } from '@moodle/module/storage/core'
 import { userAccount_core } from '@moodle/module/user-account/core'
 import { user_profile_core } from '@moodle/module/user-profile/core'
@@ -35,22 +36,22 @@ import {
 } from '@moodle/sec-db-arango'
 import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
 import { get_nodemailer_secondary_factory, NodemailerSecEnv, provideNodemailerSecEnv } from '@moodle/sec-email-nodemailer'
+import {
+  get_default_resource_ingestion_secondary_factory,
+  provideDefaultResourceIngestorSecEnv,
+} from '@moodle/sec-resource-ingestion-default'
 import { get_storage_default_secondary_factory, StorageDefaultSecEnv } from '@moodle/sec-storage-local-fs'
 import assert from 'assert'
+import { appDeployments } from 'domain/src/modules/env'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
 import { executionOutcome } from 'lib/job-queue/service/src/lib/types'
 import moment from 'moment'
 import * as path from 'path'
+import timers from 'timers/promises'
 import { coerce, literal, object, union } from 'zod'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
-import { appDeployments } from 'domain/src/modules/env'
-import {
-  get_default_resource_ingestion_secondary_factory,
-  provideDefaultResourceIngestorSecEnv,
-} from '@moodle/sec-resource-ingestion-default'
-import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
 //   provideDefaultResourceIngestorSecEnv,
@@ -234,12 +235,18 @@ export async function configurator({ domainName }: { domainName: string }) {
         _queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser,
         _queue_moodleDomain_proxy.secondary.resourceIngestion.write.ingestResource,
       ].reduce<map<queueService<jobData>>>((_, proxyFn) => {
-        const path = getProxyFnPath(proxyFn)
-        const jobName = getJobName(path)
         // const jobIs = {
         //   sendMessageToUser: proxyFn === _queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser,
         //   ingestResource: proxyFn === _queue_moodleDomain_proxy.secondary.resourceIngestion.write.ingestResource,
         // }
+        const path = getProxyFnPath(proxyFn)
+        const jobName = getJobName(path)
+        const jobConfig = {
+          jobName,
+          parallelism: 1,
+          progressTimeoutSecs: 30,
+          emptyQueueRescheduleSecs: 30,
+        }
 
         const queueService = provideQueueService<jobData>({
           workers: arangoQueueServiceWorkers,
@@ -249,35 +256,42 @@ export async function configurator({ domainName }: { domainName: string }) {
               jobData: { domainAccess },
             },
           }) {
-            return shortcircuitLoopbackDispatcher({ domainAccess: { ...domainAccess, enqueue: false } })
-              .then<executionOutcome>(outcome => ({
-                result: 'done',
-                outcome,
-                date: new Date().toISOString(),
-              }))
-              .catch<executionOutcome>(error => ({
+            return Promise.race([
+              shortcircuitLoopbackDispatcher({ domainAccess: { ...domainAccess, enqueue: false } })
+                .then<executionOutcome>(outcome => ({
+                  result: 'done',
+                  outcome,
+                  date: new Date().toISOString(),
+                }))
+                .catch<executionOutcome>(error => ({
+                  result: 'failed',
+                  reason: 'unhandledError',
+                  date: new Date().toISOString(),
+                  error,
+                  followUp:
+                    executionOutcomes.length > 2
+                      ? {
+                          action: 'abort',
+                          details: 'Too many retries',
+                        }
+                      : {
+                          action: 'retry',
+                          fromDate: moment().add(5, 'seconds').toISOString(),
+                        },
+                })),
+              timers.setTimeout(jobConfig.progressTimeoutSecs * 1000).then<executionOutcome>(() => ({
                 result: 'failed',
-                reason: 'unhandledError',
+                reason: 'timeout',
+                timeoutSecs: jobConfig.progressTimeoutSecs,
                 date: new Date().toISOString(),
-                error,
-                followUp:
-                  executionOutcomes.length > 2
-                    ? {
-                        action: 'abort',
-                        details: 'Too many retries',
-                      }
-                    : {
-                        action: 'retry',
-                        fromDate: moment().add(5, 'seconds').toISOString(),
-                      },
-              }))
+                followUp: {
+                  action: 'retry',
+                  fromDate: new Date().toISOString(),
+                },
+              })),
+            ])
           },
-          jobConfig: {
-            jobName,
-            parallelism: 1,
-            progressTimeoutSecs: 30,
-            emptyQueueRescheduleSecs: 30,
-          },
+          jobConfig,
         })
 
         queueService.serviceEmitter.on('error', (context, error) => {
