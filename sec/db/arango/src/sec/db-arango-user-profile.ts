@@ -94,6 +94,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             processStatus,
             processType,
             userProfileIdSelect,
+            condition,
           }) {
             const processType_propName: keyof assetProcessStatus = processType
             const updateResult = await overUserProfileById({
@@ -104,7 +105,11 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 UPDATE userProfileDoc WITH {
                   myDrafts: {
                     eduResource: (  FOR draft IN userProfileDoc.myDrafts.eduResource
-                                      RETURN draft.draftId == ${eduResourceDraftId}
+                                      LET isTargetDraft = draft.draftId == ${eduResourceDraftId}
+                                      LET targetProcessStatus = draft.assetProcessStatus[${processType_propName}]
+                                      LET conditionMet = targetProcessStatus.status == ${condition.status}
+                                      LET updateThisDraft = isTargetDraft && conditionMet
+                                      RETURN updateThisDraft
                                         ? MERGE(
                                                 draft,
                                                 {

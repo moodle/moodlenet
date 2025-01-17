@@ -14,6 +14,7 @@ import { adoptAssetForm, adoptAssetResult } from '../storage'
 import { userAccountId, userAccountRecord } from '../user-account'
 import {
   UserProfilePrimaryMsgSchemaConfigs,
+  assetProcessStatus,
   draftId,
   eduCollectionDraft,
   eduCollectionDraftId,
@@ -161,8 +162,18 @@ export default interface UserProfileDomain {
             userProfileIdSelect: userProfileIdSelect
           } & d_u<
             {
-              ingestion: { processStatus: processStatus<eduResourceIngestionOutcome> }
-              aiGeneration: { processStatus: processStatus<eduResourceAiGenerationOutcome> }
+              ingestion: {
+                processStatus: processStatus<eduResourceIngestionOutcome>
+                condition: {
+                  status: assetProcessStatus['ingestion']['status']
+                }
+              }
+              aiGeneration: {
+                processStatus: processStatus<eduResourceAiGenerationOutcome>
+                condition: {
+                  status: assetProcessStatus['aiGeneration']['status']
+                }
+              }
             },
             'processType'
           >,

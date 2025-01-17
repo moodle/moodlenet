@@ -257,23 +257,6 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 if (ingestionContext.type !== 'eduResourceDraft') {
                   return
                 }
-                const [found, draft] = await ctx.mod.secondary.userProfile.query.getDraft({
-                  draftId: ingestionContext.eduResourceDraftId,
-                  draftType: 'eduResource',
-                  userProfileIdSelect: ingestionContext.userProfileIdSelect,
-                })
-                if (!found) {
-                  return
-                }
-                if (draft.assetProcessStatus.ingestion.status !== 'neverEngaged') {
-                  ctx.log(
-                    'warn',
-                    `ingestResource enqueued: userProfile's resource draft assetProcessStatus.ingestion not "neverEngaged" : [${draft.assetProcessStatus.ingestion.status}]`,
-                    draft,
-                    ingestionContext,
-                  )
-                  return
-                }
 
                 await ctx.write.updateDraftResourceAssetProcessStatus({
                   userProfileIdSelect: ingestionContext.userProfileIdSelect,
@@ -283,6 +266,9 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                     status: 'awaiting',
                     engageDate: new Date().toISOString(),
                   },
+                  condition:{
+                    status: 'neverEngaged',
+                  }
                 })
               },
             },
@@ -302,16 +288,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                   draftType: 'eduResource',
                   userProfileIdSelect: payload.ingestionContext.userProfileIdSelect,
                 })
-                if (!found) {
-                  return
-                }
-                if (draft.assetProcessStatus.ingestion.status !== 'awaiting') {
-                  ctx.log(
-                    'warn',
-                    `ingestResource outcome: userProfile's  resource draft assetProcessStatus.ingestion not "awaiting" : [${draft.assetProcessStatus.ingestion.status}]`,
-                    draft,
-                    payload.ingestionContext,
-                  )
+                if (!found || draft.assetProcessStatus.ingestion.status !== 'awaiting') {
                   return
                 }
 
@@ -324,6 +301,9 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                     status: 'finished',
                     finishDate: new Date().toISOString(),
                     outcome: eduResourceIngestionOutcome,
+                  },
+                  condition: {
+                    status: draft.assetProcessStatus.ingestion.status,
                   },
                 })
               },
@@ -377,7 +357,6 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               },
               async useTempImageInDraft([adoptAssetResult, { userProfileId: id, draftId, draftType }]) {
                 if (adoptAssetResult.status === 'error') {
-                  ctx.log('warn', 'useTempImageInDraft: adoptAssetResult error', adoptAssetResult)
                   return
                 }
                 const asset = adoptAssetResult.asset
@@ -398,8 +377,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
           userAccount: {
             write: {
               //REVIEW - this userAccount should emit an event and catch it here in userprofile
-              async saveNewUser([[created, result], { newUser }]) {
-                ctx.log('debug', 'user-profile watch saveNewUser', { created, result, newUser })
+              async saveNewUser([[created], { newUser }]) {
                 if (!created) {
                   return
                 }
