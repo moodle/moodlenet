@@ -1,3 +1,5 @@
+// NOTICE: Dropped use of puppeteer because its content outcome is always messy, containing a lot of noise from html page
+
 import { ok_ko, url_string, url_string_schema } from '@moodle/lib-types'
 import { eduResourceIngestionOutcome as ingestionOutcome } from '@moodle/module/resource-ingestion'
 import { asset, externalAsset } from '@moodle/module/storage'
@@ -26,8 +28,9 @@ export async function puppeteerOgsUrlIngestor({
     return { outcome: 'undoable', details: { puppeteerResponse, ogsResponse }, ingestionImpl, reason: 'could not get any' }
   }
   const content =
-    ((ogsDone && ogsResponse.content) || '') +
-      ((puppeteerDone && (await tikaUrlContentIngestion({ tikaServerUrl, ...puppeteerResponse }))) || '') || null
+    (ogsDone && ogsResponse.content) ||
+    (puppeteerDone && (await tikaUrlContentIngestion({ tikaServerUrl, ...puppeteerResponse }))) ||
+    null
 
   const title = (ogsDone && ogsResponse.title) || (puppeteerDone && puppeteerResponse.title) || null
   const externalAssetImage = (ogsDone && ogsResponse.image) || null
