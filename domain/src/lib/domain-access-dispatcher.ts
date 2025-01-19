@@ -321,6 +321,7 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     })
   }
   const syncProxy = getLoopbackProxy()
+  const asyncProxy = getLoopbackProxy(true /*asyncOptions */)
 
   const callerContext = currentDomainAccess?.callerContext
   const originEndpoint = currentDomainAccess?.originEndpoint
@@ -355,16 +356,14 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     emit: syncProxy.event,
     forward: syncProxy.primary,
     mod: syncProxy,
-    write: syncProxy.secondary[moduleName].write,
+    // write: syncProxy.secondary[moduleName].write as _any,
+    write: syncProxy.secondary[moduleName].write as _any,
     sync: syncProxy.secondary[moduleName].sync,
     log,
     async enqueue(endopint_fn_proxy, payload /*, asyncOptions = true*/) {
       assert(currentDomainAccess, `ctx.async: needs a currentDomainAccess to enqueue a message`)
       const queueEndpoint = getProxyFnPath(endopint_fn_proxy)
-      const fn = queueEndpoint.reduce(
-        (currProp, currPathSegment) => currProp?.[currPathSegment],
-        getLoopbackProxy(true /*asyncOptions */) as _any,
-      )
+      const fn = queueEndpoint.reduce((currProp, currPathSegment) => currProp?.[currPathSegment], asyncProxy as _any)
       assert(typeof fn === 'function', `ctx.async: endpoint[${queueEndpoint.join('.')}] fn is not a function`)
       await fn(payload)
       // console.log({ queueEndpoint, qwatchEndpoint, payload })

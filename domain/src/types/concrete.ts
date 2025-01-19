@@ -54,7 +54,16 @@ export type modSecondary<moduleName extends moodleModuleName = never> = Pick<moo
 export type modEmitter<moduleName extends moodleModuleName = never> = Pick<moodleEvent, moduleName>[moduleName]
 
 type coreContext<moduleName extends moodleModuleName = never> = baseContext & {
-  write: modSecondary<moduleName>['write']
+  //write: modSecondary<moduleName>['write']
+  write: {
+    [endpoint in keyof modSecondary<moduleName>['write']]: modSecondary<moduleName>['write'][endpoint] extends infer write_endpoint_fn
+      ? write_endpoint_fn extends any_function
+        ? Parameters<write_endpoint_fn>[0] extends infer payload
+          ? (payload: undefined extends payload ? void : payload /* , enqueueOpts */) => Promise<void>
+          : never
+        : never
+      : never
+  }
   emit: modEmitter<moduleName>
   enqueue: enqueueMessage
 }
@@ -145,4 +154,5 @@ export type layerWatchEnqueue<layer extends 'secondary' | 'primary'> = {
 export type enqueueMessage = <endpoint_fn extends any_function>(
   endpoint_fn: endpoint_fn,
   payload: Parameters<endpoint_fn>[0],
+  // enqueueOpts
 ) => Promise<void>

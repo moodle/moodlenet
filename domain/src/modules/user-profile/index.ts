@@ -49,18 +49,8 @@ export default interface UserProfileDomain {
         }>
       }
       authenticated: {
-        useTempImageAsProfileImage(_: {
-          useProfileImageForm: useProfileImageForm
-        }): Promise<{ adoptAssetResult: adoptAssetResult; userProfileId: userProfileId }>
-        editProfileInfoMeta(_: { profileInfoMeta: profileInfoMeta }): Promise<
-          ok_ko<
-            { userProfileId: userProfileId },
-            {
-              notFound: unknown
-              unknown: unknown
-            }
-          >
-        >
+        useTempImageAsProfileImage(_: { useProfileImageForm: useProfileImageForm }): Promise<void>
+        editProfileInfoMeta(_: { profileInfoMeta: profileInfoMeta }): Promise<void>
         getMyUserRecords(): Promise<{
           userProfileRecord: Omit<userProfileRecord, 'userAccount'>
           userAccountRecord: Omit<userAccountRecord, 'displayName'>
@@ -73,11 +63,11 @@ export default interface UserProfileDomain {
         editEduCollectionDraft(_: {
           eduCollectionDraftId: eduCollectionDraftId
           eduCollectionMetaForm: eduCollectionMetaForm
-        }): Promise<ok_ko<void>>
+        }): Promise<void>
         applyEduCollectionDraftImage(_: {
           eduCollectionDraftId: eduCollectionDraftId
           applyImageForm: eduCollectionApplyImageForm
-        }): Promise<{ adoptAssetResult: adoptAssetResult; userProfileId: userProfileId }>
+        }): Promise<void>
         getEduCollectionDraft(_: {
           eduCollectionDraftId: eduCollectionDraftId
         }): Promise<ok_ko<eduCollectionDraft, { notFound: unknown }>>
@@ -90,11 +80,11 @@ export default interface UserProfileDomain {
         editEduResourceDraft(_: {
           eduResourceDraftId: eduResourceDraftId
           eduResourceMetaForm: eduResourceMetaForm
-        }): Promise<ok_ko<void>>
+        }): Promise<void>
         applyEduResourceDraftImage(_: {
           eduResourceDraftId: eduResourceDraftId
           applyImageForm: eduResourceApplyImageForm
-        }): Promise<{ adoptAssetResult: adoptAssetResult; userProfileId: userProfileId }>
+        }): Promise<void>
         getEduResourceDraft(_: {
           eduResourceDraftId: eduResourceDraftId
         }): Promise<ok_ko<eduResourceDraft, { notFound: unknown }>>

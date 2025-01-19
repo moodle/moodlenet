@@ -4,7 +4,7 @@ import { pageProps, paramRequired } from '../../../../../lib/server/page-props'
 import { access } from '../../../../../lib/server/session-access'
 import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'
 import ProfilePageClient, { profilePageProps } from '../../../../../ui/pages/Profile/ProfilePage'
-import { getApplyMyProfileImageadoptAssetService, updateMyProfileInfoMetaForm } from './profile.server'
+import { getApplyMyProfileImageSafeAction, getUpdateMyProfileInfoMetaSafeAction } from './profile.server'
 
 export default async function ProfilePage({ params }: pageProps<{ moodlenetContributorId: string; slug: string }>) {
   const [moodlenetContributorId, slug] = await Promise.all([
@@ -17,18 +17,20 @@ export default async function ProfilePage({ params }: pageProps<{ moodlenetContr
   if (!foundContributor) {
     return <Fallback />
   }
+
   if (webappContributorAccessData.slug !== slug) {
     redirect(appRoutes(`/profile/${moodlenetContributorId}/${webappContributorAccessData.slug}`))
   }
+  const { id: userProfileId } = webappContributorAccessData
   const { permissions } = webappContributorAccessData
   const profilePageProps: profilePageProps = {
     ...webappContributorAccessData,
     actions: {
       edit: permissions.editProfileInfo
         ? {
-            updateMyProfileInfo: updateMyProfileInfoMetaForm,
-            useAsMyProfileAvatar: await getApplyMyProfileImageadoptAssetService('avatar'),
-            useAsMyProfileBackground: await getApplyMyProfileImageadoptAssetService('background'),
+            updateMyProfileInfo: await getUpdateMyProfileInfoMetaSafeAction({ userProfileId }),
+            useAsMyProfileAvatar: await getApplyMyProfileImageSafeAction({ userProfileId, type: 'avatar' }),
+            useAsMyProfileBackground: await getApplyMyProfileImageSafeAction({ userProfileId, type: 'background' }),
           }
         : null,
       follow: permissions.follow ? null : null,

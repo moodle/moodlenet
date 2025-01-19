@@ -39,7 +39,7 @@ import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
 import * as path from 'path'
 import { coerce, literal, object, union } from 'zod'
-import { createQueueServices, getJobName } from './assets/q'
+import { createQueueServices, getJobName } from './assets/queue-services'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
 // import {
 //   get_default_resource_ingestion_secondary_factory,

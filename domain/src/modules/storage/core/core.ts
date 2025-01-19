@@ -9,13 +9,11 @@ export const storage_core: moduleCore<'storage'> = {
   },
   startBackgroundProcess(ctx) {
     delStales()
-    function delStales() {
+    async function delStales() {
       ctx.log('debug', 'deleteStaleTemp files')
-      ctx.write
-        .deleteStaleTemp()
-        .catch(e => ctx.log('warn', 'error deleteStaleTemp', e))
-        .then(() => timers.setTimeout(ONE_MINUTE))
-        .then(delStales)
+      await ctx.mod.secondary.storage.service.deleteStaleTemp()
+      await timers.setTimeout(ONE_MINUTE)
+      delStales()
     }
   },
   primary(ctx) {

@@ -16,6 +16,7 @@ export default interface StorageDomain {
   secondary: {
     storage: {
       service: {
+        deleteStaleTemp(): Promise<void>
         createStoredAssetTempFileReference(_: {
           expiresSeconds: number
           storedAssetMeta: Pick<storedAssetMeta, 'path' | 'name'>
@@ -23,9 +24,7 @@ export default interface StorageDomain {
       }
       sync: unknown
       query: unknown
-      write: {
-        deleteStaleTemp(): Promise<void>
-      }
+      write: unknown
     }
   }
 }

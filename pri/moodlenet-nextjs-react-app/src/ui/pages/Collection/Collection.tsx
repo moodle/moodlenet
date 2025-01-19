@@ -1,8 +1,8 @@
 'use client'
 
 import { _nullish, d_u, selection } from '@moodle/lib-types'
-import { adoptAssetService } from '@moodle/module/storage'
 import { eduCollectionData, eduCollectionMetaFormSchema } from '@moodle/module/edu'
+import { adoptAssetSafeAction, simpleHookSafeAction } from '../../../lib/common/actions'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../atoms/SecondaryButton/SecondaryButton'
@@ -12,7 +12,6 @@ import {
   collectionContributorCardProps,
 } from './CollectionContributorCard/CollectionContributorCard'
 import { MainCollectionCard } from './MainCollectionCard/MainCollectionCard'
-import { simpleHookSafeAction } from '../../../lib/common/actions'
 
 type saveEduCollectionMetaFn = simpleHookSafeAction<eduCollectionMetaFormSchema, void>
 export type eduCollectionActions = {
@@ -20,7 +19,7 @@ export type eduCollectionActions = {
   saveNewDraft: saveEduCollectionMetaFn
   editDraft: {
     saveMeta: saveEduCollectionMetaFn
-    applyImage: adoptAssetService
+    applyImage: adoptAssetSafeAction
   }
   deleteDraft(): Promise<unknown>
   deletePublished(): Promise<unknown>

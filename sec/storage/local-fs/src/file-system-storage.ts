@@ -77,16 +77,6 @@ export function get_storage_default_secondary_factory({ localFsStorageDirectory 
       },
       storage: {
         service: {
-          async createStoredAssetTempFileReference({ storedAssetMeta, expiresSeconds }) {
-            return createStoredAssetTempFileSymlink({
-              expiresSeconds,
-              localStorageFsDirectories,
-              storedAssetMeta,
-            })
-          },
-        },
-        query: {},
-        write: {
           async deleteStaleTemp() {
             const deletedFiles = await deleteStaleTemp({ domainFsDirectories })
 
@@ -96,27 +86,14 @@ export function get_storage_default_secondary_factory({ localFsStorageDirectory 
               }
             })
           },
+          async createStoredAssetTempFileReference({ storedAssetMeta, expiresSeconds }) {
+            return createStoredAssetTempFileSymlink({
+              expiresSeconds,
+              localStorageFsDirectories,
+              storedAssetMeta,
+            })
+          },
         },
-        // async useTempFile({ absolutePath, tempId }) {
-        //   const { temp_file_meta_path } = get_temp_file_paths({ tempId })
-
-        //   const meta: fileMeta = await readFile(temp_file_meta_path, 'utf8')
-        //     .then(JSON.parse)
-        //     .catch(null)
-        //   if (!meta) {
-        //     await deleteTemp({ tempId }).catch(() => null)
-        //     return [false, { reason: 'notFound' }]
-        //   }
-
-        //   const fs_dest_path = path2modFsPath({ path: absolutePath })
-        //   await mkdir(fs_dest_path, { recursive: true })
-        //   const { temp_file_path } = get_temp_file_paths({ tempId })
-
-        //   await rename(temp_file_path, fs_dest_path)
-        //   await deleteTemp({ tempId })
-
-        //   return [true, { meta }]
-        // },
       },
     }
     return secondaryAdapter

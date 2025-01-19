@@ -2,14 +2,14 @@
 
 import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
 import { eduCollectionMetaForm } from '@moodle/module/edu'
-import { adoptAssetService } from '@moodle/module/storage'
 import { eduCollectionDraftId } from '@moodle/module/user-profile'
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { redirect, RedirectType } from 'next/navigation'
+import { adoptAssetSafeAction } from '../../../lib/common/actions'
 import { appRoutes } from '../../../lib/common/appRoutes'
-import { defaultSafeActionClient, safeActionResult_to_adoptAssetResult } from '../../../lib/server/safe-action'
+import { defaultSafeActionClient } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
 
 export async function getEduCollectionMetaSchema() {
@@ -36,15 +36,11 @@ export async function editEduCollectionDraftForId({ eduCollectionDraftId }: { ed
       .schema(getEduCollectionMetaSchema)
       .action(async ({ parsedInput: eduCollectionMetaForm }) => {
         'use server'
-        const [done /* , result */] = await access.primary.userProfile.authenticated.editEduCollectionDraft({
+        await access.primary.userProfile.authenticated.editEduCollectionDraft({
           eduCollectionMetaForm,
           eduCollectionDraftId,
         })
-        if (!done) {
-          returnValidationErrors(getEduCollectionMetaSchema, {
-            _errors: [t(`something went wrong while saving collection meta`)],
-          })
-        }
+
         revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
       })
     return editEduCollectionDraftAction(eduCollectionMetaForm)
@@ -59,7 +55,7 @@ export async function getEduCollectionDraftImageForIdadoptAssetService({
   eduCollectionDraftId,
 }: {
   eduCollectionDraftId: eduCollectionDraftId
-}): Promise<adoptAssetService> {
+}): Promise<adoptAssetSafeAction> {
   return async function adoptAssetForm_eduCollectionDraftImage(adoptAssetForm) {
     'use server'
 
@@ -71,13 +67,11 @@ export async function getEduCollectionDraftImageForIdadoptAssetService({
             eduCollectionDraftId,
             applyImageForm,
           })
-          .then(({ adoptAssetResult }) => {
+          .then(() => {
             revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
-
-            return adoptAssetResult
           }),
       )
-    return safeActionResult_to_adoptAssetResult(applyEduCollectionDraftImageAction({ resourceImageForm: adoptAssetForm }))
+    return applyEduCollectionDraftImageAction({ resourceImageForm: adoptAssetForm })
   }
 }
 

@@ -44,7 +44,7 @@ export default function MainResourceCard(props: mainResourceCardProps) {
   const [resourceUrl] = useAssetUrl(eduResourceData?.asset)
   const uploadResourceHandler = useAssetUploader('file', null, actions.saveNewResourceAsset, { nonNullable: true })
   const { state: resourceUploaderState, submit: resourceUploaderSubmit } = uploadResourceHandler
-  if (resourceUploaderState.type === 'selected') {
+  if (resourceUploaderState.type === 'selected' && !resourceUploaderState.lastSubmission) {
     resourceUploaderSubmit()
   }
   const newResourceLinkFormSchema = object({ url: url_string_schema })

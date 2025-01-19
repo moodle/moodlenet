@@ -1,31 +1,30 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { _nullish, d_u, selection, unreachable_never } from '@moodle/lib-types'
-import { adoptAssetService } from '@moodle/module/storage'
 import { eduResourceData, eduResourceMetaFormSchema } from '@moodle/module/edu'
 import { InsertDriveFile } from '@mui/icons-material'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
+import { useCallback, useState } from 'react'
 import { useAllPrimarySchemas, useAssetUrl, useGlobalCtx } from '../../../lib/client/globalContexts'
-import { default_noop_action, simpleHookSafeAction } from '../../../lib/common/actions'
+import { adoptAssetSafeAction, adoptValuedAssetSafeAction, default_noop_action, simpleHookSafeAction } from '../../../lib/common/actions'
 import { appRoute } from '../../../lib/common/appRoutes'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
 import { SecondaryButton } from '../../atoms/SecondaryButton/SecondaryButton'
+import { blankToNullOption } from '../../lib/react-hook-form'
 import DateField from '../../molecules/ed-meta/fields/DateField/DateField'
 import DropdownField from '../../molecules/ed-meta/fields/DropdownField'
 import MainResourceCard from './MainResourceCard/MainResourceCard'
 import './Resource.scss'
 import { ResourceContributorCard, ResourceContributorCardProps } from './ResourceContributorCard/ResourceContributorCard'
-import { blankToNullOption } from '../../lib/react-hook-form'
-import { useCallback, useState } from 'react'
 
 type saveEduResourceMetaFn = simpleHookSafeAction<eduResourceMetaFormSchema, void>
 export type eduResourceActions = {
   publish(): Promise<unknown>
-  saveNewResourceAsset: adoptAssetService<'external' | 'tempFile'>
+  saveNewResourceAsset: adoptValuedAssetSafeAction
   editDraft: {
     saveMeta: saveEduResourceMetaFn
-    applyImage: adoptAssetService
+    applyImage: adoptAssetSafeAction
   }
   deleteDraft(): Promise<unknown>
   deletePublished(): Promise<unknown>

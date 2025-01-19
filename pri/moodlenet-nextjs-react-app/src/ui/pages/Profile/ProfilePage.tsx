@@ -5,26 +5,25 @@ import Grade from '@mui/icons-material/Grade'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 
 import { selection } from '@moodle/lib-types'
-import { adoptAssetService } from '@moodle/module/storage'
 import { webappContributorAccessData } from '@moodle/module/moodlenet-react-app'
 import { updateProfileInfoSchema } from '@moodle/module/user-profile'
+import { adoptValuedAssetSafeAction, simpleHookSafeAction } from '../../../lib/common/actions'
 import { Card } from '../../atoms/Card/Card'
 import { OverallCard } from '../../molecules/OverallCard/OverallCard'
 import { MainProfileCard } from './MainProfileCard/MainProfileCard'
 import { UserProgressCard } from './UserProgressCard/UserProgressCard'
-import { simpleHookSafeAction } from '../../../lib/common/actions'
 
 type actionsOnContributor = {
   edit: {
-    updateMyProfileInfo: updateMyProfileInfoFn
-    useAsMyProfileBackground: adoptAssetService
-    useAsMyProfileAvatar: adoptAssetService
+    updateMyProfileInfo: updateMyProfileInfoSafeAction
+    useAsMyProfileBackground: adoptValuedAssetSafeAction
+    useAsMyProfileAvatar: adoptValuedAssetSafeAction
   }
   follow(): Promise<void>
   sendMessage(text: string): Promise<void>
   report(text: string): Promise<void>
 }
-type updateMyProfileInfoFn = simpleHookSafeAction<updateProfileInfoSchema, void>
+export type updateMyProfileInfoSafeAction = simpleHookSafeAction<updateProfileInfoSchema, void>
 
 export type profilePageProps = webappContributorAccessData & {
   actions: selection<actionsOnContributor, never, 'edit' | 'follow' | 'sendMessage' | 'report'>

@@ -61,14 +61,12 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               new_roles_set.has('admin') ? (['admin', 'contributor'] satisfies userRole[]) : Array.from(new_roles_set)
             ).sort()
 
-            const [done] = await ctx.write.setUserRoles({
-              userAccountId,
-              roles: new_roles,
-              adminUserAccountId: adminUserSession.user.id,
-            })
-            if (!done) {
-              return [false, { reason: 'userNotFound' }]
-            }
+             await ctx.write.setUserRoles({
+               userAccountId,
+               roles: new_roles,
+               adminUserAccountId: adminUserSession.user.id,
+             })
+
             return [true, { updatedRoles: new_roles, adminUserAccountId }]
           },
 
@@ -80,7 +78,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           },
 
           async deactivateUser({ userAccountId, anonymize, reason }) {
-            const [done] = await ctx.write.deactivateUser({
+            await ctx.write.deactivateUser({
               userAccountId,
               reason: {
                 type: 'adminRequest',
@@ -89,9 +87,6 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               },
               anonymize,
             })
-            if (!done) {
-              return [false, { reason: 'userNotFound' }]
-            }
             return [true, { adminUserAccountId }]
           },
         } satisfies primary['admin']
@@ -131,12 +126,10 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               passwordHash: validatedSignedTokenData.passwordHash,
               lastLogin: ctx.now,
             })
-            const [newUserCreated] = await ctx.write.saveNewUser({
-              newUser,
-            })
-            if (!newUserCreated) {
-              return [false, { reason: 'unknown' }]
-            }
+
+             await ctx.write.saveNewUser({
+               newUser,
+             })
 
             return [true, { userAccountId: newUser.id }]
           },
@@ -162,11 +155,11 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             const { passwordHash } = await ctx.mod.secondary.crypto.service.hashPassword({
               plainPassword: newPassword,
             })
-            const [pwdChanged] = await ctx.write.setUserPassword({
-              newPasswordHash: passwordHash,
-              userAccountId: userAccountRecord.id,
-            })
-            return pwdChanged ? [true, _void] : [false, { reason: 'unknown' }]
+             await ctx.write.setUserPassword({
+               newPasswordHash: passwordHash,
+               userAccountId: userAccountRecord.id,
+             })
+            return [true, _void]
           },
           async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
             const [verified, validation] = await ctx.mod.secondary.crypto.service.validateSignedToken({
@@ -188,7 +181,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               return [false, { reason: 'unknownUser' }]
             }
 
-            const [deactivated] = await ctx.write.deactivateUser({
+            await ctx.write.deactivateUser({
               anonymize: true,
               reason: {
                 type: 'userSelfDeletionRequest',
@@ -196,7 +189,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               },
               userAccountId: validatedSignedTokenData.userAccountId,
             })
-            return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
+            return [true, _void]
           },
         } satisfies primary['signedTokenAccess']
       },
@@ -355,14 +348,10 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             const { passwordHash } = await ctx.mod.secondary.crypto.service.hashPassword({
               plainPassword: newPassword,
             })
-            const [done] = await ctx.write.setUserPassword({
+            await ctx.write.setUserPassword({
               newPasswordHash: passwordHash,
               userAccountId,
             })
-
-            if (!done) {
-              return [false, { reason: 'unknown' }]
-            }
 
             return [true, { userAccountId }]
           },
