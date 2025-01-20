@@ -5,8 +5,8 @@ import { pageProps, paramRequired } from '../../../../lib/server/page-props'
 import { CollectionPage, collectionPageProps } from '../../../../ui/pages/Collection/Collection'
 import { Fallback } from '../../../../ui/pages/Fallback/Fallback'
 import {
-  getEduCollectionDraftImageForIdadoptAssetService,
-  editEduCollectionDraftForId,
+  getEduCollectionDraftImageForId_AdoptAssetSafeAction,
+  getEditEduCollectionDraftForId,
 } from '../eduCollection-actions.server'
 
 export default async function EditDraftCollectionPage({ params }: pageProps<{ eduCollectionId: string }>) {
@@ -23,8 +23,8 @@ export default async function EditDraftCollectionPage({ params }: pageProps<{ ed
     actions: {
       // applyImage: null,
       editDraft: {
-        saveMeta: await editEduCollectionDraftForId({ eduCollectionDraftId: eduCollectionId }),
-        applyImage: await getEduCollectionDraftImageForIdadoptAssetService({ eduCollectionDraftId: eduCollectionId }),
+        saveMeta: await getEditEduCollectionDraftForId({ eduCollectionDraftId: eduCollectionId }),
+        applyImage: await getEduCollectionDraftImageForId_AdoptAssetSafeAction({ eduCollectionDraftId: eduCollectionId }),
       },
 
       publish: null,

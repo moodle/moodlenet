@@ -12,16 +12,4 @@ export default async function PublicCollectionPage({ params }: pageProps<{ eduCo
       <pre>VIEW PUBLIC COLLECTION {JSON.stringify({ eduCollectionId, slug }, null, 2)}</pre>
     </div>
   )
-  // const [foundEduCollection, collectionPageProps] = await access.primary.moodlenetReactApp.props.collectionPage({
-  //   moodlenetEduCollectionId,
-  // })
-  // if (!foundEduCollection) {
-  //   return <Fallback />
-  // }
-  // const { moodlenetEduCollectionAccessObject } = collectionPageProps
-  // if (moodlenetEduCollectionAccessObject.slug !== slug) {
-  //   redirect(routes.collection[moodlenetEduCollectionId]![moodlenetEduCollectionAccessObject.slug]!())
-  // }
-
-  // return <CollectionClient {...collectionPageProps} />
 }

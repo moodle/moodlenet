@@ -1,6 +1,6 @@
 import { getAuthenticatedUserSessionOrRedirectToLogin } from '../../../lib/server/session-access'
 import { CollectionPage, collectionPageProps } from '../../../ui/pages/Collection/Collection'
-import { saveNewEduCollectionDraft } from './eduCollection-actions.server'
+import { getSaveNewEduCollectionDraft } from './eduCollection-actions.server'
 // import CollectionClient from './collection.client'
 
 export default async function CreateDraftCollectionPage() {
@@ -8,7 +8,7 @@ export default async function CreateDraftCollectionPage() {
   const collectionPageProps: collectionPageProps = {
     activity: 'createDraft',
     actions: {
-      saveNewDraft: saveNewEduCollectionDraft,
+      saveNewDraft: await getSaveNewEduCollectionDraft(),
     },
     eduCollectionData: null,
     contributorCardProps: null,

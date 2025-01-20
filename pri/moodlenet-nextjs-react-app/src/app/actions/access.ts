@@ -9,6 +9,6 @@ export async function logout() {
   const { sessionToken } = await getAuthTokenCookie()
   sessionToken && access.primary.userAccount.authenticated.invalidateSession()
   await setAuthTokenCookie(null)
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
   redirect('/')
 }

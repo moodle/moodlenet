@@ -17,19 +17,32 @@ export async function getEduCollectionMetaSchema() {
   return edu.eduCollectionMetaSchema
 }
 
-export const saveNewEduCollectionDraft = defaultSafeActionClient
-  .schema(getEduCollectionMetaSchema)
-  .action(async ({ parsedInput: eduCollectionMetaForm }) => {
-    const [done, result] = await access.primary.userProfile.authenticated.createEduCollectionDraft({ eduCollectionMetaForm })
-    if (!done) {
-      returnValidationErrors(getEduCollectionMetaSchema, {
-        _errors: [t(`something went wrong while saving collection meta`)],
+export async function getSaveNewEduCollectionDraft() {
+  return async function saveNewEduCollectionDraft(eduCollectionMetaForm: eduCollectionMetaForm) {
+    'use server'
+    const saveNewEduCollectionDraft = defaultSafeActionClient
+      .schema(getEduCollectionMetaSchema)
+      .action(async ({ parsedInput: eduCollectionMetaForm }) => {
+        const [done, result] = await access.primary.userProfile.authenticated.createEduCollectionDraft({
+          eduCollectionMetaForm,
+        })
+        if (!done) {
+          return returnValidationErrors(getEduCollectionMetaSchema, {
+            _errors: [t(`something went wrong while saving collection meta`)],
+          })
+        }
+        redirect(appRoutes(`/collection/${result.eduCollectionDraftId}`), RedirectType.replace)
       })
-    }
-    redirect(appRoutes(`/collection/${result.eduCollectionDraftId}`), RedirectType.replace)
-  })
 
-export async function editEduCollectionDraftForId({ eduCollectionDraftId }: { eduCollectionDraftId: eduCollectionDraftId }) {
+    return saveNewEduCollectionDraft(eduCollectionMetaForm)
+  }
+}
+
+export async function getEditEduCollectionDraftForId({
+  eduCollectionDraftId,
+}: {
+  eduCollectionDraftId: eduCollectionDraftId
+}) {
   return async function editEduCollectionDraft(eduCollectionMetaForm: eduCollectionMetaForm) {
     'use server'
     const editEduCollectionDraftAction = defaultSafeActionClient
@@ -51,26 +64,22 @@ export async function getApplyEduCollectionDraftImageSchema() {
   const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
   return edu.applyImageSchema
 }
-export async function getEduCollectionDraftImageForIdadoptAssetService({
+export async function getEduCollectionDraftImageForId_AdoptAssetSafeAction({
   eduCollectionDraftId,
 }: {
   eduCollectionDraftId: eduCollectionDraftId
 }): Promise<adoptAssetSafeAction> {
-  return async function adoptAssetForm_eduCollectionDraftImage(adoptAssetForm) {
+  return async function adoptAssetSafeAction_eduCollectionDraftImage(adoptAssetForm) {
     'use server'
-
     const applyEduCollectionDraftImageAction = defaultSafeActionClient
       .schema(getApplyEduCollectionDraftImageSchema)
-      .action(async ({ parsedInput: applyImageForm }) =>
-        access.primary.userProfile.authenticated
-          .applyEduCollectionDraftImage({
-            eduCollectionDraftId,
-            applyImageForm,
-          })
-          .then(() => {
-            revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
-          }),
-      )
+      .action(async ({ parsedInput: applyImageForm }) => {
+        await access.primary.userProfile.authenticated.applyEduCollectionDraftImage({
+          eduCollectionDraftId,
+          applyImageForm,
+        })
+        revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
+      })
     return applyEduCollectionDraftImageAction({ resourceImageForm: adoptAssetForm })
   }
 }
