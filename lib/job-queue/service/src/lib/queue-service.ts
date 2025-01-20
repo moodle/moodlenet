@@ -50,6 +50,7 @@ export function provideQueueService<jobData>({
     stopAndDrain,
     startProcesses,
     enqueue,
+    jobConfig,
   }
   function stopAndDrain() {
     stopSchedulers()

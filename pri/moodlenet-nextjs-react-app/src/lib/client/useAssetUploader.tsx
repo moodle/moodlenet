@@ -72,10 +72,11 @@ type assetType = 'webImage' | 'file'
 export function useAssetUploader<non_nullable extends boolean | undefined>(
   assetType: assetType,
   initialAsset: _nullish | maybeAsset,
+  //FIXME: !! adoptAssetService !! NOT adoptValuedAssetSafeAction
   adoptAssetService: _nullish | (non_nullable extends true ? adoptValuedAssetSafeAction : adoptAssetSafeAction),
   opts?: assetUploaderHookOpts<non_nullable>,
 ) {
-  const { overrideMaxSize, nonNullable, } = opts ?? {}
+  const { overrideMaxSize, nonNullable } = opts ?? {}
   const filetoreHttp = useGlobalCtx().filestoreHttpDeployment
   const { uploadMaxSizeConfigs } = useGlobalCtx().allSchemaConfigs
   const maxSize = overrideMaxSize ?? (assetType === 'webImage' ? uploadMaxSizeConfigs.webImage : uploadMaxSizeConfigs.max)
@@ -191,7 +192,6 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
       }
       const selection = m_selection ?? { type: 'null' }
       dispatch({ type: 'select', selection })
-
     },
     [maxSize, adoptAssetService],
   )

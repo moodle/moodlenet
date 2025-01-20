@@ -6,10 +6,11 @@ import moment from 'moment'
 import timers from 'timers/promises'
 
 type jobData = { domainAccess: domainAccess }
-export function getJobName(path: string[]) {
+function getJobName(path: string[]) {
   return path.join('.')
 }
 
+const DEFAULT_WRITE_QUEUE = Symbol('default-write')
 export function createQueueServices({
   queueServiceWorkers,
   binderDispatcher,
@@ -20,23 +21,31 @@ export function createQueueServices({
   const _queue_moodleDomain_proxy = createMoodleDomainProxy({ ctrl: async () => null })
 
   const knownQProxyFns = [
+    DEFAULT_WRITE_QUEUE,
     _queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser,
     _queue_moodleDomain_proxy.secondary.resourceIngestion.write.ingestResource,
-  ]
-  const services = knownQProxyFns.reduce<map<queueService<jobData>>>((_, proxyFn) => {
+  ] as const
+  const allServices = knownQProxyFns.map<queueService<jobData>>(proxyFn => {
     // const jobIs = {
     //   sendMessageToUser: proxyFn === _queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser,
     //   ingestResource: proxyFn === _queue_moodleDomain_proxy.secondary.resourceIngestion.write.ingestResource,
     // }
-    const path = getProxyFnPath(proxyFn)
+    const isDefaultQ = DEFAULT_WRITE_QUEUE === proxyFn
+    const path = isDefaultQ ? ['default-write-job'] : getProxyFnPath(proxyFn)
     const jobName = getJobName(path)
-    const jobConfig = {
-      jobName,
-      parallelism: 1,
-      progressTimeoutSecs: 30,
-      emptyQueueRescheduleSecs: 30,
-    }
-
+    const jobConfig = isDefaultQ
+      ? {
+          jobName,
+          parallelism: 100,
+          progressTimeoutSecs: 5,
+          emptyQueueRescheduleSecs: 10,
+        }
+      : {
+          jobName,
+          parallelism: 1,
+          progressTimeoutSecs: 30,
+          emptyQueueRescheduleSecs: 30,
+        }
     const queueService = provideQueueService<jobData>({
       workers: queueServiceWorkers,
       async executeJob({
@@ -65,7 +74,7 @@ export function createQueueServices({
                     }
                   : {
                       action: 'retry',
-                      fromDate: moment().add(5, 'seconds').toISOString(),
+                      fromDate: moment().add(jobConfig.progressTimeoutSecs, 'seconds').toISOString(),
                     },
             })),
           timers.setTimeout(jobConfig.progressTimeoutSecs * 1000).then<executionOutcome>(() => ({
@@ -73,10 +82,16 @@ export function createQueueServices({
             reason: 'timeout',
             timeoutSecs: jobConfig.progressTimeoutSecs,
             date: new Date().toISOString(),
-            followUp: {
-              action: 'retry',
-              fromDate: new Date().toISOString(),
-            },
+            followUp:
+              executionOutcomes.length > 2
+                ? {
+                    action: 'abort',
+                    details: 'Too many retries',
+                  }
+                : {
+                    action: 'retry',
+                    fromDate: new Date().toISOString(),
+                  },
           })),
         ])
       },
@@ -88,22 +103,31 @@ export function createQueueServices({
       console.error(`queue service error [${jobName}]`, { context, error })
     })
 
+    return queueService
+  })
+  const [defaultService, ...namedServiceList] = allServices
+  const services = namedServiceList.reduce<map<queueService<jobData>>>((_, qService) => {
     return {
       ..._,
-      [jobName]: queueService,
+      [qService.jobConfig.jobName]: qService,
     }
   }, {})
-
   return {
-    services,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    defaultService: defaultService!,
     startAll,
     stopAndDrainAll,
+    getNamedService,
+  }
+  function getNamedService({ domainAccess }: { domainAccess: domainAccess }) {
+    const jobName = getJobName(domainAccess.endpoint)
+    return services[jobName]
   }
   function startAll() {
-    return Promise.all(Object.values(services).map(({ startProcesses }) => startProcesses()))
+    return Promise.all(Object.values(allServices).map(({ startProcesses }) => startProcesses()))
   }
   function stopAndDrainAll() {
     console.log(`draining queues ...`)
-    return Promise.allSettled(Object.values(services).map(({ stopAndDrain }) => stopAndDrain()))
+    return Promise.allSettled(Object.values(allServices).map(({ stopAndDrain }) => stopAndDrain()))
   }
 }

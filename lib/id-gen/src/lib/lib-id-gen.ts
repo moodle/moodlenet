@@ -17,13 +17,20 @@ export function generateUlid({ onDate }: { onDate: Date | number | string }) {
 }
 const ALPHNUM_62 = `useandom26T198340PX75pxJACKVERYMINDBUSHWOLFGQZbfghjklqvwyzrict` // urlAlphabet except -_
 const DEFAULT_ALPHANUM_ID_LENGTH = 8
+const CURRENT_ZERO_DELTA_DATE_ALPHANUM_LENGTH = 5
+const MIN_ACCEPTABLE_NANOID_LENGTH = 2
 export function generateAlphanumId(opts?: { length?: number }) {
   const length = opts?.length ?? DEFAULT_ALPHANUM_ID_LENGTH
-  const restId = customAlphabet(ALPHNUM_62)(length - 5)
+  const genNanoId = customAlphabet(ALPHNUM_62)
+  const nanoIdLength = length - CURRENT_ZERO_DELTA_DATE_ALPHANUM_LENGTH
+  if (nanoIdLength < MIN_ACCEPTABLE_NANOID_LENGTH) {
+    return genNanoId(length)
+  }
+  const nanoId = genNanoId(nanoIdLength)
   const currentZeroDeltaDateAlphanum5 = getCurrentZeroDeltaDateAlphanum5()
 
-  const alphanumId = `${currentZeroDeltaDateAlphanum5}${restId}`
-  console.log({ length, restId, currentZeroDeltaDateAlphanum5, alphanumId })
+  const alphanumId = `${currentZeroDeltaDateAlphanum5}${nanoId}`
+
   return alphanumId
 }
 //FIXME: REMOVE generateNanoId by renaming to generateAlphanumId
@@ -47,23 +54,24 @@ export function decodeUlid(ulid: string) {
 
 const ZERO_DATE = Number(new Date('01/01/2020'))
 
+const ZERO_DELTA_ALPHANUM_TIME_CHUNKS_MILLISECS = 200
 function getCurrentZeroDeltaDateAlphanum5() {
-  const fifthSecondsFromZeroDate = Math.floor((Number(new Date()) - ZERO_DATE) / 200)
+  const timeChunksFromZeroDate = Math.floor((Number(new Date()) - ZERO_DATE) / ZERO_DELTA_ALPHANUM_TIME_CHUNKS_MILLISECS)
 
-  const reversedFifthSecondsFromZeroDateStringArray = String(fifthSecondsFromZeroDate).split('').reverse()
+  const reversedTimeChunksFromZeroDateStringArray = String(timeChunksFromZeroDate).split('').reverse()
 
   // ensures first reversed digit is not 0
-  reversedFifthSecondsFromZeroDateStringArray[0] =
+  reversedTimeChunksFromZeroDateStringArray[0] =
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    reversedFifthSecondsFromZeroDateStringArray[0] === '0' ? '1' : reversedFifthSecondsFromZeroDateStringArray[0]!
-  const base62encodingNumber = Number(reversedFifthSecondsFromZeroDateStringArray.join(''))
+    reversedTimeChunksFromZeroDateStringArray[0] === '0' ? '1' : reversedTimeChunksFromZeroDateStringArray[0]!
+  const base62encodingNumber = Number(reversedTimeChunksFromZeroDateStringArray.join(''))
   const encoded62 = encodeBase62(base62encodingNumber)
-  console.log({
-    fifthSecondsFromZeroDate,
-    reversedFifthSecondsFromZeroDateStringArray,
-    base62encodingNumber,
-    encoded62,
-  })
+  // console.log({
+  //   timeChunksFromZeroDate,
+  //    reversedTimeChunksFromZeroDateStringArray,
+  //   base62encodingNumber,
+  //   encoded62,
+  // })
   return encoded62
 }
 

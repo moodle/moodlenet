@@ -357,7 +357,7 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     forward: syncProxy.primary,
     mod: syncProxy,
     // write: syncProxy.secondary[moduleName].write as _any,
-    write: syncProxy.secondary[moduleName].write as _any,
+    write: asyncProxy.secondary[moduleName].write as _any,
     sync: syncProxy.secondary[moduleName].sync,
     log,
     async enqueue(endopint_fn_proxy, payload /*, asyncOptions = true*/) {

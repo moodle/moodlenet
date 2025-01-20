@@ -1,5 +1,6 @@
 import {
   binderDispatcher,
+  domainAccess,
   moduleCore,
   moodleModuleName,
   secondaryAdapter,
@@ -8,6 +9,7 @@ import {
 } from '@moodle/domain'
 import { accessDomain, configuration, deploymentInfoFromUrlString, startBackgroundProcesses } from '@moodle/domain/lib'
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
+import { generateAlphanumId } from '@moodle/lib-id-gen'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { edu_core } from '@moodle/module/edu/core'
@@ -39,7 +41,7 @@ import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
 import * as path from 'path'
 import { coerce, literal, object, union } from 'zod'
-import { createQueueServices, getJobName } from './assets/queue-services'
+import { createQueueServices } from './queue-services'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
@@ -190,16 +192,29 @@ export async function configurator({ domainName }: { domainName: string }) {
         domainFsDirectories,
       }
       const pendingAccessResultPromises: Promise<unknown>[] = []
+      const arangoQueueServiceWorkers = provideArangoQueueServiceWorkers({ dbStruct: arango_persistence.dbStruct })
 
-      const shortcircuitLoopbackDispatcher: binderDispatcher = async ({ domainAccess }) => {
+      const queues = createQueueServices({
+        binderDispatcher: shortcircuitLoopbackDispatcher,
+        queueServiceWorkers: arangoQueueServiceWorkers,
+      })
+
+      async function shortcircuitLoopbackDispatcher({ domainAccess }: { domainAccess: domainAccess }) {
+        const jobId = domainAccess.callerContext
+          ? `${domainAccess.callerContext.ctxId}_${generateAlphanumId({ length: 3 })}`
+          : undefined
         if (domainAccess.enqueue) {
-          const jobName = getJobName(domainAccess.endpoint)
-          const jobId = domainAccess.callerContext?.ctxId
           assert(jobId, 'domainAccess must have a callerContext for enqueuing a message')
-          const queueService = queues.services[jobName]
-          assert(queueService, `queueService for jobName [${jobName}] not found`)
-          await queueService.enqueue({ jobId, enqueueDate: new Date().toISOString(), jobData: { domainAccess } })
-          return
+          const queueService = queues.getNamedService({ domainAccess })
+          if (queueService) {
+            const enqueuePromise = queueService.enqueue({
+              jobId,
+              enqueueDate: new Date().toISOString(),
+              jobData: { domainAccess },
+            })
+            pendingAccessResultPromises.push(enqueuePromise)
+            return enqueuePromise
+          }
         }
         const accessResultPromise = accessDomain({
           domainAccess,
@@ -207,18 +222,23 @@ export async function configurator({ domainName }: { domainName: string }) {
           loopbackDispatcher: shortcircuitLoopbackDispatcher,
         })
         pendingAccessResultPromises.push(accessResultPromise)
-        accessResultPromise.finally(() =>
-          pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(accessResultPromise), 1),
-        )
+        accessResultPromise
+          .catch(
+            !(domainAccess.enqueue && jobId)
+              ? undefined
+              : () => {
+                  const enqueuePromise = queues.defaultService.enqueue({
+                    jobId,
+                    enqueueDate: new Date().toISOString(),
+                    jobData: { domainAccess },
+                  })
+                  pendingAccessResultPromises.push(enqueuePromise)
+                },
+          )
+          .finally(() => pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(accessResultPromise), 1))
         return accessResultPromise
         // return shortCircuitLoopbackDispatcher({ configuration, domainAccess })
       }
-      const arangoQueueServiceWorkers = provideArangoQueueServiceWorkers({ dbStruct: arango_persistence.dbStruct })
-
-      const queues = createQueueServices({
-        binderDispatcher: shortcircuitLoopbackDispatcher,
-        queueServiceWorkers: arangoQueueServiceWorkers,
-      })
 
       const background_process_promise =
         env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
@@ -239,9 +259,11 @@ export async function configurator({ domainName }: { domainName: string }) {
               )
               .then(() => queues.startAll())
           : Promise.resolve()
+
       background_process_promise.then(() => {
         resolveConfigurationPromise({ configuration, loopbackDispatcher: shortcircuitLoopbackDispatcher, stopAndDrain })
       })
+
       async function stopAndDrain() {
         console.log(`draining [#${pendingAccessResultPromises.length}] pending replies ...`)
         await Promise.allSettled([queues.stopAndDrainAll(), ...pendingAccessResultPromises])
