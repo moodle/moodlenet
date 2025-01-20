@@ -1,3 +1,4 @@
+import { edu_default_configs } from '@moodle/module/edu/setup'
 import { moodlenet_react_app_default_configs } from '@moodle/module/moodlenet-react-app/setup'
 import { moodlenet_default_configs } from '@moodle/module/moodlenet/setup'
 import { org_default_configs } from '@moodle/module/org/setup'
@@ -6,7 +7,6 @@ import { userAccount_default_configs } from '@moodle/module/user-account/setup'
 import { user_profile_default_configs } from '@moodle/module/user-profile/setup'
 import { dbStruct } from '../../../db-structure'
 import { saveModConfigs } from '../../../lib/modules'
-import { edu_default_configs } from '@moodle/module/edu/setup'
 // import { removePropOnInsert } from '../lib/id'
 
 export async function insertModConfigs({ dbStruct }: { dbStruct: dbStruct }) {

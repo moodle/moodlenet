@@ -1,57 +1,60 @@
 'use server'
 
 import { fetchAllPrimarySchemas } from '@moodle/domain/lib'
-import { adoptAssetService } from '@moodle/module/content'
-import { profileImageType } from '@moodle/module/user-profile'
-import { t } from 'i18next'
-import { returnValidationErrors } from 'next-safe-action'
+import { profileImageType, userProfileId } from '@moodle/module/user-profile'
 import { revalidatePath } from 'next/cache'
+import { adoptValuedAssetSafeAction } from '../../../../../lib/common/actions'
 import { appRoutes } from '../../../../../lib/common/appRoutes'
-import { defaultSafeActionClient, safeActionResult_to_adoptAssetResponse } from '../../../../../lib/server/safe-action'
+import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
 import { access } from '../../../../../lib/server/session-access'
-
-export async function getProfileInfoSchema() {
-  const {
-    userProfile: { updateProfileInfoMetaSchema },
-  } = await fetchAllPrimarySchemas({ primary: access.primary })
-  return updateProfileInfoMetaSchema
-}
-
-export const updateMyProfileInfoMetaForm = defaultSafeActionClient
-  .schema(getProfileInfoSchema)
-  .action(async ({ parsedInput: partialProfileInfoMeta }) => {
-    const [editDone, editResult] = await access.primary.userProfile.authenticated.editProfileInfoMeta({
-      partialProfileInfoMeta,
-    })
-    if (editDone) {
-      revalidatePath(appRoutes(`/profile/${editResult.userProfileId}/`))
-      return
-    }
-    returnValidationErrors(getProfileInfoSchema, {
-      _errors: [t(`something went wrong while saving profile info`) + ` : ${editResult.reason}`],
-    })
-  })
-
+import { updateMyProfileInfoSafeAction } from '../../../../../ui/pages/Profile/ProfilePage'
 export async function getUseProfileImageSchema() {
-  const {
-    userProfile: { useProfileImageSchema },
-  } = await fetchAllPrimarySchemas({ primary: access.primary })
-  return useProfileImageSchema
+  const schemas = await fetchAllPrimarySchemas({ primary: access.primary })
+  return schemas.userProfile.useProfileImageSchema
 }
 
-export async function getApplyMyProfileImageadoptAssetService(as: profileImageType): Promise<adoptAssetService> {
+export async function getApplyMyProfileImageSafeAction({
+  type,
+  userProfileId,
+}: {
+  userProfileId: userProfileId
+  type: profileImageType
+}): Promise<adoptValuedAssetSafeAction> {
   return async function adoptAssetForm_myProfileImage(adoptAssetForm) {
     'use server'
     const applyMyProfileImageAction = defaultSafeActionClient
       .schema(getUseProfileImageSchema)
-      .action(async ({ parsedInput: { as, adoptAssetForm } }) => {
-        return access.primary.userProfile.authenticated
-          .useTempImageAsProfileImage({ useProfileImageForm: { as, adoptAssetForm } })
-          .then(({ adoptAssetResponse, userProfileId }) => {
-            revalidatePath(appRoutes(`/profile/${userProfileId}/`))
-            return adoptAssetResponse
-          })
+      .action(async ({ parsedInput: { type, adoptAssetForm } }) => {
+        await access.primary.userProfile.authenticated.useTempImageAsProfileImage({
+          useProfileImageForm: { type, adoptAssetForm },
+        })
+
+        revalidatePath(appRoutes(`/profile/${userProfileId}/`))
       })
-    return safeActionResult_to_adoptAssetResponse(applyMyProfileImageAction({ as, adoptAssetForm }))
+    return applyMyProfileImageAction({ type, adoptAssetForm })
+  }
+}
+
+export async function getEditProfileInfoSchema() {
+  const allSchemas = await fetchAllPrimarySchemas({ primary: access.primary })
+  return allSchemas.userProfile.editProfileInfoMetaSchema
+}
+
+export async function getUpdateMyProfileInfoMetaSafeAction({
+  userProfileId,
+}: {
+  userProfileId: userProfileId
+}): Promise<updateMyProfileInfoSafeAction> {
+  return async function updateMyProfileInfoMeta(profileInfoMeta) {
+    'use server'
+    const updateMyProfileInfoMetaAction = defaultSafeActionClient
+      .schema(getEditProfileInfoSchema)
+      .action(async ({ parsedInput: profileInfoMeta }) => {
+        await access.primary.userProfile.authenticated.editProfileInfoMeta({
+          profileInfoMeta,
+        })
+        revalidatePath(appRoutes(`/profile/${userProfileId}/`))
+      })
+    return updateMyProfileInfoMetaAction(profileInfoMeta)
   }
 }

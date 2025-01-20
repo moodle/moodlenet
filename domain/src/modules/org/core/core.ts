@@ -1,7 +1,7 @@
 import { moduleCore } from '../../../types'
 
 export const org_core: moduleCore<'org'> = {
-  modName: 'org',
+  moduleName: 'org',
   service() {
     return
   },

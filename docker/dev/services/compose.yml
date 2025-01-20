@@ -22,6 +22,15 @@ services:
       - "80:80"
     extra_hosts:
       - "dev-host:host-gateway"
+  tika:
+    network_mode: host
+    image: apache/tika:latest-full
+    # networks:
+    #   - default
+    ports:
+      - "9998:9998"
+    extra_hosts:
+      - "dev-host:host-gateway"
   # minio:
   #   image: quay.io/minio/minio
   #   ports:

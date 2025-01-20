@@ -20,7 +20,7 @@ export const saveGeneralInfoAction = defaultSafeActionClient
   .action(async ({ parsedInput: adminGeneralForm }) => {
     const { moodlenetInfoSchema, orgInfoSchema } = await getAdminGeneralSchemas()
 
-    const [[mmoodlenetDone], [orgDone]] = await Promise.all([
+    const [[moodlenetDone], [orgDone]] = await Promise.all([
       access.primary.moodlenet.admin.updatePartialMoodlenetInfo({
         partialInfo: moodlenetInfoSchema.parse(adminGeneralForm),
       }),
@@ -28,11 +28,10 @@ export const saveGeneralInfoAction = defaultSafeActionClient
         partialInfo: orgInfoSchema.parse(adminGeneralForm),
       }),
     ])
-    revalidatePath('/')
-    if (mmoodlenetDone && orgDone) {
-      return
+    if (!(moodlenetDone && orgDone)) {
+      return returnValidationErrors(getGeneralSchema, {
+        _errors: [t(`something went wrong while saving the general info`)],
+      })
     }
-    returnValidationErrors(getGeneralSchema, {
-      _errors: [t(`something went wrong while saving the general info`)],
-    })
+    revalidatePath('/', 'layout')
   })

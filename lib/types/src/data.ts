@@ -1,7 +1,15 @@
 import { ReactElement } from 'react'
 import _slugify from 'slugify'
-import { BRAND, intersection, number, object, string, ZodSchema } from 'zod'
-import { _any, d_u } from './map'
+import { BRAND, number, object, string, ZodNullable, ZodSchema } from 'zod'
+import { d_u } from './map'
+import type {} from 'moment'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type _any = any
+export type _any_k = keyof _any
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type _other_string = string & {}
 
 export type promise_or_value<t> = t | Promise<t>
 
@@ -9,9 +17,9 @@ export type path = string[]
 
 export type jsonDiff = unknown
 
-export type intersection<types extends _any[]> = pretty<
-  types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
->
+export type union<types extends _any[]> = types extends [infer t, ...infer rest] ? t | intersection<rest> : unknown
+export type intersection<types extends _any[]> = types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
+
 export function unreachable_never(_: never, message?: string): never {
   throw new TypeError(`never [${JSON.stringify(_, null, 2)}]${message ? `: ${message}` : ''}`)
 }
@@ -21,9 +29,12 @@ export type pretty<t> = { [k in keyof t]: t[k] } & {} // utility type to convert
 
 export type _maybe<t> = t | _nullish
 export type _nullish = undefined | null
-export type _falsy = false | _nullish
-// export const _void = void 0 as never // TOO DANGEROUS
+export type _falsy_stricter = false | _nullish
+export type _falsy = '' | 0 | _falsy_stricter
+
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 export const _void = void 0 as void
+
 export type primitive = primitive_value | null | undefined
 export type primitive_value = string | number | boolean | bigint
 
@@ -45,7 +56,7 @@ export function __redact_stringify__(obj: _any) {
 }
 
 export function __redact__(data: _any): _any {
-  return JSON.parse(__redact_stringify__(data))
+  return data === null || typeof data !== 'object' ? data : JSON.parse(__redact_stringify__(data))
 }
 export function __redacted__<t>(data: t): __redacted__<t> {
   return _unchecked_brand<__redacted__<t>>({ [__redacted__key]: data })
@@ -58,10 +69,6 @@ export function __redacted_schema__<schema extends ZodSchema>(schema: schema) {
   }).brand<typeof __redacted__brand>()
 }
 
-export function date_time_string(date: Date | 'now'): date_time_string {
-  const _date = date === 'now' ? new Date() : date
-  return _date.toISOString() as date_time_string
-}
 export const single_line_string_schema = string().regex(/^[^\r\n]*$/gi)
 
 // // export const url_string_brand = Symbol('url_string_brand')
@@ -87,6 +94,18 @@ export declare const date_time_string_brand: unique symbol
 export type date_time_string = branded<string, typeof date_time_string_brand> // ISO 8601
 export const date_time_string_schema = string().trim().datetime().brand<typeof date_time_string_brand>()
 
+declare global {
+  interface Date {
+    toISOString(): date_time_string
+  }
+}
+
+declare module 'moment' {
+  interface Moment {
+    toISOString(keepOffset?: boolean): date_time_string
+  }
+}
+
 // // export const date_string_brand = Symbol('date_string_brand')
 // export type date_string = z.infer< typeof date_string_schema> // ISO 8601
 export declare const date_string_brand: unique symbol
@@ -102,8 +121,11 @@ export const time_string_schema = string().trim().time().brand<typeof time_strin
 // // export const time_duration_string_brand = Symbol('time_duration_string_brand')
 // export type time_duration_string = z.infer< typeof time_duration_string_schema> // ISO 8601
 export declare const time_duration_string_brand: unique symbol
-export type time_duration_string = branded<string, typeof time_duration_string_brand> // ISO 8601
+export type time_duration_string = branded<string, typeof time_duration_string_brand> // ISO 8601 https://www.digi.com/resources/documentation/digidocs/90001488-13/reference/r_iso_8601_duration_format.htm
 export const time_duration_string_schema = string().trim().duration().brand<typeof time_duration_string_brand>()
+export function time_duration(duration: string): time_duration_string {
+  return time_duration_string_schema.parse(duration)
+}
 
 // // export const signed_token_brand = Symbol('signed_token_brand')
 // export type signed_token = z.infer< typeof signed_token_schema> // .. JWT
@@ -172,7 +194,12 @@ export function isNotNullish<t>(el: t | _nullish): el is t {
 
 export type flags<names extends string> = Record<names, boolean>
 
-
+export function zod_m_nullable<zodSchema extends ZodSchema>(
+  zodSchema: zodSchema,
+  nullable: boolean,
+): ZodNullable<zodSchema> {
+  return (nullable ? zodSchema.nullable() : zodSchema) as ZodNullable<zodSchema>
+}
 
 // SHAREDLIB
 // FIXME: here's not the best place for type `email_body`

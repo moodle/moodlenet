@@ -1,7 +1,6 @@
 import { url_string_schema } from '@moodle/lib-types'
 import { DeploymentInfo } from '../modules/env/types'
 
-//FIXME: use URL !
 export function getDeploymentInfoUrl(
   { hostname, port, protocol, basePath }: DeploymentInfo,
   appendPath: string | string[] = '',

@@ -4,7 +4,7 @@
 import type React from 'react'
 import type { ReactElement } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import type { CreditedImage } from '../../../../../../common/types.mjs'
+import type { CreditedImage } from '../../../../../../common/types'
 import InputTextField from '../../atoms/InputTextField/InputTextField'
 import Loading from '../../atoms/Loading/Loading'
 import Modal from '../../atoms/Modal/Modal'

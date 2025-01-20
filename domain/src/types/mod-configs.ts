@@ -19,5 +19,6 @@ export interface ModConfigs {
   userProfile: userProfile.Configs
   storage: storage.Configs
   edu: edu.configs
+  //resourceIngestion: resourceIngestion.Configs
   // env: env.Configs
 }

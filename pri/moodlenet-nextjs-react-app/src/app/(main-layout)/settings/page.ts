@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
-import { srvSiteRoutes } from '../../../lib/server/utils/site-urls.server'
+import { appRoutes } from '../../../lib/common/appRoutes'
 
 export default async function BaseSettingsPage() {
-  redirect((await srvSiteRoutes()).site('/settings/general'))
+  redirect(appRoutes('/settings/general'))
 }

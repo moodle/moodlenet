@@ -1,0 +1,9 @@
+{
+  "name": "lib-nodejs-common",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/nodejs/common/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project lib-nodejs-common --web",
+  "targets": {}
+}

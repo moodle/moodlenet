@@ -1,9 +1,8 @@
-import { d_u__d, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
-import sanitizeFilename from 'sanitize-filename'
-import { adoptAssetResponse } from '../../content'
-import { asset, useTempFileResult } from '../types'
+import { useTempFileResult } from '@moodle/lib-domain-fs'
+import { _any, d_u__d, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
+import { adoptAssetResult, maybeAsset } from '../types'
 
-// export function newFsFileRelativePath(filename: string, date = date_time_string('now')) {
+// export function newFsFileRelativePath(filename: string, date = ctx.now) {
 //   return [
 //     String(date.getFullYear()),
 //     String(date.getMonth() + 1).padStart(2, '0'),
@@ -14,45 +13,34 @@ import { asset, useTempFileResult } from '../types'
 //     filename,
 //   ]
 // }
-export function getSanitizedFileName(originalFilename: string) {
-  const sanitized = sanitizeFilename(originalFilename)
-    .normalize('NFKD')
-    .replace(/\p{Diacritic}/gu, '')
-    .replace(/[^a-z0-9._-]/gi, '_')
-    .replace(/^[_-]+/, '')
-    .replace(/[_-]+$/, '')
-    .replace(/[_-]+/g, '_')
-
-  return sanitized
-  // originalFilename.normalize("NFD").replace(/\p{Diacritic}/gu, "")
-  // const origExt = originalFilename.split('.').pop()
-  // const mDotExt = origExt ? `.${origExt}` : ''
-}
-export function getRndPrefixedSanitizedFileName(originalFilename: string, prefixLength = 3) {
-  const rnd = String(Math.random()).substring(2, 2 + prefixLength)
-  return `${rnd}_${getSanitizedFileName(originalFilename)}`
-}
-export function getAssetUrl<_asset extends asset>(
+export function getAssetUrl<_asset extends maybeAsset>(
   asset: _asset,
   filestoreHttpHref: url_string,
 ): _asset extends { type: 'none' } ? undefined : url_string {
   return asset.type === 'none'
-    ? (undefined as any) // TS doesn't infer here we ar e in _asset extends { type: 'none' } branch 🤔
+    ? (undefined as _any) // TS doesn't infer here we are in `_asset extends { type: 'none' }` branch 🤔
     : asset.type === 'external'
       ? asset.url
-      : asset.type === 'local'
-        ? (`${filestoreHttpHref}/${asset.path}/${asset.name}` as url_path_string)
+      : asset.type === 'stored'
+        ? (`${filestoreHttpHref}/${asset.path.join('/')}/${asset.name}` as url_path_string)
         : unreachable_never(asset)
 }
 
-export async function useTempFileResult_to_adoptAssetResponse(
+export async function useTempFileResult_to_adoptAssetResult(
   p_useTempFileResult: useTempFileResult | Promise<useTempFileResult>,
-): Promise<d_u__d<adoptAssetResponse<'local'>, 'status', 'done' | 'error'>> {
+): Promise<d_u__d<adoptAssetResult<'stored'>, 'status', 'done' | 'error'>> {
   const [done, result] = await p_useTempFileResult
   return done
     ? {
         status: 'done',
-        asset: result.asset,
+        asset: {
+          type: 'stored',
+          mimetype: result.fileMeta.mimetype,
+          name: result.fileMeta.name,
+          size: result.fileMeta.size,
+          uploaded: result.fileMeta.uploaded,
+          path: result.path,
+        },
       }
     : {
         status: 'error',

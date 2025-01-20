@@ -13,7 +13,7 @@ export type Package = {
 }
 export type Module = {
   name: string
-  enabled: boolean
+
   mandatory?: boolean
 }
 

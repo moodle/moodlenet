@@ -1,8 +1,8 @@
-import { http_bind } from '@moodle/bindings-node'
+import { http_bind } from '@moodle/bindings-http'
 import { MoodleDomain, moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { _any, map } from '@moodle/lib-types'
+import { _any, _nullish, map } from '@moodle/lib-types'
 import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/user-account/lib'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
@@ -14,7 +14,8 @@ import { appRoute, appRoutes } from '../common/appRoutes'
 import { getAuthTokenCookie } from './auth'
 const MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL
 
-const requestTarget = MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
+const reqHttpTarget = MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
+
 
 export const access = {
   get primary(): moodlePrimary {
@@ -28,7 +29,7 @@ function _domainAccess(): MoodleDomain {
   if (_existing_current_moodle_domain_store) {
     return _existing_current_moodle_domain_store.moodle_domain
   }
-  const trnspClient = http_bind.client()
+  const binderDispatcher = http_bind.getHttpBinderDispatcher({ reqHttpTarget })
   const primarySessionPromise = getPrimarySession()
   const cache = new Map<string, _any>()
   const { hash } = hasher({
@@ -44,24 +45,36 @@ function _domainAccess(): MoodleDomain {
   })
   const moodle_domain = createMoodleDomainProxy({
     async ctrl({ domainMsg }) {
-      const domainMsgHash = hash(domainMsg)
+      const domainMsgHashingObject = { domainMsg /* , primarySessionId: primarySession.id */ }
+      const domainMsgHash = hash(domainMsgHashingObject)
       // console.log(cache.has(domainMsgHash) ? `${domainMsgHash}**cache**  ` : '--fetch--  ', domainMsg.endpoint.join('.'))
       if (!cache.has(domainMsgHash)) {
         cache.set(
           domainMsgHash,
-          new Promise((resolve, reject) => {
-            primarySessionPromise
-              .then(async primarySession =>
-                trnspClient(
-                  {
-                    ...domainMsg,
-                    primarySession,
-                  },
-                  requestTarget,
-                ),
-              )
-              .then(resolve, reject)
-          }),
+          primarySessionPromise.then(
+            primarySession =>
+              binderDispatcher({
+                domainAccess: {
+                  ...domainMsg,
+                  domain: primarySession.domain,
+                  primarySession,
+                },
+              }),
+            // .catch(error => {
+            //   if (isErrorXxx(error)) {
+            //     if (error.errorXxx.desc === 'Forbidden') {
+            //       forbidden()
+            //     }
+            //     if (error.errorXxx.desc === 'Unauthorized') {
+            //       unauthorized()
+            //     }
+            //     if (error.errorXxx.desc === 'Not Found') {
+            //       notFound()
+            //     }
+            //   }
+            //   throw error
+            // }),
+          ),
         )
       }
 
@@ -95,10 +108,12 @@ function _domainAccess(): MoodleDomain {
   //       })
   //   }
   // }
-
-  return moodle_domain
 }
 
+export async function getCurrentUrl() {
+  const currentUrl = (await headers()).get('x-pathname') as appRoute
+  return currentUrl
+}
 export async function getAuthenticatedUserSessionOrRedirectToLogin() {
   const { userSession: maybe_authenticatedUserSession } = await access.primary.userAccount.anyUser.getUserSession()
   if (isAuthenticatedUserSession(maybe_authenticatedUserSession)) {
@@ -107,7 +122,7 @@ export async function getAuthenticatedUserSessionOrRedirectToLogin() {
 
   const loginUrl = appRoutes('/login', {
     q: {
-      redirect: (headers().get('x-pathname') as appRoute) ?? appRoutes('/'),
+      redirect: await getCurrentUrl(),
     },
   })
   redirect(loginUrl, RedirectType.replace)
@@ -116,7 +131,7 @@ export async function getAuthenticatedUserSessionOrRedirectToLogin() {
 export async function getAdminUserSessionOrRedirect(path = '/') {
   const authenticatedUserSession = await getAuthenticatedUserSessionOrRedirectToLogin()
   if (!isAdminUserSession(authenticatedUserSession)) {
-    redirect('/')
+    redirect(path)
   }
   return authenticatedUserSession
 }
@@ -129,19 +144,17 @@ async function getPrimarySession() {
     returnEmptyString: false,
   })
 
-  const _headers = headers()
+  const _headers = await headers()
   const xHost = _headers.get('x-host')
   // const xPort = _headers.get('x-port')
   const xProto = _headers.get('x-proto') ?? 'http'
-  const xClientIp = _headers.get('x-client-ip') ?? undefined
   const xUrl = _headers.get('x-url') ?? undefined
   const xMode = _headers.get('x-mode') ?? undefined
-  const xGeo = JSON.parse(_headers.get('x-geo') ?? '{}')
   const ua = userAgent({ headers: _headers })
   assert(xHost, 'x-host not found in headers')
   const primarySession: primarySession = {
-    id: await generateUlid(),
-    token: getAuthTokenCookie().sessionToken,
+    id: generateUlid({ onDate: new Date().toISOString() }),
+    token: (await getAuthTokenCookie()).sessionToken,
     app: {
       name: 'moodlenetWebapp',
       version: '0.1',
@@ -151,7 +164,6 @@ async function getPrimarySession() {
       secure: xProto === 'https',
       mode: xMode,
       url: xUrl,
-      clientIp: xClientIp,
       ua: {
         name: ua.ua,
         isBot: ua.isBot,
@@ -159,7 +171,7 @@ async function getPrimarySession() {
     },
     domain: xHost,
     platforms: {
-      local: {
+      stored: {
         type: 'nodeJs',
         version: process.version,
         //env: process.env,
@@ -168,7 +180,6 @@ async function getPrimarySession() {
         type: 'browser',
         version: ua.browser.version,
         name: ua.browser.name,
-        geo: xGeo,
         cpu: ua.cpu,
         device: ua.device,
         engine: ua.engine,

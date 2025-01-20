@@ -1,4 +1,4 @@
-import { _nullish, d_u, ok_ko } from '@moodle/lib-types'
+import { _any, d_u, ok_ko } from '@moodle/lib-types'
 import { primaryContext } from '../../../../types'
 import { userSessionInfo } from '../../../user-account'
 import { validate_currentUserSessionInfo } from '../../../user-account/lib'
@@ -13,7 +13,7 @@ export async function accessMoodlenetContributor({
   ctx,
   id,
 }: {
-  ctx: primaryContext<any>
+  ctx: primaryContext<_any>
   id: moodlenetContributorId
 }): Promise<ok_ko<moodlenetContributorAccessObject, { notAllowed: unknown; notFound: unknown }>> {
   const [found, queryResult] = await ctx.mod.secondary.moodlenet.query.contributor({
@@ -21,7 +21,7 @@ export async function accessMoodlenetContributor({
       by: 'moodlenetContributorId',
       moodlenetContributorId: id,
     },
-    noAccessLevelFilter: true, // !! noAccessLevelFilter
+    filter: { accessLevel: false },
   })
   if (!found) {
     return [false, { reason: 'notFound' }]
@@ -38,7 +38,7 @@ export async function accessMoodlenetContributor({
   if (moodlenetContributorRecord.access === 'protected' && !its_me_or_admin) {
     return [false, { reason: 'notAllowed' }]
   }
-  const myUserRecords = await ctx.forward.moodlenet.session.getMySessionUserRecords()
+  const myUserRecords = await ctx.forward.moodlenet.session.getMyCurrentMoodlenetSessionData()
   const me = myUserRecords.type === 'authenticated' ? myUserRecords.moodlenetContributorRecord : null
   const accessObj = contributorRecordToContributorAccessObject({ moodlenetContributorRecord, me })
   return [true, accessObj]
@@ -73,7 +73,7 @@ export function contributorRecordToContributorAccessObject({
   me,
 }: {
   moodlenetContributorRecord: moodlenetContributorRecord
-  me: _nullish | Pick<moodlenetContributorRecord, 'id' | 'linkedContent'>
+  me: null | Pick<moodlenetContributorRecord, 'id' | 'linkedContent'>
 }): moodlenetContributorAccessObject {
   const itsMe = !!me && me.id === moodlenetContributorRecord.id
   const myLinks: moodlenetContributorAccessObject['myLinks'] = {

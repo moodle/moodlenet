@@ -19,7 +19,7 @@ export async function getLoginSchema() {
 export const loginAction = defaultSafeActionClient.schema(getLoginSchema).action(async ({ parsedInput: loginForm }) => {
   // const inSiteRefererUrl = await getInSiteReferer()
 
-  const xSearchHeader = headers().get('x-search')
+  const xSearchHeader = (await headers()).get('x-search')
   const redirectPathAfterLogin = xSearchHeader ? String(QueryString.parse(xSearchHeader).redirect) : undefined
 
   const redirectUrl = redirectPathAfterLogin || appRoutes('/')
@@ -30,7 +30,7 @@ export const loginAction = defaultSafeActionClient.schema(getLoginSchema).action
   if (!loginSuccess) {
     returnValidationErrors(getLoginSchema, { _errors: [t('Incorrect email or password')] })
   }
-  setAuthTokenCookie(loginResponse.sessionToken)
+  await setAuthTokenCookie(loginResponse.sessionToken)
   revalidatePath('/', 'layout')
   redirect(redirectUrl)
 })

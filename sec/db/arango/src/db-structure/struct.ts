@@ -1,54 +1,56 @@
-import { modConfigName, ModConfigs } from '@moodle/domain'
-import { Database } from 'arangojs'
-import { databaseConnections } from './types'
-import { userProfileRecord } from '@moodle/module/user-profile'
-import { eduBloomCognitiveRecord, eduIscedFieldRecord, eduIscedLevelRecord, eduResourceTypeRecord } from '@moodle/module/edu'
+import { domainAccess, modConfigName, ModConfigs } from '@moodle/domain'
+import { job } from '@moodle/lib-job-queue-service'
 import { contentLanguageRecord, contentLicenseRecord } from '@moodle/module/content'
-import { userAccountRecord } from '@moodle/module/user-account'
-import { record_doc } from '../lib/key-id-mapping'
+import { eduBloomCognitiveRecord, eduIscedFieldRecord, eduIscedLevelRecord, eduResourceTypeRecord } from '@moodle/module/edu'
 import { moodlenetContributorRecord } from '@moodle/module/moodlenet'
+import { userAccountRecord } from '@moodle/module/user-account'
+import { userProfileRecord } from '@moodle/module/user-profile'
+import { Database } from 'arangojs'
+import { domain_record_doc } from '../lib/key-id-mapping'
+import { migrationRecord } from '../migrate/types'
+import { databaseConnections } from './types'
 
 export function getDbStruct(databaseConnections: databaseConnections) {
   const baseConnectionConfig = {
     keepalive: true,
     retryOnConflict: 5,
   }
-  const moodlenet_db = new Database({ ...baseConnectionConfig, ...databaseConnections.moodlenet })
-  const user_account_db = new Database({ ...baseConnectionConfig, ...databaseConnections.userAccount })
-  const mng_db = new Database({ ...baseConnectionConfig, ...databaseConnections.modules })
+  const appData_db = new Database({ ...baseConnectionConfig, ...databaseConnections.appData })
+  const identity_db = new Database({ ...baseConnectionConfig, ...databaseConnections.identity })
+  const services_db = new Database({ ...baseConnectionConfig, ...databaseConnections.services })
   const sys_db = new Database({
     ...baseConnectionConfig,
-    ...databaseConnections.modules,
-    databaseName: '_system',
+    // databaseName: '_system',
   })
 
   return {
     connections: databaseConnections,
     sys_db,
-    modules: {
-      db: mng_db,
+    appData: {
+      db: appData_db,
       coll: {
-        moduleConfigs: mng_db.collection<ModConfigs[modConfigName]>('moduleConfigs'),
-        migrations: mng_db.collection('migrations'),
+        moduleConfigs: appData_db.collection<ModConfigs[modConfigName]>('moduleConfigs'),
+        eduIscedField: appData_db.collection<domain_record_doc<eduIscedFieldRecord, 'code'>>('eduIscedField'),
+        eduIscedLevel: appData_db.collection<domain_record_doc<eduIscedLevelRecord, 'code'>>('eduIscedLevel'),
+        eduBloomCognitive: appData_db.collection<domain_record_doc<eduBloomCognitiveRecord, 'level'>>('eduBloomCognitive'),
+        eduResourceType: appData_db.collection<domain_record_doc<eduResourceTypeRecord, 'code'>>('eduResourceType'),
+        contentLanguage: appData_db.collection<domain_record_doc<contentLanguageRecord, 'code'>>('contentLanguage'),
+        contentLicense: appData_db.collection<domain_record_doc<contentLicenseRecord, 'code'>>('contentLicense'),
+        contributor: appData_db.collection<domain_record_doc<moodlenetContributorRecord>>('contributor'),
+        userProfile: appData_db.collection<domain_record_doc<userProfileRecord>>('userProfile'),
       },
     },
-    moodlenet: {
-      db: moodlenet_db,
+    identity: {
+      db: identity_db,
       coll: {
-        eduIscedField: moodlenet_db.collection<record_doc<eduIscedFieldRecord, 'code'>>('eduIscedField'),
-        eduIscedLevel: moodlenet_db.collection<record_doc<eduIscedLevelRecord, 'code'>>('eduIscedLevel'),
-        eduBloomCognitive: moodlenet_db.collection<record_doc<eduBloomCognitiveRecord, 'level'>>('eduBloomCognitive'),
-        eduResourceType: moodlenet_db.collection<record_doc<eduResourceTypeRecord>>('eduResourceType'),
-        contentLanguage: moodlenet_db.collection<record_doc<contentLanguageRecord, 'code'>>('contentLanguage'),
-        contentLicense: moodlenet_db.collection<record_doc<contentLicenseRecord, 'code'>>('contentLicense'),
-        contributor: moodlenet_db.collection<record_doc<moodlenetContributorRecord>>('contributor'),
+        userAccount: identity_db.collection<domain_record_doc<userAccountRecord>>('userAccount'),
       },
     },
-    userAccount: {
-      db: user_account_db,
+    services: {
+      db: services_db,
       coll: {
-        userProfile: moodlenet_db.collection<record_doc<userProfileRecord>>('userProfile'),
-        userAccount: user_account_db.collection<record_doc<userAccountRecord>>('userAccount'),
+        migrations: services_db.collection<migrationRecord>('migrations'),
+        domainAccessJob: services_db.collection<job<{ domainAccess: domainAccess }>>('domainAccessJob'),
       },
     },
   }

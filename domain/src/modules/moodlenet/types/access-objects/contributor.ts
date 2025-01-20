@@ -1,4 +1,4 @@
-import { _nullish, date_time_string, flags, non_negative_integer } from '@moodle/lib-types'
+import { date_time_string, flags, non_negative_integer } from '@moodle/lib-types'
 import { profileInfo, userProfileId } from '../../../user-profile'
 
 export type moodlenetContributorId = string
@@ -28,9 +28,11 @@ type moodlenetContributions = {
   eduResources: publicContributionRef[]
 }
 
+export type contributorAccessLevel = 'public' | 'protected'
+
 export type moodlenetContributorRecord = {
   id: moodlenetContributorId
-  access: 'public' | 'protected'
+  access: contributorAccessLevel
   userProfile: moodlenetContributorProfileExcerpt
   preferences: {
     useMyInterestsAsDefaultFilters: boolean
@@ -59,7 +61,7 @@ type suggestedContentRef<refData = unknown> = refData & { id: string }
 type featuredContentRef<refData = unknown> = refData & {
   id: string
   sinceDate: date_time_string
-  removingDate: _nullish | date_time_string
+  removingDate: null | date_time_string
 }
 
 export type permissionsOnMoodlenetContributor = flags<'follow' | 'sendMessage' | 'report' | 'editProfileInfo'>

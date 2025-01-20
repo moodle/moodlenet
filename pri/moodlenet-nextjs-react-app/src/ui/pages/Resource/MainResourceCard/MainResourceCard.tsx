@@ -13,8 +13,8 @@ import {
   Share,
 } from '@mui/icons-material'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
-import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'next-i18next'
+import { useCallback, useRef, useState } from 'react'
 import { object } from 'zod'
 import { useAssetUrl } from '../../../../lib/client/globalContexts'
 import { useAssetUploader } from '../../../../lib/client/useAssetUploader'
@@ -33,21 +33,20 @@ import './MainResourceCard.scss'
 
 export type mainResourceCardProps = resourcePageProps & {
   hookFormHandle: simpleUseHookFormActionHookReturn<eduResourceMetaFormSchema, void>
+  publishCheck(): void
+  shouldShowErrors: boolean
 }
 
 export default function MainResourceCard(props: mainResourceCardProps) {
   const { width } = useWindowDimensions()
   const { t } = useTranslation()
-  const { actions, activity, eduResourceData, hookFormHandle, references } = props
+  const { actions, activity, eduResourceData, hookFormHandle, references, publishCheck, shouldShowErrors } = props
   const [resourceUrl] = useAssetUrl(eduResourceData?.asset)
-
   const uploadResourceHandler = useAssetUploader('file', null, actions.saveNewResourceAsset, { nonNullable: true })
   const { state: resourceUploaderState, submit: resourceUploaderSubmit } = uploadResourceHandler
-  useEffect(() => {
-    if (resourceUploaderState.type === 'selected') {
-      resourceUploaderSubmit()
-    }
-  }, [resourceUploaderState, resourceUploaderSubmit])
+  if (resourceUploaderState.type === 'selected' && !resourceUploaderState.lastSubmission) {
+    resourceUploaderSubmit()
+  }
   const newResourceLinkFormSchema = object({ url: url_string_schema })
   const newResourceLinkFormAction: simpleHookSafeAction<typeof newResourceLinkFormSchema, undefined> = async input => {
     return actions
@@ -66,12 +65,9 @@ export default function MainResourceCard(props: mainResourceCardProps) {
   const [showFullDescription, setShowFullDescription] = useState(false)
 
   const descriptionFieldElemRefScrollHeight = descriptionRef.current?.scrollHeight
-  useEffect(() => {
-    if (!descriptionFieldElemRefScrollHeight) {
-      return
-    }
-    setShowFullDescription(descriptionFieldElemRefScrollHeight < 114)
-  }, [descriptionFieldElemRefScrollHeight])
+  if (!showFullDescription && descriptionFieldElemRefScrollHeight && descriptionFieldElemRefScrollHeight < 114) {
+    setShowFullDescription(true)
+  }
 
   const uploadImageHandler = useAssetUploader('webImage', eduResourceData?.image, actions.editDraft?.applyImage)
   const saveDraft = useCallback(() => {
@@ -153,10 +149,11 @@ export default function MainResourceCard(props: mainResourceCardProps) {
               key="title"
               className="title"
               isTextarea
-              edit={activity === 'editDraft'}
+              edit={true}
               placeholder="Title"
               textAreaAutoSize
               noBorder
+              error={shouldShowErrors && hookFormHandle.form.formState.errors.title?.message}
               {...hookFormHandle.form.register('title')}
             />
           ) : (
@@ -174,21 +171,22 @@ export default function MainResourceCard(props: mainResourceCardProps) {
                 onKeyDown={e => e.key === 'Enter' && newResourceLinkHookForm.handleSubmitWithAction(e)}
                 rightSlot={<PrimaryButton onClick={newResourceLinkHookForm.handleSubmitWithAction}>Add</PrimaryButton>}
                 {...newResourceLinkHookForm.form.register('url')}
-                error={newResourceLinkHookForm.form.formState.errors.url?.message}
+                error={shouldShowErrors && newResourceLinkHookForm.form.formState.errors.url?.message}
               />
             </>
           ) : activity === 'editDraft' || activity === 'viewPublished' ? (
             <DropUpload useAssetUploaderHandler={uploadImageHandler} displayOnly={activity === 'viewPublished'} />
           ) : null}
-          {activity !== 'editDraft' ? (
+          {activity === 'editDraft' ? (
             <InputTextField
               className="description"
               key="description"
               isTextarea
               textAreaAutoSize
               noBorder
-              edit={activity === 'createDraft'}
+              edit={true}
               placeholder="Description"
+              error={shouldShowErrors && hookFormHandle.form.formState.errors.description?.message}
               {...hookFormHandle.form.register('description')}
             />
           ) : (
@@ -213,21 +211,22 @@ export default function MainResourceCard(props: mainResourceCardProps) {
         </div>
         {props.activity !== 'createDraft' ? (
           <LearningOutcomes
-            eduBloomCognitiveRecords={props.eduBloomCognitiveRecords ?? []}
-            bloomLearningOutcomes={props.eduResourceData.bloomLearningOutcomes}
+            bloomLearningOutcomes={hookFormHandle.form.getValues().bloomLearningOutcomes}
             isEditing={activity === 'editDraft'}
             disabled={activity === 'viewPublished'}
             error={
-              activity === 'editDraft' &&
-              activity === 'editDraft' &&
-              hookFormHandle.form.formState.errors.bloomLearningOutcomes?.map
-                ? hookFormHandle.form.formState.errors.bloomLearningOutcomes.map(
-                    item => item?.learningOutcome?.message ?? '',
-                  )
+              activity === 'editDraft' && hookFormHandle.form.formState.errors.bloomLearningOutcomes?.message
+                ? hookFormHandle.form.formState.errors.bloomLearningOutcomes.message //.map(item => item?.sentence?.message ?? '')
                 : undefined
             }
-            shouldShowErrors={activity === 'editDraft'}
-            edit={values => hookFormHandle.form.setValue('bloomLearningOutcomes', values)}
+            shouldShowErrors={shouldShowErrors}
+            edit={bloomLearningOutcomes =>
+              hookFormHandle.form.setValue('bloomLearningOutcomes', bloomLearningOutcomes, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true,
+              })
+            }
           />
         ) : null}
         <div className="resource-footer" key="resource-footer"></div>
@@ -249,7 +248,7 @@ export default function MainResourceCard(props: mainResourceCardProps) {
       },
       activity === 'editDraft' && {
         Element: (
-          <div className={`publish-check-button`} key="publish-check-button" onClick={() => alert('publishCheck')}>
+          <div className={`publish-check-button`} key="publish-check-button" onClick={publishCheck}>
             <Check />
             Publish check
           </div>
@@ -268,7 +267,7 @@ export default function MainResourceCard(props: mainResourceCardProps) {
         width < 800 && {
           Element: (
             <div key="open-link-or-download-file-button">
-              {eduResourceData.asset.type === 'local' ? (
+              {eduResourceData.asset.type === 'stored' ? (
                 <>
                   <InsertDriveFile />
                   <a href={resourceUrl} target="_blank" rel="noopener noreferrer" download={eduResourceData.asset.name}>

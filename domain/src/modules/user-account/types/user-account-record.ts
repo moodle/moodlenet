@@ -1,7 +1,7 @@
 import type { d_u, date_time_string, email_address, time_duration_string } from '@moodle/lib-types'
 import { password_hash } from '../../crypto/types'
 
-// NOTE: roles will eventually be per-subsystem . e.g. export type userRole = 'moodle.net.admin' | 'moodle.net.contributor'
+// FUTURE: roles will eventually be per-subsystem . e.g. export type userRole = 'moodle.net.admin' | 'moodle.net.contributor'
 export type userRole = 'admin' | 'contributor'
 
 export type userAccountId = string

@@ -1,20 +1,24 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { _void } from '@moodle/lib-types'
+import { aql } from 'arangojs'
 import { dbStruct } from '../db-structure'
 import { save_id_to_key } from '../lib/key-id-mapping'
-import { getUserProfileById, updateUserProfileById } from './user-profile-db'
-import { aql } from 'arangojs'
+import { getDraft, overUserProfileById } from './user-profile-db'
+import { assetProcessStatus } from '@moodle/module/user-profile'
+import { literal } from 'arangojs/aql'
 
 export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): secondaryProvider {
-  return secondaryCtx => {
+  return (/* secondaryCtx */) => {
     const secondaryAdapter: secondaryAdapter = {
       userProfile: {
         sync: {
           async userAccountExcerpt({ userAccountExcerpt }) {
-            const userProfileDoc = await updateUserProfileById({
-              select: { by: 'userAccountId', userAccountId: userAccountExcerpt.id },
+            const userProfileDoc = await overUserProfileById({
+              userProfileIdSelect: { by: 'userAccountId', userAccountId: userAccountExcerpt.id },
               dbStruct,
-              partialUserProfile: { userAccount: userAccountExcerpt },
+              apply: aql`UPDATE userProfileDoc WITH {
+                userAccount: ${userAccountExcerpt}
+              } IN ${dbStruct.appData.coll.userProfile}`,
             })
             if (!userProfileDoc) {
               return [false, _void]
@@ -24,41 +28,28 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
         },
         query: {
           async getUserProfile(select) {
-            const userProfileRecord = await getUserProfileById({ dbStruct, select })
+            const userProfileRecord = await overUserProfileById({ dbStruct, userProfileIdSelect: select })
             if (!userProfileRecord) {
               return [false, { reason: 'notFound' }]
             }
             return [true, { userProfileRecord }]
           },
-          async getEduCollectionDraft({ eduCollectionDraftId, userProfileId }) {
-            const userProfileRecord = await getUserProfileById({ select: { by: 'userProfileId', userProfileId }, dbStruct })
-            const eduCollectionDraft = userProfileRecord?.myDrafts.eduCollections[eduCollectionDraftId]
-            if (!eduCollectionDraft) {
+          async getDraft({ draftId, draftType, userProfileIdSelect }) {
+            const draft = await getDraft({
+              userProfileIdSelect,
+              dbStruct,
+              draftId,
+              draftType,
+            })
+            if (!draft) {
               return [false, { reason: 'notFound' }]
             }
-            return [true, eduCollectionDraft]
-          },
-          async getEduResourceDraft({ eduResourceDraftId, userProfileId }) {
-            const userProfileRecord = await getUserProfileById({ select: { by: 'userProfileId', userProfileId }, dbStruct })
-            const eduResourceDraft = userProfileRecord?.myDrafts.eduResources[eduResourceDraftId]
-            if (!eduResourceDraft) {
-              return [false, { reason: 'notFound' }]
-            }
-            return [true, eduResourceDraft]
+            return [true, draft]
           },
         },
         write: {
-          async updatePartialProfileInfo({ partialProfileInfo, userProfileId }) {
-            const updateResult = await updateUserProfileById({
-              dbStruct,
-              partialUserProfile: { info: partialProfileInfo },
-              select: { by: 'userProfileId', userProfileId },
-            })
-            const updateDone = !!updateResult
-            return [updateDone, _void]
-          },
           async createUserProfile({ userProfileRecord }) {
-            const result = await dbStruct.userAccount.coll.userProfile
+            const result = await dbStruct.appData.coll.userProfile
               .save(save_id_to_key('id')(userProfileRecord))
               .catch(() => null)
 
@@ -66,68 +57,142 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
 
             return [saveDone, _void]
           },
-          async updateEduCollectionDraft({ userProfileId, eduCollectionDraftId, partialEduCollectionDraft }) {
-            const updateResult = await updateUserProfileById({
+          async updateProfileInfoMeta({ lastEditDate, userProfileIdSelect, profileInfoMeta }) {
+            const updateResult = await overUserProfileById({
               dbStruct,
-              preCondition: aql`FILTER HAS( userProfileDoc.myDrafts.eduCollections, ${eduCollectionDraftId} )`,
-              partialUserProfile: {
-                myDrafts: {
-                  eduCollections: {
-                    [eduCollectionDraftId]: partialEduCollectionDraft,
-                  },
-                },
-              },
-              select: { by: 'userProfileId', userProfileId },
+              userProfileIdSelect,
+              apply: aql`UPDATE userProfileDoc WITH {
+                info: ${{
+                  lastEditDate,
+                  ...profileInfoMeta,
+                }}
+              } IN ${dbStruct.appData.coll.userProfile}
+            `,
             })
             const updateDone = !!updateResult
             return [updateDone, _void]
           },
-          async createEduCollectionDraft({ userProfileId, eduCollectionDraftId, eduCollectionDraft }) {
-            const updateResult = await updateUserProfileById({
+          async updateProfileImage({ lastEditDate, userProfileIdSelect, image, type }) {
+            const updateResult = await overUserProfileById({
               dbStruct,
-              preCondition: aql`FILTER NOT( HAS( userProfileDoc.myDrafts.eduCollections, ${eduCollectionDraftId} ) )`,
-              partialUserProfile: {
-                myDrafts: {
-                  eduCollections: {
-                    [eduCollectionDraftId]: eduCollectionDraft,
-                  },
-                },
-              },
-              select: { by: 'userProfileId', userProfileId },
+              userProfileIdSelect,
+              apply: aql`
+                UPDATE userProfileDoc  WITH {
+                                              info: MERGE(
+                                                          UNSET(userProfileDoc.info, ${type}),
+                                                          {
+                                                            lastEditDate: ${lastEditDate},
+                                                            [${type}]: ${image}
+                                                          })
+                                            } IN ${dbStruct.appData.coll.userProfile}`,
             })
             const updateDone = !!updateResult
             return [updateDone, _void]
           },
-          async updateEduResourceDraft({ userProfileId, eduResourceDraftId, partialEduResourceDraft }) {
-            const updateResult = await updateUserProfileById({
+          async updateDraftResourceAssetProcessStatus({
+            eduResourceDraftId,
+            processStatus,
+            processType,
+            userProfileIdSelect,
+            condition,
+          }) {
+            const processType_propName: keyof assetProcessStatus = processType
+            const updateResult = await overUserProfileById({
               dbStruct,
-              preCondition: aql`FILTER HAS( userProfileDoc.myDrafts.eduResources, ${eduResourceDraftId} )`,
-              partialUserProfile: {
-                myDrafts: {
-                  eduResources: {
-                    [eduResourceDraftId]: partialEduResourceDraft,
-                  },
-                },
-              },
-              select: { by: 'userProfileId', userProfileId },
+              userProfileIdSelect,
+              apply: aql`
+                FILTER ${eduResourceDraftId} IN userProfileDoc.myDrafts.eduResource[*].draftId
+                UPDATE userProfileDoc WITH {
+                  myDrafts: {
+                    eduResource: (  FOR draft IN userProfileDoc.myDrafts.eduResource
+                                      LET isTargetDraft = draft.draftId == ${eduResourceDraftId}
+                                      LET targetProcessStatus = draft.assetProcessStatus[${processType_propName}]
+                                      LET conditionMet = targetProcessStatus.status == ${condition.status}
+                                      LET updateThisDraft = isTargetDraft && conditionMet
+                                      RETURN updateThisDraft
+                                        ? MERGE(
+                                                draft,
+                                                {
+                                                  assetProcessStatus: MERGE(
+                                                                        UNSET(draft.assetProcessStatus, ${processType_propName}),
+                                                                        {
+                                                                          ${literal(processType_propName)}: ${processStatus},
+                                                                        })
+                                                })
+                                        : draft )
+                  }
+                } IN ${dbStruct.appData.coll.userProfile}
+              `,
+            })
+
+            const updateDone = !!updateResult
+            return [updateDone, _void]
+          },
+          async updateDraftImage({ lastEditDate, userProfileIdSelect, image, draftId, draftType }) {
+            const updateResult = await overUserProfileById({
+              dbStruct,
+              userProfileIdSelect,
+              apply: aql`
+                FILTER ${draftId} IN userProfileDoc.myDrafts[${draftType}][*].draftId
+                UPDATE userProfileDoc WITH {
+                  myDrafts: {
+                    [${draftType}]: (FOR draft IN userProfileDoc.myDrafts[${draftType}]
+                                      RETURN draft.draftId == ${draftId}
+                                              ? MERGE(
+                                                      draft,
+                                                      {
+                                                        lastEditDate: ${lastEditDate},
+                                                        data: MERGE( UNSET(draft.data, 'image'), {
+                                                          image: ${image}
+                                                        }),
+                                                      })
+                                              : draft)
+                  }
+                } IN ${dbStruct.appData.coll.userProfile}
+              `,
             })
             const updateDone = !!updateResult
             return [updateDone, _void]
           },
-          async createEduResourceDraft({ userProfileId, eduResourceDraftId, eduResourceDraft }) {
-            const updateResult = await updateUserProfileById({
+          async updateDraftMeta({ userProfileIdSelect, draftId, meta, lastEditDate }) {
+            const updateResult = await overUserProfileById({
               dbStruct,
-              preCondition: aql`FILTER NOT( HAS( userProfileDoc.myDrafts.eduResources, ${eduResourceDraftId} ) )`,
-              partialUserProfile: {
-                myDrafts: {
-                  eduResources: {
-                    [eduResourceDraftId]: eduResourceDraft,
-                  },
-                },
-              },
-              select: { by: 'userProfileId', userProfileId },
+              userProfileIdSelect,
+              apply: aql`
+                FILTER ${draftId} IN userProfileDoc.myDrafts[${meta.type}][*].draftId
+                UPDATE userProfileDoc WITH {
+                  myDrafts: {
+                    [${meta.type}]: (FOR draft IN userProfileDoc.myDrafts[${meta.type}]
+                                      RETURN draft.draftId == ${draftId}
+                                              ? MERGE_RECURSIVE(
+                                                                draft,
+                                                                {
+                                                                  lastEditDate: ${lastEditDate},
+                                                                  data: ${meta.data}
+                                                                })
+                                              : draft)
+                  }
+                } IN ${dbStruct.appData.coll.userProfile}
+              `,
             })
             const updateDone = !!updateResult
+            return [updateDone, _void]
+          },
+          async createDraft({ userProfileIdSelect, draft }) {
+            const { draftId } = draft.data
+            const createDraftUpdateResult = await overUserProfileById({
+              dbStruct,
+              userProfileIdSelect,
+              apply: aql`
+                FILTER ${draftId} NOT IN userProfileDoc.myDrafts[${draft.type}][*].draftId
+                UPDATE userProfileDoc WITH {
+                  myDrafts: {
+                    [${draft.type}]: PUSH(userProfileDoc.myDrafts[${draft.type}], ${draft.data})
+                  }
+                } IN ${dbStruct.appData.coll.userProfile}
+              `,
+            })
+            const updateDone = !!createDraftUpdateResult
             return [updateDone, _void]
           },
           /*  async updatePartialUserProfile({ userProfileId, partialUserProfile }) {

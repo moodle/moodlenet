@@ -1,14 +1,14 @@
 'use client'
 import Link from 'next/link'
 import './HeaderLogo.scss'
-import { asset } from '@moodle/module/storage'
+import { maybeAsset } from '@moodle/module/storage'
 import { useAssetUrl } from '../../../../lib/client/globalContexts'
 import { appRoute } from '../../../../lib/common/appRoutes'
 import { _nullish } from '@moodle/lib-types'
 
 export interface HeaderLogoProps {
-  logo: asset | _nullish
-  smallLogo: asset | _nullish
+  logo: maybeAsset | _nullish
+  smallLogo: maybeAsset | _nullish
   landingPath: appRoute
 }
 

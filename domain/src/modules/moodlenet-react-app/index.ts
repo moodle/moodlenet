@@ -1,7 +1,7 @@
 import { d_u, ok_ko } from '@moodle/lib-types'
-import { currentMoodlenetSessionData, moodlenetContributorId } from '../moodlenet/types'
+import { moodlenetContributorId } from '../moodlenet/types'
 import { profileInfo } from '../user-profile'
-import type { landingLayoutProps, Layouts, webappContributorAccessData, webappGlobals } from './types'
+import type { landingLayoutProps, Layouts, moodlenetCategories, webappContributorAccessData, webappGlobals } from './types'
 import { PageLayouts } from './types/layouts/page'
 import { RootLayouts } from './types/layouts/root'
 export * from './types'
@@ -11,12 +11,9 @@ export default interface MoodlenetReactAppDomain {
   service: { moodlenetReactApp: unknown }
   primary: {
     moodlenetReactApp: {
-      session: {
-        data(): Promise<currentMoodlenetSessionData>
-      }
       props: {
         allLayouts(): Promise<Layouts>
-        rootLayout(): Promise<{ webappGlobalCtx: webappGlobals }>
+        rootLayout(): Promise<ok_ko<{ webappGlobalCtx: webappGlobals }, { cleanupSession: unknown }>>
         mainLayout(): Promise<{
           session: d_u<
             {
@@ -49,7 +46,9 @@ export default interface MoodlenetReactAppDomain {
   }
   secondary: {
     moodlenetReactApp: {
-      query?: unknown
+      query: {
+        moodlenetCategories(): Promise<{ moodlenetCategories: moodlenetCategories }>
+      }
       service?: unknown
       write?: unknown
       sync?: unknown

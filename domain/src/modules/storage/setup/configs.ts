@@ -11,5 +11,5 @@ export const storage_default_configs: Configs = {
     medium: 400,
     small: 200,
   },
-  tempFileMaxRetentionSeconds: 60,
+  uploadedTempFileMaxRetentionSeconds: 60,
 }

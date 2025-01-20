@@ -7,10 +7,10 @@ export type primarySession = {
   domain: string
   protocol: d_u<protocols, 'type'>
   app: { name: moodleApp; version: string }
-  // NOTE: ? make it `modTokens: { [app_name:string]?: string | null  }`
+  // FUTURE: make it `modTokens: { [app_name:string]?: string | null  }`
   token: signed_token | null
   platforms: {
-    local: platform
+    stored: platform
     remote: platform
   }
 }
@@ -20,7 +20,7 @@ type protocols = {
     secure: boolean
     mode?: string
     url?: string
-    clientIp?: string
+    // clientIp?: string // https://github.com/vercel/next.js/pull/68379
     ua: {
       name: string
       isBot?: boolean
@@ -56,11 +56,11 @@ export type browserPlatform = {
   cpu?: {
     architecture?: string
   }
-  geo?: {
-    city?: string
-    country?: string
-    region?: string
-  }
+  // geo?: { // https://github.com/vercel/next.js/pull/68379
+  //   city?: string
+  //   country?: string
+  //   region?: string
+  // }
 }
 
 export interface NodeJsPlatform {

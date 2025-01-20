@@ -9,7 +9,7 @@ export interface ArangoDbSecEnv {
 export type dbConnection = ArangoConnectionConfig
 
 export type databaseConnections = {
-  modules: dbConnection
-  moodlenet: dbConnection
-  userAccount: dbConnection
+  services: dbConnection
+  appData: dbConnection
+  identity: dbConnection
 }

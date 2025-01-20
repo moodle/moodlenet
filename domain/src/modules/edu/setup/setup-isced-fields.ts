@@ -5,13 +5,14 @@ import { eduIscedFieldRecord } from '../types'
 // @ts-nocheck: because is raw data and it's massive, it will slowdown ts
 // @ts-ignore: because is raw data and it's massive, it will slowdown ts
 
-export const eduIscedFieldsSetup = _eduIscedFieldsSetup().map<eduIscedFieldRecord>(record => ({
-  ...record,
-  code: record.codePath.join(''),
-  enabled: record.codePath.length === 3,
-}))
+export const eduIscedFieldsSetup = _eduIscedFieldsSetup()
+  .map<eduIscedFieldRecord>(record => ({
+    ...record,
+    code: record.codePath.join(''),
+  }))
+  .sort((a, b) => a.code.localeCompare(b.code))
 
-function _eduIscedFieldsSetup(): Omit<eduIscedFieldRecord, 'code' | 'enabled'>[] {
+function _eduIscedFieldsSetup(): Omit<eduIscedFieldRecord, 'code'>[] {
   return [
     {
       codePath: ['10', '1', '5'],
@@ -684,7 +685,7 @@ function _eduIscedFieldsSetup(): Omit<eduIscedFieldRecord, 'code' | 'enabled'>[]
     },
     {
       codePath: ['07', '2', '4'],
-      description: 'Mining and extraction',
+      description: 'Mining and ingestion',
     },
     {
       codePath: ['06', '1', '1'],

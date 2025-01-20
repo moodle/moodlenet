@@ -1,5 +1,5 @@
 import { d_u__d, url_string } from '@moodle/lib-types'
-import { asset } from '@moodle/module/storage'
+import { maybeAsset } from '@moodle/module/storage'
 import ashleywhitlatch from './ashleywhitlatch.jpg'
 import dvlden from './dvlden.jpg'
 import dvlden2 from './dvlden2.jpg'
@@ -17,7 +17,7 @@ import seanwsinclair from './seanwsinclair.jpg'
 import solenfeyisa from './solenfeyissa.jpg'
 import vackground from './vackground.jpg'
 
-export const ContentBackupImages: d_u__d<asset, 'type', 'external'>[] = [
+export const ContentBackupImages: d_u__d<maybeAsset, 'type', 'external'>[] = [
   {
     type: 'external',
     url: solenfeyisa.src as url_string,

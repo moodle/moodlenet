@@ -1,7 +1,7 @@
-export type mime_main_type = keyof mimetypesmap
+export type mime_main_type = keyof mimetypesMap
 export type mimetype_obj = mime_main_type extends infer type
   ? type extends mime_main_type
-    ? { type: type; sub: mimetypesmap[type][number] }
+    ? { type: type; sub: mimetypesMap[type][number] }
     : never
   : never
 export type mimetype = mimetype_obj extends infer m
@@ -14,12 +14,12 @@ export function isMimetype(mime: string): mime is mimetype {
   const [_type, _sub] = mime.split('/')
   const type = String(_type)
   const sub = String(_sub)
-  return type in mimetypesmap && mimetypesmap[type as keyof mimetypesmap].includes(sub as never)
+  return type in mimetypesMap && mimetypesMap[type as keyof mimetypesMap].includes(sub as never)
 }
 
-type mimetypesmap = typeof mimetypesmap
+type mimetypesMap = typeof mimetypesMap
 // https://mimetype.io/all-types
-export const mimetypesmap = {
+export const mimetypesMap = {
   'application': [
     'andrew-inset',
     'applixware',

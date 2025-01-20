@@ -1,12 +1,9 @@
 import { fraction_schema } from '@moodle/lib-types'
 import { contentLicenseRecord } from '../types'
 
-export const contentLicensesSetup = contentLicenses().map<contentLicenseRecord>(license => ({
-  ...license,
-  enabled: true,
-}))
+export const contentLicensesSetup = contentLicenses()
 
-function contentLicenses(): Omit<contentLicenseRecord, 'enabled'>[] {
+function contentLicenses(): contentLicenseRecord[] {
   return [
     { code: 'cc-0', name: 'Public domain', restrictiveness: fraction_schema.parse(0.01) },
     { code: 'cc-by', name: 'Attribution', restrictiveness: fraction_schema.parse(0.1) },

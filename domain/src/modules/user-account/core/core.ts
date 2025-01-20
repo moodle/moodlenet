@@ -1,6 +1,7 @@
 import { generateNanoId } from '@moodle/lib-id-gen'
-import { __redacted__, _void, date_time_string, url_string_schema } from '@moodle/lib-types'
-import userAccountDomain, { getuserAccountPrimarySchemas, userRole } from '..'
+import { __redacted__, _void, url_string_schema } from '@moodle/lib-types'
+import assert from 'assert'
+import userAccountDomain, { getUserAccountPrimarySchemas, userRole } from '..'
 import { moduleCore } from '../../../types'
 import {
   assert_authorizeAuthenticatedCurrentUserSession,
@@ -9,11 +10,10 @@ import {
   generateSessionForUserAccountId,
   validateCurrentUserSession,
 } from '../lib'
-import assert from 'assert'
 
 type primary = userAccountDomain['primary']['userAccount']
 export const userAccount_core: moduleCore<'userAccount'> = {
-  modName: 'userAccount',
+  moduleName: 'userAccount',
   service(ctx) {
     return {
       async generateUserSessionToken({ userAccountId }) {
@@ -22,6 +22,9 @@ export const userAccount_core: moduleCore<'userAccount'> = {
     }
   },
   primary(ctx) {
+    // ctx.enqueue.setUserPassword({ newPasswordHash:'',userAccountId:''},{
+    //   delay:time_duration('P3D')
+    // })
     return {
       async anyUser() {
         return {
@@ -35,7 +38,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             const userSession = await validateCurrentUserSession({ ctx })
             return { userSession }
           },
-        }
+        } satisfies primary['anyUser']
       },
 
       //get admin(){ check () return { ... } }
@@ -47,7 +50,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
         const adminUserAccountId = adminUserSession.user.id
         return {
           async editUserRoles({ userAccountId, role, action }) {
-            const [found, user] = await ctx.mod.secondary.userAccount.query.userBy({ by: 'id', userAccountId })
+            const [found, user] = await ctx.mod.secondary.userAccount.query.findUser({ by: 'id', userAccountId })
             if (!found) {
               return [false, { reason: 'userNotFound' }]
             }
@@ -58,14 +61,12 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               new_roles_set.has('admin') ? (['admin', 'contributor'] satisfies userRole[]) : Array.from(new_roles_set)
             ).sort()
 
-            const [done] = await ctx.write.setUserRoles({
-              userAccountId,
-              roles: new_roles,
-              adminUserAccountId: adminUserSession.user.id,
-            })
-            if (!done) {
-              return [false, { reason: 'userNotFound' }]
-            }
+             await ctx.write.setUserRoles({
+               userAccountId,
+               roles: new_roles,
+               adminUserAccountId: adminUserSession.user.id,
+             })
+
             return [true, { updatedRoles: new_roles, adminUserAccountId }]
           },
 
@@ -77,7 +78,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           },
 
           async deactivateUser({ userAccountId, anonymize, reason }) {
-            const [done] = await ctx.write.deactivateUser({
+            await ctx.write.deactivateUser({
               userAccountId,
               reason: {
                 type: 'adminRequest',
@@ -86,12 +87,9 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               },
               anonymize,
             })
-            if (!done) {
-              return [false, { reason: 'userNotFound' }]
-            }
             return [true, { adminUserAccountId }]
           },
-        }
+        } satisfies primary['admin']
       },
       async signedTokenAccess() {
         return {
@@ -111,7 +109,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               return [false, { reason: 'invalidToken' }]
             }
             const { validatedSignedTokenData } = validation
-            const [, foundSameEmailUser] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [, foundSameEmailUser] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'email',
               email: validatedSignedTokenData.email,
             })
@@ -120,21 +118,18 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               return [false, { reason: 'userWithThisEmailExists' }]
             }
 
-            const now = date_time_string('now')
             const newUser = await createNewUserAccountRecordData({
-              creationDate: now,
+              creationDate: ctx.now,
               roles: newlyCreatedUserRoles,
               displayName: validatedSignedTokenData.displayName,
               email: validatedSignedTokenData.email,
               passwordHash: validatedSignedTokenData.passwordHash,
-              lastLogin: now,
+              lastLogin: ctx.now,
             })
-            const [newUserCreated] = await ctx.write.saveNewUser({
-              newUser,
-            })
-            if (!newUserCreated) {
-              return [false, { reason: 'unknown' }]
-            }
+
+             await ctx.write.saveNewUser({
+               newUser,
+             })
 
             return [true, { userAccountId: newUser.id }]
           },
@@ -150,7 +145,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             }
 
             const { validatedSignedTokenData } = validation
-            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'email',
               email: validatedSignedTokenData.email,
             })
@@ -160,11 +155,11 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             const { passwordHash } = await ctx.mod.secondary.crypto.service.hashPassword({
               plainPassword: newPassword,
             })
-            const [pwdChanged] = await ctx.write.setUserPassword({
-              newPasswordHash: passwordHash,
-              userAccountId: userAccountRecord.id,
-            })
-            return pwdChanged ? [true, _void] : [false, { reason: 'unknown' }]
+             await ctx.write.setUserPassword({
+               newPasswordHash: passwordHash,
+               userAccountId: userAccountRecord.id,
+             })
+            return [true, _void]
           },
           async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
             const [verified, validation] = await ctx.mod.secondary.crypto.service.validateSignedToken({
@@ -178,7 +173,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             }
             const { validatedSignedTokenData } = validation
 
-            const [user] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [user] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'id',
               userAccountId: validatedSignedTokenData.userAccountId,
             })
@@ -186,7 +181,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               return [false, { reason: 'unknownUser' }]
             }
 
-            const [deactivated] = await ctx.write.deactivateUser({
+            await ctx.write.deactivateUser({
               anonymize: true,
               reason: {
                 type: 'userSelfDeletionRequest',
@@ -194,16 +189,16 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               },
               userAccountId: validatedSignedTokenData.userAccountId,
             })
-            return deactivated ? [true, _void] : [false, { reason: 'unknown' }]
+            return [true, _void]
           },
-        }
+        } satisfies primary['signedTokenAccess']
       },
       async unauthenticated() {
         return {
           async signupRequest({ signupForm, redirectUrl }) {
             const schemas = await fetchPrimarySchemas()
             const { displayName, email, password } = schemas.signupSchema.parse(signupForm)
-            const [found] = await ctx.mod.secondary.userAccount.query.userBy({ by: 'email', email })
+            const [found] = await ctx.mod.secondary.userAccount.query.findUser({ by: 'email', email })
             if (found) {
               return [false, { reason: 'userWithSameEmailExists' }]
             }
@@ -226,7 +221,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
                 passwordHash,
               },
             })
-            ctx.mod.secondary.userNotification.service.enqueueNotificationToUser({
+            await ctx.enqueue(ctx.mod.secondary.userNotification.service.sendMessageToUser, {
               data: {
                 module: 'userAccount',
                 type: 'signupWithEmailConfirmation',
@@ -239,7 +234,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           },
 
           async login({ loginForm }) {
-            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'email',
               email: loginForm.email,
             })
@@ -269,7 +264,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               configs: { tokenExpireTime: userSelfDeletion },
             } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userAccount' })
 
-            const [, user] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [, user] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'email',
               email: declaredOwnEmail,
             })
@@ -287,7 +282,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               },
             })
 
-            ctx.mod.secondary.userNotification.service.enqueueNotificationToUser({
+            await ctx.enqueue(ctx.mod.secondary.userNotification.service.sendMessageToUser, {
               data: {
                 module: 'userAccount',
                 type: 'resetPasswordRequest',
@@ -297,18 +292,18 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             })
             return
           },
-        }
+        } satisfies primary['unauthenticated']
       },
 
       async authenticated() {
         const authenticatedSession = await assert_authorizeAuthenticatedCurrentUserSession({ ctx })
         const userAccountId = authenticatedSession.user.id
 
-        const authenticatedPrimary: primary['authenticated'] = {
+        return {
           async invalidateSession(/* {sessionToken} */) {
             // TODO implement session_token invalidation
             //! -------------------------------------
-            return {userAccountId}
+            return { userAccountId }
           },
           async selfDeletionRequest({ redirectUrl }) {
             const {
@@ -324,7 +319,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               },
             })
 
-            ctx.mod.secondary.userNotification.service.enqueueNotificationToUser({
+            await ctx.enqueue(ctx.mod.secondary.userNotification.service.sendMessageToUser, {
               data: {
                 module: 'userAccount',
                 type: 'deleteAccountRequest',
@@ -336,7 +331,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
           },
 
           async changePassword({ currentPassword, newPassword }) {
-            const [, user] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [, user] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'id',
               userAccountId,
             })
@@ -353,75 +348,69 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             const { passwordHash } = await ctx.mod.secondary.crypto.service.hashPassword({
               plainPassword: newPassword,
             })
-            const [done] = await ctx.write.setUserPassword({
+            await ctx.write.setUserPassword({
               newPasswordHash: passwordHash,
               userAccountId,
             })
 
-            if (!done) {
-              return [false, { reason: 'unknown' }]
-            }
-
             return [true, { userAccountId }]
           },
           async getMyUserAccountRecord() {
-            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.userBy({
+            const [found, userAccountRecord] = await ctx.mod.secondary.userAccount.query.findUser({
               by: 'id',
               userAccountId: authenticatedSession.user.id,
             })
             assert(found, `authenticated user ${authenticatedSession.user.id}} not found`)
             return userAccountRecord
           },
-        }
-        return authenticatedPrimary
+        } satisfies primary['authenticated']
       },
     }
     async function fetchPrimarySchemas() {
       const {
         configs: { userAccountPrimaryMsgSchemaConfigs },
       } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'userAccount' })
-      return getuserAccountPrimarySchemas(userAccountPrimaryMsgSchemaConfigs)
+      return getUserAccountPrimarySchemas(userAccountPrimaryMsgSchemaConfigs)
     }
   },
   watch(ctx) {
     return {
-      secondary: {
-        userAccount: {
-          write: {
-            async setUserPassword([[done], { userAccountId }]) {
-              //FIXME: put quite all notification sends as reaction to some atomic event (just like in the case of password change here)
-              if (!done) {
-                return
-              }
-              ctx.mod.secondary.userNotification.service.enqueueNotificationToUser({
-                data: { module: 'userAccount', type: 'passwordChanged', toUserAccountId: userAccountId },
-              })
+      result: {
+        secondary: {
+          userAccount: {
+            write: {
+              async setUserPassword([[done], { userAccountId }]) {
+                //FIXME: put quite all notification sends as reaction to some atomic event (just like in the case of password change here)
+                if (!done) {
+                  return
+                }
+                await ctx.enqueue(ctx.mod.secondary.userNotification.service.sendMessageToUser, {
+                  data: { module: 'userAccount', type: 'passwordChanged', toUserAccountId: userAccountId },
+                })
+              },
             },
           },
-        },
-        userProfile: {
-          write: {
-            async updatePartialProfileInfo([
-              [done],
-              {
-                userProfileId,
-                partialProfileInfo: { displayName },
+          userProfile: {
+            write: {
+              async updateProfileInfoMeta([
+                [done],
+                {
+                  userProfileIdSelect,
+                  profileInfoMeta: { displayName },
+                },
+              ]) {
+                if (!done || typeof displayName !== 'string') {
+                  return
+                }
+                const [found, result] = await ctx.mod.secondary.userProfile.query.getUserProfile(userProfileIdSelect)
+                if (!found) {
+                  return
+                }
+                await ctx.sync.userDisplayname({
+                  displayName,
+                  userAccountId: result.userProfileRecord.userAccount.id,
+                })
               },
-            ]) {
-              if (!done || typeof displayName !== 'string') {
-                return
-              }
-              const [found, response] = await ctx.mod.secondary.userProfile.query.getUserProfile({
-                by: 'userProfileId',
-                userProfileId,
-              })
-              if (!found) {
-                return
-              }
-              await ctx.sync.userDisplayname({
-                displayName,
-                userAccountId: response.userProfileRecord.userAccount.id,
-              })
             },
           },
         },
@@ -429,24 +418,25 @@ export const userAccount_core: moduleCore<'userAccount'> = {
     }
   },
   async startBackgroundProcess(ctx) {
-    ctx.log('debug', 'Starting background process userAccount')
     const sysAdminInfo = await ctx.mod.secondary.env.query.getSysAdminInfo()
     ctx.log('debug', `Checking if sysAdmin user exists: `, { sysAdminInfo })
 
-    const [found] = await ctx.mod.secondary.userAccount.query.userBy({
+    const [found] = await ctx.mod.secondary.userAccount.query.findUser({
       by: 'email',
       email: sysAdminInfo.email,
     })
 
     if (!found) {
       const { passwordHash } = await ctx.mod.secondary.crypto.service.hashPassword({
-        plainPassword: __redacted__(await generateNanoId({ length: 20 })),
+        plainPassword: __redacted__(generateNanoId({ length: 20 })),
       })
       const newUser = await createNewUserAccountRecordData({
         displayName: 'Admin',
         email: sysAdminInfo.email,
         passwordHash,
         roles: ['admin', 'contributor'],
+        creationDate: ctx.now,
+        lastLogin: ctx.now,
       })
 
       await ctx.write.saveNewUser({ newUser })

@@ -14,7 +14,7 @@ export type ModalProps = {
   className?: string
   closeButton?: boolean
   children?: ReactNode
-  contentRef?: React.RefObject<HTMLDivElement>
+  contentRef?: React.RefObject<HTMLDivElement | null>
   onPressEnter?: () => void
   onClose?: () => void
 }

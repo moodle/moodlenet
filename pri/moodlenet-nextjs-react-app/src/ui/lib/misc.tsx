@@ -1,5 +1,5 @@
-import { _any, _nullish, d_u__d, date_time_string, unreachable_never } from '@moodle/lib-types'
-import { asset } from '@moodle/module/storage'
+import { _any, _nullish, d_u__d, unreachable_never } from '@moodle/lib-types'
+import { maybeAsset } from '@moodle/module/storage'
 import assert from 'assert'
 import defaultsDeep from 'lodash-es/defaultsDeep'
 import Link from 'next/link'
@@ -58,13 +58,12 @@ export const randomIntFromInterval = (min: number, max: number) => {
 
 export const fileExceedsMaxUploadSize = (size: number, max: number | null) => (max === null ? false : size > max)
 
-export const getYearList = (startYear: number): string[] => {
-  const currentYear = new Date(date_time_string('now')).getFullYear()
-  const years = []
-  while (startYear <= currentYear) {
-    years.push((startYear++).toString())
-  }
-  return years.reverse()
+export function getYearList({ sinceYear, thisYear }: { thisYear: number; sinceYear: number }): number[] {
+  const years = new Array(thisYear - sinceYear + 1)
+    .fill(0)
+    .map((_, index) => sinceYear + index)
+    .reverse()
+  return years
 }
 
 export const getWindowDimensions = () => {
@@ -91,7 +90,7 @@ export const getPastelColor = (i?: number, opacity = 1) => {
   // return 'hsla(' + 360 * number + ',' + (25 + 60 * number) + '%,' + (45 + 1 * number) + '%, ' + opacity + ')'
 }
 
-export const getBackupImage = (id: string): d_u__d<asset, 'type', 'external'> | undefined => {
+export const getBackupImage = (id: string): d_u__d<maybeAsset, 'type', 'external'> | undefined => {
   const numId = getNumberFromString(id)
   return ContentBackupImages[numId % ContentBackupImages.length]
 }
@@ -141,10 +140,10 @@ export const getResourceDomainName = (url: string): string | undefined => {
   }
 }
 
-export const getResourceTypeInfo = (asset?: asset | _nullish): { typeName: string; typeColor: string } | null => {
+export const getResourceTypeInfo = (asset?: maybeAsset | _nullish): { typeName: string; typeColor: string } | null => {
   if (!asset || asset.type === 'none') return null
   const resourceType =
-    asset.type === 'local'
+    asset.type === 'stored'
       ? asset.name.split('.').pop()
       : asset.type === 'external'
         ? getResourceDomainName(asset.url)
@@ -231,7 +230,7 @@ export const getThumbnailFromUrl = (url: string): ThumbnailType => {
 export const getDomainUrl = (url: string): string | undefined => {
   try {
     return new URL(url).hostname.replace('www.', '')
-  } catch (e) {
+  } catch {
     return undefined
   }
 }

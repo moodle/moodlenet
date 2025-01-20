@@ -1,32 +1,31 @@
-import { useMemo, useRef } from 'react'
+import { eduResourceMeta } from '@moodle/module/edu'
 import { useTranslation } from 'next-i18next'
+import { useCallback, useMemo, useRef } from 'react'
 import { TextOptionProps } from '../../../../atoms/Dropdown/Dropdown'
 import DropdownField from '../DropdownField'
 import './DateField.scss'
+import { useGlobalCtx } from '../../../../../lib/client/globalContexts'
+import { getYearList } from '../../../../lib/misc'
 
 export type DateFieldProps = {
-  month: number | undefined
-  allowedYears: number[]
-  year: number | undefined
+  publicationDate: eduResourceMeta['publicationDate']
+  sinceYear: number
   canEdit: boolean
   errorMonth: string | undefined
   errorYear: string | undefined
   shouldShowErrors: boolean
-  editMonth(month: number): void
-  editYear(year: number): void
+  onChange(publicationDate: eduResourceMeta['publicationDate']): void
   disabled?: boolean
 }
 
 export default function DateField({
-  month,
-  year,
-  allowedYears,
+  publicationDate,
+  sinceYear,
   canEdit,
   shouldShowErrors,
   errorMonth,
   errorYear,
-  editMonth,
-  editYear,
+  onChange,
   disabled,
 }: DateFieldProps) {
   const { t } = useTranslation()
@@ -44,56 +43,73 @@ export default function DateField({
     { value: `11`, label: t`November` },
     { value: `12`, label: t`December` },
   ])
-  const selectedMonthProps = monthOptionsProps.find(({ value }) => value === String(month))
-
+  const { serverTimeMs } = useGlobalCtx()
   const yearOptionsProps = useMemo<TextOptionProps[]>(
-    () => allowedYears.map(String).map<TextOptionProps>(year => ({ value: year, label: year })),
-    [allowedYears],
+    () =>
+      getYearList({ sinceYear, thisYear: new Date(serverTimeMs).getFullYear() })
+        .map(String)
+        .map<TextOptionProps>(year => ({ value: year, label: year })),
+    [serverTimeMs, sinceYear],
   )
-  const selectedYearProps = yearOptionsProps.find(({ value }) => value === String(year))
+  const handleChange = useCallback(
+    (field: 'month' | 'year', action: 'select' | 'deselect', valueStr: string | null) => {
+      const value = valueStr ? parseInt(valueStr) : null
+      const _m_publicationDate = {
+        ...(publicationDate ?? {}),
+        [field]: action === 'select' ? value : null,
+      }
+      const _publicationDate = !_m_publicationDate.year ? null : (_m_publicationDate as eduResourceMeta['publicationDate'])
+      onChange(_publicationDate)
+    },
+    [onChange, publicationDate],
+  )
 
+  const yearValue = publicationDate?.year ? String(publicationDate.year) : undefined
+  const monthValue = publicationDate?.month ? String(publicationDate.month) : undefined
+  // console.log({
+  //   publicationDate,
+  //   monthValue,
+  //   yearValue,
+  // })
   return canEdit ? (
     <div className={`date-field ${disabled ? 'disabled' : ''}`}>
       <label>Original creation date</label>
       <div className="fields date-field">
         <DropdownField
           name="month"
-          value={String(month)}
-          onChange={e => {
-            e.currentTarget.value !== String(month) && editMonth(parseInt(e.currentTarget.value))
-          }}
+          disabled={disabled || !yearValue}
+          value={!yearValue ? undefined : monthValue}
+          onItem={(action, month) => handleChange('month', action, month)}
+          // onChange={ev => handleChange('month', ev.target.value)}
           placeholder="Month"
           edit
           noBorder
-          disabled={disabled}
           highlight={shouldShowErrors}
           error={shouldShowErrors && errorMonth}
-          position={{ top: 30, bottom: 25 }}
+          // position={{ top: 30, bottom: 25 }}
           options={monthOptionsProps}
         />
         <DropdownField
           name="year"
-          value={String(year)}
-          onChange={e => {
-            e.currentTarget.value !== String(year) && editYear(parseInt(e.currentTarget.value))
-          }}
+          value={yearValue}
+          onItem={(action, year) => handleChange('year', action, year)}
           placeholder="Year"
           edit
           noBorder
           disabled={disabled}
           highlight={shouldShowErrors}
           error={shouldShowErrors && errorYear}
-          position={{ top: 30, bottom: 25 }}
+          // position={{ top: 30, bottom: 25 }}
           options={yearOptionsProps}
         />
       </div>
     </div>
-  ) : month || year ? (
+  ) : publicationDate ? (
     <div className={`date-field-read-mode detail ${disabled ? 'disabled' : ''}`}>
       <div className="title">Original creation date</div>
-      <abbr className={`value date`} title={`${selectedMonthProps?.value ?? ''} ${selectedYearProps?.value ?? ''}`}>
-        {selectedMonthProps && <span>{selectedMonthProps.value}</span>}
-        {selectedYearProps && <span>{selectedYearProps.value}</span>}
+      <abbr className={`value date`} title={`${publicationDate.month ?? ''} ${publicationDate.year ?? ''}`}>
+        {publicationDate.month && <span>{publicationDate.month}</span>}
+        {publicationDate.year && <span>{publicationDate.year}</span>}
       </abbr>
     </div>
   ) : null

@@ -4,12 +4,12 @@ import { joseOpts } from '@moodle/lib-jwt-jose'
 import { crypto_secondary_services_factory } from './sec'
 import { ArgonPwdHashOpts } from './types'
 
-export interface CryptoDefaultEnv {
+export interface cryptoDefaultEnv {
   joseOpts: joseOpts
   argonOpts: ArgonPwdHashOpts
 }
 
-export function get_default_crypto_secondarys_factory({ joseOpts, argonOpts }: CryptoDefaultEnv): secondaryProvider {
+export function get_default_crypto_secondarys_factory({ joseOpts, argonOpts }: cryptoDefaultEnv): secondaryProvider {
   return secondaryCtx => {
     return mergeSecondaryAdapters([crypto_secondary_services_factory({ joseOpts, argonOpts })(secondaryCtx)])
   }

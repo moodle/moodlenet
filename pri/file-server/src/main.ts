@@ -1,18 +1,24 @@
-import { http_bind } from '@moodle/bindings-node'
+import { http_bind } from '@moodle/bindings-http'
 import { moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
+import {
+  createUploadedTempFile,
+  deleteTempFile,
+  domainFsDirectories,
+  fileMeta,
+  getDomainFsDirectories,
+  MOODLE_DEFAULT_HOME_DIR,
+} from '@moodle/lib-domain-fs'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { fsDirectories, generateFileHashes, getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
+import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
 import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
-import { uploaded_blob_meta } from '@moodle/module/storage'
-import { getSanitizedFileName } from '@moodle/module/storage/lib'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
-import { mkdir, writeFile } from 'fs/promises'
+import { mkdir } from 'fs/promises'
 import multer from 'multer'
 import { userAgent } from 'next/server'
-import { join, resolve } from 'path'
+import { resolve } from 'path'
 import { Headers } from 'undici'
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
@@ -23,7 +29,7 @@ const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(
   process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR,
 )
 
-const requestTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
+const reqHttpTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -31,29 +37,38 @@ declare global {
     export interface Request {
       moodlePrimary: moodlePrimary
       moodlePrimarySession: primarySession
-      moodleDirs: fsDirectories
+      moodleDirs: domainFsDirectories
+    }
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    namespace Multer {
+      export interface File {
+        moodleUploaded: {
+          tempId: string
+          fileMeta: fileMeta
+        }
+      }
     }
   }
 }
 
 const app = express()
-const trnspClient = http_bind.client()
-console.log('!!! moodle-fs-file-server started !!!')
+const trnspClient = http_bind.getHttpBinderDispatcher({ reqHttpTarget })
+console.log('moodle-fs-file-server started')
 app.use(cookieParser()).use(async (req, _res, next) => {
-  const primarySession = await getPrimarySession(req)
+  const primarySession = getPrimarySession(req)
   const ap = createMoodleDomainProxy({
     ctrl({ domainMsg }) {
-      return trnspClient(
-        {
+      return trnspClient({
+        domainAccess: {
           ...domainMsg,
+          domain: primarySession.domain,
           primarySession,
         },
-        requestTarget,
-      )
+      })
     },
   })
 
-  req.moodleDirs = getFsDirectories({
+  req.moodleDirs = getDomainFsDirectories({
     domainName: primarySession.domain,
     homeDir: MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR,
   })
@@ -81,10 +96,11 @@ const router = express
     // if (!canServe) {
     //   return res.status(401).send('UNAUTHORIZED')
     // }
-    // USA ALIAS NAME METTI UPLOADED_BLOB_META NEL DB NDO SERVE CO I WATCH !
 
     // req.url = dirname(req.url)
-    express.static(join(req.moodleDirs.fsStorage), {})(req, res, () => {
+    const localFsStorageDirectory = getDefaultLocalFsStorageDirectory({ domainFsDirectories: req.moodleDirs })
+
+    express.static(localFsStorageDirectory, {})(req, res, () => {
       res.status(404).send('NOT FOUND')
     })
   })
@@ -97,51 +113,75 @@ const router = express
     const { userSession } = await req.moodlePrimary.userAccount.anyUser.getUserSession()
 
     if (userSession.type !== 'authenticated') {
-      return res.status(401).send('UNAUTHORIZED')
+      res.status(401).send('UNAUTHORIZED')
+      return
     }
-    const { uploadMaxSizeConfigs } = await req.moodlePrimary.storage.session.moduleInfo()
-    const fileSizeLimit = req.params.type === 'file' ? uploadMaxSizeConfigs.max : uploadMaxSizeConfigs.webImage
+    const {
+      configs: { uploadMaxSize, uploadedTempFileMaxRetentionSeconds: tempFileMaxRetentionSeconds },
+    } = await req.moodlePrimary.storage.session.moduleInfo()
+    const fileSizeLimit = req.params.type === 'file' ? uploadMaxSize.max : uploadMaxSize.webImage
     const multerOptions: multer.Options = {
       limits: {
         fileSize: fileSizeLimit,
       },
-    } //get from req.moodlePrimary
-
+      storage: {
+        _handleFile(req, file, cb) {
+          //sample file: {
+          //   fieldname: 'file',
+          //   originalname: 'filename.jpg',
+          //   encoding: '7bit',
+          //   mimetype: 'image/jpeg',
+          //   destination: '/path/to/temp_dir',
+          //   filename: '085dcd493a51adf9e34bdc776926e225',
+          //   path: '/path/to/temp_dir/085dcd493a51adf9e34bdc776926e225',
+          //   size: 129352
+          // }
+          if (!file || !isMimetype(file.mimetype)) {
+            cb(new Error('upload failed'))
+            return
+          }
+          if (!isMimetype(file.mimetype)) {
+            cb(new Error(`invalid mimetype ${file.mimetype}`))
+            return
+          }
+          createUploadedTempFile({
+            expiresSeconds: tempFileMaxRetentionSeconds,
+            domainFsDirectories: req.moodleDirs,
+            readable: file.stream,
+            uploadedFileMeta: {
+              name: file.originalname,
+              mimetype: file.mimetype,
+              size: file.size,
+              uploaded: {
+                primarySessionId: req.moodlePrimarySession.id,
+                date: new Date().toISOString(),
+                original: {
+                  name: file.originalname,
+                },
+              },
+            },
+          }).then(
+            ({ fileMeta, tempId }) => {
+              cb(null, { moodleUploaded: { fileMeta, tempId } })
+            },
+            e => {
+              cb(e)
+            },
+          )
+        },
+        _removeFile(req, file, callback) {
+          deleteTempFile({
+            domainFsDirectories: req.moodleDirs,
+            tempId: file.moodleUploaded.tempId,
+          }).then(() => callback(null), callback)
+        },
+      }, //get from req.moodlePrimary
+    }
     multer({ dest: req.moodleDirs.temp, ...multerOptions }).single('file')(req, res, async () => {
-      if (!req.file) {
+      if (!req.file?.moodleUploaded) {
         return res.status(500).send('upload failed')
       }
-      if (!isMimetype(req.file.mimetype)) {
-        return res.status(500).send(`invalid mimetype ${req.file.mimetype}`)
-      }
-
-      const uploaded_blob_meta: uploaded_blob_meta = {
-        hash: await generateFileHashes(req.file.path),
-        name: getSanitizedFileName(req.file.originalname),
-        mimetype: req.file.mimetype,
-        size: req.file.size,
-        uploaded: {
-          primarySessionId: req.moodlePrimarySession.id,
-          byUserAccountId: userSession.user.id,
-          date: date_time_string('now'),
-        },
-        original: {
-          name: req.file.originalname,
-        },
-      }
-      writeFile(`${req.file.path}.json`, JSON.stringify(uploaded_blob_meta), 'utf8')
-      res.status(200).json({ tempId: req.file.filename })
-
-      //req.file: {
-      //   fieldname: 'file',
-      //   originalname: 'jp.jpg',
-      //   encoding: '7bit',
-      //   mimetype: 'image/jpeg',
-      //   destination: '/path/to/.moodle.env.home/localhost/fs-storage/.temp',
-      //   filename: '085dcd493a51adf9e34bdc776926e225',
-      //   path: '/path/to/.moodle.env.home/localhost/fs-storage/.temp/085dcd493a51adf9e34bdc776926e225',
-      //   size: 129352
-      // }
+      res.status(200).json({ tempId: req.file.moodleUploaded.tempId })
     })
   })
 app.use(BASE_HTTP_PATH, router)
@@ -156,23 +196,21 @@ app.listen(PORT, () => {
 //
 // FIXME: all this stuff below taken and adapted from react-app server code
 // SHAREDLIB
-// need to extract lib (cookies, access-session ... ) for all http primaries
+// need to ingest lib (cookies, access-session ... ) for all http primaries
 // check DEV-NOTES.md for more info
 const AUTH_COOKIE = 'moodle-auth'
 
-async function getPrimarySession(req: express.Request) {
+function getPrimarySession(req: express.Request) {
   const { headers } = middlewareHeaders(req)
   const xHost = headers.get('x-host')
   // const xPort = headers.get('x-port')
   const xProto = headers.get('x-proto') ?? 'http'
-  const xClientIp = headers.get('x-client-ip') ?? undefined
   const xUrl = headers.get('x-url') ?? undefined
   const xMode = headers.get('x-mode') ?? undefined
-  const xGeo = JSON.parse(headers.get('x-geo') ?? '{}')
   const ua = userAgent({ headers: headers })
   assert(xHost, 'x-host not found in headers')
   const userSession: primarySession = {
-    id: await generateUlid(),
+    id: generateUlid({ onDate: new Date().toISOString() }),
     domain: xHost,
     token: getAuthTokenCookie(req).sessionToken,
     app: {
@@ -184,14 +222,13 @@ async function getPrimarySession(req: express.Request) {
       secure: xProto === 'https',
       mode: xMode,
       url: xUrl,
-      clientIp: xClientIp,
       ua: {
         name: ua.ua,
         isBot: ua.isBot,
       },
     },
     platforms: {
-      local: {
+      stored: {
         type: 'nodeJs',
         version: process.version,
         //    env: process.env,
@@ -200,7 +237,6 @@ async function getPrimarySession(req: express.Request) {
         type: 'browser',
         version: ua.browser.version,
         name: ua.browser.name,
-        geo: xGeo,
         cpu: ua.cpu,
         device: ua.device,
         engine: ua.engine,
@@ -228,11 +264,9 @@ export function middlewareHeaders(request: express.Request) {
   const urlPathname = request.path
   const urlProto = (headers.get('X-Forwarded-Proto') || request.protocol).toLowerCase()
   const xUrl = request.url.toString()
-  const xClientIp = headers.get('X-Forwarded-For') || request.ip || 'unknown'
 
-  // FIXME: find how to get 'mode' and 'geo' in expressjs
+  // FIXME: find how to get 'mode' in expressjs
   const xMode = null // request.mode
-  const xGeo = JSON.stringify(/* request.geo */ null || {})
 
   const xSearch = Object.entries(request.query ?? {})
     .map(([k, v]) => `${k}=${v}`)
@@ -242,9 +276,7 @@ export function middlewareHeaders(request: express.Request) {
   // or simply implement some utility functins for accessing these  custom data in server-components|actions
 
   xMode ? headers.set('x-mode', xMode) : headers.delete('x-mode')
-  headers.set('x-geo', xGeo)
   headers.set('x-url', xUrl)
-  headers.set('x-client-ip', xClientIp)
   headers.set('x-host', urlHost)
   headers.set('x-proto', urlProto)
   headers.set('x-port', urlPort)

@@ -13,5 +13,5 @@ export type uploadMaxSizeConfigs = {
 export interface Configs {
   uploadMaxSize: uploadMaxSizeConfigs
   webImageResizes: webImageResizesConfigs
-  tempFileMaxRetentionSeconds: number
+  uploadedTempFileMaxRetentionSeconds: number
 }

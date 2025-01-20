@@ -4,7 +4,7 @@ import FilterNone from '@mui/icons-material/FilterNone'
 import Grade from '@mui/icons-material/Grade'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 import Link from 'next/link'
-import { useAssetUrl, usePointSystem } from '../../../lib/client/globalContexts'
+import { useAssetUrl, useGlobalCtx } from '../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../lib/client/user-levels/lib'
 import { appRoute } from '../../../lib/common/appRoutes'
 import defaultAvatarSrc from '../../../ui/lib/assets/img/default-avatar.svg'
@@ -23,7 +23,7 @@ export type profileCardProps = Pick<webappContributorAccessData, 'myLinks' | 'pr
 }
 
 export function ProfileCard({ myLinks, actions, profileInfo, stats, profileHomeRoute }: profileCardProps) {
-  const { pointSystem } = usePointSystem()
+  const { pointSystem } = useGlobalCtx()
   const { pointAvatar, level, title } = getUserLevelDetails(pointSystem, stats.points)
   const { avatar, background, displayName } = profileInfo
 

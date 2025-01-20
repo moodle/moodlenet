@@ -1,46 +1,81 @@
-import { moduleCore, secondaryAdapter, secondaryProvider, sys_admin_info } from '@moodle/domain'
-import { configuration, deploymentInfoFromUrlString } from '@moodle/domain/lib'
-import { getFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-local-fs-storage'
+import {
+  binderDispatcher,
+  domainAccess,
+  moduleCore,
+  moodleModuleName,
+  secondaryAdapter,
+  secondaryProvider,
+  sys_admin_info,
+} from '@moodle/domain'
+import { accessDomain, configuration, deploymentInfoFromUrlString, startBackgroundProcesses } from '@moodle/domain/lib'
+import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
+import { generateAlphanumId } from '@moodle/lib-id-gen'
+import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
 import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
-import { userAccount_core } from '@moodle/module/user-account/core'
+import { edu_core } from '@moodle/module/edu/core'
 import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
 import { moodlenet_core } from '@moodle/module/moodlenet/core'
 import { org_core } from '@moodle/module/org/core'
-import { edu_core } from '@moodle/module/edu/core'
+import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
 import { storage_core } from '@moodle/module/storage/core'
+import { userAccount_core } from '@moodle/module/user-account/core'
 import { user_profile_core } from '@moodle/module/user-profile/core'
-import { CryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
-import { ArangoDbSecEnv, get_arango_persistence_factory, provideArangoDbSecEnv } from '@moodle/sec-db-arango'
+import { cryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
+import {
+  ArangoDbSecEnv,
+  get_arango_persistence_factory,
+  provideArangoDbSecEnv,
+  provideArangoQueueServiceWorkers,
+} from '@moodle/sec-db-arango'
 import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
 import { get_nodemailer_secondary_factory, NodemailerSecEnv, provideNodemailerSecEnv } from '@moodle/sec-email-nodemailer'
-import { get_storage_default_secondary_factory, StorageDefaultSecEnv } from '@moodle/sec-storage-default'
+import {
+  get_default_resource_ingestion_secondary_factory,
+  provideDefaultResourceIngestorSecEnv,
+} from '@moodle/sec-resource-ingestion-default'
+import { get_storage_default_secondary_factory, StorageDefaultSecEnv } from '@moodle/sec-storage-local-fs'
+import assert from 'assert'
+import { appDeployments } from 'domain/src/modules/env'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
 import * as path from 'path'
 import { coerce, literal, object, union } from 'zod'
-import { configurator } from './types'
-import { createDefaultDomainLoggerProvider } from './winston-logger'
+import { createQueueServices } from './queue-services'
+import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
+// import {
+//   get_default_resource_ingestion_secondary_factory,
+//   provideDefaultResourceIngestorSecEnv,
+// } from '@moodle/sec-resource-ingestion-default'
+// import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
 
-const cache: map<Promise<configuration>> = {}
+export const cache: map<Promise<configuratorResult>> = {}
+type configuratorResult = {
+  configuration: configuration
+  loopbackDispatcher: binderDispatcher
+  stopAndDrain: () => Promise<void>
+}
 
-export const default_configurator: configurator = async ({ domainAccess, loggerConfigs }) => {
-  if (!domainAccess.primarySession?.domain) {
-    throw new Error('domainAccess.primarySession.domain is required')
-  }
-  const domainName = domainAccess.primarySession.domain
+export async function configuratorDrain() {
+  const configs = await Promise.all(Object.values(cache))
+  return Promise.allSettled(configs.map(({ stopAndDrain }) => stopAndDrain()))
+}
+
+export async function configurator({ domainName }: { domainName: string }) {
   // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
   if (!cache[domainName]) {
-    cache[domainName] = new Promise<configuration>(promiseResolveConfiguration => {
+    cache[domainName] = new Promise<configuratorResult>(resolveConfigurationPromise => {
       const MOODLE_HOME_DIR = path.resolve(process.cwd(), process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
-      const { currentDomainDir } = getFsDirectories({
+      const domainFsDirectories = getDomainFsDirectories({
         homeDir: MOODLE_HOME_DIR,
         domainName,
       })
-      dotenvExpand(dotenv.config({ path: path.join(currentDomainDir, '.env'), override: true }))
-      console.debug({ currentDomainDir, MOODLE_HOME_DIR })
+      const loggerConfigs: winstonLoggerConfigs = { consoleLevel: 'debug' }
 
-      const { loggerProvider } = createDefaultDomainLoggerProvider({ loggerConfigs })
+      dotenvExpand(dotenv.config({ path: path.join(domainFsDirectories.currentDomainDir, '.env'), override: true }))
+      console.debug({ currentDomainDir: domainFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
+
+      const { loggerProvider } = createWinstonDomainLoggerProvider({ loggerConfigs })
 
       const isDev = process.env.NODE_ENV === 'development'
 
@@ -59,46 +94,49 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
       })
 
       console.info(`configuring domain [${domainName}] env:`, { MOODLE_HOME_DIR, ...env })
-      const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(currentDomainDir, `private.key`), 'utf8')
-      const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(currentDomainDir, `public.key`), 'utf8')
-      const _process_env = process.env as _any
+      const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `private.key`), 'utf8')
+      const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `public.key`), 'utf8')
+      const domain_process_env = process.env as _any
 
       const arango_db_env: ArangoDbSecEnv = provideArangoDbSecEnv({
         env: {
-          ..._process_env,
+          ...domain_process_env,
           MOODLE_ARANGODB_ISDEV: `${isDev}`,
           MOODLE_ARANGODB_DOMAIN_NAME: domainName,
         },
       })
-      const crypto_env: CryptoDefaultEnv = provideCryptoDefaultEnv({
-        env: { ..._process_env, MOODLE_CRYPTO_PRIVATE_KEY, MOODLE_CRYPTO_PUBLIC_KEY },
+      const crypto_env: cryptoDefaultEnv = provideCryptoDefaultEnv({
+        env: { ...domain_process_env, MOODLE_CRYPTO_PRIVATE_KEY, MOODLE_CRYPTO_PUBLIC_KEY },
       })
       const nodemailer_env: NodemailerSecEnv = provideNodemailerSecEnv({
-        env: _process_env,
+        env: domain_process_env,
       })
       const sys_admin_info: sys_admin_info = {
         email: env.MOODLE_SYS_ADMIN_EMAIL,
       }
-
+      const localFsStorageDirectory = getDefaultLocalFsStorageDirectory({ domainFsDirectories })
       const file_system_storage_sec_env: StorageDefaultSecEnv = {
-        homeDir: MOODLE_HOME_DIR,
+        localFsStorageDirectory,
       }
 
+      const appDeployments: appDeployments = {
+        moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
+        filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
+      }
+      const default_resource_ingestor_env = provideDefaultResourceIngestorSecEnv({ env: domain_process_env })
+      const arango_persistence = get_arango_persistence_factory(arango_db_env)
       const secondaryProviders: secondaryProvider[] = [
         // sec modules
-        get_arango_persistence_factory(arango_db_env),
+        arango_persistence.secondaryProvider,
         get_default_crypto_secondarys_factory(crypto_env),
         get_nodemailer_secondary_factory(nodemailer_env),
         get_storage_default_secondary_factory(file_system_storage_sec_env),
-        secondaryContext => {
+        (/* secondaryContext */) => {
           const secondaryAdapter: secondaryAdapter = {
             env: {
               query: {
                 async deployments() {
-                  return {
-                    moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
-                    filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
-                  }
+                  return appDeployments
                 },
                 async getSysAdminInfo() {
                   return sys_admin_info
@@ -108,6 +146,7 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
           }
           return secondaryAdapter
         },
+        get_default_resource_ingestion_secondary_factory(default_resource_ingestor_env),
       ]
 
       const moduleCores: moduleCore<_any>[] = [
@@ -119,12 +158,13 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
         moodlenet_react_app_core,
         user_profile_core,
         storage_core,
+        resource_ingestion_core,
         {
-          modName: 'env',
+          moduleName: 'env',
           service() {
             return
           },
-          primary(ctx) {
+          primary(/* ctx */) {
             return {
               async domain() {
                 return {
@@ -136,37 +176,101 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
               async application() {
                 return {
                   async deployments() {
-                    return {
-                      moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
-                      filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
-                    }
+                    return appDeployments
                   },
                 }
               },
             }
           },
-        },
+        } satisfies moduleCore<'env'>,
       ]
+      const configuration: configuration = {
+        moduleCores,
+        secondaryProviders,
+        loggerProvider,
+        domain: domainName,
+        domainFsDirectories,
+      }
+      const pendingAccessResultPromises: Promise<unknown>[] = []
+      const arangoQueueServiceWorkers = provideArangoQueueServiceWorkers({ dbStruct: arango_persistence.dbStruct })
 
-      let do_start_background_processes = env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
-      migrateArangoDB({
-        databaseConnections: arango_db_env.database_connections,
-        log: loggerProvider({ domain: domainName, contextLayer: 'secondary', id: 'migration', endpoint: ['sec-arangodb'] }),
-      }).then(() => {
-        const configuration: configuration = {
-          moduleCores,
-          secondaryProviders,
-          loggerProvider,
-          domain: domainName,
-          get start_background_processes() {
-            const resp = do_start_background_processes
-            do_start_background_processes = false
-            return resp
-          },
-        }
-        promiseResolveConfiguration(configuration)
+      const queues = createQueueServices({
+        binderDispatcher: shortcircuitLoopbackDispatcher,
+        queueServiceWorkers: arangoQueueServiceWorkers,
       })
+
+      async function shortcircuitLoopbackDispatcher({ domainAccess }: { domainAccess: domainAccess }) {
+        const jobId = domainAccess.callerContext
+          ? `${domainAccess.callerContext.ctxId}_${generateAlphanumId({ length: 3 })}`
+          : undefined
+        if (domainAccess.enqueue) {
+          assert(jobId, 'domainAccess must have a callerContext for enqueuing a message')
+          const queueService = queues.getNamedService({ domainAccess })
+          if (queueService) {
+            const enqueuePromise = queueService.enqueue({
+              jobId,
+              enqueueDate: new Date().toISOString(),
+              jobData: { domainAccess },
+            })
+            pendingAccessResultPromises.push(enqueuePromise)
+            return enqueuePromise
+          }
+        }
+        const accessResultPromise = accessDomain({
+          domainAccess,
+          configuration,
+          loopbackDispatcher: shortcircuitLoopbackDispatcher,
+        })
+        pendingAccessResultPromises.push(accessResultPromise)
+        accessResultPromise
+          .catch(
+            !(domainAccess.enqueue && jobId)
+              ? undefined
+              : () => {
+                  const enqueuePromise = queues.defaultService.enqueue({
+                    jobId,
+                    enqueueDate: new Date().toISOString(),
+                    jobData: { domainAccess },
+                  })
+                  pendingAccessResultPromises.push(enqueuePromise)
+                },
+          )
+          .finally(() => pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(accessResultPromise), 1))
+        return accessResultPromise
+        // return shortCircuitLoopbackDispatcher({ configuration, domainAccess })
+      }
+
+      const background_process_promise =
+        env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
+          ? migrateArangoDB({
+              databaseConnections: arango_db_env.database_connections,
+              log: loggerProvider({
+                domain: domainName,
+                contextLayer: 'secondary',
+                id: 'migration',
+                moduleName: 'sec-arangodb' as moodleModuleName,
+              }),
+            })
+              .then(() =>
+                startBackgroundProcesses({
+                  configuration,
+                  loopbackDispatcher: shortcircuitLoopbackDispatcher,
+                }),
+              )
+              .then(() => queues.startAll())
+          : Promise.resolve()
+
+      background_process_promise.then(() => {
+        resolveConfigurationPromise({ configuration, loopbackDispatcher: shortcircuitLoopbackDispatcher, stopAndDrain })
+      })
+
+      async function stopAndDrain() {
+        console.log(`draining [#${pendingAccessResultPromises.length}] pending replies ...`)
+        await Promise.allSettled([queues.stopAndDrainAll(), ...pendingAccessResultPromises])
+        console.log('drained pending replies')
+      }
     }).catch(e => {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete cache[domainName]
       throw e
     })
@@ -174,5 +278,3 @@ export const default_configurator: configurator = async ({ domainAccess, loggerC
 
   return cache[domainName]
 }
-
-export default default_configurator

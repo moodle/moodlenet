@@ -1,24 +1,19 @@
 import { moduleCore } from '../../../types'
+import * as timers from 'timers/promises'
 
+const ONE_MINUTE = 60 * 1000
 export const storage_core: moduleCore<'storage'> = {
-  modName: 'storage',
+  moduleName: 'storage',
   service() {
     return
   },
   startBackgroundProcess(ctx) {
     delStales()
-    function delStales() {
+    async function delStales() {
       ctx.log('debug', 'deleteStaleTemp files')
-      ctx.write
-        .deleteStaleTemp()
-        .catch(e => ctx.log('warn', 'error deleteStaleTemp', e))
-        .then(() =>
-          ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' }).catch(e => {
-            ctx.log('alert', 'error query modConfigs, defaulting tempFileMaxRetentionSeconds to 10 minutes', e)
-            return { configs: { tempFileMaxRetentionSeconds: 10 * 60 } }
-          }),
-        )
-        .then(({ configs: { tempFileMaxRetentionSeconds } }) => setTimeout(delStales, tempFileMaxRetentionSeconds * 1000))
+      await ctx.mod.secondary.storage.service.deleteStaleTemp()
+      await timers.setTimeout(ONE_MINUTE)
+      delStales()
     }
   },
   primary(ctx) {
@@ -26,29 +21,27 @@ export const storage_core: moduleCore<'storage'> = {
       async session() {
         return {
           async moduleInfo() {
-            const {
-              configs: { uploadMaxSize },
-            } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
-            return { uploadMaxSizeConfigs: uploadMaxSize }
+            const { configs } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'storage' })
+            return { configs }
           },
         }
       },
     }
   },
-  watch(ctx) {
-    return {
-      secondary: {
-        userProfile: {
-          write: {
-            async createUserProfile([[done], { userProfileRecord: userProfile }]) {
-              if (!done) {
-                return
-              }
-              ctx.sync.createUserProfile({ userProfileId: userProfile.id })
-            },
-          },
-        },
-      },
-    }
-  },
+  // watch(ctx) {
+  //   return {
+  //     secondary: {
+  //       userProfile: {
+  //         write: {
+  //           async createUserProfile([[done], { userProfileRecord: userProfile }]) {
+  //             if (!done) {
+  //               return
+  //             }
+  //             ctx.sync.createUserProfile({ userProfileId: userProfile.id })
+  //           },
+  //         },
+  //       },
+  //     },
+  //   }
+  // },
 }

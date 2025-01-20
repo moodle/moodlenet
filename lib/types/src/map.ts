@@ -1,12 +1,9 @@
-import { DeepComplete } from './-deep-requires'
-import { _nullish, pretty } from './data'
+//import { DeepComplete } from './-deep-requires'
+import { _any, _any_k, _nullish, pretty } from './data'
 
 export type splitMap<T, right extends keyof T> = [Pick<T, right>, Omit<T, right>]
 
-export type _any = any
-export type _any_k = keyof _any
-
-export type map<t = _any, k extends _any_k = _any_k> = pretty<Record<k, t>>
+export type map<t = _any, k extends _any_k = _any_k> = Record<k, t>
 type m_map<t = _any, k extends _any_k = _any_k> = map<t, k> | void | undefined | null | unknown
 
 // discriminate maps
@@ -60,16 +57,12 @@ export type deep_partial_props<t> = {
 // export type deep_required<t> = DeepComplete<t>
 
 // type selection : like Pick. but keeps unpicked as optional nullish
-export type selection<
-  typemap extends map,
-  selection extends keyof typemap,
-  optionals extends keyof typemap = never,
-> = pretty<
+export type selection<typemap extends map, required extends keyof typemap, optionals extends keyof typemap = never> = pretty<
   {
-    [propName in selection]: typemap[propName]
+    [propName in required]: typemap[propName]
   } & {
     [propName in optionals]: typemap[propName] | _nullish
   } & {
-    [propName in Exclude<keyof typemap, optionals | selection>]?: _nullish
+    [propName in Exclude<keyof typemap, optionals | required>]?: _nullish
   }
 >

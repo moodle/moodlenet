@@ -1,11 +1,18 @@
-import { logLevelColors, logLevelMap, loggerContext, loggerProvider } from '@moodle/domain'
+import { LogSeverity, logLevelColors, logLevelMap, loggerContext, loggerProvider } from '@moodle/domain'
 import { _any } from '@moodle/lib-types'
 import { inspect } from 'util'
 import winston from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
-import { loggerConfigs } from './types'
 
-export function createDefaultDomainLoggerProvider({ loggerConfigs }: { loggerConfigs: loggerConfigs }): {
+export type winstonLoggerConfigs = {
+  consoleLevel?: LogSeverity
+  file?: {
+    path: string
+    level: string
+  }
+}
+
+export function createWinstonDomainLoggerProvider({ loggerConfigs }: { loggerConfigs: winstonLoggerConfigs }): {
   loggerProvider: loggerProvider
 } {
   const winstonLogger = winston.createLogger({
@@ -46,7 +53,11 @@ export function createDefaultDomainLoggerProvider({ loggerConfigs }: { loggerCon
   const loggerProvider: loggerProvider = loggerContext => {
     const childLogger = winstonLogger.child(loggerContext)
     return (level, ...args) => {
-      const message = args.map((arg: unknown) => inspect(arg, { colors: true, depth: 8, })).join('\n')
+      const message = args
+        .map((arg: unknown) => {
+          return typeof arg === 'object' ? inspect(arg, { colors: true, depth: 8 }) : arg
+        })
+        .join('\n')
       childLogger.log(level, message)
     }
   }
@@ -58,6 +69,7 @@ function ctxString({
   message,
   timestamp,
   domain,
+  moduleName,
   id,
   contextLayer,
   //
@@ -65,15 +77,19 @@ function ctxString({
   callerContext,
   primarySessionId,
   endpoint,
+  enqueue,
 }: extended_loggerContext) {
   const NOT_AVAILABLE_CHAR = '~'
-  return `${timestamp} [${level}]
+  return `
+${timestamp} [${level}]
   domain            : ${domain}
+  moduleName        : ${moduleName}
   context           : ${contextLayer} # ${id}
-  callerContext     : ${callerContext ? `${callerContext.layer}.${callerContext.module} # ${callerContext.ctxId}` : NOT_AVAILABLE_CHAR}
-  originEndpoint    : ${(originEndpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
   endpoint          : ${(endpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
   primarySessionId  : ${primarySessionId ?? NOT_AVAILABLE_CHAR}
+  callerContext     : ${callerContext ? `${callerContext.layer}.${callerContext.moduleName} # ${callerContext.ctxId}` : NOT_AVAILABLE_CHAR}
+  originEndpoint    : ${(originEndpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
+  enqueued          : ${enqueue ?? false}
 
 ${message}
 

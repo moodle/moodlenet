@@ -35,6 +35,9 @@ export function errorXxx(code_or_desc: statusXxx, details?: _any): errorXxx {
   return _unchecked_brand<errorXxx>({ code, desc, details })
 }
 
+export function isErrorXxx(e: unknown): e is ErrorXxx {
+  return e instanceof ErrorXxx
+}
 export class ErrorXxx extends Error {
   public errorXxx: errorXxx
   constructor(code_or_desc_or_err: errorXxx | statusXxx, details?: _any) {

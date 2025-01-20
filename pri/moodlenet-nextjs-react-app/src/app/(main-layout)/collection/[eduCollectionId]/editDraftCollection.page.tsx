@@ -1,20 +1,17 @@
 // import CollectionClient from './collection.client'
 
 import { access, getAuthenticatedUserSessionOrRedirectToLogin } from '../../../../lib/server/session-access'
-import { params } from '../../../../lib/server/types'
+import { pageProps, paramRequired } from '../../../../lib/server/page-props'
 import { CollectionPage, collectionPageProps } from '../../../../ui/pages/Collection/Collection'
 import { Fallback } from '../../../../ui/pages/Fallback/Fallback'
 import {
-  getEduCollectionDraftImageForIdadoptAssetService,
-  editEduCollectionDraftForId,
+  getEduCollectionDraftImageForId_AdoptAssetSafeAction,
+  getEditEduCollectionDraftForId,
 } from '../eduCollection-actions.server'
 
-export default async function EditDraftCollectionPage({
-  params: { eduCollectionId },
-}: {
-  params: params<'eduCollectionId'>
-}) {
+export default async function EditDraftCollectionPage({ params }: pageProps<{ eduCollectionId: string }>) {
   await getAuthenticatedUserSessionOrRedirectToLogin()
+  const eduCollectionId = await paramRequired('eduCollectionId', params)
   const [found, myEduCollectionDraft] = await access.primary.userProfile.authenticated.getEduCollectionDraft({
     eduCollectionDraftId: eduCollectionId,
   })
@@ -26,8 +23,8 @@ export default async function EditDraftCollectionPage({
     actions: {
       // applyImage: null,
       editDraft: {
-        saveMeta: await editEduCollectionDraftForId({ eduCollectionDraftId: eduCollectionId }),
-        applyImage: await getEduCollectionDraftImageForIdadoptAssetService({ eduCollectionDraftId: eduCollectionId }),
+        saveMeta: await getEditEduCollectionDraftForId({ eduCollectionDraftId: eduCollectionId }),
+        applyImage: await getEduCollectionDraftImageForId_AdoptAssetSafeAction({ eduCollectionDraftId: eduCollectionId }),
       },
 
       publish: null,

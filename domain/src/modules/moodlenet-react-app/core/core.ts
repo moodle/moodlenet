@@ -1,35 +1,17 @@
 import { fetchAllSchemaConfigs } from '../../../lib'
-import { moduleCore, moodlePrimary } from '../../../types'
-import { isMeMoodlenetContributorRecord } from '../../moodlenet/core/lib/primary-access'
+import { isErrorXxx, moduleCore, moodlePrimary } from '../../../types'
 import { validate_currentUserSessionInfo } from '../../user-account/lib'
 import { landingLayoutProps, suggestedContent } from '../types/webapp/pageProps/landing'
 import { accessWebappContributorAccessData, contributorRecordToWebappContributorAccessData } from './lib'
 
 type primary = moodlePrimary['moodlenetReactApp']
 export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
-  modName: 'moodlenetReactApp',
+  moduleName: 'moodlenetReactApp',
   service() {
     return
   },
   primary(ctx) {
     return {
-      async session() {
-        const session: primary['session'] = {
-          async data() {
-            const mySessionUserRecords = await ctx.forward.moodlenet.session.getMySessionUserRecords()
-            // const userAccount = mySessionUserRecords.type === 'authenticated' ? mySessionUserRecords.userAccountRecord : null
-            // const moodlenetReactAppSessionData: moodlenetReactAppSessionData = {
-            //   is: {
-            //     admin: !!userAccount?.roles.includes('admin'),
-            //     contributor: !!userAccount?.roles.includes('contributor'),
-            //   },
-            //   ...mySessionUserRecords,
-            // }
-            return mySessionUserRecords
-          },
-        }
-        return session
-      },
       async props() {
         const props: primary['props'] = {
           async allLayouts() {
@@ -40,31 +22,41 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
           },
           async rootLayout() {
             const moodlenetConfigs = await ctx.forward.moodlenet.session.moduleInfo()
+            const { moodlenetCategories } = await ctx.mod.secondary.moodlenetReactApp.query.moodlenetCategories()
             const { filestoreHttp } = await ctx.forward.env.application.deployments()
             const allSchemaConfigs = await fetchAllSchemaConfigs({ primary: ctx.forward })
-            const session = await ctx.forward.moodlenetReactApp.session.data()
-            // .catch<moodlenetReactAppSessionData>(() => ({
-            //   type: 'guest',
-            //   is: {
-            //     admin: false,
-            //     contributor: false,
-            //     authenticated: false,
-            //   },
-            // }))
+            const currentMoodlenetSessionData = await ctx.forward.moodlenet.session
+              .getMyCurrentMoodlenetSessionData()
+              .catch(error => {
+                if (!isErrorXxx(error)) {
+                  throw error
+                }
+                return 'cleanupSession' as const
+              })
 
-            return {
-              webappGlobalCtx: {
-                allSchemaConfigs,
-                filestoreHttpDeployment: filestoreHttp,
-                session,
-                pointSystem: moodlenetConfigs.pointSystem,
-                moodlenetSiteInfo: moodlenetConfigs.info,
-              },
+            if (currentMoodlenetSessionData === 'cleanupSession') {
+              return [false, { reason: currentMoodlenetSessionData }]
             }
+
+            return [
+              true,
+              {
+                webappGlobalCtx: {
+                  allSchemaConfigs,
+                  filestoreHttpDeployment: filestoreHttp,
+                  currentMoodlenetSessionData,
+                  // session,
+                  pointSystem: moodlenetConfigs.pointSystem,
+                  // moodlenetSiteInfo: moodlenetConfigs.info,
+                  moodlenetCategories,
+                  serverTimeMs: Date.now(),
+                },
+              },
+            ]
           },
           async mainLayout() {
             const [session, layouts] = await Promise.all([
-              ctx.forward.moodlenetReactApp.session.data(),
+              ctx.forward.moodlenet.session.getMyCurrentMoodlenetSessionData(),
               ctx.forward.moodlenetReactApp.props.allLayouts(),
             ])
             return {
@@ -106,7 +98,7 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
               range: [20],
               sort: ['points', 'DESC'],
             })
-            const myUserRecords = await ctx.forward.moodlenet.session.getMySessionUserRecords()
+            const myUserRecords = await ctx.forward.moodlenet.session.getMyCurrentMoodlenetSessionData()
             const me = myUserRecords.type === 'authenticated' ? myUserRecords.moodlenetContributorRecord : null
 
             const leaderContributors = moodlenetContributorRecords.map(moodlenetContributorRecord =>

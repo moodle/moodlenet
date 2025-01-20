@@ -1,4 +1,4 @@
-import { eduPrimaryMsgSchemaConfigs } from './types'
+import { eduPrimaryEnabledCategoriesSchemaConfigs, eduPrimaryMsgSchemaConfigs } from './types'
 
 export * from './types'
 
@@ -8,14 +8,20 @@ export default interface EduDomain {
   primary: {
     edu: {
       session: {
-        moduleInfo(): Promise<{ schemaConfigs: eduPrimaryMsgSchemaConfigs }>
+        moduleInfo(): Promise<{
+          schemaConfigs: eduPrimaryMsgSchemaConfigs
+          enabledCategoriesSchemaConfigs: eduPrimaryEnabledCategoriesSchemaConfigs
+        }>
       }
     }
   }
   secondary: {
     edu: {
       query: {
-        moduleInfo(): Promise<{ schemaConfigs: eduPrimaryMsgSchemaConfigs }>
+        moduleInfo(): Promise<{
+          schemaConfigs: eduPrimaryMsgSchemaConfigs
+          enabledCategoriesSchemaConfigs: eduPrimaryEnabledCategoriesSchemaConfigs
+        }>
       }
       service?: unknown
       write?: unknown

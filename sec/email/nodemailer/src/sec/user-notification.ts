@@ -8,16 +8,17 @@ import {
 import { EmailLayoutContentProps, layoutEmail } from '@moodle/lib-email-templates/org'
 import { _void, email_address, ok_ko } from '@moodle/lib-types'
 import { OrgInfo } from '@moodle/module/org'
-import { userNotification } from '@moodle/module/user-notification'
+import { userMessage } from '@moodle/module/user-notification'
 import { send } from '../lib'
 import { NodemailerSecEnv } from '../types'
+import * as timers from 'timers/promises'
 
 export function user_notification_service_factory(env: NodemailerSecEnv): secondaryProvider {
   return ctx => {
     const secondaryAdapter: secondaryAdapter = {
       userNotification: {
         service: {
-          async enqueueNotificationToUser({ data }) {
+          async sendMessageToUser({ data }) {
             const deps = await layoutDeps()
             const [ok, content] = await getEmailLayoutProps({ data, orgInfo: deps.orgInfo })
             if (!ok) {
@@ -29,6 +30,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
               orgInfo: deps.orgInfo,
               receiverEmail: content.receiverEmail,
             })
+            await timers.setTimeout(5000)
             await send({
               to: content.receiverEmail,
               body,
@@ -36,6 +38,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
               env,
               sender: env.sender,
             })
+
             return [true, _void]
           },
         },
@@ -59,7 +62,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
       data,
       orgInfo,
     }: {
-      data: userNotification
+      data: userMessage
       orgInfo: OrgInfo
     }): Promise<
       ok_ko<
@@ -82,9 +85,9 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
             },
           ]
         }
-        const [found, user] = await ctx.mod.secondary.userAccount.query.userBy({
-          userAccountId: data.toUserAccountId,
+        const [found, user] = await ctx.mod.secondary.userAccount.query.findUser({
           by: 'id',
+          userAccountId: data.toUserAccountId,
         })
         if (!found) {
           ctx.log('warn', `User not found for id ${data.toUserAccountId}`)

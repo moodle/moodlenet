@@ -1,35 +1,42 @@
+import { isErrorXxx } from '@moodle/domain'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
-import { binder, configurator, mainMessageDispatcher } from './types.js'
-import { _maybe } from '@moodle/lib-types'
+import { configurator, configuratorDrain } from './default-configurator'
+import { httpBinderReceiverProvider } from './http-binder-receiver'
+
 dotenvExpand(dotenv.config())
+;(async () => {
+  const { binderReceiver, drain: httpReceiverDrain } = await httpBinderReceiverProvider()
 
-optimport<binder>(process.env.MOODLE_BINDER_MODULE, './simple-http-binder.js').then(binder => {
-  binder({
-    messageDispatcher: async ({ domainAccess }) => {
-      const configurator = await optimport<configurator>(process.env.MOODLE_CONFIGURATOR_MODULE, './default-configurator.js')
-      const configuration = await configurator({
-        domainAccess,
-        loggerConfigs: { consoleLevel: 'debug' },
-      })
+  process.on('SIGINT', drainAndExit)
+  process.on('SIGTERM', drainAndExit)
+  process.on('unhandledRejection', (reason, promise) => {
+    if (isErrorXxx(reason)) {
+      return
+    }
+    console.error('^^^ CRITICAL UNHANDLED_REJECTION ^^^', { reason, promise }, '$$$ CRITICAL UNHANDLED_REJECTION $$$')
+    drainAndExit('unhandledRejection')
+  })
 
-      const messageDispatcher = await optimport<mainMessageDispatcher>(
-        process.env.MOODLE_DISPATCHER_MODULE,
-        './feedbackloop-message-dispatcher.js',
-      )
-      return messageDispatcher({
-        configuration,
-        domainAccess,
+  binderReceiver({
+    binderDispatcher: async ({ domainAccess }) => {
+      const { loopbackDispatcher /* , configuration */ } = await configurator({
+        domainName: domainAccess.domain,
       })
+      loopbackDispatcher
+      return loopbackDispatcher({ domainAccess })
+      // return accessDomain({ domainAccess, configuration, loopbackDispatcher })
     },
   })
-})
-
-async function optimport<T>(
-  optional_module_path: _maybe<string>,
-  default_module_path: string,
-): Promise<T> {
-  return (
-    optional_module_path ? await import(optional_module_path) : await import(default_module_path)
-  ).default.default
-}
+  let exiting = false
+  async function drainAndExit(sig: unknown) {
+    if (exiting) {
+      return
+    }
+    exiting = true
+    console.log(`received signal ${sig} draining...`)
+    await Promise.all([configuratorDrain(), httpReceiverDrain()])
+    console.log(`exiting...`)
+    process.exit(0)
+  }
+})()

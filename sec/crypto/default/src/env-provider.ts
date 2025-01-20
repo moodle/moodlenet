@@ -1,7 +1,7 @@
 import { literal, number, object, string, union } from 'zod'
 
 import { map } from '@moodle/lib-types'
-import type { CryptoDefaultEnv } from './crypto-secondarys'
+import type { cryptoDefaultEnv } from './crypto-secondarys'
 
 export type env_keys =
   | 'MOODLE_CRYPTO_PRIVATE_KEY'
@@ -10,12 +10,12 @@ export type env_keys =
   | 'MOODLE_ARGON_OPTS_TIME_COST'
   | 'MOODLE_ARGON_OPTS_PARALLELISM'
   | 'MOODLE_ARGON_OPTS_TYPE'
-export function provideCryptoDefaultEnv({ env }: { env: map<unknown, env_keys> }): CryptoDefaultEnv {
+export function provideCryptoDefaultEnv({ env }: { env: map<unknown, env_keys> }): cryptoDefaultEnv {
   function string_int_schema(def: number) {
     return string().transform(Number).pipe(number().positive().int().default(def))
   }
   const env_config = object({
-    MOODLE_CRYPTO_PRIVATE_KEY: string(), //FIXME: apply key validations
+    MOODLE_CRYPTO_PRIVATE_KEY: string().nullable().optional(), //FIXME: apply key validations
     MOODLE_CRYPTO_PUBLIC_KEY: string(), //FIXME: apply key validations
     MOODLE_ARGON_OPTS_MEMORY_COST: string_int_schema(100000),
     MOODLE_ARGON_OPTS_TIME_COST: string_int_schema(8),
@@ -32,7 +32,7 @@ export function provideCryptoDefaultEnv({ env }: { env: map<unknown, env_keys> }
     MOODLE_ARGON_OPTS_TYPE: env.MOODLE_ARGON_OPTS_TYPE,
   })
 
-  const cryptoDefaultEnv: CryptoDefaultEnv = {
+  const cryptoDefaultEnv: cryptoDefaultEnv = {
     argonOpts: {
       memoryCost: env_config.MOODLE_ARGON_OPTS_MEMORY_COST,
       timeCost: env_config.MOODLE_ARGON_OPTS_TIME_COST,

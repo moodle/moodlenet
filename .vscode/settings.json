@@ -43,6 +43,12 @@
       "background": "#ff00ff",
       "opacity": 90
     },
+    "SECURITY": {
+      "foreground": "#000000",
+      "iconColour": "#ff004c",
+      "background": "#ff004c",
+      "opacity": 90
+    },
     "NOTE": {
       "foreground": "#000000",
       "iconColour": "#41c9ff",
@@ -53,6 +59,12 @@
       "foreground": "#000000",
       "iconColour": "#fff241",
       "background": "#fff241",
+      "opacity": 80
+    },
+    "FUTURE": {
+      "foreground": "#000000",
+      "iconColour": "#155629",
+      "background": "#155629",
       "opacity": 80
     }
   },
@@ -84,16 +96,24 @@
     "SHAREDLIB",
     "SHARED_LIB",
     "MAKE_SHARED_LIB",
-    "MAKE_SHARED_LIB",
     "NEED_SHARED_LIB",
-    "SHARED_LIB_NEEDED"
+    "SHARED_LIB_NEEDED",
+    //
+    "FUTURE",
+    //
+    "SECURITY"
   ],
   "todo-tree.general.tagGroups": {
     "FIXME": ["FIXME", "FIXIT", "FIX"],
     "NOTE": ["NOTE", "NOTICE"],
     "CHECK": ["CHECK", "CHECKOUT", "BEWARE"],
     "CREDITS": ["CREDITS", "CREDIT", "THANKS", "THANK"],
-    "SHAREDLIB": ["SHAREDLIB", "SHARED_LIB", "MAKE_SHARED_LIB", "NEED_SHARED_LIB", "SHARED_LIB_NEEDED"]
+    "SHAREDLIB": ["SHAREDLIB", "SHARED_LIB", "MAKE_SHARED_LIB", "NEED_SHARED_LIB", "SHARED_LIB_NEEDED"],
+    "SECURITY": []
   },
-  "typescript.preferences.importModuleSpecifier": "project-relative"
+  "typescript.preferences.importModuleSpecifier": "project-relative",
+  "workbench.colorCustomizations": {
+    "minimap.background": "#333333aa",
+    "scrollbar.shadow": "#333333aa"
+  }
 }

@@ -1,11 +1,5 @@
 {
-  "extends": [
-    "plugin:@nx/react-typescript",
-    "next",
-    "next/core-web-vitals",
-    "../../.eslintrc.base.json",
-    "../../.eslintrc.base.json"
-  ],
+  "extends": ["plugin:@nx/react-typescript", "next", "next/core-web-vitals", "../../.eslintrc.base.json"],
   "ignorePatterns": ["!**/*", ".next/**/*", "zz__legacy/**/*", "ui-cmps/**/*"],
   "rules": {
     "react-hooks/rules-of-hooks": "error",

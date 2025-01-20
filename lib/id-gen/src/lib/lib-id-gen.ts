@@ -1,34 +1,96 @@
-import * as ulidx from 'ulidx'
+//import { urlAlphabet } from 'nanoid'
+import { d_u } from '@moodle/lib-types'
 import { customAlphabet } from 'nanoid'
-import { d_u, date_time_string } from '@moodle/lib-types'
+import * as ulidx from 'ulidx'
 
 export type id_type = d_u<
   {
     alphanumeric: { length: number }
-    ulid: { onDate?: Date | number | string }
+    ulid: { onDate: Date | number | string }
   },
   'type'
 >
-
 const globalMonoUlid = ulidx.monotonicFactory()
-export async function generateUlid(cfg?: { onDate?: Date | number | string }) {
-  const date = new Date(cfg?.onDate ?? date_time_string('now'))
+export function generateUlid({ onDate }: { onDate: Date | number | string }) {
+  const date = new Date(onDate)
   return globalMonoUlid(date.valueOf())
 }
+const ALPHNUM_62 = `useandom26T198340PX75pxJACKVERYMINDBUSHWOLFGQZbfghjklqvwyzrict` // urlAlphabet except -_
+const DEFAULT_ALPHANUM_ID_LENGTH = 8
+const CURRENT_ZERO_DELTA_DATE_ALPHANUM_LENGTH = 5
+const MIN_ACCEPTABLE_NANOID_LENGTH = 2
+export function generateAlphanumId(opts?: { length?: number }) {
+  const length = opts?.length ?? DEFAULT_ALPHANUM_ID_LENGTH
+  const genNanoId = customAlphabet(ALPHNUM_62)
+  const nanoIdLength = length - CURRENT_ZERO_DELTA_DATE_ALPHANUM_LENGTH
+  if (nanoIdLength < MIN_ACCEPTABLE_NANOID_LENGTH) {
+    return genNanoId(length)
+  }
+  const nanoId = genNanoId(nanoIdLength)
+  const currentZeroDeltaDateAlphanum5 = getCurrentZeroDeltaDateAlphanum5()
 
-export async function generateNanoId(opts?: { alpabet?: string; length?: number }) {
-  const id = customAlphabet(
-    opts?.alpabet || `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`,
-    8,
-  )(opts?.length)
-  return id
+  const alphanumId = `${currentZeroDeltaDateAlphanum5}${nanoId}`
+
+  return alphanumId
 }
+//FIXME: REMOVE generateNanoId by renaming to generateAlphanumId
+export const generateNanoId = generateAlphanumId
 
-export async function generateId(id_type: id_type) {
+export function generateId(id_type: id_type) {
   switch (id_type.type) {
     case 'alphanumeric':
-      return generateNanoId({ length: id_type.length })
+      return generateAlphanumId({ length: id_type.length })
     case 'ulid':
       return generateUlid({ onDate: id_type.onDate })
   }
+}
+
+export function decodeUlid(ulid: string) {
+  if (!ulidx.isValid(ulid)) {
+    return null
+  }
+  return ulidx.decodeTime(ulid)
+}
+
+const ZERO_DATE = Number(new Date('01/01/2020'))
+
+const ZERO_DELTA_ALPHANUM_TIME_CHUNKS_MILLISECS = 200
+function getCurrentZeroDeltaDateAlphanum5() {
+  const timeChunksFromZeroDate = Math.floor((Number(new Date()) - ZERO_DATE) / ZERO_DELTA_ALPHANUM_TIME_CHUNKS_MILLISECS)
+
+  const reversedTimeChunksFromZeroDateStringArray = String(timeChunksFromZeroDate).split('').reverse()
+
+  // ensures first reversed digit is not 0
+  reversedTimeChunksFromZeroDateStringArray[0] =
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    reversedTimeChunksFromZeroDateStringArray[0] === '0' ? '1' : reversedTimeChunksFromZeroDateStringArray[0]!
+  const base62encodingNumber = Number(reversedTimeChunksFromZeroDateStringArray.join(''))
+  const encoded62 = encodeBase62(base62encodingNumber)
+  // console.log({
+  //   timeChunksFromZeroDate,
+  //    reversedTimeChunksFromZeroDateStringArray,
+  //   base62encodingNumber,
+  //   encoded62,
+  // })
+  return encoded62
+}
+
+// https://lowrey.me/encoding-decoding-base-62-in-es6-javascript/
+function encodeBase62(integer: number) {
+  if (integer === 0) {
+    return 0
+  }
+  let s: string[] = []
+  while (integer > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    s = [ALPHNUM_62[integer % 62]!, ...s]
+    integer = Math.floor(integer / 62)
+  }
+  return s.join('')
+}
+function _decodeBase62(chars: string) {
+  return chars
+    .split('')
+    .reverse()
+    .reduce((prev, curr, i) => prev + ALPHNUM_62.indexOf(curr) * 62 ** i, 0)
 }

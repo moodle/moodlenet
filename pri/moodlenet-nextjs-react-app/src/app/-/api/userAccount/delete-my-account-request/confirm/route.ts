@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
       status: 400,
     })
   }
-  setAuthTokenCookie(null)
+  await setAuthTokenCookie(null)
   revalidatePath('/', 'layout')
   redirect('/')
 }

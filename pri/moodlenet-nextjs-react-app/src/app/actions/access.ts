@@ -6,9 +6,9 @@ import { getAuthTokenCookie, setAuthTokenCookie } from '../../lib/server/auth'
 import { access } from '../../lib/server/session-access'
 
 export async function logout() {
-  const { sessionToken } = getAuthTokenCookie()
+  const { sessionToken } = await getAuthTokenCookie()
   sessionToken && access.primary.userAccount.authenticated.invalidateSession()
-  setAuthTokenCookie(null)
-  revalidatePath('/')
+  await setAuthTokenCookie(null)
+  revalidatePath('/', 'layout')
   redirect('/')
 }

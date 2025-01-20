@@ -1,34 +1,36 @@
 import { redirect } from 'next/navigation'
 import { appRoutes } from '../../../../../lib/common/appRoutes'
+import { pageProps, paramRequired } from '../../../../../lib/server/page-props'
 import { access } from '../../../../../lib/server/session-access'
-import { params } from '../../../../../lib/server/types'
 import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'
 import ProfilePageClient, { profilePageProps } from '../../../../../ui/pages/Profile/ProfilePage'
-import { getApplyMyProfileImageadoptAssetService, updateMyProfileInfoMetaForm } from './profile.server'
+import { getApplyMyProfileImageSafeAction, getUpdateMyProfileInfoMetaSafeAction } from './profile.server'
 
-export default async function ProfilePage({
-  params: { moodlenetContributorId, slug },
-}: {
-  params: params<'moodlenetContributorId' | 'slug'>
-}) {
+export default async function ProfilePage({ params }: pageProps<{ moodlenetContributorId: string; slug: string }>) {
+  const [moodlenetContributorId, slug] = await Promise.all([
+    paramRequired('moodlenetContributorId', params),
+    paramRequired('slug', params),
+  ])
   const [foundContributor, webappContributorAccessData] = await access.primary.moodlenetReactApp.props.profilePage({
     moodlenetContributorId,
   })
   if (!foundContributor) {
     return <Fallback />
   }
+
   if (webappContributorAccessData.slug !== slug) {
     redirect(appRoutes(`/profile/${moodlenetContributorId}/${webappContributorAccessData.slug}`))
   }
+  const { id: userProfileId } = webappContributorAccessData
   const { permissions } = webappContributorAccessData
   const profilePageProps: profilePageProps = {
     ...webappContributorAccessData,
     actions: {
       edit: permissions.editProfileInfo
         ? {
-            updateMyProfileInfo: updateMyProfileInfoMetaForm,
-            useAsMyProfileAvatar: await getApplyMyProfileImageadoptAssetService('avatar'),
-            useAsMyProfileBackground: await getApplyMyProfileImageadoptAssetService('background'),
+            updateMyProfileInfo: await getUpdateMyProfileInfoMetaSafeAction({ userProfileId }),
+            useAsMyProfileAvatar: await getApplyMyProfileImageSafeAction({ userProfileId, type: 'avatar' }),
+            useAsMyProfileBackground: await getApplyMyProfileImageSafeAction({ userProfileId, type: 'background' }),
           }
         : null,
       follow: permissions.follow ? null : null,

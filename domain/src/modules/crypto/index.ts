@@ -5,9 +5,7 @@ export * from './types'
 export default interface CryptoDomain {
   event: { crypto: unknown }
   service: { crypto: unknown }
-  primary: {
-    crypto: unknown
-  }
+  primary: { crypto: unknown }
   secondary: {
     crypto: {
       write?: unknown

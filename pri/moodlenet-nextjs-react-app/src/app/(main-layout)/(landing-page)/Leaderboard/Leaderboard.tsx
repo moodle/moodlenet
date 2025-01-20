@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { useAssetUrl, usePointSystem } from '../../../../lib/client/globalContexts'
+import { useAssetUrl, useGlobalCtx } from '../../../../lib/client/globalContexts'
 import { getUserLevelDetails } from '../../../../lib/client/user-levels/lib'
 import { Card } from '../../../../ui/atoms/Card/Card'
 import { ReactComponent as LeafIcon } from '../../../../ui/lib/assets/icons/leaf.svg'
@@ -30,7 +30,7 @@ export function Leaderboard({ leaderContributors }: leaderboardProps) {
 export type leaderRowProps = Pick<profileCardProps, 'profileInfo' | 'profileHomeRoute' | 'stats'>
 
 function LeaderRow({ contributor, position }: { contributor: leaderRowProps; position: number }) {
-  const { pointSystem } = usePointSystem()
+  const { pointSystem } = useGlobalCtx()
 
   const { pointAvatar, level } = getUserLevelDetails(pointSystem, contributor.stats.points)
   const [avatarUrl] = useAssetUrl(contributor.profileInfo.avatar, defaultAvatar)

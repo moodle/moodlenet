@@ -1,7 +1,7 @@
 import { single_line_string_schema, url_string_schema } from '@moodle/lib-types'
 import type { z, ZodString } from 'zod'
 import { any, literal, object, string, union } from 'zod'
-import { adoptAssetFormSchema } from '../../content'
+import { adoptAssetFormSchema } from '../../storage'
 export interface UserProfilePrimaryMsgSchemaConfigs {
   profileInfoMeta: {
     displayName: { max: number; min: number; regex: null | [regex: string, flags: string] }
@@ -10,7 +10,7 @@ export interface UserProfilePrimaryMsgSchemaConfigs {
     siteUrl: { max: number }
   }
 }
-export type updateProfileInfoSchema = ReturnType<typeof getUserProfilePrimarySchemas>['updateProfileInfoMetaSchema']
+export type updateProfileInfoSchema = ReturnType<typeof getUserProfilePrimarySchemas>['editProfileInfoMetaSchema']
 export type updateProfileInfoForm = z.infer<updateProfileInfoSchema>
 
 export type useProfileImageSchema = ReturnType<typeof getUserProfilePrimarySchemas>['useProfileImageSchema']
@@ -30,16 +30,16 @@ export function getUserProfilePrimarySchemas({ profileInfoMeta }: UserProfilePri
         : (any() as unknown as ZodString),
     )
     .pipe(single_line_string_schema)
-  const aboutMe = string().trim().max(profileInfoMeta.aboutMe.max).optional()
-  const location = string().trim().max(profileInfoMeta.location.max).optional().pipe(single_line_string_schema)
-  const siteUrl = url_string_schema.nullish()
+  const aboutMe = string().trim().max(profileInfoMeta.aboutMe.max)
+  const location = string().trim().max(profileInfoMeta.location.max).pipe(single_line_string_schema)
+  const siteUrl = url_string_schema.nullable()
 
   const useProfileImageSchema = object({
-    as: profileImageSchema,
+    type: profileImageSchema,
     adoptAssetForm: adoptAssetFormSchema,
   })
 
-  const updateProfileInfoMetaSchema = object({
+  const editProfileInfoMetaSchema = object({
     displayName,
     aboutMe,
     location,
@@ -55,7 +55,7 @@ export function getUserProfilePrimarySchemas({ profileInfoMeta }: UserProfilePri
         siteUrl,
       },
     },
-    updateProfileInfoMetaSchema,
+    editProfileInfoMetaSchema,
     useProfileImageSchema,
   }
 }

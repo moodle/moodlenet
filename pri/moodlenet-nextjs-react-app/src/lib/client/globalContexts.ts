@@ -1,50 +1,37 @@
 import { makeAllPrimarySchemas } from '@moodle/domain/lib'
-import { _nullish, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
+import { _any, _nullish, unreachable_never, url_string } from '@moodle/lib-types'
 import { webappGlobals } from '@moodle/module/moodlenet-react-app'
-import { asset } from '@moodle/module/storage'
+import { maybeAsset } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
 import { createContext, useContext, useMemo } from 'react'
+import { TextOptionProps } from '../../ui/atoms/Dropdown/Dropdown'
 // import { getUserLevelDetails } from './user-levels/lib'
 // import { linkedContent } from '@moodle/module/moodlenet'
 
-export const GlobalCtx = createContext<webappGlobals>(null as any)
+export type globalCtx = webappGlobals & {
+  enabledCategoriesOptions: {
+    bloomCognitives: TextOptionProps[]
+    iscedFields: TextOptionProps[]
+    iscedLevels: TextOptionProps[]
+    resourceTypes: TextOptionProps[]
+    languages: TextOptionProps[]
+    licenses: TextOptionProps[] //IconTextOptionProps[]
+  }
+}
+export const GlobalCtx = createContext<globalCtx>(null as _any)
 
-function useGlobalCtx() {
+export function useGlobalCtx() {
   return useContext(GlobalCtx)
 }
-// export function useSiteInfo() {
-//   return useGlobalCtx().moodlenetSiteInfo
-// }
-export function useAllSchemaConfigs() {
-  return useGlobalCtx().allSchemaConfigs
-}
-export function useFileServerDeployment() {
-  return useGlobalCtx().filestoreHttpDeployment
-}
-
-export function usePointSystem() {
-  const { /* session,  */ pointSystem } = useGlobalCtx()
-  // const myPoints = session.type === 'authenticated' ? session.moodlenetContributorRecord.stats.points : 0
-  return useMemo(() => {
-    // const myUserLevelDetails = getUserLevelDetails(pointSystem, myPoints)
-    return { pointSystem /* , myUserLevelDetails */ }
-  }, [pointSystem /* , myPoints */])
-}
-// export function useMySession() {
-//   const { session } = useGlobalCtx()
-//   return useMemo(() => {
-//     return { session }
-//   }, [session])
-// }
 
 export function useAllPrimarySchemas() {
-  const allSchemaConfigs = useAllSchemaConfigs()
+  const allSchemaConfigs = useGlobalCtx().allSchemaConfigs
   const primarySchemas = makeAllPrimarySchemas(allSchemaConfigs)
   return primarySchemas
 }
 
-export function useAssetUrl(asset: asset | _nullish, defaultTo?: string | asset) {
-  const filestoreHttp = useFileServerDeployment()
+export function useAssetUrl(asset: maybeAsset | _nullish, defaultTo?: url_string | maybeAsset) {
+  const filestoreHttp = useGlobalCtx().filestoreHttpDeployment
   return useMemo(() => {
     const defaultUrl = !defaultTo
       ? undefined
@@ -54,13 +41,13 @@ export function useAssetUrl(asset: asset | _nullish, defaultTo?: string | asset)
           ? undefined
           : defaultTo.type === 'external'
             ? defaultTo.url
-            : defaultTo.type === 'local'
+            : defaultTo.type === 'stored'
               ? getAssetUrl(defaultTo, filestoreHttp.href)
               : unreachable_never(defaultTo)
     const [url, credits] =
       !asset || asset.type === 'none'
         ? ([defaultUrl, undefined] as const)
-        : asset.type === 'local'
+        : asset.type === 'stored'
           ? ([getAssetUrl(asset, filestoreHttp.href), undefined] as const)
           : asset.type === 'external'
             ? ([asset.url, asset.credits] as const)
@@ -69,6 +56,7 @@ export function useAssetUrl(asset: asset | _nullish, defaultTo?: string | asset)
     return [url, credits] as const
   }, [asset, filestoreHttp.href, defaultTo])
 }
+
 
 // export function useMyLinkedContent<linkType extends keyof linkedContent, contentType extends keyof linkedContent[linkType]>(
 //   linkType: linkType,

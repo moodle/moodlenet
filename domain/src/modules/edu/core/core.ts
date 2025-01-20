@@ -1,7 +1,7 @@
 import { moduleCore } from '../../../types'
 
 export const edu_core: moduleCore<'edu'> = {
-  modName: 'edu',
+  moduleName: 'edu',
   service() {
     return
   },
@@ -11,9 +11,9 @@ export const edu_core: moduleCore<'edu'> = {
         return {
           async moduleInfo() {
             const {
-              configs: { eduPrimaryMsgSchemaConfigs },
+              configs: { eduPrimaryMsgSchemaConfigs, enabledCategories },
             } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'edu' })
-            return { schemaConfigs: eduPrimaryMsgSchemaConfigs }
+            return { schemaConfigs: eduPrimaryMsgSchemaConfigs, enabledCategoriesSchemaConfigs: enabledCategories }
           },
         }
       },
