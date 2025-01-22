@@ -1,4 +1,4 @@
-import { generateNanoId } from '@moodle/lib-id-gen'
+import { generateAlphanumId } from '@moodle/lib-id-gen'
 import { date_time_string, email_address } from '@moodle/lib-types'
 import { password_hash } from '../../crypto/types'
 import { userAccountRecord, userRole } from '../types'
@@ -20,7 +20,7 @@ export async function createNewUserAccountRecordData({
   creationDate,
   lastLogin,
 }: CreateNewUserAccountRecordDataArg): Promise<userAccountRecord> {
-  const id = generateNanoId()
+  const id = generateAlphanumId()
   return {
     id,
     creationDate,

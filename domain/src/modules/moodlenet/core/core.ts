@@ -1,4 +1,4 @@
-import { generateNanoId } from '@moodle/lib-id-gen'
+import { generateAlphanumId } from '@moodle/lib-id-gen'
 import { _void, non_negative_integer } from '@moodle/lib-types'
 import assert from 'assert'
 import { omit } from 'lodash'
@@ -140,7 +140,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
                   return
                 }
                 const { userProfileRecord } = payload
-                const id = generateNanoId()
+                const id = generateAlphanumId()
                 const { configs } = await ctx.mod.secondary.env.query.modConfigs({ mod: 'moodlenet' })
                 await ctx.write.createMoodlenetContributor({
                   moodlenetContributorRecord: {

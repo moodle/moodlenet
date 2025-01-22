@@ -1,5 +1,4 @@
-import { generateNanoId } from '@moodle/lib-id-gen'
-import { _void } from '@moodle/lib-types'
+import { generateAlphanumId } from '@moodle/lib-id-gen'
 import { omit } from 'lodash'
 import UserProfileDomain, { eduCollectionDraft } from '..'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
@@ -39,7 +38,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
 
         return {
           async createEduCollectionDraft({ eduCollectionMetaForm }) {
-            const eduCollectionDraftId = generateNanoId()
+            const eduCollectionDraftId = generateAlphanumId()
             const eduCollectionDraft: eduCollectionDraft = {
               draftId: eduCollectionDraftId,
               created: ctx.now,
@@ -59,20 +58,18 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               },
             })
 
-
             return [true, { eduCollectionDraftId }]
           },
           async editEduCollectionDraft({ eduCollectionDraftId, eduCollectionMetaForm }) {
-             await ctx.write.updateDraftMeta({
-               userProfileIdSelect: { by: 'userProfileId', userProfileId },
-               draftId: eduCollectionDraftId,
-               lastEditDate: ctx.now,
-               meta: {
-                 type: 'eduCollection',
-                 data: eduCollectionMetaForm,
-               },
-             })
-
+            await ctx.write.updateDraftMeta({
+              userProfileIdSelect: { by: 'userProfileId', userProfileId },
+              draftId: eduCollectionDraftId,
+              lastEditDate: ctx.now,
+              meta: {
+                type: 'eduCollection',
+                data: eduCollectionMetaForm,
+              },
+            })
           },
           async applyEduResourceDraftImage({ eduResourceDraftId, applyImageForm: { resourceImageForm: adoptAssetForm } }) {
             if (adoptAssetForm.type === 'external') {
@@ -94,15 +91,15 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             })
           },
           async editEduResourceDraft({ eduResourceDraftId, eduResourceMetaForm }) {
-             await ctx.write.updateDraftMeta({
-               userProfileIdSelect: { by: 'userProfileId', userProfileId },
-               draftId: eduResourceDraftId,
-               lastEditDate: ctx.now,
-               meta: {
-                 type: 'eduResource',
-                 data: eduResourceMetaForm,
-               },
-             })
+            await ctx.write.updateDraftMeta({
+              userProfileIdSelect: { by: 'userProfileId', userProfileId },
+              draftId: eduResourceDraftId,
+              lastEditDate: ctx.now,
+              meta: {
+                type: 'eduResource',
+                data: eduResourceMetaForm,
+              },
+            })
           },
           async getEduCollectionDraft({ eduCollectionDraftId }) {
             const result = await ctx.mod.secondary.userProfile.query.getDraft({
@@ -145,7 +142,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
             })
           },
           async createEduResourceDraft({ newResourceAsset }) {
-            const eduResourceDraftId = generateNanoId()
+            const eduResourceDraftId = generateAlphanumId()
             if (newResourceAsset.type === 'tempFile') {
               await ctx.write.useTempFileAsNewResourceDraftAsset({
                 adoptAssetForm: newResourceAsset,
@@ -181,7 +178,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               })
               return
             }
-             await ctx.write.useTempImageInProfile({
+            await ctx.write.useTempImageInProfile({
               type,
               userProfileId,
               adoptAssetForm,
@@ -257,9 +254,9 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                     status: 'awaiting',
                     engageDate: new Date().toISOString(),
                   },
-                  condition:{
+                  condition: {
                     status: 'neverEngaged',
-                  }
+                  },
                 })
               },
             },
@@ -323,8 +320,6 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                     data: eduResourceDraftData,
                   },
                 })
-
-
               },
               async useTempImageInProfile([adoptAssetResult, { userProfileId: id, type }]) {
                 if (adoptAssetResult.status === 'error') {
@@ -332,20 +327,19 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                   return
                 }
                 const asset = adoptAssetResult.asset
-                 await ctx.write.updateProfileImage({
+                await ctx.write.updateProfileImage({
                   userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
                   lastEditDate: ctx.now,
                   type,
                   image: asset,
                 })
-
               },
               async useTempImageInDraft([adoptAssetResult, { userProfileId: id, draftId, draftType }]) {
                 if (adoptAssetResult.status === 'error') {
                   return
                 }
                 const asset = adoptAssetResult.asset
-                 await ctx.write.updateDraftImage({
+                await ctx.write.updateDraftImage({
                   userProfileIdSelect: { by: 'userProfileId', userProfileId: id },
                   draftId,
                   image: asset,

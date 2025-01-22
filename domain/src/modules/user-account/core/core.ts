@@ -1,4 +1,4 @@
-import { generateNanoId } from '@moodle/lib-id-gen'
+import { generateAlphanumId } from '@moodle/lib-id-gen'
 import { __redacted__, _void, url_string_schema } from '@moodle/lib-types'
 import assert from 'assert'
 import userAccountDomain, { getUserAccountPrimarySchemas, userRole } from '..'
@@ -61,11 +61,11 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               new_roles_set.has('admin') ? (['admin', 'contributor'] satisfies userRole[]) : Array.from(new_roles_set)
             ).sort()
 
-             await ctx.write.setUserRoles({
-               userAccountId,
-               roles: new_roles,
-               adminUserAccountId: adminUserSession.user.id,
-             })
+            await ctx.write.setUserRoles({
+              userAccountId,
+              roles: new_roles,
+              adminUserAccountId: adminUserSession.user.id,
+            })
 
             return [true, { updatedRoles: new_roles, adminUserAccountId }]
           },
@@ -127,9 +127,9 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               lastLogin: ctx.now,
             })
 
-             await ctx.write.saveNewUser({
-               newUser,
-             })
+            await ctx.write.saveNewUser({
+              newUser,
+            })
 
             return [true, { userAccountId: newUser.id }]
           },
@@ -155,10 +155,10 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             const { passwordHash } = await ctx.mod.secondary.crypto.service.hashPassword({
               plainPassword: newPassword,
             })
-             await ctx.write.setUserPassword({
-               newPasswordHash: passwordHash,
-               userAccountId: userAccountRecord.id,
-             })
+            await ctx.write.setUserPassword({
+              newPasswordHash: passwordHash,
+              userAccountId: userAccountRecord.id,
+            })
             return [true, _void]
           },
           async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
@@ -428,7 +428,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
 
     if (!found) {
       const { passwordHash } = await ctx.mod.secondary.crypto.service.hashPassword({
-        plainPassword: __redacted__(generateNanoId({ length: 20 })),
+        plainPassword: __redacted__(generateAlphanumId({ length: 20 })),
       })
       const newUser = await createNewUserAccountRecordData({
         displayName: 'Admin',

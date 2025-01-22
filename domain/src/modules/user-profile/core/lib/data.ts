@@ -1,4 +1,4 @@
-import { generateNanoId } from '@moodle/lib-id-gen'
+import { generateAlphanumId } from '@moodle/lib-id-gen'
 import { date_time_string } from '@moodle/lib-types'
 import { eduResourceMeta } from '../../../edu'
 import { asset, NONE_ASSET } from '../../../storage'
@@ -6,7 +6,7 @@ import { userAccountRecord } from '../../../user-account'
 import { eduResourceDraft, eduResourceDraftId, userProfileRecord } from '../../types'
 
 export function createNewUserProfileData({ newUser }: { newUser: userAccountRecord }): userProfileRecord {
-  const userProfileId = generateNanoId()
+  const userProfileId = generateAlphanumId()
   const userProfileRecord: userProfileRecord = {
     id: userProfileId,
     userAccount: {
