@@ -1,4 +1,4 @@
-import { _any, any_function, path, unsupportedProxyHandler } from '@moodle/lib-types'
+import { any_, any_function, path, unsupportedProxyHandler } from '@moodle/lib-types'
 import assert from 'assert'
 import { MoodleDomain } from '../moodle-domain'
 import { domainMsg } from '../types/msg'
@@ -7,7 +7,7 @@ const INSPECT_SYM = Symbol('MoodleDomainProxy inspect symbol')
 export function createMoodleDomainProxy({
   ctrl,
 }: {
-  ctrl(domainProxyCtrlArg: { domainMsg: domainMsg }): Promise<_any>
+  ctrl(domainProxyCtrlArg: { domainMsg: domainMsg }): Promise<any_>
 }): MoodleDomain {
   const moodleDomain = domain_proxy([]) as unknown as MoodleDomain
   return moodleDomain
@@ -32,7 +32,7 @@ export function createMoodleDomainProxy({
 }
 
 export function getProxyFnPath(proxy_function: any_function): path {
-  const endpoint = (proxy_function as _any)[INSPECT_SYM]
+  const endpoint = (proxy_function as any_)[INSPECT_SYM]
   assert(Array.isArray(endpoint), `invalid proxy function [inspected endpoint=${endpoint}]`)
   return endpoint
 }

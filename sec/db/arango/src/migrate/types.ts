@@ -1,8 +1,8 @@
-import { _any } from '@moodle/lib-types'
+import { any_ } from '@moodle/lib-types'
 
 export interface migrationRecord {
   previous: string
   current: string
   date: string
-  meta: _any
+  meta: any_
 }

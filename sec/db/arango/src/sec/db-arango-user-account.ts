@@ -1,5 +1,5 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
-import { _void, deep_partial_props } from '@moodle/lib-types'
+import { void_, deep_partial_props } from '@moodle/lib-types'
 import { userAccountRecord } from '@moodle/module/user-account'
 import { aql } from 'arangojs'
 import { createHash } from 'node:crypto'
@@ -16,7 +16,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             const done = !!(await dbStruct.identity.coll.userAccount
               .update({ _key: userAccountId }, { displayName })
               .catch(() => null))
-            return [done, _void]
+            return [done, void_]
           },
         },
         write: {
@@ -25,14 +25,14 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               .save(save_id_to_key('id')(newUser), { overwriteMode: 'conflict', returnNew: true })
               .catch(() => null)
 
-            return [!!savedUser?.new, _void]
+            return [!!savedUser?.new, void_]
           },
           async deactivateUser({ anonymize, reason, userAccountId, overrideDeactivationDate: date = ctx.now }) {
             const deactivatingUser = await dbStruct.identity.coll.userAccount.document(
               { _key: userAccountId },
               { graceful: true },
             )
-            if (!deactivatingUser) return [false, _void]
+            if (!deactivatingUser) return [false, void_]
 
             const anonymization: null | deep_partial_props<userAccountRecord> = anonymize
               ? {
@@ -59,7 +59,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               `)
             const [deactivatedUserAccountRecord] = await deactivatedUserAccount_cursor.all()
 
-            return deactivatedUserAccountRecord ? [true, { deactivatedUserAccountRecord }] : [false, _void]
+            return deactivatedUserAccountRecord ? [true, { deactivatedUserAccountRecord }] : [false, void_]
           },
 
           async setUserPassword({ newPasswordHash, userAccountId }) {
@@ -76,10 +76,10 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 },
               )
               .catch(() => null)
-            return [!!updated, _void]
+            return [!!updated, void_]
           },
           async setUserRoles({ userAccountId, roles }) {
-           const updatedUserRoles_cursor = await dbStruct.identity.db.query<userAccountRecord>(aql`
+            const updatedUserRoles_cursor = await dbStruct.identity.db.query<userAccountRecord>(aql`
                 FOR userAccountDoc IN ${dbStruct.identity.coll.userAccount}
                 FILTER userAccountDoc._key == ${userAccountId}
                 LIMIT 1
@@ -87,7 +87,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                 RETURN MOODLE::RESTORE_RECORD_ID(OLD)
               `)
             const [updated] = await updatedUserRoles_cursor.all()
-            return updated ? [true, { newRoles: roles, oldRoles: updated.roles }] : [false, _void]
+            return updated ? [true, { newRoles: roles, oldRoles: updated.roles }] : [false, void_]
           },
         },
         query: {

@@ -13,7 +13,7 @@ export async function overUserProfileById({
   dbStruct: dbStruct
   userProfileIdSelect: userProfileIdSelect
   apply?: AqlQuery
-  returns?: 'userProfileDoc' | 'OLD' | 'NEW' // | _other_string
+  returns?: 'userProfileDoc' | 'OLD' | 'NEW' // | any_other_string
 }): Promise<userProfileRecord | null> {
   const getUserProfileAql = getMaybeUserProfileByIdSelectAql(userProfileIdSelect, dbStruct)
 

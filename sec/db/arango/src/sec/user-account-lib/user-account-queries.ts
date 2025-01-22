@@ -1,4 +1,4 @@
-import { _void, email_address, ok_ko } from '@moodle/lib-types'
+import { email_address, ok_ko, void_ } from '@moodle/lib-types'
 import { userAccountId, userAccountRecord } from '@moodle/module/user-account'
 import { aql } from 'arangojs'
 import { dbStruct } from '../../db-structure'
@@ -18,7 +18,7 @@ export async function getUserByEmail({
   )
   const [foundUser] = await cursor.all()
 
-  return foundUser ? [true, foundUser] : [false, _void]
+  return foundUser ? [true, foundUser] : [false, void_]
 }
 export async function getUserById({
   userAccountId,
@@ -35,5 +35,5 @@ export async function getUserById({
   )
   const [foundUser] = await cursor.all()
 
-  return foundUser ? [true, foundUser] : [false, _void]
+  return foundUser ? [true, foundUser] : [false, void_]
 }

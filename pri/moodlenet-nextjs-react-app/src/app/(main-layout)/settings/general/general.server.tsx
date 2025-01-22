@@ -9,11 +9,11 @@ import { access } from '../../../../lib/server/session-access'
 async function getChangePasswordSchema() {
   const { userAccount } = await getAllPrimarySchemas()
   return userAccount.changePasswordSchema /* .superRefine(({ currentPassword, newPassword }, ctx) => {
-    if (currentPassword.__redacted__ === newPassword.__redacted__) {
+    if (currentPassword.redacted === newPassword.redacted) {
       ctx.addIssue({
         code: 'custom',
         message: 'Passwords must be different',
-        path: ['newPassword.__redacted__'],
+        path: ['newPassword.redacted'],
       })
     }
   }) */

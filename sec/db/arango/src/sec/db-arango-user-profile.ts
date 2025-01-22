@@ -1,5 +1,5 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
-import { _void } from '@moodle/lib-types'
+import { void_ } from '@moodle/lib-types'
 import { aql } from 'arangojs'
 import { dbStruct } from '../db-structure'
 import { save_id_to_key } from '../lib/key-id-mapping'
@@ -21,9 +21,9 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               } IN ${dbStruct.appData.coll.userProfile}`,
             })
             if (!userProfileDoc) {
-              return [false, _void]
+              return [false, void_]
             }
-            return [true, _void]
+            return [true, void_]
           },
         },
         query: {
@@ -55,7 +55,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
 
             const saveDone = !!result
 
-            return [saveDone, _void]
+            return [saveDone, void_]
           },
           async updateProfileInfoMeta({ lastEditDate, userProfileIdSelect, profileInfoMeta }) {
             const updateResult = await overUserProfileById({
@@ -70,7 +70,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             `,
             })
             const updateDone = !!updateResult
-            return [updateDone, _void]
+            return [updateDone, void_]
           },
           async updateProfileImage({ lastEditDate, userProfileIdSelect, image, type }) {
             const updateResult = await overUserProfileById({
@@ -87,7 +87,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
                                             } IN ${dbStruct.appData.coll.userProfile}`,
             })
             const updateDone = !!updateResult
-            return [updateDone, _void]
+            return [updateDone, void_]
           },
           async updateDraftResourceAssetProcessStatus({
             eduResourceDraftId,
@@ -126,7 +126,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             })
 
             const updateDone = !!updateResult
-            return [updateDone, _void]
+            return [updateDone, void_]
           },
           async updateDraftImage({ lastEditDate, userProfileIdSelect, image, draftId, draftType }) {
             const updateResult = await overUserProfileById({
@@ -152,7 +152,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               `,
             })
             const updateDone = !!updateResult
-            return [updateDone, _void]
+            return [updateDone, void_]
           },
           async updateDraftMeta({ userProfileIdSelect, draftId, meta, lastEditDate }) {
             const updateResult = await overUserProfileById({
@@ -176,7 +176,7 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               `,
             })
             const updateDone = !!updateResult
-            return [updateDone, _void]
+            return [updateDone, void_]
           },
           async createDraft({ userProfileIdSelect, draft }) {
             const { draftId } = draft.data
@@ -193,14 +193,14 @@ export function user_profile_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               `,
             })
             const updateDone = !!createDraftUpdateResult
-            return [updateDone, _void]
+            return [updateDone, void_]
           },
           /*  async updatePartialUserProfile({ userProfileId, partialUserProfile }) {
             const updateResult = await dbStruct.userAccount.coll.userProfile
               .update({ _key: userProfileId }, partialUserProfile, { returnNew: true })
               .catch(() => null)
             const updateDone = !!updateResult?.new
-            return [updateDone, _void]
+            return [updateDone, void_]
           }, */
         },
       },

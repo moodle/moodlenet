@@ -1,4 +1,4 @@
-import { _any, ok_ko, webSlug } from '@moodle/lib-types'
+import { any_, ok_ko, webSlug } from '@moodle/lib-types'
 import { primaryContext } from '../../../types'
 import {
   accessMoodlenetContributor,
@@ -34,7 +34,7 @@ export async function accessWebappContributorAccessData({
   ctx,
   id,
 }: {
-  ctx: primaryContext<_any>
+  ctx: primaryContext<any_>
   id: moodlenetContributorId
 }): Promise<ok_ko<webappContributorAccessData, { notFound: unknown; notAllowed: unknown }>> {
   const [gotIt, result] = await accessMoodlenetContributor({

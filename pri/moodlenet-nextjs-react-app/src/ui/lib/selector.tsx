@@ -1,4 +1,4 @@
-import { _any, _nullish } from '@moodle/lib-types'
+import { any_, nullish } from '@moodle/lib-types'
 import { createContext, forwardRef, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useForwardedRef } from './hooks'
 
@@ -12,13 +12,13 @@ export type SelectorProps = Omit<
 } & (
     | {
         multiple: true
-        value?: string[] | _nullish
-        defaultValue?: string[] | _nullish
+        value?: string[] | nullish
+        defaultValue?: string[] | nullish
       }
     | {
         multiple?: false | undefined
-        value?: string | _nullish
-        defaultValue?: string | _nullish
+        value?: string | nullish
+        defaultValue?: string | nullish
       }
   )
 
@@ -138,7 +138,7 @@ export const Selector = forwardRef<HTMLSelectElement, SelectorProps>((props, for
         Array.from(selectElem.options).forEach(
           optionElem => (optionElem.selected = newSelections.includes(optionElem.value)),
         )
-        selectElem.value = newSelections[0] as _any
+        selectElem.value = newSelections[0] as any_
         setSelections(newSelections)
         fireEvent(selectElem, 'change')
       }
@@ -171,11 +171,11 @@ export const Selector = forwardRef<HTMLSelectElement, SelectorProps>((props, for
 Selector.displayName = 'Selector'
 
 function fireEvent(element: HTMLSelectElement, event: string) {
-  const ieDoc = document as _any
+  const ieDoc = document as any_
   if (ieDoc.createEventObject) {
     // dispatch for IE
     const evt = ieDoc.createEventObject()
-    return (element as _any).fireEvent('on' + event, evt)
+    return (element as any_).fireEvent('on' + event, evt)
   } else {
     const evt = new Event(event, { bubbles: true, cancelable: true })
     return !element.dispatchEvent(evt)

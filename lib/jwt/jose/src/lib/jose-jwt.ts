@@ -1,9 +1,4 @@
-import {
-  _any,
-  date_time_string,
-  signed_token_schema,
-  time_duration_string,
-} from '@moodle/lib-types'
+import { any_, date_time_string, signed_token_schema, time_duration_string } from '@moodle/lib-types'
 import * as iso8601duration from 'iso8601-duration'
 import * as jose from 'jose'
 import { joseOpts } from './types'
@@ -56,7 +51,7 @@ export async function joseVerify<payload>(joseEnv: joseOpts, token: string) {
 //       if (claimSet.includes(key)) {
 //         acc.claims[key] = value
 //       } else {
-//         ;(acc.payload as _any)[key] = value
+//         ;(acc.payload as any_)[key] = value
 //       }
 //       return acc
 //     },
@@ -89,7 +84,7 @@ export async function sign<payload>({
 }) {
   const { /* jwk, */ keyLikes } = await getJoseKeys(joseOpts)
   assert(keyLikes.private, 'cannot sign without access to privateKey')
-  const _payload: JwtStdClaims & payload = { ...(payload as _any) }
+  const _payload: JwtStdClaims & payload = { ...(payload as any_) }
   if (stdClaims.scope !== undefined) {
     _payload.scope = [stdClaims.scope].flat().join(' ')
   }

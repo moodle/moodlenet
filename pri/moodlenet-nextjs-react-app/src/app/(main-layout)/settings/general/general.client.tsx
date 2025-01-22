@@ -68,8 +68,8 @@ export function GeneralSettingsClient() {
               placeholder={t('Enter your current password')}
               type="password"
               autoComplete="new-password"
-              error={formState.errors.currentPassword?.__redacted__?.message}
-              {...register('currentPassword.__redacted__')}
+              error={formState.errors.currentPassword?.redacted?.message}
+              {...register('currentPassword.redacted')}
             />
           </div>
           <br />
@@ -79,8 +79,8 @@ export function GeneralSettingsClient() {
               placeholder={t('Enter your new password')}
               type="password"
               autoComplete="new-password"
-              error={formState.errors.newPassword?.__redacted__?.message}
-              {...register('newPassword.__redacted__')}
+              error={formState.errors.newPassword?.redacted?.message}
+              {...register('newPassword.redacted')}
             />
           </div>
           <br />

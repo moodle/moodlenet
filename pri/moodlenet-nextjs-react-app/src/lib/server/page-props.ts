@@ -1,7 +1,7 @@
 import { map } from '@moodle/lib-types'
 import assert from 'assert'
 
-export type pageProps<params extends _params, searchParams extends _params = never> = {
+export type pageProps<params extends params_, searchParams extends params_ = never> = {
   params: Promise<params>
   searchParams: Promise<searchParams>
 }
@@ -9,8 +9,8 @@ export type pageProps<params extends _params, searchParams extends _params = nev
 type pVal = undefined | string | string[]
 
 // export type params<names extends string> = Record<names, string>
-type _params = map<pVal>
-type paramsKeys<params extends Promise<_params>, t extends pVal> = keyof Awaited<params> extends infer _k
+type params_ = map<pVal>
+type paramsKeys<params extends Promise<params_>, t extends pVal> = keyof Awaited<params> extends infer _k
   ? _k extends string
     ? Awaited<params>[_k] extends t
       ? _k
@@ -25,7 +25,7 @@ type paramsKeys<params extends Promise<_params>, t extends pVal> = keyof Awaited
  * @returns A Promise that resolves to the value of the required parameter as a string.
  * @throws Assertion error if the parameter is undefined or an array.
  */
-export async function paramRequired<params extends Promise<_params>, name extends paramsKeys<params, string>>(
+export async function paramRequired<params extends Promise<params_>, name extends paramsKeys<params, string>>(
   name: name,
   params: params,
 ): Promise<string> {
@@ -40,7 +40,7 @@ export async function paramRequired<params extends Promise<_params>, name extend
  * @param params The object containing the parameters.
  * @returns A Promise that resolves to an array of strings representing the parameter values.
  */
-export async function paramArray<params extends Promise<_params>, name extends paramsKeys<params, string[] | undefined>>(
+export async function paramArray<params extends Promise<params_>, name extends paramsKeys<params, string[] | undefined>>(
   name: name,
   params: params,
 ): Promise<string[]> {
@@ -54,7 +54,7 @@ export async function paramArray<params extends Promise<_params>, name extends p
  * @param params The object containing the parameters.
  * @returns A Promise that resolves to the value of the optional parameter as a string or undefined.
  */
-export async function paramOpt<params extends Promise<_params>, name extends paramsKeys<params, string | undefined>>(
+export async function paramOpt<params extends Promise<params_>, name extends paramsKeys<params, string | undefined>>(
   name: name,
   params: params,
 ): Promise<string | undefined> {

@@ -1,5 +1,5 @@
 'use client'
-import { _nullish } from '@moodle/lib-types'
+import { nullish } from '@moodle/lib-types'
 import { Bookmarks, DisplaySettings, ExitToApp, Settings } from '@mui/icons-material'
 import Person from '@mui/icons-material/Person'
 import { t } from 'i18next'
@@ -60,7 +60,7 @@ export function HeaderSearchbox() {
 }
 
 export type ProfileLinkProps = {
-  avatar: maybeAsset | _nullish
+  avatar: maybeAsset | nullish
   profileRoute: appRoute
 }
 export function ProfileLink({ profileRoute, avatar }: ProfileLinkProps) {
@@ -132,7 +132,7 @@ export function FollowingLink({ followingRoute }: FollowingLinkProps) {
 }
 
 export type AvatarMenuProps = {
-  avatar: maybeAsset | _nullish
+  avatar: maybeAsset | nullish
   menuItems: clientSlotItem[]
 }
 

@@ -2,7 +2,7 @@ import { http_bind } from '@moodle/bindings-http'
 import { MoodleDomain, moodlePrimary, primarySession } from '@moodle/domain'
 import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { _any, _nullish, map } from '@moodle/lib-types'
+import { any_, nullish, map } from '@moodle/lib-types'
 import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/user-account/lib'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
@@ -16,14 +16,13 @@ const MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_REACT_A
 
 const reqHttpTarget = MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
-
 export const access = {
   get primary(): moodlePrimary {
     return _domainAccess().primary
   },
 }
 
-const request_session_async_storage = new AsyncLocalStorage<{ moodle_domain: MoodleDomain; cache: map<_any> }>()
+const request_session_async_storage = new AsyncLocalStorage<{ moodle_domain: MoodleDomain; cache: map<any_> }>()
 function _domainAccess(): MoodleDomain {
   const _existing_current_moodle_domain_store = request_session_async_storage.getStore()
   if (_existing_current_moodle_domain_store) {
@@ -31,7 +30,7 @@ function _domainAccess(): MoodleDomain {
   }
   const binderDispatcher = http_bind.getHttpBinderDispatcher({ reqHttpTarget })
   const primarySessionPromise = getPrimarySession()
-  const cache = new Map<string, _any>()
+  const cache = new Map<string, any_>()
   const { hash } = hasher({
     coerce: false,
     alg: 'sha1',

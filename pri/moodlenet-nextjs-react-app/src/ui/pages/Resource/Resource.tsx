@@ -1,12 +1,17 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { _nullish, d_u, selection, unreachable_never } from '@moodle/lib-types'
+import { nullish, d_u, selection, unreachable_never } from '@moodle/lib-types'
 import { eduResourceData, eduResourceMetaFormSchema } from '@moodle/module/edu'
 import { InsertDriveFile } from '@mui/icons-material'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { useCallback, useState } from 'react'
 import { useAllPrimarySchemas, useAssetUrl, useGlobalCtx } from '../../../lib/client/globalContexts'
-import { adoptAssetSafeAction, adoptValuedAssetSafeAction, default_noop_action, simpleHookSafeAction } from '../../../lib/common/actions'
+import {
+  adoptAssetSafeAction,
+  adoptValuedAssetSafeAction,
+  default_noop_action,
+  simpleHookSafeAction,
+} from '../../../lib/common/actions'
 import { appRoute } from '../../../lib/common/appRoutes'
 import { Card } from '../../atoms/Card/Card'
 import { PrimaryButton } from '../../atoms/PrimaryButton/PrimaryButton'
@@ -35,16 +40,16 @@ export type eduResourceActions = {
 export type resourcePageProps = d_u<
   {
     createDraft: {
-      eduResourceData: _nullish
+      eduResourceData: nullish
       actions: selection<eduResourceActions, 'saveNewResourceAsset'>
-      contributorCardProps: _nullish
-      references: _nullish
+      contributorCardProps: nullish
+      references: nullish
     }
     editDraft: {
       eduResourceData: eduResourceData
       actions: selection<eduResourceActions, 'editDraft', 'publish'>
-      references: _nullish
-      contributorCardProps: _nullish
+      references: nullish
+      contributorCardProps: nullish
     }
     viewPublished: {
       eduResourceData: eduResourceData

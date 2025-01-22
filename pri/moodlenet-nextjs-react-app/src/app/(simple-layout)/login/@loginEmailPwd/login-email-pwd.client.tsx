@@ -36,8 +36,8 @@ export default function LoginPanel() {
           placeholder={t(`Password`)}
           type="password"
           edit
-          error={formState.errors.password?.__redacted__?.message}
-          {...register('password.__redacted__')}
+          error={formState.errors.password?.redacted?.message}
+          {...register('password.redacted')}
         />
         {loginErrorMsg && <div className="error">{loginErrorMsg}</div>}
         <PrimaryButton disabled={formState.isSubmitting} type="submit">

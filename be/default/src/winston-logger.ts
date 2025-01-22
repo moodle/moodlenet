@@ -1,5 +1,5 @@
 import { LogSeverity, logLevelColors, logLevelMap, loggerContext, loggerProvider } from '@moodle/domain'
-import { _any } from '@moodle/lib-types'
+import { any_ } from '@moodle/lib-types'
 import { inspect } from 'util'
 import winston from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
@@ -63,7 +63,7 @@ export function createWinstonDomainLoggerProvider({ loggerConfigs }: { loggerCon
   }
   return { loggerProvider }
 }
-type extended_loggerContext = loggerContext & { level: string; message: _any; timestamp: _any }
+type extended_loggerContext = loggerContext & { level: string; message: any_; timestamp: any_ }
 function ctxString({
   level,
   message,

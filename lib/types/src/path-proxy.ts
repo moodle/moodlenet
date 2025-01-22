@@ -1,4 +1,4 @@
-import { _any, _void, path } from './data'
+import { any_, path, void_ } from './data'
 
 export const _inspect_symbol = Symbol('moduleAccessProxy inspect')
 type proxy_applier<arg, returns> = (_: { path: path; arg: arg }) => returns
@@ -11,7 +11,7 @@ export function createPathProxy<t, arg = unknown, returns = unknown>(ctrl: path_
   return pathProxy
 
   function path_proxy(path: path) {
-    return new Proxy(() => _void, {
+    return new Proxy(() => void_, {
       ...unsupportedProxyHandler<() => void>(),
       get(_target, prop /* , _receiver */) {
         if (typeof prop !== 'string') {
@@ -48,7 +48,7 @@ export function unsupportedProxyHandler<T extends object>(): ProxyHandler<T> {
   }
   return usnupportedProxyHandler
   function _thrower(e: Error) {
-    return (...args: _any[]): never => {
+    return (...args: any_[]): never => {
       e.message += ` ${JSON.stringify(args)}`
       throw e
     }

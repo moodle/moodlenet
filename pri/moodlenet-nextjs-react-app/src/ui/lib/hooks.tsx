@@ -1,4 +1,4 @@
-import { _nullish } from '@moodle/lib-types'
+import { nullish } from '@moodle/lib-types'
 import { contentCredits } from '@moodle/module/content'
 import type { MutableRefObject } from 'react'
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
@@ -26,7 +26,7 @@ export const useWindowDimensions = () => {
 
   return windowDimensions
 }
-export function ImageCredits({ credits, id }: { credits: contentCredits | _nullish; id?: string | _nullish }) {
+export function ImageCredits({ credits, id }: { credits: contentCredits | nullish; id?: string | nullish }) {
   const defaultId = useId()
   const backupImage = getBackupImage(id ?? defaultId)
   const _credits = credits ?? backupImage?.credits

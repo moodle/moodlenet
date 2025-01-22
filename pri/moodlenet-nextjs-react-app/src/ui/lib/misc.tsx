@@ -1,4 +1,4 @@
-import { _any, _nullish, d_u__d, unreachable_never } from '@moodle/lib-types'
+import { any_, d_u__d, nullish, unreachable_never } from '@moodle/lib-types'
 import { maybeAsset } from '@moodle/module/storage'
 import assert from 'assert'
 import defaultsDeep from 'lodash-es/defaultsDeep'
@@ -140,7 +140,7 @@ export const getResourceDomainName = (url: string): string | undefined => {
   }
 }
 
-export const getResourceTypeInfo = (asset?: maybeAsset | _nullish): { typeName: string; typeColor: string } | null => {
+export const getResourceTypeInfo = (asset?: maybeAsset | nullish): { typeName: string; typeColor: string } | null => {
   if (!asset || asset.type === 'none') return null
   const resourceType =
     asset.type === 'stored'
@@ -450,7 +450,7 @@ export const getGrayScale = (color: HslType) => {
   // Percetage of lightness or darkness that will be increased next
   const ratio = 3
   const desaturatedColor = changeSaturation(color, 10)
-  const grayScaleSet = {} as _any
+  const grayScaleSet = {} as any_
   for (let i = 14; i > 0; i--) {
     grayScaleSet[`--color-light-gray-${i}`] = hslToHex(changeLightness(desaturatedColor, 54 + ratio * i))
   }
@@ -461,7 +461,7 @@ export const getGrayScale = (color: HslType) => {
 }
 
 export const getColorPalette = (hex: string) => {
-  let colorPalette = {} as _any
+  let colorPalette = {} as any_
   const pureTone = balanceColor(hex)
   // The pure color is perfect to create the grayscale, but it is too bright
   // for highlighting the UI. So we'll get a slightly darker version of it.

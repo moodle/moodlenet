@@ -1,4 +1,4 @@
-import { _any, d_u, ok_ko } from '@moodle/lib-types'
+import { any_, d_u, ok_ko } from '@moodle/lib-types'
 import { primaryContext } from '../../../../types'
 import { userSessionInfo } from '../../../user-account'
 import { validate_currentUserSessionInfo } from '../../../user-account/lib'
@@ -13,7 +13,7 @@ export async function accessMoodlenetContributor({
   ctx,
   id,
 }: {
-  ctx: primaryContext<_any>
+  ctx: primaryContext<any_>
   id: moodlenetContributorId
 }): Promise<ok_ko<moodlenetContributorAccessObject, { notAllowed: unknown; notFound: unknown }>> {
   const [found, queryResult] = await ctx.mod.secondary.moodlenet.query.contributor({

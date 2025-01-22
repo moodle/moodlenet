@@ -1,5 +1,5 @@
 import { binderDispatcher, binderReceiver, domainAccess, ErrorXxx, isCodeXxx, status_code_xxx } from '@moodle/domain'
-import { _any } from '@moodle/lib-types'
+import { any_ } from '@moodle/lib-types'
 import express from 'express'
 import { Agent, fetch } from 'undici'
 
@@ -134,12 +134,12 @@ const _VOID_VALUE_ = '\u0000'
 function _parse(_: string) {
   return _ === _VOID_VALUE_ ? void 0 : JSON.parse(_, reviver)
 }
-function _serial(_: _any) {
+function _serial(_: any_) {
   return _ === void 0 ? _VOID_VALUE_ : JSON.stringify(_, replacer)
 }
-function replacer(_key: string, val: _any) {
+function replacer(_key: string, val: any_) {
   return val === void 0 ? _VOID_VALUE_ : val
 }
-function reviver(_key: string, val: _any) {
+function reviver(_key: string, val: any_) {
   return val === _VOID_VALUE_ ? void 0 : val
 }

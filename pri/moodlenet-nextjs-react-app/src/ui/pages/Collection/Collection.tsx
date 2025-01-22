@@ -1,6 +1,6 @@
 'use client'
 
-import { _nullish, d_u, selection } from '@moodle/lib-types'
+import { nullish, d_u, selection } from '@moodle/lib-types'
 import { eduCollectionData, eduCollectionMetaFormSchema } from '@moodle/module/edu'
 import { adoptAssetSafeAction, simpleHookSafeAction } from '../../../lib/common/actions'
 import { Card } from '../../atoms/Card/Card'
@@ -31,7 +31,7 @@ export type eduCollectionActions = {
 export type collectionPageProps = d_u<
   {
     createDraft: {
-      eduCollectionData: _nullish | eduCollectionData
+      eduCollectionData: nullish | eduCollectionData
       actions: selection<eduCollectionActions, 'saveNewDraft'>
       contributorCardProps: null
     }

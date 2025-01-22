@@ -1,6 +1,6 @@
 import { domainFsDirectories } from '@moodle/lib-domain-fs'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { __redact__, _any, d_u, unreachable_never } from '@moodle/lib-types'
+import { redact__, any_, d_u, unreachable_never } from '@moodle/lib-types'
 import assert from 'assert'
 import { merge } from 'lodash'
 import {
@@ -27,7 +27,7 @@ import {
 import { createMoodleDomainProxy, getProxyFnPath } from './domain-proxy'
 export type configuration = {
   domain: string
-  moduleCores: moduleCore<_any>[]
+  moduleCores: moduleCore<any_>[]
   secondaryProviders: secondaryProvider[]
   loggerProvider: loggerProvider
   domainFsDirectories: domainFsDirectories
@@ -36,7 +36,7 @@ export type configuration = {
 export function mergeSecondaryAdapters(adapters: secondaryAdapter[]): moodleSecondary {
   return merge({}, ...adapters)
 }
-export function mergeCoreImplementations(primaryImpls: modPrimary<_any>[]): moodlePrimary {
+export function mergeCoreImplementations(primaryImpls: modPrimary<any_>[]): moodlePrimary {
   return merge({}, ...primaryImpls)
 }
 export async function startBackgroundProcesses({
@@ -212,7 +212,7 @@ export async function accessDomain({
   }
 
   async function dispatchDomainMsg(
-    impl: _any, // primaryImpl | secondaryAdapter | eventImpl | watchImpl
+    impl: any_, // primaryImpl | secondaryAdapter | eventImpl | watchImpl
     domainAccess: domainAccess,
     logMessage: Logger,
     opts: { watchable: boolean; optionalDispatch: boolean },
@@ -339,7 +339,7 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
       enqueue,
       endpoint,
       primarySessionId,
-    })(level, ...args.map(__redact__))
+    })(level, ...args.map(redact__))
   const accessContext: backgroundContext<moduleName> &
     primaryContext<moduleName> &
     eventContext<moduleName> &
@@ -356,14 +356,14 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
     emit: syncProxy.event,
     forward: syncProxy.primary,
     mod: syncProxy,
-    // write: syncProxy.secondary[moduleName].write as _any,
-    write: asyncProxy.secondary[moduleName].write as _any,
+    // write: syncProxy.secondary[moduleName].write as any_,
+    write: asyncProxy.secondary[moduleName].write as any_,
     sync: syncProxy.secondary[moduleName].sync,
     log,
     async enqueue(endopint_fn_proxy, payload /*, asyncOptions = true*/) {
       assert(currentDomainAccess, `ctx.async: needs a currentDomainAccess to enqueue a message`)
       const queueEndpoint = getProxyFnPath(endopint_fn_proxy)
-      const fn = queueEndpoint.reduce((currProp, currPathSegment) => currProp?.[currPathSegment], asyncProxy as _any)
+      const fn = queueEndpoint.reduce((currProp, currPathSegment) => currProp?.[currPathSegment], asyncProxy as any_)
       assert(typeof fn === 'function', `ctx.async: endpoint[${queueEndpoint.join('.')}] fn is not a function`)
       await fn(payload)
       // console.log({ queueEndpoint, qwatchEndpoint, payload })
@@ -373,7 +373,7 @@ async function generateAccessContext<moduleName extends moodleModuleName, layer 
 }
 function loopbackWatch(
   loopbackDispatcher: binderDispatcher,
-  watching: { domainAccess: domainAccess } & d_u<{ result: { result: _any }; enqueue: unknown }, 'type'>,
+  watching: { domainAccess: domainAccess } & d_u<{ result: { result: any_ }; enqueue: unknown }, 'type'>,
 ) {
   const watchEndpoint = ['watch', watching.type, ...watching.domainAccess.endpoint]
 

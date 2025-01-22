@@ -1,5 +1,5 @@
 'use client'
-import { _any } from '@moodle/lib-types'
+import { any_ } from '@moodle/lib-types'
 import { Trans } from 'next-i18next'
 import { useState } from 'react'
 import { Card } from '../../../../ui/atoms/Card/Card'
@@ -24,7 +24,7 @@ interface AdvancedSettingsProps {
 export function AdvancedSettings({ orgName }: AdvancedSettingsProps) {
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false)
 
-  const snackbars: _any[] = [
+  const snackbars: any_[] = [
     // deleteAccountSuccess ? (
     //   <Snackbar type="success">
     //     <Trans>Check your email to confirm the deletion</Trans>
@@ -69,9 +69,7 @@ export function AdvancedSettings({ orgName }: AdvancedSettingsProps) {
         <div className="parameter">
           <div className="name">Leave {orgName}</div>
           <div className="actions">
-            <SecondaryButton onClick={() => setShowDeleteAccountModal(true)}>
-              Delete account
-            </SecondaryButton>
+            <SecondaryButton onClick={() => setShowDeleteAccountModal(true)}>Delete account</SecondaryButton>
           </div>
         </div>
       </Card>

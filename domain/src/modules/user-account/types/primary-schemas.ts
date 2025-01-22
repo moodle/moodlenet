@@ -1,9 +1,4 @@
-import {
-  __redacted_schema__,
-  email_address_schema,
-  signed_token_schema,
-  single_line_string_schema,
-} from '@moodle/lib-types'
+import { email_address_schema, redacted_schema, signed_token_schema, single_line_string_schema } from '@moodle/lib-types'
 import type { z } from 'zod'
 import { any, object, string, ZodString } from 'zod'
 export interface userAccountPrimaryMsgSchemaConfigs {
@@ -34,7 +29,7 @@ export function getUserAccountPrimarySchemas({ user, myAccount }: userAccountPri
     .pipe(user.displayName.regex ? string().regex(new RegExp(...user.displayName.regex)) : (any() as unknown as ZodString))
     .pipe(single_line_string_schema)
 
-  const redacted_password = __redacted_schema__(password)
+  const redacted_password = redacted_schema(password)
 
   const signupSchema = object({
     email,
@@ -46,11 +41,11 @@ export function getUserAccountPrimarySchemas({ user, myAccount }: userAccountPri
     currentPassword: redacted_password,
     newPassword: redacted_password,
   }).superRefine(({ currentPassword, newPassword }, ctx) => {
-    if (currentPassword.__redacted__ === newPassword.__redacted__) {
+    if (currentPassword.redacted === newPassword.redacted) {
       ctx.addIssue({
         code: 'custom',
         message: 'Passwords must be different',
-        path: ['newPassword.__redacted__'],
+        path: ['newPassword.redacted'],
       })
     }
   })

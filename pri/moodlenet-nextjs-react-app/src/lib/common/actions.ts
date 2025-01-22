@@ -1,7 +1,7 @@
-import { _any, _nullish } from '@moodle/lib-types'
-import { adoptAssetResult } from '@moodle/module/storage'
+import { any_, nullish } from '@moodle/lib-types'
 import {
   adoptAssetFormSchema,
+  adoptAssetResult,
   adoptExternalAssetFormSchema,
   adoptTempFileFormSchema,
   adoptValuedAssetFormSchema,
@@ -11,16 +11,16 @@ import { ValidationErrors } from 'next-safe-action'
 import { HookSafeActionFn } from 'next-safe-action/hooks'
 import { ZodType } from 'zod'
 
-export function default_noop_action<action extends HookSafeActionFn<_any, _any, _any, _any, _any, _any>>(
-  action: action | _nullish,
+export function default_noop_action<action extends HookSafeActionFn<any_, any_, any_, any_, any_, any_>>(
+  action: action | nullish,
 ): action {
-  return action ?? ((async () => undefined) as _any as action)
+  return action ?? ((async () => undefined) as any_ as action)
 }
 
 export type simpleHookSafeAction<inputSchema extends ZodType, returnType> = HookSafeActionFn<
   unknown,
   inputSchema,
-  _any,
+  any_,
   ValidationErrors<inputSchema>,
   unknown,
   // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
@@ -29,16 +29,15 @@ export type simpleHookSafeAction<inputSchema extends ZodType, returnType> = Hook
 export type simpleUseHookFormActionHookReturn<inputSchema extends ZodType, returnType> = UseHookFormActionHookReturn<
   unknown,
   inputSchema,
-  _any,
+  any_,
   ValidationErrors<inputSchema>,
   unknown,
   // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   void | returnType,
-  _any
+  any_
 >
 
 export type adoptValuedAssetSafeAction = simpleHookSafeAction<typeof adoptValuedAssetFormSchema, adoptAssetResult>
 export type adoptTempFileAssetSafeAction = simpleHookSafeAction<typeof adoptTempFileFormSchema, adoptAssetResult>
 export type adoptExternalAssetSafeAction = simpleHookSafeAction<typeof adoptExternalAssetFormSchema, adoptAssetResult>
 export type adoptAssetSafeAction = simpleHookSafeAction<typeof adoptAssetFormSchema, adoptAssetResult>
-

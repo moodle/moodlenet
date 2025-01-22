@@ -91,7 +91,7 @@ const router = express
     //   return res.status(404).send('NOT FOUND')
 
     // req.moodlePrimary[module as keyof moodle_domain['primary']].fileServerQuery.canServe({ path })
-    // const [canServe] = await (req.moodlePrimary as _any)[module].fileServerQuery.canServe({ path })
+    // const [canServe] = await (req.moodlePrimary as any_)[module].fileServerQuery.canServe({ path })
 
     // if (!canServe) {
     //   return res.status(401).send('UNAUTHORIZED')

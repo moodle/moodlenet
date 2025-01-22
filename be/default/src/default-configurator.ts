@@ -11,7 +11,7 @@ import { accessDomain, configuration, deploymentInfoFromUrlString, startBackgrou
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 import { generateAlphanumId } from '@moodle/lib-id-gen'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
-import { _any, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
+import { any_, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { edu_core } from '@moodle/module/edu/core'
 import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
 import { moodlenet_core } from '@moodle/module/moodlenet/core'
@@ -96,7 +96,7 @@ export async function configurator({ domainName }: { domainName: string }) {
       console.info(`configuring domain [${domainName}] env:`, { MOODLE_HOME_DIR, ...env })
       const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `private.key`), 'utf8')
       const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `public.key`), 'utf8')
-      const domain_process_env = process.env as _any
+      const domain_process_env = process.env as any_
 
       const arango_db_env: ArangoDbSecEnv = provideArangoDbSecEnv({
         env: {
@@ -149,7 +149,7 @@ export async function configurator({ domainName }: { domainName: string }) {
         get_default_resource_ingestion_secondary_factory(default_resource_ingestor_env),
       ]
 
-      const moduleCores: moduleCore<_any>[] = [
+      const moduleCores: moduleCore<any_>[] = [
         // core modules
         moodlenet_core,
         org_core,

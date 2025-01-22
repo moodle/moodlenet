@@ -5,11 +5,11 @@ import { d_u } from './map'
 import type {} from 'moment'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type _any = any
-export type _any_k = keyof _any
+export type any_ = any
+export type any_key = keyof any_
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type _other_string = string & {}
+export type any_other_string = string & {}
 
 export type promise_or_value<t> = t | Promise<t>
 
@@ -17,8 +17,8 @@ export type path = string[]
 
 export type jsonDiff = unknown
 
-export type union<types extends _any[]> = types extends [infer t, ...infer rest] ? t | intersection<rest> : unknown
-export type intersection<types extends _any[]> = types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
+export type union<types extends any_[]> = types extends [infer t, ...infer rest] ? t | intersection<rest> : unknown
+export type intersection<types extends any_[]> = types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
 
 export function unreachable_never(_: never, message?: string): never {
   throw new TypeError(`never [${JSON.stringify(_, null, 2)}]${message ? `: ${message}` : ''}`)
@@ -27,21 +27,26 @@ export function unreachable_never(_: never, message?: string): never {
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type pretty<t> = { [k in keyof t]: t[k] } & {} // utility type to convert make more readable maps
 
-export type _maybe<t> = t | _nullish
-export type _nullish = undefined | null
-export type _falsy_stricter = false | _nullish
-export type _falsy = '' | 0 | _falsy_stricter
+export type maybe<t> = t | nullish
+export type nullish = undefined | null
+export type falsy_stricter = false | nullish
+export type falsy_loosy = '' | 0 | falsy_stricter
 
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-export const _void = void 0 as void
+export const void_ = void 0 as void
 
 export type primitive = primitive_value | null | undefined
 export type primitive_value = string | number | boolean | bigint
 
-export function _unchecked_brand<b extends branded<_any, _any>>(b: unbranded<b>): b {
+export type serializable = serializable_primitive | serializable_object | serializable_array
+export type serializable_primitive = string | number | boolean | null
+export type serializable_object = { [k: string]: serializable }
+export type serializable_array = serializable[]
+
+export function unchecked_brand_<b extends branded<any_, any_>>(b: unbranded<b>): b {
   return b as b
 }
-export type unbranded<b extends branded<_any, _any>> = { [_ in Exclude<keyof b, symbol>]: b[_] }
+export type unbranded<b extends branded<any_, any_>> = { [_ in Exclude<keyof b, symbol>]: b[_] }
 // export const _BRAND = BRAND
 export type branded<type, b extends symbol /*  | string */> = BRAND<b> & type extends infer _type
   ? type extends primitive_value
@@ -50,23 +55,27 @@ export type branded<type, b extends symbol /*  | string */> = BRAND<b> & type ex
   : never
 
 // redacted logging
-export const __redacted__key = '__redacted__'
-export function __redact_stringify__(obj: _any) {
-  return JSON.stringify(obj, (key, value) => (key === __redacted__key ? '###__redacted__###' : value), 2)
+export const REDACTED_KEY = 'redacted'
+export function redact_stringify(obj: any_) {
+  return JSON.stringify(obj, redacted_json_reviver, 2)
 }
 
-export function __redact__(data: _any): _any {
-  return data === null || typeof data !== 'object' ? data : JSON.parse(__redact_stringify__(data))
+export function redacted_json_reviver(key: string, value: any_): any_ {
+  return key === REDACTED_KEY ? '###redacted###' : value
 }
-export function __redacted__<t>(data: t): __redacted__<t> {
-  return _unchecked_brand<__redacted__<t>>({ [__redacted__key]: data })
+
+export function redact__(data: any_): any_ {
+  return data === null || typeof data !== 'object' ? data : JSON.parse(redact_stringify(data))
 }
-export type __redacted__<T> = branded<{ [k in typeof __redacted__key]: T }, typeof __redacted__brand>
-export declare const __redacted__brand: unique symbol
-export function __redacted_schema__<schema extends ZodSchema>(schema: schema) {
+export function redacted<t>(data: t): redacted<t> {
+  return unchecked_brand_<redacted<t>>({ [REDACTED_KEY]: data })
+}
+export type redacted<T> = branded<{ [k in typeof REDACTED_KEY]: T }, typeof redacted_brand>
+export declare const redacted_brand: unique symbol
+export function redacted_schema<schema extends ZodSchema>(schema: schema) {
   return object({
-    [__redacted__key]: schema,
-  }).brand<typeof __redacted__brand>()
+    [REDACTED_KEY]: schema,
+  }).brand<typeof redacted_brand>()
 }
 
 export const single_line_string_schema = string().regex(/^[^\r\n]*$/gi)
@@ -176,19 +185,19 @@ export function namedEmailAddressString(addr: email_address | named_email_addres
   return typeof addr === 'string' ? addr : `${addr.name} <${addr.address}>`
 }
 
-export function filterOutFalsies<t>(arr: (t | _falsy)[]): t[] {
+export function filterOutFalsies<t>(arr: (t | falsy_loosy)[]): t[] {
   return arr.filter(isNotFalsy)
 }
 
-export function isNotFalsy<t>(el: t | _falsy): el is t {
+export function isNotFalsy<t>(el: t | falsy_loosy): el is t {
   return el !== false && isNotNullish(el)
 }
 
-export function filterOutNullishes<t>(arr: (t | _nullish)[]): t[] {
+export function filterOutNullishes<t>(arr: (t | nullish)[]): t[] {
   return arr.filter(isNotNullish)
 }
 
-export function isNotNullish<t>(el: t | _nullish): el is t {
+export function isNotNullish<t>(el: t | nullish): el is t {
   return el !== null && el !== undefined
 }
 

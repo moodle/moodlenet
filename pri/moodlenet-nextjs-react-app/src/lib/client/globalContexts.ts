@@ -1,5 +1,5 @@
 import { makeAllPrimarySchemas } from '@moodle/domain/lib'
-import { _any, _nullish, unreachable_never, url_string } from '@moodle/lib-types'
+import { any_, nullish, unreachable_never, url_string } from '@moodle/lib-types'
 import { webappGlobals } from '@moodle/module/moodlenet-react-app'
 import { maybeAsset } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
@@ -18,7 +18,7 @@ export type globalCtx = webappGlobals & {
     licenses: TextOptionProps[] //IconTextOptionProps[]
   }
 }
-export const GlobalCtx = createContext<globalCtx>(null as _any)
+export const GlobalCtx = createContext<globalCtx>(null as any_)
 
 export function useGlobalCtx() {
   return useContext(GlobalCtx)
@@ -30,7 +30,7 @@ export function useAllPrimarySchemas() {
   return primarySchemas
 }
 
-export function useAssetUrl(asset: maybeAsset | _nullish, defaultTo?: url_string | maybeAsset) {
+export function useAssetUrl(asset: maybeAsset | nullish, defaultTo?: url_string | maybeAsset) {
   const filestoreHttp = useGlobalCtx().filestoreHttpDeployment
   return useMemo(() => {
     const defaultUrl = !defaultTo

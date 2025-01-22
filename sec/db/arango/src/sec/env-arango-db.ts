@@ -1,5 +1,5 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
-import { _void } from '@moodle/lib-types'
+import { void_ } from '@moodle/lib-types'
 import { dbStruct } from '../db-structure'
 import { getModConfigs, updateDeepPartialModConfigs } from '../lib'
 
@@ -15,7 +15,6 @@ export function env_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): sec
             })
             return configs
           },
-
         },
         service: {
           async updatePartialConfigs({ partialConfigs, mod }) {
@@ -24,7 +23,7 @@ export function env_secondary_factory({ dbStruct }: { dbStruct: dbStruct }): sec
               dbStruct,
               partialConfigs,
             })
-            return [!!result, _void]
+            return [!!result, void_]
           },
         },
       },

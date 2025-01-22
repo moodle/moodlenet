@@ -1,5 +1,5 @@
 import { generateAlphanumId } from '@moodle/lib-id-gen'
-import { __redacted__, _void, url_string_schema } from '@moodle/lib-types'
+import { redacted, void_, url_string_schema } from '@moodle/lib-types'
 import assert from 'assert'
 import userAccountDomain, { getUserAccountPrimarySchemas, userRole } from '..'
 import { moduleCore } from '../../../types'
@@ -159,7 +159,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               newPasswordHash: passwordHash,
               userAccountId: userAccountRecord.id,
             })
-            return [true, _void]
+            return [true, void_]
           },
           async confirmSelfDeletionRequest({ selfDeletionConfirmationToken, reason }) {
             const [verified, validation] = await ctx.mod.secondary.crypto.service.validateSignedToken({
@@ -189,7 +189,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               },
               userAccountId: validatedSignedTokenData.userAccountId,
             })
-            return [true, _void]
+            return [true, void_]
           },
         } satisfies primary['signedTokenAccess']
       },
@@ -230,7 +230,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
                 userName: signupForm.displayName,
               },
             })
-            return [true, _void]
+            return [true, void_]
           },
 
           async login({ loginForm }) {
@@ -239,7 +239,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               email: loginForm.email,
             })
             if (!(found && !userAccountRecord.deactivated)) {
-              return [false, _void]
+              return [false, void_]
             }
             const [verified] = await ctx.mod.secondary.crypto.service.verifyPasswordHash({
               plainPassword: loginForm.password,
@@ -247,7 +247,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             })
 
             if (!verified) {
-              return [false, _void]
+              return [false, void_]
             }
 
             const [sessionCreated, sessionResult] = await generateSessionForUserAccountId({
@@ -255,7 +255,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
               userAccountId: userAccountRecord.id,
             })
             if (!sessionCreated) {
-              return [false, _void]
+              return [false, void_]
             }
             return [true, { sessionToken: sessionResult.userSessionToken }]
           },
@@ -428,7 +428,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
 
     if (!found) {
       const { passwordHash } = await ctx.mod.secondary.crypto.service.hashPassword({
-        plainPassword: __redacted__(generateAlphanumId({ length: 20 })),
+        plainPassword: redacted(generateAlphanumId({ length: 20 })),
       })
       const newUser = await createNewUserAccountRecordData({
         displayName: 'Admin',

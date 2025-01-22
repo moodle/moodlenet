@@ -1,5 +1,5 @@
 import { useTempFileResult } from '@moodle/lib-domain-fs'
-import { _any, d_u__d, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
+import { any_, d_u__d, unreachable_never, url_path_string, url_string } from '@moodle/lib-types'
 import { adoptAssetResult, maybeAsset } from '../types'
 
 // export function newFsFileRelativePath(filename: string, date = ctx.now) {
@@ -18,7 +18,7 @@ export function getAssetUrl<_asset extends maybeAsset>(
   filestoreHttpHref: url_string,
 ): _asset extends { type: 'none' } ? undefined : url_string {
   return asset.type === 'none'
-    ? (undefined as _any) // TS doesn't infer here we are in `_asset extends { type: 'none' }` branch 🤔
+    ? (undefined as any_) // TS doesn't infer here we are in `_asset extends { type: 'none' }` branch 🤔
     : asset.type === 'external'
       ? asset.url
       : asset.type === 'stored'

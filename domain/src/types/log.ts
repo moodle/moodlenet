@@ -1,6 +1,6 @@
-import { _any } from '@moodle/lib-types'
+import { any_ } from '@moodle/lib-types'
 import { baseContext, domainLayer, moodleModuleName } from './concrete'
-import { domainEndpoint, domainAccess } from './msg'
+import { domainAccess, domainEndpoint } from './msg'
 
 //https://datatracker.ietf.org/doc/html/rfc5424
 export type LogSeverity = 'emergency' | 'alert' | 'critical' | 'error' | 'warn' | 'notice' | 'info' | 'debug'
@@ -24,7 +24,7 @@ export type loggerContext = {
   Pick<domainAccess, 'callerContext' | 'originEndpoint' | 'enqueue'>
 
 export type loggerProvider = (_: loggerContext) => Logger
-export type Logger = (level: LogSeverity, ..._: _any[]) => void
+export type Logger = (level: LogSeverity, ..._: any_[]) => void
 
 export const logLevelColors: Record<LogSeverity, string> = {
   emergency: 'magenta',

@@ -1,8 +1,8 @@
-import { _any } from '@moodle/lib-types'
+import { ModConfigs, modConfigName } from '@moodle/domain'
+import { any_ } from '@moodle/lib-types'
+import { Document } from 'arangojs/documents'
 import assert from 'assert'
 import { dbStruct } from '../db-structure'
-import { ModConfigs, modConfigName } from '@moodle/domain'
-import { Document } from 'arangojs/documents'
 
 export async function getModConfigs<mod extends modConfigName>({
   dbStruct,
@@ -39,7 +39,7 @@ export async function updateDeepPartialModConfigs({
 }: {
   dbStruct: dbStruct
   moduleName: string
-  partialConfigs: _any
+  partialConfigs: any_
 }) {
   const result = await dbStruct.appData.coll.moduleConfigs.update({ _key: moduleName }, partialConfigs, { returnNew: true })
 

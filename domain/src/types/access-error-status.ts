@@ -1,4 +1,4 @@
-import { _any } from '@moodle/lib-types'
+import { any_ } from '@moodle/lib-types'
 
 // export const status_list_2xx = [
 //   // ['Continue', 100],
@@ -73,7 +73,7 @@ export const status_list_xxx = [
 //   code_or_desc: status_desc_2xx | status_code_2xx,
 // ): status_code_2xx {
 //   return code_or_desc in status_code_by_desc_2xx
-//     ? (status_code_by_desc_2xx as _any)[code_or_desc]
+//     ? (status_code_by_desc_2xx as any_)[code_or_desc]
 //     : code_or_desc in status_desc_by_code_2xx
 //       ? code_or_desc
 //       : (() => {
@@ -82,11 +82,9 @@ export const status_list_xxx = [
 // }
 
 export const statusXxx = statusByDescOrCodeXxx
-export function statusByDescOrCodeXxx(
-  code_or_desc: status_desc_xxx | status_code_xxx,
-): status_code_xxx {
+export function statusByDescOrCodeXxx(code_or_desc: status_desc_xxx | status_code_xxx): status_code_xxx {
   return code_or_desc in status_code_by_desc_xxx
-    ? (status_code_by_desc_xxx as _any)[code_or_desc]
+    ? (status_code_by_desc_xxx as any_)[code_or_desc]
     : code_or_desc in status_desc_by_code_xxx
       ? code_or_desc
       : (() => {
@@ -110,13 +108,11 @@ export function isCodeXxx(sc: number): sc is status_code_xxx {
 //   status_list_2xx.map(([name, code]) => [code, name]),
 // ) as Record<status_code_2xx, status_desc_2xx>
 
-export const status_code_by_desc_xxx = Object.fromEntries(status_list_xxx) as Record<
-  status_desc_xxx,
-  status_code_xxx
+export const status_code_by_desc_xxx = Object.fromEntries(status_list_xxx) as Record<status_desc_xxx, status_code_xxx>
+export const status_desc_by_code_xxx = Object.fromEntries(status_list_xxx.map(([name, code]) => [code, name])) as Record<
+  status_code_xxx,
+  status_desc_xxx
 >
-export const status_desc_by_code_xxx = Object.fromEntries(
-  status_list_xxx.map(([name, code]) => [code, name]),
-) as Record<status_code_xxx, status_desc_xxx>
 
 // export type status_desc_2xx = (typeof status_list_2xx)[number][0]
 // export type status_code_2xx = (typeof status_list_2xx)[number][1]

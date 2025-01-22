@@ -1,5 +1,5 @@
 import { generateAlphanumId } from '@moodle/lib-id-gen'
-import { _void, non_negative_integer } from '@moodle/lib-types'
+import { void_, non_negative_integer } from '@moodle/lib-types'
 import assert from 'assert'
 import { omit } from 'lodash'
 import { assertWithErrorXxx, moduleCore } from '../../../types'
@@ -85,7 +85,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
               mod: 'moodlenet',
               partialConfigs: { siteInfo: partialInfo },
             })
-            return [done, _void]
+            return [done, void_]
           },
           async contributor(select) {
             const result = await ctx.mod.secondary.moodlenet.query.contributor({ select, filter: { accessLevel: false } })

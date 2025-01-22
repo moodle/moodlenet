@@ -1,23 +1,23 @@
 //import { DeepComplete } from './-deep-requires'
-import { _any, _any_k, _nullish, pretty } from './data'
+import { any_, any_key, nullish, pretty } from './data'
 
 export type splitMap<T, right extends keyof T> = [Pick<T, right>, Omit<T, right>]
 
-export type map<t = _any, k extends _any_k = _any_k> = Record<k, t>
-type m_map<t = _any, k extends _any_k = _any_k> = map<t, k> | void | undefined | null | unknown
+export type map<t = any_, k extends any_key = any_key> = Record<k, t>
+type m_map<t = any_, k extends any_key = any_key> = map<t, k> | void | undefined | null | unknown
 
 // discriminate maps
-export type d_m<nmap extends m_map, p extends _any_k> = discriminated_map<nmap, p>
-export type discriminated_map<nmap extends m_map, p extends _any_k> = {
+export type d_m<nmap extends m_map, p extends any_key> = discriminated_map<nmap, p>
+export type discriminated_map<nmap extends m_map, p extends any_key> = {
   [name in keyof nmap]: { [n in p]: name } & nmap[name]
 }
 
 // discriminated unions
-export type discriminated_union<nmap extends m_map, p extends _any_k, keys extends keyof nmap = keyof nmap> = d_m<
+export type discriminated_union<nmap extends m_map, p extends any_key, keys extends keyof nmap = keyof nmap> = d_m<
   nmap,
   p
 >[keys]
-export type d_u<nmap extends m_map, p extends _any_k, keys extends keyof nmap = keyof nmap> = discriminated_union<
+export type d_u<nmap extends m_map, p extends any_key, keys extends keyof nmap = keyof nmap> = discriminated_union<
   nmap,
   p,
   keys
@@ -47,11 +47,11 @@ export type d_t_u<nmap extends m_map, keys extends keyof nmap = keyof nmap> = di
 // discr_map<nmap, p> extends infer m ? m[keyof m] : never
 
 export type deep_partial<t> = {
-  [P in keyof t]?: t[P] extends (_: _any) => _any ? t[P] : t[P] extends object ? deep_partial<t[P]> : t[P]
+  [P in keyof t]?: t[P] extends (_: any_) => any_ ? t[P] : t[P] extends object ? deep_partial<t[P]> : t[P]
 }
 
 export type deep_partial_props<t> = {
-  [P in keyof t]?: t[P] extends _any[] | ((_: _any) => _any) ? t[P] : t[P] extends object ? deep_partial_props<t[P]> : t[P]
+  [P in keyof t]?: t[P] extends any_[] | ((_: any_) => any_) ? t[P] : t[P] extends object ? deep_partial_props<t[P]> : t[P]
 }
 
 // export type deep_required<t> = DeepComplete<t>
@@ -61,8 +61,8 @@ export type selection<typemap extends map, required extends keyof typemap, optio
   {
     [propName in required]: typemap[propName]
   } & {
-    [propName in optionals]: typemap[propName] | _nullish
+    [propName in optionals]: typemap[propName] | nullish
   } & {
-    [propName in Exclude<keyof typemap, optionals | required>]?: _nullish
+    [propName in Exclude<keyof typemap, optionals | required>]?: nullish
   }
 >

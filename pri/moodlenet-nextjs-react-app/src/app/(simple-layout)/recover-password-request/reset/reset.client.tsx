@@ -1,6 +1,6 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { __redacted__, signed_token } from '@moodle/lib-types'
+import { redacted, signed_token } from '@moodle/lib-types'
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks'
 import { Trans, useTranslation } from 'next-i18next'
 import Link from 'next/link'
@@ -21,7 +21,7 @@ export function ResetPasswordClient({ resetPasswordToken }: { resetPasswordToken
   } = useHookFormAction(resetMyPasswordAction, zodResolver(userAccount.resetPasswordSchema), {
     formProps: {
       values: {
-        newPassword: __redacted__(''),
+        newPassword: redacted(''),
         token: resetPasswordToken,
       },
     },
@@ -46,8 +46,8 @@ export function ResetPasswordClient({ resetPasswordToken }: { resetPasswordToken
                   placeholder={t(`New password`)}
                   type="password"
                   edit
-                  error={formState.errors.newPassword?.__redacted__?.message}
-                  {...register('newPassword.__redacted__')}
+                  error={formState.errors.newPassword?.redacted?.message}
+                  {...register('newPassword.redacted')}
                 />
                 <br />
                 <PrimaryButton type="submit" disabled={formState.isSubmitting}>

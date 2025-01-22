@@ -1,4 +1,4 @@
-import { _nullish, d_u, d_u__d, isNotNullish, unreachable_never, url_string } from '@moodle/lib-types'
+import { d_u, d_u__d, isNotNullish, nullish, unreachable_never, url_string } from '@moodle/lib-types'
 import { adoptAssetForm, adoptAssetResult, asset, externalAsset, maybeAsset, NONE_ASSET } from '@moodle/module/storage'
 import { getAssetUrl } from '@moodle/module/storage/lib'
 import { DeploymentInfo } from 'domain/src/modules/env'
@@ -20,7 +20,7 @@ type selectedCurrentAsset =
     }
   | {
       asset: d_u__d<maybeAsset, 'type', 'none'>
-      url: _nullish
+      url: nullish
     }
   | {
       asset: { type: 'file'; file: File }
@@ -34,7 +34,7 @@ type settledCurrentAsset =
     }
   | {
       asset: d_u__d<maybeAsset, 'type', 'none'>
-      url: _nullish
+      url: nullish
     }
 
 type current = d_u<
@@ -49,10 +49,10 @@ export type useAssetUploaderHandler = {
   current: current
   openFileDialog: () => void
   submit(): void
-  select: (selection: selection | _nullish) => void
+  select: (selection: selection | nullish) => void
   state: assetUploaderState
   dropHandlers: Pick<DOMAttributes<HTMLElement>, 'onDrop' | 'onDragEnter' | 'onDragOver'>
-  uploadingHandler?: _nullish | uploadingHandler
+  uploadingHandler?: nullish | uploadingHandler
   assetType: assetType
 }
 type uploadingHandler = {
@@ -71,9 +71,9 @@ export type assetUploaderHookOpts<non_nullable extends boolean | undefined> = {
 type assetType = 'webImage' | 'file'
 export function useAssetUploader<non_nullable extends boolean | undefined>(
   assetType: assetType,
-  initialAsset: _nullish | maybeAsset,
+  initialAsset: nullish | maybeAsset,
   //FIXME: !! adoptAssetService !! NOT adoptValuedAssetSafeAction
-  adoptAssetService: _nullish | (non_nullable extends true ? adoptValuedAssetSafeAction : adoptAssetSafeAction),
+  adoptAssetService: nullish | (non_nullable extends true ? adoptValuedAssetSafeAction : adoptAssetSafeAction),
   opts?: assetUploaderHookOpts<non_nullable>,
 ) {
   const { overrideMaxSize, nonNullable } = opts ?? {}
@@ -180,7 +180,7 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
   }, [state.type, state.selection, adoptAssetService, nonNullable, filetoreHttp.href, assetType])
 
   const checkAndSelect = useCallback(
-    (m_selection: selection | _nullish) => {
+    (m_selection: selection | nullish) => {
       if (!adoptAssetService) {
         return null
       }
@@ -266,7 +266,7 @@ export function useAssetUploader<non_nullable extends boolean | undefined>(
     setCurrent(newCurrent)
   }
 
-  const [uploadingHandler, setUploadingHandler] = useState<_nullish | uploadingHandler>()
+  const [uploadingHandler, setUploadingHandler] = useState<nullish | uploadingHandler>()
 
   const assetUploaderHandler = useMemo<useAssetUploaderHandler>(() => {
     const useAssetUploaderHandler: useAssetUploaderHandler = {
@@ -467,7 +467,7 @@ function selectionEqualsLastSettledAsset(selection: selection, lastSettledAsset:
 }
 // Actions
 // export type actionResponse = d_u<
-//   { done: { adoptAssetResult?: adoptAssetResult | _nullish }; error: { message: string } },
+//   { done: { adoptAssetResult?: adoptAssetResult | nullish }; error: { message: string } },
 //   'status'
 // >
 
@@ -530,9 +530,9 @@ type stateSettled = {
   type: 'settled'
   dirty: false
   lastSettledAsset: lastSettledAsset
-  selection: _nullish
-  uploadStatus: _nullish
-  lastSubmission: _nullish | lastSubmission
+  selection: nullish
+  uploadStatus: nullish
+  lastSubmission: nullish | lastSubmission
 }
 
 type stateSelected = {
@@ -540,8 +540,8 @@ type stateSelected = {
   dirty: true
   lastSettledAsset: lastSettledAsset
   selection: selection
-  uploadStatus: _nullish
-  lastSubmission: _nullish | lastSubmission
+  uploadStatus: nullish
+  lastSubmission: nullish | lastSubmission
 }
 type selection = d_u<{ file: { file: File }; external: externalAsset; null: unknown }, 'type'>
 
@@ -551,5 +551,5 @@ type stateSubmitting = {
   lastSettledAsset: lastSettledAsset
   selection: selection
   uploadStatus: uploadStatus
-  lastSubmission: _nullish | lastSubmission
+  lastSubmission: nullish | lastSubmission
 }
