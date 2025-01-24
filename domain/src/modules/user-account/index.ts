@@ -1,5 +1,4 @@
 import type {
-  nullish,
   d_u,
   date_time_string,
   email_address,
@@ -14,6 +13,7 @@ import type {
   changePasswordForm,
   loginForm,
   resetPasswordForm,
+  roleHistoryItem,
   signupForm,
   userAccountId,
   userAccountPrimaryMsgSchemaConfigs,
@@ -119,7 +119,7 @@ export default interface userAccountDomain {
         setUserRoles(_: {
           userAccountId: userAccountId
           roles: userRole[]
-          adminUserAccountId: userAccountId
+          addRoleHistoryItem: roleHistoryItem
         }): Promise<ok_ko<{ newRoles: userRole[]; oldRoles: userRole[] }>>
       }
       service?: unknown

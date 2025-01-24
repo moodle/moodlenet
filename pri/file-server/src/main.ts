@@ -11,7 +11,7 @@ import {
 } from '@moodle/lib-domain-fs'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
-import { date_time_string, isMimetype, signed_token_schema } from '@moodle/lib-types'
+import { isMimetype, signed_token_schema } from '@moodle/lib-types'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
@@ -37,7 +37,7 @@ declare global {
     export interface Request {
       moodlePrimary: moodlePrimary
       moodlePrimarySession: primarySession
-      moodleDirs: domainFsDirectories
+      domainFsDirectories: domainFsDirectories
     }
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Multer {
@@ -68,7 +68,7 @@ app.use(cookieParser()).use(async (req, _res, next) => {
     },
   })
 
-  req.moodleDirs = getDomainFsDirectories({
+  req.domainFsDirectories = getDomainFsDirectories({
     domainName: primarySession.domain,
     homeDir: MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR,
   })
@@ -83,7 +83,7 @@ const router = express
   .Router()
   .get(/\/\.temp\/\.*/, async (req, res, next) => {
     req.url = req.url.replace(/^\/\.temp\//, '')
-    express.static(req.moodleDirs.temp, {})(req, res, next)
+    express.static(req.domainFsDirectories.temp, {})(req, res, next)
   })
   .get(/\.*/, async (req, res) => {
     // const [module, ...path] = req.url.split('/')
@@ -98,14 +98,14 @@ const router = express
     // }
 
     // req.url = dirname(req.url)
-    const localFsStorageDirectory = getDefaultLocalFsStorageDirectory({ domainFsDirectories: req.moodleDirs })
+    const localFsStorageDirectory = getDefaultLocalFsStorageDirectory({ domainFsDirectories: req.domainFsDirectories })
 
     express.static(localFsStorageDirectory, {})(req, res, () => {
       res.status(404).send('NOT FOUND')
     })
   })
   .post('/.temp/:type', async (req, res) => {
-    await mkdir(req.moodleDirs.temp, { recursive: true })
+    await mkdir(req.domainFsDirectories.temp, { recursive: true })
 
     if (req.params.type !== 'file' && req.params.type !== 'webImage') {
       res.status(404).end()
@@ -146,7 +146,7 @@ const router = express
           }
           createUploadedTempFile({
             expiresSeconds: tempFileMaxRetentionSeconds,
-            domainFsDirectories: req.moodleDirs,
+            domainFsDirectories: req.domainFsDirectories,
             readable: file.stream,
             uploadedFileMeta: {
               name: file.originalname,
@@ -171,13 +171,13 @@ const router = express
         },
         _removeFile(req, file, callback) {
           deleteTempFile({
-            domainFsDirectories: req.moodleDirs,
+            domainFsDirectories: req.domainFsDirectories,
             tempId: file.moodleUploaded.tempId,
           }).then(() => callback(null), callback)
         },
       }, //get from req.moodlePrimary
     }
-    multer({ dest: req.moodleDirs.temp, ...multerOptions }).single('file')(req, res, async () => {
+    multer({ dest: req.domainFsDirectories.temp, ...multerOptions }).single('file')(req, res, async () => {
       if (!req.file?.moodleUploaded) {
         return res.status(500).send('upload failed')
       }

@@ -64,7 +64,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
             await ctx.write.setUserRoles({
               userAccountId,
               roles: new_roles,
-              adminUserAccountId: adminUserSession.user.id,
+              addRoleHistoryItem: { by: adminUserSession.user.id, oldRoles: user.roles, date: new Date().toISOString() },
             })
 
             return [true, { updatedRoles: new_roles, adminUserAccountId }]

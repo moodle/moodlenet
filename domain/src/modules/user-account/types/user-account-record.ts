@@ -6,11 +6,10 @@ export type userRole = 'admin' | 'contributor'
 
 export type userAccountId = string
 
-type roleHistoryItem = {
+export type roleHistoryItem = {
   date: date_time_string
   by: userAccountId
   oldRoles: userRole[]
-  newRoles: userRole[]
 }
 
 export type userAccountRecord = {

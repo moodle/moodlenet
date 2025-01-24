@@ -24,7 +24,7 @@ export async function createNewUserAccountRecordData({
   return {
     id,
     creationDate,
-    roles: roles,
+    roles,
     roleHistory: [],
     displayName,
     contacts: {

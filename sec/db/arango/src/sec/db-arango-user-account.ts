@@ -78,12 +78,15 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
               .catch(() => null)
             return [!!updated, void_]
           },
-          async setUserRoles({ userAccountId, roles }) {
+          async setUserRoles({ userAccountId, roles, addRoleHistoryItem }) {
             const updatedUserRoles_cursor = await dbStruct.identity.db.query<userAccountRecord>(aql`
                 FOR userAccountDoc IN ${dbStruct.identity.coll.userAccount}
                 FILTER userAccountDoc._key == ${userAccountId}
                 LIMIT 1
-                UPDATE userAccountDoc WITH { roles: ${roles} } IN ${dbStruct.identity.coll.userAccount}
+                UPDATE userAccountDoc WITH {
+                  roles: ${roles}
+                  roleHistory: UNIQUE( UNSHIFT(userAccountDoc.roleHistory, ${addRoleHistoryItem}) )
+                } IN ${dbStruct.identity.coll.userAccount}
                 RETURN MOODLE::RESTORE_RECORD_ID(OLD)
               `)
             const [updated] = await updatedUserRoles_cursor.all()

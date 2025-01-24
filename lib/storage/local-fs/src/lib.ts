@@ -5,7 +5,7 @@ import {
   resizeTempImage,
   useTempFileResult,
 } from '@moodle/lib-domain-fs'
-import { dirPath, ok_ko, path } from '@moodle/lib-types'
+import { ok_ko, path } from '@moodle/lib-types'
 import { storedAssetMeta } from '@moodle/module/storage'
 import { mkdir, readdir, rename, stat, symlink } from 'fs/promises'
 import { join, normalize, sep as os_path_separator } from 'path'
@@ -92,19 +92,19 @@ export async function useTempFileAsWebImage({
   return use_temp_file_result
 }
 
-export async function createDir({
-  dirPath,
-  localStorageFsDirectories,
-}: {
-  dirPath: dirPath
-  localStorageFsDirectories: localStorageFsDirectories
-}) {
-  const absoluteDirPath = absoluteDirPathOf({ path: dirPath, localStorageFsDirectories })
-  return mkdir(absoluteDirPath, { recursive: true }).then(
-    () => true,
-    () => false,
-  )
-}
+// export async function createDir({
+//   dirPath,
+//   localStorageFsDirectories,
+// }: {
+//   dirPath: dirPath
+//   localStorageFsDirectories: localStorageFsDirectories
+// }) {
+//   const absoluteDirPath = absoluteDirPathOf({ path: dirPath, localStorageFsDirectories })
+//   return mkdir(absoluteDirPath, { recursive: true }).then(
+//     () => true,
+//     () => false,
+//   )
+// }
 
 export async function useTempFile({
   tempId,
