@@ -3,7 +3,7 @@ import { any_, any_key, nullish, pretty } from './data'
 
 export type splitMap<T, right extends keyof T> = [Pick<T, right>, Omit<T, right>]
 
-export type map<t = any_, k extends any_key = any_key> = Record<k, t>
+export type map<t = any_, k extends any_key = string> = Record<k, t>
 type m_map<t = any_, k extends any_key = any_key> = map<t, k> | void | undefined | null | unknown
 
 // discriminate maps

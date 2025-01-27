@@ -1,186 +1,218 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { fileMeta } from '@moodle/lib-domain-fs'
-import { any_, map, ok_ko, serializable_object, unsupportedProxyHandler } from '@moodle/lib-types'
-import assert from 'assert'
+import { any_, d_u, map, serializable_object } from '@moodle/lib-types'
+import { externalAsset } from '../modules/storage'
 
-declare const _: unique symbol
-declare global {
-  namespace moodle {
-    type modelTypeName = keyof ModelTypeMap
-    interface ModelTypeMap<args extends map = map> {
-      id_space_map: { exists: [_: { id: string }, boolean] }
-      fs_file: { meta: [void, fileMeta] }
-      fs_image_file: unknown
-      endpoint: { send: args['epDef'] }
-      id_space: { purge: [void, void] }
-      data_entity: {
-        get: [void | { cond: args['accessConditions'] }, args['data'] | null]
-        replace: [{ data: args['data']; cond: args['accessConditions'] }, ok_ko<void>]
-      }
-      static_data: { get: [void, args['data']] }
-    }
+declare const _placeholder_sym: unique symbol
+declare const model_traits_sym: unique symbol
 
-    interface Domain {
-      version: '5.0'
-      modules: Modules
-      model: Model
-    }
-    interface Modules {
-      [_]: never
-    }
-    type Model = {
-      [moduleName in keyof Modules]: Modules[moduleName]['model']
-    }
+export const OPS = Symbol('ModelType operations impl symbol')
+export const NO_JOB_HERE = void 0 as never
 
-    // type dRef<modelRef extends ModelRef<any_, any_>> = modelRef | undefined
-    type ModelTypeTraits = map<EndpointDef, string>
-    type ModelType<
-      tags extends modelTypeName,
-      shape = unknown,
-      args extends map = map,
-      moreTraits extends ModelTypeTraits = map,
-    > = shape & {
-      [_]?: { tags: tags; traits: ModelTypeMap<args>[tags] & moreTraits; shape: shape }
-    }
-
-    type IdSpaceMap<spaceStruct extends map, moreTraits extends ModelTypeTraits = map> = ModelType<
-      'id_space_map',
-      map<IdSpace<spaceStruct>>,
-      never,
-      moreTraits
-    >
-
-    type IdSpace<spaceStruct extends map, moreTraits extends ModelTypeTraits = map> = ModelType<
-      'id_space',
-      spaceStruct,
-      never,
-      moreTraits
-    >
-
-    type DataEntity<
-      data extends serializable_object,
-      accessConditions extends map | never = never,
-      moreTraits extends ModelTypeTraits = map,
-    > = ModelType<'data_entity', unknown, { data: data; accessConditions: accessConditions }, moreTraits>
-
-    type StaticData<data extends serializable_object, moreTraits extends ModelTypeTraits = map> = ModelType<
-      'static_data',
-      unknown,
-      { data: data },
-      moreTraits
-    >
-
-    type FsFile<moreTraits extends ModelTypeTraits = map> = ModelType<'fs_file', unknown, never, moreTraits>
-
-    type FsImageFile<moreTraits extends ModelTypeTraits = map> = ModelType<
-      'fs_image_file' | 'fs_file',
-      unknown,
-      never,
-      moreTraits
-    >
-
-    type epType = 'sync' | 'async'
-    type EndpointDef = [message: any_, outcome: any_, type?: epType]
-    type Endpoint<epDef extends EndpointDef> = ModelType<'endpoint', unknown, { epDef: epDef }>
-
-    type ep<epDef extends EndpointDef> = (message: epDef[0]) => Promise<epDef[1]>
-
-    type ModuleDef = { useCases: map<map<EndpointDef>>; model: map }
-    type Module<moduleDef extends ModuleDef> = moduleDef
-
-    type UseCasesDef = map<EndpointDef>
-    type UseCases<useCaseDef extends UseCasesDef> = useCaseDef
-
-    type Module_Impl<moduleDef extends ModuleDef> = {
-      useCases: {
-        [useCaseName in keyof moduleDef['useCases']]: UseCases_Impl<moduleDef['useCases'][useCaseName]>
-      }
-    }
-    type UseCases_Impl<useCasesDef extends UseCasesDef> = {
-      [endpointName in keyof useCasesDef]: UseCase_Endpoint_Impl<useCasesDef[endpointName]>
-    }
-
-    // type AccessErrorType = {
-    //   invalidMessage: unknown
-    //   forbidden: unknown
-    //   unauthorized: unknown
-    //   notPermitted: unknown
-    // }
-
-    // type AccessError = d_u<AccessErrorType, 'type'>
-    type UseCase_Endpoint_Impl<epDef extends EndpointDef> = (
-      message: unknown,
-      ctx: ModuleCtx,
-    ) => Promise<[validatedMessage: epDef[0], endpoint: ep<epDef>]>
-
-    // ) => Promise<
-    //               ok_ko<
-    //                     [
-    //                       validatedMessage: epDef[0],
-    //                       endpoint: ep<[
-    //                                     epDef[0],
-    //                                     ok_ko<epDef[1], AccessErrorType>
-    //                                   ]>
-    //                     ],
-    //                     AccessErrorType
-    //                   >>
-
-    type ModuleCtx = {
-      m: Domain['model']
-      s: <dRef extends ModelType<any_>>(
-        dRef: dRef | undefined,
-      ) => {
-        [name in keyof Traits<dRef>]: Traits<dRef>[name][2] extends 'sync' | undefined ? ep<Traits<dRef>[name]> : never
-      }
-      q: <dRef extends ModelType<any_>>(
-        dRef: dRef | undefined,
-      ) => {
-        // [name in keyof Traits<dRef>]: Traits<dRef>[name][2] extends 'async' ? ep<[Traits<dRef>[name][0], void]> : never
-        [name in keyof Traits<dRef>]: ep<[Traits<dRef>[name][0], void]>
-      }
-    }
-    type _<dRef extends ModelType<any_>> = Exclude<dRef[typeof _], undefined>
-    type Traits<dRef extends ModelType<any_>> = _<dRef>['traits'] extends infer traits
-      ? traits extends ModelTypeTraits
-        ? {
-            [k in keyof traits]: traits[k] //extends infer trait ? (trait extends EndpointDef ? trait : never) : never
-          }
-        : never
-      : never
-
-    type PrimaryAccess = {
-      [moduleName in keyof Modules]: {
-        [useCaseName in keyof Modules[moduleName]['useCases']]: {
-          [endpointName in keyof Modules[moduleName]['useCases'][useCaseName]]: Modules[moduleName]['useCases'][useCaseName][endpointName] extends infer epDef
-            ? epDef extends EndpointDef
-              ? ep<epDef>
-              : never
-            : never
-        }
-      }
+type modelTypeName = keyof ModelTypeMap
+interface ModelTypeMap<args extends map = never> {
+  id_space_map: { shape: unknown; ops: { exists: [{ id: string }, { exists: boolean }, 'query'] } }
+  fs_file: {
+    shape: unknown
+    ops: { meta: [void, null | fileMeta, 'query'] } & (args['removable'] extends false
+      ? unknown
+      : {
+          remove: [void, void, 'async']
+        })
+  }
+  asset: {
+    arags: { removable?: boolean }
+    shape: { file: FsFile<args['fileTraits']> }
+    ops: {
+      fromTempFile: [{ tempId: string }, { fileMeta: fileMeta }, 'async']
+      fromUrl: [{ externalAsset: externalAsset }, { fileMeta: fileMeta }, 'async']
+    } & (args['removable'] extends false
+      ? unknown
+      : {
+          remove: [void, void, 'async']
+        })
+  }
+  fs_image_file: { shape: unknown; ops: unknown }
+  endpoint: { shape: unknown; ops: { do: args['epDef'] } }
+  id_space: { shape: unknown; ops: { purge: [void, void, 'async'] } }
+  entity_data: {
+    shape: unknown
+    ops: {
+      get: [
+        void | { conditions?: args['conditions'] },
+        d_u<{ found: { data: args['data'] }; notFound: unknown; conditionsNotMet: unknown }, 'result'>,
+        'query',
+      ]
+      replace: [
+        { newData: args['data']; conditions?: args['conditions'] },
+        d_u<{ done: unknown; notFound: unknown; conditionsNotMet: unknown }, 'result'>,
+        'async',
+      ]
     }
   }
+  static_data: { shape: unknown; ops: { get: [void, args['data'], 'query'] } }
 }
 
-const __x: { i: map<{ a: { id: string; c: number } }> } = {
-  i: idSpaceMap(id => ({
-    a: { id, c: 2 },
-  })),
+export interface Domain {
+  version: '5.0'
+  modules: Modules
 }
 
-__x.i.assa?.a.id
-// __x.i.assa?.aa.id
+type module_name = string & keyof Modules
+export interface Modules {
+  [_placeholder_sym]?: never
+}
 
-export function idSpaceMap<T extends map>(tf: (id: string) => T): moodle.IdSpaceMap<T> {
-  return new Proxy(
-    {},
-    {
-      ...unsupportedProxyHandler,
-      get(_, id) {
-        assert(typeof id === 'string')
-        return tf(id)
-      },
-    },
-  ) as moodle.IdSpaceMap<T>
+type ModelTypeTraits = { shape: unknown; ops: map<ModelOpDef> }
+type ModelType<
+  tags extends modelTypeName,
+  traits extends Partial<ModelTypeTraits> = ModelTypeTraits,
+  args extends map = never,
+> = traits['shape'] &
+  ModelTypeMap<args>[tags]['shape'] & {
+    [model_traits_sym]: { tags: tags; ops: ModelTypeMap<args>[tags]['ops'] & traits['ops'] }
+  }
+
+export type IdSpaceMap<
+  sub_traits extends Partial<ModelTypeTraits> = ModelTypeTraits,
+  ops extends map<ModelOpDef> = map<ModelOpDef>,
+> = ModelType<'id_space_map', { ops: ops; shape: map<IdSpace<sub_traits>> }>
+
+type IdSpace<traits extends Partial<ModelTypeTraits> = ModelTypeTraits> = ModelType<'id_space', traits>
+
+export type EntityData<
+  data extends serializable_object,
+  args extends { conditions?: map } | unknown = unknown,
+  traits extends Partial<ModelTypeTraits> = ModelTypeTraits,
+> = ModelType<'entity_data', traits, args & { data: data }>
+
+export type StaticData<
+  data extends serializable_object,
+  args extends { conditions?: map } | unknown = unknown,
+  traits extends Partial<ModelTypeTraits> = ModelTypeTraits,
+> = ModelType<'static_data', traits, args & { data: data }>
+
+export type Asset<
+  args extends { removable?: boolean } = { removable: true },
+  traits extends Partial<ModelTypeTraits> = ModelTypeTraits,
+> = ModelType<'asset', traits, args>
+
+type FsFile<
+  args extends { removable?: boolean } = { removable: true },
+  traits extends Partial<ModelTypeTraits> = ModelTypeTraits,
+> = ModelType<'fs_file', traits, args>
+
+export type FsImageFile<
+  args extends { removable?: boolean },
+  traits extends Partial<ModelTypeTraits> = ModelTypeTraits,
+> = ModelType<'fs_image_file' | 'fs_file', traits, args>
+
+type modelOpType = 'sync' | 'async' | 'query'
+type ModelOpDef = [message: any_, outcome: any_, type: modelOpType]
+export type Endpoint<epDef extends ModelOpDef> = ModelType<'endpoint', ModelTypeTraits, { epDef: epDef }>
+
+type EpDef = [message: any_, outcome: any_, _?: unknown]
+type epImpl<epDef extends EpDef> = (message: epDef[0]) => Promise<epDef[1]>
+
+type ModuleDef = { useCases: map<map<EpDef>>; model: map }
+export type Module<moduleDef extends ModuleDef> = moduleDef
+
+type UseCasesDef = map<EpDef>
+export type UseCases<useCaseDef extends UseCasesDef> = useCaseDef
+
+export type Module_Impl<moduleDef extends ModuleDef> = {
+  useCases: {
+    [useCaseName in keyof moduleDef['useCases']]: UseCases_Impl<moduleDef['useCases'][useCaseName]>
+  }
+}
+export type Core<moduleName extends module_name> = Module_Impl<Modules[moduleName]>
+
+type UseCases_Impl<useCasesDef extends UseCasesDef> = {
+  [endpointName in keyof useCasesDef]: UseCase_Endpoint_Impl<useCasesDef[endpointName]>
+}
+
+type UseCase_Endpoint_Impl<epDef extends EpDef> = (
+  message: unknown,
+  ctx: ModuleCtx,
+) => Promise<[validatedMessage: epDef[0], endpoint: epImpl<epDef>]>
+
+type ModuleCtx = {
+  m: WholeModel
+  on: <modelTypeRef extends ModelType<modelTypeName>>(
+    modelTypeRef: modelTypeRef | undefined,
+  ) => ModelTypeRefOps<modelTypeRef>
+}
+
+type ___<modelTypeRef extends ModelType<modelTypeName>> = Exclude<modelTypeRef[typeof model_traits_sym], undefined>
+type ModelTypeRefOps<modelTypeRef extends ModelType<modelTypeName>> = ___<modelTypeRef>['ops'] extends infer modelOpDefMap
+  ? modelOpDefMap extends map<ModelOpDef>
+    ? {
+        [k in keyof modelOpDefMap]: modelOpDefMap[k][2] extends 'query'
+          ? {
+              query: epImpl<modelOpDefMap[k]>
+            }
+          : modelOpDefMap[k][2] extends 'async' | 'sync'
+            ? {
+                async: epImpl<[modelOpDefMap[k][0], void]>
+              } & (modelOpDefMap[k][2] extends 'sync'
+                ? {
+                    sync: epImpl<modelOpDefMap[k]>
+                  }
+                : unknown)
+            : never
+      }
+    : never
+  : never
+
+export type WholeModel = {
+  [moduleName in module_name]: Modules[moduleName]['model']
+}
+
+export type SubModel<moduleName extends module_name> = Model<Modules[moduleName]['model']>
+
+export type Model<baseModelNode = WholeModel> = {
+  [k in keyof baseModelNode]: baseModelNode[k] extends infer modelNode
+    ? modelNode extends ModelType<modelTypeName>
+      ? ModelTypeImpl<modelNode>
+      : Model<modelNode>
+    : never // else : unknown
+}
+
+type ModelTypeImpl<modelTypeNode extends ModelType<modelTypeName>> = {
+  [OPS]: TypeOpsImpl<modelTypeNode>
+} & (modelTypeNode extends IdSpaceMap<infer sub_traits>
+  ? { _: (id: string) => Model<sub_traits['shape']> }
+  : Model<Omit<modelTypeNode, typeof model_traits_sym>>)
+
+type TypeOpsImpl<modelTypeNode extends ModelType<modelTypeName>> = {
+  [opName in keyof modelTypeNode[typeof model_traits_sym]['ops']]: modelTypeNode[typeof model_traits_sym]['ops'][opName] extends infer op
+    ? op extends ModelOpDef
+      ? ModelOpImpl<op>
+      : never
+    : never
+}
+
+type ModelOpImpl<op extends ModelOpDef> = op[2] extends 'query'
+  ? {
+      query?: epImpl<op>
+      then?: (outcome: op[1], message: op[0]) => Promise<void>
+    }
+  : op[2] extends 'sync' | 'async'
+    ? {
+        cmd?: epImpl<op>
+        then?: (outcome: op[1], message: op[0]) => Promise<void>
+      }
+    : unknown
+
+export type PrimaryAccess = {
+  [moduleName in module_name]: {
+    [useCaseName in keyof Modules[moduleName]['useCases']]: {
+      [endpointName in keyof Modules[moduleName]['useCases'][useCaseName]]: Modules[moduleName]['useCases'][useCaseName][endpointName] extends infer epDef
+        ? epDef extends EpDef
+          ? epImpl<epDef>
+          : never
+        : never
+    }
+  }
 }
