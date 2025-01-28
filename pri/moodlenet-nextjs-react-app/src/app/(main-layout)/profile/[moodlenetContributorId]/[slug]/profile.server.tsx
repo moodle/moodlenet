@@ -13,6 +13,9 @@ export async function getUseProfileImageSchema() {
   return schemas.userProfile.useProfileImageSchema
 }
 
+
+// REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
+// REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
 export async function getApplyMyProfileImageSafeAction({
   type,
   userProfileId,
@@ -39,6 +42,9 @@ export async function getEditProfileInfoSchema() {
   const allSchemas = await fetchAllPrimarySchemas({ primary: access.primary })
   return allSchemas.userProfile.editProfileInfoMetaSchema
 }
+
+// REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
+// REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
 
 export async function getUpdateMyProfileInfoMetaSafeAction({
   userProfileId,

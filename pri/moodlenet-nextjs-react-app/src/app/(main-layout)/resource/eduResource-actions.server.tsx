@@ -17,6 +17,9 @@ export async function getCreateNewEduResourceSchema() {
   return edu.createNewEduResourceDraftSchema
 }
 
+// REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
+// REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
+
 export async function getCreateNewEduResourceDraft(): Promise<adoptValuedAssetSafeAction> {
   return async function adoptAssetService_newEduResourceFileDraft(newResourceAsset) {
     'use server'
@@ -41,6 +44,9 @@ export async function getEduResourceMetaSchema() {
   return edu.eduResourceMetaSchema
 }
 
+// REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
+// REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
+
 export async function getEditEduResourceDraftForId({ eduResourceDraftId }: { eduResourceDraftId: eduResourceDraftId }) {
   return async function editEduResourceDraft(eduResourceMetaForm: eduResourceMetaForm) {
     'use server'
@@ -61,6 +67,9 @@ export async function getApplyEduResourceDraftImageSchema() {
   const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
   return edu.applyImageSchema
 }
+
+// REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
+// REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
 
 export async function getEduResourceDraftImageForId_AdoptAssetSafeAction({
   eduResourceDraftId,

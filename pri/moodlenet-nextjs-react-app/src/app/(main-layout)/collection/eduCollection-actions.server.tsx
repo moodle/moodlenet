@@ -17,6 +17,9 @@ export async function getEduCollectionMetaSchema() {
   return edu.eduCollectionMetaSchema
 }
 
+// REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
+// REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
+
 export async function getSaveNewEduCollectionDraft() {
   return async function saveNewEduCollectionDraft(eduCollectionMetaForm: eduCollectionMetaForm) {
     'use server'
@@ -37,6 +40,9 @@ export async function getSaveNewEduCollectionDraft() {
     return saveNewEduCollectionDraft(eduCollectionMetaForm)
   }
 }
+
+// REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
+// REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
 
 export async function getEditEduCollectionDraftForId({
   eduCollectionDraftId,
@@ -64,6 +70,10 @@ export async function getApplyEduCollectionDraftImageSchema() {
   const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
   return edu.applyImageSchema
 }
+
+// REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
+// REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
+
 export async function getEduCollectionDraftImageForId_AdoptAssetSafeAction({
   eduCollectionDraftId,
 }: {
