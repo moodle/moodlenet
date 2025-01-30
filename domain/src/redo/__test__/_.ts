@@ -1,20 +1,33 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import * as moo from '../moodle-domain'
-declare module '../moodle-domain' {
+import * as moo from 'moodle-domain'
+declare module 'moodle-domain' {
   interface Personas {
-    ciccio: CiccioPersona
+    ciccioPersona: CiccioPersona
+  }
+  interface Systems {
+    ciccioSystem: DefSystem<{
+      model: CiccioModel
+    }>
   }
 }
 
 export type CiccioPersona = moo.DefPersona<{
-  useCase: {
-    some: {
-      epx: [void, { x: string }]
-      ep1: [{ a: number }, { x: string }]
-      ep2: [{ b: number }, { c: boolean }]
+  context: never
+  systems: moo.DefPersonaSystems<{
+    // userAccount:never
+    // moodlenet:never
+    // emailSignup:never
+    ciccioSystem: {
+      useCase: {
+        some: {
+          epx: [void, { x: string }]
+          ep1: [{ a: number }, { x: string }]
+          ep2: [{ b: number }, { c: boolean }]
+        }
+      }
     }
-  }
-  model: CiccioModel
+  }>
+  //model: CiccioModel
 }>
 
 export type CiccioModel = moo.DefModel<{

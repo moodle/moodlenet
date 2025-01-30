@@ -52,5 +52,5 @@ export function assertWithErrorXxx<assertionObj>(
   code_or_desc: statusXxx,
   details?: any_,
 ): asserts assertionObj {
-  assert(assertionObj, new ErrorXxx(code_or_desc, details))
+   assert(assertionObj, new ErrorXxx(code_or_desc, details))
 }

@@ -1,17 +1,22 @@
-export interface Domain {
-  version: '5.0'
-  personas: Personas
-  model: Model
-}
+declare module 'moodle-domain' {
+  interface Domain {
+    version: '5.0'
+    personas: Personas
+    systems: Systems
+  }
 
-declare const _persona_type_placeholder_sym: unique symbol
-export type personaType = string & keyof Personas
-export interface Personas {
-  [_persona_type_placeholder_sym]?: never
-}
+  interface Personas {
+    [personaType: string]: PersonaDef
+  }
 
-declare const _module_name_placeholder_sym: unique symbol
-export type moduleName = string & keyof Model
-export interface Model {
-  [_module_name_placeholder_sym]?: never
+  interface Systems {
+    [systemName: string]: SystemDef
+  }
+
+  // const p :PrimaryAccess
+  // p.anonymous.emailSignup.signupWithMyEmail.apply({}).then(_=>{})
+  // p.user.
+  // const d: Domain
+  // d.personas.anonymous.systems.emailSignup.useCase.signupWithMyEmail.apply
+  // d.personas.user.systems.
 }
