@@ -32,7 +32,7 @@ export type contributorAccessLevel = 'public' | 'protected'
 
 export type moodlenetContributorRecord = {
   id: moodlenetContributorId
-  access: contributorAccessLevel
+  access: contributorAccessLevel // visibility: 'public' | 'hidden', however derived, not in model
   userProfile: moodlenetContributorProfileExcerpt
   preferences: {
     useMyInterestsAsDefaultFilters: boolean

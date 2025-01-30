@@ -1,42 +1,39 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-/* eslint-disable @typescript-eslint/no-namespace */
-import * as m from '../moodle-domain'
+import * as moo from '../moodle-domain'
 declare module '../moodle-domain' {
-  interface Modules {
-    ciccio: CiccioModule
+  interface Personas {
+    ciccio: CiccioPersona
   }
 }
 
-export type CiccioModule = m.Module<{
-  useCases: {
+export type CiccioPersona = moo.DefPersona<{
+  useCase: {
     some: {
       epx: [void, { x: string }]
       ep1: [{ a: number }, { x: string }]
       ep2: [{ b: number }, { c: boolean }]
     }
   }
-  model: {
-    stEp: m.Endpoint<[{ aNumber: number }, { res: string }, 'query']>
-    stCosa: m.StaticData<{ statica: string }>
-    b: {
-      c: {
-        buEp: m.Endpoint<[{ aNumber: number }, { res: string }, 'async']>
-      }
-      basEp: m.Endpoint<[{ aNumber: number }, { res: string }, 'query']>
-      bsEp: m.Endpoint<[{ aNumber: number }, { res: string }, 'sync']>
+  model: CiccioModel
+}>
+
+export type CiccioModel = moo.DefModel<{
+  stEp: moo.Endpoint<['query', { aNumber: number }, { res: string }]>
+  stCosa: moo.StaticData<'w', { statica: string }>
+  b: {
+    c: {
+      buEp: moo.Endpoint<['async', { aNumber: number }, { res: string }]>
     }
-    aIdsm: m.IdSpaceMap<{
-      shape: {
-        // asset: Asset<{ removable: true }>
-        // a_bFile: FsFile
-        a_ep: m.Endpoint<[{ aNumber: number }, { res: string }, 'async']>
-        // a_info: DataEntity<{ name: string }, { conditions: { isAdmin: boolean } }>
-        a_sub: m.IdSpaceMap<{
-          shape: {
-            a_subCosa: m.EntityData<{ lolo: string }, { conditions: { x: number } }>
-          }
-        }>
-      }
-    }>
+    basEp: moo.Endpoint<['query', { aNumber: number }, { res: string }]>
+    bsEp: moo.Endpoint<['sync', { aNumber: number }, { res: string }]>
   }
+  aIdsm: moo.IdSpaceMap<{
+    // asset: Asset<{ optional: true }>
+    // a_bFile: FsFile
+    a_ep: moo.Endpoint<['async', { aNumber: number }, { res: string }]>
+    // a_info: DataEntity<{ name: string }, { conditions: { isAdmin: boolean } }>
+    a_sub: moo.IdSpaceMap<{
+      a_subCosa: moo.EntityData<'w', { lolo: string }, { conditions: { x: number } }>
+    }>
+  }>
 }>

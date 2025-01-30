@@ -1,9 +1,17 @@
+import { JsonRecord } from 'fp-ts/Json'
+import type {} from 'moment'
 import { ReactElement } from 'react'
 import _slugify from 'slugify'
 import { BRAND, number, object, string, ZodNullable, ZodSchema } from 'zod'
 import { d_u } from './map'
-import type {} from 'moment'
 
+export type promiseOrValue<t> = t | Promise<t>
+export type wideProvider<t, args extends any_[] = never> = promiseOrValue<t> | ((..._: args) => promiseOrValue<t>)
+
+export type dmesg_<type extends string, details extends JsonRecord | unknown = unknown> = diagnosticMessage<type, details>
+export type diagnosticMessage<message extends string, details extends JsonRecord | unknown = unknown> = details & {
+  message: message
+}
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type any_ = any
 export type any_key = keyof any_
@@ -38,10 +46,10 @@ export const void_ = void 0 as void
 export type primitive = primitive_value | null | undefined
 export type primitive_value = string | number | boolean | bigint
 
-export type serializable = serializable_primitive | serializable_object | serializable_array
-export type serializable_primitive = string | number | boolean | null
-export type serializable_object = { [k: string]: serializable }
-export type serializable_array = serializable[]
+// export type serializable = serializable_primitive | serializable_object | serializable_array
+// export type serializable_primitive = string | number | boolean | null
+// export type serializable_object = { readonly [k: string]: serializable }
+// export type serializable_array = ReadonlyArray<serializable>
 
 export function unchecked_brand_<b extends branded<any_, any_>>(b: unbranded<b>): b {
   return b as b

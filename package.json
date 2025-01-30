@@ -34,6 +34,7 @@
     "dotenv-expand": "^11.0.6",
     "express": "^5.0.0",
     "fastq": "^1.17.1",
+    "fp-ts": "^3.0.0-alpha.26",
     "humanize-duration": "^3.32.1",
     "i18next": "^24.1.0",
     "immer": "^10.1.1",

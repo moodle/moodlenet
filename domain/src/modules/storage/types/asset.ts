@@ -1,25 +1,20 @@
 import { fileMeta } from '@moodle/lib-domain-fs'
-import { d_u, d_u__d, path, url_string, url_string_schema } from '@moodle/lib-types'
+import { d_u, d_u__d, url_string, url_string_schema } from '@moodle/lib-types'
 import { literal, object, string, union } from 'zod'
 
 import { contentCredits } from '../../content'
 
 export type externalAsset = { url: url_string; credits?: contentCredits }
 
-type noAsset = d_u<{ none: unknown }, 'type'>
-
 export type maybeAsset = asset | noAsset
+type noAsset = d_u<{ none: unknown }, 'type'>
 export type asset = d_u<
   {
-    stored: storedAssetMeta
+    stored: fileMeta
     external: externalAsset
   },
   'type'
 >
-
-export type storedAssetMeta = fileMeta & {
-  path: path
-}
 
 export const NONE_ASSET: noAsset = { type: 'none' }
 
