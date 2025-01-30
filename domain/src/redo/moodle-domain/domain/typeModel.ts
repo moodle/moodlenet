@@ -4,7 +4,7 @@ import { any_, dmesg_, map } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { JsonRecord } from 'fp-ts/Json'
 import { asset, externalAsset, maybeAsset } from '../../../modules/storage'
-import { CONDITIONS_NOT_MET, NOT_FOUND } from '../../lib/types'
+import { CONDITIONS_NOT_MET, NOT_FOUND } from '../../lib/constants'
 
 declare module 'moodle-domain' {
   type TypeModel<traits extends TypeModelTraits> = traits['shape'] & { [model_traits_sym]: traits }

@@ -12,6 +12,4 @@ declare module 'moodle-domain' {
 // export interface AnonymousPersonaContext{}
 export type AdminPersonaContext = never
 
-export interface AdminPersonaSystems {
-  [systemName: string]: moo.SystemAccessDef
-}
+export interface AdminPersonaSystems {}

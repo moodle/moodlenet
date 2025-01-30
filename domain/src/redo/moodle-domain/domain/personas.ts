@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_ } from '@moodle/lib-types'
+import { any_, map } from '@moodle/lib-types'
 
 declare module 'moodle-domain' {
   type DefPersona<personaDef extends PersonaDef> = personaDef
@@ -24,11 +24,10 @@ declare module 'moodle-domain' {
     [system_name in keyof Systems]: SystemAccessDef
   }
 
+  type DefUseCase<useCaseDef extends UseCaseDef> = useCaseDef
   type UseCaseDef = {
     [useCaseEndpoint: string]: UseCaseEpDef
   }
 
-  type UseCaseEpDef = [message: any_, outcome: any_, directives?: any_]
-
-  type DefUseCase<useCaseDef extends UseCaseDef> = useCaseDef
+  type UseCaseEpDef = [message: any_, outcome: any_, directives?: map]
 }

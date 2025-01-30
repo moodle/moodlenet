@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { map } from '@moodle/lib-types'
-import type { OPS } from '../../lib/types'
+import type { OPS } from '../../lib/constants'
 
 declare module 'moodle-domain' {
   type DefModel<modelDef extends ModelDef> = modelDef

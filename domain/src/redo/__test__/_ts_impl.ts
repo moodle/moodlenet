@@ -1,12 +1,13 @@
 import * as moo from 'moodle-domain'
 import { assertWithErrorXxx } from '../../types'
+import { NO_JOB_HERE } from '../lib/constants'
 // import { CONDITIONS_NOT_MET } from '../lib/types'
 
 const _cor: moo.Core = x => ({
   ciccioPersona: {
-    // emailSignup: NO_JOB_HERE,
-    // userAccount: NO_JOB_HERE,
-    // moodlenet: NO_JOB_HERE,
+    emailSignup: NO_JOB_HERE,
+    userAccount: NO_JOB_HERE,
+    moodlenet: NO_JOB_HERE,
     ciccioSystem: {
       some: {
         ep1: [

@@ -17,15 +17,15 @@ export type CiccioPersona = moo.DefPersona<{
     // userAccount:never
     // moodlenet:never
     // emailSignup:never
-    ciccioSystem: {
+    ciccioSystem: moo.DefSystemAccess<{
       useCase: {
         some: {
-          epx: [void, { x: string }]
-          ep1: [{ a: number }, { x: string }]
-          ep2: [{ b: number }, { c: boolean }]
+          epx: [void, { x: string }, { epx_a: number }]
+          ep1: [{ a: number }, { x: string }, { ep1_a: string }]
+          ep2: [{ b: number }, { c: boolean }, { ep2_a: boolean }]
         }
       }
-    }
+    }>
   }>
   //model: CiccioModel
 }>

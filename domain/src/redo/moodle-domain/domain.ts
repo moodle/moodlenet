@@ -13,10 +13,11 @@ declare module 'moodle-domain' {
     [systemName: string]: SystemDef
   }
 
-  // const p :PrimaryAccess
-  // p.anonymous.emailSignup.signupWithMyEmail.apply({}).then(_=>{})
-  // p.user.
+  // const p :Primary
+  // p.anonymous?.emailSignup?.signupWithMyEmail?.apply?.call({}).then(_=>{})
+  // p.ciccioPersona?.ciccioSystem?.some?.ep1?.call({a:1}).then(_=>{})
+  // p.ciccioPersona?.ciccioSystem?.some?.ep2?.directives
   // const d: Domain
   // d.personas.anonymous.systems.emailSignup.useCase.signupWithMyEmail.apply
-  // d.personas.user.systems.
+  // d.personas.ciccioPersona.systems.ciccioSystem
 }
