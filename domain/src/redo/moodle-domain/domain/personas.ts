@@ -29,5 +29,6 @@ declare module 'moodle-domain' {
     [useCaseEndpoint: string]: UseCaseEpDef
   }
 
+  type DefUseCaseEp<useCaseEpDef extends UseCaseEpDef> = useCaseEpDef
   type UseCaseEpDef = [message: any_, outcome: any_, directives?: map]
 }

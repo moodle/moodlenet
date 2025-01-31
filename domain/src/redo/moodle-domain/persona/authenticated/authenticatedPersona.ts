@@ -1,5 +1,3 @@
-import * as moo from 'moodle-domain'
-
 declare module 'moodle-domain' {
   interface Personas {
     authenticated: DefPersona<{
@@ -13,6 +11,4 @@ export interface AuthenticatedPersonaContext {
   authenticatedId: string
 }
 
-export interface AuthenticatedPersonaSystems {
-
-}
+export interface AuthenticatedPersonaSystems {}

@@ -1,5 +1,3 @@
-import * as moo from 'moodle-domain'
-
 declare module 'moodle-domain' {
   interface Personas {
     admin: DefPersona<{

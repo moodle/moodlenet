@@ -3,7 +3,7 @@ import type {} from 'moment'
 import { ReactElement } from 'react'
 import _slugify from 'slugify'
 import { BRAND, number, object, string, ZodNullable, ZodSchema } from 'zod'
-import { d_u } from './map'
+import { d_u, map } from './map'
 
 export type promiseOrValue<t> = t | Promise<t>
 export type wideProvider<t, args extends any_[] = never> = promiseOrValue<t> | ((..._: args) => promiseOrValue<t>)
@@ -34,6 +34,7 @@ export function unreachable_never(_: never, message?: string): never {
 // export type pretty<t> = keyof t extends infer keyof_t ? { [k in keyof_t & keyof t]: t[k] } : never // this one prettify better, but loses optionals?: props 🤔
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type pretty<t> = { [k in keyof t]: t[k] } & {} // utility type to convert make more readable maps
+// export type pretty<t> = { [k in keyof t]: t[k] extends primitive ? t[k] : pretty<t[k]> } & {} // utility type to convert make more readable maps
 
 export type maybe<t> = t | nullish
 export type nullish = undefined | null
@@ -54,13 +55,16 @@ export type primitive_value = string | number | boolean | bigint
 export function unchecked_brand_<b extends branded<any_, any_>>(b: unbranded<b>): b {
   return b as b
 }
-export type unbranded<b extends branded<any_, any_>> = { [_ in Exclude<keyof b, symbol>]: b[_] }
 // export const _BRAND = BRAND
 export type branded<type, b extends symbol /*  | string */> = BRAND<b> & type extends infer _type
   ? type extends primitive_value
     ? _type
     : { [_ in keyof _type]: _type[_] }
   : never
+
+export type unbranded<b> = {
+  [_ in Exclude<keyof b, symbol>]: b[_] extends map ? unbranded<b[_]> : b[_]
+}
 
 // redacted logging
 export const REDACTED_KEY = 'redacted'
@@ -76,8 +80,9 @@ export function redact__(data: any_): any_ {
   return data === null || typeof data !== 'object' ? data : JSON.parse(redact_stringify(data))
 }
 export function redacted<t>(data: t): redacted<t> {
-  return unchecked_brand_<redacted<t>>({ [REDACTED_KEY]: data })
+  return { [REDACTED_KEY]: data } as redacted<t>
 }
+
 export type redacted<T> = branded<{ [k in typeof REDACTED_KEY]: T }, typeof redacted_brand>
 export declare const redacted_brand: unique symbol
 export function redacted_schema<schema extends ZodSchema>(schema: schema) {

@@ -27,7 +27,7 @@ export type errorXxx = branded<
 export function errorXxx(code_or_desc: statusXxx, details?: any_): errorXxx {
   const code = statusXxx(code_or_desc)
   const desc = status_desc_by_code_xxx[code]
-  return unchecked_brand_<errorXxx>({ code, desc, details })
+  return { code, desc, details } as errorXxx
 }
 
 export function isErrorXxx(e: unknown): e is ErrorXxx {

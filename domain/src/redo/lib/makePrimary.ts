@@ -6,7 +6,7 @@ export function makePrimary(
   priDir: moo.PrimaryDirectives,
   exec: (primaryPath: string[], message: unknown, directives: map) => Promise<unknown>,
 ): moo.Primary {
-  priDir.anonymous?.emailSignup?.signupWithMyEmail?.apply?.eitherDirectives
+  priDir.anonymous?.emailSignup?.requestSignupWithMyEmail?.apply?.eitherDirectives
   priDir.ciccioPersona?.ciccioSystem?.some?.ep1?.eitherDirectives
   const primary = Object.entries(priDir ?? {}).reduce((acc, [personaType, systems]) => {
     acc[personaType] = Object.entries(systems ?? {}).reduce((acc, [systemName, useCases]) => {
