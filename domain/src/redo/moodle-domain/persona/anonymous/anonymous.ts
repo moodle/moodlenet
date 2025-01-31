@@ -1,12 +1,9 @@
-import { Anonymous_EmailSignup } from './emailSignup/anonymous.emailSignup'
+import * as moo from 'moodle-domain'
+import { EmailSignup } from './emailSignup/emailSignup'
 
-declare module 'moodle-domain' {
-  interface Personas {
-    anonymous: DefPersona<{
-      context: never
-      systems: DefPersonaSystems<{
-        emailSignup: Anonymous_EmailSignup
-      }>
-    }>
-  }
-}
+export type anonymous = moo.DefPersona<{
+  context: never
+  systems: moo.DefPersonaSystems<{
+    emailSignup: EmailSignup
+  }>
+}>

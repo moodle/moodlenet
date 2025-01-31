@@ -1,4 +1,4 @@
-import { any_, branded, unchecked_brand_ } from '@moodle/lib-types'
+import { any_, branded } from '@moodle/lib-types'
 import assert from 'assert'
 import { statusXxx, status_code_xxx, status_desc_by_code_xxx, status_desc_xxx } from './access-error-status'
 
@@ -52,5 +52,5 @@ export function assertWithErrorXxx<assertionObj>(
   code_or_desc: statusXxx,
   details?: any_,
 ): asserts assertionObj {
-   assert(assertionObj, new ErrorXxx(code_or_desc, details))
+  assert(assertionObj, new ErrorXxx(code_or_desc, details))
 }

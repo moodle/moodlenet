@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
+import { email_address_schema, redacted } from '@moodle/lib-types'
 import * as moo from 'moodle-domain'
 declare module 'moodle-domain' {
   interface Personas {
@@ -50,3 +51,13 @@ export type CiccioModel = moo.DefModel<{
     }>
   }>
 }>
+
+declare const p: moo.Primary
+p.anonymous?.emailSignup?.signupWithMyEmail?.submitSignup
+  ?.call({ password: redacted(''), displayName: '', email: email_address_schema.parse('') })
+  .then(_ => _._tag)
+p.ciccioPersona?.ciccioSystem?.some?.ep1?.call({ a: 1 }).then(_ => _.x)
+p.ciccioPersona?.ciccioSystem?.some?.ep2?.directives
+declare const d: moo.Domain
+d.personas.anonymous.systems.emailSignup.useCase.signupWithMyEmail.submitSignup
+d.personas.ciccioPersona.systems.ciccioSystem
