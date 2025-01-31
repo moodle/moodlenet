@@ -5,23 +5,23 @@ declare module 'moodle-domain' {
   type DefPersona<personaDef extends PersonaDef> = personaDef
   type PersonaDef = {
     context: unknown
-    systems: Partial<PersonaSystemsDef>
+    services: Partial<PersonaServicesDef>
   }
 
-  type DefSystemAccess<systemAccessDef extends SystemAccessDef> = systemAccessDef
+  type DefServiceAccess<serviceAccessDef extends ServiceAccessDef> = serviceAccessDef
 
-  type SystemAccessDef = {
+  type ServiceAccessDef = {
     useCase: {
       [useCaseName: string]: UseCaseDef
     }
   }
 
-  type DefPersonaSystems<personaSystemsDef extends Partial<PersonaSystemsDef>> = personaSystemsDef /*  & {
-    [systemName in keyof Systems]: SystemAccessDef
+  type DefPersonaServices<personaServicesDef extends Partial<PersonaServicesDef>> = personaServicesDef /*  & {
+    [serviceName in keyof Services]: ServiceAccessDef
   } */
 
-  type PersonaSystemsDef = {
-    [system_name in keyof Systems]: SystemAccessDef
+  type PersonaServicesDef = {
+    [service_name in keyof Services]: ServiceAccessDef
   }
 
   type DefUseCase<useCaseDef extends UseCaseDef> = useCaseDef

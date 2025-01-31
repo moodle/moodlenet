@@ -5,8 +5,8 @@ declare module 'moodle-domain' {
   interface Personas {
     ciccioPersona: CiccioPersona
   }
-  interface Systems {
-    ciccioSystem: DefSystem<{
+  interface Services {
+    ciccioService: DefService<{
       model: CiccioModel
     }>
   }
@@ -14,11 +14,11 @@ declare module 'moodle-domain' {
 
 export type CiccioPersona = moo.DefPersona<{
   context: never
-  systems: moo.DefPersonaSystems<{
+  services: moo.DefPersonaServices<{
     // userAccount:never
     // moodlenet:never
     // emailSignup:never
-    ciccioSystem: moo.DefSystemAccess<{
+    ciccioService: moo.DefServiceAccess<{
       useCase: {
         some: {
           epx: [void, { x: string }, { epx_a: number }]
@@ -56,8 +56,8 @@ declare const p: moo.Primary
 p.anonymous?.emailSignup?.signupWithMyEmail?.submitSignup
   ?.call({ password: redacted(''), displayName: '', email: email_address_schema.parse('') })
   .then(_ => _._tag)
-p.ciccioPersona?.ciccioSystem?.some?.ep1?.call({ a: 1 }).then(_ => _.x)
-p.ciccioPersona?.ciccioSystem?.some?.ep2?.directives
+p.ciccioPersona?.ciccioService?.some?.ep1?.call({ a: 1 }).then(_ => _.x)
+p.ciccioPersona?.ciccioService?.some?.ep2?.directives
 declare const d: moo.Domain
-d.personas.anonymous.systems.emailSignup.useCase.signupWithMyEmail.submitSignup
-d.personas.ciccioPersona.systems.ciccioSystem
+d.personas.anonymous.services.emailSignup.useCase.signupWithMyEmail.submitSignup
+d.personas.ciccioPersona.services.ciccioService

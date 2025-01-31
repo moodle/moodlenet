@@ -3,7 +3,7 @@ import { EmailSignup } from './emailSignup/emailSignup'
 
 export type anonymous = moo.DefPersona<{
   context: never
-  systems: moo.DefPersonaSystems<{
+  services: moo.DefPersonaServices<{
     emailSignup: EmailSignup
   }>
 }>

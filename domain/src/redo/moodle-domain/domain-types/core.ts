@@ -14,17 +14,17 @@ declare module 'moodle-domain' {
   type Core = (ctx: CoreCtx /* <personaDef> */) => promiseOrValue<CorePersonas_Impl>
 
   type CorePersonas_Impl = {
-    [persona_type in keyof Personas]?: promiseOrValue<CoreSystems_Impl<Personas[persona_type]>>
+    [persona_type in keyof Personas]?: promiseOrValue<CoreServices_Impl<Personas[persona_type]>>
   }
 
-  type CoreSystems_Impl<personaDef extends PersonaDef> = {
-    [system_name in keyof personaDef['systems']]: personaDef['systems'][system_name] extends SystemAccessDef
-      ? CoreSystemAccess_Impl<personaDef['systems'][system_name]>
+  type CoreServices_Impl<personaDef extends PersonaDef> = {
+    [service_name in keyof personaDef['services']]: personaDef['services'][service_name] extends ServiceAccessDef
+      ? CoreServiceAccess_Impl<personaDef['services'][service_name]>
       : unknown
   }
 
-  type CoreSystemAccess_Impl<systemAccessDef extends SystemAccessDef> = {
-    [useCaseName in keyof systemAccessDef['useCase']]: CoreUseCase_Impl<systemAccessDef['useCase'][useCaseName]>
+  type CoreServiceAccess_Impl<serviceAccessDef extends ServiceAccessDef> = {
+    [useCaseName in keyof serviceAccessDef['useCase']]: CoreUseCase_Impl<serviceAccessDef['useCase'][useCaseName]>
   }
 
   // type AllPersonas = {

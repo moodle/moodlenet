@@ -8,7 +8,7 @@ const _cor: moo.Core = x => ({
     emailSignup: NO_JOB_HERE,
     userAccount: NO_JOB_HERE,
     moodlenet: NO_JOB_HERE,
-    ciccioSystem: {
+    ciccioService: {
       some: {
         ep1: [
           _u => ({ a: 1 }),
@@ -20,16 +20,16 @@ const _cor: moo.Core = x => ({
             // const _ = x.on(x._.ciccio.aIdsm.asas?.a_bFile)
             // const _x = x.on(x._.ciccio.aIdsm.asas?.a_bFile).meta.query()
             // const _sax = x.on(x._.ciccio.aIdsm.asas?.a_info).get.query({ asLongAs: { isAdmin: false } })
-            const _saax__ = x.on(x._.ciccioSystem.aIdsm.asas?.a_sub.sa?.a_subCosa)
-            const _saax = x.on(x._.ciccioSystem.aIdsm.asas?.a_sub.sa?.a_subCosa).get.query()
+            const _saax__ = x.on(x._.ciccioService.aIdsm.asas?.a_sub.sa?.a_subCosa)
+            const _saax = x.on(x._.ciccioService.aIdsm.asas?.a_sub.sa?.a_subCosa).get.query()
             const _saaxs = x
-              .on(x._.ciccioSystem.aIdsm.asas?.a_sub.sa?.a_subCosa)
+              .on(x._.ciccioService.aIdsm.asas?.a_sub.sa?.a_subCosa)
               .replace.async({ newData: { lolo: '' }, conditions: { x: 2 } })
-            const _found = x.on(x._.ciccioSystem.aIdsm.aaa).exists.query()
-            const _st = x.on(x._.ciccioSystem.stCosa).get.query()
+            const _found = x.on(x._.ciccioService.aIdsm.aaa).exists.query()
+            const _st = x.on(x._.ciccioService.stCosa).get.query()
             // const _repl = x.on(x._.ciccio.aIdsm.asas?.a_info).get.query()
 
-            const _uqqq = x.on(x._.ciccioSystem.stEp).do.query({ aNumber: 321 })
+            const _uqqq = x.on(x._.ciccioService.stEp).do.query({ aNumber: 321 })
             // const ___u = x.on(x._.ciccio.b.buEp)
             // const _uq = x.on(x._.ciccio.b.buEp).do.async({ aNumber: 321 })
 
@@ -40,7 +40,7 @@ const _cor: moo.Core = x => ({
 
             // const _aq = x.on(x._.ciccio.aIdsm.asas?.a_ep).do.async({ aNumber: 321 })
 
-            const _asa = x.on(x._.ciccioSystem.aIdsm.asas?.a_ep).do.async({ aNumber: 321 })
+            const _asa = x.on(x._.ciccioService.aIdsm.asas?.a_ep).do.async({ aNumber: 321 })
 
             //  return [false,{reason:'invalidMessage'}]
             return { x: '' }
@@ -67,8 +67,8 @@ const _cor: moo.Core = x => ({
 })
 // declare const _pri: moo.Primary
 // declare const _dom: moo.Domain
-// _dom.personas.ciccioPersona.systems.ciccioSystem.useCase.some.ep2
-// _dom.personas.anyUser.systems
+// _dom.personas.ciccioPersona.services.ciccioService.useCase.some.ep2
+// _dom.personas.anyUser.services
 // declare const _ctx: moo.CoreCtx
 
 // const _p12 = _pri.anyUser.sas?.sas
@@ -76,22 +76,11 @@ const _cor: moo.Core = x => ({
 // const _p1d = _pri.anonymous.smoodlenet
 // const _p1daa = _pri.anonymous.moodlenet
 // const _ps1 = _pri.authenticated.emailSignup
-// const _p2 = _pri.ciccioPersona.ciccioSystem.some.ep2({ b: 1 })
-// const _p3 = _pri.ciccioPersona.ciccioSystem.some.ep2({ ab: 1 })
-// const _p31 = _pri.ciccioPersona.ciccioSystem
+// const _p2 = _pri.ciccioPersona.ciccioService.some.ep2({ b: 1 })
+// const _p3 = _pri.ciccioPersona.ciccioService.some.ep2({ ab: 1 })
+// const _p31 = _pri.ciccioPersona.ciccioService
 // const _p3ss = _pri.ciccioPersona.moodlenet
 // _pri.ciccioPersona
-
-// export const w: moo.ModuleModel_Impl<'ciccio'>['b']['c'] = {
-//   // export const w: moo.Model<moo.WholeModel['ciccio']['b']['c']> = {
-//   buEp: {
-//     [moo.OPS]: {
-//       do: {
-//         cmd: async ({ aNumber }) => ({ res: `${aNumber}` }),
-//       },
-//     },
-//   },
-// }
 
 // export const _x: moo.Model_Impl = {
 //   // user: moo.NO_JOB_HERE,

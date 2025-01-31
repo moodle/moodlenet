@@ -1,6 +1,6 @@
 import { map } from '@moodle/lib-types'
 import * as moo from 'moodle-domain'
 
-export type moodlenet = moo.DefSystem<{
+export type userAccount = moo.DefService<{
   model: moo.DefModel<map>
 }>

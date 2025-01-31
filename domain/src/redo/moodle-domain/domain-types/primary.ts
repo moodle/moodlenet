@@ -10,13 +10,13 @@ declare module 'moodle-domain' {
   }
 
   type PrimaryPersonas<personaDef extends PersonaDef, with_call extends boolean = false> = {
-    [system_name in keyof personaDef['systems']]?: personaDef['systems'][system_name] extends SystemAccessDef
-      ? PrimarySystem<personaDef['systems'][system_name], with_call>
+    [service_name in keyof personaDef['services']]?: personaDef['services'][service_name] extends ServiceAccessDef
+      ? PrimaryService<personaDef['services'][service_name], with_call>
       : never
   }
 
-  type PrimarySystem<systemAccessDef extends SystemAccessDef, with_call extends boolean = false> = {
-    [useCaseName in keyof systemAccessDef['useCase']]?: PrimaryUseCase<systemAccessDef['useCase'][useCaseName], with_call>
+  type PrimaryService<serviceAccessDef extends ServiceAccessDef, with_call extends boolean = false> = {
+    [useCaseName in keyof serviceAccessDef['useCase']]?: PrimaryUseCase<serviceAccessDef['useCase'][useCaseName], with_call>
   }
 
   type PrimaryUseCase<useCase extends UseCaseDef, with_call extends boolean = false> = {
@@ -44,16 +44,16 @@ declare module 'moodle-domain' {
   //   [persona_type in keyof Personas]: Personas[persona_type] extends infer personaDef
   //     ? personaDef extends PersonaDef
   //       ? {
-  //           [system_name in keyof personaDef['systems']]: personaDef['systems'][system_name] extends SystemAccessDef
-  //             ? DirectivesSystem<personaDef['systems'][system_name]>
+  //           [service_name in keyof personaDef['services']]: personaDef['services'][service_name] extends ServiceAccessDef
+  //             ? DirectivesService<personaDef['services'][service_name]>
   //             : never
   //         }
   //       : never
   //     : never
   // }
 
-  // type DirectivesSystem<systemAccessDef extends SystemAccessDef> = {
-  //   [useCaseName in keyof systemAccessDef['useCase']]: DirectivesUseCase<systemAccessDef['useCase'][useCaseName]>
+  // type DirectivesService<serviceAccessDef extends ServiceAccessDef> = {
+  //   [useCaseName in keyof serviceAccessDef['useCase']]: DirectivesUseCase<serviceAccessDef['useCase'][useCaseName]>
   // }
 
   // type DirectivesUseCase<useCase extends UseCaseDef> = {

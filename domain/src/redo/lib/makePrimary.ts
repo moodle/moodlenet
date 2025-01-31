@@ -7,13 +7,13 @@ export function makePrimary(
   exec: (primaryPath: string[], message: unknown, directives: map) => Promise<unknown>,
 ): moo.Primary {
   priDir.anonymous?.emailSignup?.requestSignupWithMyEmail?.apply?.eitherDirectives
-  priDir.ciccioPersona?.ciccioSystem?.some?.ep1?.eitherDirectives
-  const primary = Object.entries(priDir ?? {}).reduce((acc, [personaType, systems]) => {
-    acc[personaType] = Object.entries(systems ?? {}).reduce((acc, [systemName, useCases]) => {
-      acc[systemName] = Object.entries(useCases ?? {}).reduce((acc, [useCaseName, endpoints]) => {
+  priDir.ciccioPersona?.ciccioService?.some?.ep1?.eitherDirectives
+  const primary = Object.entries(priDir ?? {}).reduce((acc, [personaType, services]) => {
+    acc[personaType] = Object.entries(services ?? {}).reduce((acc, [serviceName, useCases]) => {
+      acc[serviceName] = Object.entries(useCases ?? {}).reduce((acc, [useCaseName, endpoints]) => {
         acc[useCaseName] = Object.entries(endpoints ?? {}).reduce((acc, [endpointName, _ep]) => {
           const maybe_eitherDirectives = (_ep ?? ({} as any_)).eitherDirectives ?? ({} as any_)
-          const primaryPath = [personaType, systemName, useCaseName, endpointName]
+          const primaryPath = [personaType, serviceName, useCaseName, endpointName]
           if (!(isLeft(maybe_eitherDirectives) || isRight<map>(maybe_eitherDirectives))) {
             console.error(`eitherDirectives in ${primaryPath.join('.')} is not left or right`, maybe_eitherDirectives)
             return acc
@@ -40,7 +40,7 @@ export function makePrimary(
 // const primary = makePrimary({} as moo.Primary<false>, async (_primaryPath, _message) => null)
 
 // primary.anonymous?.emailSignup?.signupWithMyEmail?.apply?.directives
-// const ep1 = primary.ciccioPersona?.ciccioSystem?.some?.ep1
+// const ep1 = primary.ciccioPersona?.ciccioService?.some?.ep1
 // if (ep1) {
 //   ep1.directives
 //   ep1.call({ a: 1 }).then(_ => {

@@ -4,35 +4,35 @@ import { any, string, ZodString } from 'zod'
 
 export type any__ = moo.DefPersona<{
   context: AnyPersonaContext
-  systems: moo.DefPersonaSystems<AnyPersonaSystems>
+  services: moo.DefPersonaServices<AnyPersonaServices>
 }>
 
 export interface AnyPersonaContext {
-  systemDirectives: systemDirectives
+  serviceDirectives: serviceDirectives
 }
 
-export interface AnyPersonaSystems {}
+export interface AnyPersonaServices {}
 
 export type plain_password = redacted<string>
 
-export type systemDirectives = {
+export type serviceDirectives = {
   userEmail: { max: number }
   password: { max: number; min: number; regex: null | [regex: string, flags: string] }
   userDisplayName: { max: number; min: number; regex: null | [regex: string, flags: string] }
 }
 
-export function systemDirectivesZodSchemas(systemDirectives: systemDirectives) {
-  const userEmail = string().max(systemDirectives.userEmail.max).pipe(email_address_schema)
+export function serviceDirectivesZodSchemas(serviceDirectives: serviceDirectives) {
+  const userEmail = string().max(serviceDirectives.userEmail.max).pipe(email_address_schema)
   const password = redacted_schema(
-    string().trim().min(systemDirectives.password.min).max(systemDirectives.password.max).pipe(single_line_string_schema),
+    string().trim().min(serviceDirectives.password.min).max(serviceDirectives.password.max).pipe(single_line_string_schema),
   )
   const userDisplayName = string()
     .trim()
-    .min(systemDirectives.userDisplayName.min)
-    .max(systemDirectives.userDisplayName.max)
+    .min(serviceDirectives.userDisplayName.min)
+    .max(serviceDirectives.userDisplayName.max)
     .pipe(
-      systemDirectives.userDisplayName.regex
-        ? string().regex(new RegExp(...systemDirectives.userDisplayName.regex))
+      serviceDirectives.userDisplayName.regex
+        ? string().regex(new RegExp(...serviceDirectives.userDisplayName.regex))
         : (any() as unknown as ZodString),
     )
     .pipe(single_line_string_schema)
