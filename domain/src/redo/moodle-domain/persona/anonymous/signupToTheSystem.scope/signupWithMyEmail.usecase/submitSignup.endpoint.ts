@@ -3,10 +3,10 @@ import { Either } from 'fp-ts/Either'
 import * as moo from 'moodle-domain'
 import { object, ZodType } from 'zod'
 import { SUBMITTED } from '../../../../../lib/constants'
-import { serviceDirectives, serviceDirectivesZodSchemas } from '../../../any/any'
-import { USER_WITH_EMAL_EXISTS } from '../consts'
+import { GeneralDirectives, generalDirectivesZodSchemas } from '../../../any/any.persona'
+import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 
-export type submitSignup = moo.DefUseCaseEp<[signupForm, Either<USER_WITH_EMAL_EXISTS, SUBMITTED>]>
+export type submitSignup = moo.DefUseCaseEp<[signupForm, Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>]>
 
 export type signupForm = {
   email: email_address
@@ -14,8 +14,8 @@ export type signupForm = {
   displayName: string
 }
 
-export function signupFormZodSchema(serviceDirectives: serviceDirectives): ZodType<unbranded<signupForm>> {
-  const { password, userDisplayName, userEmail } = serviceDirectivesZodSchemas(serviceDirectives)
+export function signupFormZodSchema(serviceDirectives: GeneralDirectives): ZodType<unbranded<signupForm>> {
+  const { password, userDisplayName, userEmail } = generalDirectivesZodSchemas(serviceDirectives)
 
   const signupFormSchema = object({
     email: userEmail,

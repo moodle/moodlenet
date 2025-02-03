@@ -1,7 +1,7 @@
-import type { admin } from './persona/admin/admin'
-import type { anonymous } from './persona/anonymous/anonymous'
-import type { any__ } from './persona/any/any'
-import type { authenticated } from './persona/authenticated/authenticated'
+import type { admin } from './persona/admin/admin.persona'
+import type { anonymous } from './persona/anonymous/anonymous.persona'
+import type { any__ } from './persona/any/any.persona'
+import type { authenticated } from './persona/authenticated/authenticated.persona'
 import type { emailSignup } from './service/emailSignup/emailSignup'
 import type { moodlenet } from './service/moodlenet/moodlenet'
 import type { userAccount } from './service/userAccount/userAccount'
@@ -25,4 +25,14 @@ declare module 'moodle-domain' {
     userAccount: userAccount
     moodlenet: moodlenet
   }
+
+  // interface UserScopes {
+  //   signupToTheSystem: unknown
+  // }
+  type personaScopes = {
+    [personaType in keyof Personas]: Personas[personaType]['scope'] extends never
+      ? never
+      : keyof Personas[personaType]['scope']
+  }
+  type scopes = personaScopes[keyof personaScopes]
 }

@@ -6,24 +6,22 @@ declare module 'moodle-domain' {
   type PrimaryDirectives = Primary<false>
 
   type Primary<with_call extends boolean = true> = {
-    [persona_type in keyof Personas]?: PrimaryPersonas<Personas[persona_type], with_call>
+    [personaType in keyof Personas]?: PrimaryPersonas<Personas[personaType], with_call>
   }
 
   type PrimaryPersonas<personaDef extends PersonaDef, with_call extends boolean = false> = {
-    [service_name in keyof personaDef['services']]?: personaDef['services'][service_name] extends ServiceAccessDef
-      ? PrimaryService<personaDef['services'][service_name], with_call>
+    [scopeName in keyof personaDef['scope']]?: personaDef['scope'][scopeName] extends ScopeDef
+      ? PrimaryService<personaDef['scope'][scopeName], with_call>
       : never
   }
 
-  type PrimaryService<serviceAccessDef extends ServiceAccessDef, with_call extends boolean = false> = {
-    [useCaseName in keyof serviceAccessDef['useCase']]?: PrimaryUseCase<serviceAccessDef['useCase'][useCaseName], with_call>
+  type PrimaryService<scopeDef extends ScopeDef, with_call extends boolean = false> = {
+    [useCaseName in keyof scopeDef['useCase']]?: PrimaryUseCase<scopeDef['useCase'][useCaseName], with_call>
   }
 
   type PrimaryUseCase<useCase extends UseCaseDef, with_call extends boolean = false> = {
-    [endpointName in keyof useCase]?: PrimaryUseCaseEp<useCase[endpointName], with_call>
+    [endpointName in keyof useCase['endpoint']]?: PrimaryUseCaseEp<useCase['endpoint'][endpointName], with_call>
   }
-
-  type EitherDirectives<ucEpDef extends UseCaseEpDef> = Either<void, ucEpDef[2]>
 
   // type PrimaryUseCaseEp<ucEpDef extends UseCaseEpDef> = (message: ucEpDef[0]) => Promise<ucEpDef[1]>
   type PrimaryUseCaseEp<ucEpDef extends UseCaseEpDef, with_call extends boolean = false> = with_call extends true
@@ -32,7 +30,7 @@ declare module 'moodle-domain' {
         directives: ucEpDef[2]
       }
     : {
-        eitherDirectives: EitherDirectives<ucEpDef>
+        directives: Either<void, ucEpDef[2]>
       }
 
   // type x = 'directives' extends never ? 'yes' : 'no'
@@ -44,16 +42,16 @@ declare module 'moodle-domain' {
   //   [persona_type in keyof Personas]: Personas[persona_type] extends infer personaDef
   //     ? personaDef extends PersonaDef
   //       ? {
-  //           [service_name in keyof personaDef['services']]: personaDef['services'][service_name] extends ServiceAccessDef
-  //             ? DirectivesService<personaDef['services'][service_name]>
+  //           [scopeName in keyof personaDef['scope']]: personaDef['scope'][scopeName] extends ScopeDef
+  //             ? DirectivesService<personaDef['scope'][scopeName]>
   //             : never
   //         }
   //       : never
   //     : never
   // }
 
-  // type DirectivesService<serviceAccessDef extends ServiceAccessDef> = {
-  //   [useCaseName in keyof serviceAccessDef['useCase']]: DirectivesUseCase<serviceAccessDef['useCase'][useCaseName]>
+  // type DirectivesService<scopeDef extends ScopeDef> = {
+  //   [useCaseName in keyof scopeDef['useCase']]: DirectivesUseCase<scopeDef['useCase'][useCaseName]>
   // }
 
   // type DirectivesUseCase<useCase extends UseCaseDef> = {

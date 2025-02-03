@@ -12,18 +12,29 @@ declare module 'moodle-domain' {
   }
 }
 
+declare module '../moodle-domain/persona/anonymous/signupToTheSystem.scope' {
+  export interface SignupToTheSystemUseCases {
+    signupXop: {
+      endpoint: {
+        zupsigup: [{ a: number }, { x: string }, { ep1_a: string }]
+      }
+    }
+  }
+}
 export type CiccioPersona = moo.DefPersona<{
   context: never
-  services: moo.DefPersonaServices<{
+  scope: moo.DefPersonaScopes<{
     // userAccount:never
     // moodlenet:never
     // emailSignup:never
-    ciccioService: moo.DefServiceAccess<{
+    ciccioscope: moo.DefScope<{
       useCase: {
         some: {
-          epx: [void, { x: string }, { epx_a: number }]
-          ep1: [{ a: number }, { x: string }, { ep1_a: string }]
-          ep2: [{ b: number }, { c: boolean }, { ep2_a: boolean }]
+          endpoint: {
+            epx: [void, { x: string }, { epx_a: number }]
+            ep1: [{ a: number }, { x: string }, { ep1_a: string }]
+            ep2: [{ b: number }, { c: boolean }, { ep2_a: boolean }]
+          }
         }
       }
     }>
@@ -53,11 +64,13 @@ export type CiccioModel = moo.DefModel<{
 }>
 
 declare const p: moo.Primary
-p.anonymous?.emailSignup?.signupWithMyEmail?.submitSignup
+p.anonymous?.signupToTheSystem?.signupWithMyEmail?.submitSignup
   ?.call({ password: redacted(''), displayName: '', email: email_address_schema.parse('') })
   .then(_ => _._tag)
-p.ciccioPersona?.ciccioService?.some?.ep1?.call({ a: 1 }).then(_ => _.x)
-p.ciccioPersona?.ciccioService?.some?.ep2?.directives
+p.ciccioPersona?.ciccioscope?.some?.ep1?.call({ a: 1 }).then(_ => _.x)
+p.ciccioPersona?.ciccioscope?.some?.ep2?.directives
+p.anonymous?.signupToTheSystem?.signupXop?.zupsigup?.call({ a: 1 })
+
 declare const d: moo.Domain
-d.personas.anonymous.services.emailSignup.useCase.signupWithMyEmail.submitSignup
-d.personas.ciccioPersona.services.ciccioService
+d.personas.anonymous.context
+d.personas.ciccioPersona.scope.ciccioscope.useCase.some.endpoint.epx

@@ -1,32 +1,33 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_, map } from '@moodle/lib-types'
+import { any_, any_other_string, map } from '@moodle/lib-types'
 
 declare module 'moodle-domain' {
-  type DefPersona<personaDef extends PersonaDef> = personaDef
   type PersonaDef = {
-    context: unknown
-    services: Partial<PersonaServicesDef>
+    scope: PersonaScopesDef
+    context: map | never
   }
 
-  type DefServiceAccess<serviceAccessDef extends ServiceAccessDef> = serviceAccessDef
+  type DefPersona<personaDef extends PersonaDef> = personaDef
 
-  type ServiceAccessDef = {
-    useCase: {
-      [useCaseName: string]: UseCaseDef
-    }
+  type DefScope<scopeDef extends ScopeDef> = scopeDef
+
+  type ScopeDef = {
+    useCase: map<UseCaseDef>
+    // claims: map | never
   }
 
-  type DefPersonaServices<personaServicesDef extends Partial<PersonaServicesDef>> = personaServicesDef /*  & {
-    [serviceName in keyof Services]: ServiceAccessDef
-  } */
+  type DefPersonaScopes<personaScopesDef extends PersonaScopesDef> = personaScopesDef
 
-  type PersonaServicesDef = {
-    [service_name in keyof Services]: ServiceAccessDef
-  }
+  type PersonaScopesDef = Partial<map<ScopeDef, scopes | any_other_string>>
+
+  // type PersonaScopesDef = Partial<{
+  //   [scopeName in keyof UserScopes]: ScopeDef
+  // }>
 
   type DefUseCase<useCaseDef extends UseCaseDef> = useCaseDef
   type UseCaseDef = {
-    [useCaseEndpoint: string]: UseCaseEpDef
+    // configs: map | never
+    endpoint: map<UseCaseEpDef>
   }
 
   type DefUseCaseEp<useCaseEpDef extends UseCaseEpDef> = useCaseEpDef

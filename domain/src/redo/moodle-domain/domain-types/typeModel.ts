@@ -5,6 +5,7 @@ import { Either } from 'fp-ts/Either'
 import { JsonRecord } from 'fp-ts/Json'
 import { asset, externalAsset, maybeAsset } from '../../../modules/storage'
 import { CONDITIONS_NOT_MET, NOT_FOUND } from '../../lib/constants'
+import { Option } from 'fp-ts/Option'
 
 declare module 'moodle-domain' {
   type TypeModel<traits extends TypeModelTraits> = traits['shape'] & { [model_traits_sym]: traits }
@@ -26,7 +27,7 @@ declare module 'moodle-domain' {
     ModelSpace<space_shape, space_ops> extends infer idSpace
       ? TypeModel<{
           ops: ops & {
-            subset: [
+            some: [
               'query',
               {
                 filters?: filters & { ids?: string[] }
@@ -35,6 +36,7 @@ declare module 'moodle-domain' {
               },
               { items: { id: string; data: SpaceData<space_shape>; cursor: string }[] },
             ]
+            one: ['query', { filters?: filters }, Option<{ id: string; data: SpaceData<space_shape> }>]
           }
           shape: map<idSpace>
           data: map<SpaceData<space_shape>>
@@ -44,8 +46,8 @@ declare module 'moodle-domain' {
   type ModelSpace<shape, ops extends TraitsOps = TraitsOps> = TypeModel<{
     shape: shape
     ops: ops & {
-      getSpaceData: ['query', void, Either<NOT_FOUND, SpaceData<shape>>]
-      purge: ['async', void, Either<NOT_FOUND, 'done'>]
+      getSpaceData: ['query', void, Either<typeof NOT_FOUND, SpaceData<shape>>]
+      purge: ['async', void, Either<typeof NOT_FOUND, 'done'>]
       exists: ['query', void, { exists: boolean }]
     }
     data: SpaceData<shape>
@@ -63,13 +65,17 @@ declare module 'moodle-domain' {
   > = TypeModel<{
     data: data
     ops: ops & {
-      get: ['query', void | { conditions?: opts['conditions'] }, Either<dmesg_<NOT_FOUND | CONDITIONS_NOT_MET>, data>]
+      get: [
+        'query',
+        void | { conditions?: opts['conditions'] },
+        Either<dmesg_<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET>, data>,
+      ]
     } & (access extends 'w'
         ? {
             replace: [
               'sync',
               { newData: data; conditions?: opts['conditions'] },
-              Either<dmesg_<NOT_FOUND | CONDITIONS_NOT_MET>, 'done'>,
+              Either<dmesg_<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET>, 'done'>,
             ]
           }
         : unknown)
@@ -88,8 +94,8 @@ declare module 'moodle-domain' {
     shape: { file: FsFile<{ optional: true }> }
     data: opts['optional'] extends true ? maybeAsset : asset
     ops: {
-      fromTempFile: ['async', { tempId: string }, Either<NOT_FOUND, { fileMeta: fileMeta }>]
-      fromUrl: ['async', { externalAsset: externalAsset }, Either<NOT_FOUND, void>]
+      fromTempFile: ['async', { tempId: string }, Either<typeof NOT_FOUND, { fileMeta: fileMeta }>]
+      fromUrl: ['async', { externalAsset: externalAsset }, Either<typeof NOT_FOUND, void>]
     } & (opts['optional'] extends false ? unknown : { remove: ['async', void, void] })
   }>
 
