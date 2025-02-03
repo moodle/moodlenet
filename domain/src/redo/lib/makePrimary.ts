@@ -7,7 +7,7 @@ export function makePrimary(
   exec: (primaryPath: string[], message: unknown, directives: map) => Promise<unknown>,
 ): moo.Primary {
   priDir.anonymous?.signupToTheSystem?.signupWithMyEmail?.confirmMyEmail?.directives
-  priDir.ciccioPersona?.ciccioscope?.some?.ep1?.directives
+  priDir.fooPersona?.fooscope?.some?.ep1?.directives
   const primary = Object.entries(priDir ?? {}).reduce((acc, [personaType, scopes]) => {
     acc[personaType] = Object.entries(scopes ?? {}).reduce((acc, [scopeName, scope]) => {
       acc[scopeName] = Object.entries((scope ?? {}).useCase ?? {}).reduce((acc, [useCaseName, useCase]) => {
@@ -22,7 +22,7 @@ export function makePrimary(
             return acc
           }
           const directives = maybe_eitherDirectives.right
-          const primaryUseCaseEp_with_call: moo.PrimaryUseCaseEp<moo.UseCaseEpDef, true> = {
+          const primaryUseCaseEp_with_call: moo.Primary_UseCaseEp<moo.UseCaseEpDef, true> = {
             directives,
             call: (message: unknown) => exec(primaryPath, message, directives),
           }
@@ -40,7 +40,7 @@ export function makePrimary(
 // const primary = makePrimary({} as moo.Primary<false>, async (_primaryPath, _message) => null)
 
 // primary.anonymous?.emailSignup?.signupWithMyEmail?.apply?.directives
-// const ep1 = primary.ciccioPersona?.ciccioService?.some?.ep1
+// const ep1 = primary.fooPersona?.fooService?.some?.ep1
 // if (ep1) {
 //   ep1.directives
 //   ep1.call({ a: 1 }).then(_ => {

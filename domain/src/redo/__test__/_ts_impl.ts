@@ -1,46 +1,55 @@
+import { signed_token } from '@moodle/lib-types'
 import * as moo from 'moodle-domain'
+import { signupForm } from '../../modules/user-account'
 import { assertWithErrorXxx } from '../../types'
 import { NO_JOB_HERE } from '../lib/constants'
 // import { CONDITIONS_NOT_MET } from '../lib/types'
 
 const _cor: moo.Core = x => ({
-  ciccioPersona: {
-    emailSignup: NO_JOB_HERE,
+  fooPersona: {
+    // fooscope: NO_JOB_HERE,
     userAccount: NO_JOB_HERE,
     moodlenet: NO_JOB_HERE,
-    ciccioService: {
+    fooscope: {
       some: {
         ep1: [
           _u => ({ a: 1 }),
           async ({ a }) => {
             const _n: number = a
 
-            // const _asset_ = x.on(x._.ciccio.aIdsm.asas?.asset)
-            // const _asset = x.on(x._.ciccio.aIdsm.asas?.asset).remove.async()
-            // const _ = x.on(x._.ciccio.aIdsm.asas?.a_bFile)
-            // const _x = x.on(x._.ciccio.aIdsm.asas?.a_bFile).meta.query()
-            // const _sax = x.on(x._.ciccio.aIdsm.asas?.a_info).get.query({ asLongAs: { isAdmin: false } })
-            const _saax__ = x.on(x._.ciccioService.aIdsm.asas?.a_sub.sa?.a_subCosa)
-            const _saax = x.on(x._.ciccioService.aIdsm.asas?.a_sub.sa?.a_subCosa).get.query()
+            // const _asset_ = x.on(x._.foo.aIdsm.asas?.asset)
+            // const _asset = x.on(x._.foo.aIdsm.asas?.asset).remove.async()
+            // const _ = x.on(x._.foo.aIdsm.asas?.a_bFile)
+            // const _x = x.on(x._.foo.aIdsm.asas?.a_bFile).meta.query()
+            // const _sax = x.on(x._.foo.aIdsm.asas?.a_info).get.query({ asLongAs: { isAdmin: false } })
+            const _tok = x
+              .on(x._.crypto.serviceToken.emailSignup.emailConfirmationToken.sign)
+              .do.query({ data: { signupForm: { displayName: '', password: { redacted: '' }, email: '' } as signupForm } })
+            const _tok_v = x
+              .on(x._.crypto.serviceToken.emailSignup.emailConfirmationToken.validate)
+              .do.query({ token: '' as signed_token })
+
+            const _saax__ = x.on(x._.fooService.aIdsm.asas?.a_sub.sa?.a_subCosa)
+            const _saax = x.on(x._.fooService.aIdsm.asas?.a_sub.sa?.a_subCosa).get.query()
             const _saaxs = x
-              .on(x._.ciccioService.aIdsm.asas?.a_sub.sa?.a_subCosa)
+              .on(x._.fooService.aIdsm.asas?.a_sub.sa?.a_subCosa)
               .replace.async({ newData: { lolo: '' }, conditions: { x: 2 } })
-            const _found = x.on(x._.ciccioService.aIdsm.aaa).exists.query()
-            const _st = x.on(x._.ciccioService.stCosa).get.query()
-            // const _repl = x.on(x._.ciccio.aIdsm.asas?.a_info).get.query()
+            const _found = x.on(x._.fooService.aIdsm.aaa).exists.query()
+            const _st = x.on(x._.fooService.stCosa).get.query()
+            // const _repl = x.on(x._.foo.aIdsm.asas?.a_info).get.query()
 
-            const _uqqq = x.on(x._.ciccioService.stEp).do.query({ aNumber: 321 })
-            // const ___u = x.on(x._.ciccio.b.buEp)
-            // const _uq = x.on(x._.ciccio.b.buEp).do.async({ aNumber: 321 })
+            const _uqqq = x.on(x._.fooService.stEp).do.query({ aNumber: 321 })
+            // const ___u = x.on(x._.foo.b.buEp)
+            // const _uq = x.on(x._.foo.b.buEp).do.async({ aNumber: 321 })
 
-            // const _ass = x.on(x._.ciccio.b.basEp).do.query({ aNumber: 321 })
+            // const _ass = x.on(x._.foo.b.basEp).do.query({ aNumber: 321 })
 
-            // const _sq = x.on(x._.ciccio.b.bsEp).do.sync({ aNumber: 321 })
-            // const _ss = x.on(x._.ciccio.b.bsEp).do.async({ aNumber: 321 })
+            // const _sq = x.on(x._.foo.b.bsEp).do.sync({ aNumber: 321 })
+            // const _ss = x.on(x._.foo.b.bsEp).do.async({ aNumber: 321 })
 
-            // const _aq = x.on(x._.ciccio.aIdsm.asas?.a_ep).do.async({ aNumber: 321 })
+            // const _aq = x.on(x._.foo.aIdsm.asas?.a_ep).do.async({ aNumber: 321 })
 
-            const _asa = x.on(x._.ciccioService.aIdsm.asas?.a_ep).do.async({ aNumber: 321 })
+            const _asa = x.on(x._.fooService.aIdsm.asas?.a_ep).do.async({ aNumber: 321 })
 
             //  return [false,{reason:'invalidMessage'}]
             return { x: '' }
@@ -67,7 +76,7 @@ const _cor: moo.Core = x => ({
 })
 // declare const _pri: moo.Primary
 // declare const _dom: moo.Domain
-// _dom.personas.ciccioPersona.services.ciccioService.useCase.some.ep2
+// _dom.personas.fooPersona.services.fooService.useCase.some.ep2
 // _dom.personas.anyUser.services
 // declare const _ctx: moo.CoreCtx
 
@@ -76,11 +85,11 @@ const _cor: moo.Core = x => ({
 // const _p1d = _pri.anonymous.smoodlenet
 // const _p1daa = _pri.anonymous.moodlenet
 // const _ps1 = _pri.authenticated.emailSignup
-// const _p2 = _pri.ciccioPersona.ciccioService.some.ep2({ b: 1 })
-// const _p3 = _pri.ciccioPersona.ciccioService.some.ep2({ ab: 1 })
-// const _p31 = _pri.ciccioPersona.ciccioService
-// const _p3ss = _pri.ciccioPersona.moodlenet
-// _pri.ciccioPersona
+// const _p2 = _pri.fooPersona.fooService.some.ep2({ b: 1 })
+// const _p3 = _pri.fooPersona.fooService.some.ep2({ ab: 1 })
+// const _p31 = _pri.fooPersona.fooService
+// const _p3ss = _pri.fooPersona.moodlenet
+// _pri.fooPersona
 
 // export const _x: moo.Model_Impl = {
 //   // user: moo.NO_JOB_HERE,
@@ -90,7 +99,7 @@ const _cor: moo.Core = x => ({
 //   moodlenet: moo.NO_JOB_HERE,
 //   org: moo.NO_JOB_HERE,
 //   userHome: moo.NO_JOB_HERE,
-//   ciccio: {
+//   foo: {
 //     stCosa: {
 //       [moo.OPS]: {
 //         get: {
@@ -177,14 +186,14 @@ const _cor: moo.Core = x => ({
 //   // userIdEmailPassword: moo.NO_JOB_HERE,
 //   // admin: moo.NO_JOB_HERE,
 //   emailSignup: moo.NO_JOB_HERE,
-//   ciccio: moo.NO_JOB_HERE,
+//   foo: moo.NO_JOB_HERE,
 // }
 // export const z: moo.Model_Impl = {
 //   // admin: moo.NO_JOB_HERE,
 //   // user: moo.NO_JOB_HERE,
 //   // userIdEmailPassword: moo.NO_JOB_HERE,
 //   emailSignup: moo.NO_JOB_HERE,
-//   ciccio: {
+//   foo: {
 //     stCosa: moo.NO_JOB_HERE,
 //     stEp: moo.NO_JOB_HERE,
 //     b: moo.NO_JOB_HERE,

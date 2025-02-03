@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { promiseOrValue } from '@moodle/lib-types'
+import type { promiseOrValue } from '@moodle/lib-types'
 
 declare module 'moodle-domain' {
   // type PersonaCtx<personaDef extends PersonaDef> = {
@@ -14,17 +14,17 @@ declare module 'moodle-domain' {
   type Core = (ctx: CoreCtx /* <personaDef> */) => promiseOrValue<CorePersonas_Impl>
 
   type CorePersonas_Impl = {
-    [persona_type in keyof Personas]?: promiseOrValue<CoreServices_Impl<Personas[persona_type]>>
+    [personaType in keyof Personas]?: promiseOrValue<CoreScopes_Impl<Personas[personaType]>>
   }
 
-  type CoreServices_Impl<personaDef extends PersonaDef> = {
-    [service_name in keyof personaDef['services']]: personaDef['services'][service_name] extends ServiceAccessDef
-      ? CoreServiceAccess_Impl<personaDef['services'][service_name]>
+  type CoreScopes_Impl<personaDef extends PersonaDef> = {
+    [scopeName in keyof personaDef['scope']]: personaDef['scope'][scopeName] extends ScopeDef
+      ? CoreScope_Impl<personaDef['scope'][scopeName]>
       : unknown
   }
 
-  type CoreServiceAccess_Impl<serviceAccessDef extends ServiceAccessDef> = {
-    [useCaseName in keyof serviceAccessDef['useCase']]: CoreUseCase_Impl<serviceAccessDef['useCase'][useCaseName]>
+  type CoreScope_Impl<scopeDef extends ScopeDef> = {
+    [useCaseName in keyof scopeDef['useCase']]: CoreUseCase_Impl<scopeDef['useCase'][useCaseName]>
   }
 
   // type AllPersonas = {
@@ -32,9 +32,9 @@ declare module 'moodle-domain' {
   // }
 
   type CoreUseCase_Impl<useCaseDef extends UseCaseDef> = {
-    [endpointName in keyof useCaseDef]: [
-      endpointGuard: CoreUseCaseEp_EndpointGuard<useCaseDef[endpointName]>,
-      epImpl: CoreUseCaseEp_Impl<useCaseDef[endpointName]>,
+    [endpointName in keyof useCaseDef['endpoint']]: [
+      endpointGuard: CoreUseCaseEp_EndpointGuard<useCaseDef['endpoint'][endpointName]>,
+      epImpl: CoreUseCaseEp_Impl<useCaseDef['endpoint'][endpointName]>,
     ]
   }
   type CoreUseCaseEp_EndpointGuard<ucEpDef extends UseCaseEpDef> = (message: unknown) => promiseOrValue<ucEpDef[0]>

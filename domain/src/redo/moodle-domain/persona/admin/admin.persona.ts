@@ -1,8 +1,7 @@
 import * as moo from 'moodle-domain'
 
 export type admin = moo.DefPersona<{
-  context: AdminPersonaContext
   scope: moo.DefPersonaScopes<never>
+  directives: null
 }>
 
-export type AdminPersonaContext = never

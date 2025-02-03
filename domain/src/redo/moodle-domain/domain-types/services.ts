@@ -2,9 +2,8 @@
 
 declare module 'moodle-domain' {
   type DefService<serviceDef extends ServiceDef> = serviceDef
-  type ServiceDef = { model: ModelDef }
-
-  type Model = {
-    [serviceName in keyof Services]: Services[serviceName]['model']
+  type ServiceDef = { model: ModelDef; tokens: signedTokensMapDef | never }
+  type signedTokensMapDef = {
+    [tokenName: string]: unknown
   }
 }

@@ -1,30 +1,30 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 
-import { Either } from 'fp-ts/Either'
+import type { Either } from 'fp-ts/Either'
 
 declare module 'moodle-domain' {
   type PrimaryDirectives = Primary<false>
 
   type Primary<with_call extends boolean = true> = {
-    [personaType in keyof Personas]?: PrimaryPersonas<Personas[personaType], with_call>
+    [personaType in keyof Personas]?: Primary_Personas<Personas[personaType], with_call>
   }
 
-  type PrimaryPersonas<personaDef extends PersonaDef, with_call extends boolean = false> = {
+  type Primary_Personas<personaDef extends PersonaDef, with_call extends boolean = false> = {
     [scopeName in keyof personaDef['scope']]?: personaDef['scope'][scopeName] extends ScopeDef
-      ? PrimaryService<personaDef['scope'][scopeName], with_call>
+      ? Primary_Scope<personaDef['scope'][scopeName], with_call>
       : never
   }
 
-  type PrimaryService<scopeDef extends ScopeDef, with_call extends boolean = false> = {
-    [useCaseName in keyof scopeDef['useCase']]?: PrimaryUseCase<scopeDef['useCase'][useCaseName], with_call>
+  type Primary_Scope<scopeDef extends ScopeDef, with_call extends boolean = false> = {
+    [useCaseName in keyof scopeDef['useCase']]?: Primary_UseCase<scopeDef['useCase'][useCaseName], with_call>
   }
 
-  type PrimaryUseCase<useCase extends UseCaseDef, with_call extends boolean = false> = {
-    [endpointName in keyof useCase['endpoint']]?: PrimaryUseCaseEp<useCase['endpoint'][endpointName], with_call>
+  type Primary_UseCase<useCase extends UseCaseDef, with_call extends boolean = false> = {
+    [endpointName in keyof useCase['endpoint']]?: Primary_UseCaseEp<useCase['endpoint'][endpointName], with_call>
   }
 
   // type PrimaryUseCaseEp<ucEpDef extends UseCaseEpDef> = (message: ucEpDef[0]) => Promise<ucEpDef[1]>
-  type PrimaryUseCaseEp<ucEpDef extends UseCaseEpDef, with_call extends boolean = false> = with_call extends true
+  type Primary_UseCaseEp<ucEpDef extends UseCaseEpDef, with_call extends boolean = false> = with_call extends true
     ? {
         call: (message: ucEpDef[0]) => Promise<ucEpDef[1]>
         directives: ucEpDef[2]

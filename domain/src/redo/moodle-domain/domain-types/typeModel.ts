@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { fileMeta } from '@moodle/lib-domain-fs'
-import { any_, dmesg_, map } from '@moodle/lib-types'
-import { Either } from 'fp-ts/Either'
-import { JsonRecord } from 'fp-ts/Json'
-import { asset, externalAsset, maybeAsset } from '../../../modules/storage'
-import { CONDITIONS_NOT_MET, NOT_FOUND } from '../../lib/constants'
-import { Option } from 'fp-ts/Option'
+import type { fileMeta } from '@moodle/lib-domain-fs'
+import type { any_, dmesg_, map } from '@moodle/lib-types'
+import type { Either } from 'fp-ts/Either'
+import type { JsonRecord } from 'fp-ts/Json'
+import type { asset, externalAsset, maybeAsset } from '../../../modules/storage'
+import type { CONDITIONS_NOT_MET, NOT_FOUND } from '../../lib/constants'
+import type { Option } from 'fp-ts/Option'
 
 declare module 'moodle-domain' {
   type TypeModel<traits extends TypeModelTraits> = traits['shape'] & { [model_traits_sym]: traits }

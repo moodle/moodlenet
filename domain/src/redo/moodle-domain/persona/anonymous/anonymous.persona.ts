@@ -5,5 +5,5 @@ export type anonymous = moo.DefPersona<{
   scope: moo.DefPersonaScopes<{
     signupToTheSystem: SignupToTheSystem
   }>
-  context: never
+  directives: null
 }>

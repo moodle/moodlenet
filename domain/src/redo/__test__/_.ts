@@ -3,33 +3,38 @@ import { email_address_schema, redacted } from '@moodle/lib-types'
 import * as moo from 'moodle-domain'
 declare module 'moodle-domain' {
   interface Personas {
-    ciccioPersona: CiccioPersona
+    fooPersona: FooPersona
   }
   interface Services {
-    ciccioService: DefService<{
-      model: CiccioModel
+    fooService: DefService<{
+      v: '1'
+      model: FooModel
+      tokens: never
     }>
   }
 }
 
 declare module '../moodle-domain/persona/anonymous/signupToTheSystem.scope' {
   export interface SignupToTheSystemUseCases {
-    signupXop: {
+    fooSignup: {
+      directives: { a: string }
       endpoint: {
         zupsigup: [{ a: number }, { x: string }, { ep1_a: string }]
       }
     }
   }
 }
-export type CiccioPersona = moo.DefPersona<{
-  context: never
+export type FooPersona = moo.DefPersona<{
+  directives: null
   scope: moo.DefPersonaScopes<{
     // userAccount:never
     // moodlenet:never
     // emailSignup:never
-    ciccioscope: moo.DefScope<{
+    fooscope: moo.DefScope<{
+      directives: null
       useCase: {
         some: {
+          directives: null
           endpoint: {
             epx: [void, { x: string }, { epx_a: number }]
             ep1: [{ a: number }, { x: string }, { ep1_a: string }]
@@ -39,10 +44,10 @@ export type CiccioPersona = moo.DefPersona<{
       }
     }>
   }>
-  //model: CiccioModel
+  //model: FooModel
 }>
 
-export type CiccioModel = moo.DefModel<{
+export type FooModel = moo.DefModel<{
   stEp: moo.Endpoint<['query', { aNumber: number }, { res: string }]>
   stCosa: moo.StaticData<'w', { statica: string }>
   b: {
@@ -67,10 +72,10 @@ declare const p: moo.Primary
 p.anonymous?.signupToTheSystem?.signupWithMyEmail?.submitSignup
   ?.call({ password: redacted(''), displayName: '', email: email_address_schema.parse('') })
   .then(_ => _._tag)
-p.ciccioPersona?.ciccioscope?.some?.ep1?.call({ a: 1 }).then(_ => _.x)
-p.ciccioPersona?.ciccioscope?.some?.ep2?.directives
-p.anonymous?.signupToTheSystem?.signupXop?.zupsigup?.call({ a: 1 })
+p.fooPersona?.fooscope?.some?.ep1?.call({ a: 1 }).then(_ => _.x)
+p.fooPersona?.fooscope?.some?.ep2?.directives
+p.anonymous?.signupToTheSystem?.fooSignup?.zupsigup?.call({ a: 1 })
 
 declare const d: moo.Domain
-d.personas.anonymous.context
-d.personas.ciccioPersona.scope.ciccioscope.useCase.some.endpoint.epx
+d.personas.anonymous.directives
+d.personas.fooPersona.scope.fooscope.useCase.some.endpoint.epx

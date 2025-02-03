@@ -1,14 +1,17 @@
 import { email_address_schema, redacted, redacted_schema, single_line_string_schema } from '@moodle/lib-types'
 import * as moo from 'moodle-domain'
 import { any, string, ZodString } from 'zod'
+import { SystemAccess } from './systemAccess.scope'
 
 export type any__ = moo.DefPersona<{
-  context: AnyPersonaContext
-  scope: moo.DefPersonaScopes<never>
+  directives: AnyPersonaContext
+  scope: moo.DefPersonaScopes<{
+    systemAccess: SystemAccess
+  }>
 }>
 
 export interface AnyPersonaContext {
-  generalDirectives: GeneralDirectives
+  general: GeneralDirectives
 }
 
 export type plain_password = redacted<string>

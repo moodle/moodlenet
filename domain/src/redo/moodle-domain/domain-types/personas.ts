@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_, any_other_string, map } from '@moodle/lib-types'
+import type { any_, any_other_string, map } from '@moodle/lib-types'
 
 declare module 'moodle-domain' {
   type PersonaDef = {
     scope: PersonaScopesDef
-    context: map | never
+    directives: map | null
   }
 
   type DefPersona<personaDef extends PersonaDef> = personaDef
@@ -13,7 +12,7 @@ declare module 'moodle-domain' {
 
   type ScopeDef = {
     useCase: map<UseCaseDef>
-    // claims: map | never
+    directives: map | null
   }
 
   type DefPersonaScopes<personaScopesDef extends PersonaScopesDef> = personaScopesDef
@@ -26,10 +25,10 @@ declare module 'moodle-domain' {
 
   type DefUseCase<useCaseDef extends UseCaseDef> = useCaseDef
   type UseCaseDef = {
-    // configs: map | never
+    directives: map | null
     endpoint: map<UseCaseEpDef>
   }
 
   type DefUseCaseEp<useCaseEpDef extends UseCaseEpDef> = useCaseEpDef
-  type UseCaseEpDef = [message: any_, outcome: any_, directives?: map]
+  type UseCaseEpDef = [message: any_, outcome: any_, directives?: map | null]
 }
