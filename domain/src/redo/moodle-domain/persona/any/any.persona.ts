@@ -1,39 +1,37 @@
-import { email_address_schema, redacted, redacted_schema, single_line_string_schema } from '@moodle/lib-types'
+import { email_address_schema, plain_password_schema, single_line_string_schema, valid } from '@moodle/lib-types'
 import * as moo from 'moodle-domain'
 import { any, string, ZodString } from 'zod'
-import { SystemAccess } from './systemAccess.scope'
+import { System } from './system.context'
 
-export type any__ = moo.DefPersona<{
-  directives: AnyPersonaContext
-  scope: moo.DefPersonaScopes<{
-    systemAccess: SystemAccess
-  }>
-}>
+export type any__ = moo.DefPersona<{ system: System }, { general: GeneralDirectives }>
 
-export interface AnyPersonaContext {
-  general: GeneralDirectives
+export type UserDataConfigs = {
+  email: valid.max
+  password: valid.max & valid.min & valid.regex
+  displayName: valid.max & valid.min & valid.regex
 }
-
-export type plain_password = redacted<string>
 
 export type GeneralDirectives = {
-  user: {
-    email: { max: number }
-    password: { max: number; min: number; regex: null | [regex: string, flags: string] }
-    displayName: { max: number; min: number; regex: null | [regex: string, flags: string] }
-  }
+  userDataConfigs: UserDataConfigs
 }
 
-export function generalDirectivesZodSchemas({ user }: GeneralDirectives) {
-  const userEmail = string().max(user.email.max).pipe(email_address_schema)
-  const password = redacted_schema(
-    string().trim().min(user.password.min).max(user.password.max).pipe(single_line_string_schema),
+export function userDataZodSchemas(userDataConfigs: UserDataConfigs) {
+  const userEmail = string().max(userDataConfigs.email.max).pipe(email_address_schema)
+  const password = plain_password_schema(
+    string()
+      .min(userDataConfigs.password.min)
+      .max(userDataConfigs.password.max)
+      .regex(new RegExp(...userDataConfigs.password.regex)),
   )
   const userDisplayName = string()
     .trim()
-    .min(user.displayName.min)
-    .max(user.displayName.max)
-    .pipe(user.displayName.regex ? string().regex(new RegExp(...user.displayName.regex)) : (any() as unknown as ZodString))
+    .min(userDataConfigs.displayName.min)
+    .max(userDataConfigs.displayName.max)
+    .pipe(
+      userDataConfigs.displayName.regex
+        ? string().regex(new RegExp(...userDataConfigs.displayName.regex))
+        : (any() as unknown as ZodString),
+    )
     .pipe(single_line_string_schema)
 
   return {

@@ -1,4 +1,4 @@
-import { binderDispatcher, binderReceiver, domainAccess, ErrorXxx, isCodeXxx, status_code_xxx } from '@moodle/domain'
+import { binderDispatcher, binderReceiver, domainAccess, Error4xx, isCode4xx, status_code_4xx } from '@moodle/domain'
 import { any_ } from '@moodle/lib-types'
 import express from 'express'
 import { Agent, fetch } from 'undici'
@@ -51,9 +51,9 @@ export function getHttpBinderDispatcher({
           const jsonBody = _parse(jsonBodyStrUtf8)
           return jsonBody
         }
-        if (isCodeXxx(httpResponse.status)) {
+        if (isCode4xx(httpResponse.status)) {
           const jsonBody = _parse(jsonBodyStrUtf8)
-          throw new ErrorXxx(httpResponse.status as status_code_xxx, jsonBody?.details)
+          throw new Error4xx(httpResponse.status as status_code_4xx, jsonBody?.details)
         }
         throw new Error(`Server error: ${httpResponse.status}\n ${jsonBodyStrUtf8}`)
       })
@@ -78,7 +78,7 @@ type httpBinderReceiverHandle = {
 export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promise<httpBinderReceiverHandle> {
   const pendingReplyPromises: Promise<unknown>[] = []
   let binderDispatcher: binderDispatcher = async () => {
-    throw new ErrorXxx('Service Unavailable')
+    throw new Error4xx('Service Unavailable')
   }
 
   const app = express()
@@ -96,9 +96,9 @@ export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promis
         throw e
       })
       .catch(e => {
-        if (e instanceof ErrorXxx) {
-          res.status(e.errorXxx.code)
-          return { details: e.errorXxx.details }
+        if (e instanceof Error4xx) {
+          res.status(e.error4xx.code)
+          return { details: e.error4xx.details }
         } else {
           res.status(500)
           return e instanceof Error ? { name: e.name, message: e.message, stack: e.stack } : { error: String(e) }

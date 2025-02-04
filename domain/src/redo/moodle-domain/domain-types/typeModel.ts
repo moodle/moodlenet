@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { fileMeta } from '@moodle/lib-domain-fs'
-import type { any_, dmesg_, map } from '@moodle/lib-types'
+import type { any_, dmesg_, map, serializable_object } from '@moodle/lib-types'
 import type { Either } from 'fp-ts/Either'
-import type { JsonRecord } from 'fp-ts/Json'
 import type { asset, externalAsset, maybeAsset } from '../../../modules/storage'
 import type { CONDITIONS_NOT_MET, NOT_FOUND } from '../../lib/constants'
 import type { Option } from 'fp-ts/Option'
@@ -12,7 +11,7 @@ declare module 'moodle-domain' {
 
   const model_traits_sym: unique symbol
   type TraitsOps = map<ModelOpDef>
-  type TypeModelTraits = { shape: unknown; ops: TraitsOps; data: JsonRecord }
+  type TypeModelTraits = { shape: unknown; ops: TraitsOps; data: serializable_object }
 
   type modelOpType = 'sync' | 'async' | 'query'
   type ModelOpDef = [type: modelOpType, message: any_, outcome: any_]
@@ -59,7 +58,7 @@ declare module 'moodle-domain' {
 
   type EntityData<
     access extends 'r' | 'w',
-    data extends JsonRecord,
+    data extends serializable_object,
     opts extends { conditions?: map } = map,
     ops extends TraitsOps = TraitsOps,
   > = TypeModel<{
@@ -82,7 +81,11 @@ declare module 'moodle-domain' {
     shape: unknown
   }>
 
-  type StaticData<access extends 'r' | 'w', data extends JsonRecord, ops extends TraitsOps = TraitsOps> = TypeModel<{
+  type StaticData<
+    access extends 'r' | 'w',
+    data extends serializable_object,
+    ops extends TraitsOps = TraitsOps,
+  > = TypeModel<{
     data: data
     ops: ops & { get: ['query', void, data] } & (access extends 'w'
         ? { replace: ['sync', { newData: data }, void] }

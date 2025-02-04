@@ -1,7 +1,7 @@
 import { generateAlphanumId } from '@moodle/lib-id-gen'
 import { omit } from 'lodash'
 import UserProfileDomain, { eduCollectionDraft } from '..'
-import { assertWithErrorXxx, moduleCore } from '../../../types'
+import { assertWithError4xx, moduleCore } from '../../../types'
 import { maybeAsset, NONE_ASSET } from '../../storage'
 import { assert_authorizeAuthenticatedCurrentUserSession } from '../../user-account/lib'
 import { createNewEduResourceDraftData, createNewUserProfileData } from './lib/data'
@@ -187,7 +187,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
           async getMyUserRecords() {
             const [myUserProfileFound, userProfileResult] = await fetchMyUserProfile()
 
-            assertWithErrorXxx(myUserProfileFound, 'Not Found', {
+            assertWithError4xx(myUserProfileFound, 'Not Found', {
               message: `seemingly authenticated session, but couldn't find userProfileRecord for userProfileId: ${userProfileId}`,
               authenticatedUserSession,
             })

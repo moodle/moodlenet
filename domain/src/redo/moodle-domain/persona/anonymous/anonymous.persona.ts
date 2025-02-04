@@ -1,9 +1,4 @@
 import * as moo from 'moodle-domain'
-import { SignupToTheSystem } from './signupToTheSystem.scope'
+import { System } from './system.context'
 
-export type anonymous = moo.DefPersona<{
-  scope: moo.DefPersonaScopes<{
-    signupToTheSystem: SignupToTheSystem
-  }>
-  directives: null
-}>
+export type anonymous = moo.DefPersona<{ system: System }>//,{a:1}>

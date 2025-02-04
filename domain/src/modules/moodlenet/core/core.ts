@@ -2,7 +2,7 @@ import { generateAlphanumId } from '@moodle/lib-id-gen'
 import { void_, non_negative_integer } from '@moodle/lib-types'
 import assert from 'assert'
 import { omit } from 'lodash'
-import { assertWithErrorXxx, moduleCore } from '../../../types'
+import { assertWithError4xx, moduleCore } from '../../../types'
 import { assert_authorizeCurrentUserSessionWithRole, validate_currentUserSessionInfo } from '../../user-account/lib'
 
 export const moodlenet_core: moduleCore<'moodlenet'> = {
@@ -32,7 +32,7 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
               foundContributorRecord,
               `moodlenetContributorRecord notfound for authenticated userAccountRecord#${userAccountRecord.id}`,
             )
-            assertWithErrorXxx(foundContributorRecord, 'Not Found', {
+            assertWithError4xx(foundContributorRecord, 'Not Found', {
               message: `seemingly authenticated session, but couldn't find moodlenetContributorRecord for userProfileId: ${userProfileRecord.id}`,
               currentSessionInfo,
             })

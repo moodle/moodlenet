@@ -22,11 +22,11 @@ export function makePrimary(
             return acc
           }
           const directives = maybe_eitherDirectives.right
-          const primaryUseCaseEp_with_call: moo.Primary_UseCaseEp<moo.UseCaseEpDef, true> = {
+          const primaryUseCaseEndpoint_with_call: moo.Primary_UseCaseEndpoint<moo.UseCaseEndpointDef, true> = {
             directives,
             call: (message: unknown) => exec(primaryPath, message, directives),
           }
-          acc[endpointName] = primaryUseCaseEp_with_call
+          acc[endpointName] = primaryUseCaseEndpoint_with_call
           return acc
         }, {} as map)
         return acc

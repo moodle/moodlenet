@@ -1,34 +1,32 @@
-import type { any_, any_other_string, map } from '@moodle/lib-types'
+import type { any_, map, serializable } from '@moodle/lib-types'
 
 declare module 'moodle-domain' {
-  type PersonaDef = {
-    scope: PersonaScopesDef
-    directives: map | null
-  }
+  type dirDef = serializable | undefined
+  const _dir: unique symbol
+  type withDir<T, dir extends dirDef> = { [_dir]: dir } & T
 
-  type DefPersona<personaDef extends PersonaDef> = personaDef
+  type DefPersona<personaContextsDef extends PersonaContextsDef, dir extends dirDef = undefined> = withDir<
+    personaContextsDef,
+    dir
+  >
+  type Persona = withDir<PersonaContextsDef, dirDef>
+  type PersonaContextsDef = Partial<map<ContextScopesDef, contexts>>
 
-  type DefScope<scopeDef extends ScopeDef> = scopeDef
+  type DefContext<contextScopesDef extends ContextScopesDef, dir extends dirDef = undefined> = withDir<contextScopesDef, dir>
+  type Context = withDir<ContextScopesDef, dirDef>
+  type ContextScopesDef = Partial<map<ScopeUseCasesDef, scopes>>
 
-  type ScopeDef = {
-    useCase: map<UseCaseDef>
-    directives: map | null
-  }
+  type DefScope<scopeUseCasesDef extends ScopeUseCasesDef, dir extends dirDef = undefined> = withDir<scopeUseCasesDef, dir>
+  type ScopeUseCasesDef = map<UseCaseEndpointsDef>
+  type Scope = withDir<ScopeUseCasesDef, dirDef>
 
-  type DefPersonaScopes<personaScopesDef extends PersonaScopesDef> = personaScopesDef
+  type DefUseCase<useCaseEndpointsDef extends UseCaseEndpointsDef, dir extends dirDef = undefined> = withDir<
+    useCaseEndpointsDef,
+    dir
+  >
+  type UseCaseEndpointsDef = map<UseCaseEndpoint>
+  type UseCase = withDir<UseCaseEndpointsDef, dirDef>
 
-  type PersonaScopesDef = Partial<map<ScopeDef, scopes | any_other_string>>
-
-  // type PersonaScopesDef = Partial<{
-  //   [scopeName in keyof UserScopes]: ScopeDef
-  // }>
-
-  type DefUseCase<useCaseDef extends UseCaseDef> = useCaseDef
-  type UseCaseDef = {
-    directives: map | null
-    endpoint: map<UseCaseEpDef>
-  }
-
-  type DefUseCaseEp<useCaseEpDef extends UseCaseEpDef> = useCaseEpDef
-  type UseCaseEpDef = [message: any_, outcome: any_, directives?: map | null]
+  type DefUseCaseEndpoint<useCaseEndpoint extends UseCaseEndpoint> = useCaseEndpoint
+  type UseCaseEndpoint = [message: any_, outcome: any_, directives: serializable | undefined]
 }

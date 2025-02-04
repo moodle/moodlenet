@@ -1,6 +1,6 @@
 import { ok_ko, signed_expire_token } from '@moodle/lib-types'
 import assert from 'assert'
-import { baseContext, ErrorXxx, primaryContext } from '../../../types'
+import { baseContext, Error4xx, primaryContext } from '../../../types'
 import { profileSessionData, userAccountId, userRole, userSession, userSessionData } from '../types'
 import { hasUserSessionRole, getUserSessionInfo } from './user-session'
 
@@ -63,18 +63,18 @@ export async function validateCurrentUserAuthenticatedSessionHasRole({ role, ...
 
 export async function assert_authorizeCurrentUserAuthenticatedSession(dep: sessionLibDep) {
   const authenticated_userSession = await validateCurrentUserAuthenticatedSession(dep)
-  assert(authenticated_userSession, new ErrorXxx('Unauthorized', 'assert_authorizeUserAuthenticatedSession'))
+  assert(authenticated_userSession, new Error4xx('Unauthorized', 'assert_authorizeUserAuthenticatedSession'))
   return authenticated_userSession
 }
 export async function assert_authorizeCurrentUserSessionWithRole(dep: sessionLibDepWithRole) {
   const authenticated_userSession = await validateCurrentUserAuthenticatedSessionHasRole(dep)
-  assert(authenticated_userSession, new ErrorXxx('Unauthorized', `assert_authorizeUserSessionWithRole ${dep.role}`))
+  assert(authenticated_userSession, new Error4xx('Unauthorized', `assert_authorizeUserSessionWithRole ${dep.role}`))
   return authenticated_userSession
 }
 
 export async function assert_authorizeAuthenticatedCurrentUserSession(dep: sessionLibDep) {
   const authenticated_userSession = await validateCurrentUserAuthenticatedSession(dep)
-  assert(authenticated_userSession, new ErrorXxx('Unauthorized', 'assert_authorizeAuthenticatedUserSession'))
+  assert(authenticated_userSession, new Error4xx('Unauthorized', 'assert_authorizeAuthenticatedUserSession'))
   return authenticated_userSession
 }
 

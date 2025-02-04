@@ -1,5 +1,5 @@
 import { fetchAllSchemaConfigs } from '../../../lib'
-import { isErrorXxx, moduleCore, moodlePrimary } from '../../../types'
+import { isError4xx, moduleCore, moodlePrimary } from '../../../types'
 import { validate_currentUserSessionInfo } from '../../user-account/lib'
 import { landingLayoutProps, suggestedContent } from '../types/webapp/pageProps/landing'
 import { accessWebappContributorAccessData, contributorRecordToWebappContributorAccessData } from './lib'
@@ -28,7 +28,7 @@ export const moodlenet_react_app_core: moduleCore<'moodlenetReactApp'> = {
             const currentMoodlenetSessionData = await ctx.forward.moodlenet.session
               .getMyCurrentMoodlenetSessionData()
               .catch(error => {
-                if (!isErrorXxx(error)) {
+                if (!isError4xx(error)) {
                   throw error
                 }
                 return 'cleanupSession' as const

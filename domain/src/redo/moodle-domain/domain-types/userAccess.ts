@@ -1,35 +1,25 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 
 declare module 'moodle-domain' {
-  type PersonaAccess<config extends boolean = false> = {
-    [personaType in keyof Personas]: Personas[personaType] extends PersonaDef
-      ?
-          | {
-              scope: PersonaAccess_Personas<Personas[personaType], config>
-              directives: Personas[personaType]['directives']
-            }
-          | (config extends true ? never : undefined)
+  type UserAccess = {
+    [personaType in keyof Personas]?: Personas[personaType] extends Persona
+      ? UserAccess_Personas<Personas[personaType]>
       : never
   }
 
-  type PersonaAccess_Personas<personaDef extends PersonaDef, configs extends boolean = false> = {
-    [scopeName in keyof personaDef['scope']]: personaDef['scope'][scopeName] extends ScopeDef
-      ?
-          | {
-              directives: personaDef['scope'][scopeName]['directives']
-              useCase: PersonaAccess_Scope<personaDef['scope'][scopeName], configs>
-            }
-          | (configs extends true ? never : undefined)
-      : never
-  }
+  type UserAccess_Personas<persona extends Persona> = {
+    [contextName in keyof persona]?: persona[contextName] extends Context ? UserAccess_Context<persona[contextName]> : never
+  } & { _: persona[typeof _dir] }
 
-  type PersonaAccess_Scope<scopeDef extends ScopeDef, configs extends boolean = false> = {
-    [useCaseName in keyof scopeDef['useCase']]: scopeDef['useCase'][useCaseName] extends UseCaseDef
-      ?
-          | {
-              directives: scopeDef['useCase'][useCaseName]['directives']
-            }
-          | (configs extends true ? never : undefined)
-      : never
-  }
+  type UserAccess_Context<context extends Context> = {
+    [scopeName in keyof context]?: context[scopeName] extends Scope ? UserAccess_Scope<context[scopeName]> : never
+  } & { _: context[typeof _dir] }
+
+  type UserAccess_Scope<scope extends Scope> = {
+    [useCaseName in keyof scope]?: scope[useCaseName] extends UseCase ? UserAccess_UseCase<scope[useCaseName]> : never
+  } & { _: scope[typeof _dir] }
+
+  type UserAccess_UseCase<useCase extends UseCase> = {
+    [endpointName in keyof useCase]?: { _: useCase[endpointName][2] }
+  } & { _: useCase[typeof _dir] }
 }

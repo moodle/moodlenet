@@ -1,6 +1,6 @@
 import * as moo from 'moodle-domain'
 
-export const defaultPersonaAccessConfig: moo.PersonaAccess<true> = {
+export const defaultUserAccessConfig: moo.UserAccess<true> = {
   admin: {
     directives: null,
     scope: {},

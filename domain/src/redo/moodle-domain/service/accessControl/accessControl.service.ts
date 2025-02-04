@@ -1,4 +1,3 @@
-import { typ } from '@moodle/lib-types'
 import * as moo from 'moodle-domain'
 
 export type accessControl = moo.DefService<{
@@ -11,5 +10,5 @@ export interface AccessControlModel {
 }
 
 interface ConfigsSpace {
-  personaAccess: moo.EntityData<'w', typ<moo.PersonaAccess<true>>>
+  userAccess: moo.EntityData<'w', moo.UserAccess>
 }

@@ -2,7 +2,7 @@ import { JsonRecord } from 'fp-ts/Json'
 import type {} from 'moment'
 import { ReactElement } from 'react'
 import _slugify from 'slugify'
-import { BRAND, number, object, string, ZodNullable, ZodSchema } from 'zod'
+import { BRAND, number, object, string, ZodNullable, ZodSchema, ZodString } from 'zod'
 import { d_u, map } from './map'
 
 export type promiseOrValue<t> = t | Promise<t>
@@ -47,10 +47,10 @@ export const void_ = void 0 as void
 export type primitive = primitive_value | null | undefined
 export type primitive_value = string | number | boolean | bigint
 
-// export type serializable = serializable_primitive | serializable_object | serializable_array
-// export type serializable_primitive = string | number | boolean | null
-// export type serializable_object = { readonly [k: string]: serializable }
-// export type serializable_array = ReadonlyArray<serializable>
+export type serializable = serializable_primitive | serializable_object | serializable_array
+export type serializable_primitive = string | number | boolean | null | undefined
+export type serializable_object = { [k in string]: serializable }
+export type serializable_array = ReadonlyArray<serializable>
 
 export function unchecked_brand_<b extends branded<any_, any_>>(b: unbranded<b>): b {
   return b as b
@@ -79,6 +79,7 @@ export function redacted_json_reviver(key: string, value: any_): any_ {
 export function redact__(data: any_): any_ {
   return data === null || typeof data !== 'object' ? data : JSON.parse(redact_stringify(data))
 }
+
 export function redacted<t>(data: t): redacted<t> {
   return { [REDACTED_KEY]: data } as redacted<t>
 }
@@ -91,7 +92,17 @@ export function redacted_schema<schema extends ZodSchema>(schema: schema) {
   }).brand<typeof redacted_brand>()
 }
 
+export type regex_parts = [pattern: string, flags: string]
+
+export const single_line_string_regex_parts: regex_parts = ['^[^\r\n]*$', 'gi']
+export const single_line_string_regex = new RegExp(...single_line_string_regex_parts)
 export const single_line_string_schema = string().regex(/^[^\r\n]*$/gi)
+
+export declare const plain_password_brand: unique symbol
+export type plain_password = redacted<branded<string, typeof plain_password_brand>>
+export function plain_password_schema(pwdschema: ZodString) {
+  return redacted_schema(pwdschema.pipe(single_line_string_schema))
+}
 
 // // export const url_string_brand = Symbol('url_string_brand')
 // export type url_string = z.infer< typeof url_string_schema>

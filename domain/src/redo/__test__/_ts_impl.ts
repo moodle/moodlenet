@@ -1,7 +1,7 @@
 import { signed_token } from '@moodle/lib-types'
 import * as moo from 'moodle-domain'
 import { signupForm } from '../../modules/user-account'
-import { assertWithErrorXxx } from '../../types'
+import { assertWithError4xx } from '../../types'
 import { NO_JOB_HERE } from '../lib/constants'
 // import { CONDITIONS_NOT_MET } from '../lib/types'
 
@@ -57,7 +57,7 @@ const _cor: moo.Core = x => ({
         ],
         ep2: [
           _u => {
-            assertWithErrorXxx(typeof _u === 'object' && !!_u && 'b' in _u && typeof _u.b === 'number', 'Forbidden')
+            assertWithError4xx(typeof _u === 'object' && !!_u && 'b' in _u && typeof _u.b === 'number', 'Forbidden')
             return { b: _u.b }
           },
           async _message => {

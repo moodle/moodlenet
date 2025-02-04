@@ -1,13 +1,14 @@
-import type { admin } from './persona/admin/admin.persona'
+// import type { admin } from './persona/admin/admin.persona'
+import { any_other_string } from '@moodle/lib-types'
 import type { anonymous } from './persona/anonymous/anonymous.persona'
 import type { any__ } from './persona/any/any.persona'
-import type { authenticated } from './persona/authenticated/authenticated.persona'
-import type { emailSignup } from './service/emailSignup/emailSignup.service'
-import type { moodlenet } from './service/moodlenet/moodlenet.service'
-import { crypto } from './service/crypto/crypto.service'
-import type { userAccount } from './service/userAccount/userAccount.service'
-import { mailer } from './service/mailer/mailer.service'
+// import type { authenticated } from './persona/authenticated/authenticated.persona'
 import { accessControl } from './service/accessControl/accessControl.service'
+import { crypto } from './service/crypto/crypto.service'
+import type { emailSignup } from './service/emailSignup/emailSignup.service'
+import { mailer } from './service/mailer/mailer.service'
+import type { moodlenet } from './service/moodlenet/moodlenet.service'
+import type { userAccount } from './service/userAccount/userAccount.service'
 
 declare module 'moodle-domain' {
   interface Domain {
@@ -17,10 +18,10 @@ declare module 'moodle-domain' {
   }
 
   interface Personas {
-    admin: admin
+    // admin: admin
     anonymous: anonymous
     any: any__
-    authenticated: authenticated
+    // authenticated: authenticated
   }
 
   interface Services {
@@ -40,11 +41,30 @@ declare module 'moodle-domain' {
     [serviceName in keyof Services]: Services[serviceName]['model']
   }
 
-  type personaScopes = {
-    [personaType in keyof Personas]: Personas[personaType]['scope'] extends never
-      ? never
-      : keyof Personas[personaType]['scope']
-  }
+  type contexts = {
+    [personaType in keyof Personas]: Exclude<keyof Personas[personaType], typeof _dir>
+  } extends infer _
+    ? _[keyof _] | any_other_string
+    : never
 
-  type scopes = personaScopes[keyof personaScopes]
+  type scopes = {
+    [personaType in keyof Personas]: {
+      [ctx in Exclude<keyof Personas[personaType], typeof _dir>]: keyof Personas[personaType][ctx]
+    } extends infer _
+      ? Exclude<_[keyof _], typeof _dir>
+      : never
+  } extends infer _
+    ? _[keyof _] | any_other_string
+    : never
+  // type scopes = {
+  //   [personaType in keyof Personas]: {
+  //     [ctx in Exclude<keyof Personas[personaType], typeof _dir>]: Exclude<keyof Personas[personaType][ctx], typeof _dir>
+  //   }
+  // } extends infer _
+  //   ? _[keyof _] extends infer __
+  //     ? __[keyof __] | any_other_string
+  //     : never
+  //   : never
+
+  type services = any_other_string | keyof Services
 }
