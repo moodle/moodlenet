@@ -1,4 +1,4 @@
 import * as moo from 'moodle-domain'
-import { permissions } from './permissions.scope/read.usecase'
+import { Read } from './permissions.scope/read.usecase'
 
-export type Access = moo.DefScope<{ permissions: permissions }>
+export type Permissions = moo.DefScope<{ read: Read }>
