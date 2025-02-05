@@ -5,10 +5,10 @@ export type accessControl = moo.DefService<{
   tokens: never
 }>
 
-export interface AccessControlModel {
+export type AccessControlModel = {
   configs: moo.IdSpaceMap<ConfigsSpace>
 }
 
-interface ConfigsSpace {
+type ConfigsSpace = {
   permissions: moo.EntityData<'w', moo.Permissions>
 }

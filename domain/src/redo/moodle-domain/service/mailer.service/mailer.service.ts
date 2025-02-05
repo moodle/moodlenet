@@ -5,7 +5,7 @@ export type mailer = moo.DefService<{
   tokens: never
 }>
 
-export interface MailerModel {
-  send: moo.Endpoint<['async', never]>
+export type MailerModel = {
+  send: moo.Endpoint<['async', unknown, unknown]>
   configs: moo.StaticData<'w', never>
 }

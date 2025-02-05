@@ -1,4 +1,4 @@
-import { any_, email_address, integer_schema, single_line_string_regex_parts } from '@moodle/lib-types'
+import { email_address } from '@moodle/lib-types'
 import * as moo from 'moodle-domain'
 import { UserDataConfigs } from '../../persona/any.persona/any.persona'
 
@@ -7,16 +7,15 @@ export type userAccount = moo.DefService<{
   tokens: never
 }>
 
-export interface ProfileInfo {
+export type ProfileInfo = {
   displayName: string
-  [k: string]: any_
 }
 
-// export interface ResourceDraftSpace {}
+// export type ResourceDraftSpace = {}
 
-// export interface CollectionDraftSpace {}
+// export type CollectionDraftSpace = {}
 
-export interface Profile {
+export type Profile = {
   info: moo.EntityData<'w', ProfileInfo>
   // avatar: moo.Asset<{
   //   optional: true
@@ -26,7 +25,7 @@ export interface Profile {
   // }>
 }
 
-export interface UserSpace {
+export type UserSpace = {
   email: email_address
   secure: {
     passwordHash: string
@@ -38,23 +37,13 @@ export interface UserSpace {
   // }
 }
 
-export interface UserAccountModel {
+export type UserAccountModel = {
   configs: moo.StaticData<'w', UserAccountConfigs>
   user: moo.IdSpaceMap<UserSpace, { emailEquals: string }>
 }
 
-export interface UserAccountConfigs {
+export type UserAccountConfigs = {
   dataConfigs: {
     userData: UserDataConfigs
   }
-  [k: string]: any_
-}
-export const userAccountConfigs: UserAccountConfigs = {
-  dataConfigs: {
-    userData: {
-      displayName: { max: integer_schema.parse(100), min: integer_schema.parse(100), regex: single_line_string_regex_parts },
-      password: { max: integer_schema.parse(100), min: integer_schema.parse(100), regex: single_line_string_regex_parts },
-      email: { max: integer_schema.parse(100) },
-    },
-  },
 }

@@ -8,7 +8,7 @@ export type crypto = moo.DefService<{
   tokens: never
 }>
 
-export interface TokenModel {
+export type TokenModel = {
   serviceToken: {
     [audience_serviceName in keyof moo.Services]: {
       [tokenType in keyof moo.Services[audience_serviceName]['tokens']]: {

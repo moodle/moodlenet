@@ -1,9 +1,11 @@
 import type { any_, map, serializable } from '@moodle/lib-types'
+import { ZodType } from 'zod'
 
 declare module 'moodle-domain' {
   type dirDef = serializable | undefined
   const _dir: unique symbol
   type withDir<T, dir extends dirDef> = { [_dir]: dir } & T
+  type noDir<T> = Omit<T, typeof _dir>
 
   type DefPersona<personaContextsDef extends PersonaContextsDef, dir extends dirDef = undefined> = withDir<
     personaContextsDef,
@@ -28,5 +30,6 @@ declare module 'moodle-domain' {
   type UseCase = withDir<UseCaseEndpointsDef, dirDef>
 
   type DefUseCaseEndpoint<useCaseEndpoint extends UseCaseEndpoint> = useCaseEndpoint
-  type UseCaseEndpoint = [message: any_, outcome: any_, directives: serializable | undefined]
+  type UseCaseEndpoint = [message: ZodType, outcome: any_, directives: serializable | undefined]
+  type ucpl<T extends ZodType | ((...a: any_[]) => ZodType)> = T extends ZodType ? T : ReturnType<T>
 }

@@ -3,8 +3,8 @@ import type { fileMeta } from '@moodle/lib-domain-fs'
 import type { any_, dmesg_, map, serializable_object } from '@moodle/lib-types'
 import type { Either } from 'fp-ts/Either'
 import type { Option } from 'fp-ts/Option'
-import type { asset, externalAsset, maybeAsset } from '../../../../modules/storage'
-import type { CONDITIONS_NOT_MET, NOT_FOUND } from '../../../lib/constants'
+import type { asset, externalAsset, maybeAsset } from '../../../modules/storage'
+import type { CONDITIONS_NOT_MET, NOT_FOUND } from '../../lib/constants'
 
 declare module 'moodle-domain' {
   type TypeModel<traits extends TypeModelTraits> = traits['shape'] & { [model_traits_sym]: traits }

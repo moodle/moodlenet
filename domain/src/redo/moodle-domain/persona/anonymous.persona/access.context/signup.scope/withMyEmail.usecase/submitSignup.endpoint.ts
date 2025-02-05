@@ -10,7 +10,7 @@ import { UserDataConfigs, userDataZodSchemas } from '../../../../any.persona/any
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 
 export type submitSignup = moo.DefUseCaseEndpoint<
-  [signupForm, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>, undefined]
+  [moo.ucpl<typeof signupFormZodSchema>, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>, undefined]
 >
 
 export type signupForm = {
@@ -19,18 +19,17 @@ export type signupForm = {
   displayName: string
 }
 
-
-export const submitSignupGateProvider = flow(
-  O.some<{ permissions: moo.Permissions }>,
+export const submitSignup_Gate: moo.Gate_Endpoint_Provider<submitSignup> = flow(
+  O.some,
   O.bind('userDataConfigs', ({ permissions }) => O.fromNullable(permissions.any?._.general.userDataConfigs)),
   O.bind('zod', flow(O.some, O.map(signupFormZodSchema))),
   E.fromOption(() => error4xx('Unauthorized')),
-) satisfies moo.Gate_Either_Endpoint_Provider<submitSignup>
+)
 
 export function signupFormZodSchema({ userDataConfigs }: { userDataConfigs: UserDataConfigs }) {
   const { password, userDisplayName, userEmail } = userDataZodSchemas(userDataConfigs)
 
-  const signupFormSchema: moo.Gate_Endpoint_Zod<submitSignup> = object({
+  const signupFormSchema = object({
     email: userEmail,
     password,
     displayName: userDisplayName,

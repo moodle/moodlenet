@@ -62,9 +62,11 @@ export type branded<type, b extends symbol /*  | string */> = BRAND<b> & type ex
     : { [_ in keyof _type]: _type[_] }
   : never
 
-export type unbranded<b> = {
-  [_ in Exclude<keyof b, symbol>]: b[_] extends map ? unbranded<b[_]> : b[_]
-}
+export type unbranded<b> = b extends map
+  ? {
+      [_ in Exclude<keyof b, symbol>]: unbranded<b[_]>
+    }
+  : b
 
 // redacted logging
 export const REDACTED_KEY = 'redacted'
@@ -96,7 +98,7 @@ export type regex_parts = [pattern: string, flags: string]
 
 export const single_line_string_regex_parts: regex_parts = ['^[^\r\n]*$', 'gi']
 export const single_line_string_regex = new RegExp(...single_line_string_regex_parts)
-export const single_line_string_schema = string().regex(/^[^\r\n]*$/gi)
+export const single_line_string_schema = string().regex(new RegExp(...single_line_string_regex_parts))
 
 export declare const plain_password_brand: unique symbol
 export type plain_password = redacted<branded<string, typeof plain_password_brand>>

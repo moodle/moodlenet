@@ -1,7 +1,7 @@
 // import type { admin } from './persona/admin.persona/admin.persona'
 import { any_other_string } from '@moodle/lib-types'
-import type { anonymous } from './persona/anonymous.persona/anonymous.persona'
-import type { any__ } from './persona/any.persona/any.persona'
+import type { Anonymous } from './persona/anonymous.persona/anonymous.persona'
+import type { Any } from './persona/any.persona/any.persona'
 // import type { authenticated } from './persona/authenticated.persona/authenticated.persona'
 import { accessControl } from './service/accessControl.service/accessControl.service'
 import { crypto } from './service/crypto.service/crypto.service'
@@ -19,8 +19,8 @@ declare module 'moodle-domain' {
 
   interface Personas {
     // admin: admin
-    anonymous: anonymous
-    any: any__
+    anonymous: Anonymous
+    any: Any
     // authenticated: authenticated
   }
 
