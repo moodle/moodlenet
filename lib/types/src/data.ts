@@ -69,13 +69,17 @@ export type unbranded<b> = b extends map
   : b
 
 // redacted logging
-export const REDACTED_KEY = 'redacted'
+export const REDACTED_KEY = '###--redacted--###'
 export function redact_stringify(obj: any_) {
   return JSON.stringify(obj, redacted_json_reviver, 2)
 }
 
 export function redacted_json_reviver(key: string, value: any_): any_ {
-  return key === REDACTED_KEY ? '###redacted###' : value
+  return key === REDACTED_KEY ? REDACTED_KEY : value
+}
+
+export function redacted_value<t>(redacted: redacted<t>): t {
+  return redacted[REDACTED_KEY]
 }
 
 export function redact__(data: any_): any_ {
@@ -100,8 +104,9 @@ export const single_line_string_regex_parts: regex_parts = ['^[^\r\n]*$', 'gi']
 export const single_line_string_regex = new RegExp(...single_line_string_regex_parts)
 export const single_line_string_schema = string().regex(new RegExp(...single_line_string_regex_parts))
 
-export declare const plain_password_brand: unique symbol
-export type plain_password = redacted<branded<string, typeof plain_password_brand>>
+// export declare const plain_password_brand: unique symbol
+// export type plain_password = redacted<branded<string, typeof plain_password_brand>>
+export type plain_password = redacted<string>
 export function plain_password_schema(pwdschema: ZodString) {
   return redacted_schema(pwdschema.pipe(single_line_string_schema))
 }

@@ -22,14 +22,30 @@ export function generateAlphanumId(opts?: { length?: number }) {
   return alphanumId
 }
 
-export function generateId(id_type: id_type) {
-  switch (id_type.type) {
-    case 'alphanumeric':
-      return generateAlphanumId({ length: id_type.length })
-    case 'ulid':
-      return generateUlid({ onDate: id_type.onDate })
+export async function generateAlphanumId_withCheck(
+  check: (id: string) => Promise<boolean>,
+  opts?: { length?: number },
+  [tries, of] = [0, 3],
+) {
+  if (tries === of) {
+    throw new Error(`Failed to generate unique id`)
   }
+  const alphanumId = generateAlphanumId(opts)
+  const idExists = await check(alphanumId)
+  if (idExists === false) {
+    return alphanumId
+  }
+  return generateAlphanumId_withCheck(check, opts, [tries + 1, of])
 }
+
+// export function generateId(id_type: id_type) {
+//   switch (id_type.type) {
+//     case 'alphanumeric':
+//       return generateAlphanumId({ length: id_type.length })
+//     case 'ulid':
+//       return generateUlid({ onDate: id_type.onDate })
+//   }
+// }
 
 export function decodeUlid(ulid: string) {
   if (!ulidx.isValid(ulid)) {

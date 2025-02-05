@@ -1,4 +1,4 @@
-import { signed_token } from '@moodle/lib-types'
+import { plain_password, signed_token } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import * as moo from 'moodle-domain'
 import { TYPE_INVALID_TOKEN } from './consts'
@@ -23,6 +23,12 @@ export type TokenModel = {
           ]
         >
       }
+    }
+  }
+  hashing: {
+    password: {
+      hash: moo.Endpoint<['query', { plainPassword: plain_password }, { hash: string }]>
+      verify: moo.Endpoint<['query', { plainPassword: plain_password; hash: string }, { valid: boolean }]>
     }
   }
 }

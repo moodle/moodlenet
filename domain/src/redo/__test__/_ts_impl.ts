@@ -23,22 +23,22 @@ const _cor: moo.Core = x => ({
             // const _x = x.on(x._.foo.aIdsm.asas?.a_bFile).meta.query()
             // const _sax = x.on(x._.foo.aIdsm.asas?.a_info).get.query({ asLongAs: { isAdmin: false } })
             const _tok = x
-              .on(x._.crypto.serviceToken.emailSignup.emailConfirmationToken.sign)
-              .do.query({ data: { signupForm: { displayName: '', password: { redacted: '' }, email: '' } as signupForm } })
+              .over(x.model.crypto.serviceToken.emailSignup.emailConfirmationToken.sign)
+              .call.query({ data: { signupForm: { displayName: '', password: { redacted: '' }, email: '' } as signupForm } })
             const _tok_v = x
-              .on(x._.crypto.serviceToken.emailSignup.emailConfirmationToken.validate)
-              .do.query({ token: '' as signed_token })
+              .over(x.model.crypto.serviceToken.emailSignup.emailConfirmationToken.validate)
+              .call.query({ token: '' as signed_token })
 
-            const _saax__ = x.on(x._.fooService.aIdsm.asas?.a_sub.sa?.a_subCosa)
-            const _saax = x.on(x._.fooService.aIdsm.asas?.a_sub.sa?.a_subCosa).get.query()
+            const _saax__ = x.over(x.model.fooService.aIdsm.asas?.a_sub.sa?.a_subCosa)
+            const _saax = x.over(x.model.fooService.aIdsm.asas?.a_sub.sa?.a_subCosa).get.query()
             const _saaxs = x
-              .on(x._.fooService.aIdsm.asas?.a_sub.sa?.a_subCosa)
+              .over(x.model.fooService.aIdsm.asas?.a_sub.sa?.a_subCosa)
               .replace.async({ newData: { lolo: '' }, conditions: { x: 2 } })
-            const _found = x.on(x._.fooService.aIdsm.aaa).exists.query()
-            const _st = x.on(x._.fooService.stCosa).get.query()
+            const _found = x.over(x.model.fooService.aIdsm.aaa).exists.query()
+            const _st = x.over(x.model.fooService.stCosa).get.query()
             // const _repl = x.on(x._.foo.aIdsm.asas?.a_info).get.query()
 
-            const _uqqq = x.on(x._.fooService.stEp).do.query({ aNumber: 321 })
+            const _uqqq = x.over(x.model.fooService.stEp).do.query({ aNumber: 321 })
             // const ___u = x.on(x._.foo.b.buEp)
             // const _uq = x.on(x._.foo.b.buEp).do.async({ aNumber: 321 })
 
@@ -49,7 +49,7 @@ const _cor: moo.Core = x => ({
 
             // const _aq = x.on(x._.foo.aIdsm.asas?.a_ep).do.async({ aNumber: 321 })
 
-            const _asa = x.on(x._.fooService.aIdsm.asas?.a_ep).do.async({ aNumber: 321 })
+            const _asa = x.over(x.model.fooService.aIdsm.asas?.a_ep).do.async({ aNumber: 321 })
 
             //  return [false,{reason:'invalidMessage'}]
             return { x: '' }

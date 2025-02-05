@@ -3,13 +3,14 @@ import * as E from 'fp-ts/Either'
 import { flow } from 'fp-ts/function'
 import * as moo from 'moodle-domain'
 import { object } from 'zod'
-import { INVALID_TOKEN, SUBMITTED } from '../../../../../../lib/constants'
+import { SUBMITTED } from '../../../../../../lib/constants'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
+import { TYPE_INVALID_TOKEN } from '../../../../../service/crypto.service/consts'
 
 export type confirmMyEmail = moo.DefUseCaseEndpoint<
   [
     moo.ucpl<typeof confirmEmailFormZodSchema>,
-    E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS | typeof INVALID_TOKEN, typeof SUBMITTED>,
+    E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS | TYPE_INVALID_TOKEN, typeof SUBMITTED>,
     undefined,
   ]
 >

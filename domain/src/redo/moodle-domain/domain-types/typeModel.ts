@@ -48,6 +48,7 @@ declare module 'moodle-domain' {
       getSpaceData: ['query', void, Either<typeof NOT_FOUND, SpaceData<shape>>]
       purge: ['async', void, Either<typeof NOT_FOUND, 'done'>]
       exists: ['query', void, { exists: boolean }]
+      create: ['async', { spaceData: SpaceData<shape> }, void]
     }
     data: SpaceData<shape>
   }>
@@ -108,5 +109,5 @@ declare module 'moodle-domain' {
     ops: opts['optional'] extends false ? never : { remove: ['async', void, void] }
   }>
 
-  type Endpoint<modelOpDef extends ModelOpDef> = TypeModel<{ ops: { do: modelOpDef }; shape: unknown; data: never }>
+  type Endpoint<modelOpDef extends ModelOpDef> = TypeModel<{ ops: { call: modelOpDef }; shape: unknown; data: never }>
 }

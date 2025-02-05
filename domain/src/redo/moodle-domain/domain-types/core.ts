@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 
+import { any_ } from '@moodle/lib-types'
+import { ZodType } from 'zod'
+
 declare module 'moodle-domain' {
   // type PersonaCtx<personaDef extends PersonaDef> = {
   // _: personaDef['model']
   type CoreCtx = {
-    _: Model
-    on: <typeModelRef extends TypeModel<TypeModelTraits>>(
+    model: Model
+    over: <typeModelRef extends TypeModel<TypeModelTraits>>(
       typeModelRef: typeModelRef | undefined,
     ) => TypeModelRefOpMap_Impl<typeModelRef>
+    permissions: Permissions
   }
 
-  type Core = (ctx: CoreCtx /* <personaDef> */) => Gate
+  type Core = (ctx: CoreCtx /* <personaDef> */) => Gate<false>
 
   type TypeModelRefOpMap_Impl<typeModelRef extends TypeModel<TypeModelTraits>> =
     typeModelRef extends TypeModel<infer traits>
@@ -36,4 +40,9 @@ declare module 'moodle-domain' {
             }
           : unknown)
       : never
+
+  type Core_Endpoint<useCaseEndpoint extends UseCaseEndpoint> = (
+    payload: useCaseEndpoint[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never,
+    ctx: CoreCtx,
+  ) => Promise<useCaseEndpoint[1]>
 }

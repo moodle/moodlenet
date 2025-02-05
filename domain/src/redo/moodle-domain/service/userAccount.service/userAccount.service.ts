@@ -7,39 +7,29 @@ export type userAccount = moo.DefService<{
   tokens: never
 }>
 
-export type ProfileInfo = {
+export type profileInfo = {
   displayName: string
 }
 
-// export type ResourceDraftSpace = {}
+export type resourceDraftSpace = unknown
 
-// export type CollectionDraftSpace = {}
+export type collectionDraftSpace = unknown
 
-export type Profile = {
-  info: moo.EntityData<'w', ProfileInfo>
-  // avatar: moo.Asset<{
-  //   optional: true
-  // }>
-  // background: moo.Asset<{
-  //   optional: true
-  // }>
+export type profile = {
+  info: moo.EntityData<'w', profileInfo>
+  avatar: moo.Asset<{ optional: true }>
+  background: moo.Asset<{ optional: true }>
 }
 
-export type UserSpace = {
-  email: email_address
-  secure: {
-    passwordHash: string
-  }
-  profile: Profile
-  // drafts: {
-  //   resources: moo.IdSpaceMap<ResourceDraftSpace>
-  //   collections: moo.IdSpaceMap<CollectionDraftSpace>
-  // }
+export type userSpace = {
+  email: moo.EntityData<'w', { address: email_address }>
+  password: moo.EntityData<'w', { hash: string }>
+  profile: profile
 }
 
 export type UserAccountModel = {
   configs: moo.StaticData<'w', UserAccountConfigs>
-  user: moo.IdSpaceMap<UserSpace, { emailEquals: string }>
+  user: moo.IdSpaceMap<userSpace, { emailEquals: string }>
 }
 
 export type UserAccountConfigs = {

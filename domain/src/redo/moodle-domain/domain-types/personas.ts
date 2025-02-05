@@ -31,5 +31,10 @@ declare module 'moodle-domain' {
 
   type DefUseCaseEndpoint<useCaseEndpoint extends UseCaseEndpoint> = useCaseEndpoint
   type UseCaseEndpoint = [message: ZodType, outcome: any_, directives: serializable | undefined]
-  type ucpl<T extends ZodType | ((...a: any_[]) => ZodType)> = T extends ZodType ? T : ReturnType<T>
+
+  type ucpl<T extends ZodType | ((...a: any_[]) => ZodType)> = T extends ZodType
+    ? T
+    : T extends (...a: any_[]) => ZodType
+      ? ReturnType<T>
+      : never
 }

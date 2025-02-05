@@ -9,7 +9,7 @@ import { SUBMITTED } from '../../../../../../lib/constants'
 import { UserDataConfigs, userDataZodSchemas } from '../../../../any.persona/any.persona'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 
-export type submitSignup = moo.DefUseCaseEndpoint<
+export type submitSignupForm = moo.DefUseCaseEndpoint<
   [moo.ucpl<typeof signupFormZodSchema>, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>, undefined]
 >
 
@@ -19,7 +19,7 @@ export type signupForm = {
   displayName: string
 }
 
-export const submitSignup_Gate: moo.Gate_Endpoint_Provider<submitSignup> = flow(
+export const submitSignupForm_Gate: moo.Gate_Endpoint_Provider<submitSignupForm> = flow(
   O.some,
   O.bind('userDataConfigs', ({ permissions }) => O.fromNullable(permissions.any?._.general.userDataConfigs)),
   O.bind('zod', flow(O.some, O.map(signupFormZodSchema))),
