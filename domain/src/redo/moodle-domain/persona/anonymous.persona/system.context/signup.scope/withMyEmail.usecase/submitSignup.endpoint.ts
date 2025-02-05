@@ -6,7 +6,7 @@ import * as moo from 'moodle-domain'
 import { object } from 'zod'
 import { error4xx } from '../../../../../../../types'
 import { SUBMITTED } from '../../../../../../lib/constants'
-import { UserDataConfigs, userDataZodSchemas } from '../../../../any/any.persona'
+import { UserDataConfigs, userDataZodSchemas } from '../../../../any.persona/any.persona'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 
 export type submitSignup = moo.DefUseCaseEndpoint<
@@ -20,14 +20,14 @@ export type signupForm = {
 }
 
 export const signupFormZod = flow(
-  O.some<{ userAccess: moo.UserAccess }>,
-  O.bind('userDataConfigs', ({ userAccess }) => O.fromNullable(userAccess.any?._.general.userDataConfigs)),
+  O.some<{ permissions: moo.Permissions }>,
+  O.bind('userDataConfigs', ({ permissions }) => O.fromNullable(permissions.any?._.general.userDataConfigs)),
   O.map(({ userDataConfigs }) => signupFormZodSchema(userDataConfigs)),
   E.fromOption(() => error4xx('Unauthorized')),
 )
 
 export const submitSignupGateProvider: moo.Gate_Either_Endpoint_Provider<submitSignup> = flow(
-  E.right<{ userAccess: moo.UserAccess }>,
+  E.right<{ permissions: moo.Permissions }>,
   E.bind('zod', signupFormZod),
   E.map(({ zod }) => ({ zod }) /* satisfies moo.Gate_Endpoint<submitSignup>, */),
 )

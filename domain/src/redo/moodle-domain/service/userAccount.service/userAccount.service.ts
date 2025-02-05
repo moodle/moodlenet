@@ -1,6 +1,6 @@
 import { any_, email_address, integer_schema, single_line_string_regex_parts } from '@moodle/lib-types'
 import * as moo from 'moodle-domain'
-import { UserDataConfigs } from '../../persona/any/any.persona'
+import { UserDataConfigs } from '../../persona/any.persona/any.persona'
 
 export type userAccount = moo.DefService<{
   model: moo.DefModel<UserAccountModel>

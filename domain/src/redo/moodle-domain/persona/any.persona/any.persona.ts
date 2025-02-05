@@ -6,9 +6,9 @@ import { System } from './system.context'
 export type any__ = moo.DefPersona<{ system: System }, { general: GeneralDirectives }>
 
 export type UserDataConfigs = {
-  email: valid.max
-  password: valid.max & valid.min & valid.regex
-  displayName: valid.max & valid.min & valid.regex
+  email: valid.iMax
+  password: valid.iMinMax & valid.regex
+  displayName: valid.iMinMax & valid.regex
 }
 
 export type GeneralDirectives = {

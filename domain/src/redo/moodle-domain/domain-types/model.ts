@@ -8,7 +8,6 @@ declare module 'moodle-domain' {
 
   // type ___<typeModelRef extends TypeModel<TypeModelTraits>> = Exclude<typeModelRef, undefined>
 
-
   type Model_Impl<baseModelNode = Services> = {
     [k in keyof baseModelNode]: baseModelNode[k] extends infer modelNode
       ? modelNode extends TypeModel<TypeModelTraits>

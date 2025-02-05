@@ -1,6 +1,6 @@
 import * as moo from 'moodle-domain'
 
-export const defaultUserAccessConfig: moo.UserAccess<true> = {
+export const defaultpermissionsConfig: moo.Permissions<true> = {
   admin: {
     directives: null,
     scope: {},
@@ -35,7 +35,7 @@ export const defaultUserAccessConfig: moo.UserAccess<true> = {
       systemAccess: {
         directives: null,
         useCase: {
-          userAccess: {
+          permissions: {
             directives: null,
           },
         },

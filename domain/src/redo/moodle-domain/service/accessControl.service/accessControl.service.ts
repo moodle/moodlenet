@@ -10,5 +10,5 @@ export interface AccessControlModel {
 }
 
 interface ConfigsSpace {
-  userAccess: moo.EntityData<'w', moo.UserAccess>
+  permissions: moo.EntityData<'w', moo.Permissions>
 }

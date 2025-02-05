@@ -26,7 +26,7 @@ declare module 'moodle-domain' {
   }
 
   type Gate_Either_Endpoint_Provider<useCaseEndpoint extends UseCaseEndpoint> = (_: {
-    userAccess: UserAccess
+    permissions: Permissions
   }) => Gate_Either_Endpoint<useCaseEndpoint>
 
   type Gate_Either_Endpoint<useCaseEndpoint extends UseCaseEndpoint> = Either<error4xx, Gate_Endpoint<useCaseEndpoint>>
