@@ -19,23 +19,18 @@ export type signupForm = {
   displayName: string
 }
 
-export const signupFormZod = flow(
+
+export const submitSignupGateProvider = flow(
   O.some<{ permissions: moo.Permissions }>,
   O.bind('userDataConfigs', ({ permissions }) => O.fromNullable(permissions.any?._.general.userDataConfigs)),
-  O.map(({ userDataConfigs }) => signupFormZodSchema(userDataConfigs)),
+  O.bind('zod', flow(O.some, O.map(signupFormZodSchema))),
   E.fromOption(() => error4xx('Unauthorized')),
-)
+) satisfies moo.Gate_Either_Endpoint_Provider<submitSignup>
 
-export const submitSignupGateProvider: moo.Gate_Either_Endpoint_Provider<submitSignup> = flow(
-  E.right<{ permissions: moo.Permissions }>,
-  E.bind('zod', signupFormZod),
-  E.map(({ zod }) => ({ zod }) /* satisfies moo.Gate_Endpoint<submitSignup>, */),
-)
-
-export function signupFormZodSchema(userDataConfigs: UserDataConfigs) {
+export function signupFormZodSchema({ userDataConfigs }: { userDataConfigs: UserDataConfigs }) {
   const { password, userDisplayName, userEmail } = userDataZodSchemas(userDataConfigs)
 
-  const signupFormSchema = object({
+  const signupFormSchema: moo.Gate_Endpoint_Zod<submitSignup> = object({
     email: userEmail,
     password,
     displayName: userDisplayName,

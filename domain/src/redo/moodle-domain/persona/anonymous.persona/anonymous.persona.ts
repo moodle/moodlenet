@@ -1,4 +1,4 @@
 import * as moo from 'moodle-domain'
-import { System } from './system.context'
+import { Access } from './access.context'
 
-export type anonymous = moo.DefPersona<{ system: System }>//,{a:1}>
+export type anonymous = moo.DefPersona<{ access: Access }>//,{a:1}>

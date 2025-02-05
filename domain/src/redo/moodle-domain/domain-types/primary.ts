@@ -7,7 +7,11 @@ declare module 'moodle-domain' {
   }
 
   type Primary_Personas<persona extends Persona> = {
-    [scopeName in keyof persona]: persona[scopeName] extends Scope ? Primary_Scope<persona[scopeName]> : never
+    [contextName in keyof persona]: persona[contextName] extends Context ? Primary_Context<persona[contextName]> : never
+  }
+
+  type Primary_Context<context extends Context> = {
+    [scopeName in keyof context]: context[scopeName] extends Scope ? Primary_Scope<context[scopeName]> : never
   }
 
   type Primary_Scope<scope extends Scope> = {
