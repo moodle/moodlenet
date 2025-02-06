@@ -1,11 +1,9 @@
-import * as moo from 'moodle-domain'
-
-export type mailer = moo.DefService<{
-  model: moo.DefModel<MailerModel>
+export type mailer = moo.service<{
+  model: moo.model<MailerModel>
   tokens: never
 }>
 
 export type MailerModel = {
-  send: moo.Endpoint<['async', unknown, unknown]>
-  configs: moo.StaticData<'w', never>
+  send: moo.model.type.endpoint<['async', unknown, unknown]>
+  configs: moo.model.type.staticData<'w', never>
 }

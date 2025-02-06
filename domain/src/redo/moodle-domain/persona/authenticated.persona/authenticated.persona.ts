@@ -1,4 +1,1 @@
-import * as moo from 'moodle-domain'
-
-export type authenticated = moo.DefPersona<never>
-
+export type authenticated = moo.persona<never>

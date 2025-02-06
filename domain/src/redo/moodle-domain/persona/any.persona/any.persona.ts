@@ -1,12 +1,11 @@
 import { email_address_schema, plain_password_schema, single_line_string_schema, valid } from '@moodle/lib-types'
-import * as moo from 'moodle-domain'
 import { string } from 'zod'
-import { System, System_Gate } from './system.context'
+import { system, systemGate } from './system.context'
 
-export type Any = moo.DefPersona<{ system: System }, { general: GeneralDirectives }>
+export type any__ = moo.persona<{ system: system }, { general: GeneralDirectives }>
 
-export const Any_Gate: moo.Gate_Persona<Any> = {
-  system: System_Gate,
+export const anyGate: moo.gate.persona<any__> = {
+  system: systemGate,
 }
 
 export type UserDataConfigs = {

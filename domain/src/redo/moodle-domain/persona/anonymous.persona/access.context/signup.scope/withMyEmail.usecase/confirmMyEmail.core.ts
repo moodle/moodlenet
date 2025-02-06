@@ -1,13 +1,13 @@
 import { generateAlphanumId_withCheck } from '@moodle/lib-id-gen'
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
-import * as moo from 'moodle-domain'
-import { SUBMITTED } from '../../../../../../lib/constants'
 import { userSpace } from '../../../../../service/userAccount.service/userAccount.service'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 import { confirmMyEmail } from './confirmMyEmail.endpoint'
+import { NONE_ASSET } from '../../../../../../moo/lib/content/asset'
+import { SUBMITTED } from '../../../../../../moo/lib/constants'
 
-export const confirmMyEmailCore: moo.Core_Endpoint<confirmMyEmail> = async (confirmEmailForm, _) => {
+export const confirmMyEmailCore: moo.core.endpoint<confirmMyEmail> = async (confirmEmailForm, _) => {
   const e_validatedToken = await _.over(_.model.crypto.serviceToken.emailSignup.emailConfirmationToken.validate).call.query({
     token: confirmEmailForm.signupEmailVerificationToken,
   })
@@ -32,15 +32,15 @@ export const confirmMyEmailCore: moo.Core_Endpoint<confirmMyEmail> = async (conf
       .then(({ exists }) => exists),
   )
 
-  const userSpace: moo.SpaceData<userSpace> = {
+  const userSpace: moo.model.type.spaceData<userSpace> = {
     email: { address: confirmationTokenData.email },
     password: { hash: confirmationTokenData.passwordHash },
     profile: {
       info: {
         displayName: confirmationTokenData.displayName,
       },
-      avatar: { type: 'none' },
-      background: { type: 'none' },
+      avatar: NONE_ASSET,
+      background: NONE_ASSET,
     },
   }
 

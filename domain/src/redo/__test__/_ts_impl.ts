@@ -2,7 +2,7 @@ import { signed_token } from '@moodle/lib-types'
 import * as moo from 'moodle-domain'
 import { signupForm } from '../../modules/user-account'
 import { assertWithError4xx } from '../../types'
-import { NO_JOB_HERE } from '../lib/constants'
+import { NO_JOB_HERE } from '../moo/lib/constants'
 // import { CONDITIONS_NOT_MET } from '../lib/types'
 
 const _cor: moo.Core = x => ({

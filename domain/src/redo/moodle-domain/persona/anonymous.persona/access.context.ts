@@ -1,8 +1,7 @@
-import * as moo from 'moodle-domain'
-import { Signup, Signup_Gate } from './access.context/signup.scope'
+import { signup, signupGate } from './access.context/signup.scope'
 
-export type Access = moo.DefContext<{ signup: Signup }>
+export type access = moo.persona.context<{ signup: signup }>
 
-export const Access_Gate: moo.Gate_Context<Access> = {
-  signup: Signup_Gate,
+export const accessGate: moo.gate.context<access> = {
+  signup: signupGate,
 }

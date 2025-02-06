@@ -1,6 +1,4 @@
-import * as moo from 'moodle-domain'
-
-export const defaultpermissionsConfig: moo.Permissions<true> = {
+export const defaultpermissionsConfig: moo.permissions<true> = {
   admin: {
     directives: null,
     scope: {},

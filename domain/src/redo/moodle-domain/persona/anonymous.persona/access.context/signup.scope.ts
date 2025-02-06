@@ -1,8 +1,7 @@
-import * as moo from 'moodle-domain'
-import { WithMyEmail, WithMyEmail_Gate } from './signup.scope/withMyEmail.usecase'
+import { withMyEmail, withMyEmailGate } from './signup.scope/withMyEmail.usecase'
 
-export type Signup = moo.DefScope<{ withMyEmail: WithMyEmail }>
+export type signup = moo.persona.scope<{ withMyEmail: withMyEmail }>
 
-export const Signup_Gate: moo.Gate_Scope<Signup> = {
-  withMyEmail: WithMyEmail_Gate,
+export const signupGate: moo.gate.scope<signup> = {
+  withMyEmail: withMyEmailGate,
 }

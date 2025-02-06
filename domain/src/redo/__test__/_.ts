@@ -15,7 +15,7 @@ declare module '----moodle-domain' {
 
 declare module '---../moodle-domain/persona/anonymous/signupToTheSystem.scope' {
   export interface SignupToTheSystemUseCases {
-    fooSignup: moo.DefUseCase<
+    fooSignup: moo.persona.usecase<
       {
         zupsigup: [{ a: number }, { x: string }, { ep1_a: string }]
       },
@@ -23,12 +23,12 @@ declare module '---../moodle-domain/persona/anonymous/signupToTheSystem.scope' {
     >
   }
 }
-export type FooPersona = moo.DefPersona<{
+export type FooPersona = moo.persona<{
   // userAccount:never
   // moodlenet:never
   // emailSignup:never
-  fooscope: moo.DefScope<{
-    some: moo.DefUseCase<{
+  fooscope: moo.persona.scope<{
+    some: moo.persona.usecase<{
       epx: [void, { x: string }, { epx_a: number }]
       ep1: [{ a: number }, { x: string }, { ep1_a: string }]
       ep2: [{ b: number }, { c: boolean }, { ep2_a: boolean }]
@@ -36,23 +36,23 @@ export type FooPersona = moo.DefPersona<{
   }>
 }>
 
-export type FooModel = moo.DefModel<{
-  stEp: moo.Endpoint<['query', { aNumber: number }, { res: string }]>
-  stCosa: moo.StaticData<'w', { statica: string }>
+export type FooModel = moo.model<{
+  stEp: moo.model.type.endpoint<['query', { aNumber: number }, { res: string }]>
+  stCosa: moo.model.type.staticData<'w', { statica: string }>
   b: {
     c: {
-      buEp: moo.Endpoint<['async', { aNumber: number }, { res: string }]>
+      buEp: moo.model.type.endpoint<['async', { aNumber: number }, { res: string }]>
     }
-    basEp: moo.Endpoint<['query', { aNumber: number }, { res: string }]>
-    bsEp: moo.Endpoint<['sync', { aNumber: number }, { res: string }]>
+    basEp: moo.model.type.endpoint<['query', { aNumber: number }, { res: string }]>
+    bsEp: moo.model.type.endpoint<['sync', { aNumber: number }, { res: string }]>
   }
-  aIdsm: moo.IdSpaceMap<{
+  aIdsm: moo.model.type.idSpaceMap<{
     // asset: Asset<{ optional: true }>
     // a_bFile: FsFile
-    a_ep: moo.Endpoint<['async', { aNumber: number }, { res: string }]>
+    a_ep: moo.model.type.endpoint<['async', { aNumber: number }, { res: string }]>
     // a_info: DataEntity<{ name: string }, { conditions: { isAdmin: boolean } }>
-    a_sub: moo.IdSpaceMap<{
-      a_subCosa: moo.EntityData<'w', { lolo: string }, { conditions: { x: number } }>
+    a_sub: moo.model.type.idSpaceMap<{
+      a_subCosa: moo.model.type.entityData<'w', { lolo: string }, { conditions: { x: number } }>
     }>
   }>
 }>

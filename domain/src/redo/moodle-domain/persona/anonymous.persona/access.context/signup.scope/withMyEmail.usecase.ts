@@ -1,12 +1,11 @@
-import * as moo from 'moodle-domain'
 import { confirmMyEmail, confirmMyEmail_Gate } from './withMyEmail.usecase/confirmMyEmail.endpoint'
 import { submitSignupForm, submitSignupForm_Gate } from './withMyEmail.usecase/submitSignupForm.endpoint'
-export type WithMyEmail = moo.DefUseCase<{
+export type withMyEmail = moo.persona.usecase<{
   submitSignupForm: submitSignupForm
   confirmMyEmail: confirmMyEmail
 }>
 
-export const WithMyEmail_Gate: moo.Gate_UseCase<WithMyEmail> = {
+export const withMyEmailGate: moo.gate.usecase<withMyEmail> = {
   confirmMyEmail: confirmMyEmail_Gate,
   submitSignupForm: submitSignupForm_Gate,
 }

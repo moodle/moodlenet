@@ -2,15 +2,14 @@ import { email_address, redacted } from '@moodle/lib-types'
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import { flow } from 'fp-ts/function'
-import * as moo from 'moodle-domain'
 import { object } from 'zod'
 import { error4xx } from '../../../../../../../types'
-import { SUBMITTED } from '../../../../../../lib/constants'
 import { UserDataConfigs, userDataZodSchemas } from '../../../../any.persona/any.persona'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
+import { SUBMITTED } from '../../../../../../moo/lib/constants'
 
-export type submitSignupForm = moo.DefUseCaseEndpoint<
-  [moo.ucpl<typeof signupFormZodSchema>, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>, undefined]
+export type submitSignupForm = moo.persona.endpoint<
+  [typeof signupFormZodSchema, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>, undefined]
 >
 
 export type signupForm = {
@@ -19,7 +18,7 @@ export type signupForm = {
   displayName: string
 }
 
-export const submitSignupForm_Gate: moo.Gate_Endpoint_Provider<submitSignupForm> = flow(
+export const submitSignupForm_Gate: moo.gate.endpointProvider<submitSignupForm> = flow(
   O.some,
   O.bind('userDataConfigs', ({ permissions }) => O.fromNullable(permissions.any?._.general.userDataConfigs)),
   O.bind('zod', flow(O.some, O.map(signupFormZodSchema))),

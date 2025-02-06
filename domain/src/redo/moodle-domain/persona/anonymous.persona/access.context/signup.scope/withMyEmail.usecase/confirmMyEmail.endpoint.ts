@@ -1,15 +1,14 @@
 import { signed_token, signed_token_schema } from '@moodle/lib-types'
 import * as E from 'fp-ts/Either'
 import { flow } from 'fp-ts/function'
-import * as moo from 'moodle-domain'
 import { object } from 'zod'
-import { SUBMITTED } from '../../../../../../lib/constants'
-import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 import { TYPE_INVALID_TOKEN } from '../../../../../service/crypto.service/consts'
+import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
+import { SUBMITTED } from '../../../../../../moo/lib/constants'
 
-export type confirmMyEmail = moo.DefUseCaseEndpoint<
+export type confirmMyEmail = moo.persona.endpoint<
   [
-    moo.ucpl<typeof confirmEmailFormZodSchema>,
+    typeof confirmEmailFormZodSchema,
     E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS | TYPE_INVALID_TOKEN, typeof SUBMITTED>,
     undefined,
   ]
@@ -17,7 +16,7 @@ export type confirmMyEmail = moo.DefUseCaseEndpoint<
 
 export type confirmEmailForm = { signupEmailVerificationToken: signed_token }
 
-export const confirmMyEmail_Gate: moo.Gate_Endpoint_Provider<confirmMyEmail> = flow(
+export const confirmMyEmail_Gate: moo.gate.endpointProvider<confirmMyEmail> = flow(
   E.right,
   E.bind('zod', flow(E.right, E.map(confirmEmailFormZodSchema))),
 )

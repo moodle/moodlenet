@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { email_address, signed_token } from '@moodle/lib-types'
-import * as moo from 'moodle-domain'
 
-export type emailSignup = moo.DefService<{
-  model: moo.DefModel<EmailSignupModel>
+export type emailSignup = moo.service<{
+  model: moo.model<EmailSignupModel>
   tokens: {
     emailConfirmationToken: { passwordHash: string; displayName: string; email: email_address }
   }
 }>
 
 export type EmailSignupModel = {
-  sendUserEmailConfirmation: moo.Endpoint<
+  sendUserEmailConfirmation: moo.model.type.endpoint<
     [
       'async',
       {

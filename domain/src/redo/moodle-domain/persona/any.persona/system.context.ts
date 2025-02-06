@@ -1,8 +1,7 @@
-import * as moo from 'moodle-domain'
-import { Permissions, Permissions_Gate } from './system.context/permissions.scope'
+import { permissions, permissionsGate } from './system.context/permissions.scope'
 
-export type System = moo.DefContext<{ permissions: Permissions }>
+export type system = moo.persona.context<{ permissions: permissions }>
 
-export const System_Gate: moo.Gate_Context<System> = {
-  permissions: Permissions_Gate,
+export const systemGate: moo.gate.context<system> = {
+  permissions: permissionsGate,
 }

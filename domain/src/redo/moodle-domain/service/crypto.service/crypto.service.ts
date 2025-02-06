@@ -1,10 +1,9 @@
 import { plain_password, signed_token } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
-import * as moo from 'moodle-domain'
 import { TYPE_INVALID_TOKEN } from './consts'
 
-export type crypto = moo.DefService<{
-  model: moo.DefModel<TokenModel>
+export type crypto = moo.service<{
+  model: moo.model<TokenModel>
   tokens: never
 }>
 
@@ -12,10 +11,10 @@ export type TokenModel = {
   serviceToken: {
     [audience_serviceName in keyof moo.Services]: {
       [tokenType in keyof moo.Services[audience_serviceName]['tokens']]: {
-        sign: moo.Endpoint<
+        sign: moo.model.type.endpoint<
           ['query', { data: moo.Services[audience_serviceName]['tokens'][tokenType] }, { token: signed_token }]
         >
-        validate: moo.Endpoint<
+        validate: moo.model.type.endpoint<
           [
             'query',
             { token: signed_token },
@@ -27,8 +26,8 @@ export type TokenModel = {
   }
   hashing: {
     password: {
-      hash: moo.Endpoint<['query', { plainPassword: plain_password }, { hash: string }]>
-      verify: moo.Endpoint<['query', { plainPassword: plain_password; hash: string }, { valid: boolean }]>
+      hash: moo.model.type.endpoint<['query', { plainPassword: plain_password }, { hash: string }]>
+      verify: moo.model.type.endpoint<['query', { plainPassword: plain_password; hash: string }, { valid: boolean }]>
     }
   }
 }

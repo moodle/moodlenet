@@ -1,8 +1,5 @@
-import * as moo from 'moodle-domain'
-import { Read, Read_Gate } from './permissions.scope/read.usecase'
+import { read, readGate } from './permissions.scope/read.usecase'
 
-export type Permissions = moo.DefScope<{ read: Read }>
+export type permissions = moo.persona.scope<{ read: read }>
 
-export const Permissions_Gate: moo.Gate_Scope<Permissions> = {
-  read: Read_Gate,
-}
+export const permissionsGate: moo.gate.scope<permissions> = { read: readGate }

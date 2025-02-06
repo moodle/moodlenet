@@ -1,6 +1,6 @@
 import { integer_schema } from '@moodle/lib-types'
 import { object, string } from 'zod'
-import { makeGateProxy } from '../lib/gateProxy'
+import { makeGateProxy } from '../moo/lib/gateProxy'
 import { Gate } from '../moodle-domain/gate'
 
 const _ = makeGateProxy({
