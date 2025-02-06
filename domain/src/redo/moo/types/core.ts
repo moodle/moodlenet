@@ -6,14 +6,14 @@ import { ZodType } from 'zod'
 
 declare global {
   namespace moo {
-    type core = (ctx: core.ctx) => moo.gate<false>
+    type core = (ctx: core.ctx) => moo.gate.user
     namespace core {
       type ctx = {
         model: Model
         over: <typeModelRef extends model.type>(
           typeModelRef: typeModelRef | undefined,
         ) => typeModelRefOpMap_impl<typeModelRef>
-        permissions: permissions
+        permissions: permissions.user
       }
 
       type endpoint<endpoint_ extends persona.endpoint> = (

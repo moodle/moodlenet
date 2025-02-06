@@ -7,16 +7,6 @@ const _ = makeGateProxy({
   gateProvider: Gate,
   messageDispatcher: async () => null,
   permissions: {
-    anonymous: {
-      access: {
-        signup: {
-          withMyEmail: {
-            submitSignup: {},
-            confirmMyEmail: {},
-          },
-        },
-      },
-    },
     any: {
       _: {
         general: {
@@ -27,11 +17,12 @@ const _ = makeGateProxy({
           },
         },
       },
-      system: {
-        permissions: {
-          read: {
-            getMine: {},
-          },
+      system: { permissions: { read: { getMine: {} } } },
+    },
+    anonymous: {
+      access: {
+        signup: {
+          withMyEmail: { confirmMyEmail: {}, submitSignupForm: {} },
         },
       },
     },
@@ -41,7 +32,7 @@ const _ = makeGateProxy({
 const ce = _.anonymous?.access?.signup?.withMyEmail?.confirmMyEmail?.zod.safeParse({})
 ce?.data?.signupEmailVerificationToken
 ce?.error
-const sig = _.anonymous?.access?.signup?.withMyEmail?.submitSignup?.zod.safeParse({})
+const sig = _.anonymous?.access?.signup?.withMyEmail?.submitSignupForm?.zod.safeParse({})
 sig?.error
 sig?.data?.email
 const xx = object({ a: string() }).safeParse({})

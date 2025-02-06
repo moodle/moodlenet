@@ -8,5 +8,5 @@ export type AccessControlModel = {
 }
 
 type ConfigsSpace = {
-  permissions: moo.model.type.entityData<'w', moo.permissions>
+  permissions: moo.model.type.entityData<'w', moo.permissions.configs>
 }

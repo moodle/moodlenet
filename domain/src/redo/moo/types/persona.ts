@@ -4,31 +4,27 @@ import type { ZodType } from 'zod'
 
 declare global {
   namespace moo {
-    type persona<personaDef extends PersonaDef = PersonaDef, _ extends serializable_object | undefined = any_> = withDir<
-      personaDef,
-      _
-    >
+    type persona<personaDef extends PersonaDef, _ extends serializable_object = never> = withDir<personaDef, _>
 
     namespace persona {
-      type dir<T> = { _: T extends withDir<unknown, any_> ? T[typeof _] : undefined }
+      type dirProp = typeof _
+      type dir<T> = T extends { [_]?: never } ? { _?: never } : T extends { [_]: infer dir } ? { _: dir } : never
 
-      type keysof<T> = Exclude<keyof T, _>
-
-      type _ = typeof _
+      type keysof<T> = Exclude<keyof T, dirProp>
 
       type context<
         contextScopesDef extends ContextDef = ContextDef,
-        _ extends serializable_object | undefined = any_,
+        _ extends serializable_object | undefined = undefined,
       > = withDir<contextScopesDef, _>
 
-      type scope<scopeUseCasesDef extends ScopeDef = ScopeDef, _ extends serializable_object | undefined = any_> = withDir<
-        scopeUseCasesDef,
-        _
-      >
+      type scope<
+        scopeUseCasesDef extends ScopeDef = ScopeDef,
+        _ extends serializable_object | undefined = undefined,
+      > = withDir<scopeUseCasesDef, _>
 
       type usecase<
         useCaseEndpointsDef extends UseCaseDef = UseCaseDef,
-        _ extends serializable_object | undefined = any_,
+        _ extends serializable_object | undefined = undefined,
       > = withDir<useCaseEndpointsDef, _>
 
       type endpoint<useCaseEndpoint extends EndpointDef = EndpointDef> = [
@@ -55,4 +51,5 @@ type UseCaseDef = map<EndpointDef>
 type EndpointDef = [message: zodTypeOrProvider, outcome: any_, directives: serializable | undefined]
 
 type withDir<T, _> = T & { [_]: _ }
+
 declare const _: unique symbol

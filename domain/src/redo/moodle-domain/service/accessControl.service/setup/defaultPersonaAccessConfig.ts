@@ -1,58 +1,32 @@
-export const defaultpermissionsConfig: moo.permissions<true> = {
-  admin: {
-    directives: null,
-    scope: {},
-  },
+import { integer_schema } from '@moodle/lib-types'
+
+export const defaultpermissionsConfig: moo.permissions.configs = {
+  admin: {},
+  authenticated: {},
   anonymous: {
-    directives: null,
-    scope: {
-      signupToTheSystem: {
-        directives: null,
-        useCase: {
-          fooSignup: {
-            directives: { a: '' },
-          },
-          signupWithMyEmail: {
-            directives: null,
-          },
+    access: {
+      signup: {
+        withMyEmail: {
+          confirmMyEmail: {},
+          submitSignupForm: {},
         },
       },
     },
   },
   any: {
-    directives: {
+    _: {
       general: {
-        user: {
-          displayName: { max: 100, min: 2, regex: null },
-          email: { max: 100 },
-          password: { max: 100, min: 8, regex: null },
+        userDataConfigs: {
+          displayName: { max: integer_schema.parse(100), min: integer_schema.parse(2) },
+          email: { max: integer_schema.parse(100) },
+          password: { max: integer_schema.parse(100), min: integer_schema.parse(8) },
         },
       },
     },
-    scope: {
-      systemAccess: {
-        directives: null,
-        useCase: {
-          permissions: {
-            directives: null,
-          },
-        },
-      },
-    },
-  },
-  authenticated: {
-    directives: null,
-    scope: {},
-  },
-  fooPersona: {
-    directives: null,
-    scope: {
-      fooscope: {
-        directives: null,
-        useCase: {
-          some: {
-            directives: null,
-          },
+    system: {
+      permissions: {
+        read: {
+          getMine: {},
         },
       },
     },

@@ -18,7 +18,6 @@ declare global {
 
         type opType = 'sync' | 'async' | 'query'
         type opDef = [type: opType, message: any_, outcome: any_]
-        // FIX: ModelOpDef=> TypeModelOpDef
 
         type idSpaceMap<space_shape, filters extends map = map, space_ops extends ops = ops, ops_ extends ops = ops> =
           modelSpace<space_shape, space_ops> extends infer idSpace

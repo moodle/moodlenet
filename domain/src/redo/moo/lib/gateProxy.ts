@@ -1,7 +1,6 @@
 import { any_, unsupportedProxyHandler } from '@moodle/lib-types'
 import { isLeft } from 'fp-ts/Either'
 import { Error4xx } from '../../../types'
-import { messageDispatcher } from '../../lib/types'
 
 const INSPECT_SYM = Symbol('GateProxy inspect symbol')
 
@@ -10,11 +9,11 @@ export function makeGateProxy({
   messageDispatcher,
   gateProvider,
 }: {
-  permissions: moo.permissions
-  gateProvider: moo.Gate
-  messageDispatcher: messageDispatcher
+  permissions: moo.permissions.user
+  gateProvider: moo.gate.provider
+  messageDispatcher: moo.gate.messageDispatcher
 }) {
-  return gateProxy(gateProvider, permissions, []) as unknown as moo.Gate<false>
+  return gateProxy(gateProvider, permissions, []) as unknown as moo.gate.user
   function gateProxy(_sub_gateProvider: any_, _sub_permissions: any_, path: string[]) {
     return new Proxy(() => null, {
       ...unsupportedProxyHandler,
@@ -68,8 +67,8 @@ export function makeGateProxy({
             `)
         }
 
-        const gate_Endpoint_Provider: moo.gate.endpointProvider<moo.model.type.endpointDef> = _next_sub_gateProvider
-        const permissions_Endpoint: moo.permissions.Endpoint<moo.model.type.endpointDef> = _next_sub_permissions
+        const gate_Endpoint_Provider: moo.gate.endpointProvider<moo.persona.endpoint> = _next_sub_gateProvider
+        const permissions_Endpoint: moo.permissions.Endpoint<moo.persona.endpoint> = _next_sub_permissions
 
         const directives = ((permissions_Endpoint as any_) ?? {})._
 
@@ -77,7 +76,7 @@ export function makeGateProxy({
         if (isLeft(e_gate_enpoint)) {
           return undefined
         }
-        const gate_endpoint: moo.Gate_Endpoint<any_, false> = {
+        const gate_endpoint: moo.gate.endpoint<any_, false> = {
           ...e_gate_enpoint.right,
           call: payload => messageDispatcher({ path: _next_path, payload }),
         }

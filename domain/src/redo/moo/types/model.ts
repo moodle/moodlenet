@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { map } from '@moodle/lib-types'
-import type { OPS } from '../lib/constants'
 
 declare global {
   namespace moo {
     type model<modelDef extends map = map> = modelDef
     namespace model {
-      // type ___<typeModelRef extends TypeModel<TypeModelTraits>> = Exclude<typeModelRef, undefined>
+      type OPS = '#'
+
       type impl<baseModelNode = Services> = {
-        [k in keyof baseModelNode]: baseModelNode[k] extends infer modelNode
-          ? modelNode extends type<type.traitsDef>
+        [modelNodePropName in keyof baseModelNode]: baseModelNode[modelNodePropName] extends infer modelNode
+          ? /* ? wideProvider<
+              modelNode extends type<type.traitsDef> ? impl.typeModel<modelNode> : impl<modelNode>,
+              [modelNodePropName]
+            > */
+            modelNode extends type<type.traitsDef>
             ? impl.typeModel<modelNode>
             : impl<modelNode>
           : never // or maybe `unknown` instead ?

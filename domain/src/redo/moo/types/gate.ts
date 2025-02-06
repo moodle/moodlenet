@@ -7,19 +7,22 @@ import { error4xx } from '../lib/access-error'
 
 declare global {
   namespace moo {
-    type gate<provider extends boolean = true> = {
-      [personaType in persona.keysof<Personas>]: gate.persona<Personas[personaType], provider>
+    type gate<provider extends boolean> = {
+      [personaType in keyof Personas]: gate.persona<Personas[personaType], provider>
     }
     namespace gate {
-      type persona<moopersona extends moo.persona, provider extends boolean = true> =
+      type provider = gate<true>
+      type user = gate<false>
+
+      type persona<persona_ extends moo.persona<any_, any_>, provider extends boolean> =
         | {
-            [contextName in persona.keysof<moopersona>]: moopersona[contextName] extends moo.persona.context
-              ? context<moopersona[contextName], provider>
+            [contextName in persona.keysof<persona_>]: persona_[contextName] extends moo.persona.context
+              ? context<persona_[contextName], provider>
               : unknown
           }
         | (provider extends false ? undefined : never)
 
-      type context<context extends moo.persona.context, provider extends boolean = true> =
+      type context<context extends moo.persona.context, provider extends boolean> =
         | {
             [scopeName in persona.keysof<context>]: context[scopeName] extends moo.persona.scope
               ? scope<context[scopeName], provider>
@@ -27,7 +30,7 @@ declare global {
           }
         | (provider extends false ? undefined : never)
 
-      type scope<scope extends moo.persona.scope, provider extends boolean = true> =
+      type scope<scope extends moo.persona.scope, provider extends boolean> =
         | {
             [useCaseName in persona.keysof<scope>]: scope[useCaseName] extends moo.persona.usecase
               ? usecase<scope[useCaseName], provider>
@@ -35,7 +38,7 @@ declare global {
           }
         | (provider extends false ? undefined : never)
 
-      type usecase<useCase extends moo.persona.usecase, provider extends boolean = true> =
+      type usecase<useCase extends moo.persona.usecase, provider extends boolean> =
         | {
             [endpointName in persona.keysof<useCase>]: provider extends false
               ? endpoint<persona.endpoint<useCase[endpointName]>, false>
@@ -45,10 +48,10 @@ declare global {
 
       type endpointProvider<useCaseEndpoint extends moo.persona.endpoint> = (_: {
         directives: useCaseEndpoint[2]
-        permissions: permissions
+        permissions: permissions.user
       }) => Either<error4xx, endpoint<useCaseEndpoint, true>>
 
-      type endpoint<useCaseEndpoint extends moo.persona.endpoint, provider extends boolean = true> =
+      type endpoint<useCaseEndpoint extends moo.persona.endpoint, provider extends boolean> =
         | ({
             zod: endpointZod<useCaseEndpoint>
           } & (provider extends false ? { call: endpointCall<useCaseEndpoint> } : unknown))
