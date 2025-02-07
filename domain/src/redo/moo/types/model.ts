@@ -6,8 +6,6 @@ declare global {
   namespace moo {
     type model<modelDef extends map = map> = modelDef
     namespace model {
-      type OPS = '#'
-
       type impl<baseModelNode = Services> = {
         [modelNodePropName in keyof baseModelNode]: baseModelNode[modelNodePropName] extends infer modelNode
           ? /* ? wideProvider<
@@ -22,9 +20,9 @@ declare global {
 
       namespace impl {
         type typeModel<modelNode extends type<type.traitsDef>> = {
-          [op in OPS]: ops<modelNode>
+          $: ops<modelNode>
         } & (modelNode extends type.idSpaceMap<infer space_shape, infer space_ops>
-          ? { _: (id: string) => typeModel<type.modelSpace<space_shape, space_ops>> }
+          ? { '#': (id: string) => typeModel<type.modelSpace<space_shape, space_ops>> }
           : impl<Omit<modelNode, type.traits_prop>>)
 
         type ops<modelNode extends type<type.traitsDef>> = {

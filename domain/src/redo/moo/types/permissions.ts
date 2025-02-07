@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import '@moodle/lib-types'
-import { any_, map } from '@moodle/lib-types'
+import { any_ } from '@moodle/lib-types'
 
 declare global {
   namespace moo {
@@ -13,35 +13,36 @@ declare global {
     namespace permissions {
       type configs = permissions<false>
       type user = permissions<true>
-      type persona<persona_ extends moo.persona<any_, any_>, partial extends boolean> = persona.dir<persona_> & {
+      type persona<persona_ extends moo.persona<any_, any_>, partial extends boolean> = dir_tag<persona_> & {
         [contextName in persona.keysof<persona_>]:
           | (partial extends true ? undefined : never)
           | (persona_[contextName] extends moo.persona.context ? permissions.context<persona_[contextName], partial> : never)
       }
 
-      type context<context extends moo.persona.context, partial extends boolean> = persona.dir<context> & {
+      type context<context extends moo.persona.context, partial extends boolean> = dir_tag<context> & {
         [scopeName in persona.keysof<context>]:
           | (partial extends true ? undefined : never)
           | (context[scopeName] extends moo.persona.scope ? permissions.scope<context[scopeName], partial> : never)
       }
 
-      type scope<scope extends moo.persona.scope, partial extends boolean> = persona.dir<scope> & {
+      type scope<scope extends moo.persona.scope, partial extends boolean> = dir_tag<scope> & {
         [useCaseName in persona.keysof<scope>]:
           | (partial extends true ? undefined : never)
           | (scope[useCaseName] extends moo.persona.usecase ? permissions.UseCase<scope[useCaseName], partial> : never)
       }
 
-      type UseCase<useCase extends moo.persona.usecase, partial extends boolean> = persona.dir<useCase> & {
+      type UseCase<useCase extends moo.persona.usecase, partial extends boolean> = dir_tag<useCase> & {
         [endpointName in persona.keysof<useCase>]:
           | (partial extends true ? undefined : never)
           | permissions.Endpoint<persona.endpoint<useCase[endpointName]>>
       }
 
-      type Endpoint<useCaseEndpoint extends moo.persona.endpoint> = useCaseEndpoint[2] extends undefined | void
-        ? map
+      type Endpoint<useCaseEndpoint extends moo.persona.endpoint> = useCaseEndpoint[2] extends undefined | void | never
+        ? Record<string, never>
         : {
             _: useCaseEndpoint[2]
           }
     }
   }
 }
+type dir_tag<T> = moo.persona.dirType<T> extends never ? { _?: never } : { _: moo.persona.dirType<T> }

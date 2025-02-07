@@ -4,28 +4,34 @@ import type { ZodType } from 'zod'
 
 declare global {
   namespace moo {
-    type persona<personaDef extends PersonaDef, _ extends serializable_object = never> = withDir<personaDef, _>
+    type persona<personaDef extends PersonaDef, directives extends serializable_object = never> = dir_sym_tag<directives> &
+      personaDef
 
     namespace persona {
-      type dirProp = typeof _
-      type dir<T> = T extends { [_]?: never } ? { _?: never } : T extends { [_]: infer dir } ? { _: dir } : never
+      type dirProp = typeof directivesSym
+
+      type dirType<T> = T extends { [directivesSym]?: never }
+        ? never
+        : T extends { [directivesSym]: infer dir }
+          ? dir
+          : never
 
       type keysof<T> = Exclude<keyof T, dirProp>
 
       type context<
         contextScopesDef extends ContextDef = ContextDef,
-        _ extends serializable_object | undefined = undefined,
-      > = withDir<contextScopesDef, _>
+        directives extends serializable_object | undefined = undefined,
+      > = dir_sym_tag<directives> & contextScopesDef
 
       type scope<
         scopeUseCasesDef extends ScopeDef = ScopeDef,
-        _ extends serializable_object | undefined = undefined,
-      > = withDir<scopeUseCasesDef, _>
+        directives extends serializable_object | undefined = undefined,
+      > = dir_sym_tag<directives> & scopeUseCasesDef
 
       type usecase<
         useCaseEndpointsDef extends UseCaseDef = UseCaseDef,
-        _ extends serializable_object | undefined = undefined,
-      > = withDir<useCaseEndpointsDef, _>
+        directives extends serializable_object | undefined = undefined,
+      > = dir_sym_tag<directives> & useCaseEndpointsDef
 
       type endpoint<useCaseEndpoint extends EndpointDef = EndpointDef> = [
         epType<useCaseEndpoint[0]>,
@@ -50,6 +56,6 @@ type ScopeDef = map<UseCaseDef>
 type UseCaseDef = map<EndpointDef>
 type EndpointDef = [message: zodTypeOrProvider, outcome: any_, directives: serializable | undefined]
 
-type withDir<T, _> = T & { [_]: _ }
+type dir_sym_tag<directives> = { [directivesSym]: directives }
 
-declare const _: unique symbol
+declare const directivesSym: unique symbol
