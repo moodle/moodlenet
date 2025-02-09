@@ -8,7 +8,9 @@ import { NONE_ASSET } from '../../../../../../moo/lib/content/asset'
 import { SUBMITTED } from '../../../../../../moo/lib/constants'
 
 export const confirmMyEmailCore: moo.core.endpoint<confirmMyEmail> = async (confirmEmailForm, _) => {
-  const e_validatedToken = await _.over(_.model.crypto.serviceToken.emailSignup.emailConfirmationToken.validate).call.query({
+  const e_validatedToken = await _.over(
+    _.model.signedTokens.anonymous.access.signup.withMyEmail.emailConfirmationToken.validate,
+  ).call.query({
     token: confirmEmailForm.signupEmailVerificationToken,
   })
 

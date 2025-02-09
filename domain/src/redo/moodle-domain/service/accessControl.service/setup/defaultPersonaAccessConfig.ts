@@ -1,8 +1,8 @@
 import { integer_schema } from '@moodle/lib-types'
 
 export const defaultpermissionsConfig: moo.permissions.configs = {
-  admin: {},
-  authenticated: {},
+  // admin: {},
+  // authenticated: {},
   anonymous: {
     access: {
       signup: {

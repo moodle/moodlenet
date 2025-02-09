@@ -3,7 +3,6 @@ import { UserDataConfigs } from '../../persona/any.persona/any.persona'
 
 export type userAccount = moo.service<{
   model: moo.model<UserAccountModel>
-  tokens: never
 }>
 
 export type profileInfo = {

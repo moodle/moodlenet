@@ -30,9 +30,9 @@ export const status_list_4xx = [
   ['Payment Required', 402],
   ['Forbidden', 403],
   ['Not Found', 404],
-  ['Method Not Allowed', 405],
+  // ['Method Not Allowed', 405],
   ['Not Acceptable', 406],
-  ['Proxy Authentication Required', 407],
+  // ['Proxy Authentication Required', 407],
   ['Request Timeout', 408],
   ['Conflict', 409],
   ['Gone', 410],
@@ -52,7 +52,7 @@ export const status_list_4xx = [
   ['Upgrade Required', 426],
   ['Precondition Required', 428],
   ['Too Many Requests', 429],
-  ['Request Header Fields Too Large', 431],
+  // ['Request Header Fields Too Large', 431],
   ['Unavailable For Legal Reasons', 451],
 ] as const
 // export const status_list_5xx = [

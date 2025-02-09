@@ -1,37 +1,23 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import type { any_, map, serializable, serializable_object } from '@moodle/lib-types'
 import type { ZodType } from 'zod'
-
 declare global {
   namespace moo {
-    type persona<personaDef extends PersonaDef, directives extends serializable_object = never> = dir_sym_tag<directives> &
-      personaDef
+    type persona<personaDef extends PersonaDef> = personaDef
 
     namespace persona {
-      type dirProp = typeof directivesSym
+      type withDirectives = { [moo.persona.directives]?: serializable_object }
+      const directives: unique symbol
+      namespace usecase {
+        type withServices = { [moo.persona.usecase.services]?: Partial<map<map<serializable_object>, moo.services>> }
+        const services: unique symbol
+      }
 
-      type dirType<T> = T extends { [directivesSym]?: never }
-        ? never
-        : T extends { [directivesSym]: infer dir }
-          ? dir
-          : never
+      type context<contextScopesDef extends ContextDef = ContextDef> = contextScopesDef
 
-      type keysof<T> = Exclude<keyof T, dirProp>
+      type scope<scopeUseCasesDef extends ScopeDef = ScopeDef> = scopeUseCasesDef
 
-      type context<
-        contextScopesDef extends ContextDef = ContextDef,
-        directives extends serializable_object | undefined = undefined,
-      > = dir_sym_tag<directives> & contextScopesDef
-
-      type scope<
-        scopeUseCasesDef extends ScopeDef = ScopeDef,
-        directives extends serializable_object | undefined = undefined,
-      > = dir_sym_tag<directives> & scopeUseCasesDef
-
-      type usecase<
-        useCaseEndpointsDef extends UseCaseDef = UseCaseDef,
-        directives extends serializable_object | undefined = undefined,
-      > = dir_sym_tag<directives> & useCaseEndpointsDef
+      type usecase<useCaseEndpointsDef extends UseCaseDef = UseCaseDef> = useCaseEndpointsDef
 
       type endpoint<useCaseEndpoint extends EndpointDef = EndpointDef> = [
         epType<useCaseEndpoint[0]>,
@@ -49,13 +35,14 @@ type epType<T extends zodTypeOrProvider> = T extends ZodType
     ? ReturnType<T>
     : never
 
-type ContextDef = Partial<map<moo.persona.scope>> //, moo.scopes>>
-type PersonaDef = Partial<map<moo.persona.context>> //, moo.contexts>>
-type ScopeDef = map<UseCaseDef>
+type PersonaDef = /* Partial< */ map<ContextDef & moo.persona.withDirectives> // ,moo.contexts>>
+type ContextDef = /* Partial< */ map<ScopeDef & moo.persona.withDirectives> // ,moo.scopes>>
+type ScopeDef = map<UseCaseDef & moo.persona.withDirectives>
+type UseCaseDef = map<EndpointDef & moo.persona.withDirectives & moo.persona.usecase.withServices>
 
-type UseCaseDef = map<EndpointDef>
 type EndpointDef = [message: zodTypeOrProvider, outcome: any_, directives: serializable | undefined]
 
-type dir_sym_tag<directives> = { [directivesSym]: directives }
 
-declare const directivesSym: unique symbol
+
+
+

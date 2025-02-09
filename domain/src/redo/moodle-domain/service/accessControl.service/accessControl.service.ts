@@ -1,6 +1,5 @@
 export type accessControl = moo.service<{
   model: moo.model<AccessControlModel>
-  tokens: never
 }>
 
 export type AccessControlModel = {

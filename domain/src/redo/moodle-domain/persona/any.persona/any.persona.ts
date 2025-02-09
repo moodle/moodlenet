@@ -2,7 +2,7 @@ import { email_address_schema, plain_password_schema, single_line_string_schema,
 import { string } from 'zod'
 import { system, systemGate } from './system.context'
 
-export type any__ = moo.persona<{ system: system }, { general: GeneralDirectives }>
+export type any__ = moo.persona<{ system: system; [moo.persona.directives]: { general: GeneralDirectives } }>
 
 export const anyGate: moo.gate.persona<any__> = {
   system: systemGate,

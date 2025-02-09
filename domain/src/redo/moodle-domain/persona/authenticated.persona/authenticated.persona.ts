@@ -1,1 +1,3 @@
-export type authenticated = moo.persona<never>
+export type authenticated = moo.persona<{
+  [moo.persona.directives]: { userId: string }
+}>

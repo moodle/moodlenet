@@ -14,33 +14,33 @@ declare global {
       type provider = gate<true>
       type user = gate<false>
 
-      type persona<persona_ extends moo.persona<any_, any_>, provider extends boolean> =
+      type persona<persona_ extends moo.persona<any_>, provider extends boolean = true> =
         | {
-            [contextName in persona.keysof<persona_>]: persona_[contextName] extends moo.persona.context
+            [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context
               ? context<persona_[contextName], provider>
               : unknown
           }
         | (provider extends false ? undefined : never)
 
-      type context<context extends moo.persona.context, provider extends boolean> =
+      type context<context extends moo.persona.context, provider extends boolean = true> =
         | {
-            [scopeName in persona.keysof<context>]: context[scopeName] extends moo.persona.scope
+            [scopeName in string & keyof context]: context[scopeName] extends moo.persona.scope
               ? scope<context[scopeName], provider>
               : unknown
           }
         | (provider extends false ? undefined : never)
 
-      type scope<scope extends moo.persona.scope, provider extends boolean> =
+      type scope<scope extends moo.persona.scope, provider extends boolean = true> =
         | {
-            [useCaseName in persona.keysof<scope>]: scope[useCaseName] extends moo.persona.usecase
+            [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.persona.usecase
               ? usecase<scope[useCaseName], provider>
               : never
           }
         | (provider extends false ? undefined : never)
 
-      type usecase<useCase extends moo.persona.usecase, provider extends boolean> =
+      type usecase<useCase extends moo.persona.usecase, provider extends boolean = true> =
         | {
-            [endpointName in persona.keysof<useCase>]: provider extends false
+            [endpointName in string & keyof useCase]: provider extends false
               ? endpoint<persona.endpoint<useCase[endpointName]>, false>
               : endpointProvider<persona.endpoint<useCase[endpointName]>>
           }
@@ -51,7 +51,7 @@ declare global {
         permissions: permissions.user
       }) => Either<error4xx, endpoint<useCaseEndpoint, true>>
 
-      type endpoint<useCaseEndpoint extends moo.persona.endpoint, provider extends boolean> =
+      type endpoint<useCaseEndpoint extends moo.persona.endpoint, provider extends boolean = true> =
         | ({
             zod: endpointZod<useCaseEndpoint>
           } & (provider extends false ? { call: endpointCall<useCaseEndpoint> } : unknown))

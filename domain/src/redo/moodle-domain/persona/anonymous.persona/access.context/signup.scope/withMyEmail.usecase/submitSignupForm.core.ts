@@ -15,11 +15,19 @@ export const submitSignupFormCore: moo.core.endpoint<submitSignupForm> = async (
     plainPassword: signupForm.password,
   })
 
-  const { token } = await _.over(_.model.crypto.serviceToken.emailSignup.emailConfirmationToken.sign).call.query({
+  const { token } = await _.over(
+    _.model.signedTokens.anonymous.access.signup.withMyEmail.emailConfirmationToken.sign,
+  ).call.query({
     data: { displayName: signupForm.displayName, email: signupForm.email, passwordHash },
   })
 
-  await _.over(_.model.mailer.send).call.async({ displayName: signupForm.displayName, email: signupForm.email, token })
+  await _.over(_.model.mailer.send.anonymous.access.signup.withMyEmail.userEmailConfirmation).call.async({
+    data: {
+      displayName: signupForm.displayName,
+      email: signupForm.email,
+      confirmationToken: token,
+    },
+  })
 
   return E.right(SUBMITTED)
 }
