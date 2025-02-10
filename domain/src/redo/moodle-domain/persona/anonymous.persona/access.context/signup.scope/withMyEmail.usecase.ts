@@ -4,7 +4,7 @@ import { submitSignupForm, submitSignupForm_Gate } from './withMyEmail.usecase/s
 export type withMyEmail = moo.persona.usecase<{
   submitSignupForm: submitSignupForm
   confirmMyEmail: confirmMyEmail
-  [moo.persona.usecase.services]: {
+  [moo.persona.usecase.modelTypes]: {
     signedTokens: {
       emailConfirmationToken: { passwordHash: string; displayName: string; email: email_address }
     }

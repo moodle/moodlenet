@@ -40,7 +40,7 @@ export function makePrimary(
 // const primary = makePrimary({} as moo.Primary<false>, async (_primaryPath, _message) => null)
 
 // primary.anonymous?.emailSignup?.signupWithMyEmail?.apply?.directives
-// const ep1 = primary.fooPersona?.fooService?.some?.ep1
+// const ep1 = primary.fooPersona?.fooModel?.some?.ep1
 // if (ep1) {
 //   ep1.directives
 //   ep1.call({ a: 1 }).then(_ => {

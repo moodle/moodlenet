@@ -1,5 +1,5 @@
 import { integer_schema } from '@moodle/lib-types'
-import { UserAccountConfigs } from './userAccount.service'
+import { UserAccountConfigs } from './userAccount.model'
 
 export const DEFAULT_USER_ACCOUNT_CONFIGS: UserAccountConfigs = {
   dataConfigs: {

@@ -1,7 +1,7 @@
 import { generateAlphanumId_withCheck } from '@moodle/lib-id-gen'
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
-import { userSpace } from '../../../../../service/userAccount.service/userAccount.service'
+import { userSpace } from '../../../../../model/userAccount.model/userAccount.model'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 import { confirmMyEmail } from './confirmMyEmail.endpoint'
 import { NONE_ASSET } from '../../../../../../moo/lib/content/asset'

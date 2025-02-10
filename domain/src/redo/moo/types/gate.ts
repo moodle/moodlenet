@@ -8,7 +8,7 @@ import { error4xx } from '../lib/access-error'
 declare global {
   namespace moo {
     type gate<provider extends boolean> = {
-      [personaType in keyof Personas]: gate.persona<Personas[personaType], provider>
+      [personaType_ in personaType]: gate.persona<Personas[personaType_], provider>
     }
     namespace gate {
       type provider = gate<true>

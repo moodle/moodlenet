@@ -5,7 +5,7 @@
 // declare global {
 //   namespace moo {
 //     type Primary = {
-//       [personaType in keyof Personas]: Primary_Personas<Personas[personaType]>
+//       [personaType in personaType]: Primary_Personas<Personas[personaType]>
 //     }
 
 //     type Primary_Personas<persona extends DefPersona> = {

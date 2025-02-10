@@ -9,7 +9,7 @@ declare global {
     type core = (ctx: core.ctx) => moo.gate.user
     namespace core {
       type ctx = {
-        model: Model
+        model: Models
         over: <typeModelRef extends model.type>(
           typeModelRef: typeModelRef | undefined,
         ) => typeModelRefOpMap_impl<typeModelRef>

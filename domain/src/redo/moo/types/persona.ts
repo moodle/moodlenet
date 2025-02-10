@@ -9,8 +9,8 @@ declare global {
       type withDirectives = { [moo.persona.directives]?: serializable_object }
       const directives: unique symbol
       namespace usecase {
-        type withServices = { [moo.persona.usecase.services]?: Partial<map<map<serializable_object>, moo.services>> }
-        const services: unique symbol
+        type withModelTypes = { [moo.persona.usecase.modelTypes]?: Partial<map<map<serializable_object>, moo.modelName>> }
+        const modelTypes: unique symbol
       }
 
       type context<contextScopesDef extends ContextDef = ContextDef> = contextScopesDef
@@ -38,7 +38,7 @@ type epType<T extends zodTypeOrProvider> = T extends ZodType
 type PersonaDef = /* Partial< */ map<ContextDef & moo.persona.withDirectives> // ,moo.contexts>>
 type ContextDef = /* Partial< */ map<ScopeDef & moo.persona.withDirectives> // ,moo.scopes>>
 type ScopeDef = map<UseCaseDef & moo.persona.withDirectives>
-type UseCaseDef = map<EndpointDef & moo.persona.withDirectives & moo.persona.usecase.withServices>
+type UseCaseDef = map<EndpointDef & moo.persona.withDirectives & moo.persona.usecase.withModelTypes>
 
 type EndpointDef = [message: zodTypeOrProvider, outcome: any_, directives: serializable | undefined]
 

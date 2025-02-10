@@ -1,8 +1,6 @@
 import { plain_password,  } from '@moodle/lib-types'
 
-export type crypto = moo.service<{
-  model: moo.model<CryptoModel>
-}>
+export type crypto = moo.model<CryptoModel>
 
 export type CryptoModel = {
   hashing: {

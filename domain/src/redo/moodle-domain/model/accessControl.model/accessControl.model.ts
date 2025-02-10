@@ -1,6 +1,4 @@
-export type accessControl = moo.service<{
-  model: moo.model<AccessControlModel>
-}>
+export type accessControl = moo.model<AccessControlModel>
 
 export type AccessControlModel = {
   configs: moo.model.type.idSpaceMap<ConfigsSpace>

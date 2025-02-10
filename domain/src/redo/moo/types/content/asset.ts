@@ -38,7 +38,7 @@ declare global {
           'status'
         >
 
-        type adoptService<accepts extends adoptForm['type'] = adoptForm['type']> = (
+        type adoptModel<accepts extends adoptForm['type'] = adoptForm['type']> = (
           adoptAssetForm: d_u__d<adoptForm, 'type', accepts>,
         ) => Promise<adoptResult>
       }

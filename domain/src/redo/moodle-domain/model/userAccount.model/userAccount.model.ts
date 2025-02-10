@@ -1,9 +1,7 @@
 import { email_address } from '@moodle/lib-types'
 import { UserDataConfigs } from '../../persona/any.persona/any.persona'
 
-export type userAccount = moo.service<{
-  model: moo.model<UserAccountModel>
-}>
+export type userAccount = moo.model<UserAccountModel>
 
 export type profileInfo = {
   displayName: string

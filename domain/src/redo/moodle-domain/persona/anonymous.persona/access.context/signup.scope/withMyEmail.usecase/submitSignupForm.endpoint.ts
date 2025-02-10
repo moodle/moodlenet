@@ -3,10 +3,10 @@ import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import { flow } from 'fp-ts/function'
 import { object } from 'zod'
-import { error4xx } from '../../../../../../../types'
 import { UserDataConfigs, userDataZodSchemas } from '../../../../any.persona/any.persona'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 import { SUBMITTED } from '../../../../../../moo/lib/constants'
+import { error4xx } from '../../../../../../moo/lib/access-error'
 
 export type submitSignupForm = moo.persona.endpoint<
   [typeof signupFormZodSchema, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>, undefined]

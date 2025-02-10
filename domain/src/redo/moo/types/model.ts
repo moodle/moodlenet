@@ -6,7 +6,7 @@ declare global {
   namespace moo {
     type model<modelDef extends map = map> = modelDef
     namespace model {
-      type impl<baseModelNode = Services> = {
+      type impl<baseModelNode = Models> = {
         [modelNodePropName in keyof baseModelNode]: baseModelNode[modelNodePropName] extends infer modelNode
           ? /* ? wideProvider<
               modelNode extends type<type.traitsDef> ? impl.typeModel<modelNode> : impl<modelNode>,

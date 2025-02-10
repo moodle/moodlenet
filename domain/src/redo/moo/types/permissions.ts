@@ -6,9 +6,9 @@ import { any_ } from '@moodle/lib-types'
 declare global {
   namespace moo {
     type permissions<partial extends boolean> = {
-      [personaType in keyof Personas]:
+      [personaType_ in personaType]:
         | (partial extends true ? undefined : never)
-        | permissions.persona<Personas[personaType], partial>
+        | permissions.persona<Personas[personaType_], partial>
     }
     namespace permissions {
       type configs = permissions<false>
