@@ -43,7 +43,7 @@ export class Error4xx extends Error {
   }
 }
 
-export function assertWithError4xx<assertionObj>(
+export function assert4xx<assertionObj>(
   assertionObj: assertionObj,
   code_or_desc: status4xx,
   details?: any_,

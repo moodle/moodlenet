@@ -47,8 +47,8 @@ declare global {
         | (provider extends false ? undefined : never)
 
       type endpointProvider<useCaseEndpoint extends moo.persona.endpoint> = (epGateCtx: {
-        directives: useCaseEndpoint[2]
-        permissions: permissions.user
+        configs: useCaseEndpoint[2]
+        session: session.user
       }) => Either<error4xx, endpoint<useCaseEndpoint, true>>
 
       type endpoint<useCaseEndpoint extends moo.persona.endpoint, provider extends boolean = true> =

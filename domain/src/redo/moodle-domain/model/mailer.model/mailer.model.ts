@@ -16,5 +16,5 @@ export type MailerModel = {
       }
     }
   }
-  configs: moo.model.type.staticData<'w', never>
+  configs: moo.model.type.staticData<never>
 }

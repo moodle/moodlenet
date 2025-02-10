@@ -16,7 +16,7 @@ export const submitSignupFormCore: moo.core.endpoint<submitSignupForm> = async (
   })
 
   const { token } = await _.over(
-    _.model.signedTokens.anonymous.access.signup.withMyEmail.emailConfirmationToken.sign,
+    _.model.jwtTokens.anonymous.access.signup.withMyEmail.emailConfirmationToken.sign,
   ).call.query({
     data: { displayName: signupForm.displayName, email: signupForm.email, passwordHash },
   })

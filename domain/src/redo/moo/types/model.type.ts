@@ -6,12 +6,15 @@ import type { Either } from 'fp-ts/Either'
 import type { Option } from 'fp-ts/Option'
 import type { CONDITIONS_NOT_MET, NOT_FOUND } from '../lib/constants'
 
+declare const traits_sym: unique symbol
+
 declare global {
   namespace moo {
     namespace model {
-      type type<traits extends type.traitsDef = type.traitsDef> = traits['shape'] & { [k in type.traits_prop]: traits }
+      type type<traits extends type.traitsDef = type.traitsDef> = traits['shape'] & { [traits_sym]: traits }
+
       namespace type {
-        type traits_prop = '#'
+        type traits_prop = typeof traits_sym
 
         type ops = map<opDef>
         type traitsDef = { shape: unknown; ops: ops; data: serializable_object }
@@ -55,7 +58,6 @@ declare global {
         }
 
         type entityData<
-          access extends 'r' | 'w',
           data extends serializable_object,
           opts extends { conditions?: map } = map,
           ops_ extends ops = ops,
@@ -67,23 +69,18 @@ declare global {
               void | { conditions?: opts['conditions'] },
               Either<dmesg_<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET>, data>,
             ]
-          } & (access extends 'w'
-              ? {
-                  replace: [
-                    'sync',
-                    { newData: data; conditions?: opts['conditions'] },
-                    Either<dmesg_<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET>, 'done'>,
-                  ]
-                }
-              : unknown)
+            replace: [
+              'sync',
+              { newData: data; conditions?: opts['conditions'] },
+              Either<dmesg_<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET>, 'done'>,
+            ]
+          }
           shape: unknown
         }>
 
-        type staticData<access extends 'r' | 'w', data extends serializable_object, ops_ extends ops = ops> = type<{
+        type staticData<data extends serializable_object, ops_ extends ops = ops> = type<{
           data: data
-          ops: ops_ & { get: ['query', void, data] } & (access extends 'w'
-              ? { replace: ['sync', { newData: data }, void] }
-              : unknown)
+          ops: ops_ & { get: ['query', void, data]; replace: ['sync', { newData: data }, void] }
           shape: unknown
         }>
 

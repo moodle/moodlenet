@@ -2,7 +2,7 @@ import { signed_token, signed_token_schema } from '@moodle/lib-types'
 import * as E from 'fp-ts/Either'
 import { flow } from 'fp-ts/function'
 import { object } from 'zod'
-import { TYPE_INVALID_TOKEN } from '../../../../../model/signedTokens.model/consts'
+import { TYPE_INVALID_TOKEN } from '../../../../../model/jwtTokens.model/consts'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 import { SUBMITTED } from '../../../../../../moo/lib/constants'
 

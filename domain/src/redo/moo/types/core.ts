@@ -11,9 +11,9 @@ declare global {
       type ctx = {
         model: Models
         over: <typeModelRef extends model.type>(
-          typeModelRef: typeModelRef | undefined,
+          type_model_ref: typeModelRef | undefined,
         ) => typeModelRefOpMap_impl<typeModelRef>
-        permissions: permissions.user
+        session: session.user
       }
 
       type endpoint<endpoint_ extends persona.endpoint> = (

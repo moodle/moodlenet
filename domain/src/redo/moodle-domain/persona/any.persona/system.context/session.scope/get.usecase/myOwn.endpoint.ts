@@ -1,0 +1,8 @@
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
+import { signed_token } from '@moodle/lib-types'
+import * as E from 'fp-ts/Either'
+import { void as voidz, ZodVoid } from 'zod'
+
+export type myOwn = moo.persona.endpoint<[ZodVoid, { session: moo.session.user; token: signed_token }, undefined]>
+
+export const myOwn_Gate: moo.gate.endpointProvider<myOwn> = () => E.right({ zod: voidz() })

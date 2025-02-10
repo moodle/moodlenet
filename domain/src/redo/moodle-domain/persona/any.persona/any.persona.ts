@@ -1,11 +1,11 @@
 import { email_address_schema, plain_password_schema, single_line_string_schema, valid } from '@moodle/lib-types'
 import { string } from 'zod'
-import { system, systemGate } from './system.context'
+import { system, system_Gate } from './system.context/system.context'
 
-export type any__ = moo.persona<{ system: system; [moo.persona.directives]: { general: GeneralDirectives } }>
+export type any__ = moo.persona<{ system: system; [moo.persona.configs]: { general: GeneralConfigs } }>
 
-export const anyGate: moo.gate.persona<any__> = {
-  system: systemGate,
+export const any_Gate: moo.gate.persona<any__> = {
+  system: system_Gate,
 }
 
 export type UserDataConfigs = {
@@ -14,7 +14,7 @@ export type UserDataConfigs = {
   displayName: valid.iMinMax
 }
 
-export type GeneralDirectives = {
+export type GeneralConfigs = {
   userDataConfigs: UserDataConfigs
 }
 

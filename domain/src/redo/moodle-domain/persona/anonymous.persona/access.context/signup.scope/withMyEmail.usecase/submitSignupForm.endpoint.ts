@@ -20,7 +20,7 @@ export type signupForm = {
 
 export const submitSignupForm_Gate: moo.gate.endpointProvider<submitSignupForm> = flow(
   O.some,
-  O.bind('userDataConfigs', ({ permissions }) => O.fromNullable(permissions.any?._.general.userDataConfigs)),
+  O.bind('userDataConfigs', ({ session }) => O.fromNullable(session.any?._.general.userDataConfigs)),
   O.bind('zod', flow(O.some, O.map(signupFormZodSchema))),
   E.fromOption(() => error4xx('Unauthorized')),
 )

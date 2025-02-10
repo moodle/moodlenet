@@ -9,7 +9,7 @@ import { SUBMITTED } from '../../../../../../moo/lib/constants'
 
 export const confirmMyEmailCore: moo.core.endpoint<confirmMyEmail> = async (confirmEmailForm, _) => {
   const e_validatedToken = await _.over(
-    _.model.signedTokens.anonymous.access.signup.withMyEmail.emailConfirmationToken.validate,
+    _.model.jwtTokens.anonymous.access.signup.withMyEmail.emailConfirmationToken.validate,
   ).call.query({
     token: confirmEmailForm.signupEmailVerificationToken,
   })
@@ -43,6 +43,11 @@ export const confirmMyEmailCore: moo.core.endpoint<confirmMyEmail> = async (conf
       },
       avatar: NONE_ASSET,
       background: NONE_ASSET,
+    },
+    session: {
+      personaTypes: {
+        types: ['any', 'authenticated'],
+      },
     },
   }
 

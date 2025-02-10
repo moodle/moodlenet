@@ -6,8 +6,10 @@ declare global {
     type persona<personaDef extends PersonaDef> = personaDef
 
     namespace persona {
-      type withDirectives = { [moo.persona.directives]?: serializable_object }
-      const directives: unique symbol
+      type withConfigs = { [moo.persona.configs]?: serializable_object }
+      type withContext = { [moo.persona.context]?: serializable_object }
+      const configs: unique symbol
+      const context: unique symbol
       namespace usecase {
         type withModelTypes = { [moo.persona.usecase.modelTypes]?: Partial<map<map<serializable_object>, moo.modelName>> }
         const modelTypes: unique symbol
@@ -35,12 +37,12 @@ type epType<T extends zodTypeOrProvider> = T extends ZodType
     ? ReturnType<T>
     : never
 
-type PersonaDef = /* Partial< */ map<ContextDef & moo.persona.withDirectives> // ,moo.contexts>>
-type ContextDef = /* Partial< */ map<ScopeDef & moo.persona.withDirectives> // ,moo.scopes>>
-type ScopeDef = map<UseCaseDef & moo.persona.withDirectives>
-type UseCaseDef = map<EndpointDef & moo.persona.withDirectives & moo.persona.usecase.withModelTypes>
+type PersonaDef = /* Partial< */ map<ContextDef & moo.persona.withConfigs & moo.persona.withContext> // ,moo.contexts>>
+type ContextDef = /* Partial< */ map<ScopeDef & moo.persona.withConfigs> // ,moo.scopes>>
+type ScopeDef = map<UseCaseDef & moo.persona.withConfigs>
+type UseCaseDef = map<EndpointDef & moo.persona.withConfigs & moo.persona.usecase.withModelTypes>
 
-type EndpointDef = [message: zodTypeOrProvider, outcome: any_, directives: serializable | undefined]
+type EndpointDef = [message: zodTypeOrProvider, outcome: any_, configs: serializable | undefined]
 
 
 

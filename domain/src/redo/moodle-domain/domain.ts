@@ -2,9 +2,9 @@
 // import type { admin } from './persona/admin.persona/admin.persona'
 import type { anonymous } from './persona/anonymous.persona/anonymous.persona'
 import type { any__ } from './persona/any.persona/any.persona'
-// import type { authenticated } from './persona/authenticated.persona/authenticated.persona'
+import type { authenticated } from './persona/authenticated.persona/authenticated.persona'
 import type { accessControl } from '../moodle-domain/model/accessControl.model/accessControl.model'
-import type { signedTokens } from './model/signedTokens.model/signedTokens.model'
+import type { twtTokens } from './model/jwtTokens.model/jwtTokens.model'
 import type { crypto } from './model/crypto.model/crypto.model'
 import type { mailer } from '../moodle-domain/model/mailer.model/mailer.model'
 import type { moodlenet } from '../moodle-domain/model/moodlenet.model/moodlenet.model'
@@ -16,14 +16,14 @@ declare global {
       // admin: admin
       anonymous: anonymous
       any: any__
-      // authenticated: authenticated
+      authenticated: authenticated
     }
 
     interface Models {
       crypto: crypto
       userAccount: userAccount
       moodlenet: moodlenet
-      signedTokens: signedTokens
+      jwtTokens: twtTokens
       mailer: mailer
       accessControl: accessControl
     }

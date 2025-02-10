@@ -1,11 +1,11 @@
 import { email_address, signed_token } from '@moodle/lib-types'
-import { confirmMyEmail, confirmMyEmail_Gate } from './withMyEmail.usecase/confirmMyEmail.endpoint'
-import { submitSignupForm, submitSignupForm_Gate } from './withMyEmail.usecase/submitSignupForm.endpoint'
+import { confirmMyEmail, confirmMyEmail_Gate } from './confirmMyEmail.endpoint'
+import { submitSignupForm, submitSignupForm_Gate } from './submitSignupForm.endpoint'
 export type withMyEmail = moo.persona.usecase<{
   submitSignupForm: submitSignupForm
   confirmMyEmail: confirmMyEmail
   [moo.persona.usecase.modelTypes]: {
-    signedTokens: {
+    jwtTokens: {
       emailConfirmationToken: { passwordHash: string; displayName: string; email: email_address }
     }
     mailer: {
@@ -18,7 +18,7 @@ export type withMyEmail = moo.persona.usecase<{
   }
 }>
 
-export const withMyEmailGate: moo.gate.usecase<withMyEmail> = {
+export const withMyEmail_Gate: moo.gate.usecase<withMyEmail> = {
   confirmMyEmail: confirmMyEmail_Gate,
   submitSignupForm: submitSignupForm_Gate,
 }

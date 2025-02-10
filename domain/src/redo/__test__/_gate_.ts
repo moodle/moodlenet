@@ -6,7 +6,7 @@ import { Gate } from '../moodle-domain/gate'
 const _ = makeGateProxy({
   gateProvider: Gate,
   messageDispatcher: async () => null,
-  permissions: {
+  session: {
     any: {
       _: {
         general: {
@@ -17,7 +17,7 @@ const _ = makeGateProxy({
           },
         },
       },
-      system: { permissions: { read: { getMine: {} } } },
+      system: { session: { read: { getMine: {} } } },
     },
     anonymous: {
       access: {

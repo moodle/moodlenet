@@ -1,14 +1,19 @@
 import { integer_schema } from '@moodle/lib-types'
 
-export const defaultpermissionsConfig: moo.permissions.configs = {
+export const defaultSessionConfig: moo.session.configs = {
   // admin: {},
-  // authenticated: {},
+  authenticated: {},
   anonymous: {
     access: {
       signup: {
         withMyEmail: {
           confirmMyEmail: {},
           submitSignupForm: {},
+        },
+      },
+      login: {
+        withMyEmail: {
+          emailLogin: {},
         },
       },
     },
@@ -24,9 +29,9 @@ export const defaultpermissionsConfig: moo.permissions.configs = {
       },
     },
     system: {
-      permissions: {
-        read: {
-          getMine: {},
+      session: {
+        get: {
+          myOwn: {},
         },
       },
     },

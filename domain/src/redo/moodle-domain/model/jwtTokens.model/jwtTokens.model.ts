@@ -2,16 +2,16 @@ import { signed_token } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { TYPE_INVALID_TOKEN } from './consts'
 
-export type signedTokens = moo.model<SignedTokensModel>
+export type twtTokens = moo.model<JwtTokensModel>
 
-type modelUcTypes = moo.ucModelUcTypes<'signedTokens'>
+type modelUcTypes = moo.ucModelUcTypes<'jwtTokens'>
 
-export type SignedTokensModel = {
+export type JwtTokensModel = {
   [persona in keyof modelUcTypes]: {
     [ctx in keyof modelUcTypes[persona]]: {
       [scope in keyof modelUcTypes[persona][ctx]]: {
         [uc in keyof modelUcTypes[persona][ctx][scope]]: {
-          [tok in keyof modelUcTypes[persona][ctx][scope][uc]]: {
+          [tokType in keyof modelUcTypes[persona][ctx][scope][uc]]: {
             validate: moo.model.type.endpoint<
               [
                 'query',
@@ -19,7 +19,7 @@ export type SignedTokensModel = {
                 Either<
                   TYPE_INVALID_TOKEN,
                   {
-                    data: modelUcTypes[persona][ctx][scope][uc][tok]
+                    data: modelUcTypes[persona][ctx][scope][uc][tokType]
                   }
                 >,
               ]
@@ -28,7 +28,7 @@ export type SignedTokensModel = {
               [
                 'query',
                 {
-                  data: modelUcTypes[persona][ctx][scope][uc][tok]
+                  data: modelUcTypes[persona][ctx][scope][uc][tokType]
                 },
                 { token: signed_token },
               ]
