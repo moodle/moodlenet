@@ -5,23 +5,20 @@ import { flow } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import { object } from 'zod'
 import { error4xx } from '../../../../../../moo/lib/access-error'
-import { userDataConfigs } from '../../../../../model/userAccount.model/userAccount.model'
-import { generalUserDataConfigsFlow } from '../../../../any.persona/any.gates.helper'
-import { userDataZodSchemas } from '../../../../any.persona/any.persona'
+import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
 export type setNew = moo.persona.endpoint<[typeof setNewSchema, void, void]>
 
-export const setNew_Gate: moo.gate.endpointProvider<setNew> = flow(
-  generalUserDataConfigsFlow,
+export const setNew_Gate: moo.gate.endpoint<setNew> = flow(
+  O.some,
+  O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(setNewSchema))),
   E.fromOption(() => error4xx('Unauthorized')),
 )
 
-export function setNewSchema({ userDataConfigs }: { userDataConfigs: userDataConfigs }) {
-  const { plainPassword } = userDataZodSchemas(userDataConfigs)
-
+export function setNewSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {
   return object({
-    newPassword: plainPassword,
+    newPassword: anyPersonaZod.user.plainPassword,
     token: signed_token_schema,
   })
 }

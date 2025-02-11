@@ -5,12 +5,11 @@ import { flow } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import { object } from 'zod'
 import { error4xx } from '../../../../../../moo/lib/access-error'
-import { baseUserDataValidationConfigsFlow } from '../../../../any.persona/any.gates.helper'
 
 export type confirmDelete = moo.persona.endpoint<[typeof confirmDeleteSchema, void, void]>
 
 export const confirmDelete_Gate: moo.gate.endpoint<confirmDelete> = flow(
-  baseUserDataValidationConfigsFlow,
+  O.some,
   O.bind('zod', flow(O.some, O.map(confirmDeleteSchema))),
   E.fromOption(() => error4xx('Unauthorized')),
 )

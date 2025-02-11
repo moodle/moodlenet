@@ -5,23 +5,20 @@ import { flow } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import { object } from 'zod'
 import { error4xx } from '../../../../../../moo/lib/access-error'
-import { userDataConfigs } from '../../../../../model/userAccount.model/userAccount.model'
-import { generalUserDataConfigsFlow } from '../../../../any.persona/any.gates.helper'
-import { userDataZodSchemas } from '../../../../any.persona/any.persona'
+import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
 export type requestLink = moo.persona.endpoint<[typeof requestLinkSchema, void, void]>
 
-export const requestLink_Gate: moo.gate.endpointProvider<requestLink> = flow(
-  generalUserDataConfigsFlow,
+export const requestLink_Gate: moo.gate.endpoint<requestLink> = flow(
+  O.some,
+  O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(requestLinkSchema))),
   E.fromOption(() => error4xx('Unauthorized')),
 )
 
-export function requestLinkSchema({ userDataConfigs }: { userDataConfigs: userDataConfigs }) {
-  const { userEmail } = userDataZodSchemas(userDataConfigs)
-
+export function requestLinkSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {
   return object({
     redirectUrl: url_string_schema,
-    myEmail: userEmail,
+    myEmail: anyPersonaZod.user.email,
   })
 }

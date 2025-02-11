@@ -6,7 +6,7 @@ import { ZodType } from 'zod'
 
 declare global {
   namespace moo {
-    type core = (ctx: core.ctx) => moo.gate.user
+    type core = (ctx: core.ctx) => moo.gate.provider
     namespace core {
       type ctx = {
         model: Models

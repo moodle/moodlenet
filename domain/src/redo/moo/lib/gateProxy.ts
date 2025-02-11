@@ -13,7 +13,7 @@ export function makeGateProxy({
   gateProvider: moo.gate.provider
   messageDispatcher: moo.gate.messageDispatcher
 }) {
-  return gateProxy(gateProvider, session, []) as unknown as moo.gate.user
+  return gateProxy(gateProvider, session, []) as unknown as moo.gate.proxy
   function gateProxy(_sub_gateProvider: any_, _sub_session: any_, path: string[]) {
     return new Proxy(() => null, {
       ...unsupportedProxyHandler,
@@ -76,7 +76,7 @@ export function makeGateProxy({
         if (isLeft(e_gate_enpoint)) {
           return undefined
         }
-        const gate_endpoint: moo.gate.endpointProxy<any_, false> = {
+        const gate_endpoint: moo.gate.endpointAcccess<any_, true> = {
           ...e_gate_enpoint.right,
           call: payload => messageDispatcher({ path: _next_path, payload }),
         }
