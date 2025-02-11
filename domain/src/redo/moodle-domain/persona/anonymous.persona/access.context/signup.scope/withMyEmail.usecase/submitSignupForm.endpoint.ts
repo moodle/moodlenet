@@ -3,10 +3,10 @@ import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import { flow } from 'fp-ts/function'
 import { object } from 'zod'
-import { UserDataConfigs, userDataZodSchemas } from '../../../../any.persona/any.persona'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 import { SUBMITTED } from '../../../../../../moo/lib/constants'
 import { error4xx } from '../../../../../../moo/lib/access-error'
+import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
 export type submitSignupForm = moo.persona.endpoint<
   [typeof signupFormZodSchema, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>, undefined]
@@ -18,20 +18,18 @@ export type signupForm = {
   displayName: string
 }
 
-export const submitSignupForm_Gate: moo.gate.endpointProvider<submitSignupForm> = flow(
+export const submitSignupForm_Gate: moo.gate.endpoint<submitSignupForm> = flow(
   O.some,
-  O.bind('userDataConfigs', ({ session }) => O.fromNullable(session.any?._.general.userDataConfigs)),
+  O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(signupFormZodSchema))),
   E.fromOption(() => error4xx('Unauthorized')),
 )
 
-export function signupFormZodSchema({ userDataConfigs }: { userDataConfigs: UserDataConfigs }) {
-  const { password, userDisplayName, userEmail } = userDataZodSchemas(userDataConfigs)
-
+export function signupFormZodSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {
   const signupFormSchema = object({
-    email: userEmail,
-    password,
-    displayName: userDisplayName,
+    email: anyPersonaZod.user.email,
+    password: anyPersonaZod.user.plainPassword,
+    displayName: anyPersonaZod.user.displayName,
   })
 
   return signupFormSchema

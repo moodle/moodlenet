@@ -18,16 +18,32 @@ declare global {
     // }
 
     type contexts = {
-      [personaType_ in personaType]: string & Personas[personaType_]
+      [personaType_ in personaType]: string & keyof Personas[personaType_]
     } extends infer _
       ? _[keyof _] //| any_other_string
       : never
 
-    type scopes = {
+    type scopeNames = {
       [personaType_ in personaType]: {
         [ctx in string & keyof Personas[personaType_]]: Personas[personaType_][ctx]
       } extends infer _
         ? string & keyof _[keyof _]
+        : never
+    } extends infer _
+      ? _[keyof _] //| any_other_string
+      : never
+
+    type fullScopes = {
+      [personaType_ in personaType]: {
+        [ctx in string & keyof Personas[personaType_]]: Personas[personaType_][ctx]
+      } extends infer _
+        ? keyof _ extends infer ctxName
+          ? ctxName extends string
+            ? ctxName extends keyof _
+              ? `${ctxName}.${string & keyof _[ctxName]}`
+              : never
+            : never
+          : never
         : never
     } extends infer _
       ? _[keyof _] //| any_other_string

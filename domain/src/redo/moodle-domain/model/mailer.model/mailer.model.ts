@@ -1,3 +1,5 @@
+import { email_address } from '@moodle/lib-types'
+
 export type mailer = moo.model<MailerModel>
 
 type modelUcTypes = moo.ucModelUcTypes<'mailer'>
@@ -9,7 +11,7 @@ export type MailerModel = {
         [scope in keyof modelUcTypes[persona][ctx]]: {
           [uc in keyof modelUcTypes[persona][ctx][scope]]: {
             [eml in keyof modelUcTypes[persona][ctx][scope][uc]]: moo.model.type.endpoint<
-              ['async', { data: modelUcTypes[persona][ctx][scope][uc][eml] }, unknown]
+              ['async', { envelope: envelope; data: modelUcTypes[persona][ctx][scope][uc][eml] }, unknown]
             >
           }
         }
@@ -17,4 +19,8 @@ export type MailerModel = {
     }
   }
   configs: moo.model.type.staticData<never>
+}
+
+export type envelope = {
+  to: email_address[]
 }

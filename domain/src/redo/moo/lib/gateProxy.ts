@@ -67,7 +67,7 @@ export function makeGateProxy({
             `)
         }
 
-        const gate_Endpoint_Provider: moo.gate.endpointProvider<moo.persona.endpoint> = _next_sub_gateProvider
+        const gate_Endpoint_Provider: moo.gate.endpoint<moo.persona.endpoint> = _next_sub_gateProvider
         const session_Endpoint: moo.session.Endpoint<moo.persona.endpoint> = _next_sub_session
 
         const configs = ((session_Endpoint as any_) ?? {})._
@@ -76,7 +76,7 @@ export function makeGateProxy({
         if (isLeft(e_gate_enpoint)) {
           return undefined
         }
-        const gate_endpoint: moo.gate.endpoint<any_, false> = {
+        const gate_endpoint: moo.gate.endpointProxy<any_, false> = {
           ...e_gate_enpoint.right,
           call: payload => messageDispatcher({ path: _next_path, payload }),
         }

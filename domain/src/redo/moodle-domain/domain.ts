@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-// import type { admin } from './persona/admin.persona/admin.persona'
+import type { admin } from './persona/admin.persona/admin.persona'
 import type { anonymous } from './persona/anonymous.persona/anonymous.persona'
 import type { any__ } from './persona/any.persona/any.persona'
 import type { authenticated } from './persona/authenticated.persona/authenticated.persona'
@@ -13,7 +13,7 @@ import type { userAccount } from '../moodle-domain/model/userAccount.model/userA
 declare global {
   namespace moo {
     interface Personas {
-      // admin: admin
+      admin: admin
       anonymous: anonymous
       any: any__
       authenticated: authenticated

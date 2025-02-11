@@ -10,7 +10,7 @@ const _ = makeGateProxy({
     any: {
       _: {
         general: {
-          userDataConfigs: {
+          baseUserDataConfigs: {
             displayName: { max: integer_schema.parse(10), min: integer_schema.parse(3) },
             email: { max: integer_schema.parse(10) },
             password: { max: integer_schema.parse(10), min: integer_schema.parse(3) },

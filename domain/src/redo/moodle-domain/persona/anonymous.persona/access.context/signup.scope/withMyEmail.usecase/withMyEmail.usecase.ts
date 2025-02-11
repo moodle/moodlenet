@@ -10,7 +10,6 @@ export type withMyEmail = moo.persona.usecase<{
     }
     mailer: {
       userEmailConfirmation: {
-        email: email_address
         displayName: string
         confirmationToken: signed_token
       }

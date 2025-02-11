@@ -4,8 +4,8 @@ import * as O from 'fp-ts/Option'
 import { flow } from 'fp-ts/function'
 import { object } from 'zod'
 import { error4xx } from '../../../../../../moo/lib/access-error'
-import { UserDataConfigs, userDataZodSchemas } from '../../../../any.persona/any.persona'
 import { WRONG_CREDENTIALS } from '../consts'
+import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
 export type login = moo.persona.endpoint<
   [
@@ -20,19 +20,17 @@ export type loginForm = {
   password: redacted<string>
 }
 
-export const login_Gate: moo.gate.endpointProvider<login> = flow(
+export const login_Gate: moo.gate.endpoint<login> = flow(
   O.some,
-  O.bind('userDataConfigs', ({ session }) => O.fromNullable(session.any?._.general.userDataConfigs)),
+  O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(loginFormZodSchema))),
   E.fromOption(() => error4xx('Unauthorized')),
 )
 
-export function loginFormZodSchema({ userDataConfigs }: { userDataConfigs: UserDataConfigs }) {
-  const { password, userEmail } = userDataZodSchemas(userDataConfigs)
-
+export function loginFormZodSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {
   const loginFormSchema = object({
-    email: userEmail,
-    password,
+    email: anyPersonaZod.user.email,
+    password: anyPersonaZod.user.plainPassword,
   })
 
   return loginFormSchema

@@ -42,7 +42,7 @@ type ContextDef = /* Partial< */ map<ScopeDef & moo.persona.withConfigs> // ,moo
 type ScopeDef = map<UseCaseDef & moo.persona.withConfigs>
 type UseCaseDef = map<EndpointDef & moo.persona.withConfigs & moo.persona.usecase.withModelTypes>
 
-type EndpointDef = [message: zodTypeOrProvider, outcome: any_, configs: serializable | undefined]
+type EndpointDef = [message: zodTypeOrProvider, outcome: any_, configs: serializable | undefined | void]
 
 
 

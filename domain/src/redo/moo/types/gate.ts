@@ -7,55 +7,55 @@ import { error4xx } from '../lib/access-error'
 
 declare global {
   namespace moo {
-    type gate<provider extends boolean> = {
-      [personaType_ in personaType]: gate.persona<Personas[personaType_], provider>
+    type gate<proxy extends boolean> = {
+      [personaType_ in personaType]: gate.persona<Personas[personaType_], proxy>
     }
     namespace gate {
-      type provider = gate<true>
-      type user = gate<false>
+      type proxy = gate<false>
+      type user = gate<true>
 
-      type persona<persona_ extends moo.persona<any_>, provider extends boolean = true> =
+      type persona<persona_ extends moo.persona<any_>, proxy extends boolean = false> =
         | {
             [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context
-              ? context<persona_[contextName], provider>
+              ? context<persona_[contextName], proxy>
               : unknown
           }
-        | (provider extends false ? undefined : never)
+        | (proxy extends false ? undefined : never)
 
-      type context<context extends moo.persona.context, provider extends boolean = true> =
+      type context<context extends moo.persona.context, proxy extends boolean = false> =
         | {
             [scopeName in string & keyof context]: context[scopeName] extends moo.persona.scope
-              ? scope<context[scopeName], provider>
+              ? scope<context[scopeName], proxy>
               : unknown
           }
-        | (provider extends false ? undefined : never)
+        | (proxy extends false ? undefined : never)
 
-      type scope<scope extends moo.persona.scope, provider extends boolean = true> =
+      type scope<scope extends moo.persona.scope, proxy extends boolean = false> =
         | {
             [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.persona.usecase
-              ? usecase<scope[useCaseName], provider>
+              ? usecase<scope[useCaseName], proxy>
               : never
           }
-        | (provider extends false ? undefined : never)
+        | (proxy extends false ? undefined : never)
 
-      type usecase<useCase extends moo.persona.usecase, provider extends boolean = true> =
+      type usecase<useCase extends moo.persona.usecase, proxy extends boolean = false> =
         | {
-            [endpointName in string & keyof useCase]: provider extends false
-              ? endpoint<persona.endpoint<useCase[endpointName]>, false>
-              : endpointProvider<persona.endpoint<useCase[endpointName]>>
+            [endpointName in string & keyof useCase]: proxy extends true
+              ? endpointProxy<persona.endpoint<useCase[endpointName]>, false>
+              : endpoint<persona.endpoint<useCase[endpointName]>>
           }
-        | (provider extends false ? undefined : never)
+        | (proxy extends false ? undefined : never)
 
-      type endpointProvider<useCaseEndpoint extends moo.persona.endpoint> = (epGateCtx: {
+      type endpoint<useCaseEndpoint extends moo.persona.endpoint> = (epGateCtx: {
         configs: useCaseEndpoint[2]
         session: session.user
-      }) => Either<error4xx, endpoint<useCaseEndpoint, true>>
+      }) => Either<error4xx, endpointProxy<useCaseEndpoint, true>>
 
-      type endpoint<useCaseEndpoint extends moo.persona.endpoint, provider extends boolean = true> =
+      type endpointProxy<useCaseEndpoint extends moo.persona.endpoint, proxy extends boolean = false> =
         | ({
             zod: endpointZod<useCaseEndpoint>
-          } & (provider extends false ? { call: endpointCall<useCaseEndpoint> } : unknown))
-        | (provider extends false ? undefined : never)
+          } & (proxy extends false ? { call: endpointCall<useCaseEndpoint> } : unknown))
+        | (proxy extends false ? undefined : never)
 
       type endpointZod<useCaseEndpoint extends moo.persona.endpoint> = useCaseEndpoint[0]
 

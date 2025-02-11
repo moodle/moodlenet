@@ -21,7 +21,7 @@ export const defaultSessionConfig: moo.session.configs = {
   any: {
     _: {
       general: {
-        userDataConfigs: {
+        baseUserDataConfigs: {
           displayName: { max: integer_schema.parse(100), min: integer_schema.parse(2) },
           email: { max: integer_schema.parse(100) },
           password: { max: integer_schema.parse(100), min: integer_schema.parse(8) },

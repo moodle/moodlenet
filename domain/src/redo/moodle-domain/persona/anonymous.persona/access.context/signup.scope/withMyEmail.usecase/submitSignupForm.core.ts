@@ -24,9 +24,9 @@ export const submitSignupFormCore: moo.core.endpoint<submitSignupForm> = async (
   await _.over(_.model.mailer.send.anonymous.access.signup.withMyEmail.userEmailConfirmation).call.async({
     data: {
       displayName: signupForm.displayName,
-      email: signupForm.email,
       confirmationToken: token,
     },
+    envelope: { to: [signupForm.email] },
   })
 
   return E.right(SUBMITTED)
