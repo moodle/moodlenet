@@ -1,6 +1,12 @@
-import { login, login_Gate } from './login.endpoint'
+import { login } from './login.endpoint'
+declare module '..' {
+  interface Scope {
+    withMyEmail: withMyEmail
+  }
+}
+
 export type withMyEmail = moo.persona.usecase<{
-  emailLogin: login
+  login: login
   [moo.persona.usecase.modelTypes]: {
     jwtTokens: {
       userSession: moo.session.user
@@ -8,6 +14,6 @@ export type withMyEmail = moo.persona.usecase<{
   }
 }>
 
-export const withMyEmail_Gate: moo.gate.usecase<withMyEmail> = {
-  emailLogin: login_Gate,
+export const withMyEmail: moo.gate.usecase<withMyEmail> = {
+  login: login,
 }

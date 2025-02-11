@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-empty-interface */
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
 /* eslint-disable @typescript-eslint/no-namespace */
 import '@moodle/lib-types'
+import { any_, primitive } from '@moodle/lib-types'
 
 declare global {
   namespace moo {
@@ -9,14 +12,12 @@ declare global {
       models: Models
     }
 
-    // interface Personas {
-    //   [personaType: string]: moo.persona<any_>
-    // }
+    interface Personas {}
+    interface Models {}
 
-    // interface Models {
-    //   [modelname: string]: moo.model<any_>
-    // }
-
+    type typ<iface> = {
+      [k in keyof iface]: iface[k] extends primitive | void | any_[] ? iface[k] : typ<iface[k]>
+    }
     type contexts = {
       [personaType_ in personaType]: string & keyof Personas[personaType_]
     } extends infer _
@@ -51,7 +52,6 @@ declare global {
 
     type modelName = keyof Models // | any_other_string
     type personaType = keyof Personas // | any_other_string
-
     type ucModelUcTypes<selectedModelName extends modelName> = {
       [personaType in moo.personaType]: {
         [audience_contextName in keyof moo.Personas[personaType]]: {

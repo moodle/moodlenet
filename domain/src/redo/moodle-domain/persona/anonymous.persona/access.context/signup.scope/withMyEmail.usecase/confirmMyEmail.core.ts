@@ -20,11 +20,11 @@ export const confirmMyEmailCore: moo.core.endpoint<confirmMyEmail> = async (conf
 
   const confirmationTokenData = e_validatedToken.right.data
 
-  const existingUserWithThisEmail = await _.over(_.model.userAccount.user).one.query({
+  const o_existingUserWithThisEmail = await _.over(_.model.userAccount.user).one.query({
     filters: { emailEquals: confirmationTokenData.email },
   })
 
-  if (O.isSome(existingUserWithThisEmail)) {
+  if (O.isSome(o_existingUserWithThisEmail)) {
     return E.left(USER_WITH_THIS_EMAIL_EXISTS)
   }
 

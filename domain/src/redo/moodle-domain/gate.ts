@@ -1,11 +1,11 @@
-import { admin_Gate } from './persona/admin.persona/admin.persona'
-import { anonymous_Gate } from './persona/anonymous.persona/anonymous.persona'
-import { any_Gate } from './persona/any.persona/any.persona'
-import { authenticated_Gate } from './persona/authenticated.persona/authenticated.persona'
+import { admin } from './persona/admin.persona'
+import { access } from './persona/anonymous.persona'
+import { any__ } from './persona/any.persona'
+import { authenticated } from './persona/authenticated.persona'
 
 export const Gate: moo.gate.provider = {
-  admin: admin_Gate,
-  authenticated: authenticated_Gate,
-  anonymous: anonymous_Gate,
-  any: any_Gate,
+  admin: admin,
+  authenticated: authenticated,
+  anonymous: access,
+  any: any__,
 }

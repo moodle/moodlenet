@@ -1,6 +1,12 @@
 import { email_address, signed_token } from '@moodle/lib-types'
 import { confirmMyEmail, confirmMyEmail_Gate } from './confirmMyEmail.endpoint'
 import { submitSignupForm, submitSignupForm_Gate } from './submitSignupForm.endpoint'
+declare module '..' {
+  interface Scope {
+    withMyEmail: withMyEmail
+  }
+}
+
 export type withMyEmail = moo.persona.usecase<{
   submitSignupForm: submitSignupForm
   confirmMyEmail: confirmMyEmail
@@ -17,7 +23,7 @@ export type withMyEmail = moo.persona.usecase<{
   }
 }>
 
-export const withMyEmail_Gate: moo.gate.usecase<withMyEmail> = {
+export const withMyEmail: moo.gate.usecase<withMyEmail> = {
   confirmMyEmail: confirmMyEmail_Gate,
   submitSignupForm: submitSignupForm_Gate,
 }

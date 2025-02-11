@@ -1,8 +1,16 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { signed_token } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { TYPE_INVALID_TOKEN } from './consts'
+declare global {
+  namespace moo {
+    interface Models {
+      jwtTokens: jwtTokens
+    }
+  }
+}
 
-export type twtTokens = moo.model<JwtTokensModel>
+export type jwtTokens = moo.model<JwtTokensModel>
 
 type modelUcTypes = moo.ucModelUcTypes<'jwtTokens'>
 

@@ -1,6 +1,12 @@
-import { myOwn, myOwn_Gate } from './myOwn.endpoint'
-export type get = moo.persona.usecase<{ myOwn: myOwn }>
+import { myOwn } from './myOwn.endpoint'
 
-export const get_Gate: moo.gate.usecase<get> = {
-  myOwn: myOwn_Gate,
+declare module '..' {
+  interface Scope {
+    get: get
+  }
+}
+
+export type get = moo.persona.usecase<{ myOwn: myOwn }>
+export const get: moo.gate.usecase<get> = {
+  myOwn: myOwn,
 }

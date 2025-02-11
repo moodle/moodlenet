@@ -1,12 +1,6 @@
 //import { DeepComplete } from './-deep-requires'
-import { any_, any_key, nullish, pretty } from './data'
+import { any_, any_key, nullish, pretty, primitive } from './data'
 
-// export type typ<iface> = {
-//   [k in keyof iface]: typ<iface[k]>
-// }
-// & {
-//   [k: string]: any_
-// }
 
 export type splitMap<T, right extends keyof T> = [Pick<T, right>, Omit<T, right>]
 

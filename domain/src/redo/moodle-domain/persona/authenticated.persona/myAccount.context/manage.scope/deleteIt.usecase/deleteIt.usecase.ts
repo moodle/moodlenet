@@ -1,6 +1,11 @@
 import { signed_token } from '@moodle/lib-types'
-import { confirmDelete, confirmDelete_Gate } from './confirmDelete.endpoint'
-import { request, request_Gate } from './request.endpoint'
+import { confirmDelete } from './confirmDelete.endpoint'
+import { request } from './request.endpoint'
+declare module '..' {
+  interface Scope {
+    deleteIt: deleteIt
+  }
+}
 
 export type deleteIt = moo.persona.usecase<{
   request: request
@@ -23,7 +28,7 @@ export type deleteIt = moo.persona.usecase<{
   }
 }>
 
-export const deleteMyAccount_Gate: moo.gate.usecase<deleteIt> = {
-  request: request_Gate,
-  confirmDelete: confirmDelete_Gate,
+export const deleteIt: moo.gate.usecase<deleteIt> = {
+  request: request,
+  confirmDelete: confirmDelete,
 }

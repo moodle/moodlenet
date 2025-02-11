@@ -1,6 +1,11 @@
 import { signed_token } from '@moodle/lib-types'
-import { requestLink, requestLink_Gate } from './requestLink.endpoint'
+import { requestLink } from './requestLink.endpoint'
 import { setNew, setNew_Gate } from './setNew.endpoint'
+declare module '..' {
+  interface Scope {
+    resetMyPassword: resetMyPassword
+  }
+}
 
 export type resetMyPassword = moo.persona.usecase<{
   requestLink: requestLink
@@ -20,7 +25,7 @@ export type resetMyPassword = moo.persona.usecase<{
   }
 }>
 
-export const resetMyPassword_Gate: moo.gate.usecase<resetMyPassword> = {
-  requestLink: requestLink_Gate,
+export const resetMyPassword: moo.gate.usecase<resetMyPassword> = {
+  requestLink: requestLink,
   setNew: setNew_Gate,
 }

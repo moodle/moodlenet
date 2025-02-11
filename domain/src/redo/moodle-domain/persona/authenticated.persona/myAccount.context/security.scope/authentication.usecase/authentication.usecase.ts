@@ -1,7 +1,11 @@
 import { changeMyPassword, changeMyPassword_Gate } from './changeMyPassword.endopoint'
+declare module '..' {
+  interface Scope {
+    authentication: authentication
+  }
+}
 
 export type authentication = moo.persona.usecase<{ changeMyPassword: changeMyPassword }>
-
-export const authentication_Gate: moo.gate.usecase<authentication> = {
+export const authentication: moo.gate.usecase<authentication> = {
   changeMyPassword: changeMyPassword_Gate,
 }

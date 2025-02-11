@@ -14,19 +14,17 @@ export type login = moo.persona.endpoint<
     undefined,
   ]
 >
-
-export type loginForm = {
-  email: email_address
-  password: redacted<string>
-}
-
-export const login_Gate: moo.gate.endpoint<login> = flow(
+export const login: moo.gate.endpoint<login> = flow(
   O.some,
   O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(loginFormZodSchema))),
   E.fromOption(() => error4xx('Unauthorized')),
 )
 
+export type loginForm = {
+  email: email_address
+  password: redacted<string>
+}
 export function loginFormZodSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {
   const loginFormSchema = object({
     email: anyPersonaZod.user.email,

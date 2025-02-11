@@ -1,6 +1,13 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { email_address } from '@moodle/lib-types'
-
+declare global {
+  namespace moo {
+    interface Models {
+      userAccount: userAccount
+    }
+  }
+}
 export type userAccount = moo.model<userAccountModel>
 
 export type profileInfo = {
@@ -31,6 +38,3 @@ export type userSpace = {
 export type userAccountModel = {
   user: moo.model.type.idSpaceMap<userSpace, { emailEquals: string }>
 }
-
-
-

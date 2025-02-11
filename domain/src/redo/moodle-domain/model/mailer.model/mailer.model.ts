@@ -1,5 +1,12 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { email_address } from '@moodle/lib-types'
-
+declare global {
+  namespace moo {
+    interface Models {
+      mailer: mailer
+    }
+  }
+}
 export type mailer = moo.model<MailerModel>
 
 type modelUcTypes = moo.ucModelUcTypes<'mailer'>

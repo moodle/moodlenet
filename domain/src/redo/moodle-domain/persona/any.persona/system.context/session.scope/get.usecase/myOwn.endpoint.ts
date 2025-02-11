@@ -5,4 +5,4 @@ import { void as voidz, ZodVoid } from 'zod'
 
 export type myOwn = moo.persona.endpoint<[ZodVoid, { session: moo.session.user; token: signed_token }, undefined]>
 
-export const myOwn_Gate: moo.gate.endpoint<myOwn> = () => E.right({ zod: voidz() })
+export const myOwn: moo.gate.endpoint<myOwn> = () => E.right({ zod: voidz() })

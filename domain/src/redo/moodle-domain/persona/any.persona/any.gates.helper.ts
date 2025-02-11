@@ -2,7 +2,7 @@ import { email_address_schema, plain_password_schema, single_line_string_schema 
 import { flow } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import { string } from 'zod'
-import { anyPersonaValidationConfigs } from './any.persona'
+import { anyPersonaValidationConfigs } from '.'
 export const anyPersonaConfigsFlow = ({ session }: { session: moo.session.user }) => O.fromNullable(session.any?._)
 
 export const anyPersonaZodFlow = flow(

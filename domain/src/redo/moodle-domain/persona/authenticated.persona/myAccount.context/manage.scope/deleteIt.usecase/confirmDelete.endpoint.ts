@@ -8,7 +8,7 @@ import { error4xx } from '../../../../../../moo/lib/access-error'
 
 export type confirmDelete = moo.persona.endpoint<[typeof confirmDeleteSchema, void, void]>
 
-export const confirmDelete_Gate: moo.gate.endpoint<confirmDelete> = flow(
+export const confirmDelete: moo.gate.endpoint<confirmDelete> = flow(
   O.some,
   O.bind('zod', flow(O.some, O.map(confirmDeleteSchema))),
   E.fromOption(() => error4xx('Unauthorized')),

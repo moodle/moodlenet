@@ -88,3 +88,7 @@ export function makeGateProxy({
     })
   }
 }
+
+// const p = makeGateProxy({} as any)
+// p.authenticated?.myAccount?.manage?.deleteIt
+// p.anonymous?.access?.signup?.withMyEmail?.submitSignupForm?.call({ displayName })

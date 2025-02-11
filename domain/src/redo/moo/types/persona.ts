@@ -3,29 +3,42 @@ import type { any_, map, serializable, serializable_object } from '@moodle/lib-t
 import type { ZodType } from 'zod'
 declare global {
   namespace moo {
-    type persona<personaDef extends PersonaDef> = personaDef
+    type persona<personaDef extends persona.def> = personaDef
 
     namespace persona {
-      type withConfigs = { [moo.persona.configs]?: serializable_object }
-      type withContext = { [moo.persona.context]?: serializable_object }
+      type def = /* Partial< */ map<context.def> & moo.persona.withConfigs & moo.persona.withContext // ,moo.contexts>>
+
       const configs: unique symbol
+      type withContext = { [moo.persona.context]?: serializable_object }
+
       const context: unique symbol
+      type withConfigs = { [moo.persona.configs]?: serializable_object }
+
+      type context<contextScopesDef extends context.def = context.def> = contextScopesDef
+      namespace context {
+        type def = /* Partial< */ map<moo.persona.scope.def> & moo.persona.withConfigs // ,moo.scopes>>
+      }
+
+      type scope<scopeDef extends moo.persona.scope.def = moo.persona.scope.def> = scopeDef
+      namespace scope {
+        type def = map<moo.persona.usecase.def> & moo.persona.withConfigs
+      }
+
+      type usecase<usecaseDef extends usecase.def = usecase.def> = usecaseDef
       namespace usecase {
+        type def = map<endpoint.def> & moo.persona.withConfigs & moo.persona.usecase.withModelTypes
         type withModelTypes = { [moo.persona.usecase.modelTypes]?: Partial<map<map<serializable_object>, moo.modelName>> }
         const modelTypes: unique symbol
       }
 
-      type context<contextScopesDef extends ContextDef = ContextDef> = contextScopesDef
-
-      type scope<scopeUseCasesDef extends ScopeDef = ScopeDef> = scopeUseCasesDef
-
-      type usecase<useCaseEndpointsDef extends UseCaseDef = UseCaseDef> = useCaseEndpointsDef
-
-      type endpoint<useCaseEndpoint extends EndpointDef = EndpointDef> = [
-        epType<useCaseEndpoint[0]>,
-        useCaseEndpoint[1],
-        useCaseEndpoint[2],
+      type endpoint<endpointDef extends endpoint.def = endpoint.def> = [
+        epType<endpointDef[0]>,
+        endpointDef[1],
+        endpointDef[2],
       ]
+      namespace endpoint {
+        type def = [message: zodTypeOrProvider, outcome: any_, configs: serializable | undefined | void]
+      }
     }
   }
 }
@@ -36,13 +49,6 @@ type epType<T extends zodTypeOrProvider> = T extends ZodType
   : T extends (...a: any_[]) => ZodType
     ? ReturnType<T>
     : never
-
-type PersonaDef = /* Partial< */ map<ContextDef & moo.persona.withConfigs & moo.persona.withContext> // ,moo.contexts>>
-type ContextDef = /* Partial< */ map<ScopeDef & moo.persona.withConfigs> // ,moo.scopes>>
-type ScopeDef = map<UseCaseDef & moo.persona.withConfigs>
-type UseCaseDef = map<EndpointDef & moo.persona.withConfigs & moo.persona.usecase.withModelTypes>
-
-type EndpointDef = [message: zodTypeOrProvider, outcome: any_, configs: serializable | undefined | void]
 
 
 

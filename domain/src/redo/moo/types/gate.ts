@@ -42,15 +42,15 @@ declare global {
       type usecase<useCase extends moo.persona.usecase, proxy extends boolean = false> =
         | {
             [endpointName in string & keyof useCase]: proxy extends true
-              ? endpointAcccess<persona.endpoint<useCase[endpointName]>, false>
-              : endpoint<persona.endpoint<useCase[endpointName]>>
+              ? endpointAcccess<persona.endpoint<useCase[endpointName]>, proxy>
+              : endpoint<persona.endpoint<useCase[endpointName]>, proxy>
           }
         | (proxy extends true ? undefined : never)
 
-      type endpoint<useCaseEndpoint extends moo.persona.endpoint> = (epGateCtx: {
+      type endpoint<useCaseEndpoint extends moo.persona.endpoint, proxy extends boolean = false> = (epGateCtx: {
         configs: useCaseEndpoint[2]
         session: session.user
-      }) => Either<error4xx, endpointAcccess<useCaseEndpoint, false>>
+      }) => Either<error4xx, endpointAcccess<useCaseEndpoint, proxy>>
 
       type endpointAcccess<useCaseEndpoint extends moo.persona.endpoint, proxy extends boolean = false> =
         | ({
