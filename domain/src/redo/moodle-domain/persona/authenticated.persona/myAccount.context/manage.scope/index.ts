@@ -1,4 +1,4 @@
-import { deleteIt } from './deleteIt.usecase/deleteIt.usecase'
+import { deleteIt } from './deleteIt.usecase'
 declare module '..' {
   interface Context {
     manage: manage

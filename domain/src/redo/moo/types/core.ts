@@ -16,7 +16,7 @@ declare global {
         session: session.user
       }
 
-      type endpoint<endpoint_ extends persona.endpoint> = (
+      type endpoint<endpoint_ extends persona.endpoint<any_>> = (
         payload: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never,
         ctx: ctx,
       ) => Promise<endpoint_[1]>

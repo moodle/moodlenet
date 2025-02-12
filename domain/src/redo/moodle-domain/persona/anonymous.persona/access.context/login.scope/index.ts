@@ -1,5 +1,5 @@
-import { resetMyPassword } from './resetMyPassword.usecase/resetMyPassword.usecase'
-import { withMyEmail } from './withMyEmail.usecase/withMyEmail.usecase'
+import { resetMyPassword } from './resetMyPassword.usecase'
+import { withMyEmailAndPassword } from './withMyEmailAndPassword.usecase'
 declare module '..' {
   interface Context {
     login: login
@@ -11,6 +11,6 @@ export interface Scope {}
 
 export type login = moo.persona.scope<moo.typ<Scope>>
 export const login: moo.gate.scope<login> = {
-  withMyEmail: withMyEmail,
+  withMyEmailAndPassword: withMyEmailAndPassword,
   resetMyPassword: resetMyPassword,
 }

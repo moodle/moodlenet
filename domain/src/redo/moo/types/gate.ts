@@ -17,50 +17,52 @@ declare global {
 
       type persona<persona_ extends moo.persona<any_>, proxy extends boolean = false> =
         | {
-            [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context
+            [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_>
               ? context<persona_[contextName], proxy>
               : unknown
           }
         | (proxy extends true ? undefined : never)
 
-      type context<context extends moo.persona.context, proxy extends boolean = false> =
+      type context<context extends moo.persona.context<any_>, proxy extends boolean = false> =
         | {
-            [scopeName in string & keyof context]: context[scopeName] extends moo.persona.scope
+            [scopeName in string & keyof context]: context[scopeName] extends moo.persona.scope<any_>
               ? scope<context[scopeName], proxy>
               : unknown
           }
         | (proxy extends true ? undefined : never)
 
-      type scope<scope extends moo.persona.scope, proxy extends boolean = false> =
+      type scope<scope extends moo.persona.scope<any_>, proxy extends boolean = false> =
         | {
-            [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.persona.usecase
+            [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.persona.usecase<any_>
               ? usecase<scope[useCaseName], proxy>
               : never
           }
         | (proxy extends true ? undefined : never)
 
-      type usecase<useCase extends moo.persona.usecase, proxy extends boolean = false> =
+      type usecase<useCase extends moo.persona.usecase<any_>, proxy extends boolean = false> =
         | {
-            [endpointName in string & keyof useCase]: proxy extends true
-              ? endpointAcccess<persona.endpoint<useCase[endpointName]>, proxy>
-              : endpoint<persona.endpoint<useCase[endpointName]>, proxy>
+            [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.persona.endpoint<any_>
+              ? proxy extends true
+                ? endpointAcccess<useCase[endpointName], proxy>
+                : endpoint<useCase[endpointName], proxy>
+              : never
           }
         | (proxy extends true ? undefined : never)
 
-      type endpoint<useCaseEndpoint extends moo.persona.endpoint, proxy extends boolean = false> = (epGateCtx: {
+      type endpoint<useCaseEndpoint extends moo.persona.endpoint<any_>, proxy extends boolean = false> = (epGateCtx: {
         configs: useCaseEndpoint[2]
         session: session.user
       }) => Either<error4xx, endpointAcccess<useCaseEndpoint, proxy>>
 
-      type endpointAcccess<useCaseEndpoint extends moo.persona.endpoint, proxy extends boolean = false> =
+      type endpointAcccess<useCaseEndpoint extends moo.persona.endpoint<any_>, proxy extends boolean = false> =
         | ({
             zod: endpointZod<useCaseEndpoint>
           } & (proxy extends false ? unknown : { call: endpointCall<useCaseEndpoint> }))
         | (proxy extends true ? undefined : never)
 
-      type endpointZod<useCaseEndpoint extends moo.persona.endpoint> = useCaseEndpoint[0]
+      type endpointZod<useCaseEndpoint extends moo.persona.endpoint<any_>> = useCaseEndpoint[0]
 
-      type endpointCall<useCaseEndpoint extends moo.persona.endpoint> = (
+      type endpointCall<useCaseEndpoint extends moo.persona.endpoint<any_>> = (
         message: useCaseEndpoint[0] extends ZodType<any_, any_, infer inputType> ? inputType : never,
       ) => Promise<useCaseEndpoint[1]>
 

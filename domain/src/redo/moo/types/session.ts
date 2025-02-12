@@ -53,7 +53,7 @@ type config_tag<T> = T extends moo.persona.withConfigs
 type context_tag<T, t extends sessionDataType> = t extends 'configs'
   ? unknown
   : T extends moo.persona.withContext
-    ? T[typeof moo.persona.context] extends never
+    ? T[typeof moo.persona.myContext] extends never
       ? { $?: never }
-      : { $: T[typeof moo.persona.context] }
+      : { $: T[typeof moo.persona.myContext] }
     : unknown

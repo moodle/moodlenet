@@ -16,7 +16,7 @@ export type confirmMyEmail = moo.persona.endpoint<
 
 export type confirmEmailForm = { signupEmailVerificationToken: signed_token }
 
-export const confirmMyEmail_Gate: moo.gate.endpoint<confirmMyEmail> = flow(
+export const confirmMyEmail: moo.gate.endpoint<confirmMyEmail> = flow(
   E.right,
   E.bind('zod', flow(E.right, E.map(confirmEmailFormZodSchema))),
 )

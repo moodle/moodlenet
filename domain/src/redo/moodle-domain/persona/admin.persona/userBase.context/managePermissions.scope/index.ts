@@ -1,4 +1,4 @@
-import { personaTypes } from './personaTypes.usecase/personaTypes.usecase'
+import { personaTypes } from './personaTypes.usecase'
 declare module '..' {
   interface Context {
     managePermissions: managePermissions

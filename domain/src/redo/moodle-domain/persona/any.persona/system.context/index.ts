@@ -1,4 +1,4 @@
-import { session } from './session.scope'
+import { access } from './access.scope'
 
 declare module '..' {
   interface Persona {
@@ -11,5 +11,5 @@ export interface Context {}
 
 export type system = moo.persona.context<moo.typ<Context>>
 export const system: moo.gate.context<system> = {
-  session: session,
+  access: access,
 }

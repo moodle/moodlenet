@@ -1,4 +1,4 @@
-import { searchUsersByText, searchUsersByText_Gate } from './searchUsersByText.endpoint'
+import { searchUsersByText } from './searchUsersByText.endpoint'
 declare module '..' {
   interface Scope {
     personaTypes: personaTypes
@@ -6,5 +6,5 @@ declare module '..' {
 }
 export type personaTypes = moo.persona.usecase<{ searchUsersByText: searchUsersByText }>
 export const personaTypes: moo.gate.usecase<personaTypes> = {
-  searchUsersByText: searchUsersByText_Gate,
+  searchUsersByText: searchUsersByText,
 }

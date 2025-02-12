@@ -16,7 +16,7 @@ declare global {
     interface Models {}
 
     type typ<iface> = {
-      [k in keyof iface]: iface[k] extends primitive | void | any_[] ? iface[k] : typ<iface[k]>
+      [k in keyof iface]: iface[k] extends primitive | void | any_[] | never ? iface[k] : typ<iface[k]>
     }
     type contexts = {
       [personaType_ in personaType]: string & keyof Personas[personaType_]
@@ -57,11 +57,9 @@ declare global {
         [audience_contextName in keyof moo.Personas[personaType]]: {
           [scopeName in keyof moo.Personas[personaType][audience_contextName]]: {
             [usecaseName in keyof moo.Personas[personaType][audience_contextName][scopeName]]: moo.Personas[personaType][audience_contextName][scopeName][usecaseName] extends infer usecase
-              ? usecase extends moo.persona.usecase.withModelTypes
-                ? usecase[typeof moo.persona.usecase.modelTypes] extends infer usecaseModels
-                  ? usecaseModels extends { [modelName_ in selectedModelName]: infer _ucModelTypes }
-                    ? _ucModelTypes
-                    : never
+              ? usecase extends { [moo.persona.usecase.modelTypes]: infer usecaseModels }
+                ? usecaseModels extends { [modelName_ in selectedModelName]: infer _ucModelTypes }
+                  ? _ucModelTypes
                   : never
                 : never
               : never
@@ -71,3 +69,4 @@ declare global {
     }
   }
 }
+

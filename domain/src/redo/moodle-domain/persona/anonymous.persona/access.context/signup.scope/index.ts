@@ -1,4 +1,4 @@
-import { withMyEmail } from './withMyEmail.usecase/withMyEmail.usecase'
+import { withMyEmail } from './withMyEmail.usecase'
 
 declare module '..' {
   interface Context {

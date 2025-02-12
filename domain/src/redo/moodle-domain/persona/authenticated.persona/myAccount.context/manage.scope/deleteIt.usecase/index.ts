@@ -7,10 +7,12 @@ declare module '..' {
   }
 }
 
-export type deleteIt = moo.persona.usecase<{
-  request: request
-  confirmDelete: confirmDelete
-  [moo.persona.usecase.modelTypes]: {
+export type deleteIt = moo.persona.usecase<
+  {
+    request: request
+    confirmDelete: confirmDelete
+  },
+  {
     mailer: {
       myAccountDeletionConfirmation: {
         displayName: string
@@ -26,7 +28,7 @@ export type deleteIt = moo.persona.usecase<{
       }
     }
   }
-}>
+>
 
 export const deleteIt: moo.gate.usecase<deleteIt> = {
   request: request,

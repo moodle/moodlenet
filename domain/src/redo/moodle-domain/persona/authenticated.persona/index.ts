@@ -7,8 +7,9 @@ declare global {
     }
   }
 }
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Persona {}
+export interface Persona {
+  [moo.persona.myContext]: { userId: string }
+}
 
 export type authenticated = moo.persona<moo.typ<Persona>>
 export const authenticated: moo.gate.persona<authenticated> = {

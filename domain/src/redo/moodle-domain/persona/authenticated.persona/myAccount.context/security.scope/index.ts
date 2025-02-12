@@ -1,4 +1,4 @@
-import { authentication } from './authentication.usecase/authentication.usecase'
+import { authentication } from './authentication.usecase'
 
 declare module '..' {
   interface Context {

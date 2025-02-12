@@ -1,8 +1,49 @@
 import { integer_schema } from '@moodle/lib-types'
 
 export const defaultSessionConfig: moo.session.configs = {
-  // admin: {},
-  authenticated: {},
+  admin: {
+    _: { validation: { personaType: { max: integer_schema.parse(20), min: integer_schema.parse(3) } } },
+    userBase: {
+      managePermissions: { personaTypes: { searchUsersByText: {} } },
+    },
+  },
+  authenticated: {
+    myAccount: {
+      manage: {
+        deleteIt: {
+          confirmDelete: {},
+          request: {},
+        },
+      },
+      security: {
+        authentication: {
+          changeMyPassword: {},
+        },
+      },
+    },
+  },
+  any: {
+    _: {
+      validation: {
+        baseUserData: {
+          displayName: { max: integer_schema.parse(100), min: integer_schema.parse(2) },
+          password: { max: integer_schema.parse(100), min: integer_schema.parse(8) },
+        },
+        general: {
+          email: { max: integer_schema.parse(100) },
+          id: { max: integer_schema.parse(100), min: integer_schema.parse(5) },
+          textSearch: { max: integer_schema.parse(100), min: integer_schema.parse(2) },
+        },
+      },
+    },
+    system: {
+      session: {
+        get: {
+          myOwn: {},
+        },
+      },
+    },
+  },
   anonymous: {
     access: {
       signup: {
@@ -13,25 +54,11 @@ export const defaultSessionConfig: moo.session.configs = {
       },
       login: {
         withMyEmail: {
-          emailLogin: {},
+          login: {},
         },
-      },
-    },
-  },
-  any: {
-    _: {
-      general: {
-        baseUserDataConfigs: {
-          displayName: { max: integer_schema.parse(100), min: integer_schema.parse(2) },
-          email: { max: integer_schema.parse(100) },
-          password: { max: integer_schema.parse(100), min: integer_schema.parse(8) },
-        },
-      },
-    },
-    system: {
-      session: {
-        get: {
-          myOwn: {},
+        resetMyPassword: {
+          requestLink: {},
+          setNew: {},
         },
       },
     },

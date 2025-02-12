@@ -7,10 +7,12 @@ declare module '..' {
   }
 }
 
-export type resetMyPassword = moo.persona.usecase<{
-  requestLink: requestLink
-  setNew: setNew
-  [moo.persona.usecase.modelTypes]: {
+export type resetMyPassword = moo.persona.usecase<
+  {
+    requestLink: requestLink
+    setNew: setNew
+  },
+  {
     mailer: {
       resetPasswordLink: {
         displayName: string
@@ -23,7 +25,7 @@ export type resetMyPassword = moo.persona.usecase<{
       }
     }
   }
-}>
+>
 
 export const resetMyPassword: moo.gate.usecase<resetMyPassword> = {
   requestLink: requestLink,
