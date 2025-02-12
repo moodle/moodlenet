@@ -10,10 +10,10 @@ declare global {
 }
 
 export interface Persona {
-  [moo.persona.configs]: adminPersonaConfigs
+  [moo.configs]: adminPersonaConfigs
 }
 
-export type admin = moo.persona<moo.typ<Persona>>
+export type admin = moo.persona<moo<Persona>>
 
 export const admin: moo.gate.persona<admin> = {
   userBase: userBase,

@@ -7,7 +7,7 @@ declare module '..' {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Scope {}
 
-export type managePermissions = moo.persona.scope<moo.typ<Scope>>
+export type managePermissions = moo.persona.scope<moo<Scope>>
 export const managePermissions: moo.gate.scope<managePermissions> = {
   personaTypes: personaTypes,
 }

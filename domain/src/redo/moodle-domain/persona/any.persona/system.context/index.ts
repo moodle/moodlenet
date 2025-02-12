@@ -9,7 +9,7 @@ declare module '..' {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Context {}
 
-export type system = moo.persona.context<moo.typ<Context>>
+export type system = moo.persona.context<moo<Context>>
 export const system: moo.gate.context<system> = {
   access: access,
 }

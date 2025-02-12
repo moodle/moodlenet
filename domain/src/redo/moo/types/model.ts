@@ -22,7 +22,7 @@ declare global {
         type typeModel<modelNode extends type<type.traitsDef>> = {
           $: ops<modelNode>
         } & (modelNode extends type.idSpaceMap<infer space_shape, infer space_ops>
-          ? { '#': (id: string) => typeModel<type.modelSpace<space_shape, space_ops>> }
+          ? { '#': (id: string) => typeModel<type.idSpaceModel<space_shape, space_ops>> }
           : impl<Omit<modelNode, type.traits_prop>>)
 
         type ops<modelNode extends type<type.traitsDef>> = {

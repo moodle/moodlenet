@@ -3,6 +3,6 @@ import { signed_token } from '@moodle/lib-types'
 import * as E from 'fp-ts/Either'
 import { void as voidz, ZodVoid } from 'zod'
 
-export type getMyOwn = moo.persona.endpoint<[ZodVoid, { session: moo.session.user; token: signed_token }, undefined]>
+export type myOwn = moo.persona.endpoint<[ZodVoid, { session: moo.session.user; token: signed_token }, undefined]>
 
-export const getMyOwn: moo.gate.endpoint<getMyOwn> = () => E.right({ zod: voidz() })
+export const myOwn: moo.gate.endpoint<myOwn> = () => E.right({ zod: voidz() })

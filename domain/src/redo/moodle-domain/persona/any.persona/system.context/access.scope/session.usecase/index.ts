@@ -1,4 +1,4 @@
-import { getMyOwn } from './myOwn.endpoint'
+import { myOwn } from './myOwn.endpoint'
 
 declare module '..' {
   interface Scope {
@@ -7,8 +7,8 @@ declare module '..' {
 }
 
 export type session = moo.persona.usecase<{
-  getMyOwn: getMyOwn
+  myOwn: myOwn
 }>
 export const session: moo.gate.usecase<session> = {
-  getMyOwn: getMyOwn,
+  myOwn: myOwn,
 }

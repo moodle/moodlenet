@@ -45,15 +45,15 @@ declare global {
   }
 }
 type config_tag<T> = T extends moo.persona.withConfigs
-  ? T[typeof moo.persona.configs] extends never
+  ? T[typeof moo.configs] extends never
     ? { _?: never }
-    : { _: T[typeof moo.persona.configs] }
+    : { _: T[typeof moo.configs] }
   : unknown
 
 type context_tag<T, t extends sessionDataType> = t extends 'configs'
   ? unknown
-  : T extends moo.persona.withContext
-    ? T[typeof moo.persona.myContext] extends never
+  : T extends moo.persona.withMeta
+    ? T[typeof moo.persona.meta] extends never
       ? { $?: never }
-      : { $: T[typeof moo.persona.myContext] }
+      : { $: T[typeof moo.persona.meta] }
     : unknown

@@ -7,13 +7,10 @@ declare global {
     type persona<personaDef extends persona.def> = personaDef
 
     namespace persona {
-      type def = /* Partial< */ map<context.def> & withConfigs & withContext // ,moo.contexts>>
+      type def = /* Partial< */ map<context.def> & withConfigs & withMeta // ,moo.contexts>>
 
-      const myContext: unique symbol
-      type withContext = { [myContext]?: serializable_object }
-
-      const configs: unique symbol
-      type withConfigs = { [configs]?: serializable_object }
+      const meta: unique symbol
+      type withMeta = { [meta]?: serializable_object }
 
       type context<contextScopesDef extends context.def> = contextScopesDef
       namespace context {

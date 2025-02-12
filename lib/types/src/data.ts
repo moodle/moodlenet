@@ -98,11 +98,6 @@ export function redacted_schema<schema extends ZodSchema>(schema: schema) {
   }).brand<typeof redacted_brand>()
 }
 
-export type regex_parts = [pattern: string, flags: string]
-
-export const single_line_string_regex_parts: regex_parts = ['^[^\r\n]*$', 'gi']
-export const single_line_string_regex = new RegExp(...single_line_string_regex_parts)
-export const single_line_string_schema = string().regex(new RegExp(...single_line_string_regex_parts))
 
 // export declare const plain_password_brand: unique symbol
 // export type plain_password = redacted<branded<string, typeof plain_password_brand>>
@@ -110,6 +105,32 @@ export type plain_password = redacted<string>
 export function plain_password_schema(pwdschema: ZodString) {
   return redacted_schema(pwdschema.pipe(single_line_string_schema))
 }
+
+// // export const email_address_brand = Symbol('email_address_brand')
+// export type email_address = z.infer< typeof email_address_schema> // email format
+export declare const email_address_brand: unique symbol
+export type email_address = branded<string, typeof email_address_brand> // email format
+export function email_address_schema(emlschema: ZodString) {
+  return string().trim().toLowerCase().email().pipe(emlschema).brand<typeof email_address_brand>()
+}
+
+export interface named_email_address {
+  address: email_address
+  name: string
+}
+export type named_or_email_address = email_address | named_email_address
+export type named_or_email_addresses = named_or_email_address[]
+
+export function namedEmailAddressString(addr: email_address | named_email_address) {
+  return typeof addr === 'string' ? addr : `${addr.name} <${addr.address}>`
+}
+
+export type regex_parts = [pattern: string, flags: string]
+
+export const single_line_string_regex_parts: regex_parts = ['^[^\r\n]*$', 'gi']
+export const single_line_string_regex = new RegExp(...single_line_string_regex_parts)
+export const single_line_string_schema = string().regex(new RegExp(...single_line_string_regex_parts))
+
 
 // // export const url_string_brand = Symbol('url_string_brand')
 // export type url_string = z.infer< typeof url_string_schema>
@@ -198,23 +219,6 @@ export const non_negative_integer_schema = number().int().nonnegative().brand<ty
 export declare const fraction_brand: unique symbol
 export type fraction = branded<number, typeof fraction_brand>
 export const fraction_schema = number().min(0).max(1).brand<typeof fraction_brand>()
-
-// // export const email_address_brand = Symbol('email_address_brand')
-// export type email_address = z.infer< typeof email_address_schema> // email format
-export declare const email_address_brand: unique symbol
-export type email_address = branded<string, typeof email_address_brand> // email format
-export const email_address_schema = string().toLowerCase().trim().email().brand<typeof email_address_brand>()
-
-export interface named_email_address {
-  address: email_address
-  name: string
-}
-export type named_or_email_address = email_address | named_email_address
-export type named_or_email_addresses = named_or_email_address[]
-
-export function namedEmailAddressString(addr: email_address | named_email_address) {
-  return typeof addr === 'string' ? addr : `${addr.name} <${addr.address}>`
-}
 
 export function filterOutFalsies<t>(arr: (t | falsy_loosy)[]): t[] {
   return arr.filter(isNotFalsy)

@@ -2,9 +2,12 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 /* eslint-disable @typescript-eslint/no-namespace */
 import '@moodle/lib-types'
-import { any_, primitive } from '@moodle/lib-types'
+import { any_, primitive, serializable_object } from '@moodle/lib-types'
 
 declare global {
+  type moo<iface> = {
+    [k in keyof iface]: iface[k] extends primitive | void | any_[] | never ? iface[k] : moo<iface[k]>
+  }
   namespace moo {
     interface Domain {
       version: '5.0'
@@ -15,20 +18,20 @@ declare global {
     interface Personas {}
     interface Models {}
 
-    type typ<iface> = {
-      [k in keyof iface]: iface[k] extends primitive | void | any_[] | never ? iface[k] : typ<iface[k]>
-    }
+    const configs: unique symbol
+    type withConfigs = { [configs]?: serializable_object }
+
     type contexts = {
       [personaType_ in personaType]: string & keyof Personas[personaType_]
     } extends infer _
-      ? _[keyof _] //| any_other_string
+      ? string & _[keyof _] //| any_other_string
       : never
 
     type scopeNames = {
       [personaType_ in personaType]: {
-        [ctx in string & keyof Personas[personaType_]]: Personas[personaType_][ctx]
+        [ctx in string & keyof Personas[personaType_]]: string & keyof Personas[personaType_][ctx]
       } extends infer _
-        ? string & keyof _[keyof _]
+        ? string & _[keyof _]
         : never
     } extends infer _
       ? _[keyof _] //| any_other_string

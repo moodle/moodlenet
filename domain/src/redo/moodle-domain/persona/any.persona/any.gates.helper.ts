@@ -12,7 +12,7 @@ export const anyPersonaZodFlow = flow(
 
 export type anyPersonaZodSchemas = ReturnType<typeof anyPersonaZodSchemas>
 export function anyPersonaZodSchemas({ baseUserData, general }: anyPersonaValidationConfigs) {
-  const userEmail = string().max(general.email.max).pipe(email_address_schema)
+  const userEmail = email_address_schema(string().max(general.email.max))
   const plainPassword = plain_password_schema(string().min(baseUserData.password.min).max(baseUserData.password.max))
   const userDisplayName = string()
     .trim()
@@ -22,7 +22,7 @@ export function anyPersonaZodSchemas({ baseUserData, general }: anyPersonaValida
 
   return {
     user: { plainPassword: plainPassword, email: userEmail, displayName: userDisplayName },
-    id: string().min(general.id.min).max(general.id.max),
-    textSearch: string().min(general.textSearch.min).max(general.textSearch.max),
+    id: string().trim().min(general.id.min).max(general.id.max),
+    textSearch: string().trim().min(general.textSearch.min).max(general.textSearch.max),
   }
 }

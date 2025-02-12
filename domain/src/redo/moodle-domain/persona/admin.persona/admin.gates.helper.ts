@@ -16,6 +16,7 @@ export type adminPersonaZodSchemas = ReturnType<typeof adminPersonaZodSchemas>
 export function adminPersonaZodSchemas(adminPersonaValidationConfigs: adminPersonaValidationConfigs) {
   return {
     personaType: string()
+      .trim()
       .max(adminPersonaValidationConfigs.personaType.max)
       .min(adminPersonaValidationConfigs.personaType.min),
   }

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { valid } from '@moodle/lib-types'
 import { system } from './system.context'
+import { moodlenet } from './moodlenet.context'
 declare global {
   namespace moo {
     interface Personas {
@@ -10,13 +11,14 @@ declare global {
 }
 
 export interface Persona {
-  [moo.persona.configs]: anyPersonaConfigs
+  [moo.configs]: anyPersonaConfigs
 }
 
-export type any__ = moo.persona<moo.typ<Persona>>
+export type any__ = moo.persona<moo<Persona>>
 
 export const any__: moo.gate.persona<any__> = {
   system: system,
+  moodlenet: moodlenet,
 }
 
 export type anyPersonaValidationConfigs = {

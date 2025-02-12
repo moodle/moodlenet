@@ -23,7 +23,7 @@ declare global {
         type opDef = [type: opType, message: any_, outcome: any_]
 
         type idSpaceMap<space_shape, filters extends map = map, space_ops extends ops = ops, ops_ extends ops = ops> =
-          modelSpace<space_shape, space_ops> extends infer idSpace
+          idSpaceModel<space_shape, space_ops> extends infer spaceModel
             ? type<{
                 ops: ops_ & {
                   some: [
@@ -31,26 +31,38 @@ declare global {
                     {
                       filters?: filters & { ids?: string[] }
                       limit?: number
-                      cursor?: [cursor: string, dir?: 'after' | 'before']
+                      cursor?: [cursor: string] //, dir?: 'after' | 'before']
                     },
                     { items: { id: string; data: spaceData<space_shape>; cursor: string }[] },
                   ]
                   one: ['query', { filters?: filters }, Option<{ id: string; data: spaceData<space_shape> }>]
                 }
-                shape: map<idSpace>
+                shape: map<spaceModel>
                 data: map<spaceData<space_shape>>
               }>
             : unknown
 
-        type modelSpace<shape, ops_ extends ops = ops> = type<{
+        // type q = Either<{readonly a:string}, {readonly a:string}>
+        // type x = q extends JsonRecord ? 1 : 0   // 0  -_-
+        // type y = JsonRecord extends q ? 1 : 0   // 0  -_-
+
+        type idSpaceModel<shape, ops_ extends ops = ops> = type<{
           shape: shape
           ops: ops_ & {
-            getSpaceData: ['query', void, Either<typeof NOT_FOUND, spaceData<shape>>]
-            purge: ['async', void, Either<typeof NOT_FOUND, 'done'>]
+            getData: ['query', void, Either<dmesg_<typeof NOT_FOUND>, spaceData<shape>>]
+            purge: ['async', void, Either<dmesg_<typeof NOT_FOUND>, 'done'>]
             exists: ['query', void, { exists: boolean }]
             create: ['async', { spaceData: spaceData<shape> }, void]
           }
           data: spaceData<shape>
+        }>
+
+        type idAggregate<data extends serializable_object, ops_ extends ops = ops> = type<{
+          shape: unknown
+          ops: ops_ & {
+            get: ['query', void, Either<dmesg_<typeof NOT_FOUND>, data>]
+          }
+          data: never
         }>
 
         type spaceData<shape> = {
@@ -84,12 +96,18 @@ declare global {
           shape: unknown
         }>
 
+        // type staticAggregate<data extends serializable_object, ops_ extends ops = ops> = type<{
+        //   shape: unknown
+        //   ops: ops_ & { get: ['query', void, data] }
+        //   data: data
+        // }>
+
         type asset<opts extends { optional: boolean }> = type<{
           shape: { file: fsFile<{ optional: true }> }
           data: opts['optional'] extends true ? content.asset.maybe : content.asset
           ops: {
-            fromTempFile: ['async', { tempId: string }, Either<typeof NOT_FOUND, { fileMeta: fileMeta }>]
-            fromUrl: ['async', { externalAsset: content.asset.external }, Either<typeof NOT_FOUND, void>]
+            fromTempFile: ['async', { tempId: string }, Either<dmesg_<typeof NOT_FOUND>, { fileMeta: fileMeta }>]
+            fromUrl: ['async', { externalAsset: content.asset.external }, Either<dmesg_<typeof NOT_FOUND>, void>]
           } & (opts['optional'] extends false ? unknown : { remove: ['async', void, void] })
         }>
 

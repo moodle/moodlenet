@@ -12,7 +12,7 @@ declare global {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Persona {}
 
-export type anonymous = moo.persona<moo.typ<Persona>>
+export type anonymous = moo.persona<moo<Persona>>
 export const anonymous: moo.gate.persona<anonymous> = {
   access: access,
 }
