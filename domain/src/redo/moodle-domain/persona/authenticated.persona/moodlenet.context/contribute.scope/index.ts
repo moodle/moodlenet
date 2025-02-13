@@ -11,5 +11,5 @@ export interface Scope {}
 
 export type contribute = moo.persona.scope<moo<Scope>>
 export const contribute: moo.gate.scope<contribute> = {
-  publishMyContent: publishMyContent,
+  publishMyContent,
 }

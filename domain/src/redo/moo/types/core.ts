@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 
-import { any_ } from '@moodle/lib-types'
+import { any_, map } from '@moodle/lib-types'
 import { ZodType } from 'zod'
 
 declare global {
   namespace moo {
-    type core = (ctx: core.ctx) => moo.gate.provider
+    type core<forPersonas extends map<moo.persona<any_>>> = {
+      [personaType_ in keyof forPersonas]: core.persona<forPersonas[personaType_]>
+    }
     namespace core {
       type ctx = {
         model: Models
@@ -14,6 +16,30 @@ declare global {
           type_model_ref: typeModelRef | undefined,
         ) => typeModelRefOpMap_impl<typeModelRef>
         session: session.user
+      }
+
+      type persona<persona_ extends moo.persona<any_>> = {
+        [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_>
+          ? context<persona_[contextName]>
+          : unknown
+      }
+
+      type context<context extends moo.persona.context<any_>> = {
+        [scopeName in string & keyof context]: context[scopeName] extends moo.persona.scope<any_>
+          ? scope<context[scopeName]>
+          : unknown
+      }
+
+      type scope<scope extends moo.persona.scope<any_>> = {
+        [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.persona.usecase<any_>
+          ? usecase<scope[useCaseName]>
+          : never
+      }
+
+      type usecase<useCase extends moo.persona.usecase<any_>> = {
+        [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.persona.endpoint<any_>
+          ? endpoint<useCase[endpointName]>
+          : never
       }
 
       type endpoint<endpoint_ extends persona.endpoint<any_>> = (

@@ -1,9 +1,9 @@
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import { WRONG_CREDENTIALS } from '../consts'
-import { login } from './login.endpoint'
+import type * as def from './login.endpoint'
 
-export const loginCore: moo.core.endpoint<login> = async (emailLoginForm, _) => {
+export const login: moo.core.endpoint<def.login> = async (emailLoginForm, _) => {
   const existingUser = await _.over(_.model.userAccount.user).one.query({ filters: { emailEquals: emailLoginForm.email } })
 
   if (O.isNone(existingUser)) {

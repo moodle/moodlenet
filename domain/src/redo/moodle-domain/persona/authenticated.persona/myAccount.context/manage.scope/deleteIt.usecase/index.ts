@@ -31,6 +31,6 @@ export type deleteIt = moo.persona.usecase<
 >
 
 export const deleteIt: moo.gate.usecase<deleteIt> = {
-  request: request,
-  confirmDelete: confirmDelete,
+  request,
+  confirmDelete,
 }

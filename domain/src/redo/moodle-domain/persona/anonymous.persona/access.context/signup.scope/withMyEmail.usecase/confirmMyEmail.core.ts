@@ -3,11 +3,11 @@ import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import { userSpace } from '../../../../../model/userAccount.model/userAccount.model'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
-import { confirmMyEmail } from './confirmMyEmail.endpoint'
+import type * as def from './confirmMyEmail.endpoint'
 import { NONE_ASSET } from '../../../../../../moo/lib/content/asset'
 import { SUBMITTED } from '../../../../../../moo/lib/constants'
 
-export const confirmMyEmailCore: moo.core.endpoint<confirmMyEmail> = async (confirmEmailForm, _) => {
+export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (confirmEmailForm, _) => {
   const e_validatedToken = await _.over(
     _.model.jwtTokens.anonymous.access.signup.withMyEmail.emailConfirmationToken.validate,
   ).call.query({

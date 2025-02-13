@@ -21,7 +21,7 @@ export function anyPersonaZodSchemas({ baseUserData, general }: anyPersonaValida
     .pipe(single_line_string_schema)
 
   return {
-    user: { plainPassword: plainPassword, email: userEmail, displayName: userDisplayName },
+    user: { plainPassword, email: userEmail, displayName: userDisplayName },
     id: string().trim().min(general.id.min).max(general.id.max),
     textSearch: string().trim().min(general.textSearch.min).max(general.textSearch.max),
   }

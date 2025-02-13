@@ -14,5 +14,5 @@ export interface Persona {}
 
 export type anonymous = moo.persona<moo<Persona>>
 export const anonymous: moo.gate.persona<anonymous> = {
-  access: access,
+  access,
 }

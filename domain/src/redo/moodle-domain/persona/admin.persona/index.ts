@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { valid } from '@moodle/lib-types'
 import { userBase } from './userBase.context'
+import { moodlenet } from './moodlenet.context'
+import { organization } from './organization.context'
 declare global {
   namespace moo {
     interface Personas {
@@ -16,11 +18,13 @@ export interface Persona {
 export type admin = moo.persona<moo<Persona>>
 
 export const admin: moo.gate.persona<admin> = {
-  userBase: userBase,
+  userBase,
+  moodlenet,
+  organization,
 }
 
 export type adminPersonaValidationConfigs = {
-  personaType: valid.iMinMax
+  xxxxxxxx: valid.iMinMax
 }
 
 type adminPersonaConfigs = {

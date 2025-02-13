@@ -3,6 +3,7 @@ import { valid } from '@moodle/lib-types'
 import { myAccount } from './myAccount.context'
 import { mySpace } from './mySpace.context'
 import { moodlenet } from './moodlenet.context'
+import { edu } from './edu.context'
 declare global {
   namespace moo {
     interface Personas {
@@ -27,7 +28,8 @@ export interface Persona {
 
 export type authenticated = moo.persona<moo<Persona>>
 export const authenticated: moo.gate.persona<authenticated> = {
-  myAccount: myAccount,
-  mySpace: mySpace,
-  moodlenet: moodlenet,
+  myAccount,
+  mySpace,
+  moodlenet,
+  edu,
 }

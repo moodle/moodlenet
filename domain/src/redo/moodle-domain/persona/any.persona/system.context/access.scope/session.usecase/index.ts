@@ -10,5 +10,5 @@ export type session = moo.persona.usecase<{
   myOwn: myOwn
 }>
 export const session: moo.gate.usecase<session> = {
-  myOwn: myOwn,
+  myOwn,
 }

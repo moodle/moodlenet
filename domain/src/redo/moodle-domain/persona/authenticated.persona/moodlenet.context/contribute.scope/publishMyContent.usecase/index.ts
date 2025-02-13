@@ -1,5 +1,5 @@
-import { collections } from './collections.endpoint'
-import { resources } from './resources.endpoint'
+import { collection } from './collection.endpoint'
+import { resource } from './resource.endpoint'
 
 declare module '..' {
   interface Scope {
@@ -8,10 +8,10 @@ declare module '..' {
 }
 
 export type publishMyContent = moo.persona.usecase<{
-  collections: collections
-  resources: resources
+  collection: collection
+  resource: resource
 }>
 export const publishMyContent: moo.gate.usecase<publishMyContent> = {
-  collections: collections,
-  resources: resources,
+  collection,
+  resource,
 }

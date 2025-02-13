@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_ } from '@moodle/lib-types'
+import { any_, map } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { ZodType } from 'zod'
 import { error4xx } from '../lib/access-error'
 
-type Gate<proxy extends boolean> = {
-  [personaType_ in moo.personaType]: moo.gate.persona<moo.Personas[personaType_], proxy>
+type Gate<forPersonas extends map<moo.persona<any_>>, proxy extends boolean> = {
+  [personaType_ in keyof forPersonas]: moo.gate.persona<forPersonas[personaType_], proxy>
 }
 
 declare global {
   namespace moo {
     namespace gate {
-      type provider = Gate<false>
-      type proxy = Gate<true>
+      type provider<forPersonas extends map<moo.persona<any_>>> = Gate<forPersonas, false>
+      type proxy<forPersonas extends map<moo.persona<any_>>> = Gate<forPersonas, true>
 
       type persona<persona_ extends moo.persona<any_>, proxy extends boolean = false> =
         | {

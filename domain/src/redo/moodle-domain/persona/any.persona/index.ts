@@ -17,8 +17,8 @@ export interface Persona {
 export type any__ = moo.persona<moo<Persona>>
 
 export const any__: moo.gate.persona<any__> = {
-  system: system,
-  moodlenet: moodlenet,
+  system,
+  moodlenet,
 }
 
 export type anyPersonaValidationConfigs = {

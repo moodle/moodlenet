@@ -1,4 +1,4 @@
-import { publicContent } from './publicContent.scope'
+import { viewPublicContent } from './viewPublicContent.scope'
 
 declare module '..' {
   interface Persona {
@@ -11,5 +11,5 @@ export interface Context {}
 
 export type moodlenet = moo.persona.context<moo<Context>>
 export const moodlenet: moo.gate.context<moodlenet> = {
-  publicContent: publicContent,
+  viewPublicContent,
 }

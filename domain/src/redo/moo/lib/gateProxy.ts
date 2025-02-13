@@ -10,10 +10,10 @@ export function makeGateProxy({
   gateProvider,
 }: {
   session: moo.session.user
-  gateProvider: moo.gate.provider
+  gateProvider: moo.gate.provider<moo.Personas>
   messageDispatcher: moo.gate.messageDispatcher
 }) {
-  return gateProxy(gateProvider, session, []) as unknown as moo.gate.proxy
+  return gateProxy(gateProvider, session, []) as unknown as moo.gate.proxy<moo.Personas>
   function gateProxy(_sub_gateProvider: any_, _sub_session: any_, path: string[]) {
     return new Proxy(() => null, {
       ...unsupportedProxyHandler,
@@ -67,8 +67,8 @@ export function makeGateProxy({
             `)
         }
 
-        const gate_Endpoint_Provider: moo.gate.endpoint<moo.persona.endpoint> = _next_sub_gateProvider
-        const session_Endpoint: moo.session.Endpoint<moo.persona.endpoint> = _next_sub_session
+        const gate_Endpoint_Provider: moo.gate.endpoint<moo.persona.endpoint<any_>> = _next_sub_gateProvider
+        const session_Endpoint: moo.session.Endpoint<moo.persona.endpoint<any_>> = _next_sub_session
 
         const configs = ((session_Endpoint as any_) ?? {})._
 

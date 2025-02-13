@@ -2,7 +2,7 @@ import { integer_schema } from '@moodle/lib-types'
 
 export const defaultSessionConfig: moo.session.configs = {
   admin: {
-    _: { validation: { personaType: { max: integer_schema.parse(20), min: integer_schema.parse(3) } } },
+    _: { validation: { role: { max: integer_schema.parse(20), min: integer_schema.parse(3) } } },
     userBase: {
       managePermissions: { personaTypes: { searchUsersByText: {} } },
     },

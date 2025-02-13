@@ -11,6 +11,6 @@ export interface Scope {}
 
 export type login = moo.persona.scope<moo<Scope>>
 export const login: moo.gate.scope<login> = {
-  withMyEmailAndPassword: withMyEmailAndPassword,
-  resetMyPassword: resetMyPassword,
+  withMyEmailAndPassword,
+  resetMyPassword,
 }

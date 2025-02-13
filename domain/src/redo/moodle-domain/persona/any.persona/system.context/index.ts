@@ -11,5 +11,5 @@ export interface Context {}
 
 export type system = moo.persona.context<moo<Context>>
 export const system: moo.gate.context<system> = {
-  access: access,
+  access,
 }

@@ -11,6 +11,6 @@ export interface Context {}
 
 export type myAccount = moo.persona.context<moo<Context>>
 export const myAccount: moo.gate.context<myAccount> = {
-  security: security,
-  manage: manage,
+  security,
+  manage,
 }

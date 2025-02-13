@@ -10,5 +10,5 @@ export interface Scope {}
 
 export type manage = moo.persona.scope<moo<Scope>>
 export const manage: moo.gate.scope<manage> = {
-  deleteIt: deleteIt,
+  deleteIt,
 }
