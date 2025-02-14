@@ -7,7 +7,7 @@ import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 import { adminPersonaZodFlow, adminPersonaZodSchemas } from '../../../admin.gates.helper'
 
-export type personaTypes = moo.persona.endpoint<[typeof personaTypesSchema, void, void]>
+export type personaTypes = moo.persona.endpoint<[typeof personaTypesSchema, void]>
 
 export const personaTypes: moo.gate.endpoint<personaTypes> = flow(
   O.some,

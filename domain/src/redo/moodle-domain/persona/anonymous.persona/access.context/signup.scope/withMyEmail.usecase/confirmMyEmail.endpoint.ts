@@ -10,7 +10,7 @@ export type confirmMyEmail = moo.persona.endpoint<
   [
     typeof confirmEmailFormZodSchema,
     E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS | TYPE_INVALID_TOKEN, typeof SUBMITTED>,
-    undefined,
+    // undefined,
     // {
     //   z: (_: { a: number }) => boolean
     // },

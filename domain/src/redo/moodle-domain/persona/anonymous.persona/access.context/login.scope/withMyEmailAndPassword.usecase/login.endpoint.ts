@@ -8,11 +8,7 @@ import { WRONG_CREDENTIALS } from '../consts'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
 export type login = moo.persona.endpoint<
-  [
-    typeof loginFormZodSchema,
-    E.Either<typeof WRONG_CREDENTIALS, { session: moo.session.user; token: signed_token }>,
-    undefined,
-  ]
+  [typeof loginFormZodSchema, E.Either<typeof WRONG_CREDENTIALS, { session: moo.session.user; token: signed_token }>]
 >
 export const login: moo.gate.endpoint<login> = flow(
   O.some,

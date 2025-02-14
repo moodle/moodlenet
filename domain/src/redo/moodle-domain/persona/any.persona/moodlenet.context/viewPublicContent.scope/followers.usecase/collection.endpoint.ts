@@ -2,6 +2,6 @@
 import * as E from 'fp-ts/Either'
 import { void as voidz, ZodVoid } from 'zod'
 
-export type collection = moo.persona.endpoint<[ZodVoid, void, undefined]>
+export type collection = moo.persona.endpoint<[ZodVoid, void]>
 
 export const collection: moo.gate.endpoint<collection> = () => E.right({ zod: voidz() })

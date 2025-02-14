@@ -6,7 +6,7 @@ import * as O from 'fp-ts/Option'
 import { object } from 'zod'
 import { Error4xx } from '../../../../../../moo/lib/access-error'
 
-export type confirmDelete = moo.persona.endpoint<[typeof confirmDeleteSchema, void, void]>
+export type confirmDelete = moo.persona.endpoint<[typeof confirmDeleteSchema, void]>
 
 export const confirmDelete: moo.gate.endpoint<confirmDelete> = flow(
   O.some,

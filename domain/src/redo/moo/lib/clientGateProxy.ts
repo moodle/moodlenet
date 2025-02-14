@@ -90,5 +90,9 @@ export function makeGateProxy({
 
 // const p = makeGateProxy({} as any)
 // p.authenticated?.myAccount?.manage?.deleteIt
-// p.anonymous?.access?.signup?.withMyEmail?.confirmMyEmail?.more.z({a:32})
-// p.anonymous?.access?.signup?.withMyEmail?.submitSignupForm?.more
+// p.anonymous?.access?.signup?.withMyEmail?.confirmMyEmail?.more.z({ a: 32 })
+// const e = p.anonymous?.access?.signup?.withMyEmail?.submitSignupForm
+// if (e) {
+//   const {displayName,email,password} = e.zod.parse({  })
+//   const x = e.call({ password, email, displayName })
+// }

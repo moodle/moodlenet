@@ -7,7 +7,7 @@ import { object } from 'zod'
 import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
-export type requestLink = moo.persona.endpoint<[typeof requestLinkSchema, void, void]>
+export type requestLink = moo.persona.endpoint<[typeof requestLinkSchema, void]>
 export const requestLink: moo.gate.endpoint<requestLink> = flow(
   O.some,
   O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),

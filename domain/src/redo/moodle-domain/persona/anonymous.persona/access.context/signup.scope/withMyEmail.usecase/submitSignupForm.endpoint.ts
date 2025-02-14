@@ -9,7 +9,7 @@ import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
 export type submitSignupForm = moo.persona.endpoint<
-  [typeof signupFormZodSchema, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>, undefined]
+  [typeof signupFormZodSchema, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>]
 >
 
 export type signupForm = {

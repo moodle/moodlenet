@@ -6,7 +6,7 @@ import { object } from 'zod'
 import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
-export type setBackgroundImage = moo.persona.endpoint<[typeof setBackgroundImageSchema, void, void]>
+export type setBackgroundImage = moo.persona.endpoint<[typeof setBackgroundImageSchema, void]>
 
 export const setBackgroundImage: moo.gate.endpoint<setBackgroundImage> = flow(
   O.some,

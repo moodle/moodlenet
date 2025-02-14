@@ -7,7 +7,7 @@ import { object, string } from 'zod'
 import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
-export type changeMyPassword = moo.persona.endpoint<[typeof changeMyPasswordSchema, void, void]>
+export type changeMyPassword = moo.persona.endpoint<[typeof changeMyPasswordSchema, void]>
 
 export const changeMyPassword: moo.gate.endpoint<changeMyPassword> = flow(
   O.some,

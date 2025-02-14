@@ -6,7 +6,7 @@ import { object } from 'zod'
 import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
-export type create = moo.persona.endpoint<[typeof createSchema, void, void]>
+export type create = moo.persona.endpoint<[typeof createSchema, void]>
 
 export const create: moo.gate.endpoint<create> = flow(
   O.some,
