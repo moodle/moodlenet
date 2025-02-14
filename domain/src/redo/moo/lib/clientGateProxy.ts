@@ -61,7 +61,7 @@ export function makeGateProxy({
         const gate_Endpoint_Provider: moo.gate.endpoint<p_endpoint> = _next_gateProvider
         const session_Endpoint: moo.session.endpoint<p_endpoint> = _next_session
 
-        const configs = ((session_Endpoint as any_) ?? {})._
+        const configs = (session_Endpoint ?? {})._
 
         const e_gate_enpoint = gate_Endpoint_Provider({ configs, session: baseSession })
         if (isLeft(e_gate_enpoint)) {
@@ -93,6 +93,6 @@ export function makeGateProxy({
 // p.anonymous?.access?.signup?.withMyEmail?.confirmMyEmail?.more.z({ a: 32 })
 // const e = p.anonymous?.access?.signup?.withMyEmail?.submitSignupForm
 // if (e) {
-//   const {displayName,email,password} = e.zod.parse({  })
+//   const { displayName, email, password } = e.zod.parse({})
 //   const x = e.call({ password, email, displayName })
 // }

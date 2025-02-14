@@ -12,7 +12,7 @@ type gateStep = Either<
     path: string[]
   }
 >
-type gatedCore = (_: { payload: unknown; ctx: moo.core.ctx }) => Promise<Either<Error4xx, unknown>>
+type coreGate = (_: { payload: unknown; ctx: moo.core.ctx }) => Promise<Either<Error4xx, unknown>>
 
 type gateCoreDeps = {
   session: moo.session.user
@@ -20,14 +20,14 @@ type gateCoreDeps = {
   core: moo.core<moo.Personas>
 }
 
-export async function applyGatedCore({
+export async function applyCoreGate({
   ctx,
   payload,
   coreTargetPath,
   ...gateCoreDeps
 }: gateCoreDeps & { coreTargetPath: string[]; ctx: moo.core.ctx; payload: unknown }) {
-  const gatedCore = makeGatedCore(gateCoreDeps)
-  const gatedResult = coreTargetPath.reduce((curr, prop) => (curr as any_)?.[prop], gatedCore)({ ctx, payload })
+  const coreGate = makeCoreGate(gateCoreDeps)
+  const gatedResult = coreTargetPath.reduce((curr, prop) => (curr as any_)?.[prop], coreGate)({ ctx, payload })
   // if (isRight(gatedResult)) {
   //   const cleanCoreResult: Promise<Either<Error4xx, unknown>> = gatedResult.right
   //     .then(result => right(result))
@@ -42,14 +42,14 @@ export async function applyGatedCore({
   return gatedResult
 }
 
-export function makeGatedCore({ session, gateProvider, core }: gateCoreDeps) {
+export function makeCoreGate({ session, gateProvider, core }: gateCoreDeps) {
   const baseSession = session
   type p_endpoint = moo.persona.endpoint<moo.persona.endpoint.def>
 
-  return coreGateProxy(right({ gateProvider, session, core, path: [] })) as gatedCore
+  return coreGateProxy(right({ gateProvider, session, core, path: [] })) as coreGate
 
   function coreGateProxy(gateStep: gateStep) {
-    return new Proxy((() => null as any_) as gatedCore, {
+    return new Proxy((() => null as any_) as coreGate, {
       ...unsupportedProxyHandler,
       get(_target, prop) {
         const next_gate_step = pipe(
@@ -120,7 +120,7 @@ export function makeGatedCore({ session, gateProvider, core }: gateCoreDeps) {
         )
         return coreGateProxy(next_gate_step)
       },
-      async apply(_target, _thisArg, [{ payload: unsafe_payload, ctx }]: Parameters<gatedCore>): ReturnType<gatedCore> {
+      async apply(_target, _thisArg, [{ payload: unsafe_payload, ctx }]: Parameters<coreGate>): ReturnType<coreGate> {
         if (isLeft(gateStep)) {
           return gateStep
         }
@@ -157,12 +157,19 @@ export function makeGatedCore({ session, gateProvider, core }: gateCoreDeps) {
           return e_gate_enpoint
         }
 
-        const { success, data: payload, error } = e_gate_enpoint.right.zod.safeParse(unsafe_payload)
+        const gateEndpointAccessHandle = e_gate_enpoint.right
+
+        const { success, data: payload, error } = gateEndpointAccessHandle.zod.safeParse(unsafe_payload)
         if (!success) {
           return left(new Error4xx('Bad Request', { zod: error, path: gateStep.right.path, configs: endpointConfigs }))
         }
 
-        const cleanCoreResult: Promise<Either<Error4xx, unknown>> = core_Endpoint({ payload, ctx, configs: endpointConfigs })
+        const cleanCoreResult: Promise<Either<Error4xx, unknown>> = core_Endpoint({
+          payload,
+          ctx,
+          configs: endpointConfigs,
+          gate: gateEndpointAccessHandle,
+        })
           .then(result => right(result))
           .catch(error => {
             if (error instanceof Error4xx) {

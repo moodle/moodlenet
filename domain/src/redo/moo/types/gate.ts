@@ -54,13 +54,23 @@ declare global {
         session: session.user
       }) => Either<Error4xx, endpointAcccess<useCaseEndpoint, proxy>>
 
+      type endpointAccessHandle<useCaseEndpoint extends moo.persona.endpoint<any_>> = {
+        zod: endpointZod<useCaseEndpoint>
+      } & (useCaseEndpoint[3] extends never | undefined | null | void
+        ? {
+            more?: never
+          }
+        : {
+            more: useCaseEndpoint[3]
+          })
+
       type endpointAcccess<useCaseEndpoint extends moo.persona.endpoint<any_>, proxy extends boolean = false> =
-        | ({
-            zod: endpointZod<useCaseEndpoint>
-          } & (useCaseEndpoint[3] extends never | undefined | null | void
-            ? { more?: never }
-            : { more: useCaseEndpoint[3] }) &
-            (proxy extends false ? unknown : { call: endpointCall<useCaseEndpoint> }))
+        | (endpointAccessHandle<useCaseEndpoint> &
+            (proxy extends false
+              ? unknown
+              : {
+                  call: endpointCall<useCaseEndpoint>
+                }))
         | (proxy extends true ? undefined : never)
 
       type endpointZod<useCaseEndpoint extends moo.persona.endpoint<any_>> = useCaseEndpoint[0]
