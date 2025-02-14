@@ -15,28 +15,28 @@ declare global {
         config_tag<persona_> & {
           [contextName in string & keyof persona_]:
             | (t extends 'user' ? undefined : never)
-            | (persona_[contextName] extends moo.persona.context<any_> ? session.context<persona_[contextName], t> : never)
+            | (persona_[contextName] extends moo.persona.context<any_> ? context<persona_[contextName], t> : never)
         }
 
       type context<context extends moo.persona.context<any_>, t extends sessionDataType> = config_tag<context> & {
         [scopeName in string & keyof context]:
           | (t extends 'user' ? undefined : never)
-          | (context[scopeName] extends moo.persona.scope<any_> ? session.scope<context[scopeName], t> : never)
+          | (context[scopeName] extends moo.persona.scope<any_> ? scope<context[scopeName], t> : never)
       }
 
       type scope<scope extends moo.persona.scope<any_>, t extends sessionDataType> = config_tag<scope> & {
         [useCaseName in string & keyof scope]:
           | (t extends 'user' ? undefined : never)
-          | (scope[useCaseName] extends moo.persona.usecase<any_> ? session.UseCase<scope[useCaseName], t> : never)
+          | (scope[useCaseName] extends moo.persona.usecase<any_> ? usecase<scope[useCaseName], t> : never)
       }
 
-      type UseCase<useCase extends moo.persona.usecase<any_>, t extends sessionDataType> = config_tag<useCase> & {
+      type usecase<useCase extends moo.persona.usecase<any_>, t extends sessionDataType> = config_tag<useCase> & {
         [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.persona.endpoint<any_>
-          ? (t extends 'user' ? undefined : never) | session.Endpoint<persona.endpoint<useCase[endpointName]>>
+          ? (t extends 'user' ? undefined : never) | endpoint<persona.endpoint<useCase[endpointName]>>
           : never
       }
 
-      type Endpoint<useCaseEndpoint extends moo.persona.endpoint<any_>> = useCaseEndpoint[2] extends undefined | void | never
+      type endpoint<useCaseEndpoint extends moo.persona.endpoint<any_>> = useCaseEndpoint[2] extends undefined | void | never
         ? Record<string, never>
         : {
             _: useCaseEndpoint[2]

@@ -4,7 +4,7 @@ import * as E from 'fp-ts/Either'
 import { flow } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import { object, string } from 'zod'
-import { error4xx } from '../../../../../../moo/lib/access-error'
+import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
 export type changeMyPassword = moo.persona.endpoint<[typeof changeMyPasswordSchema, void, void]>
@@ -13,7 +13,7 @@ export const changeMyPassword: moo.gate.endpoint<changeMyPassword> = flow(
   O.some,
   O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(changeMyPasswordSchema))),
-  E.fromOption(() => error4xx('Unauthorized')),
+  E.fromOption(() => new Error4xx('Unauthorized')),
 )
 
 export function changeMyPasswordSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {

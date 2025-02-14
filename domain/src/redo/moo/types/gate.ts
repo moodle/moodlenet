@@ -3,7 +3,7 @@
 import { any_, map } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { ZodType } from 'zod'
-import { error4xx } from '../lib/access-error'
+import { Error4xx } from '../lib/access-error'
 
 type Gate<forPersonas extends map<moo.persona<any_>>, proxy extends boolean> = {
   [personaType_ in keyof forPersonas]: moo.gate.persona<forPersonas[personaType_], proxy>
@@ -52,12 +52,15 @@ declare global {
       type endpoint<useCaseEndpoint extends moo.persona.endpoint<any_>, proxy extends boolean = false> = (epGateCtx: {
         configs: useCaseEndpoint[2]
         session: session.user
-      }) => Either<error4xx, endpointAcccess<useCaseEndpoint, proxy>>
+      }) => Either<Error4xx, endpointAcccess<useCaseEndpoint, proxy>>
 
       type endpointAcccess<useCaseEndpoint extends moo.persona.endpoint<any_>, proxy extends boolean = false> =
         | ({
             zod: endpointZod<useCaseEndpoint>
-          } & (proxy extends false ? unknown : { call: endpointCall<useCaseEndpoint> }))
+          } & (useCaseEndpoint[3] extends never | undefined | null | void
+            ? { more?: never }
+            : { more: useCaseEndpoint[3] }) &
+            (proxy extends false ? unknown : { call: endpointCall<useCaseEndpoint> }))
         | (proxy extends true ? undefined : never)
 
       type endpointZod<useCaseEndpoint extends moo.persona.endpoint<any_>> = useCaseEndpoint[0]
@@ -65,8 +68,6 @@ declare global {
       type endpointCall<useCaseEndpoint extends moo.persona.endpoint<any_>> = (
         message: useCaseEndpoint[0] extends ZodType<any_, any_, infer inputType> ? inputType : never,
       ) => Promise<useCaseEndpoint[1]>
-
-      type messageDispatcher<more = unknown> = (message: { path: string[]; payload: unknown } & more) => Promise<unknown>
     }
   }
 }

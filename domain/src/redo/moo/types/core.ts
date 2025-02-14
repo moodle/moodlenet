@@ -42,10 +42,13 @@ declare global {
           : never
       }
 
-      type endpoint<endpoint_ extends persona.endpoint<any_>> = (
-        payload: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never,
-        ctx: ctx,
-      ) => Promise<endpoint_[1]>
+      type endpointArg<endpoint_ extends persona.endpoint<any_>> = {
+        payload: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never
+        ctx: ctx
+        configs: endpoint_[2]
+      }
+
+      type endpoint<endpoint_ extends persona.endpoint<any_>> = (_: endpointArg<endpoint_>) => Promise<endpoint_[1]>
     }
   }
 }

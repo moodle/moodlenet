@@ -4,14 +4,14 @@ import * as E from 'fp-ts/Either'
 import { flow } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import { object } from 'zod'
-import { error4xx } from '../../../../../../moo/lib/access-error'
+import { Error4xx } from '../../../../../../moo/lib/access-error'
 
 export type confirmDelete = moo.persona.endpoint<[typeof confirmDeleteSchema, void, void]>
 
 export const confirmDelete: moo.gate.endpoint<confirmDelete> = flow(
   O.some,
   O.bind('zod', flow(O.some, O.map(confirmDeleteSchema))),
-  E.fromOption(() => error4xx('Unauthorized')),
+  E.fromOption(() => new Error4xx('Unauthorized')),
 )
 
 export function confirmDeleteSchema() {

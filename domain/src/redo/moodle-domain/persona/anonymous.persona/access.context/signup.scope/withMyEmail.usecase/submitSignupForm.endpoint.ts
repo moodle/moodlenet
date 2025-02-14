@@ -5,7 +5,7 @@ import { flow } from 'fp-ts/function'
 import { object } from 'zod'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 import { SUBMITTED } from '../../../../../../moo/lib/constants'
-import { error4xx } from '../../../../../../moo/lib/access-error'
+import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
 export type submitSignupForm = moo.persona.endpoint<
@@ -22,7 +22,7 @@ export const submitSignupForm: moo.gate.endpoint<submitSignupForm> = flow(
   O.some,
   O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(signupFormZodSchema))),
-  E.fromOption(() => error4xx('Unauthorized')),
+  E.fromOption(() => new Error4xx('Unauthorized')),
 )
 
 export function signupFormZodSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {

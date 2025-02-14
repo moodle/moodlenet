@@ -3,7 +3,7 @@ import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import { flow } from 'fp-ts/function'
 import { object } from 'zod'
-import { error4xx } from '../../../../../../moo/lib/access-error'
+import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { WRONG_CREDENTIALS } from '../consts'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
@@ -18,7 +18,7 @@ export const login: moo.gate.endpoint<login> = flow(
   O.some,
   O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(loginFormZodSchema))),
-  E.fromOption(() => error4xx('Unauthorized')),
+  E.fromOption(() => new Error4xx('Unauthorized')),
 )
 
 export type loginForm = {

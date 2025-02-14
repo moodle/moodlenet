@@ -6,17 +6,18 @@ import { object } from 'zod'
 import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
-export type create = moo.persona.endpoint<[typeof createSchema, void, void]>
+export type collection = moo.persona.endpoint<[typeof collectionSchema, void, void]>
 
-export const create: moo.gate.endpoint<create> = flow(
+export const collection: moo.gate.endpoint<collection> = flow(
   O.some,
   O.bind(`anyZod`, ({ session }) => anyPersonaZodFlow({ session })),
-  O.bind('zod', flow(O.some, O.map(createSchema))),
+  O.bind('zod', flow(O.some, O.map(collectionSchema))),
   E.fromOption(() => new Error4xx('Unauthorized')),
 )
 
-export function createSchema({ anyZod }: { anyZod: anyPersonaZodSchemas }) {
+export function collectionSchema({ anyZod }: { anyZod: anyPersonaZodSchemas }) {
   return object({
     id: anyZod.id,
+    image: object({}),
   })
 }

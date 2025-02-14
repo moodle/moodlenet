@@ -6,17 +6,18 @@ import { object } from 'zod'
 import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
 
-export type create = moo.persona.endpoint<[typeof createSchema, void, void]>
+export type resource = moo.persona.endpoint<[typeof resourceSchema, void, void]>
 
-export const create: moo.gate.endpoint<create> = flow(
+export const resource: moo.gate.endpoint<resource> = flow(
   O.some,
   O.bind(`anyZod`, ({ session }) => anyPersonaZodFlow({ session })),
-  O.bind('zod', flow(O.some, O.map(createSchema))),
+  O.bind('zod', flow(O.some, O.map(resourceSchema))),
   E.fromOption(() => new Error4xx('Unauthorized')),
 )
 
-export function createSchema({ anyZod }: { anyZod: anyPersonaZodSchemas }) {
+export function resourceSchema({ anyZod }: { anyZod: anyPersonaZodSchemas }) {
   return object({
     id: anyZod.id,
+    image: object({}),
   })
 }

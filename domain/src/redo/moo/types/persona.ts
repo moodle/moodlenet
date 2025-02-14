@@ -34,9 +34,14 @@ declare global {
         const modelTypes: unique symbol
       }
 
-      type endpoint<endpointDef extends endpoint.def> = [epZodType<endpointDef[0]>, endpointDef[1], endpointDef[2]]
+      type endpoint<endpointDef extends endpoint.def> = [
+        epZodType<endpointDef[0]>,
+        endpointDef[1],
+        endpointDef[2],
+        endpointDef[3],
+      ]
       namespace endpoint {
-        type def = [message: zodTypeOrProvider, outcome: any_, configs: serializable | undefined | void]
+        type def = [message: zodTypeOrProvider, outcome: any_, configs: serializable | undefined | void, more?: any_]
       }
     }
   }

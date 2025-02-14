@@ -54,6 +54,9 @@ export const status_list_4xx = [
   ['Too Many Requests', 429],
   // ['Request Header Fields Too Large', 431],
   ['Unavailable For Legal Reasons', 451],
+
+  // the following are borrowed from 5xx
+  ['Not Implemented', 499],
 ] as const
 // export const status_list_5xx = [
 //   ['Internal Server Error', 500],
