@@ -10,7 +10,7 @@ import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona
 export type login = moo.persona.endpoint<
   [typeof loginFormZodSchema, E.Either<typeof WRONG_CREDENTIALS, { session: moo.session.user; token: signed_token }>]
 >
-export const login: moo.gate.endpoint<login> = flow(
+export const login: moo.gate.provider.endpoint<login> = flow(
   O.some,
   O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(loginFormZodSchema))),

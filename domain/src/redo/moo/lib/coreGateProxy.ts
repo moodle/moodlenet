@@ -20,14 +20,14 @@ type gateCoreDeps = {
   core: moo.core<moo.Personas>
 }
 
-export async function applyCoreGate({
+export async function coreGate({
   ctx,
   payload,
   coreTargetPath,
   ...gateCoreDeps
 }: gateCoreDeps & { coreTargetPath: string[]; ctx: moo.core.ctx; payload: unknown }) {
-  const coreGate = makeCoreGate(gateCoreDeps)
-  const gatedResult = coreTargetPath.reduce((curr, prop) => (curr as any_)?.[prop], coreGate)({ ctx, payload })
+  const gateProxy = coreGateProxy(gateCoreDeps)
+  const gatedResult = coreTargetPath.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy)({ ctx, payload })
   // if (isRight(gatedResult)) {
   //   const cleanCoreResult: Promise<Either<Error4xx, unknown>> = gatedResult.right
   //     .then(result => right(result))
@@ -42,13 +42,13 @@ export async function applyCoreGate({
   return gatedResult
 }
 
-export function makeCoreGate({ session, gateProvider, core }: gateCoreDeps) {
+export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
   const baseSession = session
   type p_endpoint = moo.persona.endpoint<moo.persona.endpoint.def>
 
-  return coreGateProxy(right({ gateProvider, session, core, path: [] })) as coreGate
+  return subCoreGateProxy(right({ gateProvider, session, core, path: [] })) as coreGate
 
-  function coreGateProxy(gateStep: gateStep) {
+  function subCoreGateProxy(gateStep: gateStep) {
     return new Proxy((() => null as any_) as coreGate, {
       ...unsupportedProxyHandler,
       get(_target, prop) {
@@ -118,7 +118,7 @@ export function makeCoreGate({ session, gateProvider, core }: gateCoreDeps) {
               ),
           ),
         )
-        return coreGateProxy(next_gate_step)
+        return subCoreGateProxy(next_gate_step)
       },
       async apply(_target, _thisArg, [{ payload: unsafe_payload, ctx }]: Parameters<coreGate>): ReturnType<coreGate> {
         if (isLeft(gateStep)) {
@@ -146,7 +146,7 @@ export function makeCoreGate({ session, gateProvider, core }: gateCoreDeps) {
           )
         }
 
-        const gate_Endpoint_Provider: moo.gate.endpoint<p_endpoint> = gateStep.right.gateProvider as any_
+        const gate_Endpoint_Provider: moo.gate.provider.endpoint<p_endpoint> = gateStep.right.gateProvider as any_
         const core_Endpoint: moo.core.endpoint<p_endpoint> = gateStep.right.core as any_
         const session_Endpoint: moo.session.endpoint<p_endpoint> = gateStep.right.session as any_
 
@@ -168,7 +168,19 @@ export function makeCoreGate({ session, gateProvider, core }: gateCoreDeps) {
           payload,
           ctx,
           configs: endpointConfigs,
-          gate: gateEndpointAccessHandle,
+          zod: gateEndpointAccessHandle.zod,
+          assertContextChecks:
+            gateEndpointAccessHandle.context &&
+            (context => {
+              const checkError = gateEndpointAccessHandle.context.check({ context })
+              if (checkError) {
+                throw checkError
+              }
+              const preflightError = gateEndpointAccessHandle.context.preflight({ context, payload })
+              if (preflightError) {
+                throw preflightError
+              }
+            }),
         })
           .then(result => right(result))
           .catch(error => {

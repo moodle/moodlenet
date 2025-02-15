@@ -8,7 +8,7 @@ import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona
 
 export type setAvatar = moo.persona.endpoint<[typeof setAvatarSchema, void]>
 
-export const setAvatar: moo.gate.endpoint<setAvatar> = flow(
+export const setAvatar: moo.gate.provider.endpoint<setAvatar> = flow(
   O.some,
   O.bind(`anyZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(setAvatarSchema))),

@@ -8,7 +8,7 @@ import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona
 
 export type setBackgroundImage = moo.persona.endpoint<[typeof setBackgroundImageSchema, void]>
 
-export const setBackgroundImage: moo.gate.endpoint<setBackgroundImage> = flow(
+export const setBackgroundImage: moo.gate.provider.endpoint<setBackgroundImage> = flow(
   O.some,
   O.bind(`anyZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(setBackgroundImageSchema))),

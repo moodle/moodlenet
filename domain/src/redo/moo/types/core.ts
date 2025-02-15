@@ -46,7 +46,12 @@ declare global {
         payload: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never
         ctx: ctx
         configs: endpoint_[2]
-        gate: gate.endpointAccessHandle<endpoint_>
+        assertContextChecks: endpoint_[3] extends never | undefined | null | void
+          ? undefined
+          : (
+              context: endpoint_[3] extends never | undefined | null | void ? void : endpoint_[3],
+            ) => /* Error4xx |  */ undefined
+        zod: gate.endpointZod<endpoint_>
       }
 
       type endpoint<endpoint_ extends persona.endpoint<any_>> = (_: endpointArg<endpoint_>) => Promise<endpoint_[1]>

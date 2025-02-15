@@ -16,7 +16,7 @@ type foundUser = {
 
 export type byText = moo.persona.endpoint<[typeof byTextSchema, { users: foundUser[] }, void]>
 
-export const byText: moo.gate.endpoint<byText> = flow(
+export const byText: moo.gate.provider.endpoint<byText> = flow(
   O.some,
   O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(byTextSchema))),

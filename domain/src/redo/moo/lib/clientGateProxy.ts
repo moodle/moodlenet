@@ -1,9 +1,10 @@
 import { any_, unsupportedProxyHandler } from '@moodle/lib-types'
 import { isLeft } from 'fp-ts/Either'
+import { Error4xx } from './access-error'
 
 type messageDispatcher = (message: { path: string[]; payload: unknown }) => Promise<unknown>
 
-export function makeGateProxy({
+export function clientGateProxy({
   session: baseSession,
   gateProvider: baseGateProvider,
   messageDispatcher,
@@ -12,15 +13,35 @@ export function makeGateProxy({
   gateProvider: moo.gate.provider<moo.Personas>
   messageDispatcher: messageDispatcher
 }) {
-  return gateProxy(baseGateProvider, baseSession, []) as unknown as moo.gate.proxy<moo.Personas>
-  function gateProxy(gateProvider: any_, session: any_, path: string[]) {
+  return subClientGateProxy({
+    gateProvider: baseGateProvider,
+    session: baseSession,
+    path: [],
+    accessError: undefined,
+  }) as unknown as moo.gate.client<moo.Personas>
+  function subClientGateProxy({
+    session,
+    path,
+    gateProvider,
+    accessError,
+  }: {
+    gateProvider: any_
+    session: any_
+    path: string[]
+    accessError: Error4xx | undefined
+  }) {
     return new Proxy(() => null, {
       ...unsupportedProxyHandler,
       get(_target, prop) {
         if (typeof prop !== 'string') {
           throw new TypeError(`GateProxy: Invalid property ${String(prop)}`)
         }
-
+        if (prop === '_') {
+          return accessError
+        }
+        if (accessError) {
+          return subClientGateProxy({ gateProvider, session, path, accessError })
+        }
         const _next_gateProvider = gateProvider[prop]
         const _next_session = session[prop]
         const _next_path = [...path, prop]
@@ -35,7 +56,7 @@ export function makeGateProxy({
 
         if (_next_path.length < 4) {
           if (!_next_session) {
-            return undefined
+            return subClientGateProxy({ gateProvider, session, path, accessError: new Error4xx('Unauthorized') })
           }
 
           if (!_next_gateProvider) {
@@ -46,7 +67,12 @@ export function makeGateProxy({
               `)
           }
 
-          return gateProxy(_next_gateProvider, _next_session, _next_path)
+          return subClientGateProxy({
+            gateProvider: _next_gateProvider,
+            session: _next_session,
+            path: _next_path,
+            accessError,
+          })
         }
 
         // _next_path.length === 4 : endpoint|provider level
@@ -57,41 +83,62 @@ export function makeGateProxy({
   but _next_sub_gateProvider is not a function ${_next_gateProvider}
             `)
         }
-        type p_endpoint = moo.persona.endpoint<moo.persona.endpoint.def>
-        const gate_Endpoint_Provider: moo.gate.endpoint<p_endpoint> = _next_gateProvider
-        const session_Endpoint: moo.session.endpoint<p_endpoint> = _next_session
+        type endpoint_type = moo.persona.endpoint<moo.persona.endpoint.def>
+        const endpointProvider: moo.gate.provider.endpoint<endpoint_type> = _next_gateProvider
+        const session_endpoint: moo.session.endpoint<endpoint_type> = _next_session
 
-        const configs = (session_Endpoint ?? {})._
-
-        const e_gate_enpoint = gate_Endpoint_Provider({ configs, session: baseSession })
-        if (isLeft(e_gate_enpoint)) {
-          return undefined
+        const configs = (session_endpoint ?? {})._
+        const endpointAccess: moo.gate.client.endpointAccess<endpoint_type> = context => {
+          const e_gate_endpoint = endpointProvider({ configs, session: baseSession })
+          if (isLeft(e_gate_endpoint)) {
+            return {
+              allowed: false,
+              _: { error: e_gate_endpoint.left },
+            }
+          }
+          const endpointAccessHandle: moo.gate.client.endpointAccessHandle<endpoint_type> = {
+            _: undefined,
+            allowed: true,
+            zod: e_gate_endpoint.right.zod,
+            context: e_gate_endpoint.right.context,
+            send: unsafe_payload => {
+              // const payload = e_gate_endpoint.right.zod.parse(unsafe_payload)
+              const { success, data: payload, error } = e_gate_endpoint.right.zod.safeParse(unsafe_payload)
+              if (!success) {
+                throw new Error4xx('Bad Request', { zod: error })
+              }
+              if (e_gate_endpoint.right.context) {
+                const contextCheckResult = e_gate_endpoint.right.context.check({ context })
+                if (contextCheckResult) {
+                  throw contextCheckResult
+                }
+                const preflightResult = e_gate_endpoint.right.context.preflight({ context, payload })
+                if (preflightResult) {
+                  throw preflightResult
+                }
+              }
+              return messageDispatcher({ path: _next_path, payload })
+            },
+          }
+          return endpointAccessHandle
         }
+        endpointAccess._ = accessError
 
-        const gate_endpoint: moo.gate.endpointAcccess<any_, true> = {
-          ...e_gate_enpoint.right,
-          call: unsafe_payload => {
-            // const { success, data:payload, error } = e_gate_enpoint.right.zod.safeParse(unsafe_payload)
-            // if (!success) {
-            //   throw new Error4xx('Bad Request', { zod: error })
-            // }
-            const payload = e_gate_enpoint.right.zod.parse(unsafe_payload)
-            return messageDispatcher({ path: _next_path, payload })
-          },
-        }
-        return gate_endpoint
-      },
-      apply() {
-        return { gateProvider, session, path }
+        return endpointAccess
       },
     })
   }
 }
 
-// const p = makeGateProxy({} as any)
-// p.authenticated?.myAccount?.manage?.deleteIt
-// p.anonymous?.access?.signup?.withMyEmail?.confirmMyEmail?.more.z({ a: 32 })
-// const e = p.anonymous?.access?.signup?.withMyEmail?.submitSignupForm
+// const p = clientGateProxy({} as any)
+// const _ = p.anonymous.access.login.withMyEmailAndPassword.login()
+// !_.allowed || _.send({ email: '', password:redacted( '')} })
+
+// const c = p.anonymous.access.signup.withMyEmail.confirmMyEmail({ ctxA: '32' })
+
+// const q = c.zod ? c.send({ signupEmailVerificationToken: '' }) : c()
+// const e = p.anonymous.access.signup.withMyEmail.confirmMyEmail()
+// e.allowed && e.context.preflight({context:{ctxA:'32'},payload:{signupEmailVerificationToken:''}})
 // if (e) {
 //   const { displayName, email, password } = e.zod.parse({})
 //   const x = e.call({ password, email, displayName })

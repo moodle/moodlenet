@@ -9,7 +9,7 @@ import { adminPersonaZodFlow, adminPersonaZodSchemas } from '../../../admin.gate
 
 export type personaTypes = moo.persona.endpoint<[typeof personaTypesSchema, void]>
 
-export const personaTypes: moo.gate.endpoint<personaTypes> = flow(
+export const personaTypes: moo.gate.provider.endpoint<personaTypes> = flow(
   O.some,
   O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind(`adminPersonaZod`, ({ session }) => adminPersonaZodFlow({ session })),

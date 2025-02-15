@@ -9,7 +9,7 @@ import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona
 
 export type changeMyPassword = moo.persona.endpoint<[typeof changeMyPasswordSchema, void]>
 
-export const changeMyPassword: moo.gate.endpoint<changeMyPassword> = flow(
+export const changeMyPassword: moo.gate.provider.endpoint<changeMyPassword> = flow(
   O.some,
   O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(changeMyPasswordSchema))),

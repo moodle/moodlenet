@@ -9,7 +9,7 @@ import { adminPersonaZodFlow, adminPersonaZodSchemas } from '../../../admin.gate
 
 export type role = moo.persona.endpoint<[typeof roleSchema, void]>
 
-export const role: moo.gate.endpoint<role> = flow(
+export const role: moo.gate.provider.endpoint<role> = flow(
   O.some,
   O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind(`adminPersonaZod`, ({ session }) => adminPersonaZodFlow({ session })),

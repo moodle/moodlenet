@@ -8,7 +8,7 @@ import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona
 
 export type user = moo.persona.endpoint<[typeof userSchema, void]>
 
-export const user: moo.gate.endpoint<user> = flow(
+export const user: moo.gate.provider.endpoint<user> = flow(
   O.some,
   O.bind(`anyZod`, ({ session }) => anyPersonaZodFlow({ session })),
   O.bind('zod', flow(O.some, O.map(userSchema))),

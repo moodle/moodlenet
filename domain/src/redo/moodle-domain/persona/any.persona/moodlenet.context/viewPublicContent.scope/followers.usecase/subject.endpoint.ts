@@ -4,4 +4,4 @@ import { void as voidz, ZodVoid } from 'zod'
 
 export type subject = moo.persona.endpoint<[ZodVoid, void]>
 
-export const subject: moo.gate.endpoint<subject> = () => E.right({ zod: voidz() })
+export const subject: moo.gate.provider.endpoint<subject> = () => E.right({ zod: voidz() })
