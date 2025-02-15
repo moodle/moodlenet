@@ -2,10 +2,10 @@
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import { flow } from 'fp-ts/function'
-import { array, object } from 'zod'
+import { object } from 'zod'
 import { Error4xx } from '../../../../../../moo/lib/access-error'
 import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
-import { adminPersonaZodFlow, adminPersonaZodSchemas } from '../../../admin.gates.helper'
+import { adminPersonaZodFlow, adminPersonaZodSchemas } from '../../../../admin.persona/admin.gates.helper'
 
 export type personaTypes = moo.persona.endpoint<[typeof personaTypesSchema, void]>
 
@@ -25,7 +25,7 @@ export function personaTypesSchema({
   adminPersonaZod: adminPersonaZodSchemas
 }) {
   return object({
-    personaTypes: array(adminPersonaZod.personaType),
+    role: adminPersonaZod.role,
     userId: anyPersonaZod.id,
   })
 }

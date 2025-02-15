@@ -1,7 +1,7 @@
 import { any_, unsupportedProxyHandler } from '@moodle/lib-types'
 import { Either, filter, isLeft, left, map, right } from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
-import { Error4xx } from './access-error'
+import { Error4xx, isError4xx } from './access-error'
 
 type gateStep = Either<
   Error4xx,
@@ -161,7 +161,14 @@ export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
 
         const { success, data: form, error } = gateEndpointAccessHandle.zod.safeParse(unsafe_form)
         if (!success) {
-          return left(new Error4xx('Bad Request', { zod: error, path: gateStep.right.path, configs: endpointConfigs }))
+          return left(
+            new Error4xx('Bad Request', {
+              message: error.message,
+              zod: error,
+              path: gateStep.right.path,
+              configs: endpointConfigs,
+            }),
+          )
         }
 
         const cleanCoreResult: Promise<Either<Error4xx, unknown>> = core_Endpoint({
@@ -184,7 +191,7 @@ export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
         })
           .then(result => right(result))
           .catch(error => {
-            if (error instanceof Error4xx) {
+            if (isError4xx(error)) {
               return left(error)
             }
             throw error

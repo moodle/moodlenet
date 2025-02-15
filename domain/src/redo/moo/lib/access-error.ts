@@ -1,52 +1,65 @@
-import { any_ } from '@moodle/lib-types'
+import { any_, redact_stringify } from '@moodle/lib-types'
 import assert from 'assert'
 import { status4xx, status_code_4xx, status_desc_4xx, status_desc_by_code_4xx } from './access-error-status'
 
-export type error4xx = {
+export interface error4xx {
   code: status_code_4xx
   desc: status_desc_4xx
-  details?: any_
+  details: details
 }
-
-// export function errorMsgValidation(details?: any_) {
+type details = {
+  message: string
+  [k: string]: any_
+}
+// export function errorMsgValidation(details?: details) {
 //   return error4xx(400, details)
 // }
 
-// export function errorUnauthorized(details?: any_) {
+// export function errorUnauthorized(details?: details) {
 //   return error4xx(401, details)
 // }
 
-// export function errorForbidden(details?: any_) {
+// export function errorForbidden(details?: details) {
 //   return error4xx(403, details)
 // }
-
-export function error4xx(code_or_desc: status4xx, details?: any_): error4xx {
+export function error4xx(code_or_desc: status4xx, _details?: string | details): error4xx {
   const code = status4xx(code_or_desc)
   const desc = status_desc_by_code_4xx[code]
-  return { code, desc, details } as error4xx
+  const details: details = !_details
+    ? { message: 'no details' }
+    : typeof _details === 'string'
+      ? { message: _details }
+      : _details
+  return { code, desc, details }
 }
 
 export function isError4xx(e: unknown): e is Error4xx {
   return e instanceof Error4xx
 }
-export class Error4xx extends Error {
-  public error4xx: error4xx
-  constructor(code_or_desc_or_err: error4xx | status4xx, details?: any_) {
+export class Error4xx extends Error implements error4xx {
+  code: status_code_4xx
+  desc: status_desc_4xx
+  details: details
+  constructor(code_or_desc_or_err: error4xx | status4xx, details?: string | details) {
     const _error4xx: error4xx =
-      typeof code_or_desc_or_err === 'object' ? { ...code_or_desc_or_err, details } : error4xx(code_or_desc_or_err, details)
+      typeof code_or_desc_or_err === 'object'
+        ? error4xx(code_or_desc_or_err.code, details)
+        : error4xx(code_or_desc_or_err, details)
 
     super(
-      `Access Error4xx ${_error4xx.code}:[${_error4xx.desc}]
-    ${JSON.stringify(_error4xx.details ?? 'no details')}`,
+      `Error4xx ${_error4xx.code}:[${_error4xx.desc}]
+${redact_stringify(_error4xx.details)}`,
     )
-    this.error4xx = _error4xx
+    this.code = _error4xx.code
+    this.details = _error4xx.details
+    this.desc = _error4xx.desc
   }
 }
 
 export function assert4xx<assertionObj>(
   assertionObj: assertionObj,
   code_or_desc: status4xx,
-  details?: any_,
+  details?: details,
 ): asserts assertionObj {
   assert(assertionObj, new Error4xx(code_or_desc, details))
 }
