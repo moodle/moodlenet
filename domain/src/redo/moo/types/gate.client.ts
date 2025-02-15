@@ -54,7 +54,7 @@ declare global {
         }
 
         type endpointCall<useCaseEndpoint extends moo.persona.endpoint<any_>> = (
-          message: useCaseEndpoint[0] extends ZodType<any_, any_, infer inputType> ? inputType : never,
+          form: useCaseEndpoint[0] extends ZodType<any_, any_, infer inputType> ? inputType : never,
         ) => Promise<useCaseEndpoint[1]>
       }
     }

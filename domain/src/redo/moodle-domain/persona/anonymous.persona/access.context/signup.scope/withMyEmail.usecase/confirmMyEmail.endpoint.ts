@@ -24,7 +24,7 @@ export const confirmMyEmail: moo.gate.provider.endpoint<confirmMyEmail> = flow(
   // E.bind('context', ({ configs }) =>
   //   E.right({
   //     check: ({ context }) => (context.ctxA ? undefined : new Error4xx('Bad Request')),
-  //     preflight: ({ payload, context }) => (payload.signupEmailVerificationToken ? undefined : new Error4xx('Bad Request')),
+  //     preflight: ({ form, context }) => (form.signupEmailVerificationToken ? undefined : new Error4xx('Bad Request')),
   //   }),
   // ),
 )

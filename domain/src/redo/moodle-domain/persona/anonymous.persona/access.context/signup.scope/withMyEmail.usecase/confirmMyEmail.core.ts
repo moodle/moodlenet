@@ -7,7 +7,7 @@ import type * as def from './confirmMyEmail.endpoint'
 import { NONE_ASSET } from '../../../../../../moo/lib/content/asset'
 import { SUBMITTED } from '../../../../../../moo/lib/constants'
 
-export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async ({ payload: confirmEmailForm, ctx: _ }) => {
+export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async ({ form: confirmEmailForm, ctx: _ }) => {
   const e_validatedToken = await _.over(
     _.model.jwtTokens.anonymous.access.signup.withMyEmail.emailConfirmationToken.validate,
   ).call.query({

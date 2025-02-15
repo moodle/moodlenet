@@ -2,7 +2,7 @@ import { any_, unsupportedProxyHandler } from '@moodle/lib-types'
 import { isLeft } from 'fp-ts/Either'
 import { Error4xx } from './access-error'
 
-type messageDispatcher = (message: { path: string[]; payload: unknown }) => Promise<unknown>
+type messageDispatcher = (message: { path: string[]; form: unknown }) => Promise<unknown>
 
 export function clientGateProxy({
   session: baseSession,
@@ -101,9 +101,9 @@ export function clientGateProxy({
             allowed: true,
             zod: e_gate_endpoint.right.zod,
             context: e_gate_endpoint.right.context,
-            send: unsafe_payload => {
-              // const payload = e_gate_endpoint.right.zod.parse(unsafe_payload)
-              const { success, data: payload, error } = e_gate_endpoint.right.zod.safeParse(unsafe_payload)
+            send: unsafe_form => {
+              // const form = e_gate_endpoint.right.zod.parse(unsafe_form)
+              const { success, data: form, error } = e_gate_endpoint.right.zod.safeParse(unsafe_form)
               if (!success) {
                 throw new Error4xx('Bad Request', { zod: error })
               }
@@ -112,12 +112,12 @@ export function clientGateProxy({
                 if (contextCheckResult) {
                   throw contextCheckResult
                 }
-                const preflightResult = e_gate_endpoint.right.context.preflight({ context, payload })
+                const preflightResult = e_gate_endpoint.right.context.preflight({ context, form })
                 if (preflightResult) {
                   throw preflightResult
                 }
               }
-              return messageDispatcher({ path: _next_path, payload })
+              return messageDispatcher({ path: _next_path, form })
             },
           }
           return endpointAccessHandle
@@ -138,7 +138,7 @@ export function clientGateProxy({
 
 // const q = c.zod ? c.send({ signupEmailVerificationToken: '' }) : c()
 // const e = p.anonymous.access.signup.withMyEmail.confirmMyEmail()
-// e.allowed && e.context.preflight({context:{ctxA:'32'},payload:{signupEmailVerificationToken:''}})
+// e.allowed && e.context.preflight({context:{ctxA:'32'},form:{signupEmailVerificationToken:''}})
 // if (e) {
 //   const { displayName, email, password } = e.zod.parse({})
 //   const x = e.call({ password, email, displayName })

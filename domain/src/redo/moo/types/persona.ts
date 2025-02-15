@@ -41,7 +41,7 @@ declare global {
         endpointDef[3],
       ]
       namespace endpoint {
-        type def = [message: zodTypeOrProvider, outcome: any_, configs?: serializable | undefined | void, context?: any_]
+        type def = [form: zodTypeOrProvider, outcome: any_, configs?: serializable | undefined | void, context?: any_]
       }
     }
   }

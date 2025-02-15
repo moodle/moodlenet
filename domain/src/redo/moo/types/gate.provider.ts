@@ -33,7 +33,7 @@ declare global {
 
       type preflight<useCaseEndpoint extends moo.persona.endpoint<any_>> = (_: {
         context: useCaseEndpoint[3]
-        payload: useCaseEndpoint[0] extends ZodType<any_, any_, infer inputType> ? inputType : never
+        form: useCaseEndpoint[0] extends ZodType<any_, any_, infer inputType> ? inputType : never
       }) => Error4xx | undefined
 
       type endpointZod<useCaseEndpoint extends moo.persona.endpoint<any_>> = useCaseEndpoint[0]

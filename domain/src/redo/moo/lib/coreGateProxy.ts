@@ -12,7 +12,7 @@ type gateStep = Either<
     path: string[]
   }
 >
-type coreGate = (_: { payload: unknown; ctx: moo.core.ctx }) => Promise<Either<Error4xx, unknown>>
+type coreGate = (_: { form: unknown; ctx: moo.core.ctx }) => Promise<Either<Error4xx, unknown>>
 
 type gateCoreDeps = {
   session: moo.session.user
@@ -22,12 +22,12 @@ type gateCoreDeps = {
 
 export async function coreGate({
   ctx,
-  payload,
+  form,
   coreTargetPath,
   ...gateCoreDeps
-}: gateCoreDeps & { coreTargetPath: string[]; ctx: moo.core.ctx; payload: unknown }) {
+}: gateCoreDeps & { coreTargetPath: string[]; ctx: moo.core.ctx; form: unknown }) {
   const gateProxy = coreGateProxy(gateCoreDeps)
-  const gatedResult = coreTargetPath.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy)({ ctx, payload })
+  const gatedResult = coreTargetPath.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy)({ ctx, form })
   // if (isRight(gatedResult)) {
   //   const cleanCoreResult: Promise<Either<Error4xx, unknown>> = gatedResult.right
   //     .then(result => right(result))
@@ -120,7 +120,7 @@ export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
         )
         return subCoreGateProxy(next_gate_step)
       },
-      async apply(_target, _thisArg, [{ payload: unsafe_payload, ctx }]: Parameters<coreGate>): ReturnType<coreGate> {
+      async apply(_target, _thisArg, [{ form: unsafe_form, ctx }]: Parameters<coreGate>): ReturnType<coreGate> {
         if (isLeft(gateStep)) {
           return gateStep
         }
@@ -159,13 +159,13 @@ export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
 
         const gateEndpointAccessHandle = e_gate_enpoint.right
 
-        const { success, data: payload, error } = gateEndpointAccessHandle.zod.safeParse(unsafe_payload)
+        const { success, data: form, error } = gateEndpointAccessHandle.zod.safeParse(unsafe_form)
         if (!success) {
           return left(new Error4xx('Bad Request', { zod: error, path: gateStep.right.path, configs: endpointConfigs }))
         }
 
         const cleanCoreResult: Promise<Either<Error4xx, unknown>> = core_Endpoint({
-          payload,
+          form,
           ctx,
           configs: endpointConfigs,
           zod: gateEndpointAccessHandle.zod,
@@ -176,7 +176,7 @@ export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
               if (checkError) {
                 throw checkError
               }
-              const preflightError = gateEndpointAccessHandle.context.preflight({ context, payload })
+              const preflightError = gateEndpointAccessHandle.context.preflight({ context, form })
               if (preflightError) {
                 throw preflightError
               }

@@ -3,7 +3,7 @@ import * as O from 'fp-ts/Option'
 import { WRONG_CREDENTIALS } from '../consts'
 import type * as def from './login.endpoint'
 
-export const login: moo.core.endpoint<def.login> = async ({ payload: emailLoginForm, ctx: _ }) => {
+export const login: moo.core.endpoint<def.login> = async ({ form: emailLoginForm, ctx: _ }) => {
   const existingUser = await _.over(_.model.userAccount.user).one.query({ filters: { emailEquals: emailLoginForm.email } })
 
   if (O.isNone(existingUser)) {

@@ -43,7 +43,7 @@ declare global {
       }
 
       type endpointArg<endpoint_ extends persona.endpoint<any_>> = {
-        payload: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never
+        form: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never
         ctx: ctx
         configs: endpoint_[2]
         assertContextChecks: endpoint_[3] extends never | undefined | null | void
