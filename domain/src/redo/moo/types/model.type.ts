@@ -57,13 +57,13 @@ declare global {
           data: spaceData<shape>
         }>
 
-        type idAggregate<data extends serializable_object, ops_ extends ops = ops> = type<{
-          shape: unknown
-          ops: ops_ & {
-            get: ['query', void, Either<dmesg_<typeof NOT_FOUND>, data>]
-          }
-          data: never
-        }>
+        // type idAggregate<data extends serializable_object, ops_ extends ops = ops> = type<{
+        //   shape: unknown
+        //   ops: ops_ & {
+        //     get: ['query', void, Either<dmesg_<typeof NOT_FOUND>, data>]
+        //   }
+        //   data: never
+        // }>
 
         type spaceData<shape> = {
           [k in keyof shape]: shape[k] extends type<infer traits> ? traits['data'] : spaceData<shape[k]>
@@ -71,14 +71,14 @@ declare global {
 
         type entityData<
           data extends serializable_object,
-          opts extends { conditions?: map } = map,
+          opts extends { conditions?: map } = never,
           ops_ extends ops = ops,
         > = type<{
           data: data
           ops: ops_ & {
             get: [
               'query',
-              void | { conditions?: opts['conditions'] },
+              void | undefined | { conditions?: opts['conditions'] },
               Either<dmesg_<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET>, data>,
             ]
             replace: [

@@ -170,12 +170,13 @@ async function getPrimarySession() {
     },
     domain: xHost,
     platforms: {
-      stored: {
+      server: {
         type: 'nodeJs',
         version: process.version,
         //env: process.env,
       },
-      remote: {
+      client: {
+        // this stuff goes in session token ?
         type: 'browser',
         version: ua.browser.version,
         name: ua.browser.name,

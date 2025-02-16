@@ -10,8 +10,8 @@ export type primarySession = {
   // FUTURE: make it `modTokens: { [app_name:string]?: string | null  }`
   token: signed_token | null
   platforms: {
-    stored: platform
-    remote: platform
+    server: platform
+    client: platform
   }
 }
 

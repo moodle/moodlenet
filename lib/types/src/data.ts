@@ -110,10 +110,14 @@ export function plain_password_schema(pwdschema: ZodString) {
 // export type email_address = z.infer< typeof email_address_schema> // email format
 export declare const email_address_brand: unique symbol
 export type email_address = branded<string, typeof email_address_brand> // email format
-export function email_address_schema(emlschema: ZodString) {
-  return string().trim().toLowerCase().email().pipe(emlschema).brand<typeof email_address_brand>()
+export function email_address_schema(emlschema?: ZodString) {
+  return string()
+    .trim()
+    .toLowerCase()
+    .email()
+    .pipe(emlschema ?? string())
+    .brand<typeof email_address_brand>()
 }
-
 export interface named_email_address {
   address: email_address
   name: string

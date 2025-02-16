@@ -18,7 +18,7 @@ import { any_ } from '@moodle/lib-types'
 //   // ['Multiple Choices', 300],
 //   // ['Moved Permanently', 301],
 //   // ['Found', 302],
-//   // [eeOther', 303],
+//   // [See Other', 303],
 //   // ['Not Modified', 304],
 //   // ['Use Proxy', 305],
 //   // ['Temporary Redirect', 307],
@@ -56,6 +56,7 @@ export const status_list_4xx = [
   ['Unavailable For Legal Reasons', 451],
 
   // the following are borrowed from 5xx
+  ['Service Unavailable', 498],
   ['Not Implemented', 499],
 ] as const
 // export const status_list_5xx = [
