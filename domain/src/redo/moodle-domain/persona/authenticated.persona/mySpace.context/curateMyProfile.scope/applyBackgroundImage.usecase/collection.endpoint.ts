@@ -11,8 +11,8 @@ export type collection = moo.persona.endpoint<[typeof collectionSchema, void]>
 export const collection: moo.gate.provider.endpoint<collection> = flow(
   O.some,
   O.bind(`anyZod`, ({ session }) => anyPersonaZodFlow({ session })),
-  O.bind('zod', flow(O.some, O.map(collectionSchema))),
   E.fromOption(() => new Error4xx('Unauthorized')),
+  E.bind('zod', flow(E.right, E.map(collectionSchema))),
 )
 
 export function collectionSchema({ anyZod }: { anyZod: anyPersonaZodSchemas }) {

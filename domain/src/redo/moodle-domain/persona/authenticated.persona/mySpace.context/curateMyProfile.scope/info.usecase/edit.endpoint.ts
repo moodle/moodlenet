@@ -11,8 +11,8 @@ export type edit = moo.persona.endpoint<[typeof editSchema, void]>
 export const edit: moo.gate.provider.endpoint<edit> = flow(
   O.some,
   O.bind(`anyZod`, ({ session }) => anyPersonaZodFlow({ session })),
-  O.bind('zod', flow(O.some, O.map(editSchema))),
   E.fromOption(() => new Error4xx('Unauthorized')),
+  E.bind('zod', flow(E.right, E.map(editSchema))),
 )
 
 export function editSchema({ anyZod }: { anyZod: anyPersonaZodSchemas }) {

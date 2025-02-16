@@ -12,8 +12,8 @@ export type setNew = moo.persona.endpoint<[typeof setNewSchema, void]>
 export const setNew: moo.gate.provider.endpoint<setNew> = flow(
   O.some,
   O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
-  O.bind('zod', flow(O.some, O.map(setNewSchema))),
-  E.fromOption(() => new Error4xx('Unauthorized')),
+  E.fromOption(() => new Error4xx('Forbidden')),
+  E.bind('zod', flow(E.right, E.map(setNewSchema))),
 )
 
 export function setNewSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {

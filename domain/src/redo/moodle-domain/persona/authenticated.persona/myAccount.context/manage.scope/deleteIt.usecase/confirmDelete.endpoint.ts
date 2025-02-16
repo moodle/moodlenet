@@ -10,8 +10,8 @@ export type confirmDelete = moo.persona.endpoint<[typeof confirmDeleteSchema, vo
 
 export const confirmDelete: moo.gate.provider.endpoint<confirmDelete> = flow(
   O.some,
-  O.bind('zod', flow(O.some, O.map(confirmDeleteSchema))),
   E.fromOption(() => new Error4xx('Unauthorized')),
+  E.bind('zod', flow(E.right, E.map(confirmDeleteSchema))),
 )
 
 export function confirmDeleteSchema() {

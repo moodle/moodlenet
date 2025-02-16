@@ -11,8 +11,8 @@ export type resource = moo.persona.endpoint<[typeof resourceSchema, void]>
 export const resource: moo.gate.provider.endpoint<resource> = flow(
   O.some,
   O.bind(`anyZod`, ({ session }) => anyPersonaZodFlow({ session })),
-  O.bind('zod', flow(O.some, O.map(resourceSchema))),
   E.fromOption(() => new Error4xx('Unauthorized')),
+  E.bind('zod', flow(E.right, E.map(resourceSchema))),
 )
 
 export function resourceSchema({ anyZod }: { anyZod: anyPersonaZodSchemas }) {
