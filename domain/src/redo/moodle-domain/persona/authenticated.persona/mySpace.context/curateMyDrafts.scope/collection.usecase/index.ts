@@ -17,7 +17,7 @@ export type collection = moo.persona.usecase<{
   trash: trash
 }>
 
-export const collection: moo.gate.usecase<collection> = {
+export const collection: moo.gate.provider.usecase<collection> = {
   create,
   edit,
   read,

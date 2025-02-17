@@ -25,7 +25,7 @@ export type withMyEmail = moo.persona.usecase<
   }
 >
 
-export const withMyEmail: moo.gate.usecase<withMyEmail> = {
+export const withMyEmail: moo.gate.provider.usecase<withMyEmail> = {
   confirmMyEmail,
   submitSignupForm,
 }

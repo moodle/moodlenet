@@ -9,6 +9,6 @@ declare module '..' {
 export type session = moo.persona.usecase<{
   myOwn: myOwn
 }>
-export const session: moo.gate.usecase<session> = {
+export const session: moo.gate.provider.usecase<session> = {
   myOwn,
 }

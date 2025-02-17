@@ -10,7 +10,7 @@ declare module '..' {
 export interface Scope {}
 
 export type curateMyDrafts = moo.persona.scope<moo<Scope>>
-export const curateMyDrafts: moo.gate.scope<curateMyDrafts> = {
+export const curateMyDrafts: moo.gate.provider.scope<curateMyDrafts> = {
   collection,
   resource,
 }

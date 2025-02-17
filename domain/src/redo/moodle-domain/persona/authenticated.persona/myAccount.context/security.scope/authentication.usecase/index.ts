@@ -6,6 +6,6 @@ declare module '..' {
 }
 
 export type authentication = moo.persona.usecase<{ changeMyPassword: changeMyPassword }>
-export const authentication: moo.gate.usecase<authentication> = {
+export const authentication: moo.gate.provider.usecase<authentication> = {
   changeMyPassword,
 }

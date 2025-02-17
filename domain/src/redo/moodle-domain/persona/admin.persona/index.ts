@@ -17,7 +17,7 @@ export interface Persona {
 
 export type admin = moo.persona<moo<Persona>>
 
-export const admin: moo.gate.persona<admin> = {
+export const admin: moo.gate.provider.persona<admin> = {
   userBase,
   moodlenet,
   organization,

@@ -6,7 +6,7 @@ import { any_, primitive, serializable_object } from '@moodle/lib-types'
 
 declare global {
   type moo<iface> = {
-    [k in keyof iface]: iface[k] extends primitive | void | any_[] | never ? iface[k] : moo<iface[k]>
+    [k in keyof iface]: iface[k] //extends primitive | void | any_[] | never ? iface[k] : moo<iface[k]>
   }
   namespace moo {
     interface Domain {

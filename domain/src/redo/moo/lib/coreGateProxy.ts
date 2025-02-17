@@ -80,8 +80,8 @@ export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
             ): nextGateStep is {
               path: string[]
               gateProvider: NonNullable<unknown>
-              session: unknown
               core: unknown
+              session: unknown
             } => !!nextGateStep.gateProvider,
             ({ path }) =>
               new Error4xx(
@@ -96,19 +96,8 @@ export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
             ): nextGateStep is {
               path: string[]
               gateProvider: NonNullable<unknown>
-              session: NonNullable<unknown>
-              core: unknown
-            } => !!nextGateStep.session,
-            ({ path }) => new Error4xx('Forbidden', `path [${path.join('.')}]`),
-          ),
-          filter(
-            (
-              nextGateStep,
-            ): nextGateStep is {
-              path: string[]
-              gateProvider: NonNullable<unknown>
-              session: NonNullable<unknown>
               core: NonNullable<unknown>
+              session: unknown
             } => !!nextGateStep.core,
             ({ path }) =>
               new Error4xx(
@@ -116,6 +105,17 @@ export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
                 `CoreGate:
   core does not implement path [${path.join('.')}]`,
               ),
+          ),
+          filter(
+            (
+              nextGateStep,
+            ): nextGateStep is {
+              path: string[]
+              gateProvider: NonNullable<unknown>
+              core: NonNullable<unknown>
+              session: NonNullable<unknown>
+            } => !!nextGateStep.session,
+            ({ path }) => new Error4xx('Forbidden', `path [${path.join('.')}]`),
           ),
         )
         return subCoreGateProxy(next_gate_step)

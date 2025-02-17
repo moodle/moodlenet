@@ -1,4 +1,5 @@
 import { curateMyDrafts } from './curateMyDrafts.scope'
+import { curateMyProfile } from './curateMyProfile.scope'
 
 declare module '..' {
   interface Persona {
@@ -9,6 +10,7 @@ declare module '..' {
 export interface Context {}
 
 export type mySpace = moo.persona.context<moo<Context>>
-export const mySpace: moo.gate.context<mySpace> = {
+export const mySpace: moo.gate.provider.context<mySpace> = {
   curateMyDrafts,
+  curateMyProfile,
 }

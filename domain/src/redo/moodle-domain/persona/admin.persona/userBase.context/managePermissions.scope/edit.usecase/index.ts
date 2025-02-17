@@ -5,6 +5,6 @@ declare module '..' {
   }
 }
 export type edit = moo.persona.usecase<{ role: role }>
-export const edit: moo.gate.usecase<edit> = {
+export const edit: moo.gate.provider.usecase<edit> = {
   role,
 }

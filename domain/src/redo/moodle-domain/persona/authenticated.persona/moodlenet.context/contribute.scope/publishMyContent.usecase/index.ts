@@ -11,7 +11,7 @@ export type publishMyContent = moo.persona.usecase<{
   collection: collection
   resource: resource
 }>
-export const publishMyContent: moo.gate.usecase<publishMyContent> = {
+export const publishMyContent: moo.gate.provider.usecase<publishMyContent> = {
   collection,
   resource,
 }

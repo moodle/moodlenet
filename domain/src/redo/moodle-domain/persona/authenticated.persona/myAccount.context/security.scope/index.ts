@@ -10,6 +10,6 @@ declare module '..' {
 export interface Scope {}
 
 export type security = moo.persona.scope<moo<Scope>>
-export const security: moo.gate.scope<security> = {
+export const security: moo.gate.provider.scope<security> = {
   authentication,
 }

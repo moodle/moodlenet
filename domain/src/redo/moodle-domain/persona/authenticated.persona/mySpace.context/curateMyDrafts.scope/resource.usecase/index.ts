@@ -17,7 +17,7 @@ export type resource = moo.persona.usecase<{
   trash: trash
 }>
 
-export const resource: moo.gate.usecase<resource> = {
+export const resource: moo.gate.provider.usecase<resource> = {
   create,
   edit,
   read,

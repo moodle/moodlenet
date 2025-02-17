@@ -10,6 +10,6 @@ declare module '..' {
 export interface Scope {}
 
 export type signup = moo.persona.scope<moo<Scope>>
-export const signup: moo.gate.scope<signup> = {
+export const signup: moo.gate.provider.scope<signup> = {
   withMyEmail,
 }

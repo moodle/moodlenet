@@ -9,6 +9,6 @@ declare module '..' {
 export interface Scope {}
 
 export type manage = moo.persona.scope<moo<Scope>>
-export const manage: moo.gate.scope<manage> = {
+export const manage: moo.gate.provider.scope<manage> = {
   deleteIt,
 }

@@ -9,6 +9,6 @@ declare module '..' {
 export interface Context {}
 
 export type userBase = moo.persona.context<moo<Context>>
-export const userBase: moo.gate.context<userBase> = {
+export const userBase: moo.gate.provider.context<userBase> = {
   managePermissions,
 }

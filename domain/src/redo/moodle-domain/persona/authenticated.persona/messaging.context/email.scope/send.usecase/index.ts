@@ -9,6 +9,6 @@ export type send = moo.persona.usecase<{
   user: user
 }>
 
-export const send: moo.gate.usecase<send> = {
+export const send: moo.gate.provider.usecase<send> = {
   user,
 }

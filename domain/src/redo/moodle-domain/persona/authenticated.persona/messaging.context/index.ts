@@ -1,14 +1,14 @@
-import { curateMyDrafts } from './curateMyDrafts.scope'
+import { email } from './email.scope'
 
 declare module '..' {
   interface Persona {
-    mySpace: mySpace
+    messaging: messaging
   }
 }
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Context {}
 
-export type mySpace = moo.persona.context<moo<Context>>
-export const mySpace: moo.gate.context<mySpace> = {
-  curateMyDrafts,
+export type messaging = moo.persona.context<moo<Context>>
+export const messaging: moo.gate.provider.context<messaging> = {
+  email,
 }

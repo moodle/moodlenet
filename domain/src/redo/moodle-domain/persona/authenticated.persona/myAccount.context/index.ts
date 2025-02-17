@@ -10,7 +10,7 @@ declare module '..' {
 export interface Context {}
 
 export type myAccount = moo.persona.context<moo<Context>>
-export const myAccount: moo.gate.context<myAccount> = {
+export const myAccount: moo.gate.provider.context<myAccount> = {
   security,
   manage,
 }

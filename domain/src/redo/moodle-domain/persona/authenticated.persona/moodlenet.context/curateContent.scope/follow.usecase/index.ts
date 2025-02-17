@@ -13,7 +13,7 @@ export type follow = moo.persona.usecase<{
   contributor: contributor
   subject: subject
 }>
-export const follow: moo.gate.usecase<follow> = {
+export const follow: moo.gate.provider.usecase<follow> = {
   collection,
   contributor,
   subject,

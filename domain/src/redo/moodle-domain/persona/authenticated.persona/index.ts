@@ -4,6 +4,7 @@ import { myAccount } from './myAccount.context'
 import { mySpace } from './mySpace.context'
 import { moodlenet } from './moodlenet.context'
 import { edu } from './edu.context'
+import { messaging } from './messaging.context'
 declare global {
   namespace moo {
     interface Personas {
@@ -27,9 +28,10 @@ export interface Persona {
 }
 
 export type authenticated = moo.persona<moo<Persona>>
-export const authenticated: moo.gate.persona<authenticated> = {
+export const authenticated: moo.gate.provider.persona<authenticated> = {
   myAccount,
   mySpace,
   moodlenet,
   edu,
+  messaging,
 }

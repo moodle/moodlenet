@@ -9,6 +9,6 @@ declare module '..' {
 export interface Context {}
 
 export type edu = moo.persona.context<moo<Context>>
-export const edu: moo.gate.context<edu> = {
+export const edu: moo.gate.provider.context<edu> = {
   curatePreferences,
 }

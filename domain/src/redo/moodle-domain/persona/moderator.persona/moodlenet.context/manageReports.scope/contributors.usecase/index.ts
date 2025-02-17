@@ -11,7 +11,7 @@ export type contributors = moo.persona.usecase<{
   viewList: viewList
   ignoreReports: ignoreReports
 }>
-export const contributors: moo.gate.usecase<contributors> = {
+export const contributors: moo.gate.provider.usecase<contributors> = {
   viewList,
   ignoreReports,
 }

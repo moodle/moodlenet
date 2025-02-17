@@ -5,6 +5,6 @@ declare module '..' {
   }
 }
 export type searchUsers = moo.persona.usecase<{ byText: byText }>
-export const searchUsers: moo.gate.usecase<searchUsers> = {
+export const searchUsers: moo.gate.provider.usecase<searchUsers> = {
   byText,
 }

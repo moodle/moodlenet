@@ -12,7 +12,7 @@ declare module '..' {
 export interface Scope {}
 
 export type viewPublicContent = moo.persona.scope<moo<Scope>>
-export const viewPublicContent: moo.gate.scope<viewPublicContent> = {
+export const viewPublicContent: moo.gate.provider.scope<viewPublicContent> = {
   fullTextSearch,
   entity,
   followers,

@@ -15,7 +15,7 @@ export type fullTextSearch = moo.persona.usecase<{
   contributors: contributors
   subjects: subjects
 }>
-export const fullTextSearch: moo.gate.usecase<fullTextSearch> = {
+export const fullTextSearch: moo.gate.provider.usecase<fullTextSearch> = {
   collections,
   contributors,
   subjects,

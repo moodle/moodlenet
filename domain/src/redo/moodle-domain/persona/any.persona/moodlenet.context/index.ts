@@ -10,6 +10,6 @@ declare module '..' {
 export interface Context {}
 
 export type moodlenet = moo.persona.context<moo<Context>>
-export const moodlenet: moo.gate.context<moodlenet> = {
+export const moodlenet: moo.gate.provider.context<moodlenet> = {
   viewPublicContent,
 }

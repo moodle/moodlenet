@@ -9,6 +9,6 @@ declare module '..' {
 export type resources = moo.persona.usecase<{
   send: send
 }>
-export const resources: moo.gate.usecase<resources> = {
+export const resources: moo.gate.provider.usecase<resources> = {
   send,
 }

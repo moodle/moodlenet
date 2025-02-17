@@ -10,6 +10,6 @@ declare module '..' {
 export interface Scope {}
 
 export type exchangeWithLms = moo.persona.scope<moo<Scope>>
-export const exchangeWithLms: moo.gate.scope<exchangeWithLms> = {
+export const exchangeWithLms: moo.gate.provider.scope<exchangeWithLms> = {
   resources,
 }

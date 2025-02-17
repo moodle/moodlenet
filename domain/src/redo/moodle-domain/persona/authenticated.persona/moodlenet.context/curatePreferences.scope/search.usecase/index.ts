@@ -7,7 +7,7 @@ declare module '..' {
 }
 
 export type search = moo.persona.usecase<{ read: read; write: write }>
-export const search: moo.gate.usecase<search> = {
+export const search: moo.gate.provider.usecase<search> = {
   read,
   write,
 }

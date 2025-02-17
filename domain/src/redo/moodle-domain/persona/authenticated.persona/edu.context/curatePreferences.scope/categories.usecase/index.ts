@@ -7,7 +7,7 @@ declare module '..' {
 }
 
 export type categories = moo.persona.usecase<{ read: read; write: write }>
-export const categories: moo.gate.usecase<categories> = {
+export const categories: moo.gate.provider.usecase<categories> = {
   read,
   write,
 }

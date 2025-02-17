@@ -10,4 +10,4 @@ declare module '..' {
 export interface Scope {}
 
 export type access = moo.persona.scope<moo<Scope>>
-export const access: moo.gate.scope<access> = { session: session }
+export const access: moo.gate.provider.scope<access> = { session: session }

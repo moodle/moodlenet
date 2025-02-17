@@ -11,7 +11,7 @@ export type general = moo.persona.usecase<{
   edit: edit
   read: read
 }>
-export const general: moo.gate.usecase<general> = {
+export const general: moo.gate.provider.usecase<general> = {
   edit,
   read,
 }

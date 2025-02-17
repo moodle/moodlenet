@@ -13,7 +13,7 @@ declare module '..' {
 export interface Scope {}
 
 export type curateContent = moo.persona.scope<moo<Scope>>
-export const curateContent: moo.gate.scope<curateContent> = {
+export const curateContent: moo.gate.provider.scope<curateContent> = {
   follow,
   bookmark,
   like,

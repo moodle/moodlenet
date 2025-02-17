@@ -27,7 +27,7 @@ export type resetMyPassword = moo.persona.usecase<
   }
 >
 
-export const resetMyPassword: moo.gate.usecase<resetMyPassword> = {
+export const resetMyPassword: moo.gate.provider.usecase<resetMyPassword> = {
   requestLink,
   setNew,
 }

@@ -2,15 +2,15 @@ import { preferences } from './preferences.usecase'
 import { send } from './send.usecase'
 declare module '..' {
   interface Context {
-    curateMyDrafts: curateMyDrafts
+    email: email
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Scope {}
 
-export type curateMyDrafts = moo.persona.scope<moo<Scope>>
-export const curateMyDrafts: moo.gate.scope<curateMyDrafts> = {
+export type email = moo.persona.scope<moo<Scope>>
+export const email: moo.gate.provider.scope<email> = {
   send,
   preferences,
 }

@@ -11,7 +11,7 @@ export type bookmark = moo.persona.usecase<{
   collection: collection
   resource: resource
 }>
-export const bookmark: moo.gate.usecase<bookmark> = {
+export const bookmark: moo.gate.provider.usecase<bookmark> = {
   collection,
   resource,
 }

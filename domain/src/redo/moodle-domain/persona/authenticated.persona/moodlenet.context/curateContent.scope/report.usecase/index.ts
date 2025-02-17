@@ -9,6 +9,6 @@ declare module '..' {
 export type report = moo.persona.usecase<{
   contributor: contributor
 }>
-export const report: moo.gate.usecase<report> = {
+export const report: moo.gate.provider.usecase<report> = {
   contributor,
 }

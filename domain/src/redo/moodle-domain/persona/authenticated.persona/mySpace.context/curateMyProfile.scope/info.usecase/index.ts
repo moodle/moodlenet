@@ -15,7 +15,7 @@ export type info = moo.persona.usecase<{
   setBackground: setBackground
 }>
 
-export const info: moo.gate.usecase<info> = {
+export const info: moo.gate.provider.usecase<info> = {
   edit,
   read,
   setAvatar,

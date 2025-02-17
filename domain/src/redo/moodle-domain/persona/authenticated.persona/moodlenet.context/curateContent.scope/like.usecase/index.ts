@@ -9,6 +9,6 @@ declare module '..' {
 export type like = moo.persona.usecase<{
   resource: resource
 }>
-export const like: moo.gate.usecase<like> = {
+export const like: moo.gate.provider.usecase<like> = {
   resource,
 }

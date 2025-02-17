@@ -16,6 +16,6 @@ export type withMyEmailAndPassword = moo.persona.usecase<
   }
 >
 
-export const withMyEmailAndPassword: moo.gate.usecase<withMyEmailAndPassword> = {
+export const withMyEmailAndPassword: moo.gate.provider.usecase<withMyEmailAndPassword> = {
   login,
 }

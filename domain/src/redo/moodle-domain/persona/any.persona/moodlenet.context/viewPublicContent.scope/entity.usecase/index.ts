@@ -15,7 +15,7 @@ export type entity = moo.persona.usecase<{
   contributor: contributor
   subject: subject
 }>
-export const entity: moo.gate.usecase<entity> = {
+export const entity: moo.gate.provider.usecase<entity> = {
   collection,
   contributor,
   subject,

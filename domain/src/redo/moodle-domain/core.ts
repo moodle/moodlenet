@@ -1,3 +1,4 @@
+import { any_ } from '@moodle/lib-types'
 import { admin } from './persona/admin.persona'
 import { anonymous } from './persona/anonymous.persona'
 import { login } from './persona/anonymous.persona/access.context/login.scope/withMyEmailAndPassword.usecase/login.core'
@@ -6,6 +7,7 @@ import { submitSignupForm } from './persona/anonymous.persona/access.context/sig
 import { any__ } from './persona/any.persona'
 import { authenticated } from './persona/authenticated.persona'
 
+const UNIMPLEMENTED = undefined as any_
 export const Gate: moo.core<{
   admin: admin
   authenticated: authenticated
@@ -15,73 +17,123 @@ export const Gate: moo.core<{
   admin: {
     userBase: {
       managePermissions: {
-        personaTypes: {
-          searchUsers,
+        edit: {
+          role: UNIMPLEMENTED,
+        },
+        searchUsers: {
+          byText: UNIMPLEMENTED,
+        },
+      },
+    },
+    moodlenet: {
+      curateInfo: {
+        general: {
+          edit: UNIMPLEMENTED,
+          read: UNIMPLEMENTED,
+        },
+      },
+    },
+    organization: {
+      curateInfo: {
+        general: {
+          edit: UNIMPLEMENTED,
+          read: UNIMPLEMENTED,
         },
       },
     },
   },
   authenticated: {
+    edu: {
+      curatePreferences: {
+        categories: {
+          read: UNIMPLEMENTED,
+          write: UNIMPLEMENTED,
+        },
+      },
+    },
+    messaging: {
+      email: {
+        preferences: {
+          read: UNIMPLEMENTED,
+          write: UNIMPLEMENTED,
+        },
+        send: {
+          user: UNIMPLEMENTED,
+        },
+      },
+    },
     moodlenet: {
-      curate: {
+      curateContent: {
         bookmark: {
-          collection,
-          resource,
+          collection: UNIMPLEMENTED,
+          resource: UNIMPLEMENTED,
         },
         follow: {
-          collection,
-          contributor,
-          subject,
+          collection: UNIMPLEMENTED,
+          contributor: UNIMPLEMENTED,
+          subject: UNIMPLEMENTED,
         },
         like: {
-          resource,
+          resource: UNIMPLEMENTED,
+        },
+        report: {
+          contributor: UNIMPLEMENTED,
         },
       },
       contribute: {
         publishMyContent: {
-          collection,
-          resource,
+          collection: UNIMPLEMENTED,
+          resource: UNIMPLEMENTED,
+        },
+      },
+      curatePreferences: {
+        search: {
+          read: UNIMPLEMENTED,
+          write: UNIMPLEMENTED,
+        },
+      },
+      exchangeWithLms: {
+        resources: {
+          send: UNIMPLEMENTED,
         },
       },
     },
     myAccount: {
-      preferences: {
-        read: {
-          eduCategories,
-        },
-        write: {
-          eduCategories,
-        },
-      },
       manage: {
         deleteIt: {
-          confirmDelete,
-          request,
+          confirmDelete: UNIMPLEMENTED,
+          request: UNIMPLEMENTED,
         },
       },
       security: {
         authentication: {
-          changeMyPassword,
+          changeMyPassword: UNIMPLEMENTED,
         },
       },
     },
     mySpace: {
       curateMyDrafts: {
-        createNew: {
-          collection,
-          resource,
+        collection: {
+          read: UNIMPLEMENTED,
+          create: UNIMPLEMENTED,
+          edit: UNIMPLEMENTED,
+          trash: UNIMPLEMENTED,
+          setBackgroundImage: UNIMPLEMENTED,
         },
-        edit: {
-          collection,
-          resource,
+        resource: {
+          read: UNIMPLEMENTED,
+          create: UNIMPLEMENTED,
+          edit: UNIMPLEMENTED,
+          trash: UNIMPLEMENTED,
+          setBackgroundImage: UNIMPLEMENTED,
         },
-        read: {
-          collection,
-          resource,
-        },
-        trash: {
-          collection,
-          resource,
+      },
+      curateMyProfile: {
+        info: {
+          edit: UNIMPLEMENTED,
+          read: UNIMPLEMENTED,
+          setAvatar: UNIMPLEMENTED,
+          setBackground: UNIMPLEMENTED,
         },
       },
     },
@@ -90,8 +142,8 @@ export const Gate: moo.core<{
     access: {
       login: {
         resetMyPassword: {
-          requestLink,
-          setNew,
+          requestLink: UNIMPLEMENTED,
+          setNew: UNIMPLEMENTED,
         },
         withMyEmailAndPassword: {
           login,
@@ -107,22 +159,30 @@ export const Gate: moo.core<{
   },
   any: {
     moodlenet: {
-      publicContent: {
-        findEntities: {
-          collections,
-          contributors,
-          resources,
-          subjects,
+      viewPublicContent: {
+        fullTextSearch: {
+          collections: UNIMPLEMENTED,
+          contributors: UNIMPLEMENTED,
+          resources: UNIMPLEMENTED,
+          subjects: UNIMPLEMENTED,
         },
-        instanceInfo: {
-          about,
+        entity: {
+          collection: UNIMPLEMENTED,
+          contributor: UNIMPLEMENTED,
+          resource: UNIMPLEMENTED,
+          subject: UNIMPLEMENTED,
+        },
+        followers: {
+          collection: UNIMPLEMENTED,
+          contributor: UNIMPLEMENTED,
+          subject: UNIMPLEMENTED,
         },
       },
     },
     system: {
       access: {
         session: {
-          myOwn,
+          myOwn: UNIMPLEMENTED,
         },
       },
     },
