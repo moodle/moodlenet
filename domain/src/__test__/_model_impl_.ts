@@ -1,7 +1,7 @@
 import { email_address_schema } from '@moodle/lib-types'
 import { left, right } from 'fp-ts/Either'
 import { some } from 'fp-ts/Option'
-import { NO_JOB_HERE } from '../moo/lib/constants'
+import { NO_JOB_HERE } from '../lib/constants'
 
 const _1: moo.model.impl<moo.Models['userAccount']> = {
   user: {
