@@ -6,6 +6,8 @@ declare global {
   namespace moo {
     type model<modelDef extends map = map> = modelDef
     namespace model {
+      type dispatcher = (access: access) => Promise<unknown>
+
       type handle = {
         model: Models
         over: <typeModelRef extends model.type>(
@@ -19,7 +21,6 @@ declare global {
         message: unknown
       }
 
-      type dispatcher = (access: access) => Promise<unknown>
 
       type impl<baseModelNode = Models> = {
         [modelNodePropName in keyof baseModelNode]: baseModelNode[modelNodePropName] extends infer modelNode

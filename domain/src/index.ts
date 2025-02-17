@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import '@moodle/lib-types'
 import { serializable_object } from '@moodle/lib-types'
+export * from './types'
 
 declare global {
   type moo<iface> = {
