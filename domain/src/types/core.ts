@@ -3,6 +3,7 @@
 
 import { any_, map, path, url_string } from '@moodle/lib-types'
 import { ZodType } from 'zod'
+import { logger } from './log'
 
 declare global {
   namespace moo {
@@ -29,6 +30,7 @@ declare global {
 
       type ctx<endpoint_ extends persona.endpoint<any_>> = {
         configs: endpoint_[2]
+        log: logger
       } & moo.model.handle &
         coreAccess<endpoint_>
 

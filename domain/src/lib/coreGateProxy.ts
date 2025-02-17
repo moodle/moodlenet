@@ -2,7 +2,7 @@ import { any_, unsupportedProxyHandler } from '@moodle/lib-types'
 import { Either, filter, isLeft, left, map, right } from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
 import { Error4xx, isError4xx } from './access-error'
-
+import { loggerProvider } from '../types/log'
 
 type coreGate = () => Promise<Either<Error4xx, unknown>>
 
@@ -11,9 +11,10 @@ type coreGateDeps = {
   core: moo.core<moo.Personas>
   modelHandle: moo.model.handle
   coreAccess: moo.core.coreAccess<any_>
+  loggerProvider: loggerProvider
 }
-export async function coreGate({ coreAccess, modelHandle, core, gateProvider }: coreGateDeps) {
-  const gateProxy = coreGateProxy({ gateProvider, core, coreAccess, modelHandle })
+export async function coreGate({ coreAccess, modelHandle, core, gateProvider, loggerProvider }: coreGateDeps) {
+  const gateProxy = coreGateProxy({ gateProvider, core, coreAccess, modelHandle, loggerProvider })
   const gatedResult = coreAccess.target.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy as coreGate)()
   // if (isRight(gatedResult)) {
   //   const cleanCoreResult: Promise<Either<Error4xx, unknown>> = gatedResult.right
@@ -34,6 +35,7 @@ type coreGateProxyDeps = {
   core: moo.core<moo.Personas>
   modelHandle: moo.model.handle
   coreAccess: moo.core.coreAccess<any_>
+  loggerProvider: loggerProvider
 }
 
 type gateStep = Either<
@@ -45,7 +47,7 @@ type gateStep = Either<
     path: string[]
   }
 >
-export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core }: coreGateProxyDeps) {
+export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core, loggerProvider }: coreGateProxyDeps) {
   type p_endpoint = moo.persona.endpoint<moo.persona.endpoint.def>
 
   return subCoreGateProxy(right({ gateProvider, session: coreAccess.session, core, path: [] })) as coreGate
@@ -171,11 +173,13 @@ export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core }: c
             }),
           )
         }
+        const log = loggerProvider({ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$: 1 })
         const ctx: moo.core.ctx<any_> = {
           ...coreAccess,
           form,
           ...modelHandle,
           configs,
+          log,
         }
         const cleanCoreResult: Promise<Either<Error4xx, unknown>> = core_Endpoint({
           ctx,
