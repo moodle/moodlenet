@@ -8,6 +8,7 @@ import { Error4xx } from '../lib/access-error'
 declare global {
   namespace moo {
     namespace gate {
+
       type gateContextChecks<useCaseEndpoint extends moo.persona.endpoint<any_>> = useCaseEndpoint[3] extends
         | never
         | undefined

@@ -3,36 +3,23 @@ import { Either, filter, isLeft, left, map, right } from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
 import { Error4xx, isError4xx } from './access-error'
 
-type gateStep = Either<
-  Error4xx,
-  {
-    gateProvider: unknown
-    session: unknown
-    core: unknown
-    path: string[]
-  }
->
-type coreGate = (_: { form: unknown; ctx: moo.core.ctx }) => Promise<Either<Error4xx, unknown>>
 
-type gateCoreDeps = {
-  session: moo.session.user
+type coreGate = () => Promise<Either<Error4xx, unknown>>
+
+type coreGateDeps = {
   gateProvider: moo.gate.provider<moo.Personas>
   core: moo.core<moo.Personas>
+  modelHandle: moo.model.handle
+  coreAccess: moo.core.coreAccess<any_>
 }
-
-export async function coreGate({
-  ctx,
-  form,
-  coreTargetPath,
-  ...gateCoreDeps
-}: gateCoreDeps & { coreTargetPath: string[]; ctx: moo.core.ctx; form: unknown }) {
-  const gateProxy = coreGateProxy(gateCoreDeps)
-  const gatedResult = coreTargetPath.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy)({ ctx, form })
+export async function coreGate({ coreAccess, modelHandle, core, gateProvider }: coreGateDeps) {
+  const gateProxy = coreGateProxy({ gateProvider, core, coreAccess, modelHandle })
+  const gatedResult = coreAccess.target.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy as coreGate)()
   // if (isRight(gatedResult)) {
   //   const cleanCoreResult: Promise<Either<Error4xx, unknown>> = gatedResult.right
   //     .then(result => right(result))
   //     .catch(error => {
-  //       if (error instanceof Error4xx) {
+  //       if (error instanceof Error4xx) {c
   //         return left(error)
   //       }
   //       throw error
@@ -42,11 +29,26 @@ export async function coreGate({
   return gatedResult
 }
 
-export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
-  const baseSession = session
+type coreGateProxyDeps = {
+  gateProvider: moo.gate.provider<moo.Personas>
+  core: moo.core<moo.Personas>
+  modelHandle: moo.model.handle
+  coreAccess: moo.core.coreAccess<any_>
+}
+
+type gateStep = Either<
+  Error4xx,
+  {
+    gateProvider: unknown
+    core: unknown
+    session: unknown
+    path: string[]
+  }
+>
+export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core }: coreGateProxyDeps) {
   type p_endpoint = moo.persona.endpoint<moo.persona.endpoint.def>
 
-  return subCoreGateProxy(right({ gateProvider, session, core, path: [] })) as coreGate
+  return subCoreGateProxy(right({ gateProvider, session: coreAccess.session, core, path: [] })) as coreGate
 
   function subCoreGateProxy(gateStep: gateStep) {
     return new Proxy((() => null as any_) as coreGate, {
@@ -120,7 +122,7 @@ export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
         )
         return subCoreGateProxy(next_gate_step)
       },
-      async apply(_target, _thisArg, [{ form: unsafe_form, ctx }]: Parameters<coreGate>): ReturnType<coreGate> {
+      async apply() {
         if (isLeft(gateStep)) {
           return gateStep
         }
@@ -150,8 +152,9 @@ export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
         const core_Endpoint: moo.core.endpoint<p_endpoint> = gateStep.right.core as any_
         const session_Endpoint: moo.session.endpoint<p_endpoint> = gateStep.right.session as any_
 
-        const endpointConfigs = session_Endpoint._
-        const e_gate_enpoint = gate_Endpoint_Provider({ configs: endpointConfigs, session: baseSession })
+        const configs = session_Endpoint._
+
+        const e_gate_enpoint = gate_Endpoint_Provider({ configs, session: coreAccess.session })
 
         if (isLeft(e_gate_enpoint)) {
           return e_gate_enpoint
@@ -159,22 +162,23 @@ export function coreGateProxy({ session, gateProvider, core }: gateCoreDeps) {
 
         const gateEndpointAccessHandle = e_gate_enpoint.right
 
-        const { success, data: form, error } = gateEndpointAccessHandle.zod.safeParse(unsafe_form)
+        const { success, data: form, error } = gateEndpointAccessHandle.zod.safeParse(coreAccess.form)
         if (!success) {
           return left(
             new Error4xx('Bad Request', {
               message: error.message,
-              zod: error,
-              path: gateStep.right.path,
-              configs: endpointConfigs,
+              zod: error.format(),
             }),
           )
         }
-
-        const cleanCoreResult: Promise<Either<Error4xx, unknown>> = core_Endpoint({
+        const ctx: moo.core.ctx<any_> = {
+          ...coreAccess,
           form,
+          ...modelHandle,
+          configs,
+        }
+        const cleanCoreResult: Promise<Either<Error4xx, unknown>> = core_Endpoint({
           ctx,
-          configs: endpointConfigs,
           zod: gateEndpointAccessHandle.zod,
           assertContextChecks:
             gateEndpointAccessHandle.context &&

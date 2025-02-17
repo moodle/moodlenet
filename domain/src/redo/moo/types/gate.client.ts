@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_, map } from '@moodle/lib-types'
+import { any_, map, path } from '@moodle/lib-types'
 import { ZodType } from 'zod'
 import { Error4xx } from '../lib/access-error'
 
@@ -11,6 +11,9 @@ declare global {
         [personaType_ in keyof forPersonas]: client.persona<forPersonas[personaType_]>
       }
       namespace client {
+        type access = { path: path; form: unknown }
+        type dispatcher = (gateAccess: access) => Promise<unknown>
+
         type persona<persona_ extends moo.persona<any_>> = {
           [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_>
             ? context<persona_[contextName]>

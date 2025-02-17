@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 /* eslint-disable @typescript-eslint/no-namespace */
 import '@moodle/lib-types'
-import { any_, primitive, serializable_object } from '@moodle/lib-types'
+import { serializable_object } from '@moodle/lib-types'
 
 declare global {
   type moo<iface> = {

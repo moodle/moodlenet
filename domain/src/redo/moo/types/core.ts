@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 
-import { any_, map } from '@moodle/lib-types'
+import { any_, map, path, url_string } from '@moodle/lib-types'
 import { ZodType } from 'zod'
 
 declare global {
@@ -10,13 +10,27 @@ declare global {
       [personaType_ in keyof forPersonas]: core.persona<forPersonas[personaType_]>
     }
     namespace core {
-      type ctx = {
-        model: Models
-        over: <typeModelRef extends model.type>(
-          type_model_ref: typeModelRef | undefined,
-        ) => typeModelRefOpMap_impl<typeModelRef>
+      type coreAccess<endpoint_ extends persona.endpoint<any_>> = {
+        id: string
         session: session.user
+      } & gateAccess<endpoint_>
+
+      type gateAccess<endpoint_ extends persona.endpoint<any_>> = {
+        correlationId: string
+        target: path
+        form: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never
+        claims: {
+          client: clientClaims
+          server: serverClaims
+        }
       }
+      type clientClaims = { locale?: string; locales?: string[] }
+      type serverClaims = { href: url_string; ua: string }
+
+      type ctx<endpoint_ extends persona.endpoint<any_>> = {
+        configs: endpoint_[2]
+      } & moo.model.handle &
+        coreAccess<endpoint_>
 
       type persona<persona_ extends moo.persona<any_>> = {
         [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_>
@@ -43,9 +57,7 @@ declare global {
       }
 
       type endpointArg<endpoint_ extends persona.endpoint<any_>> = {
-        form: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never
-        ctx: ctx
-        configs: endpoint_[2]
+        ctx: ctx<endpoint_>
         assertContextChecks: endpoint_[3] extends never | undefined | null | void
           ? undefined
           : (
@@ -58,28 +70,3 @@ declare global {
     }
   }
 }
-
-type typeModelRefOpMap_impl<typeModelRef extends moo.model.type> =
-  typeModelRef extends moo.model.type<infer traits>
-    ? traits['ops'] extends infer opTraits
-      ? opTraits extends moo.model.type.ops
-        ? {
-            [k in keyof opTraits]: typeModelRefOp_impl<opTraits[k]>
-          }
-        : never
-      : never
-    : never
-
-type typeModelRefOp_impl<modelOpDef extends moo.model.type.opDef> = modelOpDef[0] extends 'query'
-  ? {
-      query: (message: modelOpDef[1]) => Promise<modelOpDef[2]>
-    }
-  : modelOpDef[0] extends 'async' | 'sync'
-    ? {
-        async: (message: modelOpDef[1]) => Promise<void>
-      } & (modelOpDef[0] extends 'sync'
-        ? {
-            sync: (message: modelOpDef[1]) => Promise<modelOpDef[2]>
-          }
-        : unknown)
-    : never

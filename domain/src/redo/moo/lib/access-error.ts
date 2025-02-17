@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { any_, redact_stringify } from '@moodle/lib-types'
 import assert from 'assert'
+import { ZodFormattedError } from 'zod'
 import { status4xx, status_code_4xx, status_desc_4xx, status_desc_by_code_4xx } from './access-error-status'
 
 export interface error4xx {
@@ -9,6 +11,7 @@ export interface error4xx {
 }
 type details = {
   message: string
+  zod?: ZodFormattedError<any_>
   [k: string]: any_
 }
 // export function errorMsgValidation(details?: details) {

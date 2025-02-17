@@ -2,16 +2,14 @@ import { any_, unsupportedProxyHandler } from '@moodle/lib-types'
 import { isLeft } from 'fp-ts/Either'
 import { Error4xx } from './access-error'
 
-type messageDispatcher = (message: { path: string[]; form: unknown }) => Promise<unknown>
-
 export function clientGateProxy({
   session: baseSession,
   gateProvider: baseGateProvider,
-  messageDispatcher,
+  formDispatcher,
 }: {
   session: moo.session.user
   gateProvider: moo.gate.provider<moo.Personas>
-  messageDispatcher: messageDispatcher
+  formDispatcher: moo.gate.client.dispatcher
 }) {
   return subClientGateProxy({
     gateProvider: baseGateProvider,
@@ -105,7 +103,7 @@ export function clientGateProxy({
               // const form = e_gate_endpoint.right.zod.parse(unsafe_form)
               const { success, data: form, error } = e_gate_endpoint.right.zod.safeParse(unsafe_form)
               if (!success) {
-                throw new Error4xx('Bad Request', { zod: error })
+                throw new Error4xx('Bad Request', { message: error.message, zod: error.format() })
               }
               if (e_gate_endpoint.right.context) {
                 const contextCheckResult = e_gate_endpoint.right.context.check({ context })
@@ -117,7 +115,7 @@ export function clientGateProxy({
                   throw preflightResult
                 }
               }
-              return messageDispatcher({ path: _next_path, form })
+              return formDispatcher({ path: _next_path, form })
             },
           }
           return endpointAccessHandle

@@ -14,7 +14,7 @@ const _1: moo.model.impl<moo.Models['userAccount']> = {
           '* replace': async ({ newData: _newData, conditions: _conditions }) => {
             return right('done')
           },
-          'replace |': async (_outcme, _message) => {
+          '& replace': async (_outcme, _message) => {
             return
           },
         },

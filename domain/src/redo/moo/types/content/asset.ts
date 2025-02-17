@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { fileMeta } from '@moodle/lib-domain-fs'
 import { d_u, d_u__d, url_string } from '@moodle/lib-types'
+import { Either } from 'fp-ts/Either'
+import { Error4xx } from '../../lib/access-error'
 
 declare global {
   namespace moo {
@@ -29,13 +31,15 @@ declare global {
           'type'
         >
 
-        type adoptResult<typ extends maybe['type'] = maybe['type']> = d_u<
-          {
-            assetSubmitted: unknown
-            done: { asset: d_u__d<maybe, 'type', typ> }
-            error: { message?: string }
-          },
-          'status'
+        type adoptResult<typ extends maybe['type'] = maybe['type']> = Either<
+          Error4xx,
+          d_u<
+            {
+              assetSubmitted: unknown
+              done: { asset: d_u__d<maybe, 'type', typ> }
+            },
+            'status'
+          >
         >
 
         type adoptModel<accepts extends adoptForm['type'] = adoptForm['type']> = (
