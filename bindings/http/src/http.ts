@@ -1,9 +1,13 @@
-import { binderDispatcher, binderReceiver, domainAccess, Error4xx, isCode4xx, status_code_4xx } from '@moodle/domain'
-import { any_ } from '@moodle/lib-types'
+import { Error4xx, isCode4xx } from '@moodle/domain/lib'
+import { any_, path, serializable_object } from '@moodle/lib-types'
 import express from 'express'
 import { Agent, fetch } from 'undici'
 
 const PROTOCOL_CONTENT_TYPE = 'text/plain; charset=utf-8'
+
+type transportObject<pl extends payload> = pl & { path: path }
+type binderDispatcher<pl extends payload> = (transportObject: transportObject<pl>) => Promise<unknown>
+type payload = serializable_object
 
 type reqHttpTarget = {
   host: string
@@ -12,13 +16,13 @@ type reqHttpTarget = {
   secure: boolean
 }
 
-export function getHttpBinderDispatcher({
+export function getHttpBinderDispatcher<pl extends payload = payload>({
   reqHttpTarget,
   agentOpts,
 }: {
   reqHttpTarget: string | reqHttpTarget
   agentOpts?: Agent.Options
-}): binderDispatcher {
+}): binderDispatcher<pl> {
   const dispatcher = new Agent({
     pipelining: 2,
     keepAliveMaxTimeout: 600e3, //default
@@ -27,17 +31,16 @@ export function getHttpBinderDispatcher({
     ...agentOpts,
   })
 
-  return async function request({ domainAccess }) {
-    const { endpoint, ...accessBody } = domainAccess
+  return async function request({ path, ...payload }) {
     const url =
       typeof reqHttpTarget === 'string'
-        ? new URL([reqHttpTarget, ...endpoint].join('/'))
+        ? new URL([reqHttpTarget, ...path].join('/'))
         : new URL(
-            [reqHttpTarget.basePath, ...endpoint].join('/'),
+            [reqHttpTarget.basePath, ...path].join('/'),
             `${reqHttpTarget.secure ? 'https' : 'http'}://${reqHttpTarget.host}:${reqHttpTarget.port}`,
           )
 
-    const body = _serial(accessBody)
+    const body = _serial(payload)
     const replyPromise = fetch(url, {
       method: 'POST',
       body,
@@ -53,7 +56,7 @@ export function getHttpBinderDispatcher({
         }
         if (isCode4xx(httpResponse.status)) {
           const jsonBody = _parse(jsonBodyStrUtf8)
-          throw new Error4xx(httpResponse.status as status_code_4xx, jsonBody?.details)
+          throw new Error4xx(httpResponse.status, jsonBody?.details)
         }
         throw new Error(`Server error: ${httpResponse.status}\n ${jsonBodyStrUtf8}`)
       })
@@ -62,7 +65,7 @@ export function getHttpBinderDispatcher({
         throw e
       })
 
-    return domainAccess.enqueue ? void 0 : replyPromise
+    return replyPromise
   }
 }
 
@@ -70,14 +73,17 @@ type srv_cfg = {
   port: number
   basePath: string
 }
-type httpBinderReceiverHandle = {
-  binderReceiver: binderReceiver
+type httpBinderReceiverHandle<pl extends payload> = {
+  binderReceiver: (_: { binderDispatcher: binderDispatcher<pl> }) => void
   drain: () => Promise<void>
 }
 
-export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promise<httpBinderReceiverHandle> {
+export async function getHttpBinderReceiver<pl extends payload>({
+  port,
+  basePath,
+}: srv_cfg): Promise<httpBinderReceiverHandle<pl>> {
   const pendingReplyPromises: Promise<unknown>[] = []
-  let binderDispatcher: binderDispatcher = async () => {
+  let binderDispatcher: binderDispatcher<pl> = async () => {
     throw new Error4xx('Service Unavailable')
   }
 
@@ -85,20 +91,19 @@ export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promis
   app.use(express.text({ defaultCharset: 'utf-8' }))
   const router = express.Router().use(async (req, res) => {
     res.setHeader('Content-Type', PROTOCOL_CONTENT_TYPE)
-    const endpointless_domain_access: Omit<domainAccess, 'endpoint'> = _parse(req.body)
-    const domainAccess: domainAccess = {
-      ...endpointless_domain_access,
-      endpoint: req.url.replace(/^\//, '').split('/'),
-    }
-    const replyPromise = binderDispatcher({ domainAccess: domainAccess })
+    const path = req.url.replace(/^\//, '').split('/')
+    const payload = _parse(req.body)
+    const transportObject: transportObject<pl> = { ...payload, path }
+
+    const replyPromise = binderDispatcher(transportObject)
       .catch(e => {
-        console.error('HttpBinderReceiver', e)
+        console.error('HttpBinderReceiver error: ', e)
         throw e
       })
       .catch(e => {
         if (e instanceof Error4xx) {
-          res.status(e.error4xx.code)
-          return { details: e.error4xx.details }
+          res.status(e.code)
+          return e
         } else {
           res.status(500)
           return e instanceof Error ? { name: e.name, message: e.message, stack: e.stack } : { error: String(e) }
@@ -107,7 +112,7 @@ export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promis
 
     pendingReplyPromises.push(replyPromise)
     replyPromise.finally(() => pendingReplyPromises.splice(pendingReplyPromises.indexOf(replyPromise), 1))
-    res.send(endpointless_domain_access.enqueue ? void 0 : _serial(await replyPromise))
+    res.send(_serial(await replyPromise))
   })
   app.use(basePath, router)
 
@@ -116,7 +121,7 @@ export async function getHttpBinderReceiver({ port, basePath }: srv_cfg): Promis
       console.log(`http receiver listening on port ${port}`)
       resolve()
     })
-  }).then<httpBinderReceiverHandle>(() => {
+  }).then<httpBinderReceiverHandle<pl>>(() => {
     return {
       async drain() {
         console.log(`draining http receiver [#${pendingReplyPromises.length}] pending replies ...`)
