@@ -2,8 +2,10 @@ import { path, unsupportedProxyHandler } from '@moodle/lib-types'
 
 export function modelHandleProxy({
   modelAccessDispatcher,
+  origin,
 }: {
   modelAccessDispatcher: moo.model.dispatcher
+  origin: moo.model.access.origin
 }): moo.model.handle {
   const model = subCoreModelHandleProxy({
     path: [],
@@ -35,6 +37,7 @@ export function modelHandleProxy({
           type,
           opname,
           message,
+          ...origin,
         })
       },
     })

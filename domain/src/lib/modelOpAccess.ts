@@ -1,6 +1,6 @@
 import { any_ } from '@moodle/lib-types'
-import { modelHandleProxy } from './modelHandleProxy'
 import { loggerProvider } from '../types/log'
+import { modelHandleProxy } from './modelHandleProxy'
 
 export function modelOpAccess({
   modelImpl,
@@ -13,7 +13,13 @@ export function modelOpAccess({
   backModelAccessDispatcher: moo.model.dispatcher
   loggerProvider: loggerProvider
 }) {
-  const handle = modelHandleProxy({ modelAccessDispatcher: backModelAccessDispatcher })
+  const handle = modelHandleProxy({
+    modelAccessDispatcher: backModelAccessDispatcher,
+    origin: {
+      fromModel: { opPath: access.path },
+      useCase: access.useCase,
+    },
+  })
   const typeModelImpl = access.path.reduce((_model, prop) => _model?.[prop], modelImpl)
   const exe = typeModelImpl?.[`* ${access.opname}`] as undefined | moo.model.impl.exe<any_>
   const or = typeModelImpl?.[`| ${access.opname}`] as undefined | moo.model.impl.or<any_>

@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { any_, map, path } from '@moodle/lib-types'
 import { logger } from './log'
-import { Option } from 'fp-ts/Option'
 
 declare global {
   namespace moo {
@@ -16,16 +15,21 @@ declare global {
           type_model_ref: typeModelRef | undefined,
         ) => typeModelRefOpMap_impl<typeModelRef>
       }
-      type access<op extends type.opDef> = {
+      type access<op extends type.opDef> = access.origin & {
         type: 'query' | 'sync' | 'async'
         path: path
         opname: string
         message: op[1]
-        useCase: {
-          id: string
-          path: path
+      }
+
+      namespace access {
+        type origin = {
+          useCase: {
+            id: string
+            path: path
+          }
+          fromModel: false | { opPath: path }
         }
-        fromModel: Option<{ opPath: path }>
       }
 
       type impl<baseModelNode = Models> = {
