@@ -2,12 +2,13 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { any_, map, path } from '@moodle/lib-types'
 import { logger } from './log'
+import { Option } from 'fp-ts/Option'
 
 declare global {
   namespace moo {
     type model<modelDef extends map = map> = modelDef
     namespace model {
-      type dispatcher = (access: access) => Promise<unknown>
+      type dispatcher = (access: access<any_>) => Promise<unknown>
 
       type handle = {
         model: Models
@@ -15,11 +16,16 @@ declare global {
           type_model_ref: typeModelRef | undefined,
         ) => typeModelRefOpMap_impl<typeModelRef>
       }
-      type access = {
+      type access<op extends type.opDef> = {
         type: 'query' | 'sync' | 'async'
         path: path
         opname: string
-        message: unknown
+        message: op[1]
+        useCase: {
+          id: string
+          path: path
+        }
+        fromModel: Option<{ opPath: path }>
       }
 
       type impl<baseModelNode = Models> = {
@@ -37,8 +43,7 @@ declare global {
         type ctx<op extends type.opDef> = {
           log: logger
           handle: handle
-          message: op[1]
-        }
+        } & access<op>
         type typeModel<modelNode extends type<type.traitsDef>> = handlers<modelNode> &
           (modelNode extends type.idSpaceMap<infer space_shape, any_, infer space_ops>
             ? { '#': (id: string) => typeModel<type.idSpaceModel<space_shape, space_ops>> }

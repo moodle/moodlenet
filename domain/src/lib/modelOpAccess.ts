@@ -9,7 +9,7 @@ export function modelOpAccess({
   loggerProvider,
 }: {
   modelImpl: any_
-  access: moo.model.access
+  access: moo.model.access<any_>
   backModelAccessDispatcher: moo.model.dispatcher
   loggerProvider: loggerProvider
 }) {
@@ -19,7 +19,7 @@ export function modelOpAccess({
   const or = typeModelImpl?.[`| ${access.opname}`] as undefined | moo.model.impl.or<any_>
   const and = typeModelImpl?.[`= ${access.opname}`] as undefined | moo.model.impl.and<any_>
   const log = loggerProvider({ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$: 1 })
-  const ctx: moo.model.impl.ctx<any_> = { log, handle, message: access.message }
+  const ctx: moo.model.impl.ctx<any_> = { ...access, log, handle }
   return {
     exe: exe && (() => exe(ctx)),
     or: or && (() => or(ctx)),

@@ -17,7 +17,6 @@ declare global {
       } & gateAccess<endpoint_>
 
       type gateAccess<endpoint_ extends persona.endpoint<any_>> = {
-        correlationId: string
         target: path
         form: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never
         claims: {
@@ -26,7 +25,7 @@ declare global {
         }
       }
       type clientClaims = { locale?: string; locales?: string[] }
-      type serverClaims = { href: url_string; ua: string }
+      type serverClaims = { requestId: string; href: url_string; ua: string }
 
       type ctx<endpoint_ extends persona.endpoint<any_>> = {
         configs: endpoint_[2]
