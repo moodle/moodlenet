@@ -1,3 +1,4 @@
+import { generateUlid } from '@moodle/lib-id-gen'
 import { path, unsupportedProxyHandler } from '@moodle/lib-types'
 
 export function modelHandleProxy({
@@ -23,21 +24,27 @@ export function modelHandleProxy({
   function _over(modelRefProxy: () => { path: path; message: unknown[] }) {
     return subCoreModelHandleProxy({
       path: [],
-      apply: ({ path: [opname, type], message }) => {
-        if (!opname) {
-          throw new TypeError(`CoreModelHandleProxy: Invalid opname ${opname}`)
+      apply: ({ path: [opName, type], message }) => {
+        if (!opName) {
+          throw new TypeError(`CoreModelHandleProxy: Invalid opname ${opName}`)
         }
         if (!(type === 'query' || type === 'sync' || type === 'async')) {
           throw new TypeError(`CoreModelHandleProxy: Invalid action ${type}`)
         }
 
         const { path } = modelRefProxy()
+        const now = new Date().toISOString()
+        const id = generateUlid({ onDate: now })
         return modelAccessDispatcher({
-          path,
-          type,
-          opname,
+          dateTime: now,
+          target: {
+            id,
+            opName,
+            path,
+            type,
+          },
+          origin,
           message,
-          ...origin,
         })
       },
     })

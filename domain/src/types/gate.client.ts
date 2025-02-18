@@ -1,17 +1,28 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_, map, path } from '@moodle/lib-types'
+import { any_, map, path, serializable, url_string } from '@moodle/lib-types'
 import { ZodType } from 'zod'
 import { Error4xx } from '../lib/access-error'
 
 declare global {
   namespace moo {
     namespace gate {
+      type access<endpoint_ extends persona.endpoint<any_>> = {
+        path: path
+        form: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never
+        claims: {
+          client: clientClaims
+          server: serverClaims
+        }
+      }
+      type clientClaims = { locale?: string; locales?: string[] }
+      type serverClaims = { requestId: string; href: url_string; ua: string }
+
       type client<forPersonas extends map<moo.persona<any_>>> = {
         [personaType_ in keyof forPersonas]: client.persona<forPersonas[personaType_]>
       }
       namespace client {
-        type access = { path: path; form: unknown }
+        type access = { path: path; form: serializable }
         type dispatcher = (gateAccess: access) => Promise<unknown>
 
         type persona<persona_ extends moo.persona<any_>> = {

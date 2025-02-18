@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import type { any_, map, path } from '@moodle/lib-types'
+import type { any_, date_time_string, map, path } from '@moodle/lib-types'
 import { logger } from './log'
+import { Either } from 'fp-ts/Either'
+import { Error4xx } from '../lib'
 
 declare global {
   namespace moo {
@@ -15,20 +17,26 @@ declare global {
           type_model_ref: typeModelRef | undefined,
         ) => typeModelRefOpMap_impl<typeModelRef>
       }
-      type access<op extends type.opDef> = access.origin & {
-        type: 'query' | 'sync' | 'async'
-        path: path
-        opname: string
+      type access<op extends type.opDef> = {
+        dateTime: date_time_string
         message: op[1]
+        origin: access.origin
+        target: access.target
       }
 
       namespace access {
+        type target = {
+          id: string
+          opName: string
+          path: path
+          type: 'query' | 'sync' | 'async'
+        }
         type origin = {
           useCase: {
             id: string
             path: path
           }
-          fromModel: false | { opPath: path }
+          from: false | target
         }
       }
 
@@ -45,9 +53,11 @@ declare global {
 
       namespace impl {
         type ctx<op extends type.opDef> = {
+          now: date_time_string
           log: logger
           handle: handle
-        } & access<op>
+          access: access<op>
+        }
         type typeModel<modelNode extends type<type.traitsDef>> = handlers<modelNode> &
           (modelNode extends type.idSpaceMap<infer space_shape, any_, infer space_ops>
             ? { '#': (id: string) => typeModel<type.idSpaceModel<space_shape, space_ops>> }
@@ -55,7 +65,7 @@ declare global {
 
         type exe<op extends model.type.opDef> = (ctx: ctx<op>) => Promise<op[2]>
         type or<op extends model.type.opDef> = (ctx: ctx<op>) => Promise<void>
-        type and<op extends model.type.opDef> = (outcome: op[2], ctx: ctx<op>) => Promise<void>
+        type and<op extends model.type.opDef> = (outcome: Either<Error4xx, op[2]>, ctx: ctx<op>) => Promise<void>
 
         type handlers<modelNode extends type<type.traitsDef>> = modelNode[type.traits_prop]['ops'] extends infer ops
           ? ops extends model.type.ops

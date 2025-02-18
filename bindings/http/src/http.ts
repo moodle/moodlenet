@@ -1,13 +1,13 @@
 import { Error4xx, isCode4xx } from '@moodle/domain/lib'
-import { any_, path, serializable_object } from '@moodle/lib-types'
+import { any_, path } from '@moodle/lib-types'
 import express from 'express'
 import { Agent, fetch } from 'undici'
 
 const PROTOCOL_CONTENT_TYPE = 'text/plain; charset=utf-8'
 
-type transportObject<pl extends payload> = pl & { path: path }
-type binderDispatcher<pl extends payload> = (transportObject: transportObject<pl>) => Promise<unknown>
-type payload = serializable_object
+type transportObject<pl extends payload> = pl
+type dispatcher<pl extends payload> = (transportObject: transportObject<pl>) => Promise<unknown>
+export type payload = { path: path }
 
 type reqHttpTarget = {
   host: string
@@ -22,7 +22,7 @@ export function getHttpBinderDispatcher<pl extends payload = payload>({
 }: {
   reqHttpTarget: string | reqHttpTarget
   agentOpts?: Agent.Options
-}): binderDispatcher<pl> {
+}): dispatcher<pl> {
   const dispatcher = new Agent({
     pipelining: 2,
     keepAliveMaxTimeout: 600e3, //default
@@ -74,7 +74,7 @@ type srv_cfg = {
   basePath: string
 }
 type httpBinderReceiverHandle<pl extends payload> = {
-  binderReceiver: (_: { binderDispatcher: binderDispatcher<pl> }) => void
+  receiver: (_: { dispatcher: dispatcher<pl> }) => void
   drain: () => Promise<void>
 }
 
@@ -83,13 +83,17 @@ export async function getHttpBinderReceiver<pl extends payload>({
   basePath,
 }: srv_cfg): Promise<httpBinderReceiverHandle<pl>> {
   const pendingReplyPromises: Promise<unknown>[] = []
-  let binderDispatcher: binderDispatcher<pl> = async () => {
+  let binderDispatcher: dispatcher<pl> = async () => {
     throw new Error4xx('Service Unavailable')
   }
-
+  let draining = false
   const app = express()
   app.use(express.text({ defaultCharset: 'utf-8' }))
   const router = express.Router().use(async (req, res) => {
+    if (draining) {
+      res.status(503).send('Service Unavailable')
+      return
+    }
     res.setHeader('Content-Type', PROTOCOL_CONTENT_TYPE)
     const path = req.url.replace(/^\//, '').split('/')
     const payload = _parse(req.body)
@@ -124,12 +128,13 @@ export async function getHttpBinderReceiver<pl extends payload>({
   }).then<httpBinderReceiverHandle<pl>>(() => {
     return {
       async drain() {
+        draining = true
         console.log(`draining http receiver [#${pendingReplyPromises.length}] pending replies ...`)
-        await Promise.all(pendingReplyPromises)
+        await Promise.allSettled(pendingReplyPromises)
         console.log('drained http receiver pending replies')
       },
-      binderReceiver(_) {
-        binderDispatcher = _.binderDispatcher
+      receiver(_) {
+        binderDispatcher = _.dispatcher
       },
     }
   })

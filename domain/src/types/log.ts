@@ -1,4 +1,4 @@
-import { any_ } from '@moodle/lib-types'
+import { any_, d_u } from '@moodle/lib-types'
 
 //https://datatracker.ietf.org/doc/html/rfc5424
 export type logSeverity = 'emergency' | 'alert' | 'critical' | 'error' | 'warn' | 'notice' | 'info' | 'debug'
@@ -13,9 +13,21 @@ export const logLevelMap: Record<logSeverity, number> = {
   info: 6,
   debug: 7,
 }
-export type loggerContext = {
-  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$: unknown
-}
+export type loggerContext = d_u<
+  {
+    core: {
+      access: moo.core.access<any_>
+    }
+    model: {
+      access: moo.model.access<any_>
+    }
+    infra: {
+      name: string
+      [id: string]: any_
+    }
+  },
+  'for'
+>
 
 export type loggerProvider = (_: loggerContext) => logger
 export type logger = {

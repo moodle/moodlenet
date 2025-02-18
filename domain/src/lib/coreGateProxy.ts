@@ -10,12 +10,12 @@ type coreGateDeps = {
   gateProvider: moo.gate.provider<moo.Personas>
   core: moo.core<moo.Personas>
   modelHandle: moo.model.handle
-  coreAccess: moo.core.coreAccess<any_>
+  coreAccess: moo.core.access<any_>
   loggerProvider: loggerProvider
 }
 export async function coreGate({ coreAccess, modelHandle, core, gateProvider, loggerProvider }: coreGateDeps) {
   const gateProxy = coreGateProxy({ gateProvider, core, coreAccess, modelHandle, loggerProvider })
-  const gatedResult = coreAccess.target.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy as coreGate)()
+  const gatedResult = await coreAccess.gate.path.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy as coreGate)()
   // if (isRight(gatedResult)) {
   //   const cleanCoreResult: Promise<Either<Error4xx, unknown>> = gatedResult.right
   //     .then(result => right(result))
@@ -34,7 +34,7 @@ type coreGateProxyDeps = {
   gateProvider: moo.gate.provider<moo.Personas>
   core: moo.core<moo.Personas>
   modelHandle: moo.model.handle
-  coreAccess: moo.core.coreAccess<any_>
+  coreAccess: moo.core.access<any_>
   loggerProvider: loggerProvider
 }
 
@@ -164,20 +164,28 @@ export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core, log
 
         const gateEndpointAccessHandle = e_gate_enpoint.right
 
-        const { success, data: form, error } = gateEndpointAccessHandle.zod.safeParse(coreAccess.form)
+        const { success, data: safe_form, error: form_error } = gateEndpointAccessHandle.zod.safeParse(coreAccess.gate.form)
         if (!success) {
           return left(
             new Error4xx('Bad Request', {
-              message: error.message,
-              zod: error.format(),
+              message: form_error.message,
+              zod: form_error.format(),
             }),
           )
         }
-        const log = loggerProvider({ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$: 1 })
-        const ctx: moo.core.ctx<any_> = {
+
+        const access: moo.core.access<any_> = {
           ...coreAccess,
-          form,
-          ...modelHandle,
+          gate: {
+            ...coreAccess.gate,
+            form: safe_form,
+          },
+        }
+
+        const log = loggerProvider({ for: 'core', access })
+        const ctx: moo.core.ctx<any_> = {
+          access,
+          handle: modelHandle,
           configs,
           log,
         }
@@ -191,7 +199,7 @@ export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core, log
               if (checkError) {
                 throw checkError
               }
-              const preflightError = gateEndpointAccessHandle.context.preflight({ context, form })
+              const preflightError = gateEndpointAccessHandle.context.preflight({ context, form: safe_form })
               if (preflightError) {
                 throw preflightError
               }

@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 
-import { any_, map, path, url_string } from '@moodle/lib-types'
-import { ZodType } from 'zod'
+import { any_, date_time_string, map } from '@moodle/lib-types'
 import { logger } from './log'
 
 declare global {
@@ -11,27 +10,19 @@ declare global {
       [personaType_ in keyof forPersonas]: core.persona<forPersonas[personaType_]>
     }
     namespace core {
-      type coreAccess<endpoint_ extends persona.endpoint<any_>> = {
+      type access<endpoint_ extends persona.endpoint<any_>> = {
         id: string
+        now: date_time_string
         session: session.user
-      } & gateAccess<endpoint_>
-
-      type gateAccess<endpoint_ extends persona.endpoint<any_>> = {
-        target: path
-        form: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never
-        claims: {
-          client: clientClaims
-          server: serverClaims
-        }
+        gate: gate.access<endpoint_>
       }
-      type clientClaims = { locale?: string; locales?: string[] }
-      type serverClaims = { requestId: string; href: url_string; ua: string }
 
       type ctx<endpoint_ extends persona.endpoint<any_>> = {
         configs: endpoint_[2]
         log: logger
-      } & moo.model.handle &
-        coreAccess<endpoint_>
+        handle: moo.model.handle
+        access: access<endpoint_>
+      }
 
       type persona<persona_ extends moo.persona<any_>> = {
         [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_>
