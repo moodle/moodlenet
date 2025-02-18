@@ -20,7 +20,7 @@ export type signupForm = {
 
 export const submitSignupForm: moo.gate.provider.endpoint<submitSignupForm> = flow(
   O.some,
-  O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
+  O.bind(`anyPersonaZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
   E.fromOption(() => new Error4xx('Forbidden')),
   E.bind('zod', flow(E.right, E.map(signupFormZodSchema))),
 )

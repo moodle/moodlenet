@@ -419,7 +419,7 @@ export const userAccount_core: moduleCore<'userAccount'> = {
   },
   async startBackgroundProcess(ctx) {
     const sysAdminInfo = await ctx.mod.secondary.env.query.getSysAdminInfo()
-    ctx.log('debug', `Checking if sysAdmin user exists: `, { sysAdminInfo })
+    ctx.log.debug(`Checking if sysAdmin user exists: `, { sysAdminInfo })
 
     const [found] = await ctx.mod.secondary.userAccount.query.findUser({
       by: 'email',

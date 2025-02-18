@@ -3,8 +3,8 @@ import * as O from 'fp-ts/Option'
 import { literal } from 'zod'
 import { adminPersonaValidationConfigs } from '.'
 export const adminPersonaConfigsFlow = flow(
-  O.some<{ session: moo.session.user }>,
-  O.flatMap(({ session }) => O.fromNullable(session.admin?._)),
+  O.some<{ sessionInfo: moo.session.info }>,
+  O.flatMap(({ sessionInfo }) => O.fromNullable(sessionInfo.session.admin?._)),
 )
 
 export const adminPersonaZodFlow = flow(

@@ -1,4 +1,4 @@
-import { Logger } from '@moodle/domain'
+import { logger } from '@moodle/domain'
 import { databaseConnections, dbStruct, getDbStruct } from './db-structure'
 import * as migrations from './migrate/from'
 
@@ -9,7 +9,7 @@ export async function migrateArangoDB({
   databaseConnections,
 }: {
   databaseConnections: databaseConnections
-  log: Logger
+  log: logger
 }): Promise<string> {
   const dbStruct = getDbStruct(databaseConnections)
   const isInit = !(await dbStruct.services.db.exists())
@@ -23,20 +23,20 @@ export async function migrateArangoDB({
   })
 }
 
-export async function upgrade({ dbStruct, log }: { dbStruct: dbStruct; log: Logger }): Promise<string> {
+export async function upgrade({ dbStruct, log }: { dbStruct: dbStruct; log: logger }): Promise<string> {
   const from_v = ((await dbStruct.services.coll.migrations.document('latest', { graceful: true }))?.current ?? 'init') as
     | keyof typeof migrations
     | typeof TARGET_V
 
   if (from_v === TARGET_V) {
-    log('info', `current arangodb persistence version: [${TARGET_V}]`)
+    log.info(`current arangodb persistence version: [${TARGET_V}]`)
     return TARGET_V
   }
 
   const migrateMod = migrations[from_v]
   if (!migrateMod) {
     const errorMessage = `migration from [${from_v}] not found`
-    log('emergency', errorMessage)
+    log.emergency(errorMessage)
     throw new Error(errorMessage)
   }
 
@@ -56,6 +56,6 @@ export async function upgrade({ dbStruct, log }: { dbStruct: dbStruct; log: Logg
     { overwriteMode: 'replace' },
   )
 
-  log('info', `migrated arangodb persistence from [${from_v}] to [${migrateMod.VERSION}]`)
+  log.info(`migrated arangodb persistence from [${from_v}] to [${migrateMod.VERSION}]`)
   return upgrade({ dbStruct, log })
 }

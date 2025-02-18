@@ -10,7 +10,7 @@ export type trash = moo.persona.endpoint<[typeof trashSchema, void]>
 
 export const trash: moo.gate.provider.endpoint<trash> = flow(
   O.some,
-  O.bind(`anyZod`, ({ session }) => anyPersonaZodFlow({ session })),
+  O.bind(`anyZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
   E.fromOption(() => new Error4xx('Unauthorized')),
   E.bind('zod', flow(E.right, E.map(trashSchema))),
 )

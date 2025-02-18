@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { fileMeta } from '@moodle/lib-domain-fs'
-import type { any_, dmesg_, map, serializable_object } from '@moodle/lib-types'
+import type { any_, map, serializable_object } from '@moodle/lib-types'
 import type { Either } from 'fp-ts/Either'
 import type { Option } from 'fp-ts/Option'
 import type { CONDITIONS_NOT_MET, NOT_FOUND } from '../lib/constants'
@@ -49,8 +49,8 @@ declare global {
         type idSpaceModel<shape, ops_ extends ops = ops> = type<{
           shape: shape
           ops: ops_ & {
-            getData: ['query', void, Either<dmesg_<typeof NOT_FOUND>, spaceData<shape>>]
-            purge: ['async', void, Either<dmesg_<typeof NOT_FOUND>, 'done'>]
+            getData: ['query', void, Option<spaceData<shape>>]
+            purge: ['async', void, Option<'done'>]
             exists: ['query', void, { exists: boolean }]
             create: ['async', { spaceData: spaceData<shape> }, void]
           }
@@ -79,12 +79,12 @@ declare global {
             get: [
               'query',
               void | undefined | { conditions?: opts['conditions'] },
-              Either<dmesg_<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET>, data>,
+              Either<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET, data>,
             ]
             replace: [
-              'sync',
+              'async',
               { newData: data; conditions?: opts['conditions'] },
-              Either<dmesg_<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET>, 'done'>,
+              Either<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET, 'done'>,
             ]
           }
           shape: unknown
@@ -106,8 +106,8 @@ declare global {
           shape: { file: fsFile<{ optional: true }> }
           data: opts['optional'] extends true ? content.asset.maybe : content.asset
           ops: {
-            fromTempFile: ['async', { tempId: string }, Either<dmesg_<typeof NOT_FOUND>, { fileMeta: fileMeta }>]
-            fromUrl: ['async', { externalAsset: content.asset.external }, Either<dmesg_<typeof NOT_FOUND>, void>]
+            fromTempFile: ['async', { tempId: string }, Either<typeof NOT_FOUND, { fileMeta: fileMeta }>]
+            fromUrl: ['async', { externalAsset: content.asset.external }, Either<typeof NOT_FOUND, void>]
           } & (opts['optional'] extends false ? unknown : { remove: ['async', void, void] })
         }>
 

@@ -1,4 +1,4 @@
-import { domainAccess } from '@moodle/domain'
+import '@moodle/domain'
 import {
   enqueueJob,
   fetchAndEngageSomeEnqueuedJobs,
@@ -8,7 +8,7 @@ import {
   reEnqueueTimedoutInProgressJobs,
   updateJob,
 } from '@moodle/lib-job-queue-service'
-import { unreachable_never } from '@moodle/lib-types'
+import { any_, unreachable_never } from '@moodle/lib-types'
 import { aql } from 'arangojs'
 import { literal } from 'arangojs/aql'
 import { DocumentCollection } from 'arangojs/collection'
@@ -20,7 +20,7 @@ export function provideArangoQueueServiceWorkers({
   dbStruct,
 }: {
   dbStruct: dbStruct
-}): queueServiceWorkers<{ domainAccess: domainAccess }> {
+}): queueServiceWorkers<{ access: moo.model.access<any_> }> {
   const jobCollection = dbStruct.services.coll.domainAccessJob
   return {
     enqueueJob: arangoEnqueueJob({ jobCollection }),

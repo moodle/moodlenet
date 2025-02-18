@@ -1,25 +1,12 @@
-import {
-  binderDispatcher,
-  domainAccess,
-  moduleCore,
-  moodleModuleName,
-  secondaryAdapter,
-  secondaryProvider,
-  sys_admin_info,
-} from '@moodle/domain'
-import { accessDomain, configuration, deploymentInfoFromUrlString, startBackgroundProcesses } from '@moodle/domain/lib'
+import { appDeployments, loggerProvider } from '@moodle/domain'
+import * as domainCore from '@moodle/domain/core'
+import * as domainGate from '@moodle/domain/gate'
+import { coreGateDeps, deploymentInfoFromUrlString, executeModelOps, modelHandleProxy } from '@moodle/domain/lib'
+import type * as model from '@moodle/domain/model'
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
-import { generateAlphanumId } from '@moodle/lib-id-gen'
+import { generateAlphanumId, generateUlid } from '@moodle/lib-id-gen'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
-import { any_, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
-import { edu_core } from '@moodle/module/edu/core'
-import { moodlenet_react_app_core } from '@moodle/module/moodlenet-react-app/core'
-import { moodlenet_core } from '@moodle/module/moodlenet/core'
-import { org_core } from '@moodle/module/org/core'
-import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
-import { storage_core } from '@moodle/module/storage/core'
-import { userAccount_core } from '@moodle/module/user-account/core'
-import { user_profile_core } from '@moodle/module/user-profile/core'
+import { any_, email_address_schema, map, signed_token, url_string_schema } from '@moodle/lib-types'
 import { cryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
 import {
   ArangoDbSecEnv,
@@ -33,248 +20,319 @@ import {
   get_default_resource_ingestion_secondary_factory,
   provideDefaultResourceIngestorSecEnv,
 } from '@moodle/sec-resource-ingestion-default'
-import { get_storage_default_secondary_factory, StorageDefaultSecEnv } from '@moodle/sec-storage-local-fs'
+import { fs_default_storage_factory, storageDefaultSecEnv } from '@moodle/sec-storage-local-fs'
 import assert from 'assert'
-import { appDeployments } from 'domain/src/modules/env'
+import { activeSessionData } from 'domain/src/domain/model/accessControl.model/accessControl.model'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
 import * as path from 'path'
-import { coerce, literal, object, union } from 'zod'
+import { coerce, object } from 'zod'
 import { createQueueServices } from './queue-services'
+import { configurator } from './types'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
 //   provideDefaultResourceIngestorSecEnv,
 // } from '@moodle/sec-resource-ingestion-default'
-// import { resource_ingestion_core } from '@moodle/module/resource-ingestion/core'
 
-export const cache: map<Promise<configuratorResult>> = {}
+type __ = model.jwtTokens.JwtTokensModel
+
 type configuratorResult = {
-  configuration: configuration
-  loopbackDispatcher: binderDispatcher
+  loggerProvider: loggerProvider
+  modelDispatcher: moo.model.dispatcher
   stopAndDrain: () => Promise<void>
 }
 
-export async function configuratorDrain() {
-  const configs = await Promise.all(Object.values(cache))
-  return Promise.allSettled(configs.map(({ stopAndDrain }) => stopAndDrain()))
-}
+export const defaultConfigurator: configurator = ({ master }) => {
+  const cache: map<Promise<configuratorResult>> = {}
 
-export async function configurator({ domainName }: { domainName: string }) {
-  // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
-  if (!cache[domainName]) {
-    cache[domainName] = new Promise<configuratorResult>(resolveConfigurationPromise => {
-      const MOODLE_HOME_DIR = path.resolve(process.cwd(), process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
-      const domainFsDirectories = getDomainFsDirectories({
-        homeDir: MOODLE_HOME_DIR,
-        domainName,
-      })
-      const loggerConfigs: winstonLoggerConfigs = { consoleLevel: 'debug' }
+  return {
+    drain: configuratorDrain,
+    access,
+  }
+  async function configuratorDrain() {
+    const configResults = await Promise.all(Object.values(cache))
+    return Promise.allSettled(configResults.map(({ stopAndDrain }) => stopAndDrain()))
+  }
 
-      dotenvExpand(dotenv.config({ path: path.join(domainFsDirectories.currentDomainDir, '.env'), override: true }))
-      console.debug({ currentDomainDir: domainFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
+  async function access({ gateAccess }: { gateAccess: moo.gate.access<any_> }): Promise<coreGateDeps> {
+    // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
+    const domainName = new URL(gateAccess.claims.server.href).hostname
+    if (!cache[domainName]) {
+      cache[domainName] = new Promise<configuratorResult>(resolveConfigurationPromise => {
+        ;(async () => {
+          const MOODLE_HOME_DIR = path.resolve(process.cwd(), process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
+          const domainFsDirectories = getDomainFsDirectories({
+            homeDir: MOODLE_HOME_DIR,
+            domainName,
+          })
+          dotenvExpand(dotenv.config({ path: path.join(domainFsDirectories.currentDomainDir, '.env'), override: true }))
 
-      const { loggerProvider } = createWinstonDomainLoggerProvider({ loggerConfigs })
+          const loggerConfigs: winstonLoggerConfigs = { consoleLevel: 'debug' }
 
-      const isDev = process.env.NODE_ENV === 'development'
+          console.debug({ currentDomainDir: domainFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
 
-      const env = object({
-        MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS: coerce.number().default(60),
-        MOODLE_CORE_INIT_BACKGROUND_PROCESSES: union([literal('true'), literal('false')]).optional(),
-        MOODLE_SYS_ADMIN_EMAIL: email_address_schema,
-        MOODLE_NET_WEBAPP_DEPLOYMENT_URL: url_string_schema,
-        MOODLE_FILE_SERVER_DEPLOYMENT_URL: url_string_schema,
-      }).parse({
-        MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS: process.env.MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS,
-        MOODLE_CORE_INIT_BACKGROUND_PROCESSES: process.env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES,
-        MOODLE_SYS_ADMIN_EMAIL: process.env.MOODLE_SYS_ADMIN_EMAIL,
-        MOODLE_NET_WEBAPP_DEPLOYMENT_URL: process.env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL,
-        MOODLE_FILE_SERVER_DEPLOYMENT_URL: process.env.MOODLE_FILE_SERVER_DEPLOYMENT_URL,
-      })
+          const { loggerProvider } = createWinstonDomainLoggerProvider({ loggerConfigs })
 
-      console.info(`configuring domain [${domainName}] env:`, { MOODLE_HOME_DIR, ...env })
-      const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `private.key`), 'utf8')
-      const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `public.key`), 'utf8')
-      const domain_process_env = process.env as any_
+          const myLogger = loggerProvider({ for: 'infra', name: 'configurator', domainName })
 
-      const arango_db_env: ArangoDbSecEnv = provideArangoDbSecEnv({
-        env: {
-          ...domain_process_env,
-          MOODLE_ARANGODB_ISDEV: `${isDev}`,
-          MOODLE_ARANGODB_DOMAIN_NAME: domainName,
-        },
-      })
-      const crypto_env: cryptoDefaultEnv = provideCryptoDefaultEnv({
-        env: { ...domain_process_env, MOODLE_CRYPTO_PRIVATE_KEY, MOODLE_CRYPTO_PUBLIC_KEY },
-      })
-      const nodemailer_env: NodemailerSecEnv = provideNodemailerSecEnv({
-        env: domain_process_env,
-      })
-      const sys_admin_info: sys_admin_info = {
-        email: env.MOODLE_SYS_ADMIN_EMAIL,
-      }
-      const localFsStorageDirectory = getDefaultLocalFsStorageDirectory({ domainFsDirectories })
-      const file_system_storage_sec_env: StorageDefaultSecEnv = {
-        localFsStorageDirectory,
-      }
+          const isDev = process.env.NODE_ENV === 'development'
 
-      const appDeployments: appDeployments = {
-        moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
-        filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
-      }
-      const default_resource_ingestor_env = provideDefaultResourceIngestorSecEnv({ env: domain_process_env })
-      const arango_persistence = get_arango_persistence_factory(arango_db_env)
-      const secondaryProviders: secondaryProvider[] = [
-        // sec modules
-        arango_persistence.secondaryProvider,
-        get_default_crypto_secondarys_factory(crypto_env),
-        get_nodemailer_secondary_factory(nodemailer_env),
-        get_storage_default_secondary_factory(file_system_storage_sec_env),
-        (/* secondaryContext */) => {
-          const secondaryAdapter: secondaryAdapter = {
+          const env = object({
+            MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS: coerce.number().default(60),
+            MOODLE_SYS_ADMIN_EMAIL: email_address_schema(),
+            MOODLE_NET_WEBAPP_DEPLOYMENT_URL: url_string_schema,
+            MOODLE_FILE_SERVER_DEPLOYMENT_URL: url_string_schema,
+          }).parse({
+            MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS: process.env.MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS,
+            MOODLE_SYS_ADMIN_EMAIL: process.env.MOODLE_SYS_ADMIN_EMAIL,
+            MOODLE_NET_WEBAPP_DEPLOYMENT_URL: process.env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL,
+            MOODLE_FILE_SERVER_DEPLOYMENT_URL: process.env.MOODLE_FILE_SERVER_DEPLOYMENT_URL,
+          })
+
+          console.info(`configuring domain [${domainName}] env:`, { MOODLE_HOME_DIR, ...env })
+          const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(
+            path.join(domainFsDirectories.currentDomainDir, `private.key`),
+            'utf8',
+          )
+          const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(
+            path.join(domainFsDirectories.currentDomainDir, `public.key`),
+            'utf8',
+          )
+          const domain_process_env = process.env as any_
+
+          const arango_db_env: ArangoDbSecEnv = provideArangoDbSecEnv({
             env: {
-              query: {
-                async deployments() {
-                  return appDeployments
+              ...domain_process_env,
+              MOODLE_ARANGODB_ISDEV: `${isDev}`,
+              MOODLE_ARANGODB_DOMAIN_NAME: domainName,
+            },
+          })
+          const crypto_env: cryptoDefaultEnv = provideCryptoDefaultEnv({
+            env: { ...domain_process_env, MOODLE_CRYPTO_PRIVATE_KEY, MOODLE_CRYPTO_PUBLIC_KEY },
+          })
+          const nodemailer_env: NodemailerSecEnv = provideNodemailerSecEnv({
+            env: domain_process_env,
+          })
+          // const sys_admin_info: sys_admin_info = {
+          //   email: env.MOODLE_SYS_ADMIN_EMAIL,
+          // }
+          const storageDir = getDefaultLocalFsStorageDirectory({ domainFsDirectories })
+          const file_system_storage_sec_env: storageDefaultSecEnv = {
+            localStorageFsDirectories: {
+              storageDir: storageDir,
+              currentDomainDir: domainFsDirectories.currentDomainDir,
+              temp: domainFsDirectories.temp,
+            },
+          }
+
+          const _appDeployments: appDeployments = {
+            moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
+            filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
+          }
+          const default_resource_ingestor_env = provideDefaultResourceIngestorSecEnv({ env: domain_process_env })
+          const arangodb = get_arango_persistence_factory(arango_db_env)
+          const crypto = get_default_crypto_secondarys_factory(crypto_env)
+          const nodemailer = get_nodemailer_secondary_factory(nodemailer_env)
+          const localFsStorage = fs_default_storage_factory(file_system_storage_sec_env)
+          const tikaResourceIngestor = get_default_resource_ingestion_secondary_factory(default_resource_ingestor_env)
+
+          const models = {
+            arangodb: arangodb.modelImpl,
+            crypto,
+            nodemailer,
+            localFsStorage,
+            tikaResourceIngestor,
+            sessionManager: {
+              accessControl: {
+                activateUserSessionToken: {
+                  '* call': async ctx => {
+                    const userId = ctx.access.message.userId
+                    const { session } = await ctx.handle
+                      .over(ctx.handle.model.accessControl.getUserSession)
+                      .call.query({ user: { type: 'auth', id: userId } })
+
+                    const activeSessionData: activeSessionData = {
+                      sessionInfo: {
+                        session,
+                        user: {
+                          id: userId,
+                          type: 'auth',
+                        },
+                      },
+                    }
+
+                    const sessionId = generateUlid({ onDate: new Date() })
+                    const token = await generateToken({ sessionId }) // as signed_token
+                    await arangodb.activeSessionCollection.save({ data: activeSessionData, _key: sessionId })
+                    return { session, token }
+                    async function generateToken({ sessionId }: { sessionId: string }) {
+                      return JSON.stringify({ sessionId }) as signed_token
+                    }
+                  },
                 },
-                async getSysAdminInfo() {
-                  return sys_admin_info
+                getMyUserSession: {
+                  '* call': async ctx => {
+                    const sessionToken = ctx.access.message.sessionToken
+                    if (!sessionToken) {
+                      return anonSession(ctx)
+                    }
+                    const validatedToken = await validateToken(sessionToken) // as signed_token
+                    if (!validatedToken) {
+                      return anonSession(ctx)
+                    }
+                    const { sessionId } = validatedToken
+                    const m_foundDoc = await arangodb.activeSessionCollection.document(
+                      { _key: sessionId },
+                      { graceful: true },
+                    )
+                    if (!m_foundDoc) {
+                      return anonSession(ctx)
+                    }
+                    return m_foundDoc.data
+                    async function validateToken(token: string): Promise<{ sessionId: string } | null> {
+                      return JSON.parse(token)
+                    }
+                  },
                 },
               },
             },
-          }
-          return secondaryAdapter
-        },
-        get_default_resource_ingestion_secondary_factory(default_resource_ingestor_env),
-      ]
+          } satisfies map<moo.model.impl>
 
-      const moduleCores: moduleCore<any_>[] = [
-        // core modules
-        moodlenet_core,
-        org_core,
-        edu_core,
-        userAccount_core,
-        moodlenet_react_app_core,
-        user_profile_core,
-        storage_core,
-        resource_ingestion_core,
-        {
-          moduleName: 'env',
-          service() {
-            return
-          },
-          primary(/* ctx */) {
-            return {
-              async domain() {
-                return {
-                  async info() {
-                    return { name: domainName }
-                  },
-                }
-              },
-              async application() {
-                return {
-                  async deployments() {
-                    return appDeployments
-                  },
-                }
+          async function anonSession(ctx: moo.model.impl.ctx<any_>) {
+            const user: moo.session.info.user = { type: 'anon' }
+            const { session } = await ctx.handle.over(ctx.handle.model.accessControl.getUserSession).call.query({ user })
+            const activeSessionData: model.accessControl.activeSessionData = {
+              sessionInfo: {
+                session,
+                user,
               },
             }
-          },
-        } satisfies moduleCore<'env'>,
-      ]
-      const configuration: configuration = {
-        moduleCores,
-        secondaryProviders,
-        loggerProvider,
-        domain: domainName,
-        domainFsDirectories,
-      }
-      const pendingAccessResultPromises: Promise<unknown>[] = []
-      const arangoQueueServiceWorkers = provideArangoQueueServiceWorkers({ dbStruct: arango_persistence.dbStruct })
-
-      const queues = createQueueServices({
-        binderDispatcher: shortcircuitLoopbackDispatcher,
-        queueServiceWorkers: arangoQueueServiceWorkers,
-      })
-
-      async function shortcircuitLoopbackDispatcher({ domainAccess }: { domainAccess: domainAccess }) {
-        const jobId = domainAccess.callerContext
-          ? `${domainAccess.callerContext.ctxId}_${generateAlphanumId({ length: 3 })}`
-          : undefined
-        if (domainAccess.enqueue) {
-          assert(jobId, 'domainAccess must have a callerContext for enqueuing a message')
-          const queueService = queues.getNamedService({ domainAccess })
-          if (queueService) {
-            const enqueuePromise = queueService.enqueue({
-              jobId,
-              enqueueDate: new Date().toISOString(),
-              jobData: { domainAccess },
-            })
-            pendingAccessResultPromises.push(enqueuePromise)
-            return enqueuePromise
+            return activeSessionData
           }
-        }
-        const accessResultPromise = accessDomain({
-          domainAccess,
-          configuration,
-          loopbackDispatcher: shortcircuitLoopbackDispatcher,
-        })
-        pendingAccessResultPromises.push(accessResultPromise)
-        accessResultPromise
-          .catch(
-            !(domainAccess.enqueue && jobId)
-              ? undefined
-              : () => {
-                  const enqueuePromise = queues.defaultService.enqueue({
-                    jobId,
-                    enqueueDate: new Date().toISOString(),
-                    jobData: { domainAccess },
-                  })
-                  pendingAccessResultPromises.push(enqueuePromise)
-                },
-          )
-          .finally(() => pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(accessResultPromise), 1))
-        return accessResultPromise
-        // return shortCircuitLoopbackDispatcher({ configuration, domainAccess })
-      }
 
-      const background_process_promise =
-        env.MOODLE_CORE_INIT_BACKGROUND_PROCESSES === 'true'
-          ? migrateArangoDB({
+          if (master) {
+            await migrateArangoDB({
               databaseConnections: arango_db_env.database_connections,
-              log: loggerProvider({
-                domain: domainName,
-                contextLayer: 'secondary',
-                id: 'migration',
-                moduleName: 'sec-arangodb' as moodleModuleName,
-              }),
+              log: loggerProvider({ for: 'infra', name: 'migrateArangoDB' }),
+            }).catch(e => {
+              myLogger.error('migrateArangoDB failed', e)
+              throw e
             })
-              .then(() =>
-                startBackgroundProcesses({
-                  configuration,
-                  loopbackDispatcher: shortcircuitLoopbackDispatcher,
-                }),
+            const coreSetupModelHandle = modelHandleProxy({
+              origin: { from: false, useCase: 'coreSetup' },
+              modelAccessDispatcher,
+            })
+            await domainCore.setup({ modelHandle: coreSetupModelHandle })
+          } else {
+            const coreSetupModelHandle = modelHandleProxy({
+              origin: { from: false, useCase: 'coreModelCheck' },
+              modelAccessDispatcher,
+            })
+            await domainCore.modelCheck({ modelHandle: coreSetupModelHandle })
+          }
+
+          const pendingAccessResultPromises: Promise<unknown>[] = []
+          const arangoQueueServiceWorkers = provideArangoQueueServiceWorkers({ dbStruct: arangodb.dbStruct })
+
+          const queues = createQueueServices({
+            modelDispatcher: modelAccessDispatcher,
+            queueServiceWorkers: arangoQueueServiceWorkers,
+            queues: [],
+          })
+
+          async function modelAccessDispatcher(access: moo.model.access<any_>): Promise<unknown> {
+            const jobId = `${access.id}_${generateAlphanumId({ length: 4 })}`
+            const enqueued = access.target.type === 'async'
+            if (enqueued) {
+              assert(jobId, 'domainAccess must have a callerContext for enqueuing a message')
+              const queueService = queues.getNamedService({ access })
+              if (queueService) {
+                const enqueuePromise = queueService.enqueue({
+                  jobId,
+                  enqueueDate: new Date().toISOString(),
+                  jobData: { access },
+                })
+                pendingAccessResultPromises.push(enqueuePromise)
+                return enqueuePromise
+              }
+            }
+
+            const accessResultPromise = executeModelOps({
+              access,
+              backModelAccessDispatcher: modelAccessDispatcher,
+              loggerProvider,
+              models,
+              preAsync: enqueued,
+            })
+            pendingAccessResultPromises.push(accessResultPromise)
+            accessResultPromise
+              .catch(
+                !(enqueued && jobId)
+                  ? undefined
+                  : () => {
+                      const enqueuePromise = queues.defaultService.enqueue({
+                        jobId,
+                        enqueueDate: new Date().toISOString(),
+                        jobData: { access },
+                      })
+                      pendingAccessResultPromises.push(enqueuePromise)
+                    },
               )
-              .then(() => queues.startAll())
-          : Promise.resolve()
+              .finally(() => pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(accessResultPromise), 1))
+            return accessResultPromise
+            // return shortCircuitLoopbackDispatcher({ configuration, domainAccess })
+          }
 
-      background_process_promise.then(() => {
-        resolveConfigurationPromise({ configuration, loopbackDispatcher: shortcircuitLoopbackDispatcher, stopAndDrain })
+          resolveConfigurationPromise({
+            loggerProvider,
+            modelDispatcher: modelAccessDispatcher,
+            stopAndDrain,
+          })
+
+          return coreGateDeps
+
+          async function stopAndDrain() {
+            console.log(`draining [#${pendingAccessResultPromises.length}] pending replies ...`)
+            await Promise.allSettled([queues.stopAndDrainAll(), ...pendingAccessResultPromises])
+            console.log('drained pending replies')
+          }
+        })()
+      }).catch(e => {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete cache[domainName]
+        throw e
       })
+    }
+    const configuration = await cache[domainName]
 
-      async function stopAndDrain() {
-        console.log(`draining [#${pendingAccessResultPromises.length}] pending replies ...`)
-        await Promise.allSettled([queues.stopAndDrainAll(), ...pendingAccessResultPromises])
-        console.log('drained pending replies')
-      }
-    }).catch(e => {
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete cache[domainName]
-      throw e
+    const getMyUserSessionModelHandle = modelHandleProxy({
+      origin: { from: false, useCase: 'getMyUserSession' },
+      modelAccessDispatcher: configuration.modelDispatcher,
     })
-  }
 
-  return cache[domainName]
+    const coreId = generateUlid({ onDate: new Date() })
+    const coreGateDeps: coreGateDeps = {
+      core: domainCore.core,
+      coreAccess: {
+        gateAccess,
+        id: coreId,
+        now: new Date().toISOString(),
+        sessionInfo: (
+          await getMyUserSessionModelHandle
+            .over(getMyUserSessionModelHandle.model.accessControl.getMyUserSession)
+            .call.query({ sessionToken: gateAccess.claims.server.userToken })
+        ).sessionInfo,
+      },
+      gateProvider: domainGate.gateProvider,
+      loggerProvider: configuration.loggerProvider,
+      modelHandle: modelHandleProxy({
+        origin: { from: false, useCase: { id: coreId, path: gateAccess.path } },
+        modelAccessDispatcher: configuration.modelDispatcher,
+      }),
+    }
+
+    return coreGateDeps
+  }
 }

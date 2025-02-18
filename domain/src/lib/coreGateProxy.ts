@@ -6,16 +6,19 @@ import { loggerProvider } from '../types/log'
 
 type coreGate = () => Promise<Either<Error4xx, unknown>>
 
-type coreGateDeps = {
-  gateProvider: moo.gate.provider<moo.Personas>
-  core: moo.core<moo.Personas>
+export type coreGateDeps = {
+  gateProvider: moo.gate.provider<any_> //moo.Personas>
+  core: moo.core<any_> //moo.Personas>
   modelHandle: moo.model.handle
   coreAccess: moo.core.access<any_>
   loggerProvider: loggerProvider
 }
 export async function coreGate({ coreAccess, modelHandle, core, gateProvider, loggerProvider }: coreGateDeps) {
   const gateProxy = coreGateProxy({ gateProvider, core, coreAccess, modelHandle, loggerProvider })
-  const gatedResult = await coreAccess.gate.path.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy as coreGate)()
+  const gatedResult = await coreAccess.gateAccess.path.reduce(
+    (curr, prop) => (curr as any_)?.[prop],
+    gateProxy as coreGate,
+  )()
   // if (isRight(gatedResult)) {
   //   const cleanCoreResult: Promise<Either<Error4xx, unknown>> = gatedResult.right
   //     .then(result => right(result))
@@ -31,8 +34,8 @@ export async function coreGate({ coreAccess, modelHandle, core, gateProvider, lo
 }
 
 type coreGateProxyDeps = {
-  gateProvider: moo.gate.provider<moo.Personas>
-  core: moo.core<moo.Personas>
+  gateProvider: moo.gate.provider<any_> //moo.Personas>
+  core: moo.core<any_> //moo.Personas>
   modelHandle: moo.model.handle
   coreAccess: moo.core.access<any_>
   loggerProvider: loggerProvider
@@ -50,7 +53,7 @@ type gateStep = Either<
 export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core, loggerProvider }: coreGateProxyDeps) {
   type p_endpoint = moo.persona.endpoint<moo.persona.endpoint.def>
 
-  return subCoreGateProxy(right({ gateProvider, session: coreAccess.session, core, path: [] })) as coreGate
+  return subCoreGateProxy(right({ gateProvider, session: coreAccess.sessionInfo.session, core, path: [] })) as coreGate
 
   function subCoreGateProxy(gateStep: gateStep) {
     return new Proxy((() => null as any_) as coreGate, {
@@ -156,7 +159,10 @@ export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core, log
 
         const configs = session_Endpoint._
 
-        const e_gate_enpoint = gate_Endpoint_Provider({ configs, session: coreAccess.session })
+        const e_gate_enpoint = gate_Endpoint_Provider({
+          configs,
+          sessionInfo: coreAccess.sessionInfo,
+        })
 
         if (isLeft(e_gate_enpoint)) {
           return e_gate_enpoint
@@ -164,7 +170,11 @@ export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core, log
 
         const gateEndpointAccessHandle = e_gate_enpoint.right
 
-        const { success, data: safe_form, error: form_error } = gateEndpointAccessHandle.zod.safeParse(coreAccess.gate.form)
+        const {
+          success,
+          data: safe_form,
+          error: form_error,
+        } = gateEndpointAccessHandle.zod.safeParse(coreAccess.gateAccess.form)
         if (!success) {
           return left(
             new Error4xx('Bad Request', {
@@ -176,8 +186,8 @@ export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core, log
 
         const access: moo.core.access<any_> = {
           ...coreAccess,
-          gate: {
-            ...coreAccess.gate,
+          gateAccess: {
+            ...coreAccess.gateAccess,
             form: safe_form,
           },
         }

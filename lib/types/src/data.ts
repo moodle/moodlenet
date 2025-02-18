@@ -71,10 +71,10 @@ export type unbranded<b> = b extends map
 // redacted logging
 export const REDACTED_KEY = '###--redacted--###'
 export function redact_stringify(obj: any_) {
-  return JSON.stringify(obj, redacted_json_reviver, 2)
+  return JSON.stringify(obj, redacted_json_replacer, 2)
 }
 
-export function redacted_json_reviver(key: string, value: any_): any_ {
+export function redacted_json_replacer(key: string, value: any_): any_ {
   return key === REDACTED_KEY ? REDACTED_KEY : value
 }
 
@@ -110,7 +110,7 @@ export function plain_password_schema(pwdschema: ZodString) {
 // export type email_address = z.infer< typeof email_address_schema> // email format
 export declare const email_address_brand: unique symbol
 export type email_address = branded<string, typeof email_address_brand> // email format
-export function email_address_schema(emlschema?: ZodString) {
+export function email_address_schema(emlschema = string()) {
   return string()
     .trim()
     .toLowerCase()

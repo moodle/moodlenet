@@ -1,53 +1,52 @@
 import { http_bind } from '@moodle/bindings-http'
-import { isError4xx } from '@moodle/domain/lib'
+import { coreGate, isError4xx } from '@moodle/domain/lib'
 import { any_ } from '@moodle/lib-types'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
-import { configurator, configuratorDrain } from './default-configurator'
+import { defaultConfigurator } from './default-configurator'
 
 dotenvExpand(dotenv.config())
+
+const MOODLE_MASTER_INSTANCE = Boolean(process.env.MOODLE_MASTER_INSTANCE)
 const MOODLE_HTTP_BINDER_RECEIVER_PORT = parseInt(process.env.MOODLE_HTTP_BINDER_RECEIVER_PORT ?? '8000')
 const MOODLE_HTTP_BINDER_RECEIVER_BASEURL = process.env.MOODLE_HTTP_BINDER_RECEIVER_BASEURL ?? '/'
 
-start()
-async function start() {
-  const httpGate = await http_bind.getHttpBinderReceiver<moo.gate.access<any_>>({
+http_bind
+  .getHttpBinderReceiver<moo.gate.access<any_>>({
     port: MOODLE_HTTP_BINDER_RECEIVER_PORT,
     basePath: MOODLE_HTTP_BINDER_RECEIVER_BASEURL,
   })
+  .then(httpGate => {
+    process.on('SIGINT', drainAndExit)
+    process.on('SIGTERM', drainAndExit)
 
-  process.on('SIGINT', drainAndExit)
-  process.on('SIGTERM', drainAndExit)
+    process.on('unhandledRejection', (reason, promise) => {
+      if (isError4xx(reason)) {
+        return
+      }
+      console.error('^^^ CRITICAL UNHANDLED_REJECTION ^^^', { reason, promise }, '$$$ CRITICAL UNHANDLED_REJECTION $$$')
+      drainAndExit('unhandledRejection')
+    })
 
-  process.on('unhandledRejection', (reason, promise) => {
-    if (isError4xx(reason)) {
-      return
+    const configurator = defaultConfigurator({ master: MOODLE_MASTER_INSTANCE })
+
+    httpGate.receiver({
+      dispatcher: async gateAccess => {
+        const coreGateDeps = await configurator.access({ gateAccess })
+        return coreGate(coreGateDeps)
+      },
+    })
+
+    let exiting = false
+
+    async function drainAndExit(sig: unknown) {
+      if (exiting) {
+        return
+      }
+      exiting = true
+      console.log(`received signal [${sig}] draining...`)
+      await Promise.all([configurator.drain(), httpGate.drain()])
+      console.log(`exiting...`)
+      process.exit(0)
     }
-    console.error('^^^ CRITICAL UNHANDLED_REJECTION ^^^', { reason, promise }, '$$$ CRITICAL UNHANDLED_REJECTION $$$')
-    drainAndExit('unhandledRejection')
   })
-  
-  httpGate.receiver({
-    dispatcher: async gateAccess => {
-      const {modelHandleForCore} = await model configurator({
-        gateAccess,
-        modelHandleForModel
-      })
-
-      return core configurator({ gateAccess , modelHandleForCore})
-  },
-  })
-
-  let exiting = false
-
-  async function drainAndExit(sig: unknown) {
-    if (exiting) {
-      return
-    }
-    exiting = true
-    console.log(`received signal [${sig}] draining...`)
-    await Promise.all([configuratorDrain(), httpGate.drain()])
-    console.log(`exiting...`)
-    process.exit(0)
-  }
-}

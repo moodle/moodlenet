@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_, map, path, serializable, url_string } from '@moodle/lib-types'
+import { any_, map, path, serializable, signed_token, url_string } from '@moodle/lib-types'
 import { ZodType } from 'zod'
 import { Error4xx } from '../lib/access-error'
 
@@ -16,7 +16,7 @@ declare global {
         }
       }
       type clientClaims = { locale?: string; locales?: string[] }
-      type serverClaims = { requestId: string; href: url_string; ua: string }
+      type serverClaims = { userToken: signed_token | null; requestId: string; href: url_string; ua: string }
 
       type client<forPersonas extends map<moo.persona<any_>>> = {
         [personaType_ in keyof forPersonas]: client.persona<forPersonas[personaType_]>

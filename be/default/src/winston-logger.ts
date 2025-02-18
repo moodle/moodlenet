@@ -1,11 +1,12 @@
-import { LogSeverity, logLevelColors, logLevelMap, loggerContext, loggerProvider } from '@moodle/domain'
-import { any_ } from '@moodle/lib-types'
+import { logLevelColors, logLevelMap, logSeverity, logger, loggerProvider } from '@moodle/domain'
+import { any_, redacted_json_replacer, unsupportedProxyHandler } from '@moodle/lib-types'
+import assert from 'assert'
 import { inspect } from 'util'
 import winston from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
 
 export type winstonLoggerConfigs = {
-  consoleLevel?: LogSeverity
+  consoleLevel: logSeverity
   file?: {
     path: string
     level: string
@@ -18,13 +19,11 @@ export function createWinstonDomainLoggerProvider({ loggerConfigs }: { loggerCon
   const winstonLogger = winston.createLogger({
     transports: [
       new winston.transports.Console({
-        level: loggerConfigs.consoleLevel ?? 'info',
+        level: loggerConfigs.consoleLevel,
         format: winston.format.combine(
           winston.format.timestamp(),
           winston.format.colorize({ colors: logLevelColors, message: false }),
-          winston.format.printf(extended_loggerContext => {
-            return ctxString(extended_loggerContext as extended_loggerContext)
-          }),
+          winston.format.json({ replacer: redacted_json_replacer }),
         ),
       }),
     ],
@@ -42,9 +41,7 @@ export function createWinstonDomainLoggerProvider({ loggerConfigs }: { loggerCon
             winston.format.padLevels(),
             winston.format.timestamp(),
             winston.format.uncolorize(),
-            winston.format.printf(extended_loggerContext => {
-              return ctxString(extended_loggerContext as extended_loggerContext)
-            }),
+            winston.format.json({ replacer: redacted_json_replacer }),
           ),
         }),
       ],
@@ -52,46 +49,21 @@ export function createWinstonDomainLoggerProvider({ loggerConfigs }: { loggerCon
 
   const loggerProvider: loggerProvider = loggerContext => {
     const childLogger = winstonLogger.child(loggerContext)
-    return (level, ...args) => {
-      const message = args
-        .map((arg: unknown) => {
-          return typeof arg === 'object' ? inspect(arg, { colors: true, depth: 8 }) : arg
-        })
-        .join('\n')
-      childLogger.log(level, message)
-    }
+    return new Proxy({} as logger, {
+      ...unsupportedProxyHandler,
+      get(_target, level) {
+        assert(typeof level === 'string', `Unsupported log level ${typeof level}:${String(level)}`)
+        return (...args: any_[]) => {
+          const message = args
+            .map((arg: unknown) => {
+              return typeof arg === 'object' ? inspect(arg, { colors: true, depth: 8 }) : arg
+            })
+            .join('\n')
+          childLogger.log(level, message)
+        }
+      },
+    })
   }
+
   return { loggerProvider }
-}
-type extended_loggerContext = loggerContext & { level: string; message: any_; timestamp: any_ }
-function ctxString({
-  level,
-  message,
-  timestamp,
-  domain,
-  moduleName,
-  id,
-  contextLayer,
-  //
-  originEndpoint,
-  callerContext,
-  primarySessionId,
-  endpoint,
-  enqueue,
-}: extended_loggerContext) {
-  const NOT_AVAILABLE_CHAR = '~'
-  return `
-${timestamp} [${level}]
-  domain            : ${domain}
-  moduleName        : ${moduleName}
-  context           : ${contextLayer} # ${id}
-  endpoint          : ${(endpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
-  primarySessionId  : ${primarySessionId ?? NOT_AVAILABLE_CHAR}
-  callerContext     : ${callerContext ? `${callerContext.layer}.${callerContext.moduleName} # ${callerContext.ctxId}` : NOT_AVAILABLE_CHAR}
-  originEndpoint    : ${(originEndpoint ?? [NOT_AVAILABLE_CHAR]).join('.')}
-  enqueued          : ${enqueue ?? false}
-
-${message}
-
----`
 }

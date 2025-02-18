@@ -18,30 +18,33 @@ declare global {
         ) => typeModelRefOpMap_impl<typeModelRef>
       }
       type access<op extends type.opDef> = {
-        dateTime: date_time_string
+        id: string
+        callTime: date_time_string
+        now: date_time_string
         message: op[1]
         origin: access.origin
-        target: access.target
+        target: access.target<op>
       }
 
       namespace access {
-        type target = {
-          id: string
+        type target<op extends type.opDef> = {
           opName: string
           path: path
-          type: 'query' | 'sync' | 'async'
+          type: op[0]
         }
         type origin = {
-          useCase: {
-            id: string
-            path: path
-          }
-          from: false | target
+          useCase:
+            | string
+            | {
+                id: string
+                path: path
+              }
+          from: false | target<type.opDef>
         }
       }
 
       type impl<baseModelNode = Models> = {
-        [modelNodePropName in keyof baseModelNode]: baseModelNode[modelNodePropName] extends infer modelNode
+        [modelNodePropName in keyof baseModelNode]?: baseModelNode[modelNodePropName] extends infer modelNode
           ? /* ? wideProvider<
               modelNode extends type<type.traitsDef> ? impl.typeModel<modelNode> : impl<modelNode>,
               [modelNodePropName]
@@ -70,11 +73,11 @@ declare global {
         type handlers<modelNode extends type<type.traitsDef>> = modelNode[type.traits_prop]['ops'] extends infer ops
           ? ops extends model.type.ops
             ? {
-                [opName in keyof ops as `* ${string & opName}`]?: exe<ops[opName]>
+                [opName in keyof ops as `* ${string & opName}`]?: exe<[type.opType, ops[opName][1], ops[opName][2]]> //exe<ops[opName]>
               } & {
-                [opName in keyof ops as `| ${string & opName}`]?: or<ops[opName]>
+                [opName in keyof ops as `| ${string & opName}`]?: or<[type.opType, ops[opName][1], ops[opName][2]]> //or<ops[opName]>
               } & {
-                [opName in keyof ops as `& ${string & opName}`]?: and<ops[opName]>
+                [opName in keyof ops as `& ${string & opName}`]?: and<[type.opType, ops[opName][1], ops[opName][2]]> //and<ops[opName]>
               }
             : never
           : never

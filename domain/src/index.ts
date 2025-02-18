@@ -57,16 +57,18 @@ declare global {
     type modelName = keyof Models // | any_other_string
     type personaType = keyof Personas // | any_other_string
     type ucModelUcTypes<selectedModelName extends modelName> = {
-      [personaType in moo.personaType]: {
-        [audience_contextName in keyof moo.Personas[personaType]]: {
-          [scopeName in keyof moo.Personas[personaType][audience_contextName]]: {
-            [usecaseName in keyof moo.Personas[personaType][audience_contextName][scopeName]]: moo.Personas[personaType][audience_contextName][scopeName][usecaseName] extends infer usecase
-              ? usecase extends { [moo.persona.usecase.modelTypes]: infer usecaseModels }
-                ? usecaseModels extends { [modelName_ in selectedModelName]: infer _ucModelTypes }
-                  ? _ucModelTypes
+      uc: {
+        [personaType in moo.personaType]: {
+          [audience_contextName in keyof moo.Personas[personaType]]: {
+            [scopeName in keyof moo.Personas[personaType][audience_contextName]]: {
+              [usecaseName in keyof moo.Personas[personaType][audience_contextName][scopeName]]: moo.Personas[personaType][audience_contextName][scopeName][usecaseName] extends infer usecase
+                ? usecase extends { [moo.persona.usecase.modelTypes]: infer usecaseModels }
+                  ? usecaseModels extends { [modelName_ in selectedModelName]: infer _ucModelTypes }
+                    ? _ucModelTypes
+                    : never
                   : never
                 : never
-              : never
+            }
           }
         }
       }

@@ -10,7 +10,7 @@ export type setBackground = moo.persona.endpoint<[typeof setBackgroundSchema, vo
 
 export const setBackground: moo.gate.provider.endpoint<setBackground> = flow(
   O.some,
-  O.bind(`anyZod`, ({ session }) => anyPersonaZodFlow({ session })),
+  O.bind(`anyZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
   E.fromOption(() => new Error4xx('Unauthorized')),
   E.bind('zod', flow(E.right, E.map(setBackgroundSchema))),
 )

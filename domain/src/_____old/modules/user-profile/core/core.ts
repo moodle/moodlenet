@@ -304,7 +304,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                 { eduResourceDraftId: resourceDraftId, userProfileId },
               ]) {
                 if (adoptAssetResult.status === 'error') {
-                  // ctx.log('warn', 'useTempFileAsNewResourceDraftAsset: adoptAssetResult error', adoptAssetResult)
+                  // ctx.log.warn('useTempFileAsNewResourceDraftAsset: adoptAssetResult error', adoptAssetResult)
                   return
                 }
                 const eduResourceDraftData = createNewEduResourceDraftData({
@@ -323,7 +323,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
               },
               async useTempImageInProfile([adoptAssetResult, { userProfileId: id, type }]) {
                 if (adoptAssetResult.status === 'error') {
-                  // ctx.log('warn', 'useTempImageInProfile: adoptAssetResult error', adoptAssetResult)
+                  // ctx.log.warn('useTempImageInProfile: adoptAssetResult error', adoptAssetResult)
                   return
                 }
                 const asset = adoptAssetResult.asset
@@ -369,7 +369,7 @@ export const user_profile_core: moduleCore<'userProfile'> = {
                   userAccountExcerpt: { id: userAccountId, roles: result.newRoles },
                 })
                 if (!done) {
-                  ctx.log('critical', 'could not update user roles', updateResult)
+                  ctx.log.critical('could not update user roles', updateResult)
                 }
               },
             },

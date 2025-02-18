@@ -1,7 +1,5 @@
-import { secondaryProvider } from '@moodle/domain'
-import { mergeSecondaryAdapters } from '@moodle/domain/lib'
+import { NO_JOB_HERE } from '@moodle/domain/lib'
 import { joseOpts } from '@moodle/lib-jwt-jose'
-import { crypto_secondary_services_factory } from './sec'
 import { ArgonPwdHashOpts } from './types'
 
 export interface cryptoDefaultEnv {
@@ -9,8 +7,12 @@ export interface cryptoDefaultEnv {
   argonOpts: ArgonPwdHashOpts
 }
 
-export function get_default_crypto_secondarys_factory({ joseOpts, argonOpts }: cryptoDefaultEnv): secondaryProvider {
-  return secondaryCtx => {
-    return mergeSecondaryAdapters([crypto_secondary_services_factory({ joseOpts, argonOpts })(secondaryCtx)])
+export function get_default_crypto_secondarys_factory({
+  joseOpts: _joseOpts,
+  argonOpts: _argonOpts,
+}: cryptoDefaultEnv): moo.model.impl {
+  const modelImpl: moo.model.impl = {
+    userAccount: NO_JOB_HERE,
   }
+  return modelImpl
 }

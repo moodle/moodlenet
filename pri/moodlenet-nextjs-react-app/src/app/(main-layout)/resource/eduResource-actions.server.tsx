@@ -95,6 +95,6 @@ export async function getEduResourceDraftImageForId_AdoptAssetSafeAction({
 export async function publishDraftId(eduResourceDraftId: eduResourceDraftId) {
   return async function publish() {
     'use server'
-    console.log('publish', eduResourceDraftId)
+    console.log.publish(eduResourceDraftId)
   }
 }

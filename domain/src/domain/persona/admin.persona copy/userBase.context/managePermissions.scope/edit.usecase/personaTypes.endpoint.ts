@@ -11,8 +11,8 @@ export type personaTypes = moo.persona.endpoint<[typeof personaTypesSchema, void
 
 export const personaTypes: moo.gate.provider.endpoint<personaTypes> = flow(
   O.some,
-  O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
-  O.bind(`adminPersonaZod`, ({ session }) => adminPersonaZodFlow({ session })),
+  O.bind(`anyPersonaZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
+  O.bind(`adminPersonaZod`, ({ sessionInfo }) => adminPersonaZodFlow({ sessionInfo })),
   O.bind('zod', ({ adminPersonaZod, anyPersonaZod }) => O.some(personaTypesSchema({ adminPersonaZod, anyPersonaZod }))),
   E.fromOption(() => new Error4xx('Unauthorized')),
 )

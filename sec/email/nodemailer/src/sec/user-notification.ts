@@ -90,7 +90,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
           userAccountId: data.toUserAccountId,
         })
         if (!found) {
-          ctx.log('warn', `User not found for id ${data.toUserAccountId}`)
+          ctx.log.warn(`User not found for id ${data.toUserAccountId}`)
           return [false, { reason: 'userNotFound' }]
         }
         const receiverEmail = user.contacts.email

@@ -60,9 +60,9 @@ export async function startBackgroundProcesses({
         moduleName,
         domainFsDirectories,
       })
-      backgroundContext.log('info', `starting [${moduleName}] background process`)
+      backgroundContext.log.info(`starting [${moduleName}] background process`)
       return Promise.resolve(startBackgroundProcess(backgroundContext)).catch(error => {
-        backgroundContext.log('critical', { error, stack: error.stack })
+        backgroundContext.log.critical({ error, stack: error.stack })
         throw error
       })
     }),
@@ -104,7 +104,7 @@ export async function accessDomain({
   // const { log } = currentDomainAccessContext
   // domainAccess.endpoint[0] === 'watch' &&
   //   domainAccess.endpoint.join(',').includes('useTempFileAsNewResourceDraftAsset') &&
-  //   log('debug', '***', { domainAccess })
+  //   log.debug('***', { domainAccess })
   // mainLogger('debug', 'binderDispatcher:', {
   //   endpoint: current_domainAccess.endpoint,
   //   ctx_track: current_domainAccess.ctx_track,
@@ -177,7 +177,7 @@ export async function accessDomain({
           optionalDispatch: true,
         })
       }),
-    ) //.catch(error => log('critical', { domainAccess }, error))
+    ) //.catch(error => log.critical({ domainAccess }, error))
   } else if (domainLayer === 'watch') {
     return Promise.allSettled(
       configuration.moduleCores.map(async ({ moduleName, watch }) => {
@@ -204,9 +204,9 @@ export async function accessDomain({
         return dispatchDomainMsg(watcherLayer, { ...domainAccess, endpoint: restEndpoint }, watchAccessContext.log, {
           watchable: false,
           optionalDispatch: true,
-        }) //.catch(error => watchAccessContext.log('critical', { error, stack: error.stack }))
+        }) //.catch(error => watchAccessContext.log.critical({ error, stack: error.stack }))
       }),
-    ) //.catch(error => log('critical', { domainAccess: currentDomainAccess }, error))
+    ) //.catch(error => log.critical({ domainAccess: currentDomainAccess }, error))
   } else {
     unreachable_never(domainLayer, `unknown handle layer [${domainLayer}]`)
   }

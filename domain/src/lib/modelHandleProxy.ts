@@ -36,9 +36,10 @@ export function modelHandleProxy({
         const now = new Date().toISOString()
         const id = generateUlid({ onDate: now })
         return modelAccessDispatcher({
-          dateTime: now,
+          id,
+          now: now,
+          callTime: now,
           target: {
-            id,
             opName,
             path,
             type,

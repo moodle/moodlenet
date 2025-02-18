@@ -1,14 +1,15 @@
 import { any_ } from '@moodle/lib-types'
-import { admin } from './persona/admin.persona'
-import { anonymous } from './persona/anonymous.persona'
-import { login } from './persona/anonymous.persona/access.context/login.scope/withMyEmailAndPassword.usecase/login.core'
-import { confirmMyEmail } from './persona/anonymous.persona/access.context/signup.scope/withMyEmail.usecase/confirmMyEmail.core'
-import { submitSignupForm } from './persona/anonymous.persona/access.context/signup.scope/withMyEmail.usecase/submitSignupForm.core'
-import { any__ } from './persona/any.persona'
-import { authenticated } from './persona/authenticated.persona'
+import { admin } from '../persona/admin.persona'
+import { anonymous } from '../persona/anonymous.persona'
+import { login } from '../persona/anonymous.persona/access.context/login.scope/withMyEmailAndPassword.usecase/login.core'
+import { confirmMyEmail } from '../persona/anonymous.persona/access.context/signup.scope/withMyEmail.usecase/confirmMyEmail.core'
+import { submitSignupForm } from '../persona/anonymous.persona/access.context/signup.scope/withMyEmail.usecase/submitSignupForm.core'
+import { any__ } from '../persona/any.persona'
+import { authenticated } from '../persona/authenticated.persona'
 
 const UNIMPLEMENTED = undefined as any_
-export const Gate: moo.core<{
+
+export const core: moo.core<{
   admin: admin
   authenticated: authenticated
   anonymous: anonymous

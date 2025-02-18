@@ -10,7 +10,7 @@ export const storage_core: moduleCore<'storage'> = {
   startBackgroundProcess(ctx) {
     delStales()
     async function delStales() {
-      ctx.log('debug', 'deleteStaleTemp files')
+      ctx.log.debug('deleteStaleTemp files')
       await ctx.mod.secondary.storage.service.deleteStaleTemp()
       await timers.setTimeout(ONE_MINUTE)
       delStales()

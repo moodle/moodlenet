@@ -10,7 +10,7 @@ import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona
 export type requestLink = moo.persona.endpoint<[typeof requestLinkSchema, void]>
 export const requestLink: moo.gate.provider.endpoint<requestLink> = flow(
   O.some,
-  O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
+  O.bind(`anyPersonaZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
   E.fromOption(() => new Error4xx('Forbidden')),
   E.bind('zod', flow(E.right, E.map(requestLinkSchema))),
 )

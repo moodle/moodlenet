@@ -3,7 +3,8 @@ import { flow } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import { string } from 'zod'
 import { anyPersonaValidationConfigs } from '.'
-export const anyPersonaConfigsFlow = ({ session }: { session: moo.session.user }) => O.fromNullable(session.any?._)
+export const anyPersonaConfigsFlow = ({ sessionInfo }: { sessionInfo: moo.session.info }) =>
+  O.fromNullable(sessionInfo.session.any?._)
 
 export const anyPersonaZodFlow = flow(
   anyPersonaConfigsFlow,

@@ -1,7 +1,7 @@
-import { admin } from './persona/admin.persona'
-import { anonymous } from './persona/anonymous.persona'
-import { any__ } from './persona/any.persona'
-import { authenticated } from './persona/authenticated.persona'
+import { admin } from '../persona/admin.persona'
+import { anonymous } from '../persona/anonymous.persona'
+import { any__ } from '../persona/any.persona'
+import { authenticated } from '../persona/authenticated.persona'
 
 export const gateProvider: moo.gate.provider<{
   admin: admin

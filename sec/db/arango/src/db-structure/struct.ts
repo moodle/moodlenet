@@ -9,6 +9,8 @@ import { Database } from 'arangojs'
 import { domain_record_doc } from '../lib/key-id-mapping'
 import { migrationRecord } from '../migrate/types'
 import { databaseConnections } from './types'
+import { activeSessionData } from 'domain/src/domain/model/accessControl.model/accessControl.model'
+import { any_ } from '@moodle/lib-types'
 
 export function getDbStruct(databaseConnections: databaseConnections) {
   const baseConnectionConfig = {
@@ -50,7 +52,8 @@ export function getDbStruct(databaseConnections: databaseConnections) {
       db: services_db,
       coll: {
         migrations: services_db.collection<migrationRecord>('migrations'),
-        domainAccessJob: services_db.collection<job<{ domainAccess: domainAccess }>>('domainAccessJob'),
+        domainAccessJob: services_db.collection<job<{ access: moo.model.access<any_> }>>('domainAccessJob'),
+        activeSession: services_db.collection<{ data: activeSessionData }>('activeSession'),
       },
     },
   }

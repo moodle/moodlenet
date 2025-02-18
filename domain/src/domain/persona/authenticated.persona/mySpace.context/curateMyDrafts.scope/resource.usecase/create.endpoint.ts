@@ -10,7 +10,7 @@ export type create = moo.persona.endpoint<[typeof createSchema, void]>
 
 export const create: moo.gate.provider.endpoint<create> = flow(
   O.some,
-  O.bind(`anyZod`, ({ session }) => anyPersonaZodFlow({ session })),
+  O.bind(`anyZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
   E.fromOption(() => new Error4xx('Unauthorized')),
   E.bind('zod', flow(E.right, E.map(createSchema))),
 )

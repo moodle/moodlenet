@@ -11,7 +11,7 @@ export type request = moo.persona.endpoint<[typeof requestSchema, void]>
 
 export const request: moo.gate.provider.endpoint<request> = flow(
   O.some,
-  O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
+  O.bind(`anyPersonaZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
   E.fromOption(() => new Error4xx('Unauthorized')),
   E.bind('zod', flow(E.right, E.map(requestSchema))),
 )

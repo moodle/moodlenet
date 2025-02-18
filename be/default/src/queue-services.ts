@@ -1,61 +1,46 @@
-import { binderDispatcher, domainAccess } from '@moodle/domain'
-import { createMoodleDomainProxy, getProxyFnPath } from '@moodle/domain/lib'
-import { executionOutcome, provideQueueService, queueService, queueServiceWorkers } from '@moodle/lib-job-queue-service'
-import { map } from '@moodle/lib-types'
+import {
+  executionOutcome,
+  jobConfig,
+  provideQueueService,
+  queueService,
+  queueServiceWorkers,
+} from '@moodle/lib-job-queue-service'
+import { any_, map } from '@moodle/lib-types'
 import moment from 'moment'
 import timers from 'timers/promises'
 
-type jobData = { domainAccess: domainAccess }
+type jobData = { access: moo.model.access<any_> }
 function getJobName(path: string[]) {
   return path.join('.')
 }
 
-const DEFAULT_WRITE_QUEUE = Symbol('default-write')
 export function createQueueServices({
   queueServiceWorkers,
-  binderDispatcher,
+  modelDispatcher,
+  queues,
 }: {
-  binderDispatcher: binderDispatcher
+  modelDispatcher: moo.model.dispatcher
   queueServiceWorkers: queueServiceWorkers<jobData>
+  queues: string[]
 }) {
-  const _queue_moodleDomain_proxy = createMoodleDomainProxy({ ctrl: async () => null })
+  const allServices = queues.map<queueService<jobData>>(jobName => {
+    const jobConfig: jobConfig = {
+      jobName,
+      parallelism: 1,
+      progressTimeoutSecs: 30,
+      emptyQueueRescheduleSecs: 30,
+    }
 
-  const knownQProxyFns = [
-    DEFAULT_WRITE_QUEUE,
-    _queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser,
-    _queue_moodleDomain_proxy.secondary.resourceIngestion.write.ingestResource,
-  ] as const
-  const allServices = knownQProxyFns.map<queueService<jobData>>(proxyFn => {
-    // const jobIs = {
-    //   sendMessageToUser: proxyFn === _queue_moodleDomain_proxy.secondary.userNotification.service.sendMessageToUser,
-    //   ingestResource: proxyFn === _queue_moodleDomain_proxy.secondary.resourceIngestion.write.ingestResource,
-    // }
-    const isDefaultQ = DEFAULT_WRITE_QUEUE === proxyFn
-    const path = isDefaultQ ? ['default-write-job'] : getProxyFnPath(proxyFn)
-    const jobName = getJobName(path)
-    const jobConfig = isDefaultQ
-      ? {
-          jobName,
-          parallelism: 100,
-          progressTimeoutSecs: 5,
-          emptyQueueRescheduleSecs: 10,
-        }
-      : {
-          jobName,
-          parallelism: 1,
-          progressTimeoutSecs: 30,
-          emptyQueueRescheduleSecs: 30,
-        }
     const queueService = provideQueueService<jobData>({
       workers: queueServiceWorkers,
       async executeJob({
         job: {
           executionOutcomes,
-          jobData: { domainAccess },
+          jobData: { access },
         },
       }) {
         return Promise.race([
-          binderDispatcher({ domainAccess: { ...domainAccess, enqueue: false } })
+          modelDispatcher(access)
             .then<executionOutcome>(outcome => ({
               result: 'done',
               outcome,
@@ -119,8 +104,8 @@ export function createQueueServices({
     stopAndDrainAll,
     getNamedService,
   }
-  function getNamedService({ domainAccess }: { domainAccess: domainAccess }) {
-    const jobName = getJobName(domainAccess.endpoint)
+  function getNamedService({ access }: { access: moo.model.access<any_> }) {
+    const jobName = getJobName(access.target.path)
     return services[jobName]
   }
   function startAll() {

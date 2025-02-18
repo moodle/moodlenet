@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import '@moodle/lib-types'
-import { any_ } from '@moodle/lib-types'
+import { any_, d_u } from '@moodle/lib-types'
 type sessionDataType = 'user' | 'configs'
 declare global {
   namespace moo {
@@ -11,6 +11,21 @@ declare global {
     namespace session {
       type configs = session<'configs'>
       type user = session<'user'>
+      type info = {
+        user: info.user
+        session: user
+      }
+      namespace info {
+        type user = d_u<
+          {
+            auth: {
+              id: string
+            }
+            anon: unknown
+          },
+          'type'
+        >
+      }
       type persona<persona_ extends moo.persona<any_>, t extends sessionDataType> = context_tag<persona_, t> &
         config_tag<persona_> & {
           [contextName in string & keyof persona_]:

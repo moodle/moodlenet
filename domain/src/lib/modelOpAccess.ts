@@ -1,40 +1,39 @@
-import { any_ } from '@moodle/lib-types'
+import { any_, map } from '@moodle/lib-types'
 import { Either, left, right } from 'fp-ts/Either'
 import { loggerProvider } from '../types/log'
 import { Error4xx, isError4xx } from './access-error'
 import { modelHandleProxy } from './modelHandleProxy'
 
 type executeModelOpsDeps = {
-  execType: 'pre-async' | 'async' | 'sync'
-  models: { name: string; impl: any_ }[]
+  preAsync: boolean
+  models: map
   access: moo.model.access<any_>
   backModelAccessDispatcher: moo.model.dispatcher
   loggerProvider: loggerProvider
 }
 
 export async function executeModelOps({
-  execType,
+  preAsync,
   models,
   access,
   backModelAccessDispatcher,
   loggerProvider,
 }: executeModelOpsDeps) {
-  const log = loggerProvider({ for: 'infra', name: 'executeModelOps', access, models: Object.keys(models), execType })
+  const myLogger = loggerProvider({ for: 'infra', name: 'executeModelOps', access, models: Object.keys(models), preAsync })
 
   const targets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
-
-  if (execType !== 'async') {
+  if (access.target.type !== 'async') {
     await Promise.all(
       targets.or.map(({ fn, modelName }) =>
         fn().catch(andError => {
-          log.error(`Or error in model ${modelName}`, andError)
+          myLogger.error(`Or error in model ${modelName}`, andError)
           //REVIEW: should we throw an error here?
         }),
       ),
     )
   }
 
-  if (execType === 'pre-async') {
+  if (preAsync) {
     return
   }
 
@@ -48,18 +47,18 @@ export async function executeModelOps({
     const MULTIPLE_EXEC_MESSAGE = `Multiple implementations of model target: ${access.target}
   all others will be ignored`
     //REVIEW: should we throw an error here?
-    log.critical(MULTIPLE_EXEC_MESSAGE)
+    myLogger.critical(MULTIPLE_EXEC_MESSAGE)
   }
 
   const result = await exe.fn().catch<Error4xx>(e => {
-    log.error('Model execution error', e)
+    myLogger.error('Model execution error', e)
     return isError4xx(e) ? e : new Error4xx('Internal Server Error', { message: e.message })
   })
 
   await Promise.all(
     targets.and.map(({ fn, modelName }) =>
       fn(isError4xx(result) ? left(result) : right(result)).catch(andError => {
-        log.error(`And error in model ${modelName}`, andError)
+        myLogger.error(`And error in model ${modelName}`, andError)
         //REVIEW: should we throw an error here?
       }),
     ),
@@ -67,19 +66,24 @@ export async function executeModelOps({
 }
 
 type allModelsOpExtractsDeps = {
-  models: { name: string; impl: any_ }[]
+  models: map
   access: moo.model.access<any_>
   backModelAccessDispatcher: moo.model.dispatcher
   loggerProvider: loggerProvider
 }
 
 export function allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider }: allModelsOpExtractsDeps) {
-  return models.reduce(
-    (acc, model) => {
-      const { and, exe, or } = modelOpExtract({ model, access, backModelAccessDispatcher, loggerProvider })
-      and && acc.and.push({ fn: and, modelName: model.name })
-      exe && acc.exe.push({ fn: exe, modelName: model.name })
-      or && acc.or.push({ fn: or, modelName: model.name })
+  return Object.entries(models).reduce(
+    (acc, [modelName, impl]) => {
+      const { and, exe, or } = modelOpExtract({
+        model: { name: modelName, impl },
+        access,
+        backModelAccessDispatcher,
+        loggerProvider,
+      })
+      and && acc.and.push({ fn: and, modelName })
+      exe && acc.exe.push({ fn: exe, modelName })
+      or && acc.or.push({ fn: or, modelName })
       return acc
     },
     { and: [], or: [], exe: [] } as {
@@ -110,7 +114,8 @@ export function modelOpExtract({ model, access, backModelAccessDispatcher, logge
   const or = typeModelImpl?.[`| ${access.target.opName}`] as undefined | moo.model.impl.or<any_>
   const and = typeModelImpl?.[`= ${access.target.opName}`] as undefined | moo.model.impl.and<any_>
   const log = loggerProvider({ for: 'model', access })
-  const ctx: moo.model.impl.ctx<any_> = { access, log, handle, now: new Date().toISOString() }
+  const now = new Date().toISOString()
+  const ctx: moo.model.impl.ctx<any_> = { access: { ...access, now }, log, handle, now: new Date().toISOString() }
   return {
     exe: exe && (() => exe(ctx)),
     or: or && (() => or(ctx)),

@@ -1,10 +1,9 @@
-import { secondaryProvider } from '@moodle/domain'
-import { mergeSecondaryAdapters } from '@moodle/domain/lib'
-import { user_notification_service_factory } from './sec'
+import { NO_JOB_HERE } from '@moodle/domain/lib'
 import { NodemailerSecEnv } from './types'
 
-export function get_nodemailer_secondary_factory(env: NodemailerSecEnv): secondaryProvider {
-  return secondaryContext => {
-    return mergeSecondaryAdapters([user_notification_service_factory(env)(secondaryContext)])
+export function get_nodemailer_secondary_factory(_: NodemailerSecEnv): moo.model.impl {
+  const modelImpl: moo.model.impl = {
+    userAccount: NO_JOB_HERE,
   }
+  return modelImpl
 }

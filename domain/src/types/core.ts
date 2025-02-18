@@ -13,8 +13,8 @@ declare global {
       type access<endpoint_ extends persona.endpoint<any_>> = {
         id: string
         now: date_time_string
-        session: session.user
-        gate: gate.access<endpoint_>
+        sessionInfo: session.info
+        gateAccess: gate.access<endpoint_>
       }
 
       type ctx<endpoint_ extends persona.endpoint<any_>> = {

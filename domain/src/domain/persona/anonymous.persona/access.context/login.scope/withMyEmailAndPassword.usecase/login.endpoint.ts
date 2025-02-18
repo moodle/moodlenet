@@ -12,7 +12,7 @@ export type login = moo.persona.endpoint<
 >
 export const login: moo.gate.provider.endpoint<login> = flow(
   O.some,
-  O.bind(`anyPersonaZod`, ({ session }) => anyPersonaZodFlow({ session })),
+  O.bind(`anyPersonaZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
   E.fromOption(() => new Error4xx('Forbidden')),
   E.bind('zod', flow(E.right, E.map(loginFormZodSchema))),
 )

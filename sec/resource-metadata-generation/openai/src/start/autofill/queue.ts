@@ -27,14 +27,14 @@ RETURN res
   if (!resourceDoc) {
     return 'none' as const
   }
-  shell.log('notice', `[autofill-queue] will stepMachine for resource ${resourceDoc._key}`)
+  shell.log.notice(`[autofill-queue] will stepMachine for resource ${resourceDoc._key}`)
   return await stepMachine(resourceDoc._key).then(
     () => {
-      shell.log('notice', `[autofill-queue] generateMetaNow for resource ${resourceDoc._key}`)
+      shell.log.notice(`[autofill-queue] generateMetaNow for resource ${resourceDoc._key}`)
       return 'done one' as const
     },
     err => {
-      shell.log('error', `{Error}[autofill-queue] generateMetaNow failed for resource ${resourceDoc._key}`, err)
+      shell.log.error(`{Error}[autofill-queue] generateMetaNow failed for resource ${resourceDoc._key}`, err)
       return 'error' as const
     },
   )

@@ -17,7 +17,7 @@ interface OpenAiResponse {
 
 export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | null> {
   const resourceIngestion = await ingestResourceData(doc).catch(err => {
-    shell.log('warn', 'resourceIngestion err', err)
+    shell.log.warn('resourceIngestion err', err)
     return null
   })
   if (!resourceIngestion) {
@@ -25,7 +25,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
   }
 
   const { contentDesc, content, title, type, provideImage } = resourceIngestion
-  shell.log('notice', 'calling openai for', { contentDesc, type })
+  shell.log.notice('calling openai for', { contentDesc, type })
 
   const { completionConfig, prompts } = await getCompletionConfigs()
   const resp = await openAiClient.chat.completions
@@ -37,7 +37,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
       { ...env.generationConfigs.metadata.options },
     )
     .catch(err => {
-      shell.log('warn', 'openai chat completions call failed', err)
+      shell.log.warn('openai chat completions call failed', err)
       return null
     })
   if (!resp) {
@@ -179,7 +179,7 @@ export async function callOpenAI(doc: ResourceDoc): Promise<OpenAiResponse | nul
         },
       )
       .catch(err => {
-        shell.log('warn', 'openai dall-e-3 call failed', err)
+        shell.log.warn('openai dall-e-3 call failed', err)
         return undefined
       })
     const imageUrl = imageGenResp?.data[0]?.url

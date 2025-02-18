@@ -69,7 +69,7 @@ declare global {
 
         type endpoint<useCaseEndpoint extends moo.persona.endpoint<any_>> = (epGateCtx: {
           configs: useCaseEndpoint[2]
-          session: session.user
+          sessionInfo: session.info
         }) => Either<Error4xx, endpointChecksHandle<useCaseEndpoint>>
       }
     }

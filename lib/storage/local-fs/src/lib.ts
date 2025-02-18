@@ -127,7 +127,7 @@ export async function useTempFile({
     () => false as const,
     e => String(e),
   )
-  // console.log('use_temp_file', { mvError, tempId, absolutePath })
+  // console.log.use_temp_file({ mvError, tempId, absolutePath })
 
   if (mvError) {
     return [false, { reason: 'move', error: mvError }]
