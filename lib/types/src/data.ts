@@ -208,21 +208,24 @@ export type signed_expire_token = {
   expires: date_time_string
 }
 
-export declare const integer_brand: unique symbol
-export type integer = branded<number, typeof integer_brand>
-export const integer_schema = number().int().brand<typeof integer_brand>()
+export declare const int_brand: unique symbol
+export type int = branded<number, typeof int_brand>
+export const int_schema = number().int().brand<typeof int_brand>()
+export const int = int_schema.parse
 
-export declare const positive_integer_brand: unique symbol
-export type positive_integer = branded<number, typeof positive_integer_brand>
-export const positive_integer_schema = number().int().positive().brand<typeof positive_integer_brand>()
+export declare const pos_int_brand: unique symbol
+export type pos_int = branded<number, typeof pos_int_brand>
+export const pos_int_schema = number().int().positive().brand<typeof pos_int_brand>()
+export const pos_int = pos_int_schema.parse
 
-export declare const non_negative_integer_brand: unique symbol
-export type non_negative_integer = branded<number, typeof non_negative_integer_brand>
-export const non_negative_integer_schema = number().int().nonnegative().brand<typeof non_negative_integer_brand>()
+export declare const nat_int_brand: unique symbol
+export type nat_int = branded<number, typeof nat_int_brand>
+export const nat_int_schema = number().int().nonnegative().brand<typeof nat_int_brand>()
+export const nat_int = nat_int_schema.parse
 
-export declare const fraction_brand: unique symbol
-export type fraction = branded<number, typeof fraction_brand>
-export const fraction_schema = number().min(0).max(1).brand<typeof fraction_brand>()
+export declare const fract_brand: unique symbol
+export type fract = branded<number, typeof fract_brand>
+export const fract_schema = number().min(0).max(1).brand<typeof fract_brand>()
 
 export function filterOutFalsies<t>(arr: (t | falsy_loosy)[]): t[] {
   return arr.filter(isNotFalsy)

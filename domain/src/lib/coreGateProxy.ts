@@ -195,12 +195,8 @@ export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core, log
         const log = loggerProvider({ for: 'core', access })
         const ctx: moo.core.ctx<any_> = {
           access,
-          handle: modelHandle,
           configs,
           log,
-        }
-        const cleanCoreResult: Promise<Either<Error4xx, unknown>> = core_Endpoint({
-          ctx,
           zod: gateEndpointAccessHandle.zod,
           assertContextChecks:
             gateEndpointAccessHandle.context &&
@@ -214,7 +210,10 @@ export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core, log
                 throw preflightError
               }
             }),
-        })
+        }
+        const endpointArgs: moo.core.endpointArgs<any_> = [safe_form, modelHandle, ctx]
+
+        const cleanCoreResult: Promise<Either<Error4xx, unknown>> = core_Endpoint(...endpointArgs)
           .then(result => right(result))
           .catch(error => {
             if (isError4xx(error)) {

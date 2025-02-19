@@ -12,7 +12,7 @@ export type mailer = moo.model<MailerModel>
 type modelUcTypes = moo.ucModelUcTypes<'mailer'>
 
 export type MailerModel = {
-  send: {
+  sendUseCase: {
     [persona in keyof modelUcTypes]: {
       [ctx in keyof modelUcTypes[persona]]: {
         [scope in keyof modelUcTypes[persona][ctx]]: {

@@ -13,8 +13,7 @@ export const adminPersonaZodFlow = flow(
 )
 
 export type adminPersonaZodSchemas = ReturnType<typeof adminPersonaZodSchemas>
-export function adminPersonaZodSchemas(adminPersonaValidationConfigs: adminPersonaValidationConfigs) {
-  adminPersonaValidationConfigs.xxxxxxxx
+export function adminPersonaZodSchemas(_adminPersonaValidationConfigs: adminPersonaValidationConfigs) {
   return {
     role: literal('admin').or(literal('contributor')).or(literal('viewer')),
   }

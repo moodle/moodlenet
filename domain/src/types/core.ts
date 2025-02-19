@@ -10,20 +10,6 @@ declare global {
       [personaType_ in keyof forPersonas]: core.persona<forPersonas[personaType_]>
     }
     namespace core {
-      type access<endpoint_ extends persona.endpoint<any_>> = {
-        id: string
-        now: date_time_string
-        sessionInfo: session.info
-        gateAccess: gate.access<endpoint_>
-      }
-
-      type ctx<endpoint_ extends persona.endpoint<any_>> = {
-        configs: endpoint_[2]
-        log: logger
-        handle: moo.model.handle
-        access: access<endpoint_>
-      }
-
       type persona<persona_ extends moo.persona<any_>> = {
         [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_>
           ? context<persona_[contextName]>
@@ -48,8 +34,17 @@ declare global {
           : never
       }
 
-      type endpointArg<endpoint_ extends persona.endpoint<any_>> = {
-        ctx: ctx<endpoint_>
+      type access<endpoint_ extends persona.endpoint<any_>> = {
+        id: string
+        now: date_time_string
+        sessionInfo: session.info
+        gateAccess: gate.access<endpoint_>
+      }
+
+      type ctx<endpoint_ extends persona.endpoint<any_>> = {
+        configs: endpoint_[2]
+        log: logger
+        access: access<endpoint_>
         assertContextChecks: endpoint_[3] extends never | undefined | null | void
           ? undefined
           : (
@@ -57,8 +52,15 @@ declare global {
             ) => /* Error4xx |  */ undefined
         zod: gate.endpointZod<endpoint_>
       }
+      type endpointArgs<endpoint_ extends persona.endpoint<any_>> = [
+        form: gate.access<endpoint_>['form'],
+        handle: moo.model.handle,
+        ctx: ctx<endpoint_>,
+      ]
 
-      type endpoint<endpoint_ extends persona.endpoint<any_>> = (_: endpointArg<endpoint_>) => Promise<endpoint_[1]>
+      type endpoint<endpoint_ extends persona.endpoint<any_>> = (
+        ...endpointArgs: endpointArgs<endpoint_>
+      ) => Promise<endpoint_[1]>
     }
   }
 }

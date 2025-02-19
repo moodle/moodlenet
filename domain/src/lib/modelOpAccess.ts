@@ -115,10 +115,15 @@ export function modelOpExtract({ model, access, backModelAccessDispatcher, logge
   const and = typeModelImpl?.[`= ${access.target.opName}`] as undefined | moo.model.impl.and<any_>
   const log = loggerProvider({ for: 'model', access })
   const now = new Date().toISOString()
-  const ctx: moo.model.impl.ctx<any_> = { access: { ...access, now }, log, handle, now: new Date().toISOString() }
+  const ctx: moo.model.impl.ctx<any_> = {
+    access: { ...access, now },
+    log,
+    now: new Date().toISOString(),
+  }
+  const exeArgs: moo.model.impl.exeArgs<any_> = [access.message, handle, ctx]
   return {
-    exe: exe && (() => exe(ctx)),
-    or: or && (() => or(ctx)),
-    and: and && ((outcome: Either<Error4xx, unknown>) => and(outcome, ctx)),
+    exe: exe && (() => exe(...exeArgs)),
+    or: or && (() => or(...exeArgs)),
+    and: and && ((outcome: Either<Error4xx, unknown>) => and(outcome, ...exeArgs)),
   }
 }

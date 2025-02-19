@@ -147,11 +147,10 @@ export const defaultConfigurator: configurator = ({ master }) => {
             sessionManager: {
               accessControl: {
                 activateUserSessionToken: {
-                  '* call': async ctx => {
-                    const userId = ctx.access.message.userId
-                    const { session } = await ctx.handle
-                      .over(ctx.handle.model.accessControl.getUserSession)
-                      .call.query({ user: { type: 'auth', id: userId } })
+                  '* call': async ({ userId }, _) => {
+                    const { session } = await _.over(_.model.accessControl.getUserSession).call.query({
+                      user: { type: 'auth', id: userId },
+                    })
 
                     const activeSessionData: activeSessionData = {
                       sessionInfo: {
@@ -173,14 +172,13 @@ export const defaultConfigurator: configurator = ({ master }) => {
                   },
                 },
                 getMyUserSession: {
-                  '* call': async ctx => {
-                    const sessionToken = ctx.access.message.sessionToken
+                  '* call': async ({ sessionToken }, _) => {
                     if (!sessionToken) {
-                      return anonSession(ctx)
+                      return anonSession(_)
                     }
                     const validatedToken = await validateToken(sessionToken) // as signed_token
                     if (!validatedToken) {
-                      return anonSession(ctx)
+                      return anonSession(_)
                     }
                     const { sessionId } = validatedToken
                     const m_foundDoc = await arangodb.activeSessionCollection.document(
@@ -188,7 +186,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
                       { graceful: true },
                     )
                     if (!m_foundDoc) {
-                      return anonSession(ctx)
+                      return anonSession(_)
                     }
                     return m_foundDoc.data
                     async function validateToken(token: string): Promise<{ sessionId: string } | null> {
@@ -200,9 +198,9 @@ export const defaultConfigurator: configurator = ({ master }) => {
             },
           } satisfies map<moo.model.impl>
 
-          async function anonSession(ctx: moo.model.impl.ctx<any_>) {
+          async function anonSession(_: moo.model.handle) {
             const user: moo.session.info.user = { type: 'anon' }
-            const { session } = await ctx.handle.over(ctx.handle.model.accessControl.getUserSession).call.query({ user })
+            const { session } = await _.over(_.model.accessControl.getUserSession).call.query({ user })
             const activeSessionData: model.accessControl.activeSessionData = {
               sessionInfo: {
                 session,

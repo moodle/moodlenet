@@ -13,7 +13,7 @@ export type env_keys =
   | 'MOODLE_ARANGODB_PWD'
   | 'MOODLE_ARANGODB_VERSION'
 export function provideArangoDbSecEnv({ env }: { env: map<unknown, env_keys> }): ArangoDbSecEnv {
-  function int_schema(dflt: number) {
+  function int(dflt: number) {
     return string().transform(Number).pipe(number().positive().int().default(dflt))
   }
 
@@ -25,7 +25,7 @@ export function provideArangoDbSecEnv({ env }: { env: map<unknown, env_keys> }):
     MOODLE_ARANGODB_URL: string(),
     MOODLE_ARANGODB_USER: string().optional(),
     MOODLE_ARANGODB_PWD: string().optional(),
-    MOODLE_ARANGODB_VERSION: union([int_schema(31200), literal(31200), literal(31100)]),
+    MOODLE_ARANGODB_VERSION: union([int(31200), literal(31200), literal(31100)]),
   }).parse({
     MOODLE_ARANGODB_ISDEV: env.MOODLE_ARANGODB_ISDEV,
     MOODLE_ARANGODB_DOMAIN_NAME: env.MOODLE_ARANGODB_DOMAIN_NAME,

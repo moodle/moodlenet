@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { fraction, url_string } from '@moodle/lib-types'
+import { fract, url_string } from '@moodle/lib-types'
 declare global {
   namespace moo {
     namespace content {
@@ -22,7 +22,7 @@ declare global {
         type license = {
           code: string
           name: string
-          restrictiveness: fraction
+          restrictiveness: fract
         }
       }
     }

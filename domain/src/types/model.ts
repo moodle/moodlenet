@@ -58,17 +58,17 @@ declare global {
         type ctx<op extends type.opDef> = {
           now: date_time_string
           log: logger
-          handle: handle
           access: access<op>
         }
+        type exeArgs<op extends type.opDef> = [message: op[1], handle: handle, ctx: ctx<op>]
         type typeModel<modelNode extends type<type.traitsDef>> = handlers<modelNode> &
           (modelNode extends type.idSpaceMap<infer space_shape, any_, infer space_ops>
             ? { '#': (id: string) => typeModel<type.idSpaceModel<space_shape, space_ops>> }
             : impl<Omit<modelNode, type.traits_prop>>)
 
-        type exe<op extends model.type.opDef> = (ctx: ctx<op>) => Promise<op[2]>
-        type or<op extends model.type.opDef> = (ctx: ctx<op>) => Promise<void>
-        type and<op extends model.type.opDef> = (outcome: Either<Error4xx, op[2]>, ctx: ctx<op>) => Promise<void>
+        type exe<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<op[2]>
+        type or<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
+        type and<op extends model.type.opDef> = (outcome: Either<Error4xx, op[2]>, ...exeArgs: exeArgs<op>) => Promise<void>
 
         type handlers<modelNode extends type<type.traitsDef>> = modelNode[type.traits_prop]['ops'] extends infer ops
           ? ops extends model.type.ops

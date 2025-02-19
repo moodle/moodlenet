@@ -4,29 +4,29 @@ import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 import type * as def from './submitSignupForm.endpoint'
 import { SUBMITTED } from '../../../../../../lib/constants'
 
-export const submitSignupForm: moo.core.endpoint<def.submitSignupForm> = async ({ ctx }) => {
-  const existingUser = await ctx.over(ctx.model.userAccount.user).one.query({ filters: { emailEquals: ctx.form.email } })
+export const submitSignupForm: moo.core.endpoint<def.submitSignupForm> = async (form, _) => {
+  const existingUser = await _.over(_.model.userAccount.user).one.query({ filters: { emailEquals: form.email } })
 
   if (!O.isNone(existingUser)) {
     return E.left(USER_WITH_THIS_EMAIL_EXISTS)
   }
 
-  const { hash: passwordHash } = await ctx.over(ctx.model.crypto.hashing.password.hash).call.query({
-    plainPassword: ctx.form.password,
+  const { hash: passwordHash } = await _.over(_.model.crypto.hashing.password.hash).call.query({
+    plainPassword: form.password,
   })
 
-  const { token } = await ctx
-    .over(ctx.model.jwtTokens.anonymous.access.signup.withMyEmail.emailConfirmationToken.sign)
-    .call.query({
-      data: { displayName: ctx.form.displayName, email: ctx.form.email, passwordHash },
-    })
+  const { token } = await _.over(
+    _.model.jwtTokens.useCase.anonymous.access.signup.withMyEmail.emailConfirmationToken.sign,
+  ).call.query({
+    data: { displayName: form.displayName, email: form.email, passwordHash },
+  })
 
-  await ctx.over(ctx.model.mailer.send.anonymous.access.signup.withMyEmail.userEmailConfirmation).call.async({
+  await _.over(_.model.mailer.sendUseCase.anonymous.access.signup.withMyEmail.userEmailConfirmation).call.async({
     data: {
-      displayName: ctx.form.displayName,
+      displayName: form.displayName,
       confirmationToken: token,
     },
-    envelope: { to: [ctx.form.email] },
+    envelope: { to: [form.email] },
   })
 
   return E.right(SUBMITTED)

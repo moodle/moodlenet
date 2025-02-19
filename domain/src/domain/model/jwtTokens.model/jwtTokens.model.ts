@@ -17,7 +17,7 @@ type modelUcTypes = moo.ucModelUcTypes<'jwtTokens'>
 export type JwtTokensModel = {
   validate: moo.model.type.endpoint<['query', { token: signed_token }, Either<TYPE_INVALID_TOKEN, { data: unknown }>]>
   sign: moo.model.type.endpoint<['query', { data: unknown }, { token: signed_token }]>
-  uc: {
+  useCase: {
     [persona in keyof modelUcTypes]: {
       [ctx in keyof modelUcTypes[persona]]: {
         [scope in keyof modelUcTypes[persona][ctx]]: {
