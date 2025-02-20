@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import type { any_, date_time_string, map, path, serializable_object } from '@moodle/lib-types'
-import { logger } from './log'
+import type { any_, date_time_string, path, serializable_object } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { Error4xx } from '../lib'
+import { logger } from './log'
 
 declare global {
   namespace moo {

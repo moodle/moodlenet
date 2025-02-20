@@ -1,11 +1,11 @@
-import { contentLanguage, contentLanguageCode } from '../types'
+import { language, languageCode } from '../types'
 /* tslint:disable */
 /* eslint-disable */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck: because is raw data and it's massive, it will slowdown ts
 // @ts-ignore: because is raw data and it's massive, it will slowdown ts
 export const contentLanguages_iso_639_3_Setup = contentLanguages_iso_639_3()
-function contentLanguages_iso_639_3(): [contentLanguageCode: contentLanguageCode, contentLanguage: contentLanguage][] {
+function contentLanguages_iso_639_3(): [contentLanguageCode: languageCode, contentLanguage: language][] {
   return [
     { code: `aaa`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Ghotuo` },
     { code: `aab`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Alumu-Tesu` },

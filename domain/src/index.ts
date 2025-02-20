@@ -18,6 +18,9 @@ declare global {
 
     interface Personas {}
     interface Models {}
+      type modelConfigs = {
+        [_modelName in modelName]: Models[_modelName]['configs']
+      }
 
     const configs: unique symbol
     type withConfigs = { [configs]?: serializable_object }

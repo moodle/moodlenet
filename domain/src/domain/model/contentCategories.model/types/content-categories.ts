@@ -1,12 +1,12 @@
 import { fract, url_string } from '@moodle/lib-types'
 
-export type contentCredits = {
+export type credits = {
   owner: { name: string; url: url_string }
   provider?: { name: string; url: url_string }
 }
 
-export type contentLanguageCode = string
-export type contentLanguage = {
+export type languageCode = string
+export type language = {
   // code: contentLanguageCode
   part2b: string | null
   part2t: string | null
@@ -16,8 +16,8 @@ export type contentLanguage = {
   name: string
 }
 
-export type contentLicenseCode = string
-export type contentLicense = {
+export type licenseCode = string
+export type license = {
   // code: contentLicenseCode
   name: string
   restrictiveness: fract

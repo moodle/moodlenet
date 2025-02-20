@@ -51,7 +51,7 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
     },
   }
 
-  await _.over(_.model.userAccount.user[id]).create.async({ spaceData: [userSpace] })
+  await _.over(_.model.userAccount.user[id]).create.async({ spaceData: userSpace })
 
   return E.right(SUBMITTED)
 }

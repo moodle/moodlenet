@@ -1,4 +1,4 @@
-import { contentLanguageCode, contentLicenseCode } from '../../contentCategories.model'
+import { languageCode, licenseCode } from '../../contentCategories.model'
 import { bloomCognitiveLevel, iscedFieldCode, iscedLevelCode, resourceTypeCode } from './edu-categories'
 
 export type eduResourceData = {
@@ -8,8 +8,8 @@ export type eduResourceData = {
   iscedLevel: null | iscedLevelCode
   bloomLearningOutcomes: bloomLearningOutcome[]
   type: null | resourceTypeCode
-  language: null | contentLanguageCode
-  license: null | contentLicenseCode
+  language: null | languageCode
+  license: null | licenseCode
   publicationDate: null | { month: number | null; year: number }
 }
 

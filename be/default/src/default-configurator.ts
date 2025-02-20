@@ -14,12 +14,9 @@ import {
   provideArangoDbSecEnv,
   provideArangoQueueServiceWorkers,
 } from '@moodle/sec-db-arango'
-import { migrateArangoDB } from '@moodle/sec-db-arango/migrate'
+import { upgradeArangoDB } from '@moodle/sec-db-arango/dbUpgrade'
 import { get_nodemailer_secondary_factory, NodemailerSecEnv, provideNodemailerSecEnv } from '@moodle/sec-email-nodemailer'
-import {
-  get_default_resource_ingestion_secondary_factory,
-  provideDefaultResourceIngestorSecEnv,
-} from '@moodle/sec-resource-ingestion-default'
+import { get_default_resource_ingestion_secondary_factory, provideDefaultResourceIngestorSecEnv } from '@moodle/sec-resource-ingestion-default'
 import { fs_default_storage_factory, storageDefaultSecEnv } from '@moodle/sec-storage-local-fs'
 import assert from 'assert'
 import { activeSessionData } from 'domain/src/domain/model/accessControl.model/accessControl.model'
@@ -92,14 +89,8 @@ export const defaultConfigurator: configurator = ({ master }) => {
           })
 
           console.info(`configuring domain [${domainName}] env:`, { MOODLE_HOME_DIR, ...env })
-          const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(
-            path.join(domainFsDirectories.currentDomainDir, `private.key`),
-            'utf8',
-          )
-          const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(
-            path.join(domainFsDirectories.currentDomainDir, `public.key`),
-            'utf8',
-          )
+          const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `private.key`), 'utf8')
+          const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `public.key`), 'utf8')
           const domain_process_env = process.env as any_
 
           const arango_db_env: ArangoDbSecEnv = provideArangoDbSecEnv({
@@ -176,10 +167,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
                       return anonSession(_)
                     }
                     const { sessionId } = validatedToken
-                    const m_foundDoc = await arangodb.activeSessionCollection.document(
-                      { _key: sessionId },
-                      { graceful: true },
-                    )
+                    const m_foundDoc = await arangodb.activeSessionCollection.document({ _key: sessionId }, { graceful: true })
                     if (!m_foundDoc) {
                       return anonSession(_)
                     }
@@ -206,11 +194,11 @@ export const defaultConfigurator: configurator = ({ master }) => {
           }
 
           if (master) {
-            await migrateArangoDB({
+            await upgradeArangoDB({
               databaseConnections: arango_db_env.database_connections,
-              log: loggerProvider({ for: 'infra', name: 'migrateArangoDB' }),
+              log: loggerProvider({ for: 'infra', name: 'upgradeArangoDB' }),
             }).catch(e => {
-              myLogger.error('migrateArangoDB failed', e)
+              myLogger.error('upgradeArangoDB failed', e)
               throw e
             })
             const coreSetupModelHandle = modelHandleProxy({
@@ -307,7 +295,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
     const coreId = generateUlid({ onDate: new Date() })
     const coreGateDeps: coreGateDeps = {
-      core: domainCore.core,
+      core: domainCore.domainCoreImpl,
       coreAccess: {
         gateAccess,
         id: coreId,

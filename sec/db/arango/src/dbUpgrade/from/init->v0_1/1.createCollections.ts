@@ -3,7 +3,7 @@ import { dbStruct } from '../../../db-structure'
 
 export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   // logs
-  // ~~~`await dbStruct.logs.coll.migrations.create({ cacheEnabled: true })~~~ this is created in migrate.ts
+  // ~~~`await dbStruct.logs.coll.dbUpgrade.create()~~~ this is created in dbUpgrade.ts
 
   // userAccount
   await dbStruct.appData.coll.user.create({})
@@ -14,8 +14,8 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   })
   await dbStruct.appData.coll.user.ensureIndex({
     type: 'persistent',
-    name: 'userAccount.email.address',
-    fields: ['userAccount.email.address'],
+    name: 'userAccount.user.email.address',
+    fields: ['userAccount.user.email.address'],
     unique: true,
   })
 
@@ -29,6 +29,14 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   await dbStruct.appData.coll.eduIscedLevel.create({ cacheEnabled: true })
   await dbStruct.appData.coll.eduResourceType.create({ cacheEnabled: true })
 
+  // modules
+  await dbStruct.modules.coll.modelConfig.create({ cacheEnabled: true })
+  await dbStruct.modules.coll.modelConfig.ensureIndex({
+    type: 'persistent',
+    name: 'model',
+    fields: ['model'],
+    unique: true,
+  })
   // services
   await dbStruct.services.coll.domainAccessJob.create({ cacheEnabled: true })
   await dbStruct.services.coll.activeUserSession.create({ cacheEnabled: true })

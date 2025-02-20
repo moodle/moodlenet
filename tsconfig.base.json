@@ -39,7 +39,7 @@
       "@moodle/lib-types": ["lib/types/src/index.ts"],
       "@moodle/sec-crypto-default": ["sec/crypto/default/src/index.ts"],
       "@moodle/sec-db-arango": ["sec/db/arango/src/index.ts"],
-      "@moodle/sec-db-arango/migrate": ["sec/db/arango/src/migrate.ts"],
+      "@moodle/sec-db-arango/dbUpgrade": ["sec/db/arango/src/dbUpgrade.ts"],
       "@moodle/sec-email-nodemailer": ["sec/email/nodemailer/src/index.ts"],
       "@moodle/sec-resource-ingestion-default": ["sec/resource-ingestion/default/src/index.ts"],
       "@moodle/sec-resource-metadata-generation-openai": ["sec/resource-metadata-generation/openai/src/index.ts"],

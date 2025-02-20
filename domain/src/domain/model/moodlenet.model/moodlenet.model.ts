@@ -22,10 +22,9 @@ export type contributorSpace = {
 export type moodlenet = moo.model<MoodlenetModel>
 
 export type MoodlenetModel = {
-  configs:configs
+  configs: configs
   contributor: moo.model.type.idSpaceMap<contributorSpace>
 }
-
 
 // type _ = moo.model.type.spaceData<contributorSpace, false>
 // type __ = moo.model.type.spaceData<contributorSpace, true>
