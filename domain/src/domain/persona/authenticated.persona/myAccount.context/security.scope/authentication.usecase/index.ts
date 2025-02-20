@@ -1,4 +1,4 @@
-import { changeMyPassword } from './changeMyPassword.endopoint'
+import { changeMyPassword } from './changeMyPassword.endpoint'
 declare module '..' {
   interface Scope {
     authentication: authentication
