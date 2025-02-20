@@ -34,13 +34,13 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
       .then(({ exists }) => exists),
   )
 
-  const userSpace: moo.model.type.spaceData<userSpace> = {
+  const userSpace: moo.model.type.sSpaceData<userSpace> = {
     email: { address: confirmationTokenData.email },
     password: { hash: confirmationTokenData.passwordHash },
-    profile: {
-      info: {
-        displayName: confirmationTokenData.displayName,
-      },
+    profileInfo: {
+      displayName: confirmationTokenData.displayName,
+    },
+    images: {
       avatar: NONE_ASSET,
       background: NONE_ASSET,
     },

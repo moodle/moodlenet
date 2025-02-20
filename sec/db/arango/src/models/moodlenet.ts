@@ -1,4 +1,4 @@
-import { MoodlenetModel } from 'domain/src/domain/model/moodlenet.model'
+import { contributorSpace, MoodlenetModel } from 'domain/src/domain/model/moodlenet.model'
 import { none, some } from 'fp-ts/Option'
 import { dbStruct } from '../db-structure'
 
@@ -9,9 +9,13 @@ export function userAccount({ dbStruct }: { dbStruct: dbStruct }): moo.model.imp
         '* getData': async () => {
           const doc = await dbStruct.appData.coll.user.document({ _key }, { graceful: true })
           if (!doc) return none
-          return some({
+          return some<moo.model.type.xSpaceData<contributorSpace>>({
             ...doc.moodlenet.contributor,
-            profile: doc.userAccount.user.profile,
+            profileInfo: doc.userAccount.user.profileInfo,
+            images: {
+              avatar: doc.userAccount.user.images.avatar,
+              background: doc.userAccount.user.images.background,
+            },
           })
         },
       }),

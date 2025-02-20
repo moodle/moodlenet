@@ -15,8 +15,7 @@ export type resourceDraftSpace = unknown
 
 export type collectionDraftSpace = unknown
 
-export type profile = {
-  info: moo.model.type.entityData<profileInfo>
+export type images = {
   avatar: moo.model.type.asset<{ optional: true }>
   background: moo.model.type.asset<{ optional: true }>
 }
@@ -26,14 +25,15 @@ export interface permissions {
 }
 
 export type userSpace = {
+  profileInfo: moo.model.type.entityData<profileInfo>
   email: moo.model.type.entityData<{ address: email_address }>
   password: moo.model.type.entityData<{ hash: string }>
   permissions: permissions
-  profile: profile
+  images: images
 }
 
 export type userAccountModel = {
-  configs: configs
+  [moo.configs]: configs
   user: moo.model.type.idSpaceMap<userSpace, { emailEquals: string }>
 }
 

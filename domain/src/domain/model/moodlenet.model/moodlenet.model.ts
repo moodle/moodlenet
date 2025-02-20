@@ -12,8 +12,8 @@ declare global {
 
 export type contributorSpace = {
   points: int
-  profile: moo.model.type.derived<{
-    info: profileInfo
+  profileInfo: moo.model.type.derived<profileInfo>
+  images: moo.model.type.derived<{
     avatar: moo.content.asset.maybe
     background: moo.content.asset.maybe
   }>
@@ -22,12 +22,12 @@ export type contributorSpace = {
 export type moodlenet = moo.model<MoodlenetModel>
 
 export type MoodlenetModel = {
-  configs: configs
+  [moo.configs]: configs
   contributor: moo.model.type.idSpaceMap<contributorSpace>
 }
 
-// type _ = moo.model.type.spaceData<contributorSpace, false>
-// type __ = moo.model.type.spaceData<contributorSpace, true>
+// type _ = moo.model.type.xSpaceData<contributorSpace>
+// type __ = moo.model.type.sSpaceData<contributorSpace>
 
 // const _:moo.model.handle = {}
 // _.over(_.model.moodlenet.contributor['aaa']).create.async({spaceData:{points:int(12)}})

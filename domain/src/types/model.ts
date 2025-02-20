@@ -10,7 +10,7 @@ declare global {
     type model<modelDef extends model.def> = modelDef
     namespace model {
       type def = {
-        configs: serializable_object
+        [moo.configs]: serializable_object
       }
       type dispatcher = (access: access<any_>) => Promise<unknown>
 

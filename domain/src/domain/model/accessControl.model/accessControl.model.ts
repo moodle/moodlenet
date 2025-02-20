@@ -18,7 +18,7 @@ export type activeSessionData = {
 }
 
 export type AccessControlModel = {
-  configs: configs
+  [moo.configs]: configs
   sessionConfigs: moo.model.type.staticData<moo.session.configs>
   getUserSession: moo.model.type.endpoint<['query', { user: moo.session.info.user }, { session: moo.session.user }]>
   activateUserSessionToken: moo.model.type.endpoint<['query', { userId: string }, { session: moo.session.user; token: signed_token }]>

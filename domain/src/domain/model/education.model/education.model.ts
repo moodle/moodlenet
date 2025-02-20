@@ -11,7 +11,7 @@ declare global {
 export type education = moo.model<educationModel>
 
 export type educationModel = {
-  configs: configs
+  [moo.configs]: configs
   categories: {
     iscedFields: moo.model.type.idSpaceMap<{ data: iscedField }>
     iscedLevels: moo.model.type.idSpaceMap<{ data: iscedLevel }>

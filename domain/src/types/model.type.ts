@@ -33,24 +33,24 @@ declare global {
                       limit?: number
                       cursor?: [cursor: string] //, dir?: 'after' | 'before']
                     },
-                    { items: { id: string; data: spaceData<space_shape, false>; cursor: string }[] },
+                    { items: { id: string; data: xSpaceData<space_shape>; cursor: string }[] },
                   ]
-                  one: ['query', { filters?: filters }, Option<{ id: string; data: spaceData<space_shape, false> }>]
+                  one: ['query', { filters?: filters }, Option<{ id: string; data: xSpaceData<space_shape> }>]
                 }
                 shape: map<spaceModel>
-                data: map<spaceData<space_shape, false>>
+                data: map<xSpaceData<space_shape>>
               }>
             : unknown
 
         type idSpaceModel<shape, ops_ extends ops = ops> = type<{
           shape: shape
           ops: ops_ & {
-            getData: ['query', void, Option<spaceData<shape, false>>]
+            getData: ['query', void, Option<xSpaceData<shape>>]
             purge: ['async', void, Option<'done'>]
             exists: ['query', void, { exists: boolean }]
-            create: ['async', { spaceData: spaceData<shape, true> }, void]
+            create: ['async', { spaceData: sSpaceData<shape> }, void]
           }
-          data: spaceData<shape, false>
+          data: xSpaceData<shape>
         }>
 
         type derived<data extends serializable_object, ops_ extends ops = ops> = type<{
@@ -67,14 +67,14 @@ declare global {
         //   data: data
         // }>
 
+        type xSpaceData<shape> = spaceData<shape, false>
+        type sSpaceData<shape> = spaceData<shape, true>
         type spaceData<shape, strict extends boolean = true> = {
-          [k in keyof shape as strict extends false
-            ? k
-            : shape[k] extends type<infer traits>
-              ? traits['derived'] extends true
-                ? never
-                : k
-              : k]: shape[k] extends type<infer traits> ? traits['data'] : spaceData<shape[k], strict>
+          [k in keyof shape as strict extends false ? k : shape[k] extends type<infer traits> ? (traits['derived'] extends true ? never : k) : k]: shape[k] extends type<
+            infer traits
+          >
+            ? traits['data']
+            : spaceData<shape[k], strict>
         }
 
         type entityData<

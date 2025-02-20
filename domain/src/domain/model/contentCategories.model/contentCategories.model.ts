@@ -11,7 +11,7 @@ declare global {
 export type contentCategories = moo.model<contentCategoriesModel>
 
 export type contentCategoriesModel = {
-  configs: configs
+  [moo.configs]: configs
   categories: {
     contentLanguages: moo.model.type.idSpaceMap<{ data: language }>
     contentLicenses: moo.model.type.idSpaceMap<{ data: license }>

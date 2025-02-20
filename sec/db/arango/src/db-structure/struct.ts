@@ -35,8 +35,8 @@ export function getDbStruct(databaseConnections: databaseConnections) {
         contentLanguage: appData_db.collection<{ data: language }>('contentLanguage'),
         contentLicense: appData_db.collection<{ data: license }>('contentLicense'),
         user: identity_db.collection<{
-          userAccount: { user: moo.model.type.spaceData<userSpace> }
-          moodlenet: { contributor: moo.model.type.spaceData<contributorSpace> }
+          userAccount: { user: moo.model.type.sSpaceData<userSpace> }
+          moodlenet: { contributor: moo.model.type.sSpaceData<contributorSpace> }
         }>('user'),
       },
     },
