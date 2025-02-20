@@ -3,8 +3,8 @@ import * as E from 'fp-ts/Either'
 import { flow } from 'fp-ts/function'
 import { object } from 'zod'
 import { SUBMITTED } from '../../../../../../lib/constants'
-import { TYPE_INVALID_TOKEN } from '../../../../../model/jwtTokens.model/consts'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
+import { TYPE_INVALID_TOKEN } from '../../../../../model/jwtTokens.model'
 // import { Error4xx } from '../../../../../../moo/lib/access-error'
 
 export type confirmMyEmail = moo.persona.endpoint<

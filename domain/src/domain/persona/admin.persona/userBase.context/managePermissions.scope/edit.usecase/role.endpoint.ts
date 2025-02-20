@@ -4,28 +4,22 @@ import * as O from 'fp-ts/Option'
 import { flow } from 'fp-ts/function'
 import { object } from 'zod'
 import { Error4xx } from '../../../../../../lib/access-error'
-import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
-import { adminPersonaZodFlow, adminPersonaZodSchemas } from '../../../admin.gates.helper'
+import { getPermissionsSchema } from '../../../../../model/accessControl.model/lib'
+import { generalSchemaConfig } from '../../../../../model/org.model'
+import { generalSchemas } from '../../../../../model/org.model/lib/schemas'
 
 export type role = moo.persona.endpoint<[typeof roleSchema, void]>
 
 export const role: moo.gate.provider.endpoint<role> = flow(
   O.some,
-  O.bind(`anyPersonaZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
-  O.bind(`adminPersonaZod`, ({ sessionInfo }) => adminPersonaZodFlow({ sessionInfo })),
-  O.bind('zod', ({ adminPersonaZod, anyPersonaZod }) => O.some(roleSchema({ adminPersonaZod, anyPersonaZod }))),
+  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.general)),
   E.fromOption(() => new Error4xx('Unauthorized')),
+  E.bind('zod', flow(E.right, E.map(roleSchema))),
 )
 
-export function roleSchema({
-  adminPersonaZod,
-  anyPersonaZod,
-}: {
-  anyPersonaZod: anyPersonaZodSchemas
-  adminPersonaZod: adminPersonaZodSchemas
-}) {
+export function roleSchema({ general }: { general: generalSchemaConfig }) {
   return object({
-    role: adminPersonaZod.role,
-    userId: anyPersonaZod.id,
+    role: getPermissionsSchema().role,
+    userId: generalSchemas({ general }).id,
   })
 }

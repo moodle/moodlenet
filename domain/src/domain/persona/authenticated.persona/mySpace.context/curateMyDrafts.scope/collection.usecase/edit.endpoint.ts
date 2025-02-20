@@ -4,19 +4,20 @@ import { flow } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import { object } from 'zod'
 import { Error4xx } from '../../../../../../lib/access-error'
-import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
+import { generalSchemaConfig } from '../../../../../model/org.model'
+import { generalSchemas } from '../../../../../model/org.model/lib/schemas'
 
 export type edit = moo.persona.endpoint<[typeof editSchema, void]>
 
 export const edit: moo.gate.provider.endpoint<edit> = flow(
   O.some,
-  O.bind(`anyZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
+  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.general)),
   E.fromOption(() => new Error4xx('Unauthorized')),
   E.bind('zod', flow(E.right, E.map(editSchema))),
 )
 
-export function editSchema({ anyZod }: { anyZod: anyPersonaZodSchemas }) {
+export function editSchema({ general }: { general: generalSchemaConfig }) {
   return object({
-    id: anyZod.id,
+    id: generalSchemas({ general }).id,
   })
 }

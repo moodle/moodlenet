@@ -1,4 +1,4 @@
-import { date_time_string, nat_int } from '@moodle/lib-types'
+import { date_time_string, i_nat } from '@moodle/lib-types'
 import { moodlenetContributorId } from './contributor'
 
 export type moodlenetPublicContributionMeta = {
@@ -6,9 +6,9 @@ export type moodlenetPublicContributionMeta = {
   firstMoodlenetPublicationDate: date_time_string
   lastMoodlenetPublicationDate: date_time_string
   stats: {
-    // viewCount: nat_int
+    // viewCount: i_nat
     recalculatedDate: date_time_string
-    popularity: nat_int
+    popularity: i_nat
   }
 }
 

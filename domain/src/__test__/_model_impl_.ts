@@ -7,7 +7,7 @@ const _1: moo.model.impl<moo.Models['userAccount']> = {
   user: {
     '#': _id => ({
       email: NO_JOB_HERE,
-      session: NO_JOB_HERE,
+      permissions: NO_JOB_HERE,
       password: NO_JOB_HERE,
       profile: {
         info: {

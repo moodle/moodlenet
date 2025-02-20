@@ -1,21 +1,22 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import type { any_, date_time_string, map, path } from '@moodle/lib-types'
+import type { any_, date_time_string, map, path, serializable_object } from '@moodle/lib-types'
 import { logger } from './log'
 import { Either } from 'fp-ts/Either'
 import { Error4xx } from '../lib'
 
 declare global {
   namespace moo {
-    type model<modelDef extends map = map> = modelDef
+    type model<modelDef extends model.def> = modelDef
     namespace model {
+      type def = {
+        configs: serializable_object
+      }
       type dispatcher = (access: access<any_>) => Promise<unknown>
 
       type handle = {
         model: Models
-        over: <typeModelRef extends model.type>(
-          type_model_ref: typeModelRef | undefined,
-        ) => typeModelRefOpMap_impl<typeModelRef>
+        over: <typeModelRef extends model.type>(type_model_ref: typeModelRef | undefined) => typeModelRefOpMap_impl<typeModelRef>
       }
       type access<op extends type.opDef> = {
         id: string

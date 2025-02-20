@@ -1,6 +1,5 @@
-import { date_time_string, nat_int } from '@moodle/lib-types'
-import { userProfileId } from '../../user-profile'
-import { moodlenetContributorId } from './access-objects/contributor'
+import { date_time_string, i_nat } from '@moodle/lib-types'
+import { userId } from '../../userAccount.model'
 
 type reportType = string //TODO: type:desc map in moodlenet Configs?
 type reportAbuseForm = {
@@ -9,14 +8,14 @@ type reportAbuseForm = {
 }
 type reportAbuseItem = {
   date: date_time_string
-  reporterUserProfileId: userProfileId
+  reporterUserId: userId
   reason: reportAbuseForm
 }
 
 export type moodlenetContributorModerations = {
-  moodlenetContributorId: moodlenetContributorId
+  userId: userId
   reports: {
     items: reportAbuseItem[]
-    amount: nat_int
+    amount: i_nat
   }
 }

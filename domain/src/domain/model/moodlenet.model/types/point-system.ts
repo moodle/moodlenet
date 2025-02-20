@@ -1,29 +1,29 @@
-import { nat_int, pos_int } from '@moodle/lib-types'
+import { i_nat, i_pos } from '@moodle/lib-types'
 
 export type pointSystem = {
-  welcomePoints: nat_int
+  welcomePoints: i_nat
   pointBadgeSteps: pointBadgeSteps
   curation: {
     like: {
       toActor: {
-        points: nat_int
+        points: i_nat
       }
       toTargetEntityCreator: {
-        points: nat_int
+        points: i_nat
       }
       toTargetEntity: {
-        popularity: nat_int
+        popularity: i_nat
       }
     }
     bookmark: {
       toActor: {
-        points: nat_int
+        points: i_nat
       }
       toTargetEntityCreator: {
-        points: nat_int
+        points: i_nat
       }
       toTargetEntity: {
-        popularity: nat_int
+        popularity: i_nat
       }
     }
   }
@@ -32,26 +32,26 @@ export type pointSystem = {
       // perMetaDataField: { points__: 1 },
       published: {
         toCreator: {
-          points: nat_int
+          points: i_nat
         }
       }
     }
     collection: {
       published: {
         toCreator: {
-          points: nat_int
+          points: i_nat
         }
       }
       // perMetaDataField: { points__: 1 },
       listCuration: {
         toCollectionCreator: {
-          points: nat_int
+          points: i_nat
         }
         toResourceCreator: {
-          points: nat_int
+          points: i_nat
         }
         toResource: {
-          popularity: nat_int
+          popularity: i_nat
         }
       }
     }
@@ -65,41 +65,41 @@ export type pointSystem = {
     // },
     profile: {
       welcome: {
-        points: nat_int
+        points: i_nat
       }
       contributor: {
-        points: nat_int
+        points: i_nat
       }
       interestsSet: {
-        points: nat_int
+        points: i_nat
       }
       perMetaDataField: {
-        points: nat_int
+        points: i_nat
       }
     }
     follow: {
       followerProfile: {
-        points: nat_int
+        points: i_nat
       }
       followingProfile: {
-        points: nat_int
+        points: i_nat
       }
       entityCreatorProfile: {
-        points: nat_int
+        points: i_nat
       }
       entity: {
-        popularity: nat_int
+        popularity: i_nat
       }
     }
   }
 }
 type pointBadgeStep = {
   title: string
-  lessThanPoints: pos_int
+  lessThanPoints: i_pos
 }
 type highestBadgeStep = {
   title: string
-  lessThanPoints?: null | pos_int
+  lessThanPoints?: null | i_pos
 }
 
 export type pointBadgeSteps = [

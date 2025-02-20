@@ -1,6 +1,6 @@
 import { any_ } from '@moodle/lib-types'
 
-export interface migrationRecord {
+export interface dbMigrationRecord {
   previous: string
   current: string
   date: string

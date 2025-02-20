@@ -6,8 +6,8 @@ export type contentCredits = {
 }
 
 export type contentLanguageCode = string
-export type contentLanguageRecord = {
-  code: contentLanguageCode
+export type contentLanguage = {
+  // code: contentLanguageCode
   part2b: string | null
   part2t: string | null
   part1: string | null
@@ -17,8 +17,8 @@ export type contentLanguageRecord = {
 }
 
 export type contentLicenseCode = string
-export type contentLicenseRecord = {
-  code: contentLicenseCode
+export type contentLicense = {
+  // code: contentLicenseCode
   name: string
   restrictiveness: fract
 }

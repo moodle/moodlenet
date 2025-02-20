@@ -5,14 +5,14 @@ import { flow } from 'fp-ts/function'
 import { object } from 'zod'
 import { Error4xx } from '../../../../../../lib/access-error'
 import { WRONG_CREDENTIALS } from '../consts'
-import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
+import { baseUserDataSchemas, generalSchemas } from '../../../../../model/org.model/lib/schemas'
+import { baseUserDataSchemaConfig, generalSchemaConfig } from '../../../../../model/org.model'
 
-export type login = moo.persona.endpoint<
-  [typeof loginFormZodSchema, E.Either<typeof WRONG_CREDENTIALS, { session: moo.session.user; token: signed_token }>]
->
+export type login = moo.persona.endpoint<[typeof loginFormZodSchema, E.Either<typeof WRONG_CREDENTIALS, { session: moo.session.user; token: signed_token }>]>
 export const login: moo.gate.provider.endpoint<login> = flow(
   O.some,
-  O.bind(`anyPersonaZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
+  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.general)),
+  O.bind(`baseUserData`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.baseUserData)),
   E.fromOption(() => new Error4xx('Forbidden')),
   E.bind('zod', flow(E.right, E.map(loginFormZodSchema))),
 )
@@ -21,10 +21,12 @@ export type loginForm = {
   email: email_address
   password: redacted<string>
 }
-export function loginFormZodSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {
+export function loginFormZodSchema({ general, baseUserData }: { general: generalSchemaConfig; baseUserData: baseUserDataSchemaConfig }) {
+  const generalSchema = generalSchemas({ general })
+  const baseUserDataSchema = baseUserDataSchemas({ baseUserData })
   const loginFormSchema = object({
-    email: anyPersonaZod.user.email,
-    password: anyPersonaZod.user.plainPassword,
+    email: generalSchema.email,
+    password: baseUserDataSchema.password,
   })
 
   return loginFormSchema

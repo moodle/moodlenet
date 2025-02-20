@@ -48,7 +48,7 @@ export const core: moo.core<{
       curatePreferences: {
         categories: {
           read: UNIMPLEMENTED,
-          write: UNIMPLEMENTED,
+          edit: UNIMPLEMENTED,
         },
       },
     },
@@ -56,7 +56,7 @@ export const core: moo.core<{
       email: {
         preferences: {
           read: UNIMPLEMENTED,
-          write: UNIMPLEMENTED,
+          edit: UNIMPLEMENTED,
         },
         send: {
           user: UNIMPLEMENTED,
@@ -90,7 +90,7 @@ export const core: moo.core<{
       curatePreferences: {
         search: {
           read: UNIMPLEMENTED,
-          write: UNIMPLEMENTED,
+          edit: UNIMPLEMENTED,
         },
       },
       exchangeWithLms: {
@@ -119,14 +119,14 @@ export const core: moo.core<{
           create: UNIMPLEMENTED,
           edit: UNIMPLEMENTED,
           trash: UNIMPLEMENTED,
-          setBackgroundImage: UNIMPLEMENTED,
+          setBackground: UNIMPLEMENTED,
         },
         resource: {
           read: UNIMPLEMENTED,
           create: UNIMPLEMENTED,
           edit: UNIMPLEMENTED,
           trash: UNIMPLEMENTED,
-          setBackgroundImage: UNIMPLEMENTED,
+          setBackground: UNIMPLEMENTED,
         },
       },
       curateMyProfile: {

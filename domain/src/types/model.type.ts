@@ -17,7 +17,7 @@ declare global {
         type traits_prop = typeof traits_sym
 
         type ops = map<opDef>
-        type traitsDef = { shape: unknown; ops: ops; data: serializable_object }
+        type traitsDef = { shape: unknown; ops: ops; data: serializable_object; derived?: boolean }
 
         type opType = 'sync' | 'async' | 'query'
         type opDef = [type: opType, message: any_, outcome: any_]
@@ -33,40 +33,48 @@ declare global {
                       limit?: number
                       cursor?: [cursor: string] //, dir?: 'after' | 'before']
                     },
-                    { items: { id: string; data: spaceData<space_shape>; cursor: string }[] },
+                    { items: { id: string; data: spaceData<space_shape, false>; cursor: string }[] },
                   ]
-                  one: ['query', { filters?: filters }, Option<{ id: string; data: spaceData<space_shape> }>]
+                  one: ['query', { filters?: filters }, Option<{ id: string; data: spaceData<space_shape, false> }>]
                 }
                 shape: map<spaceModel>
-                data: map<spaceData<space_shape>>
+                data: map<spaceData<space_shape, false>>
               }>
             : unknown
-
-        // type q = Either<{readonly a:string}, {readonly a:string}>
-        // type x = q extends JsonRecord ? 1 : 0   // 0  -_-
-        // type y = JsonRecord extends q ? 1 : 0   // 0  -_-
 
         type idSpaceModel<shape, ops_ extends ops = ops> = type<{
           shape: shape
           ops: ops_ & {
-            getData: ['query', void, Option<spaceData<shape>>]
+            getData: ['query', void, Option<spaceData<shape, false>>]
             purge: ['async', void, Option<'done'>]
             exists: ['query', void, { exists: boolean }]
-            create: ['async', { spaceData: spaceData<shape> }, void]
+            create: ['async', { spaceData: spaceData<shape, true>[] }, void]
           }
-          data: spaceData<shape>
+          data: spaceData<shape, false>
         }>
 
-        // type idAggregate<data extends serializable_object, ops_ extends ops = ops> = type<{
+        type derived<data extends serializable_object, ops_ extends ops = ops> = type<{
+          shape: unknown
+          ops: ops_ & {
+            get: ['query', void, Either<typeof NOT_FOUND, data>]
+          }
+          data: data
+          derived: true
+        }>
+        // type staticAggregate<data extends serializable_object, ops_ extends ops = ops> = type<{
         //   shape: unknown
-        //   ops: ops_ & {
-        //     get: ['query', void, Either<dmesg_<typeof NOT_FOUND>, data>]
-        //   }
-        //   data: never
+        //   ops: ops_ & { get: ['query', void, data] }
+        //   data: data
         // }>
 
-        type spaceData<shape> = {
-          [k in keyof shape]: shape[k] extends type<infer traits> ? traits['data'] : spaceData<shape[k]>
+        type spaceData<shape, strict extends boolean = true> = {
+          [k in keyof shape as strict extends false
+            ? k
+            : shape[k] extends type<infer traits>
+              ? traits['derived'] extends true
+                ? never
+                : k
+              : k]: shape[k] extends type<infer traits> ? traits['data'] : spaceData<shape[k], strict>
         }
 
         type entityData<
@@ -92,15 +100,9 @@ declare global {
 
         type staticData<data extends serializable_object, ops_ extends ops = ops> = type<{
           data: data
-          ops: ops_ & { get: ['query', void, data]; replace: ['sync', { newData: data }, void] }
+          ops: ops_ & { get: ['query', void, data]; replace: ['async', { newData: data }, void] }
           shape: unknown
         }>
-
-        // type staticAggregate<data extends serializable_object, ops_ extends ops = ops> = type<{
-        //   shape: unknown
-        //   ops: ops_ & { get: ['query', void, data] }
-        //   data: data
-        // }>
 
         type asset<opts extends { optional: boolean }> = type<{
           shape: { file: fsFile<{ optional: true }> }

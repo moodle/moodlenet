@@ -1,11 +1,11 @@
-import { contentLanguageRecord } from '../types'
+import { contentLanguage, contentLanguageCode } from '../types'
 /* tslint:disable */
 /* eslint-disable */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck: because is raw data and it's massive, it will slowdown ts
 // @ts-ignore: because is raw data and it's massive, it will slowdown ts
 export const contentLanguages_iso_639_3_Setup = contentLanguages_iso_639_3()
-function contentLanguages_iso_639_3(): contentLanguageRecord[] {
+function contentLanguages_iso_639_3(): [contentLanguageCode: contentLanguageCode, contentLanguage: contentLanguage][] {
   return [
     { code: `aaa`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Ghotuo` },
     { code: `aab`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Alumu-Tesu` },
@@ -4787,7 +4787,7 @@ function contentLanguages_iso_639_3(): contentLanguageRecord[] {
     { code: `naq`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Khoekhoe` },
     { code: `nar`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Iguta` },
     { code: `nas`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Naasioi` },
-    { code: `nat`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Ca̱hungwa̱rya̱` },
+    { code: `i_nat`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Ca̱hungwa̱rya̱` },
     { code: `nau`, part2b: `nau`, part2t: `nau`, part1: `na`, scope: `I`, type: `L`, name: `Nauru` },
     { code: `nav`, part2b: `nav`, part2t: `nav`, part1: `nv`, scope: `I`, type: `L`, name: `Navajo` },
     { code: `naw`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Nawuri` },
@@ -5765,7 +5765,7 @@ function contentLanguages_iso_639_3(): contentLanguageRecord[] {
     { code: `pop`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Pwapwâ` },
     { code: `poq`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Texistepec Popoluca` },
     { code: `por`, part2b: `por`, part2t: `por`, part1: `pt`, scope: `I`, type: `L`, name: `Portuguese` },
-    { code: `pos`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Sayula Popoluca` },
+    { code: `i_pos`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Sayula Popoluca` },
     { code: `pot`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Potawatomi` },
     { code: `pov`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Upper Guinea Crioulo` },
     {
@@ -8516,5 +8516,5 @@ function contentLanguages_iso_639_3(): contentLanguageRecord[] {
     { code: `zyp`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Zyphe Chin` },
     { code: `zza`, part2b: `zza`, part2t: `zza`, part1: null, scope: `M`, type: `L`, name: `Zaza` },
     { code: `zzj`, part2b: null, part2t: null, part1: null, scope: `I`, type: `L`, name: `Zuojiang Zhuang` },
-  ]
+  ].map(({ code, ...lang }) => [code, lang])
 }

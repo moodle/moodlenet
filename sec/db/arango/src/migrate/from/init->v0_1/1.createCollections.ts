@@ -6,21 +6,21 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   // ~~~`await dbStruct.logs.coll.migrations.create({ cacheEnabled: true })~~~ this is created in migrate.ts
 
   // userAccount
-  await dbStruct.identity.coll.userAccount.create(/* { computedValues: [removePropOnInsert('id')] } */)
-  await dbStruct.identity.coll.userAccount.ensureIndex({
-    name: 'userEmail',
+  await dbStruct.appData.coll.user.create({})
+  await dbStruct.appData.coll.user.ensureIndex({
     type: 'persistent',
-    fields: ['contacts.email'],
+    name: 'moodlenet.contributor.points',
+    fields: ['moodlenet.contributor.points'],
+  })
+  await dbStruct.appData.coll.user.ensureIndex({
+    type: 'persistent',
+    name: 'userAccount.email.address',
+    fields: ['userAccount.email.address'],
     unique: true,
   })
-  await dbStruct.appData.coll.userProfile.create({})
-  await dbStruct.appData.coll.userProfile.ensureIndex({ type: 'persistent', fields: ['userAccount.id'] })
 
   // appData
   // --------------
-
-  await dbStruct.appData.coll.moduleConfigs.create({ cacheEnabled: true })
-  await dbStruct.appData.coll.contributor.create({ cacheEnabled: true })
 
   await dbStruct.appData.coll.contentLanguage.create({ cacheEnabled: true })
   await dbStruct.appData.coll.contentLicense.create({ cacheEnabled: true })
@@ -31,4 +31,5 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
 
   // services
   await dbStruct.services.coll.domainAccessJob.create({ cacheEnabled: true })
+  await dbStruct.services.coll.activeUserSession.create({ cacheEnabled: true })
 }

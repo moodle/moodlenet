@@ -16,7 +16,7 @@ export async function migrateArangoDB({
 
   if (isInit) {
     await dbStruct.sys_db.createDatabase(dbStruct.services.db.name)
-    await dbStruct.services.coll.migrations.create()
+    await dbStruct.services.coll.dbMigrations.create()
   }
   return upgrade({ dbStruct, log }).then(async final_version => {
     return final_version
@@ -24,7 +24,7 @@ export async function migrateArangoDB({
 }
 
 export async function upgrade({ dbStruct, log }: { dbStruct: dbStruct; log: logger }): Promise<string> {
-  const from_v = ((await dbStruct.services.coll.migrations.document('latest', { graceful: true }))?.current ?? 'init') as
+  const from_v = ((await dbStruct.services.coll.dbMigrations.document('latest', { graceful: true }))?.current ?? 'init') as
     | keyof typeof migrations
     | typeof TARGET_V
 
@@ -42,7 +42,7 @@ export async function upgrade({ dbStruct, log }: { dbStruct: dbStruct; log: logg
 
   const migrationDoc = await migrateMod.migrate({ dbStruct })
 
-  await dbStruct.services.coll.migrations.saveAll(
+  await dbStruct.services.coll.dbMigrations.saveAll(
     [
       {
         _key: `${migrationDoc.previous}::${migrationDoc.current}`,

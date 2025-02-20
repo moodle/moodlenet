@@ -1,5 +1,4 @@
-import { int } from '@moodle/lib-types'
-export const defaultSessionConfig: moo.session.configs = {
+export const SESSION_TEMPLATE_CONFIG: moo.session.configs = {
   moderator: {
     moodlenet: {
       manageReports: {
@@ -11,22 +10,43 @@ export const defaultSessionConfig: moo.session.configs = {
     },
   },
   admin: {
-    _: { validation: undefined },
+    _: { validation: {} },
     userBase: {
       managePermissions: { edit: { role: {} }, searchUsers: { byText: {} } },
     },
     moodlenet: { curateInfo: { general: { edit: {}, read: {} } } },
     organization: { curateInfo: { general: { edit: {}, read: {} } } },
   },
-  authenticated: {
-    _: {
-      validation: {
+  any: {
+    system: {
+      access: {
+        session: { myOwn: {} },
+      },
+    },
+    moodlenet: {
+      viewPublicContent: {
         entity: {
-          description: { max: int(1000), min: int(10) },
-          title: { max: int(100), min: int(5) },
+          collection: {},
+          resource: {},
+          contributor: {},
+          subject: {},
+        },
+        followers: {
+          collection: {},
+          contributor: {},
+          subject: {},
+        },
+        fullTextSearch: {
+          collections: {},
+          resources: {},
+          contributors: {},
+          subjects: {},
         },
       },
     },
+  },
+
+  authenticated: {
     edu: {
       curatePreferences: {
         categories: {
@@ -82,47 +102,6 @@ export const defaultSessionConfig: moo.session.configs = {
           read: {},
           setBackgroundImage: {},
           trash: {},
-        },
-      },
-    },
-  },
-  any: {
-    _: {
-      validation: {
-        baseUserData: {
-          displayName: { max: int(100), min: int(2) },
-          password: { max: int(100), min: int(8) },
-        },
-        general: {
-          email: { max: int(100) },
-          id: { max: int(100), min: int(5) },
-          textSearch: { max: int(100), min: int(2) },
-        },
-      },
-    },
-    system: {
-      access: {
-        session: { myOwn: {} },
-      },
-    },
-    moodlenet: {
-      viewPublicContent: {
-        entity: {
-          collection: {},
-          resource: {},
-          contributor: {},
-          subject: {},
-        },
-        followers: {
-          collection: {},
-          contributor: {},
-          subject: {},
-        },
-        fullTextSearch: {
-          collections: {},
-          resources: {},
-          contributors: {},
-          subjects: {},
         },
       },
     },

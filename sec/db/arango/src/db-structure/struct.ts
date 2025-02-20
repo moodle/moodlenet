@@ -1,16 +1,11 @@
-import { domainAccess, modConfigName, ModConfigs } from '@moodle/domain'
 import { job } from '@moodle/lib-job-queue-service'
-import { contentLanguageRecord, contentLicenseRecord } from '@moodle/module/content'
-import { eduBloomCognitiveRecord, eduIscedFieldRecord, eduIscedLevelRecord, eduResourceTypeRecord } from '@moodle/module/edu'
-import { moodlenetContributorRecord } from '@moodle/module/moodlenet'
-import { userAccountRecord } from '@moodle/module/user-account'
-import { userProfileRecord } from '@moodle/module/user-profile'
-import { Database } from 'arangojs'
-import { domain_record_doc } from '../lib/key-id-mapping'
-import { migrationRecord } from '../migrate/types'
-import { databaseConnections } from './types'
-import { activeSessionData } from 'domain/src/domain/model/accessControl.model/accessControl.model'
 import { any_ } from '@moodle/lib-types'
+import { Database } from 'arangojs'
+import { activeSessionData } from 'domain/src/domain/model/accessControl.model/accessControl.model'
+import { contributorSpace } from 'domain/src/domain/model/moodlenet.model/moodlenet.model'
+import { userSpace } from 'domain/src/domain/model/userAccount.model/userAccount.model'
+import { dbMigrationRecord } from '../migrate/types'
+import { databaseConnections } from './types'
 
 export function getDbStruct(databaseConnections: databaseConnections) {
   const baseConnectionConfig = {
@@ -31,29 +26,24 @@ export function getDbStruct(databaseConnections: databaseConnections) {
     appData: {
       db: appData_db,
       coll: {
-        moduleConfigs: appData_db.collection<ModConfigs[modConfigName]>('moduleConfigs'),
-        eduIscedField: appData_db.collection<domain_record_doc<eduIscedFieldRecord, 'code'>>('eduIscedField'),
-        eduIscedLevel: appData_db.collection<domain_record_doc<eduIscedLevelRecord, 'code'>>('eduIscedLevel'),
-        eduBloomCognitive: appData_db.collection<domain_record_doc<eduBloomCognitiveRecord, 'level'>>('eduBloomCognitive'),
-        eduResourceType: appData_db.collection<domain_record_doc<eduResourceTypeRecord, 'code'>>('eduResourceType'),
-        contentLanguage: appData_db.collection<domain_record_doc<contentLanguageRecord, 'code'>>('contentLanguage'),
-        contentLicense: appData_db.collection<domain_record_doc<contentLicenseRecord, 'code'>>('contentLicense'),
-        contributor: appData_db.collection<domain_record_doc<moodlenetContributorRecord>>('contributor'),
-        userProfile: appData_db.collection<domain_record_doc<userProfileRecord>>('userProfile'),
-      },
-    },
-    identity: {
-      db: identity_db,
-      coll: {
-        userAccount: identity_db.collection<domain_record_doc<userAccountRecord>>('userAccount'),
+        eduIscedField: appData_db.collection<{ data: eduIscedField }>('eduIscedField'),
+        eduIscedLevel: appData_db.collection<{ data: eduIscedLevel }>('eduIscedLevel'),
+        eduBloomCognitive: appData_db.collection<{ data: eduBloomCognitive }>('eduBloomCognitive'),
+        eduResourceType: appData_db.collection<{ data: eduResourceType }>('eduResourceType'),
+        contentLanguage: appData_db.collection<{ data: contentLanguage }>('contentLanguage'),
+        contentLicense: appData_db.collection<{ data: contentLicense }>('contentLicense'),
+        user: identity_db.collection<{
+          userAccount: { user: moo.model.type.spaceData<userSpace> }
+          moodlenet: null | { contributor: moo.model.type.spaceData<contributorSpace> }
+        }>('user'),
       },
     },
     services: {
       db: services_db,
       coll: {
-        migrations: services_db.collection<migrationRecord>('migrations'),
+        dbMigrations: services_db.collection<dbMigrationRecord>('dbMigrations'),
         domainAccessJob: services_db.collection<job<{ access: moo.model.access<any_> }>>('domainAccessJob'),
-        activeSession: services_db.collection<{ data: activeSessionData }>('activeSession'),
+        activeUserSession: services_db.collection<{ data: activeSessionData }>('activeUseSession'),
       },
     },
   }

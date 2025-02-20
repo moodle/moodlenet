@@ -211,21 +211,22 @@ export type signed_expire_token = {
 export declare const int_brand: unique symbol
 export type int = branded<number, typeof int_brand>
 export const int_schema = number().int().brand<typeof int_brand>()
-export const int = int_schema.parse
+export const int = int_schema.parse.bind(int_schema)
 
-export declare const pos_int_brand: unique symbol
-export type pos_int = branded<number, typeof pos_int_brand>
-export const pos_int_schema = number().int().positive().brand<typeof pos_int_brand>()
-export const pos_int = pos_int_schema.parse
+export declare const i_pos_brand: unique symbol
+export type i_pos = branded<number, typeof i_pos_brand>
+export const i_pos_schema = number().int().positive().brand<typeof i_pos_brand>()
+export const i_pos = i_pos_schema.parse.bind(i_pos_schema)
 
-export declare const nat_int_brand: unique symbol
-export type nat_int = branded<number, typeof nat_int_brand>
-export const nat_int_schema = number().int().nonnegative().brand<typeof nat_int_brand>()
-export const nat_int = nat_int_schema.parse
+export declare const i_nat_brand: unique symbol
+export type i_nat = branded<number, typeof i_nat_brand>
+export const i_nat_schema = number().int().nonnegative().brand<typeof i_nat_brand>()
+export const i_nat = i_nat_schema.parse.bind(i_nat_schema)
 
 export declare const fract_brand: unique symbol
 export type fract = branded<number, typeof fract_brand>
 export const fract_schema = number().min(0).max(1).brand<typeof fract_brand>()
+export const fract = fract_schema.parse.bind(fract_schema)
 
 export function filterOutFalsies<t>(arr: (t | falsy_loosy)[]): t[] {
   return arr.filter(isNotFalsy)

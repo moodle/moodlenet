@@ -3,7 +3,7 @@ import * as O from 'fp-ts/Option'
 import { WRONG_CREDENTIALS } from '../consts'
 import type * as def from './login.endpoint'
 
-export const login: moo.core.endpoint<def.login> = async ({ form: emailLoginForm, ctx: _ }) => {
+export const login: moo.core.endpoint<def.login> = async (emailLoginForm, _) => {
   const existingUser = await _.over(_.model.userAccount.user).one.query({ filters: { emailEquals: emailLoginForm.email } })
 
   if (O.isNone(existingUser)) {
@@ -20,7 +20,7 @@ export const login: moo.core.endpoint<def.login> = async ({ form: emailLoginForm
   }
 
   const userId = existingUser.value.id
-  const userSession = await _.over(_.model.accessControl.getSession).call.query(O.some({ userId }))
+  const userSession = await _.over(_.model.accessControl.activateUserSessionToken).call.query({ userId })
 
   return E.right(userSession)
 }

@@ -1,4 +1,4 @@
-import { nat_int } from '@moodle/lib-types'
+import { i_nat } from '@moodle/lib-types'
 import { eduCollectionData } from '../../../edu/types/edu-content'
 import { moodlenetPublicContentRecord } from './contributions'
 
@@ -7,8 +7,8 @@ export type moodlenetPublicEduCollectionRecord = moodlenetPublicContentRecord<
   eduCollectionData & {
     id: moodlenetPublicEduCollectionId
     stats: {
-      points: nat_int
-      followingCount: nat_int
+      points: i_nat
+      followingCount: i_nat
     }
   }
 >

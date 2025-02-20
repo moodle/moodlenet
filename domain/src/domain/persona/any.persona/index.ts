@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { valid } from '@moodle/lib-types'
-import { system } from './system.context'
+import { enabledContentCategories } from '../../model/contentCategories.model'
+import { enabledEduCategories } from '../../model/education.model'
+import { baseUserDataSchemaConfig, generalSchemaConfig } from '../../model/org.model'
 import { moodlenet } from './moodlenet.context'
+import { system } from './system.context'
 declare global {
   namespace moo {
     interface Personas {
@@ -10,6 +12,7 @@ declare global {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Persona {
   [moo.configs]: anyPersonaConfigs
 }
@@ -21,18 +24,14 @@ export const any__: moo.gate.provider.persona<any__> = {
   moodlenet,
 }
 
-export type anyPersonaValidationConfigs = {
-  general: {
-    id: valid.iMinMax
-    email: valid.iMax
-    textSearch: valid.iMinMax
+export type anyPersonaConfigs = {
+  schemas: {
+    general: generalSchemaConfig
+    baseUserData: baseUserDataSchemaConfig
   }
-  baseUserData: {
-    password: valid.iMinMax
-    displayName: valid.iMinMax
+  enabledCategories: {
+    edu: enabledEduCategories
+    content: enabledContentCategories
   }
 }
 
-export type anyPersonaConfigs = {
-  validation: anyPersonaValidationConfigs
-}

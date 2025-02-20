@@ -1,4 +1,4 @@
-import { date_time_string, flags, nat_int } from '@moodle/lib-types'
+import { date_time_string, flags, i_nat } from '@moodle/lib-types'
 import { profileInfo, userProfileId } from '../../../user-profile'
 
 export type moodlenetContributorId = string
@@ -49,10 +49,10 @@ export type moodlenetContributorRecord = {
   linkedContent: linkedContent
   stats: {
     recalculatedDate: date_time_string
-    points: nat_int
-    followersCount: nat_int
-    followingCount: nat_int
-    publishedResourcesCount: nat_int
+    points: i_nat
+    followersCount: i_nat
+    followingCount: i_nat
+    publishedResourcesCount: i_nat
   }
 }
 type publicContributionRef<refData = unknown> = refData & { id: string }
@@ -75,9 +75,9 @@ export type moodlenetContributorAccessObject = {
   contributions: moodlenetContributions
   linkedContent: linkedContent
   stats: {
-    points: nat_int
-    followersCount: nat_int
-    followingCount: nat_int
-    publishedResourcesCount: nat_int
+    points: i_nat
+    followersCount: i_nat
+    followingCount: i_nat
+    publishedResourcesCount: i_nat
   }
 }

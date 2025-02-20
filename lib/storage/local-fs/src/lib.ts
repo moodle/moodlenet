@@ -6,7 +6,6 @@ import {
   useTempFileResult,
 } from '@moodle/lib-domain-fs'
 import { ok_ko, path } from '@moodle/lib-types'
-import { storedAssetMeta } from '@moodle/module/storage'
 import { mkdir, readdir, rename, stat, symlink } from 'fs/promises'
 import { join, normalize, sep as os_path_separator } from 'path'
 import { rimraf } from 'rimraf'
@@ -29,7 +28,8 @@ export async function createStoredAssetTempFileSymlink({
   localStorageFsDirectories,
 }: {
   expiresSeconds: number
-  storedAssetMeta: Pick<storedAssetMeta, 'path' | 'name'>
+  // import { storedAssetMeta } from '@moodle/domain'
+  storedAssetMeta: { path: path; name: string } // Pick<storedAssetMeta, 'path' | 'name'>
   localStorageFsDirectories: localStorageFsDirectories
 }): Promise<ok_ko<{ tempId: string }, { notFoundInStorage: unknown; error: { error: unknown } }>> {
   const { tempPaths, tempId } = await createTempFileReferenceNames({

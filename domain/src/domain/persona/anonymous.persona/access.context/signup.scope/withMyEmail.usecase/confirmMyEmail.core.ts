@@ -44,14 +44,14 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
       avatar: NONE_ASSET,
       background: NONE_ASSET,
     },
-    session: {
+    permissions: {
       personaTypes: {
         types: ['any', 'authenticated'],
       },
     },
   }
 
-  await _.over(_.model.userAccount.user[id]).create.async({ spaceData: userSpace })
+  await _.over(_.model.userAccount.user[id]).create.async({ spaceData: [userSpace] })
 
   return E.right(SUBMITTED)
 }

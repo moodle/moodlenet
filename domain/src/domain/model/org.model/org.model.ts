@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { map } from '@moodle/lib-types'
+import { configs } from './types'
 declare global {
   namespace moo {
     interface Models {
-      moodlenet: moodlenet
+      org: org
     }
   }
 }
 
-export type moodlenet = moo.model<map>
+export type org = moo.model<OrgModel>
+
+export type OrgModel = {
+  configs: configs
+}

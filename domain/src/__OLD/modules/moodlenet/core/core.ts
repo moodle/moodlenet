@@ -1,5 +1,5 @@
 import { generateAlphanumId } from '@moodle/lib-id-gen'
-import { void_, nat_int } from '@moodle/lib-types'
+import { void_, i_nat } from '@moodle/lib-types'
 import assert from 'assert'
 import { omit } from 'lodash'
 import { assertWithError4xx, moduleCore } from '../../../types'
@@ -155,9 +155,9 @@ export const moodlenet_core: moduleCore<'moodlenet'> = {
                     preferences: { useMyInterestsAsDefaultFilters: false },
                     stats: {
                       points: configs.pointSystem.welcomePoints,
-                      followersCount: 0 as nat_int,
-                      followingCount: 0 as nat_int,
-                      publishedResourcesCount: 0 as nat_int,
+                      followersCount: 0 as i_nat,
+                      followingCount: 0 as i_nat,
+                      publishedResourcesCount: 0 as i_nat,
                       recalculatedDate: ctx.now,
                     },
                     suggestedContent: {

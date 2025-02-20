@@ -3,14 +3,13 @@ import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import { flow } from 'fp-ts/function'
 import { object } from 'zod'
-import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
-import { SUBMITTED } from '../../../../../../lib/constants'
 import { Error4xx } from '../../../../../../lib/access-error'
-import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
+import { baseUserDataSchemaConfig, generalSchemaConfig } from '../../../../../model/org.model'
+import { baseUserDataSchemas, generalSchemas } from '../../../../../model/org.model/lib/schemas'
+import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
+import { SUBMITTED } from '../../../../../../lib'
 
-export type submitSignupForm = moo.persona.endpoint<
-  [typeof signupFormZodSchema, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>]
->
+export type submitSignupForm = moo.persona.endpoint<[typeof signupFormZodSchema, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>]>
 
 export type signupForm = {
   email: email_address
@@ -20,16 +19,19 @@ export type signupForm = {
 
 export const submitSignupForm: moo.gate.provider.endpoint<submitSignupForm> = flow(
   O.some,
-  O.bind(`anyPersonaZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
+  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.general)),
+  O.bind(`baseUserData`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.baseUserData)),
   E.fromOption(() => new Error4xx('Forbidden')),
   E.bind('zod', flow(E.right, E.map(signupFormZodSchema))),
 )
 
-export function signupFormZodSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {
+export function signupFormZodSchema({ general, baseUserData }: { general: generalSchemaConfig; baseUserData: baseUserDataSchemaConfig }) {
+  const generalSchema = generalSchemas({ general })
+  const baseUserDataSchema = baseUserDataSchemas({ baseUserData })
   const signupFormSchema = object({
-    email: anyPersonaZod.user.email,
-    password: anyPersonaZod.user.plainPassword,
-    displayName: anyPersonaZod.user.displayName,
+    email: generalSchema.email,
+    password: baseUserDataSchema.password,
+    displayName: baseUserDataSchema.displayName,
   })
 
   return signupFormSchema

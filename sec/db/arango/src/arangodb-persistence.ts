@@ -7,5 +7,5 @@ export function get_arango_persistence_factory(env: ArangoDbSecEnv) {
   const modelImpl: moo.model.impl = {
     userAccount: NO_JOB_HERE,
   }
-  return { modelImpl, dbStruct, activeSessionCollection: dbStruct.services.coll.activeSession }
+  return { modelImpl, dbStruct, activeSessionCollection: dbStruct.services.coll.activeUserSession }
 }

@@ -13,7 +13,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
       userAccount: {
         sync: {
           async userDisplayname({ displayName, userAccountId }) {
-            const done = !!(await dbStruct.identity.coll.userAccount
+            const done = !!(await dbStruct.identity.coll.user
               .update({ _key: userAccountId }, { displayName })
               .catch(() => null))
             return [done, void_]
@@ -21,17 +21,14 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
         },
         write: {
           async saveNewUser({ newUser }) {
-            const savedUser = await dbStruct.identity.coll.userAccount
+            const savedUser = await dbStruct.identity.coll.user
               .save(save_id_to_key('id')(newUser), { overwriteMode: 'conflict', returnNew: true })
               .catch(() => null)
 
             return [!!savedUser?.new, void_]
           },
           async deactivateUser({ anonymize, reason, userAccountId, overrideDeactivationDate: date = ctx.now }) {
-            const deactivatingUser = await dbStruct.identity.coll.userAccount.document(
-              { _key: userAccountId },
-              { graceful: true },
-            )
+            const deactivatingUser = await dbStruct.identity.coll.user.document({ _key: userAccountId }, { graceful: true })
             if (!deactivatingUser) return [false, void_]
 
             const anonymization: null | deep_partial_props<userAccountRecord> = anonymize
@@ -51,10 +48,10 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             }
 
             const deactivatedUserAccount_cursor = await dbStruct.identity.db.query<userAccountRecord>(`
-                FOR userAccountDoc IN ${dbStruct.identity.coll.userAccount}
+                FOR userAccountDoc IN ${dbStruct.identity.coll.user}
                 FILTER userAccountDoc._key == ${userAccountId}
                 LIMIT 1
-                UPDATE userAccountDoc WITH ${updateRecordWith} IN ${dbStruct.identity.coll.userAccount}
+                UPDATE userAccountDoc WITH ${updateRecordWith} IN ${dbStruct.identity.coll.user}
                 RETURN MOODLE::RESTORE_RECORD_ID(OLD)
               `)
             const [deactivatedUserAccountRecord] = await deactivatedUserAccount_cursor.all()
@@ -65,7 +62,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
           async setUserPassword({ newPasswordHash, userAccountId }) {
             const {
               identity: {
-                coll: { userAccount: user },
+                coll: { user: user },
               },
             } = dbStruct
             const updated = await user
@@ -80,13 +77,13 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
           },
           async setUserRoles({ userAccountId, roles, addRoleHistoryItem }) {
             const updatedUserRoles_cursor = await dbStruct.identity.db.query<userAccountRecord>(aql`
-                FOR userAccountDoc IN ${dbStruct.identity.coll.userAccount}
+                FOR userAccountDoc IN ${dbStruct.identity.coll.user}
                 FILTER userAccountDoc._key == ${userAccountId}
                 LIMIT 1
                 UPDATE userAccountDoc WITH {
                   roles: ${roles}
                   roleHistory: UNIQUE( UNSHIFT(userAccountDoc.roleHistory, ${addRoleHistoryItem}) )
-                } IN ${dbStruct.identity.coll.userAccount}
+                } IN ${dbStruct.identity.coll.user}
                 RETURN MOODLE::RESTORE_RECORD_ID(OLD)
               `)
             const [updated] = await updatedUserRoles_cursor.all()
@@ -110,7 +107,7 @@ export function user_account_secondary_factory({ dbStruct }: { dbStruct: dbStruc
             const deactivatedFilter = includeDeactivated ? aql`` : aql`FILTER NOT(userAccountDoc.deactivated)`
             const userDocs_cursor = await dbStruct.identity.db.query<userAccountRecord>(
               aql`
-                FOR userAccountDoc IN ${dbStruct.identity.coll.userAccount}
+                FOR userAccountDoc IN ${dbStruct.identity.coll.user}
                 ${deactivatedFilter}
                 ${textFilter}
                 LIMIT 50

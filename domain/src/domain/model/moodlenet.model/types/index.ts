@@ -1,7 +1,3 @@
 export * from './configs'
-export * from './primary-schemas'
 export * from './moderation'
-export * from './access-objects/contributor'
-export * from './access-objects/eduCollection'
 export * from './point-system'
-export * from './session'

@@ -1,4 +1,4 @@
-import { date_time_string, nat_int } from '@moodle/lib-types'
+import { date_time_string, i_nat } from '@moodle/lib-types'
 import { userProfileId } from '../../user-profile'
 import { moodlenetContributorId } from './access-objects/contributor'
 
@@ -17,6 +17,6 @@ export type moodlenetContributorModerations = {
   moodlenetContributorId: moodlenetContributorId
   reports: {
     items: reportAbuseItem[]
-    amount: nat_int
+    amount: i_nat
   }
 }

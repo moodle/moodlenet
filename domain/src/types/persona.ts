@@ -7,19 +7,19 @@ declare global {
     type persona<personaDef extends persona.def> = personaDef
 
     namespace persona {
-      type def = /* Partial< */ map<context.def> & withConfigs & withMeta // ,moo.contexts>>
+      type def = /* Partial< */ map<context.def> & withConfigs & withContext // ,moo.contexts>>
 
-      const meta: unique symbol
-      type withMeta = { [meta]?: serializable_object }
+      const context: unique symbol
+      type withContext = { [context]?: serializable_object }
 
       type context<contextScopesDef extends context.def> = contextScopesDef
       namespace context {
-        type def = Partial<map<scope.def, moo.scopeNames> & withConfigs>
+        type def = Partial<map<scope.def, moo.scopeNames> & withConfigs & withContext>
       }
 
       type scope<scopeDef extends scope.def> = scopeDef
       namespace scope {
-        type def = map<usecase.def> & withConfigs
+        type def = map<usecase.def> & withConfigs & withContext
       }
 
       type usecase<
@@ -27,7 +27,7 @@ declare global {
         modelTypesDef extends usecase.modelTypes.def = usecase.modelTypes.def,
       > = usecaseDef & (modelTypesDef extends never ? unknown : { [usecase.modelTypes]: modelTypesDef })
       namespace usecase {
-        type def = map<endpoint.def> & withConfigs
+        type def = map<endpoint.def> & withConfigs & withContext
         namespace modelTypes {
           type def = { [n in moo.modelName]?: map<serializable_object> }
         }

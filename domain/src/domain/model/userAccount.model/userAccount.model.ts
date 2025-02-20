@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { email_address } from '@moodle/lib-types'
+import { configs, profileInfo } from './types'
 declare global {
   namespace moo {
     interface Models {
@@ -9,10 +10,6 @@ declare global {
   }
 }
 export type userAccount = moo.model<userAccountModel>
-
-export type profileInfo = {
-  displayName: string
-}
 
 export type resourceDraftSpace = unknown
 
@@ -24,17 +21,19 @@ export type profile = {
   background: moo.model.type.asset<{ optional: true }>
 }
 
-export interface userSession {
+export interface permissions {
   personaTypes: moo.model.type.entityData<{ types: moo.personaType[] }>
 }
 
 export type userSpace = {
   email: moo.model.type.entityData<{ address: email_address }>
   password: moo.model.type.entityData<{ hash: string }>
-  session: userSession
+  permissions: permissions
   profile: profile
 }
 
 export type userAccountModel = {
+  configs: configs
   user: moo.model.type.idSpaceMap<userSpace, { emailEquals: string }>
 }
+

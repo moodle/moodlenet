@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { email_address } from '@moodle/lib-types'
+import { configs } from './types'
 declare global {
   namespace moo {
     interface Models {
@@ -12,6 +13,7 @@ export type mailer = moo.model<MailerModel>
 type modelUcTypes = moo.ucModelUcTypes<'mailer'>
 
 export type MailerModel = {
+  configs: configs
   sendUseCase: {
     [persona in keyof modelUcTypes]: {
       [ctx in keyof modelUcTypes[persona]]: {
@@ -25,7 +27,6 @@ export type MailerModel = {
       }
     }
   }
-  configs: moo.model.type.staticData<never>
 }
 
 export type envelope = {

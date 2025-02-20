@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { valid } from '@moodle/lib-types'
-import { myAccount } from './myAccount.context'
-import { mySpace } from './mySpace.context'
-import { moodlenet } from './moodlenet.context'
+import { eduDraftsSchemaOverrides } from '../../model/userAccount.model'
 import { edu } from './edu.context'
 import { messaging } from './messaging.context'
+import { moodlenet } from './moodlenet.context'
+import { myAccount } from './myAccount.context'
+import { mySpace } from './mySpace.context'
 declare global {
   namespace moo {
     interface Personas {
@@ -13,20 +13,12 @@ declare global {
   }
 }
 
-export type authenticatedPersonaValidationConfigs = {
-  entity: {
-    title: valid.iMinMax
-    description: valid.iMinMax
-  }
-}
-
 export interface Persona {
-  [moo.persona.meta]: { userId: string }
+  // [moo.persona.meta]: { userId: string }
   [moo.configs]: {
     validation: authenticatedPersonaValidationConfigs
   }
 }
-
 export type authenticated = moo.persona<moo<Persona>>
 export const authenticated: moo.gate.provider.persona<authenticated> = {
   myAccount,
@@ -34,4 +26,10 @@ export const authenticated: moo.gate.provider.persona<authenticated> = {
   moodlenet,
   edu,
   messaging,
+}
+
+export type authenticatedPersonaValidationConfigs = {
+  schemas: {
+    eduDraftsOverrides: eduDraftsSchemaOverrides
+  }
 }

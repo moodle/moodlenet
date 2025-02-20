@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
+import { orgInfoSchemaConfigs } from '../../model/org.model'
 import { moodlenet } from './moodlenet.context'
 import { organization } from './organization.context'
 import { userBase } from './userBase.context'
@@ -22,8 +23,12 @@ export const admin: moo.gate.provider.persona<admin> = {
   organization,
 }
 
-export type adminPersonaValidationConfigs = undefined
+export type adminPersonaValidationConfigs = {
+  [k in never]: never
+}
 
 type adminPersonaConfigs = {
-  validation: adminPersonaValidationConfigs
+  schemas: {
+    orgInfo: orgInfoSchemaConfigs
+  }
 }

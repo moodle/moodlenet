@@ -5,20 +5,22 @@ import { flow } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import { object } from 'zod'
 import { Error4xx } from '../../../../../../lib/access-error'
-import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
+import { baseUserDataSchemaConfig } from '../../../../../model/org.model'
+import { baseUserDataSchemas } from '../../../../../model/org.model/lib/schemas'
 
 export type setNew = moo.persona.endpoint<[typeof setNewSchema, void]>
 
 export const setNew: moo.gate.provider.endpoint<setNew> = flow(
   O.some,
-  O.bind(`anyPersonaZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
+  O.bind(`baseUserData`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.baseUserData)),
   E.fromOption(() => new Error4xx('Forbidden')),
   E.bind('zod', flow(E.right, E.map(setNewSchema))),
 )
 
-export function setNewSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {
+export function setNewSchema({ baseUserData }: { baseUserData: baseUserDataSchemaConfig }) {
+  const baseUserDataSchema = baseUserDataSchemas({ baseUserData })
   return object({
-    newPassword: anyPersonaZod.user.plainPassword,
+    newPassword: baseUserDataSchema.password,
     token: signed_token_schema,
   })
 }

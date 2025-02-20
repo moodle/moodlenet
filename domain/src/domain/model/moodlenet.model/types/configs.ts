@@ -1,18 +1,29 @@
-import { deep_partial_props } from '@moodle/lib-types'
-import { eduPrimaryMsgSchemaConfigs } from '../../edu'
+import { valid } from '@moodle/lib-types'
+import { eduCollectionSchemaConfigsOverrides, eduResourceSchemaConfigsOverrides } from '../../education.model'
 import { pointSystem } from './point-system'
-import { moodlenetPrimaryMsgSchemaConfigs } from './primary-schemas'
 
-export type moodlenetEduPublishPrimaryMsgSchemaConfigOverrides = deep_partial_props<eduPrimaryMsgSchemaConfigs>
-
-export type configs = {
-  siteInfo: moodlenetSiteInfo
-  moodlenetPrimaryMsgSchemaConfigs: moodlenetPrimaryMsgSchemaConfigs
-  pointSystem: pointSystem
-  eduPublishPrimaryMsgSchemaConfigOverrides: moodlenetEduPublishPrimaryMsgSchemaConfigOverrides
+export type publishEduSchemaOverrides = {
+  collection: eduCollectionSchemaConfigsOverrides
+  resource: eduResourceSchemaConfigsOverrides
 }
 
-export type moodlenetSiteInfo = {
+export type configs = {
+  schema: {
+    publishEduOverrides: publishEduSchemaOverrides
+    moodlenetInfo: moodlenetInfoSchemaConfigs
+  }
+  info: moodlenetInfo
+  pointSystem: pointSystem
+}
+
+export type moodlenetInfo = {
   title: string
   subtitle: string
+  logo: moo.content.asset.maybe
+  smallLogo: moo.content.asset.maybe
+}
+
+export type moodlenetInfoSchemaConfigs = {
+  title: valid.i_natMinMax
+  subtitle: valid.i_natMinMax
 }

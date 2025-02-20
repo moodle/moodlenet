@@ -153,13 +153,8 @@ export const defaultConfigurator: configurator = ({ master }) => {
                     })
 
                     const activeSessionData: activeSessionData = {
-                      sessionInfo: {
-                        session,
-                        user: {
-                          id: userId,
-                          type: 'auth',
-                        },
-                      },
+                      session,
+                      userId,
                     }
 
                     const sessionId = generateUlid({ onDate: new Date() })
@@ -171,7 +166,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
                     }
                   },
                 },
-                getMyUserSession: {
+                getMyUserSessionInfo: {
                   '* call': async ({ sessionToken }, _) => {
                     if (!sessionToken) {
                       return anonSession(_)
@@ -188,7 +183,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
                     if (!m_foundDoc) {
                       return anonSession(_)
                     }
-                    return m_foundDoc.data
+                    return { info: { session: m_foundDoc.data.session, user: { id: m_foundDoc.data.userId, type: 'auth' } } }
                     async function validateToken(token: string): Promise<{ sessionId: string } | null> {
                       return JSON.parse(token)
                     }
@@ -198,16 +193,16 @@ export const defaultConfigurator: configurator = ({ master }) => {
             },
           } satisfies map<moo.model.impl>
 
-          async function anonSession(_: moo.model.handle) {
+          async function anonSession(_: moo.model.handle): Promise<{
+            info: moo.session.info
+          }> {
             const user: moo.session.info.user = { type: 'anon' }
             const { session } = await _.over(_.model.accessControl.getUserSession).call.query({ user })
-            const activeSessionData: model.accessControl.activeSessionData = {
-              sessionInfo: {
-                session,
-                user,
-              },
+            const info: moo.session.info = {
+              session,
+              user,
             }
-            return activeSessionData
+            return { info }
           }
 
           if (master) {
@@ -319,9 +314,9 @@ export const defaultConfigurator: configurator = ({ master }) => {
         now: new Date().toISOString(),
         sessionInfo: (
           await getMyUserSessionModelHandle
-            .over(getMyUserSessionModelHandle.model.accessControl.getMyUserSession)
+            .over(getMyUserSessionModelHandle.model.accessControl.getMyUserSessionInfo)
             .call.query({ sessionToken: gateAccess.claims.server.userToken })
-        ).sessionInfo,
+        ).info,
       },
       gateProvider: domainGate.gateProvider,
       loggerProvider: configuration.loggerProvider,

@@ -4,19 +4,20 @@ import { flow } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import { object } from 'zod'
 import { Error4xx } from '../../../../../../lib/access-error'
-import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
+import { generalSchemaConfig } from '../../../../../model/org.model'
+import { generalSchemas } from '../../../../../model/org.model/lib/schemas'
 
 export type read = moo.persona.endpoint<[typeof readSchema, void]>
 
 export const read: moo.gate.provider.endpoint<read> = flow(
   O.some,
-  O.bind(`anyZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
+  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.general)),
   E.fromOption(() => new Error4xx('Unauthorized')),
   E.bind('zod', flow(E.right, E.map(readSchema))),
 )
 
-export function readSchema({ anyZod }: { anyZod: anyPersonaZodSchemas }) {
+export function readSchema({ general }: { general: generalSchemaConfig }) {
   return object({
-    id: anyZod.id,
+    id: generalSchemas({ general }).id,
   })
 }

@@ -5,19 +5,21 @@ import { flow } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import { object } from 'zod'
 import { Error4xx } from '../../../../../../lib/access-error'
-import { anyPersonaZodFlow, anyPersonaZodSchemas } from '../../../../any.persona/any.gates.helper'
+import { generalSchemaConfig } from '../../../../../model/org.model'
+import { generalSchemas } from '../../../../../model/org.model/lib/schemas'
 
 export type requestLink = moo.persona.endpoint<[typeof requestLinkSchema, void]>
 export const requestLink: moo.gate.provider.endpoint<requestLink> = flow(
   O.some,
-  O.bind(`anyPersonaZod`, ({ sessionInfo }) => anyPersonaZodFlow({ sessionInfo })),
+  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.general)),
   E.fromOption(() => new Error4xx('Forbidden')),
   E.bind('zod', flow(E.right, E.map(requestLinkSchema))),
 )
 
-export function requestLinkSchema({ anyPersonaZod }: { anyPersonaZod: anyPersonaZodSchemas }) {
+export function requestLinkSchema({ general }: { general: generalSchemaConfig }) {
+  const generalSchema = generalSchemas({ general })
   return object({
     redirectUrl: url_string_schema,
-    myEmail: anyPersonaZod.user.email,
+    myEmail: generalSchema.email,
   })
 }

@@ -1,6 +1,6 @@
 import { date_time_string } from '@moodle/lib-types'
 import { dbStruct } from '../../../db-structure'
-import { migrationRecord } from '../../types'
+import { dbMigrationRecord } from '../../types'
 import { createDatabases } from './0.createDatabases'
 import { createCollections } from './1.createCollections'
 import { insertModConfigs } from './2.insertModConfigs'
@@ -15,7 +15,7 @@ export async function migrate({ dbStruct }: { dbStruct: dbStruct }) {
   await insertInitialData({ dbStruct })
 
   // bump_version
-  const migrationDoc: migrationRecord = {
+  const migrationDoc: dbMigrationRecord = {
     previous: 'null',
     current: VERSION,
     date: new Date().toISOString(),

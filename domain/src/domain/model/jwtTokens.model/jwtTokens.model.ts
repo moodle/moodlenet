@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { signed_token } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
-import { TYPE_INVALID_TOKEN } from './consts'
+import type { configs, TYPE_INVALID_TOKEN } from './types'
 declare global {
   namespace moo {
     interface Models {
@@ -15,6 +15,7 @@ export type jwtTokens = moo.model<JwtTokensModel>
 type modelUcTypes = moo.ucModelUcTypes<'jwtTokens'>
 
 export type JwtTokensModel = {
+  configs: configs
   validate: moo.model.type.endpoint<['query', { token: signed_token }, Either<TYPE_INVALID_TOKEN, { data: unknown }>]>
   sign: moo.model.type.endpoint<['query', { data: unknown }, { token: signed_token }]>
   useCase: {
