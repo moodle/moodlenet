@@ -1,14 +1,29 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import type { any_, date_time_string, path, serializable_object } from '@moodle/lib-types'
+import type { any_, date_time_string, map, path, serializable_object } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { Error4xx } from '../lib'
 import { logger } from './log'
 
 declare global {
   namespace moo {
-    type model<modelDef extends model.def> = modelDef
+    type model<modelDef extends model.def, x_types extends model.xTypes<any_> = model.xTypes<any_>> = modelDef & { [model.xTypes.tag]: x_types }
     namespace model {
+      type xTypes<xTypeDef extends xTypes.def> = xTypeDef
+      namespace xTypes {
+        const tag: unique symbol
+        type def = { [n in moo.modelName]?: map<serializable_object> }
+        type blueprint<selectedModelName extends modelName> = {
+          [model_name in modelName]: Models[model_name] extends infer model
+            ? model extends { [tag]: infer xModelTypes }
+              ? xModelTypes extends { [xTypeName_ in selectedModelName]: infer _xType }
+                ? _xType
+                : never
+              : never
+            : never
+        }
+      }
+
       type def = {
         [moo.configs]: serializable_object
       }

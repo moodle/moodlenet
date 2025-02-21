@@ -1,4 +1,3 @@
-import { signed_token } from '@moodle/lib-types'
 import { requestLink } from './requestLink.endpoint'
 import { setNew } from './setNew.endpoint'
 declare module '..' {
@@ -7,25 +6,10 @@ declare module '..' {
   }
 }
 
-export type resetMyPassword = moo.persona.usecase<
-  {
-    requestLink: requestLink
-    setNew: setNew
-  },
-  {
-    mailer: {
-      resetPasswordLink: {
-        displayName: string
-        resetPasswordToken: signed_token
-      }
-    }
-    jwtTokens: {
-      resetPasswordToken: {
-        userId: string
-      }
-    }
-  }
->
+export type resetMyPassword = moo.persona.usecase<{
+  requestLink: requestLink
+  setNew: setNew
+}>
 
 export const resetMyPassword: moo.gate.provider.usecase<resetMyPassword> = {
   requestLink,

@@ -1,4 +1,3 @@
-import { signed_token } from '@moodle/lib-types'
 import { confirmDelete } from './confirmDelete.endpoint'
 import { request } from './request.endpoint'
 declare module '..' {
@@ -7,28 +6,10 @@ declare module '..' {
   }
 }
 
-export type deleteIt = moo.persona.usecase<
-  {
-    request: request
-    confirmDelete: confirmDelete
-  },
-  {
-    mailer: {
-      myAccountDeletionConfirmation: {
-        displayName: string
-        confirmMyAccountDeletionToken: signed_token
-      }
-      goodby: {
-        displayName: string
-      }
-    }
-    jwtTokens: {
-      confirmMyAccountDeletion: {
-        userId: string
-      }
-    }
-  }
->
+export type deleteIt = moo.persona.usecase<{
+  request: request
+  confirmDelete: confirmDelete
+}>
 
 export const deleteIt: moo.gate.provider.usecase<deleteIt> = {
   request,

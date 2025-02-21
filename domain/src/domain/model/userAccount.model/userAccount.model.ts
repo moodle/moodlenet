@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { email_address } from '@moodle/lib-types'
+import { email_address, signed_token } from '@moodle/lib-types'
 import { configs, profileInfo } from './types'
 declare global {
   namespace moo {
@@ -9,7 +9,41 @@ declare global {
     }
   }
 }
-export type userAccount = moo.model<userAccountModel>
+type xTypes = moo.model.xTypes<{
+  jwtTokens: {
+    userSession: moo.session.user
+    emailConfirmationToken: {
+      passwordHash: string
+      displayName: string
+      email: email_address
+    }
+    resetPasswordToken: {
+      userId: string
+    }
+    confirmMyAccountDeletion: {
+      userId: string
+    }
+  }
+  mailer: {
+    userEmailConfirmation: {
+      displayName: string
+      confirmationToken: signed_token
+    }
+    resetPasswordLink: {
+      displayName: string
+      resetPasswordToken: signed_token
+    }
+    myAccountDeletionConfirmation: {
+      displayName: string
+      confirmMyAccountDeletionToken: signed_token
+    }
+    goodbye: {
+      displayName: string
+    }
+  }
+}>
+
+export type userAccount = moo.model<userAccountModel, xTypes>
 
 export type resourceDraftSpace = unknown
 

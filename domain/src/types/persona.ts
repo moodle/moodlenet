@@ -22,16 +22,9 @@ declare global {
         type def = map<usecase.def> & withConfigs & withContext
       }
 
-      type usecase<
-        usecaseDef extends usecase.def,
-        modelTypesDef extends usecase.modelTypes.def = usecase.modelTypes.def,
-      > = usecaseDef & (modelTypesDef extends never ? unknown : { [usecase.modelTypes]: modelTypesDef })
+      type usecase<usecaseDef extends usecase.def> = usecaseDef
       namespace usecase {
         type def = map<endpoint.def> & withConfigs & withContext
-        namespace modelTypes {
-          type def = { [n in moo.modelName]?: map<serializable_object> }
-        }
-        const modelTypes: unique symbol
       }
 
       type endpoint<endpointDef extends endpoint.def> = [

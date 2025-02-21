@@ -10,21 +10,13 @@ declare global {
 }
 export type mailer = moo.model<MailerModel>
 
-type modelUcTypes = moo.ucModelUcTypes<'mailer'>
+type xTypes = moo.model.xTypes.blueprint<'mailer'>
 
 export type MailerModel = {
   [moo.configs]: configs
-  sendUseCase: {
-    [persona in keyof modelUcTypes]: {
-      [ctx in keyof modelUcTypes[persona]]: {
-        [scope in keyof modelUcTypes[persona][ctx]]: {
-          [uc in keyof modelUcTypes[persona][ctx][scope]]: {
-            [eml in keyof modelUcTypes[persona][ctx][scope][uc]]: moo.model.type.endpoint<
-              ['async', { envelope: envelope; data: modelUcTypes[persona][ctx][scope][uc][eml] }, unknown]
-            >
-          }
-        }
-      }
+  send: {
+    [xModel in keyof xTypes]: {
+      [eml in keyof xTypes[xModel]]: moo.model.type.endpoint<['async', { envelope: envelope; data: xTypes[xModel][eml] }, unknown]>
     }
   }
 }

@@ -5,16 +5,9 @@ declare module '..' {
   }
 }
 
-export type withMyEmailAndPassword = moo.persona.usecase<
-  {
-    login: login
-  },
-  {
-    jwtTokens: {
-      userSession: moo.session.user
-    }
-  }
->
+export type withMyEmailAndPassword = moo.persona.usecase<{
+  login: login
+}>
 
 export const withMyEmailAndPassword: moo.gate.provider.usecase<withMyEmailAndPassword> = {
   login,
