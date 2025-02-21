@@ -1,5 +1,5 @@
 import { Config as ArangoConnectionConfig } from 'arangojs/connection'
-import type { getDbStruct } from './struct'
+import type { getDbStruct } from '../struct'
 export type dbStruct = ReturnType<typeof getDbStruct>
 
 export interface ArangoDbSecEnv {

@@ -1,6 +1,6 @@
 import { contributorSpace, MoodlenetModel } from 'domain/src/domain/model/moodlenet.model'
 import { none, some } from 'fp-ts/Option'
-import { dbStruct } from '../db-structure'
+import { appDataUserCollectionData, dbStruct } from '../db-structure'
 
 export function userAccount({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<MoodlenetModel> {
   return {
@@ -9,16 +9,20 @@ export function userAccount({ dbStruct }: { dbStruct: dbStruct }): moo.model.imp
         '* getData': async () => {
           const doc = await dbStruct.appData.coll.user.document({ _key }, { graceful: true })
           if (!doc) return none
-          return some<moo.model.type.xSpaceData<contributorSpace>>({
-            ...doc.moodlenet.contributor,
-            profileInfo: doc.userAccount.user.profileInfo,
-            images: {
-              avatar: doc.userAccount.user.images.avatar,
-              background: doc.userAccount.user.images.background,
-            },
-          })
+          return some(appDataUserCollectionData_2_ContributorXspace(doc))
         },
       }),
+    },
+  }
+}
+
+function appDataUserCollectionData_2_ContributorXspace(docData: appDataUserCollectionData): moo.model.type.xSpaceData<contributorSpace> {
+  return {
+    ...docData.moodlenet.contributor,
+    profileInfo: docData.userAccount.user.profileInfo,
+    images: {
+      avatar: docData.userAccount.user.images.avatar,
+      background: docData.userAccount.user.images.background,
     },
   }
 }

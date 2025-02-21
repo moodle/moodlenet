@@ -2,12 +2,10 @@ import { job } from '@moodle/lib-job-queue-service'
 import { any_, d_u } from '@moodle/lib-types'
 import { Database } from 'arangojs'
 import { activeSessionData } from 'domain/src/domain/model/accessControl.model/accessControl.model'
-import { contributorSpace } from 'domain/src/domain/model/moodlenet.model/moodlenet.model'
-import { userSpace } from 'domain/src/domain/model/userAccount.model/userAccount.model'
-import { dbUpgradeData } from '../dbUpgrade/types'
-import { databaseConnections } from './types'
-import { bloomCognitive, iscedField, iscedLevel, resourceType } from 'domain/src/domain/model/education.model'
 import { language, license } from 'domain/src/domain/model/contentCategories.model'
+import { bloomCognitive, iscedField, iscedLevel, resourceType } from 'domain/src/domain/model/education.model'
+import { dbUpgradeData } from '../dbUpgrade/types'
+import { appDataUserCollectionData, databaseConnections } from './types'
 
 export function getDbStruct(databaseConnections: databaseConnections) {
   const baseConnectionConfig = {
@@ -34,10 +32,7 @@ export function getDbStruct(databaseConnections: databaseConnections) {
         eduResourceType: appData_db.collection<{ data: resourceType }>('eduResourceType'),
         contentLanguage: appData_db.collection<{ data: language }>('contentLanguage'),
         contentLicense: appData_db.collection<{ data: license }>('contentLicense'),
-        user: identity_db.collection<{
-          userAccount: { user: moo.model.type.sSpaceData<userSpace> }
-          moodlenet: { contributor: moo.model.type.sSpaceData<contributorSpace> }
-        }>('user'),
+        user: identity_db.collection<appDataUserCollectionData>('user'),
       },
     },
     modules: {
