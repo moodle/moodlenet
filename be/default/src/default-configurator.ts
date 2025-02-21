@@ -6,20 +6,13 @@ import type * as model from '@moodle/domain/model'
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 import { generateAlphanumId, generateUlid } from '@moodle/lib-id-gen'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
-import { any_, email_address_schema, map, signed_token, url_string_schema } from '@moodle/lib-types'
+import { any_, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { cryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
-import {
-  ArangoDbSecEnv,
-  get_arango_persistence_factory,
-  provideArangoDbSecEnv,
-  provideArangoQueueServiceWorkers,
-} from '@moodle/sec-db-arango'
+import { ArangoDbSecEnv, get_arango_persistence_factory, provideArangoDbSecEnv, provideArangoQueueServiceWorkers } from '@moodle/sec-db-arango'
 import { upgradeArangoDB } from '@moodle/sec-db-arango/dbUpgrade'
 import { get_nodemailer_secondary_factory, NodemailerSecEnv, provideNodemailerSecEnv } from '@moodle/sec-email-nodemailer'
 import { get_default_resource_ingestion_secondary_factory, provideDefaultResourceIngestorSecEnv } from '@moodle/sec-resource-ingestion-default'
 import { fs_default_storage_factory, storageDefaultSecEnv } from '@moodle/sec-storage-local-fs'
-import assert from 'assert'
-import { activeSessionData } from 'domain/src/domain/model/accessControl.model/accessControl.model'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { readFileSync } from 'fs'
@@ -135,63 +128,20 @@ export const defaultConfigurator: configurator = ({ master }) => {
             nodemailer,
             localFsStorage,
             tikaResourceIngestor,
-            sessionManager: {
-              accessControl: {
-                activateUserSessionToken: {
-                  '* call': async ({ userId }, _) => {
-                    const { session } = await _.over(_.model.accessControl.getUserSession).call.query({
-                      user: { type: 'auth', id: userId },
-                    })
-
-                    const activeSessionData: activeSessionData = {
-                      session,
-                      userId,
-                    }
-
-                    const sessionId = generateUlid({ onDate: new Date() })
-                    const token = await generateToken({ sessionId }) // as signed_token
-                    await arangodb.activeSessionCollection.save({ data: activeSessionData, _key: sessionId })
-                    return { session, token }
-                    async function generateToken({ sessionId }: { sessionId: string }) {
-                      return JSON.stringify({ sessionId }) as signed_token
-                    }
-                  },
-                },
-                getMyUserSessionInfo: {
-                  '* call': async ({ sessionToken }, _) => {
-                    if (!sessionToken) {
-                      return anonSession(_)
-                    }
-                    const validatedToken = await validateToken(sessionToken) // as signed_token
-                    if (!validatedToken) {
-                      return anonSession(_)
-                    }
-                    const { sessionId } = validatedToken
-                    const m_foundDoc = await arangodb.activeSessionCollection.document({ _key: sessionId }, { graceful: true })
-                    if (!m_foundDoc) {
-                      return anonSession(_)
-                    }
-                    return { info: { session: m_foundDoc.data.session, user: { id: m_foundDoc.data.userId, type: 'auth' } } }
-                    async function validateToken(token: string): Promise<{ sessionId: string } | null> {
-                      return JSON.parse(token)
-                    }
-                  },
-                },
-              },
-            },
           } satisfies map<moo.model.impl>
 
-          async function anonSession(_: moo.model.handle): Promise<{
-            info: moo.session.info
-          }> {
-            const user: moo.session.info.user = { type: 'anon' }
-            const { session } = await _.over(_.model.accessControl.getUserSession).call.query({ user })
-            const info: moo.session.info = {
-              session,
-              user,
-            }
-            return { info }
-          }
+          const pendingAccessResultPromises: Promise<unknown>[] = []
+          const arangoQueueServiceWorkers = provideArangoQueueServiceWorkers({ dbStruct: arangodb.dbStruct })
+
+          const _from_queue_sym_ = Symbol('fromQueue')
+          const queues = createQueueServices({
+            modelDispatcher: access => {
+              ;(access as any_)[_from_queue_sym_] = _from_queue_sym_
+              return modelAccessDispatcher(access)
+            },
+            queueServiceWorkers: arangoQueueServiceWorkers,
+            queues: {},
+          })
 
           if (master) {
             await upgradeArangoDB({
@@ -206,6 +156,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
               modelAccessDispatcher,
             })
             await domainCore.setup({ modelHandle: coreSetupModelHandle })
+            await queues.startAll()
           } else {
             const coreSetupModelHandle = modelHandleProxy({
               origin: { from: false, useCase: 'coreModelCheck' },
@@ -214,30 +165,38 @@ export const defaultConfigurator: configurator = ({ master }) => {
             await domainCore.modelCheck({ modelHandle: coreSetupModelHandle })
           }
 
-          const pendingAccessResultPromises: Promise<unknown>[] = []
-          const arangoQueueServiceWorkers = provideArangoQueueServiceWorkers({ dbStruct: arangodb.dbStruct })
-
-          const queues = createQueueServices({
-            modelDispatcher: modelAccessDispatcher,
-            queueServiceWorkers: arangoQueueServiceWorkers,
-            queues: [],
-          })
-
           async function modelAccessDispatcher(access: moo.model.access<any_>): Promise<unknown> {
             const jobId = `${access.id}_${generateAlphanumId({ length: 4 })}`
-            const enqueued = access.target.type === 'async'
-            if (enqueued) {
-              assert(jobId, 'domainAccess must have a callerContext for enqueuing a message')
-              const queueService = queues.getNamedService({ access })
-              if (queueService) {
-                const enqueuePromise = queueService.enqueue({
+            type __ = keyof moo.Models extends infer modelName
+              ? modelName extends keyof moo.Models
+                ? keyof moo.Models[modelName] extends infer frstProp
+                  ? [modelName, frstProp]
+                  : never
+                : never
+              : never
+            const [model, frstProp] = access.target.path as __
+
+            const isFromQueue = _from_queue_sym_ in access
+            const enqueue = !isFromQueue && access.target.type === 'async' && ((model === 'mailer' && frstProp === 'send') || (model === 'mailer' && frstProp === 'send'))
+            if (enqueue) {
+              const queueService = queues.services.default
+              const enqueuePromise = queueService
+                .enqueue({
                   jobId,
                   enqueueDate: new Date().toISOString(),
                   jobData: { access },
                 })
-                pendingAccessResultPromises.push(enqueuePromise)
-                return enqueuePromise
-              }
+                .then(() =>
+                  executeModelOps({
+                    access,
+                    backModelAccessDispatcher: modelAccessDispatcher,
+                    loggerProvider,
+                    models,
+                    asyncExecStrategy: 'defer call later',
+                  }),
+                )
+              pendingAccessResultPromises.push(enqueuePromise)
+              return
             }
 
             const accessResultPromise = executeModelOps({
@@ -245,22 +204,19 @@ export const defaultConfigurator: configurator = ({ master }) => {
               backModelAccessDispatcher: modelAccessDispatcher,
               loggerProvider,
               models,
-              preAsync: enqueued,
+              asyncExecStrategy: isFromQueue ? 'execute deferred call' : access.target.type === 'async' ? 'immediate' : null,
             })
+
             pendingAccessResultPromises.push(accessResultPromise)
             accessResultPromise
-              .catch(
-                !(enqueued && jobId)
-                  ? undefined
-                  : () => {
-                      const enqueuePromise = queues.defaultService.enqueue({
-                        jobId,
-                        enqueueDate: new Date().toISOString(),
-                        jobData: { access },
-                      })
-                      pendingAccessResultPromises.push(enqueuePromise)
-                    },
-              )
+              .catch(() => {
+                const enqueuePromise = queues.defaultService.enqueue({
+                  jobId,
+                  enqueueDate: new Date().toISOString(),
+                  jobData: { access },
+                })
+                pendingAccessResultPromises.push(enqueuePromise)
+              })
               .finally(() => pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(accessResultPromise), 1))
             return accessResultPromise
             // return shortCircuitLoopbackDispatcher({ configuration, domainAccess })
@@ -286,10 +242,11 @@ export const defaultConfigurator: configurator = ({ master }) => {
         throw e
       })
     }
+
     const configuration = await cache[domainName]
 
-    const getMyUserSessionModelHandle = modelHandleProxy({
-      origin: { from: false, useCase: 'getMyUserSession' },
+    const myModelHandle = modelHandleProxy({
+      origin: { from: false, useCase: 'configurator' },
       modelAccessDispatcher: configuration.modelDispatcher,
     })
 
@@ -300,11 +257,8 @@ export const defaultConfigurator: configurator = ({ master }) => {
         gateAccess,
         id: coreId,
         now: new Date().toISOString(),
-        sessionInfo: (
-          await getMyUserSessionModelHandle
-            .over(getMyUserSessionModelHandle.model.accessControl.getMyUserSessionInfo)
-            .call.query({ sessionToken: gateAccess.claims.server.userToken })
-        ).info,
+        sessionInfo: (await myModelHandle.over(myModelHandle.model.accessControl.getMyUserSessionInfo).call.query({ authSessionToken: gateAccess.claims.server.authSessionToken }))
+          .info,
       },
       gateProvider: domainGate.gateProvider,
       loggerProvider: configuration.loggerProvider,
@@ -317,3 +271,4 @@ export const defaultConfigurator: configurator = ({ master }) => {
     return coreGateDeps
   }
 }
+

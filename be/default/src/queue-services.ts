@@ -10,27 +10,25 @@ import moment from 'moment'
 import timers from 'timers/promises'
 
 type jobData = { access: moo.model.access<any_> }
-function getJobName(path: string[]) {
-  return path.join('.')
-}
 
-export function createQueueServices({
+type queueConfig = Omit<jobConfig, 'jobName'> & { maxRetries: number }
+export function createQueueServices<jobNames extends string>({
   queueServiceWorkers,
   modelDispatcher,
   queues,
 }: {
   modelDispatcher: moo.model.dispatcher
   queueServiceWorkers: queueServiceWorkers<jobData>
-  queues: string[]
+  queues: map<queueConfig, jobNames>
 }) {
-  const allServices = queues.map<queueService<jobData>>(jobName => {
-    const jobConfig: jobConfig = {
-      jobName,
-      parallelism: 1,
-      progressTimeoutSecs: 30,
-      emptyQueueRescheduleSecs: 30,
-    }
+  const defaultQueue: queueConfig = {
+    parallelism: 1,
+    progressTimeoutSecs: 30,
+    emptyQueueRescheduleSecs: 30,
+    maxRetries: 3,
+  }
 
+  const allServices = Object.entries({ default: defaultQueue, ...queues }).map<queueService<jobData>>(([jobName, queueConfig]) => {
     const queueService = provideQueueService<jobData>({
       workers: queueServiceWorkers,
       async executeJob({
@@ -52,23 +50,23 @@ export function createQueueServices({
               date: new Date().toISOString(),
               error,
               followUp:
-                executionOutcomes.length > 2
+                executionOutcomes.length >= queueConfig.maxRetries
                   ? {
                       action: 'abort',
                       details: 'Too many retries',
                     }
                   : {
                       action: 'retry',
-                      fromDate: moment().add(jobConfig.progressTimeoutSecs, 'seconds').toISOString(),
+                      fromDate: moment().add(queueConfig.progressTimeoutSecs, 'seconds').toISOString(),
                     },
             })),
-          timers.setTimeout(jobConfig.progressTimeoutSecs * 1000).then<executionOutcome>(() => ({
+          timers.setTimeout(queueConfig.progressTimeoutSecs * 1000).then<executionOutcome>(() => ({
             result: 'failed',
             reason: 'timeout',
-            timeoutSecs: jobConfig.progressTimeoutSecs,
+            timeoutSecs: queueConfig.progressTimeoutSecs,
             date: new Date().toISOString(),
             followUp:
-              executionOutcomes.length > 2
+              executionOutcomes.length >= queueConfig.maxRetries
                 ? {
                     action: 'abort',
                     details: 'Too many retries',
@@ -80,7 +78,7 @@ export function createQueueServices({
           })),
         ])
       },
-      jobConfig,
+      jobConfig: { ...queueConfig, jobName },
     })
 
     queueService.serviceEmitter.on('error', (context, error) => {
@@ -91,23 +89,23 @@ export function createQueueServices({
     return queueService
   })
   const [defaultService, ...namedServiceList] = allServices
-  const services = namedServiceList.reduce<map<queueService<jobData>>>((_, qService) => {
-    return {
-      ..._,
-      [qService.jobConfig.jobName]: qService,
-    }
-  }, {})
+  const services = namedServiceList.reduce(
+    (_, qService) => {
+      return {
+        ..._,
+        [qService.jobConfig.jobName]: qService,
+      }
+    },
+    {} as map<queueService<jobData>, jobNames | 'default'>,
+  )
   return {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     defaultService: defaultService!,
     startAll,
     stopAndDrainAll,
-    getNamedService,
+    services,
   }
-  function getNamedService({ access }: { access: moo.model.access<any_> }) {
-    const jobName = getJobName(access.target.path)
-    return services[jobName]
-  }
+
   function startAll() {
     return Promise.all(Object.values(allServices).map(({ startProcesses }) => startProcesses()))
   }

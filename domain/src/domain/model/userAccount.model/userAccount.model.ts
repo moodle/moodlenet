@@ -11,7 +11,6 @@ declare global {
 }
 type xTypes = moo.model.xTypes<{
   jwtTokens: {
-    userSession: moo.session.user
     emailConfirmationToken: {
       passwordHash: string
       displayName: string

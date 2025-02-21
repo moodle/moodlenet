@@ -16,7 +16,7 @@ declare global {
         }
       }
       type clientClaims = { locale?: string; locales?: string[] }
-      type serverClaims = { userToken: signed_token | null; requestId: string; href: url_string; ua: string }
+      type serverClaims = { authSessionToken: signed_token | null; requestId: string; href: url_string; ua: string }
 
       type client<forPersonas extends map<moo.persona<any_>>> = {
         [personaType_ in keyof forPersonas]: client.persona<forPersonas[personaType_]>

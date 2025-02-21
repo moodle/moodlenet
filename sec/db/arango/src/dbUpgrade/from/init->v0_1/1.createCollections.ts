@@ -39,5 +39,5 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   })
   // services
   await dbStruct.services.coll.domainAccessJob.create({ cacheEnabled: true })
-  await dbStruct.services.coll.activeUserSession.create({ cacheEnabled: true })
+  await dbStruct.services.coll.activeAuthSessionInfo.create({ cacheEnabled: true })
 }

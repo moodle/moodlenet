@@ -18,9 +18,7 @@ declare global {
       namespace info {
         type user = d_u<
           {
-            auth: {
-              id: string
-            }
+            auth: { id: string }
             anon: unknown
           },
           'type'

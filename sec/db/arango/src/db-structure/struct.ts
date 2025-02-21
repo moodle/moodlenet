@@ -1,7 +1,7 @@
 import { job } from '@moodle/lib-job-queue-service'
 import { any_, d_u } from '@moodle/lib-types'
 import { Database } from 'arangojs'
-import { activeSessionData } from 'domain/src/domain/model/accessControl.model/accessControl.model'
+import { activeAuthSessionInfo } from 'domain/src/domain/model/accessControl.model/accessControl.model'
 import { language, license } from 'domain/src/domain/model/contentCategories.model'
 import { bloomCognitive, iscedField, iscedLevel, resourceType } from 'domain/src/domain/model/education.model'
 import { dbUpgradeData } from '../dbUpgrade/types'
@@ -46,7 +46,7 @@ export function getDbStruct(databaseConnections: databaseConnections) {
       coll: {
         dbUpgrade: services_db.collection<dbUpgradeData>('dbUpgrade'),
         domainAccessJob: services_db.collection<job<{ access: moo.model.access<any_> }>>('domainAccessJob'),
-        activeUserSession: services_db.collection<{ data: activeSessionData }>('activeUseSession'),
+        activeAuthSessionInfo: services_db.collection<{ data: activeAuthSessionInfo }>('activeAuthSessionInfo'),
       },
     },
   }

@@ -1,14 +1,15 @@
-import { email_address, redacted, signed_token } from '@moodle/lib-types'
+import { email_address, redacted } from '@moodle/lib-types'
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import { flow } from 'fp-ts/function'
 import { object } from 'zod'
 import { Error4xx } from '../../../../../../lib/access-error'
-import { WRONG_CREDENTIALS } from '../consts'
-import { baseUserDataSchemas, generalSchemas } from '../../../../../model/org.model/lib/schemas'
+import { activeAuthSessionInfo } from '../../../../../model/accessControl.model'
 import { baseUserDataSchemaConfig, generalSchemaConfig } from '../../../../../model/org.model'
+import { baseUserDataSchemas, generalSchemas } from '../../../../../model/org.model/lib/schemas'
+import { WRONG_CREDENTIALS } from '../consts'
 
-export type login = moo.persona.endpoint<[typeof loginFormZodSchema, E.Either<typeof WRONG_CREDENTIALS, { session: moo.session.user; token: signed_token }>]>
+export type login = moo.persona.endpoint<[typeof loginFormZodSchema, E.Either<WRONG_CREDENTIALS, { activeAuthSessionInfo: activeAuthSessionInfo }>]>
 export const login: moo.gate.provider.endpoint<login> = flow(
   O.some,
   O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.general)),

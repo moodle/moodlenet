@@ -5,41 +5,33 @@ import { Error4xx, isError4xx } from './access-error'
 import { modelHandleProxy } from './modelHandleProxy'
 
 type executeModelOpsDeps = {
-  preAsync: boolean
+  asyncExecStrategy: null | 'defer call later' | 'execute deferred call' | 'immediate'
   models: map
   access: moo.model.access<any_>
   backModelAccessDispatcher: moo.model.dispatcher
   loggerProvider: loggerProvider
 }
 
-export async function executeModelOps({
-  preAsync,
-  models,
-  access,
-  backModelAccessDispatcher,
-  loggerProvider,
-}: executeModelOpsDeps) {
-  const myLogger = loggerProvider({ for: 'infra', name: 'executeModelOps', access, models: Object.keys(models), preAsync })
+export async function executeModelOps({ asyncExecStrategy, models, access, backModelAccessDispatcher, loggerProvider }: executeModelOpsDeps) {
+  const myLogger = loggerProvider({ for: 'infra', name: 'executeModelOps', access, models: Object.keys(models), asyncExecStrategy })
 
   const targets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
-  if (access.target.type !== 'async') {
+  if (asyncExecStrategy !== 'execute deferred call') {
     await Promise.all(
       targets.or.map(({ fn, modelName }) =>
-        fn().catch(andError => {
-          myLogger.error(`Or error in model ${modelName}`, andError)
+        fn().catch(err => {
+          myLogger.error(`Error in "or" exec model ${modelName}`, err)
           //REVIEW: should we throw an error here?
         }),
       ),
     )
   }
-
-  if (preAsync) {
+  if (asyncExecStrategy === 'defer call later') {
     return
   }
 
   const exe = targets.exe[0] ?? {
-    fn: async () =>
-      new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${access.target}` }),
+    fn: async () => new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${access.target}` }),
     modelName: '~',
   }
 

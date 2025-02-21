@@ -27,7 +27,7 @@ declare global {
       type def = {
         [moo.configs]: serializable_object
       }
-      type dispatcher = (access: access<any_>) => Promise<unknown>
+      type dispatcher = (access: access<type.opDef>) => Promise<unknown>
 
       type handle = {
         model: Models
@@ -38,24 +38,31 @@ declare global {
         callTime: date_time_string
         now: date_time_string
         message: op[1]
-        origin: access.origin
-        target: access.target<op>
+        origin: access.origin //<type.opDef>
+        target: access.target //<op>
       }
 
       namespace access {
-        type target<op extends type.opDef> = {
+        // type target<op extends type.opDef> = {
+        //   opName: string
+        //   path: path
+        //   type: op[0]
+        // }
+        type target = {
           opName: string
           path: path
-          type: op[0]
+          type: type.opType
         }
+
         type origin = {
+          //<op extends type.opDef> = {
           useCase:
             | string
             | {
                 id: string
                 path: path
               }
-          from: false | target<type.opDef>
+          from: false | target //<op>
         }
       }
 

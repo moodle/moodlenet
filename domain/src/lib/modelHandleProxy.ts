@@ -51,13 +51,7 @@ export function modelHandleProxy({
     })
   }
 
-  function subCoreModelHandleProxy({
-    path,
-    apply,
-  }: {
-    apply: (_: { path: path; message: unknown }) => void
-    path: string[]
-  }) {
+  function subCoreModelHandleProxy({ path, apply }: { apply: (_: { path: path; message: unknown }) => void; path: string[] }) {
     return new Proxy(() => null, {
       ...unsupportedProxyHandler,
       get(_target, prop) {
