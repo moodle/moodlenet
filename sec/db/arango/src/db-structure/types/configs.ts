@@ -11,5 +11,4 @@ export type dbConnection = ArangoConnectionConfig
 export type databaseConnections = {
   services: dbConnection
   appData: dbConnection
-  identity: dbConnection
 }

@@ -1,6 +1,6 @@
-import { configs } from '../types'
+import { userAccountConfigs } from '../types'
 
-export const DEFAULT_CONFIGS: configs = {
+export const DEFAULT_USER_ACCOUNT_CONFIGS: userAccountConfigs = {
   schema: {
     eduDraftsOverrides: {
       collection: {},

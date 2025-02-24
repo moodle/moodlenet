@@ -1,4 +1,4 @@
-import { languageCode, licenseCode } from '../../contentCategories.model'
+import { languageCode, licenseCode } from '../../content.model'
 import { bloomCognitiveLevel, iscedFieldCode, iscedLevelCode, resourceTypeCode } from './edu-categories'
 
 export type eduResourceData = {

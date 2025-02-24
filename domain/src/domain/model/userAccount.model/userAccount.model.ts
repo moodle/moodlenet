@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { email_address, signed_token } from '@moodle/lib-types'
-import { configs, profileInfo } from './types'
+import { userAccountConfigs, profileInfo } from './types'
 declare global {
   namespace moo {
     interface Models {
@@ -66,7 +66,7 @@ export type userSpace = {
 }
 
 export type userAccountModel = {
-  [moo.configs]: configs
+  [moo.configs]: userAccountConfigs
   user: moo.model.type.idSpaceMap<userSpace, { emailEquals: string }>
 }
 

@@ -56,10 +56,6 @@ export function provideArangoDbSecEnv({ env }: { env: map<unknown, env_keys> }):
         ...baseArangoDbConnection,
         databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_appData`,
       },
-      identity: {
-        ...baseArangoDbConnection,
-        databaseName: `${env_config.MOODLE_ARANGODB_DOMAIN_NAME}_identity`,
-      },
     },
   }
   return arangoDbSecEnv

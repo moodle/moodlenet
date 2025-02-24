@@ -1,5 +1,5 @@
 import { signed_token } from '@moodle/lib-types'
-import { activeAuthSessionInfo, configs } from './types'
+import { activeAuthSessionInfo, accessControlConfigs } from './types'
 import { Option } from 'fp-ts/Option'
 import { Either } from 'fp-ts/Either'
 import { NOT_FOUND } from '../../../lib'
@@ -22,7 +22,7 @@ type xTypes = moo.model.xTypes<{
 export type accessControl = moo.model<AccessControlModel, xTypes>
 
 export type AccessControlModel = {
-  [moo.configs]: configs
+  [moo.configs]: accessControlConfigs
   getAnonUserSession: moo.model.type.endpoint<['query', void, { session: moo.session.user }]>
   getUserSessionFor: moo.model.type.endpoint<['query', { userId: string }, Either<NOT_FOUND, { session: moo.session.user }>]>
   activateAuthSessionFor: moo.model.type.endpoint<['query', { userId: string }, Either<NOT_FOUND, { activeAuthSessionInfo: activeAuthSessionInfo }>]>

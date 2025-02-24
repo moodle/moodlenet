@@ -1,7 +1,7 @@
 import { appDeployments, loggerProvider } from '@moodle/domain'
 import * as domainCore from '@moodle/domain/core'
 import * as domainGate from '@moodle/domain/gate'
-import { coreGateDeps, deploymentInfoFromUrlString, executeModelOps, modelHandleProxy } from '@moodle/domain/lib'
+import { coreGateDeps, deploymentInfoFromUrlString, executeModel, preModelOps, modelHandleProxy, postModelOps, Error4xx } from '@moodle/domain/lib'
 import type * as model from '@moodle/domain/model'
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 import { generateAlphanumId, generateUlid } from '@moodle/lib-id-gen'
@@ -21,6 +21,7 @@ import { coerce, object } from 'zod'
 import { createQueueServices } from './queue-services'
 import { configurator } from './types'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
+import { isLeft, left } from 'fp-ts/Either'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
 //   provideDefaultResourceIngestorSecEnv,
@@ -42,6 +43,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
     access,
   }
   async function configuratorDrain() {
+    console.log(`draining [#${Object.keys(cache).length}] pending configurations ...`)
     const configResults = await Promise.all(Object.values(cache))
     return Promise.allSettled(configResults.map(({ stopAndDrain }) => stopAndDrain()))
   }
@@ -59,10 +61,9 @@ export const defaultConfigurator: configurator = ({ master }) => {
           })
           dotenvExpand(dotenv.config({ path: path.join(domainFsDirectories.currentDomainDir, '.env'), override: true }))
 
-          const loggerConfigs: winstonLoggerConfigs = { consoleLevel: 'debug' }
+          // console.debug({ currentDomainDir: domainFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
 
-          console.debug({ currentDomainDir: domainFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
-
+          const loggerConfigs: winstonLoggerConfigs = { consoleLevel: 'debug', file: { level: 'debug', path: path.join(domainFsDirectories.currentDomainDir, 'logs') } }
           const { loggerProvider } = createWinstonDomainLoggerProvider({ loggerConfigs })
 
           const myLogger = loggerProvider({ for: 'infra', name: 'configurator', domainName })
@@ -131,6 +132,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
           } satisfies map<moo.model.impl>
 
           const pendingAccessResultPromises: Promise<unknown>[] = []
+
           const arangoQueueServiceWorkers = provideArangoQueueServiceWorkers({ dbStruct: arangodb.dbStruct })
 
           const _from_queue_sym_ = Symbol('fromQueue')
@@ -146,27 +148,47 @@ export const defaultConfigurator: configurator = ({ master }) => {
           if (master) {
             await upgradeArangoDB({
               databaseConnections: arango_db_env.database_connections,
-              log: loggerProvider({ for: 'infra', name: 'upgradeArangoDB' }),
+              log: loggerProvider({ for: 'setup', name: 'upgradeArangoDB', domainName }),
             }).catch(e => {
               myLogger.error('upgradeArangoDB failed', e)
               throw e
             })
-            const coreSetupModelHandle = modelHandleProxy({
-              origin: { from: false, useCase: 'coreSetup' },
-              modelAccessDispatcher,
-            })
-            await domainCore.setup({ modelHandle: coreSetupModelHandle })
+
+            await domainCore
+              .setup({
+                handle: modelHandleProxy({
+                  origin: { from: false, useCase: 'domainCore.setup' },
+                  modelAccessDispatcher,
+                }),
+                log: loggerProvider({ for: 'setup', name: 'domainCore.setup', domainName }),
+              })
+              .catch(e => {
+                myLogger.error('domainCore.setup failed', e)
+                throw e
+              })
+
             await queues.startAll()
-          } else {
-            const coreSetupModelHandle = modelHandleProxy({
-              origin: { from: false, useCase: 'coreModelCheck' },
-              modelAccessDispatcher,
-            })
-            await domainCore.modelCheck({ modelHandle: coreSetupModelHandle })
           }
 
+          await domainCore
+            .preflight({
+              handle: modelHandleProxy({
+                origin: { from: false, useCase: 'domainCore.preflight' },
+                modelAccessDispatcher,
+              }),
+              log: loggerProvider({ for: 'setup', name: 'domainCore.preflight', domainName }),
+            })
+            .then(result => {
+              if (isLeft(result)) {
+                throw new TypeError(result.left)
+              }
+            })
+            .catch(e => {
+              myLogger.error('domainCore.preflight failed', e)
+              throw e
+            })
+
           async function modelAccessDispatcher(access: moo.model.access<any_>): Promise<unknown> {
-            const jobId = `${access.id}_${generateAlphanumId({ length: 4 })}`
             type __ = keyof moo.Models extends infer modelName
               ? modelName extends keyof moo.Models
                 ? keyof moo.Models[modelName] extends infer frstProp
@@ -175,51 +197,80 @@ export const defaultConfigurator: configurator = ({ master }) => {
                 : never
               : never
             const [model, frstProp] = access.target.path as __
-
             const isFromQueue = _from_queue_sym_ in access
-            const enqueue = !isFromQueue && access.target.type === 'async' && ((model === 'mailer' && frstProp === 'send') || (model === 'mailer' && frstProp === 'send'))
-            if (enqueue) {
+            const enqueueing = !isFromQueue && access.target.type === 'async' && ((model === 'mailer' && frstProp === 'send') || (model === 'mailer' && frstProp === 'send'))
+            const jobId = `${access.id}_${generateAlphanumId({ length: 4 })}`
+            if (enqueueing) {
               const queueService = queues.services.default
-              const enqueuePromise = queueService
-                .enqueue({
-                  jobId,
-                  enqueueDate: new Date().toISOString(),
-                  jobData: { access },
-                })
-                .then(() =>
-                  executeModelOps({
+              pushPendingPromise(
+                queueService
+                  .enqueue({
+                    jobId,
+                    enqueueDate: new Date().toISOString(),
+                    jobData: { access },
+                  })
+                  .then(() =>
+                    pushPendingPromise(
+                      preModelOps({
+                        access,
+                        backModelAccessDispatcher: modelAccessDispatcher,
+                        loggerProvider,
+                        models,
+                      }),
+                    ),
+                  ),
+              )
+              return
+            }
+
+            const accessResultPromise = pushPendingPromise(
+              (isFromQueue
+                ? Promise.resolve()
+                : preModelOps({
                     access,
                     backModelAccessDispatcher: modelAccessDispatcher,
                     loggerProvider,
                     models,
-                    asyncExecStrategy: 'defer call later',
-                  }),
-                )
-              pendingAccessResultPromises.push(enqueuePromise)
-              return
-            }
-
-            const accessResultPromise = executeModelOps({
-              access,
-              backModelAccessDispatcher: modelAccessDispatcher,
-              loggerProvider,
-              models,
-              asyncExecStrategy: isFromQueue ? 'execute deferred call' : access.target.type === 'async' ? 'immediate' : null,
-            })
-
-            pendingAccessResultPromises.push(accessResultPromise)
-            accessResultPromise
-              .catch(() => {
-                const enqueuePromise = queues.defaultService.enqueue({
-                  jobId,
-                  enqueueDate: new Date().toISOString(),
-                  jobData: { access },
+                  })
+              )
+                .then(async () => {
+                  const outcome = await executeModel({
+                    access,
+                    backModelAccessDispatcher: modelAccessDispatcher,
+                    loggerProvider,
+                    models,
+                  })
+                  if (isLeft(outcome) && outcome.left.desc !== 'Not Implemented' && !isFromQueue && access.target.type === 'async') {
+                    myLogger.error('executeModel (async, formerly not enqueued) failed, will enqueue', { jobId, error: outcome.left, access })
+                    await queues.defaultService.enqueue({
+                      jobId,
+                      enqueueDate: new Date().toISOString(),
+                      jobData: { access },
+                    })
+                  }
+                  return outcome
                 })
-                pendingAccessResultPromises.push(enqueuePromise)
-              })
-              .finally(() => pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(accessResultPromise), 1))
-            return accessResultPromise
-            // return shortCircuitLoopbackDispatcher({ configuration, domainAccess })
+                .then(outcome => {
+                  postModelOps({
+                    access,
+                    backModelAccessDispatcher: modelAccessDispatcher,
+                    loggerProvider,
+                    models,
+                    outcome,
+                  })
+                  return outcome
+                })
+                .catch(error => {
+                  myLogger.warn('model access failed', error, 'access:', access)
+                  return left(new Error4xx('Internal Server Error', { message: error.message, error }))
+                }),
+            )
+            return accessResultPromise.then(outcome => {
+              if (isLeft(outcome)) {
+                throw outcome.left
+              }
+              return outcome.right
+            })
           }
 
           resolveConfigurationPromise({
@@ -234,6 +285,11 @@ export const defaultConfigurator: configurator = ({ master }) => {
             console.log(`draining [#${pendingAccessResultPromises.length}] pending replies ...`)
             await Promise.allSettled([queues.stopAndDrainAll(), ...pendingAccessResultPromises])
             console.log('drained pending replies')
+          }
+          function pushPendingPromise<t>(p: Promise<t>) {
+            pendingAccessResultPromises.push(p)
+            p.finally(() => pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(p), 1))
+            return p
           }
         })()
       }).catch(e => {
@@ -267,7 +323,6 @@ export const defaultConfigurator: configurator = ({ master }) => {
         modelAccessDispatcher: configuration.modelDispatcher,
       }),
     }
-
     return coreGateDeps
   }
 }

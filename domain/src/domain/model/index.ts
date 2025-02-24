@@ -1,5 +1,6 @@
 export * as accessControl from './accessControl.model'
-export * as contentCategories from './contentCategories.model'
+export * as configs from './configs.model'
+export * as content from './content.model'
 export * as crypto from './crypto.model'
 export * as education from './education.model'
 export * as jwtTokens from './jwtTokens.model'

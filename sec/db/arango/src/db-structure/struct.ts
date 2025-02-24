@@ -1,19 +1,28 @@
 import { job } from '@moodle/lib-job-queue-service'
-import { any_, d_u } from '@moodle/lib-types'
+import { any_ } from '@moodle/lib-types'
 import { Database } from 'arangojs'
 import { activeAuthSessionInfo } from 'domain/src/domain/model/accessControl.model/accessControl.model'
-import { language, license } from 'domain/src/domain/model/contentCategories.model'
-import { bloomCognitive, iscedField, iscedLevel, resourceType } from 'domain/src/domain/model/education.model'
 import { dbUpgradeData } from '../dbUpgrade/types'
-import { appDataUserCollectionData, databaseConnections } from './types'
+import {
+  appDataBloomCognitiveCollectionData,
+  appDataIscedFieldCollectionData,
+  appDataIscedLevelCollectionData,
+  appDataLanguageCollectionData,
+  appDataLicenseCollectionData,
+  appDataResourceTypeCollectionData,
+  appDataUserCollectionData,
+  databaseConnections,
+} from './types'
+import { modulesModelConfigData } from './types/collections'
+import { configs } from '@moodle/domain/model'
 
 export function getDbStruct(databaseConnections: databaseConnections) {
+  console.log({ databaseConnections })
   const baseConnectionConfig = {
     keepalive: true,
     retryOnConflict: 5,
   }
   const appData_db = new Database({ ...baseConnectionConfig, ...databaseConnections.appData })
-  const identity_db = new Database({ ...baseConnectionConfig, ...databaseConnections.identity })
   const services_db = new Database({ ...baseConnectionConfig, ...databaseConnections.services })
   const sys_db = new Database({
     ...baseConnectionConfig,
@@ -26,25 +35,21 @@ export function getDbStruct(databaseConnections: databaseConnections) {
     appData: {
       db: appData_db,
       coll: {
-        eduIscedField: appData_db.collection<{ data: iscedField }>('eduIscedField'),
-        eduIscedLevel: appData_db.collection<{ data: iscedLevel }>('eduIscedLevel'),
-        eduBloomCognitive: appData_db.collection<{ data: bloomCognitive }>('eduBloomCognitive'),
-        eduResourceType: appData_db.collection<{ data: resourceType }>('eduResourceType'),
-        contentLanguage: appData_db.collection<{ data: language }>('contentLanguage'),
-        contentLicense: appData_db.collection<{ data: license }>('contentLicense'),
-        user: identity_db.collection<appDataUserCollectionData>('user'),
-      },
-    },
-    modules: {
-      db: services_db,
-      coll: {
-        modelConfig: services_db.collection<d_u<moo.modelConfigs, 'model'>>('modelConfig'),
+        eduIscedField: appData_db.collection<appDataIscedFieldCollectionData>('eduIscedField'),
+        eduIscedLevel: appData_db.collection<appDataIscedLevelCollectionData>('eduIscedLevel'),
+        eduBloomCognitive: appData_db.collection<appDataBloomCognitiveCollectionData>('eduBloomCognitive'),
+        eduResourceType: appData_db.collection<appDataResourceTypeCollectionData>('eduResourceType'),
+        contentLanguage: appData_db.collection<appDataLanguageCollectionData>('contentLanguage'),
+        contentLicense: appData_db.collection<appDataLicenseCollectionData>('contentLicense'),
+        user: appData_db.collection<appDataUserCollectionData>('user'),
+        modelConfig: appData_db.collection<modulesModelConfigData>('modelConfig'),
       },
     },
     services: {
       db: services_db,
       coll: {
         dbUpgrade: services_db.collection<dbUpgradeData>('dbUpgrade'),
+        modelUpgrade: services_db.collection<{ data: configs.modelUpgradeData }>('modelUpgrade'),
         domainAccessJob: services_db.collection<job<{ access: moo.model.access<any_> }>>('domainAccessJob'),
         activeAuthSessionInfo: services_db.collection<{ data: activeAuthSessionInfo }>('activeAuthSessionInfo'),
       },

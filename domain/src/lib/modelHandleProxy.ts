@@ -11,7 +11,8 @@ export function modelHandleProxy({
   const model = subCoreModelHandleProxy({
     path: [],
     apply({ path }) {
-      throw TypeError(`CoreModelHandleProxy: cannot apply model ${path}`)
+      return { path }
+      // throw TypeError(`CoreModelHandleProxy: cannot apply model ${path}`)
     },
   }) as unknown as moo.model.handle['model']
   const over = _over as unknown as moo.model.handle['over']
@@ -31,6 +32,7 @@ export function modelHandleProxy({
         if (!(type === 'query' || type === 'sync' || type === 'async')) {
           throw new TypeError(`CoreModelHandleProxy: Invalid action ${type}`)
         }
+        console.log({ _modelRefProxy: modelRefProxy(), modelRefProxy })
 
         const { path } = modelRefProxy()
         const now = new Date().toISOString()
@@ -67,7 +69,7 @@ export function modelHandleProxy({
           throw new TypeError(`CoreModelHandleProxy: Invalid args length ${args}`)
         }
         const [message] = args
-        apply({ path, message })
+        return apply({ path, message })
       },
     })
   }

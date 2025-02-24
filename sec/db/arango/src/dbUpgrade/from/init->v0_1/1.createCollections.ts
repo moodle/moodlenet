@@ -30,8 +30,8 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   await dbStruct.appData.coll.eduResourceType.create({ cacheEnabled: true })
 
   // modules
-  await dbStruct.modules.coll.modelConfig.create({ cacheEnabled: true })
-  await dbStruct.modules.coll.modelConfig.ensureIndex({
+  await dbStruct.appData.coll.modelConfig.create({ cacheEnabled: true })
+  await dbStruct.appData.coll.modelConfig.ensureIndex({
     type: 'persistent',
     name: 'model',
     fields: ['model'],

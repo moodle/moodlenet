@@ -1,8 +1,8 @@
 import { i_nat, i_pos } from '@moodle/lib-types'
 import { NONE_ASSET } from '../../../../lib'
-import { configs } from '../types'
+import { moodlenetConfigs } from '../types'
 
-export const moodlenet_default_configs: configs = {
+export const DEFAULT_MOODLENET_CONFIGS: moodlenetConfigs = {
   info: {
     title: 'Search for resources, subjects, collections or people',
     subtitle: 'Find, share and curate open educational resources',

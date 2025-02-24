@@ -1,1 +1,1 @@
-export type configs = never
+export type jwtTokensConfigs = never

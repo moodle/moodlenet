@@ -18,11 +18,10 @@ declare global {
 
     interface Personas {}
     interface Models {}
-      type modelConfigs = {
-        [_modelName in modelName]: Models[_modelName][typeof configs]
-      }
+
 
     const configs: unique symbol
+    type configs = typeof configs
     type withConfigs = { [configs]?: serializable_object }
 
     type contexts = {

@@ -1,16 +1,16 @@
 import { deep_partial_props, int, serializable_object, valid } from '@moodle/lib-types'
-import { bloomCognitive, bloomCognitiveLevel, iscedFieldCode, iscedLevelCode, resourceTypeCode } from './edu-categories'
+import { bloomCognitive, bloomCognitiveLevel, iscedField, iscedLevel, resourceType } from './edu-categories'
 
-export type configs = {
-  enabledCategories: enabledEduCategories
+export type educationConfigs = {
+  // NO enabledCategories: enabledEduCategories
   schema: eduSchemaConfigs
 }
 
 export type enabledEduCategories = {
-  iscedFields: { code: iscedFieldCode }[]
-  iscedLevels: { code: iscedLevelCode }[]
-  resourceTypes: { code: resourceTypeCode }[]
-  bloomCognitives: ({ level: bloomCognitiveLevel } & Pick<bloomCognitive, 'verbs'>)[]
+  iscedFields: ({ code: string } & iscedField)[]
+  iscedLevels: ({ code: string } & iscedLevel)[]
+  resourceTypes: ({ code: string } & resourceType)[]
+  bloomCognitives: ({ level: bloomCognitiveLevel } & bloomCognitive)[]
 }
 
 export type eduResourceSchemaConfigsOverrides = deep_partial_props<eduResourceSchemaConfigs> & serializable_object

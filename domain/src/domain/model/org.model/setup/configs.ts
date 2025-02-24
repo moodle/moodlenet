@@ -1,7 +1,7 @@
 import { i_nat, i_pos } from '@moodle/lib-types'
-import { configs } from '../types'
+import { orgConfigs } from '../types'
 
-export const DEFAULT_CONFIGS: configs = {
+export const DEFAULT_ORG_CONFIGS: orgConfigs = {
   schema: {
     orgInfo: {
       websiteUrl: { max: i_nat(100) },

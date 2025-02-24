@@ -7,7 +7,7 @@ import { defaultConfigurator } from './default-configurator'
 
 dotenvExpand(dotenv.config())
 
-const MOODLE_MASTER_INSTANCE = Boolean(process.env.MOODLE_MASTER_INSTANCE)
+const MOODLE_MASTER_INSTANCE = process.env.MOODLE_MASTER_INSTANCE === 'true'
 const MOODLE_HTTP_BINDER_RECEIVER_PORT = parseInt(process.env.MOODLE_HTTP_BINDER_RECEIVER_PORT ?? '8000')
 const MOODLE_HTTP_BINDER_RECEIVER_BASEURL = process.env.MOODLE_HTTP_BINDER_RECEIVER_BASEURL ?? '/'
 
@@ -32,12 +32,17 @@ http_bind
 
     httpGate.receiver({
       dispatcher: async gateAccess => {
-
         const coreGateDeps = await configurator.access({ gateAccess })
         return coreGate(coreGateDeps)
       },
     })
-
+    configurator.access({
+      gateAccess: {
+        form: {},
+        path: ['a', 'a', 'a', 'a'],
+        claims: { client: {}, server: { href: 'https://moodlenet.local/' as any_, authSessionToken: null, requestId: '11', ua: '313132' } },
+      },
+    })
     let exiting = false
 
     async function drainAndExit(sig: unknown) {

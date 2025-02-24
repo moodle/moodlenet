@@ -11,7 +11,7 @@ export type baseUserDataSchemaConfig = {
   displayName: valid.i_posMinMax
 }
 
-export type configs = {
+export type orgConfigs = {
   info: orgInfo
   schema: {
     general: generalSchemaConfig

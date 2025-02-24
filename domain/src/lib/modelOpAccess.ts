@@ -5,53 +5,66 @@ import { Error4xx, isError4xx } from './access-error'
 import { modelHandleProxy } from './modelHandleProxy'
 
 type executeModelOpsDeps = {
-  asyncExecStrategy: null | 'defer call later' | 'execute deferred call' | 'immediate'
   models: map
   access: moo.model.access<any_>
   backModelAccessDispatcher: moo.model.dispatcher
   loggerProvider: loggerProvider
 }
 
-export async function executeModelOps({ asyncExecStrategy, models, access, backModelAccessDispatcher, loggerProvider }: executeModelOpsDeps) {
-  const myLogger = loggerProvider({ for: 'infra', name: 'executeModelOps', access, models: Object.keys(models), asyncExecStrategy })
+export async function preModelOps({ models, access, backModelAccessDispatcher, loggerProvider }: executeModelOpsDeps) {
+  const allOpTargets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
+  const exeTargets = allOpTargets.exe
+  const implementationExists = exeTargets.length > 0
+  const step = implementationExists ? 'pre' : ('noImpl' as const)
+  const myLogger = loggerProvider({ for: 'infra', name: 'preModelOps', access, models: Object.keys(models), step })
+  await Promise.all(
+    allOpTargets[step].map(({ fn, modelName }) =>
+      fn().catch(err => {
+        myLogger.error(`Error in "${step}" exec model ${modelName}`, err)
+        //REVIEW: should we throw an error here? if so it would brake the flow...
+      }),
+    ),
+  )
+}
 
-  const targets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
-  if (asyncExecStrategy !== 'execute deferred call') {
-    await Promise.all(
-      targets.or.map(({ fn, modelName }) =>
-        fn().catch(err => {
-          myLogger.error(`Error in "or" exec model ${modelName}`, err)
-          //REVIEW: should we throw an error here?
-        }),
-      ),
-    )
-  }
-  if (asyncExecStrategy === 'defer call later') {
-    return
-  }
+export async function executeModel({ models, access, backModelAccessDispatcher, loggerProvider }: executeModelOpsDeps) {
+  const myLogger = loggerProvider({ for: 'infra', name: 'executeModel', access, models: Object.keys(models), step: 'exe' })
 
-  const exe = targets.exe[0] ?? {
-    fn: async () => new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${access.target}` }),
+  const allOpTargets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
+  const exe = allOpTargets.exe[0] ?? {
+    fn: async (): Promise<never> =>
+      Promise.reject(new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${access.target.path.join('.')}.${access.target.opName}` })),
     modelName: '~',
   }
 
-  if (targets.exe.length > 1) {
-    const MULTIPLE_EXEC_MESSAGE = `Multiple implementations of model target: ${access.target}
-  all others will be ignored`
+  if (allOpTargets.exe.length > 1) {
+    const MULTIPLE_EXEC_MESSAGE = `Multiple implementations of model target: ${access.target.path.join('.')}.${access.target.opName} detected,
+  will call the first from "${exe.modelName}" model all others will be ignored`
     //REVIEW: should we throw an error here?
     myLogger.critical(MULTIPLE_EXEC_MESSAGE)
   }
 
-  const result = await exe.fn().catch<Error4xx>(e => {
+  const outcome: Error4xx | unknown = await exe.fn().catch<Error4xx>(e => {
+    if (isError4xx(e)) {
+      return e
+    }
     myLogger.error('Model execution error', e)
-    return isError4xx(e) ? e : new Error4xx('Internal Server Error', { message: e.message })
+    return new Error4xx('Internal Server Error', { message: e.message })
   })
 
+  return isError4xx(outcome) ? left(outcome) : right(outcome)
+}
+
+export async function postModelOps({ models, access, outcome, backModelAccessDispatcher, loggerProvider }: executeModelOpsDeps & { outcome: Either<Error4xx, unknown> }) {
+  const myLogger = loggerProvider({ for: 'infra', name: 'postModelOps', access, models: Object.keys(models), step: 'post' })
+
+  const allOpTargets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
+
   await Promise.all(
-    targets.and.map(({ fn, modelName }) =>
-      fn(isError4xx(result) ? left(result) : right(result)).catch(andError => {
+    allOpTargets.post.map(({ fn, modelName }) =>
+      fn(outcome).catch(andError => {
         myLogger.error(`And error in model ${modelName}`, andError)
-        //REVIEW: should we throw an error here?
+        //REVIEW: should we throw an error here? if so it would brake the flow...
       }),
     ),
   )
@@ -67,21 +80,23 @@ type allModelsOpExtractsDeps = {
 export function allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider }: allModelsOpExtractsDeps) {
   return Object.entries(models).reduce(
     (acc, [modelName, impl]) => {
-      const { and, exe, or } = modelOpExtract({
+      const { post, exe, pre, noImpl } = modelOpExtract({
         model: { name: modelName, impl },
         access,
         backModelAccessDispatcher,
         loggerProvider,
       })
-      and && acc.and.push({ fn: and, modelName })
+      post && acc.post.push({ fn: post, modelName })
       exe && acc.exe.push({ fn: exe, modelName })
-      or && acc.or.push({ fn: or, modelName })
+      pre && acc.pre.push({ fn: pre, modelName })
+      noImpl && acc.noImpl.push({ fn: noImpl, modelName })
       return acc
     },
-    { and: [], or: [], exe: [] } as {
+    { post: [], pre: [], exe: [], noImpl: [] } as {
       exe: { modelName: string; fn: Exclude<modelExtraction['exe'], undefined> }[]
-      or: { modelName: string; fn: Exclude<modelExtraction['or'], undefined> }[]
-      and: { modelName: string; fn: Exclude<modelExtraction['and'], undefined> }[]
+      pre: { modelName: string; fn: Exclude<modelExtraction['pre'], undefined> }[]
+      post: { modelName: string; fn: Exclude<modelExtraction['post'], undefined> }[]
+      noImpl: { modelName: string; fn: Exclude<modelExtraction['noImpl'], undefined> }[]
     },
   )
 }
@@ -103,8 +118,9 @@ export function modelOpExtract({ model, access, backModelAccessDispatcher, logge
   })
   const typeModelImpl = access.target.path.reduce((_model, prop) => _model?.[prop], model.impl)
   const exe = typeModelImpl?.[`* ${access.target.opName}`] as undefined | moo.model.impl.exe<any_>
-  const or = typeModelImpl?.[`| ${access.target.opName}`] as undefined | moo.model.impl.or<any_>
-  const and = typeModelImpl?.[`= ${access.target.opName}`] as undefined | moo.model.impl.and<any_>
+  const pre = typeModelImpl?.[`^ ${access.target.opName}`] as undefined | moo.model.impl.pre<any_>
+  const post = typeModelImpl?.[`$ ${access.target.opName}`] as undefined | moo.model.impl.post<any_>
+  const noImpl = typeModelImpl?.[`! ${access.target.opName}`] as undefined | moo.model.impl.noImpl<any_>
   const log = loggerProvider({ for: 'model', access })
   const now = new Date().toISOString()
   const ctx: moo.model.impl.ctx<any_> = {
@@ -115,7 +131,8 @@ export function modelOpExtract({ model, access, backModelAccessDispatcher, logge
   const exeArgs: moo.model.impl.exeArgs<any_> = [access.message, handle, ctx]
   return {
     exe: exe && (() => exe(...exeArgs)),
-    or: or && (() => or(...exeArgs)),
-    and: and && ((outcome: Either<Error4xx, unknown>) => and(outcome, ...exeArgs)),
+    pre: pre && (() => pre(...exeArgs)),
+    noImpl: noImpl && (() => noImpl(...exeArgs)),
+    post: post && ((outcome: Either<Error4xx, unknown>) => post(outcome, ...exeArgs)),
   }
 }

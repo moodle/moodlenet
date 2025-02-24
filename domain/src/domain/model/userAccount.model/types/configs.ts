@@ -4,7 +4,7 @@ export type eduDraftsSchemaOverrides = {
   collection: eduCollectionSchemaConfigsOverrides
   resource: eduResourceSchemaConfigsOverrides
 }
-export type configs = {
+export type userAccountConfigs = {
   schema: {
     eduDraftsOverrides: eduDraftsSchemaOverrides
   }

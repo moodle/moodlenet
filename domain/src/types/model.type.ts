@@ -36,6 +36,7 @@ declare global {
                     { items: { id: string; data: xSpaceData<space_shape>; cursor: string }[] },
                   ]
                   one: ['query', { filters?: filters }, Option<{ id: string; data: xSpaceData<space_shape> }>]
+                  bulkCreate: ['sync', { spaces: { id: string; data: sSpaceData<space_shape> }[] }, void]
                 }
                 shape: map<spaceModel>
                 data: map<xSpaceData<space_shape>>
@@ -77,30 +78,18 @@ declare global {
             : spaceData<shape[k], strict>
         }
 
-        type entityData<
-          data extends serializable_object,
-          opts extends { conditions?: map } = never,
-          ops_ extends ops = ops,
-        > = type<{
+        type entityData<data extends serializable_object, opts extends { conditions?: map } = never, ops_ extends ops = ops> = type<{
           data: data
           ops: ops_ & {
-            get: [
-              'query',
-              void | undefined | { conditions?: opts['conditions'] },
-              Either<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET, data>,
-            ]
-            replace: [
-              'async',
-              { newData: data; conditions?: opts['conditions'] },
-              Either<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET, 'done'>,
-            ]
+            get: ['query', void | undefined | { conditions?: opts['conditions'] }, Either<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET, data>]
+            replace: ['async', { newData: data; conditions?: opts['conditions'] }, Either<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET, 'done'>]
           }
           shape: unknown
         }>
 
         type staticData<data extends serializable_object, ops_ extends ops = ops> = type<{
           data: data
-          ops: ops_ & { get: ['query', void, data]; replace: ['async', { newData: data }, void] }
+          ops: ops_ & { get: ['query', void, data]; replace: ['sync', { newData: data }, void] }
           shape: unknown
         }>
 

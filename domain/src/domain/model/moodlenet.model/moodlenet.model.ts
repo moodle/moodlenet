@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { int } from '@moodle/lib-types'
 import { profileInfo } from '../userAccount.model'
-import { configs } from './types'
+import { moodlenetConfigs } from './types'
 declare global {
   namespace moo {
     interface Models {
@@ -22,7 +22,7 @@ export type contributorSpace = {
 export type moodlenet = moo.model<MoodlenetModel>
 
 export type MoodlenetModel = {
-  [moo.configs]: configs
+  [moo.configs]: moodlenetConfigs
   contributor: moo.model.type.idSpaceMap<contributorSpace>
 }
 

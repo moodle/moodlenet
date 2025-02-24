@@ -90,17 +90,20 @@ declare global {
             : impl<Omit<modelNode, type.traits_prop>>)
 
         type exe<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<op[2]>
-        type or<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
-        type and<op extends model.type.opDef> = (outcome: Either<Error4xx, op[2]>, ...exeArgs: exeArgs<op>) => Promise<void>
+        type pre<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
+        type noImpl<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
+        type post<op extends model.type.opDef> = (outcome: Either<Error4xx, op[2]>, ...exeArgs: exeArgs<op>) => Promise<void>
 
         type handlers<modelNode extends type<type.traitsDef>> = modelNode[type.traits_prop]['ops'] extends infer ops
           ? ops extends model.type.ops
             ? {
                 [opName in keyof ops as `* ${string & opName}`]?: exe<[type.opType, ops[opName][1], ops[opName][2]]> //exe<ops[opName]>
               } & {
-                [opName in keyof ops as `| ${string & opName}`]?: or<[type.opType, ops[opName][1], ops[opName][2]]> //or<ops[opName]>
+                [opName in keyof ops as `^ ${string & opName}`]?: pre<[type.opType, ops[opName][1], ops[opName][2]]> //or<ops[opName]>
               } & {
-                [opName in keyof ops as `& ${string & opName}`]?: and<[type.opType, ops[opName][1], ops[opName][2]]> //and<ops[opName]>
+                [opName in keyof ops as `! ${string & opName}`]?: noImpl<[type.opType, ops[opName][1], ops[opName][2]]> //or<ops[opName]>
+              } & {
+                [opName in keyof ops as `$ ${string & opName}`]?: post<[type.opType, ops[opName][1], ops[opName][2]]> //and<ops[opName]>
               }
             : never
           : never

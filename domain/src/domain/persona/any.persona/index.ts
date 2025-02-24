@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { enabledContentCategories } from '../../model/contentCategories.model'
-import { enabledEduCategories } from '../../model/education.model'
 import { baseUserDataSchemaConfig, generalSchemaConfig } from '../../model/org.model'
 import { moodlenet } from './moodlenet.context'
 import { system } from './system.context'
@@ -29,9 +27,4 @@ export type anyPersonaConfigs = {
     general: generalSchemaConfig
     baseUserData: baseUserDataSchemaConfig
   }
-  enabledCategories: {
-    edu: enabledEduCategories
-    content: enabledContentCategories
-  }
 }
-

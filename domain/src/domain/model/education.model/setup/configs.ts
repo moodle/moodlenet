@@ -1,12 +1,14 @@
 import { i_nat, int } from '@moodle/lib-types'
-import { configs } from '../types'
+import { educationConfigs } from '../types'
 import { eduBloomCognitivesSetup } from './bloom-cognitives'
 import { eduResourceTypesSetup } from './setup-edu-resource-types'
 import { eduIscedFieldsSetup } from './setup-isced-fields'
 import { eduIscedLevelsSetup } from './setup-isced-levels'
+import { bloomCognitiveSpace, iscedFieldSpace, iscedLevelSpace, resourceTypeSpace } from '../education.model'
 
-const excludedCodes = getExcludeCodes()
-export const DEFAULT_CONFIGS: configs = {
+const excludeIscedFieldCodes = getExcludeIscedFieldCodes()
+
+export const DEFAULT_EDUCATION_CONFIGS: educationConfigs = {
   schema: {
     collection: {
       description: { min: i_nat(0), max: i_nat(5000) },
@@ -27,15 +29,27 @@ export const DEFAULT_CONFIGS: configs = {
       },
     },
   },
-  enabledCategories: {
-    iscedFields: eduIscedFieldsSetup.filter(([code]) => !excludedCodes.includes(code)).map(([code]) => ({ code })),
-    iscedLevels: eduIscedLevelsSetup.filter(([, { codePath }]) => codePath.length === 1).map(([code]) => ({ code })),
-    resourceTypes: eduResourceTypesSetup.filter((/* typeRecord */) => true).map(([code]) => ({ code })),
-    bloomCognitives: eduBloomCognitivesSetup.filter((/* bloomCognitiveRecord */) => true).map(([level, { verbs }]) => ({ verbs, level })),
-  },
+}
+export const EDU_CATEGORIES_DATA_SETUP = {
+  iscedFields: eduIscedFieldsSetup.map<{ id: string; data: moo.model.type.sSpaceData<iscedFieldSpace> }>(([id, data]) => ({
+    id,
+    data: { data, meta: { enabled: !excludeIscedFieldCodes.includes(id) } },
+  })),
+
+  iscedLevels: eduIscedLevelsSetup.map<{ id: string; data: moo.model.type.sSpaceData<iscedLevelSpace> }>(([id, data]) => ({
+    id,
+    data: { data, meta: { enabled: data.codePath.length === 1 } },
+  })),
+
+  resourceTypes: eduResourceTypesSetup.map<{ id: string; data: moo.model.type.sSpaceData<resourceTypeSpace> }>(([id, data]) => ({ id, data: { data, meta: { enabled: true } } })),
+
+  bloomCognitives: eduBloomCognitivesSetup.map<{ id: string; data: moo.model.type.sSpaceData<bloomCognitiveSpace> }>(([id, data]) => ({
+    id,
+    data: { data, meta: { enabled: true } },
+  })),
 }
 
-function getExcludeCodes() {
+function getExcludeIscedFieldCodes() {
   return [
     'F1010',
     'F100',

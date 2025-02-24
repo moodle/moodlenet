@@ -1,8 +1,8 @@
-import { logLevelColors, logLevelMap, logSeverity, logger, loggerProvider } from '@moodle/domain'
-import { any_, redacted_json_replacer, unsupportedProxyHandler } from '@moodle/lib-types'
+import { logLevelColors, logLevelMap, logSeverity, logger, loggerContext, loggerProvider } from '@moodle/domain'
+import { any_, d_u__d, redacted_json_replacer, unsupportedProxyHandler } from '@moodle/lib-types'
 import assert from 'assert'
 import { inspect } from 'util'
-import winston from 'winston'
+import winston, { Logform } from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
 
 export type winstonLoggerConfigs = {
@@ -23,7 +23,14 @@ export function createWinstonDomainLoggerProvider({ loggerConfigs }: { loggerCon
         format: winston.format.combine(
           winston.format.timestamp(),
           winston.format.colorize({ colors: logLevelColors, message: false }),
-          winston.format.json({ replacer: redacted_json_replacer }),
+          winston.format.printf(_info => {
+            const info = _info as loggerContext & Logform.TransformableInfo
+            return `---- ${info.for} ----
+${info.timestamp}: [${info.level}]
+${loggerContextFormatter[info.for](info as any_)}
+${info.message}
+`
+          }),
         ),
       }),
     ],
@@ -56,7 +63,7 @@ export function createWinstonDomainLoggerProvider({ loggerConfigs }: { loggerCon
         return (...args: any_[]) => {
           const message = args
             .map((arg: unknown) => {
-              return typeof arg === 'object' ? inspect(arg, { colors: true, depth: 8 }) : arg
+              return typeof arg === 'object' ? inspect(_redact(arg), { breakLength: 120, colors: true, depth: 8 }) : arg
             })
             .join('\n')
           childLogger.log(level, message)
@@ -66,4 +73,61 @@ export function createWinstonDomainLoggerProvider({ loggerConfigs }: { loggerCon
   }
 
   return { loggerProvider }
+}
+
+const loggerContextFormatter = {
+  core(c: d_u__d<loggerContext, 'for', 'core'>) {
+    const { id, sessionInfo, now, gateAccess } = c.access
+    return `Core Access:
+id:${id}
+now:${now}
+sessionInfo:
+  user:${sessionInfo.user.type}${
+    sessionInfo.user.type === 'anon'
+      ? ''
+      : `
+    id:${sessionInfo.user.id}
+  session personas:${Object.keys(sessionInfo.session)}
+gateAccess:
+  path:${gateAccess.path.join('.')}
+  claims:${inspect(gateAccess.claims, { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
+  form:${inspect(_redact(gateAccess.form), { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
+`
+  }
+
+`
+  },
+  model(c: d_u__d<loggerContext, 'for', 'model'>) {
+    const { callTime, id, now, message, origin, target } = c.access
+    return `Model Access:
+id:${id}
+callTime:${callTime} (now:${now})
+target:
+  opName:${target.opName}
+  type:${target.type}
+  path:${target.path.join('.')}
+origin:
+  useCase: ${origin.useCase}
+  from:${
+    origin.from
+      ? `
+    opName:${origin.from.opName}
+    type:${origin.from.type}
+    path:${origin.from.path.join('.')}
+  `
+      : '~'
+  }
+message:${inspect(_redact(message), { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
+`
+  },
+  infra(c: d_u__d<loggerContext, 'for', 'infra'>) {
+    return `[${c.name}]`
+  },
+  setup(c: d_u__d<loggerContext, 'for', 'setup'>) {
+    return `[${c.name}]`
+  },
+}
+
+function _redact(o: any_) {
+  return o && JSON.parse(JSON.stringify(o, redacted_json_replacer))
 }

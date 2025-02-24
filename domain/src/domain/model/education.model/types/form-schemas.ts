@@ -2,7 +2,7 @@ import { single_line_string_schema, zod_m_nullable } from '@moodle/lib-types'
 import type { z } from 'zod'
 import { array, enum as enum_z, number, object, string } from 'zod'
 import { adoptAssetFormSchema, adoptValuedAssetFormSchema } from '../../../../lib'
-import { enabledContentCategories } from '../../contentCategories.model'
+import { enabledContentCategories } from '../../content.model'
 import { eduSchemaConfigs, enabledEduCategories } from './configs'
 
 export type eduCollectionMetaFormSchema = ReturnType<typeof getEduFormSchemas>['eduCollectionMetaSchema']

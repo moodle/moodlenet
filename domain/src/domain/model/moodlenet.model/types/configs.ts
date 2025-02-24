@@ -7,7 +7,7 @@ export type publishEduSchemaOverrides = {
   resource: eduResourceSchemaConfigsOverrides
 }
 
-export type configs = {
+export type moodlenetConfigs = {
   schema: {
     publishEduOverrides: publishEduSchemaOverrides
     moodlenetInfo: moodlenetInfoSchemaConfigs

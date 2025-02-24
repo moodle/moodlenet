@@ -16,14 +16,18 @@ export const logLevelMap: Record<logSeverity, number> = {
 export type loggerContext = d_u<
   {
     core: {
-      access: moo.core.access<any_>
+      access: moo.core.access<moo.persona.endpoint<any_>>
     }
     model: {
-      access: moo.model.access<any_>
+      access: moo.model.access<moo.model.type.opDef>
     }
     infra: {
       name: string
-      [id: string]: any_
+      [key: string]: any_
+    }
+    setup: {
+      name: string
+      [key: string]: any_
     }
   },
   'for'
