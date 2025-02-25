@@ -16,7 +16,7 @@ export async function preModelOps({ models, access, backModelAccessDispatcher, l
   const exeTargets = allOpTargets.exe
   const implementationExists = exeTargets.length > 0
   const step = implementationExists ? 'pre' : ('noImpl' as const)
-  const myLogger = loggerProvider({ for: 'infra', name: 'preModelOps', access, models: Object.keys(models), step })
+  const myLogger = loggerProvider({ for: 'model', more: { name: `${step}:op` /*  models: Object.keys(models) */ }, access })
   await Promise.all(
     allOpTargets[step].map(({ fn, modelName }) =>
       fn().catch(err => {
@@ -28,12 +28,15 @@ export async function preModelOps({ models, access, backModelAccessDispatcher, l
 }
 
 export async function executeModel({ models, access, backModelAccessDispatcher, loggerProvider }: executeModelOpsDeps) {
-  const myLogger = loggerProvider({ for: 'infra', name: 'executeModel', access, models: Object.keys(models), step: 'exe' })
+  const myLogger = loggerProvider({ for: 'model', more: { name: `exec:op` /*  models: Object.keys(models) */ }, access })
 
   const allOpTargets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
   const exe = allOpTargets.exe[0] ?? {
-    fn: async (): Promise<never> =>
-      Promise.reject(new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${access.target.path.join('.')}.${access.target.opName}` })),
+    fn: async (): Promise<never> => {
+      const notImplErr = new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${access.target.path.join('.')}.${access.target.opName}` })
+      myLogger.warn(notImplErr)
+      return Promise.reject(notImplErr)
+    },
     modelName: '~',
   }
 
@@ -56,7 +59,7 @@ export async function executeModel({ models, access, backModelAccessDispatcher, 
 }
 
 export async function postModelOps({ models, access, outcome, backModelAccessDispatcher, loggerProvider }: executeModelOpsDeps & { outcome: Either<Error4xx, unknown> }) {
-  const myLogger = loggerProvider({ for: 'infra', name: 'postModelOps', access, models: Object.keys(models), step: 'post' })
+  const myLogger = loggerProvider({ for: 'model', more: { name: `post:op` /*  models: Object.keys(models) */ }, access })
 
   const allOpTargets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
 
@@ -112,7 +115,10 @@ export function modelOpExtract({ model, access, backModelAccessDispatcher, logge
   const handle = modelHandleProxy({
     modelAccessDispatcher: backModelAccessDispatcher,
     origin: {
-      from: access.target,
+      from: {
+        id: access.id,
+        target: access.target,
+      },
       useCase: access.origin.useCase,
     },
   })

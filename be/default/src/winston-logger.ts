@@ -23,14 +23,7 @@ export function createWinstonDomainLoggerProvider({ loggerConfigs }: { loggerCon
         format: winston.format.combine(
           winston.format.timestamp(),
           winston.format.colorize({ colors: logLevelColors, message: false }),
-          winston.format.printf(_info => {
-            const info = _info as loggerContext & Logform.TransformableInfo
-            return `---- ${info.for} ----
-${info.timestamp}: [${info.level}]
-${loggerContextFormatter[info.for](info as any_)}
-${info.message}
-`
-          }),
+          winston.format.printf(_info => format(_info as loggerContext & Logform.TransformableInfo)),
         ),
       }),
     ],
@@ -47,8 +40,8 @@ ${info.message}
           format: winston.format.combine(
             winston.format.padLevels(),
             winston.format.timestamp(),
-            winston.format.uncolorize(),
-            winston.format.json({ replacer: redacted_json_replacer }),
+            winston.format.colorize({ colors: logLevelColors, message: false }),
+            winston.format.printf(_info => format(_info as loggerContext & Logform.TransformableInfo)),
           ),
         }),
       ],
@@ -59,7 +52,7 @@ ${info.message}
     return new Proxy({} as logger, {
       ...unsupportedProxyHandler,
       get(_target, level) {
-        assert(typeof level === 'string', `Unsupported log level ${typeof level}:${String(level)}`)
+        assert(typeof level === 'string', `Unsupported log level ${typeof level}: ${String(level)}`)
         return (...args: any_[]) => {
           const message = args
             .map((arg: unknown) => {
@@ -75,23 +68,34 @@ ${info.message}
   return { loggerProvider }
 }
 
+function format(info: loggerContext & Logform.TransformableInfo) {
+  return `
+- - - - - - - - - -
+${info.timestamp}
+${info.level} [${info.for}]
+${loggerContextFormatter[info.for](info as any_)}
+${info.message}
+- - - - - - - - - -
+`
+}
+
 const loggerContextFormatter = {
   core(c: d_u__d<loggerContext, 'for', 'core'>) {
     const { id, sessionInfo, now, gateAccess } = c.access
     return `Core Access:
-id:${id}
-now:${now}
+id: ${id}
+now: ${now}
 sessionInfo:
-  user:${sessionInfo.user.type}${
+  user: ${sessionInfo.user.type}${
     sessionInfo.user.type === 'anon'
       ? ''
       : `
-    id:${sessionInfo.user.id}
-  session personas:${Object.keys(sessionInfo.session)}
+    id: ${sessionInfo.user.id}
+  session personas: ${Object.keys(sessionInfo.session)}
 gateAccess:
-  path:${gateAccess.path.join('.')}
-  claims:${inspect(gateAccess.claims, { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
-  form:${inspect(_redact(gateAccess.form), { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
+  path: ${gateAccess.path.join('.')}
+  claims: ${inspect(gateAccess.claims, { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
+  form: ${inspect(_redact(gateAccess.form), { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
 `
   }
 
@@ -100,24 +104,25 @@ gateAccess:
   model(c: d_u__d<loggerContext, 'for', 'model'>) {
     const { callTime, id, now, message, origin, target } = c.access
     return `Model Access:
-id:${id}
-callTime:${callTime} (now:${now})
+id: ${id}
+callTime: ${callTime} (now: ${now})
 target:
-  opName:${target.opName}
-  type:${target.type}
-  path:${target.path.join('.')}
+  path: ${target.path.join('.')}
+  opName: ${target.opName}
+  type: ${target.type}
 origin:
   useCase: ${origin.useCase}
-  from:${
+  from: ${
     origin.from
       ? `
-    opName:${origin.from.opName}
-    type:${origin.from.type}
-    path:${origin.from.path.join('.')}
-  `
+    if: ${origin.from.id}
+    target:
+      opName: ${origin.from.target.opName}
+      type: ${origin.from.target.type}
+      path: ${origin.from.target.path.join('.')}`
       : '~'
   }
-message:${inspect(_redact(message), { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
+message: ${inspect(_redact(message), { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
 `
   },
   infra(c: d_u__d<loggerContext, 'for', 'infra'>) {

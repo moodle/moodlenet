@@ -31,7 +31,7 @@ type __ = model.jwtTokens.JwtTokensModel
 
 type configuratorResult = {
   loggerProvider: loggerProvider
-  modelDispatcher: moo.model.dispatcher
+  modelAccessDispatcher: moo.model.dispatcher
   stopAndDrain: () => Promise<void>
 }
 
@@ -66,7 +66,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
           const loggerConfigs: winstonLoggerConfigs = { consoleLevel: 'debug', file: { level: 'debug', path: path.join(domainFsDirectories.currentDomainDir, 'logs') } }
           const { loggerProvider } = createWinstonDomainLoggerProvider({ loggerConfigs })
 
-          const myLogger = loggerProvider({ for: 'infra', name: 'configurator', domainName })
+          const myLogger = loggerProvider({ for: 'infra', name: 'configurator', more: { domainName } })
 
           const isDev = process.env.NODE_ENV === 'development'
 
@@ -148,7 +148,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
           if (master) {
             await upgradeArangoDB({
               databaseConnections: arango_db_env.database_connections,
-              log: loggerProvider({ for: 'setup', name: 'upgradeArangoDB', domainName }),
+              log: loggerProvider({ for: 'setup', name: 'upgradeArangoDB', more: { domainName } }),
             }).catch(e => {
               myLogger.error('upgradeArangoDB failed', e)
               throw e
@@ -160,7 +160,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
                   origin: { from: false, useCase: 'domainCore.setup' },
                   modelAccessDispatcher,
                 }),
-                log: loggerProvider({ for: 'setup', name: 'domainCore.setup', domainName }),
+                log: loggerProvider({ for: 'setup', name: 'domainCore.setup', more: { domainName } }),
               })
               .catch(e => {
                 myLogger.error('domainCore.setup failed', e)
@@ -176,7 +176,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
                 origin: { from: false, useCase: 'domainCore.preflight' },
                 modelAccessDispatcher,
               }),
-              log: loggerProvider({ for: 'setup', name: 'domainCore.preflight', domainName }),
+              log: loggerProvider({ for: 'setup', name: 'domainCore.preflight', more: { domainName } }),
             })
             .then(result => {
               if (isLeft(result)) {
@@ -275,16 +275,14 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
           resolveConfigurationPromise({
             loggerProvider,
-            modelDispatcher: modelAccessDispatcher,
+            modelAccessDispatcher,
             stopAndDrain,
           })
 
-          return coreGateDeps
-
           async function stopAndDrain() {
-            console.log(`draining [#${pendingAccessResultPromises.length}] pending replies ...`)
+            console.log(`draining [${domainName}]'s [#${pendingAccessResultPromises.length}] pending replies ...`)
             await Promise.allSettled([queues.stopAndDrainAll(), ...pendingAccessResultPromises])
-            console.log('drained pending replies')
+            console.log(`drained [${domainName}]'s pending replies`)
           }
           function pushPendingPromise<t>(p: Promise<t>) {
             pendingAccessResultPromises.push(p)
@@ -303,7 +301,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
     const myModelHandle = modelHandleProxy({
       origin: { from: false, useCase: 'configurator' },
-      modelAccessDispatcher: configuration.modelDispatcher,
+      modelAccessDispatcher: configuration.modelAccessDispatcher,
     })
 
     const coreId = generateUlid({ onDate: new Date() })
@@ -320,7 +318,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
       loggerProvider: configuration.loggerProvider,
       modelHandle: modelHandleProxy({
         origin: { from: false, useCase: { id: coreId, path: gateAccess.path } },
-        modelAccessDispatcher: configuration.modelDispatcher,
+        modelAccessDispatcher: configuration.modelAccessDispatcher,
       }),
     }
     return coreGateDeps

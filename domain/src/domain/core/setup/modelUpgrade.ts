@@ -1,10 +1,10 @@
-import { logger } from '../../../../types'
-import * as modelUpgrades from './from'
+import { logger } from '../../../types'
+import * as modelUpgrades from './upgrade/from'
 
 export const TARGET_V = 'v0_1'
 
 export async function upgradeModel({ log, handle }: { handle: moo.model.handle; log: logger }): Promise<string> {
-  const latestModelUpgradeData = await handle.over(handle.model.configs.latestModuleUpgrade.get).call.query()
+  const latestModelUpgradeData = await getLatestModelUpgradeData({ handle })
 
   const from_v = (latestModelUpgradeData?.current ?? 'init') as keyof typeof modelUpgrades | typeof TARGET_V
 
@@ -26,4 +26,9 @@ export async function upgradeModel({ log, handle }: { handle: moo.model.handle; 
 
   log.info(`upgraded model from [${from_v}] to [${upgradeMod.VERSION}]`)
   return upgradeModel({ handle, log })
+}
+
+export async function getLatestModelUpgradeData({ handle }: { handle: moo.model.handle }) {
+  const latestModelUpgradeData = await handle.over(handle.model.configs.latestModuleUpgrade.get).call.query()
+  return latestModelUpgradeData
 }

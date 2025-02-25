@@ -1,21 +1,23 @@
 import { isRight, left, right } from 'fp-ts/Either'
 import { logger } from '../../../types'
-import { upgradeModel } from './upgrade'
+import { getLatestModelUpgradeData, upgradeModel } from './modelUpgrade'
 
 const TARGET_V = 'v0_1'
 
 export async function setup({ handle, log }: { handle: moo.model.handle; log: logger }) {
   const preflightResult = await preflight({ handle, log })
   if (isRight(preflightResult)) {
+    log.info(`current model version: [${TARGET_V}]`)
     return
   }
+  log.info(`${preflightResult.left}: upgrading to ${TARGET_V}`)
   return upgrade({ handle, log })
 }
 
 export async function preflight({ handle }: { handle: moo.model.handle; log: logger }) {
-  const latestModelUpgradeData = await handle.over(handle.model.configs.latestModuleUpgrade.get).call.query()
+  const latestModelUpgradeData = await getLatestModelUpgradeData({ handle })
   if (latestModelUpgradeData?.current !== TARGET_V) {
-    return left(`current model version: [${latestModelUpgradeData?.current}] is not equal to [${TARGET_V}]`)
+    return left(`current model version: [${latestModelUpgradeData?.current ?? 'null'}]`)
   }
   return right(`current model version: [${TARGET_V}]`)
 }

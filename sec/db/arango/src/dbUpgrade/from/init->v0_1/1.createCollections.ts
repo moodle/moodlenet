@@ -3,7 +3,6 @@ import { dbStruct } from '../../../db-structure'
 
 export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   // logs
-  // ~~~`await dbStruct.logs.coll.dbUpgrade.create()~~~ this is created in dbUpgrade.ts
 
   // userAccount
   await dbStruct.appData.coll.user.create({})
@@ -28,16 +27,17 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   await dbStruct.appData.coll.eduIscedField.create({ cacheEnabled: true })
   await dbStruct.appData.coll.eduIscedLevel.create({ cacheEnabled: true })
   await dbStruct.appData.coll.eduResourceType.create({ cacheEnabled: true })
-
-  // modules
   await dbStruct.appData.coll.modelConfig.create({ cacheEnabled: true })
   await dbStruct.appData.coll.modelConfig.ensureIndex({
     type: 'persistent',
-    name: 'model',
-    fields: ['model'],
+    name: 'modelName',
+    fields: ['modelName'],
     unique: true,
   })
+
   // services
+  // ~~~`await dbStruct.logs.coll.dbUpgrade.create()~~~ this is created in dbUpgrade.ts
+  await dbStruct.services.coll.modelUpgrade.create({ cacheEnabled: true })
   await dbStruct.services.coll.domainAccessJob.create({ cacheEnabled: true })
   await dbStruct.services.coll.activeAuthSessionInfo.create({ cacheEnabled: true })
 }

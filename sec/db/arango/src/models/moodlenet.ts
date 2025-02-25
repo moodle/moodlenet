@@ -1,8 +1,8 @@
-import { contributorSpace, MoodlenetModel } from 'domain/src/domain/model/moodlenet.model'
+import { moodlenet } from '@moodle/domain/model'
 import { none, some } from 'fp-ts/Option'
 import { appDataUserCollectionData, dbStruct } from '../db-structure'
 
-export function userAccount({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<MoodlenetModel> {
+export function moodlenetImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<moodlenet.MoodlenetModel> {
   return {
     contributor: {
       '#': _key => ({
@@ -16,7 +16,7 @@ export function userAccount({ dbStruct }: { dbStruct: dbStruct }): moo.model.imp
   }
 }
 
-function appDataUserCollectionData_2_ContributorXspace(docData: appDataUserCollectionData): moo.model.type.xSpaceData<contributorSpace> {
+function appDataUserCollectionData_2_ContributorXspace(docData: appDataUserCollectionData): moo.model.type.xSpaceData<moodlenet.contributorSpace> {
   return {
     ...docData.moodlenet.contributor,
     profileInfo: docData.userAccount.user.profileInfo,

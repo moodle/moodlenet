@@ -32,7 +32,7 @@ export function modelHandleProxy({
         if (!(type === 'query' || type === 'sync' || type === 'async')) {
           throw new TypeError(`CoreModelHandleProxy: Invalid action ${type}`)
         }
-        console.log({ _modelRefProxy: modelRefProxy(), modelRefProxy })
+        // console.log({ _modelRefProxy: modelRefProxy(), modelRefProxy })
 
         const { path } = modelRefProxy()
         const now = new Date().toISOString()

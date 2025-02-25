@@ -113,7 +113,7 @@
   },
   "typescript.preferences.importModuleSpecifier": "project-relative",
   "workbench.colorCustomizations": {
-    "minimap.background": "#00000000",
-    "scrollbar.shadow": "#00000000"
+    "minimap.background": "#11111150",
+    "scrollbar.shadow": "#11111150"
   }
 }

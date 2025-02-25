@@ -62,7 +62,7 @@ declare global {
                 id: string
                 path: path
               }
-          from: false | target //<op>
+          from: false | { id: string; target: target } //<op>
         }
       }
 
