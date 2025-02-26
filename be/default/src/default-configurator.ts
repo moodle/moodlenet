@@ -124,6 +124,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
           const tikaResourceIngestor = get_default_resource_ingestion_secondary_factory(default_resource_ingestor_env)
 
           const models = {
+            core: domainCore.coreModelImpl,
             arangodb: arangodb.modelImpl,
             crypto,
             nodemailer,

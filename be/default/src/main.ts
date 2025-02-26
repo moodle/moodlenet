@@ -36,16 +36,6 @@ http_bind
         return coreGate(coreGateDeps)
       },
     })
-    configurator
-      .access({
-        gateAccess: {
-          form: {},
-          path: ['a', 'a', 'a', 'a'],
-          claims: { client: {}, server: { href: 'https://moodlenet.local/' as any_, authSessionToken: null, requestId: '11', ua: '313132' } },
-        },
-      })
-      .then(_ => coreGate(_))
-      .then(console.log, console.error)
 
     let exiting = false
 
@@ -54,6 +44,7 @@ http_bind
         return
       }
       exiting = true
+      // FIXME: use a Logger
       console.log(`received signal [${sig}] draining...`)
       await Promise.all([configurator.drain(), httpGate.drain()])
       console.log(`exiting...`)

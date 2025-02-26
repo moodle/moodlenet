@@ -155,7 +155,7 @@ export function coreGateProxy({ modelHandle, coreAccess, gateProvider, core, log
 
         const gate_Endpoint_Provider: moo.gate.provider.endpoint<p_endpoint> = gateStep.right.gateProvider as any_
         const core_Endpoint: moo.core.endpoint<p_endpoint> = gateStep.right.core as any_
-        const session_Endpoint: moo.session.endpoint<p_endpoint> = gateStep.right.session as any_
+        const session_Endpoint: moo.session.user.endpoint<p_endpoint> = gateStep.right.session as any_
 
         const configs = session_Endpoint._
 

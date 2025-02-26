@@ -51,7 +51,7 @@ export async function executeModel({ models, access, backModelAccessDispatcher, 
     if (isError4xx(e)) {
       return e
     }
-    myLogger.error('Model execution error', e)
+    myLogger.error('Model execution error', e, e.stack)
     return new Error4xx('Internal Server Error', { message: e.message })
   })
 

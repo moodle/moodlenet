@@ -39,5 +39,5 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   // ~~~`await dbStruct.logs.coll.dbUpgrade.create()~~~ this is created in dbUpgrade.ts
   await dbStruct.services.coll.modelUpgrade.create({ cacheEnabled: true })
   await dbStruct.services.coll.domainAccessJob.create({ cacheEnabled: true })
-  await dbStruct.services.coll.activeAuthSessionInfo.create({ cacheEnabled: true })
+  await dbStruct.services.coll.activeAuthSession.create({ cacheEnabled: true })
 }

@@ -49,7 +49,7 @@ declare global {
             getData: ['query', void, Option<xSpaceData<shape>>]
             purge: ['async', void, Option<'done'>]
             exists: ['query', void, { exists: boolean }]
-            create: ['async', { spaceData: sSpaceData<shape> }, void]
+            create: ['sync', { spaceData: sSpaceData<shape> }, void]
           }
           data: xSpaceData<shape>
         }>

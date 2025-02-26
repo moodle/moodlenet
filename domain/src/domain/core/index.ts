@@ -1,2 +1,2 @@
-export * from './impl'
+export * from './coreModelImpl'
 export * from './setup'

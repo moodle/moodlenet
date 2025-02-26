@@ -1,7 +1,7 @@
 import { job } from '@moodle/lib-job-queue-service'
 import { any_ } from '@moodle/lib-types'
 import { Database } from 'arangojs'
-import { activeAuthSessionInfo } from 'domain/src/domain/model/accessControl.model/accessControl.model'
+import { authSession } from 'domain/src/domain/model/accessControl.model/accessControl.model'
 import { dbUpgradeData } from '../dbUpgrade/types'
 import {
   appDataBloomCognitiveCollectionData,
@@ -51,7 +51,7 @@ export function getDbStruct(databaseConnections: databaseConnections) {
         dbUpgrade: services_db.collection<dbUpgradeData>('dbUpgrade'),
         modelUpgrade: services_db.collection<{ data: configs.modelUpgradeData }>('modelUpgrade'),
         domainAccessJob: services_db.collection<job<{ access: moo.model.access<any_> }>>('domainAccessJob'),
-        activeAuthSessionInfo: services_db.collection<{ data: activeAuthSessionInfo }>('activeAuthSessionInfo'),
+        activeAuthSession: services_db.collection<{ data: authSession }>('activeAuthSession'),
       },
     },
   }

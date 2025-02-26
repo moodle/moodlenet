@@ -1,7 +1,7 @@
 import { generateAlphanumId_withCheck } from '@moodle/lib-id-gen'
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
-import { userSpace } from '../../../../../model/userAccount.model/userAccount.model'
+import { userAccountUserSpace } from '../../../../../model/userAccount.model/userAccount.model'
 import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 import type * as def from './confirmMyEmail.endpoint'
 import { NONE_ASSET } from '../../../../../../lib/content/asset'
@@ -32,20 +32,15 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
       .then(({ exists }) => exists),
   )
 
-  const userSpace: moo.model.type.sSpaceData<userSpace> = {
+  const userSpace: moo.model.type.sSpaceData<userAccountUserSpace> = {
     email: { address: confirmationTokenData.email },
     password: { hash: confirmationTokenData.passwordHash },
-    profileInfo: {
-      displayName: confirmationTokenData.displayName,
-    },
-    images: {
+    profile: {
+      info: {
+        displayName: confirmationTokenData.displayName,
+      },
       avatar: NONE_ASSET,
       background: NONE_ASSET,
-    },
-    permissions: {
-      personaTypes: {
-        types: ['any', 'authenticated'],
-      },
     },
   }
 

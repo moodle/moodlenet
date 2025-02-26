@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { eduDraftsSchemaOverrides } from '../../model/userAccount.model'
+import { eduDraftsPublishSchemaOverrides } from '../../model/userAccount.model'
 import { edu } from './edu.context'
 import { messaging } from './messaging.context'
 import { moodlenet } from './moodlenet.context'
@@ -16,7 +16,7 @@ declare global {
 export interface Persona {
   // [moo.persona.meta]: { userId: string }
   [moo.configs]: {
-    validation: authenticatedPersonaValidationConfigs
+    schemas: authenticatedPersonaValidationConfigs
   }
 }
 export type authenticated = moo.persona<moo<Persona>>
@@ -29,7 +29,6 @@ export const authenticated: moo.gate.provider.persona<authenticated> = {
 }
 
 export type authenticatedPersonaValidationConfigs = {
-  schemas: {
-    eduDraftsOverrides: eduDraftsSchemaOverrides
-  }
+  //FIXME: eduDraftsPublishOverrides should go in authenticated.moodlenet.contribute[moo.configs] scope
+  eduDraftsPublishOverrides: eduDraftsPublishSchemaOverrides
 }

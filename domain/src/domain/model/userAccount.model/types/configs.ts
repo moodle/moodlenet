@@ -1,11 +1,11 @@
 import { eduCollectionSchemaConfigsOverrides, eduResourceSchemaConfigsOverrides } from '../../education.model'
 
-export type eduDraftsSchemaOverrides = {
+export type eduDraftsPublishSchemaOverrides = {
   collection: eduCollectionSchemaConfigsOverrides
   resource: eduResourceSchemaConfigsOverrides
 }
 export type userAccountConfigs = {
   schema: {
-    eduDraftsOverrides: eduDraftsSchemaOverrides
+    eduDraftsOverrides: eduDraftsPublishSchemaOverrides
   }
 }

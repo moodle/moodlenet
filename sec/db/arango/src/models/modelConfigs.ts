@@ -1,13 +1,14 @@
 import { configs } from '@moodle/domain/model'
 import { any_, unsupportedProxyHandler } from '@moodle/lib-types'
 import { dbStruct, modulesModelConfigData } from '../db-structure'
+import { aql } from 'arangojs'
 
 export function modelConfigs({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<configs.configsModel> {
   return {
     allConfigs: {
       '* call': async () => {
         const allCursor = await dbStruct.appData.db.query<modulesModelConfigData>(
-          `FOR doc IN ${dbStruct.appData.coll.modelConfig}
+          aql`FOR doc IN ${dbStruct.appData.coll.modelConfig}
           RETURN doc`,
         )
         const all = await allCursor.all()
@@ -15,6 +16,7 @@ export function modelConfigs({ dbStruct }: { dbStruct: dbStruct }): moo.model.im
         return allConfigs
       },
     },
+    //TODO: try to make a well typed util for this kind of usecase (named map od)
     module: new Proxy(
       {},
       {

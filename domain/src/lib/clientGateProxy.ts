@@ -7,7 +7,7 @@ export function clientGateProxy({
   gateProvider: baseGateProvider,
   formDispatcher,
 }: {
-  sessionInfo: moo.session.info
+  sessionInfo: moo.session.user.info
   gateProvider: moo.gate.provider<moo.Personas>
   formDispatcher: moo.gate.client.dispatcher
 }) {
@@ -17,17 +17,7 @@ export function clientGateProxy({
     path: [],
     accessError: undefined,
   }) as unknown as moo.gate.client<moo.Personas>
-  function subClientGateProxy({
-    session,
-    path,
-    gateProvider,
-    accessError,
-  }: {
-    gateProvider: any_
-    session: any_
-    path: string[]
-    accessError: Error4xx | undefined
-  }) {
+  function subClientGateProxy({ session, path, gateProvider, accessError }: { gateProvider: any_; session: any_; path: string[]; accessError: Error4xx | undefined }) {
     return new Proxy(() => null, {
       ...unsupportedProxyHandler,
       get(_target, prop) {
@@ -83,7 +73,7 @@ export function clientGateProxy({
         }
         type endpoint_type = moo.persona.endpoint<moo.persona.endpoint.def>
         const endpointProvider: moo.gate.provider.endpoint<endpoint_type> = _next_gateProvider
-        const session_endpoint: moo.session.endpoint<endpoint_type> = _next_session
+        const session_endpoint: moo.session.config.endpoint<endpoint_type> = _next_session
 
         const configs = (session_endpoint ?? {})._
         const endpointAccess: moo.gate.client.endpointAccess<endpoint_type> = context => {

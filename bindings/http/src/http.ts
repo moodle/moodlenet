@@ -1,12 +1,13 @@
-import { Error4xx, isCode4xx } from '@moodle/domain/lib'
+import { Error4xx, error4xxDetails, isCode4xx } from '@moodle/domain/lib'
 import { any_, path } from '@moodle/lib-types'
 import express from 'express'
+import { Either, isLeft } from 'fp-ts/Either'
 import { Agent, fetch } from 'undici'
 
 const PROTOCOL_CONTENT_TYPE = 'text/plain; charset=utf-8'
 
 type transportObject<pl extends payload> = pl
-type dispatcher<pl extends payload> = (transportObject: transportObject<pl>) => Promise<unknown>
+type dispatcher<pl extends payload> = (transportObject: transportObject<pl>) => Promise<Either<Error4xx, unknown>>
 export type payload = { path: path }
 
 type reqHttpTarget = {
@@ -16,6 +17,7 @@ type reqHttpTarget = {
   secure: boolean
 }
 
+// FIXME: get a Logger here
 export function getHttpBinderDispatcher<pl extends payload = payload>({
   reqHttpTarget,
   agentOpts,
@@ -35,10 +37,7 @@ export function getHttpBinderDispatcher<pl extends payload = payload>({
     const url =
       typeof reqHttpTarget === 'string'
         ? new URL([reqHttpTarget, ...path].join('/'))
-        : new URL(
-            [reqHttpTarget.basePath, ...path].join('/'),
-            `${reqHttpTarget.secure ? 'https' : 'http'}://${reqHttpTarget.host}:${reqHttpTarget.port}`,
-          )
+        : new URL([reqHttpTarget.basePath, ...path].join('/'), `${reqHttpTarget.secure ? 'https' : 'http'}://${reqHttpTarget.host}:${reqHttpTarget.port}`)
 
     const body = _serial(payload)
     const replyPromise = fetch(url, {
@@ -61,7 +60,7 @@ export function getHttpBinderDispatcher<pl extends payload = payload>({
         throw new Error(`Server error: ${httpResponse.status}\n ${jsonBodyStrUtf8}`)
       })
       .catch(e => {
-        console.error('HttpBinderDispatcher', e)
+        console.error('HttpBinderDispatcher fetchError', e)
         throw e
       })
 
@@ -78,10 +77,8 @@ type httpBinderReceiverHandle<pl extends payload> = {
   drain: () => Promise<void>
 }
 
-export async function getHttpBinderReceiver<pl extends payload>({
-  port,
-  basePath,
-}: srv_cfg): Promise<httpBinderReceiverHandle<pl>> {
+// FIXME: get a Logger here
+export async function getHttpBinderReceiver<pl extends payload>({ port, basePath }: srv_cfg): Promise<httpBinderReceiverHandle<pl>> {
   const pendingReplyPromises: Promise<unknown>[] = []
   let binderDispatcher: dispatcher<pl> = async () => {
     throw new Error4xx('Service Unavailable')
@@ -99,20 +96,21 @@ export async function getHttpBinderReceiver<pl extends payload>({
     const payload = _parse(req.body)
     const transportObject: transportObject<pl> = { ...payload, path }
 
-    const replyPromise = binderDispatcher(transportObject)
-      .catch(e => {
-        console.error('HttpBinderReceiver error: ', e)
-        throw e
-      })
-      .catch(e => {
-        if (e instanceof Error4xx) {
-          res.status(e.code)
-          return e
-        } else {
-          res.status(500)
-          return e instanceof Error ? { name: e.name, message: e.message, stack: e.stack } : { error: String(e) }
+    const replyPromise = binderDispatcher(transportObject).then(
+      either_result => {
+        if (isLeft(either_result)) {
+          res.status(either_result.left.code)
+          return { details: either_result.left.details }
         }
-      })
+        return either_result.right
+      },
+      e => {
+        console.error('HttpBinderReceiver error: ', e)
+        res.status(500)
+        const details: error4xxDetails = e instanceof Error ? { error: e.name, message: e.message, stack: e.stack } : { message: String(e) }
+        return { details }
+      },
+    )
 
     pendingReplyPromises.push(replyPromise)
     replyPromise.finally(() => pendingReplyPromises.splice(pendingReplyPromises.indexOf(replyPromise), 1))

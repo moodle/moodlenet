@@ -19,10 +19,10 @@ export function moodlenetImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.i
 function appDataUserCollectionData_2_ContributorXspace(docData: appDataUserCollectionData): moo.model.type.xSpaceData<moodlenet.contributorSpace> {
   return {
     ...docData.moodlenet.contributor,
-    profileInfo: docData.userAccount.user.profileInfo,
-    images: {
-      avatar: docData.userAccount.user.images.avatar,
-      background: docData.userAccount.user.images.background,
+    profile: {
+      info: docData.userAccount.user.profile.info,
+      avatar: docData.userAccount.user.profile.avatar,
+      background: docData.userAccount.user.profile.background,
     },
   }
 }

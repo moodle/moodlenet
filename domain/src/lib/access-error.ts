@@ -7,9 +7,9 @@ import { status4xx, status_code_4xx, status_desc_4xx, status_desc_by_code_4xx } 
 export interface error4xx {
   code: status_code_4xx
   desc: status_desc_4xx
-  details: details
+  details: error4xxDetails
 }
-type details = {
+export type error4xxDetails = {
   message: string
   zod?: ZodFormattedError<any_>
   [k: string]: any_
@@ -25,14 +25,10 @@ type details = {
 // export function errorForbidden(details?: details) {
 //   return error4xx(403, details)
 // }
-export function error4xx(code_or_desc: status4xx, _details?: string | details): error4xx {
+export function error4xx(code_or_desc: status4xx, _details?: string | error4xxDetails): error4xx {
   const code = status4xx(code_or_desc)
   const desc = status_desc_by_code_4xx[code]
-  const details: details = !_details
-    ? { message: 'no details' }
-    : typeof _details === 'string'
-      ? { message: _details }
-      : _details
+  const details: error4xxDetails = !_details ? { message: 'no details' } : typeof _details === 'string' ? { message: _details } : _details
   return { code, desc, details }
 }
 
@@ -42,12 +38,9 @@ export function isError4xx(e: unknown): e is Error4xx {
 export class Error4xx extends Error implements error4xx {
   code: status_code_4xx
   desc: status_desc_4xx
-  details: details
-  constructor(code_or_desc_or_err: error4xx | status4xx, details?: string | details) {
-    const _error4xx: error4xx =
-      typeof code_or_desc_or_err === 'object'
-        ? error4xx(code_or_desc_or_err.code, details)
-        : error4xx(code_or_desc_or_err, details)
+  details: error4xxDetails
+  constructor(code_or_desc_or_err: error4xx | status4xx, details?: string | error4xxDetails) {
+    const _error4xx: error4xx = typeof code_or_desc_or_err === 'object' ? error4xx(code_or_desc_or_err.code, details) : error4xx(code_or_desc_or_err, details)
 
     super(
       `Error4xx ${_error4xx.code}:[${_error4xx.desc}]
@@ -59,10 +52,6 @@ ${redact_stringify(_error4xx.details)}`,
   }
 }
 
-export function assert4xx<assertionObj>(
-  assertionObj: assertionObj,
-  code_or_desc: status4xx,
-  details?: details,
-): asserts assertionObj {
+export function assert4xx<assertionObj>(assertionObj: assertionObj, code_or_desc: status4xx, details?: error4xxDetails): asserts assertionObj {
   assert(assertionObj, new Error4xx(code_or_desc, details))
 }
