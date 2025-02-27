@@ -21,10 +21,10 @@ export const saveGeneralInfoAction = defaultSafeActionClient
     const { moodlenetInfoSchema, orgInfoSchema } = await getAdminGeneralSchemas()
 
     const [[moodlenetDone], [orgDone]] = await Promise.all([
-      access.primary.moodlenet.admin.updatePartialMoodlenetInfo({
+      access.gate.moodlenet.admin.updatePartialMoodlenetInfo({
         partialInfo: moodlenetInfoSchema.parse(adminGeneralForm),
       }),
-      access.primary.org.admin.updatePartialOrgInfo({
+      access.gate.org.admin.updatePartialOrgInfo({
         partialInfo: orgInfoSchema.parse(adminGeneralForm),
       }),
     ])

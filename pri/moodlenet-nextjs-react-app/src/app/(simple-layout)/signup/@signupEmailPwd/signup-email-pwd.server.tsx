@@ -19,7 +19,7 @@ export const signupAction = defaultSafeActionClient
   .action(async ({ parsedInput: signupForm }) => {
     const redirectUrl = (await srvSiteRoutes()).full('/-/api/userAccount/basic-auth/verify-signup-email-token')
 
-    const [done, resp] = await access.primary.userAccount.unauthenticated.signupRequest({
+    const [done, resp] = await access.gate.userAccount.unauthenticated.signupRequest({
       signupForm,
       redirectUrl,
     })

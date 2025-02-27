@@ -13,7 +13,7 @@ import { defaultSafeActionClient } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
 
 export async function getEduCollectionMetaSchema() {
-  const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
+  const { edu } = await fetchAllPrimarySchemas({ primary: access.gate })
   return edu.eduCollectionMetaSchema
 }
 
@@ -23,19 +23,17 @@ export async function getEduCollectionMetaSchema() {
 export async function getSaveNewEduCollectionDraft() {
   return async function saveNewEduCollectionDraft(eduCollectionMetaForm: eduCollectionMetaForm) {
     'use server'
-    const saveNewEduCollectionDraft = defaultSafeActionClient
-      .schema(getEduCollectionMetaSchema)
-      .action(async ({ parsedInput: eduCollectionMetaForm }) => {
-        const [done, result] = await access.primary.userProfile.authenticated.createEduCollectionDraft({
-          eduCollectionMetaForm,
-        })
-        if (!done) {
-          return returnValidationErrors(getEduCollectionMetaSchema, {
-            _errors: [t(`something went wrong while saving collection meta`)],
-          })
-        }
-        redirect(appRoutes(`/collection/${result.eduCollectionDraftId}`), RedirectType.replace)
+    const saveNewEduCollectionDraft = defaultSafeActionClient.schema(getEduCollectionMetaSchema).action(async ({ parsedInput: eduCollectionMetaForm }) => {
+      const [done, result] = await access.gate.userProfile.authenticated.createEduCollectionDraft({
+        eduCollectionMetaForm,
       })
+      if (!done) {
+        return returnValidationErrors(getEduCollectionMetaSchema, {
+          _errors: [t(`something went wrong while saving collection meta`)],
+        })
+      }
+      redirect(appRoutes(`/collection/${result.eduCollectionDraftId}`), RedirectType.replace)
+    })
 
     return saveNewEduCollectionDraft(eduCollectionMetaForm)
   }
@@ -44,30 +42,24 @@ export async function getSaveNewEduCollectionDraft() {
 // REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
 // REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
 
-export async function getEditEduCollectionDraftForId({
-  eduCollectionDraftId,
-}: {
-  eduCollectionDraftId: eduCollectionDraftId
-}) {
+export async function getEditEduCollectionDraftForId({ eduCollectionDraftId }: { eduCollectionDraftId: eduCollectionDraftId }) {
   return async function editEduCollectionDraft(eduCollectionMetaForm: eduCollectionMetaForm) {
     'use server'
-    const editEduCollectionDraftAction = defaultSafeActionClient
-      .schema(getEduCollectionMetaSchema)
-      .action(async ({ parsedInput: eduCollectionMetaForm }) => {
-        'use server'
-        await access.primary.userProfile.authenticated.editEduCollectionDraft({
-          eduCollectionMetaForm,
-          eduCollectionDraftId,
-        })
-
-        revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
+    const editEduCollectionDraftAction = defaultSafeActionClient.schema(getEduCollectionMetaSchema).action(async ({ parsedInput: eduCollectionMetaForm }) => {
+      'use server'
+      await access.gate.userProfile.authenticated.editEduCollectionDraft({
+        eduCollectionMetaForm,
+        eduCollectionDraftId,
       })
+
+      revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
+    })
     return editEduCollectionDraftAction(eduCollectionMetaForm)
   }
 }
 
 export async function getApplyEduCollectionDraftImageSchema() {
-  const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
+  const { edu } = await fetchAllPrimarySchemas({ primary: access.gate })
   return edu.applyImageSchema
 }
 
@@ -84,7 +76,7 @@ export async function getEduCollectionDraftImageForId_AdoptAssetSafeAction({
     const applyEduCollectionDraftImageAction = defaultSafeActionClient
       .schema(getApplyEduCollectionDraftImageSchema)
       .action(async ({ parsedInput: applyImageForm }) => {
-        await access.primary.userProfile.authenticated.applyEduCollectionDraftImage({
+        await access.gate.userProfile.authenticated.applyEduCollectionDraftImage({
           eduCollectionDraftId,
           applyImageForm,
         })

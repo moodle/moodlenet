@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  const [ok, response] = await access.primary.userAccount.signedTokenAccess.createNewUserByEmailVerificationToken({
+  const [ok, response] = await access.gate.userAccount.signedTokenAccess.createNewUserByEmailVerificationToken({
     signupEmailVerificationToken,
   })
   if (!ok) {

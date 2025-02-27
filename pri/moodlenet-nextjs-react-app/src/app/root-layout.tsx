@@ -7,7 +7,7 @@ import { defaultStyle } from '../ui/lib/color-style'
 import './root-layout.scss'
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const [ok, rootPropsResult] = await access.primary.moodlenetReactApp.props.rootLayout()
+  const [ok, rootPropsResult] = await access.gate.moodlenetReactApp.props.rootLayout()
   if (!ok) {
     if (rootPropsResult.reason === 'cleanupSession') {
       redirect(`/-/api/cleanup-session?redirectBackTo=${await getCurrentUrl()}`, RedirectType.replace)

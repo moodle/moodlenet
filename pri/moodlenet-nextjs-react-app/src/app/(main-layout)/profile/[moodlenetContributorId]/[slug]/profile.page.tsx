@@ -11,7 +11,7 @@ export default async function ProfilePage({ params }: pageProps<{ moodlenetContr
     paramRequired('moodlenetContributorId', params),
     paramRequired('slug', params),
   ])
-  const [foundContributor, webappContributorAccessData] = await access.primary.moodlenetReactApp.props.profilePage({
+  const [foundContributor, webappContributorAccessData] = await access.gate.moodlenetReactApp.props.profilePage({
     moodlenetContributorId,
   })
   if (!foundContributor) {

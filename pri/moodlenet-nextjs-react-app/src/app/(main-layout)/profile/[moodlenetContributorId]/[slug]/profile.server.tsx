@@ -9,58 +9,43 @@ import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
 import { access } from '../../../../../lib/server/session-access'
 import { updateMyProfileInfoSafeAction } from '../../../../../ui/pages/Profile/ProfilePage'
 export async function getUseProfileImageSchema() {
-  const schemas = await fetchAllPrimarySchemas({ primary: access.primary })
+  const schemas = await fetchAllPrimarySchemas({ primary: access.gate })
   return schemas.userProfile.useProfileImageSchema
 }
 
-
 // REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
 // REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
-export async function getApplyMyProfileImageSafeAction({
-  type,
-  userProfileId,
-}: {
-  userProfileId: userProfileId
-  type: profileImageType
-}): Promise<adoptValuedAssetSafeAction> {
+export async function getApplyMyProfileImageSafeAction({ type, userProfileId }: { userProfileId: userProfileId; type: profileImageType }): Promise<adoptValuedAssetSafeAction> {
   return async function adoptAssetForm_myProfileImage(adoptAssetForm) {
     'use server'
-    const applyMyProfileImageAction = defaultSafeActionClient
-      .schema(getUseProfileImageSchema)
-      .action(async ({ parsedInput: { type, adoptAssetForm } }) => {
-        await access.primary.userProfile.authenticated.useTempImageAsProfileImage({
-          useProfileImageForm: { type, adoptAssetForm },
-        })
-
-        revalidatePath(appRoutes(`/profile/${userProfileId}/`))
+    const applyMyProfileImageAction = defaultSafeActionClient.schema(getUseProfileImageSchema).action(async ({ parsedInput: { type, adoptAssetForm } }) => {
+      await access.gate.userProfile.authenticated.useTempImageAsProfileImage({
+        useProfileImageForm: { type, adoptAssetForm },
       })
+
+      revalidatePath(appRoutes(`/profile/${userProfileId}/`))
+    })
     return applyMyProfileImageAction({ type, adoptAssetForm })
   }
 }
 
 export async function getEditProfileInfoSchema() {
-  const allSchemas = await fetchAllPrimarySchemas({ primary: access.primary })
+  const allSchemas = await fetchAllPrimarySchemas({ primary: access.gate })
   return allSchemas.userProfile.editProfileInfoMetaSchema
 }
 
 // REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
 // REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
 
-export async function getUpdateMyProfileInfoMetaSafeAction({
-  userProfileId,
-}: {
-  userProfileId: userProfileId
-}): Promise<updateMyProfileInfoSafeAction> {
+export async function getUpdateMyProfileInfoMetaSafeAction({ userProfileId }: { userProfileId: userProfileId }): Promise<updateMyProfileInfoSafeAction> {
   return async function updateMyProfileInfoMeta(profileInfoMeta) {
     'use server'
-    const updateMyProfileInfoMetaAction = defaultSafeActionClient
-      .schema(getEditProfileInfoSchema)
-      .action(async ({ parsedInput: profileInfoMeta }) => {
-        await access.primary.userProfile.authenticated.editProfileInfoMeta({
-          profileInfoMeta,
-        })
-        revalidatePath(appRoutes(`/profile/${userProfileId}/`))
+    const updateMyProfileInfoMetaAction = defaultSafeActionClient.schema(getEditProfileInfoSchema).action(async ({ parsedInput: profileInfoMeta }) => {
+      await access.gate.userProfile.authenticated.editProfileInfoMeta({
+        profileInfoMeta,
       })
+      revalidatePath(appRoutes(`/profile/${userProfileId}/`))
+    })
     return updateMyProfileInfoMetaAction(profileInfoMeta)
   }
 }

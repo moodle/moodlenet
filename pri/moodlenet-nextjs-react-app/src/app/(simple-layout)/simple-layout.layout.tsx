@@ -9,7 +9,7 @@ import MinimalisticHeader from '../../ui/organisms/Header/Minimalistic/Minimalis
 import './simple-layout.style.scss'
 
 export default async function SimpleLayoutLayout(props: layoutPropsWithChildren) {
-  const { simpleLayout } = await access.primary.moodlenetReactApp.props.simpleLayout()
+  const { simpleLayout } = await access.gate.moodlenetReactApp.props.simpleLayout()
   return (
     <div className={`simple-layout`}>
       <MinimalisticHeader slots={headerSlots()} />

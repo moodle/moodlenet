@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  const [ok, response] = await access.primary.userAccount.signedTokenAccess.confirmSelfDeletionRequest({
+  const [ok, response] = await access.gate.userAccount.signedTokenAccess.confirmSelfDeletionRequest({
     selfDeletionConfirmationToken,
     reason: '',
   })

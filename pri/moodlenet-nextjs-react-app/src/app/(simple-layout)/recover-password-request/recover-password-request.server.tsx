@@ -9,7 +9,7 @@ export const recoverPasswordRequestAction = defaultSafeActionClient
   .schema(recoverPasswordRequestSchema)
   .action(async ({ parsedInput: { email } }) => {
     const redirectUrl = (await srvSiteRoutes()).full('/recover-password-request/reset')
-    access.primary.userAccount.unauthenticated.resetPasswordRequest({
+    access.gate.userAccount.unauthenticated.resetPasswordRequest({
       declaredOwnEmail: email,
       redirectUrl,
     })

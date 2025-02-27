@@ -21,7 +21,7 @@ import { logout } from '../actions/access'
 import './main-layout.style.scss'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
-  const { mainLayout, session } = await access.primary.moodlenetReactApp.props.mainLayout()
+  const { mainLayout, session } = await access.gate.moodlenetReactApp.props.mainLayout()
   const authenticated = session.type === 'authenticated'
 
   return (

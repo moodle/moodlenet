@@ -24,7 +24,7 @@ export const loginAction = defaultSafeActionClient.schema(getLoginSchema).action
 
   const redirectUrl = redirectPathAfterLogin || appRoutes('/')
 
-  const [loginSuccess, loginResponse] = await access.primary.userAccount.unauthenticated.login({
+  const [loginSuccess, loginResponse] = await access.gate.userAccount.unauthenticated.login({
     loginForm,
   })
   if (!loginSuccess) {

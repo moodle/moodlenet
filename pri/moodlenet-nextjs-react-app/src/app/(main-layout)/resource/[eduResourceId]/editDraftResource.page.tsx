@@ -12,7 +12,7 @@ import {
 export default async function EditDraftResourcePage({ params }: pageProps<{ eduResourceId: string }>) {
   const eduResourceId = await paramRequired('eduResourceId', params)
   await getAuthenticatedUserSessionOrRedirectToLogin()
-  const [found, myEduResourceDraft] = await access.primary.userProfile.authenticated.getEduResourceDraft({
+  const [found, myEduResourceDraft] = await access.gate.userProfile.authenticated.getEduResourceDraft({
     eduResourceDraftId: eduResourceId,
   })
   if (!found) {

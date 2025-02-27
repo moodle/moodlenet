@@ -13,7 +13,7 @@ import { defaultSafeActionClient } from '../../../lib/server/safe-action'
 import { access } from '../../../lib/server/session-access'
 
 export async function getCreateNewEduResourceSchema() {
-  const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
+  const { edu } = await fetchAllPrimarySchemas({ primary: access.gate })
   return edu.createNewEduResourceDraftSchema
 }
 
@@ -23,24 +23,22 @@ export async function getCreateNewEduResourceSchema() {
 export async function getCreateNewEduResourceDraft(): Promise<adoptValuedAssetSafeAction> {
   return async function adoptAssetService_newEduResourceFileDraft(newResourceAsset) {
     'use server'
-    const createNewEduResourceDraftImageAction = defaultSafeActionClient
-      .schema(getCreateNewEduResourceSchema)
-      .action(async ({ parsedInput: newEduResourceForm }) => {
-        const [done, result] = await access.primary.userProfile.authenticated.createEduResourceDraft(newEduResourceForm)
-        if (!done) {
-          return returnValidationErrors(getCreateNewEduResourceSchema, {
-            _errors: [t(`something went wrong while creating resource`)],
-          })
-        }
-        redirect(appRoutes(`/resource/${result.eduResourceDraftId}`))
-      })
+    const createNewEduResourceDraftImageAction = defaultSafeActionClient.schema(getCreateNewEduResourceSchema).action(async ({ parsedInput: newEduResourceForm }) => {
+      const [done, result] = await access.gate.userProfile.authenticated.createEduResourceDraft(newEduResourceForm)
+      if (!done) {
+        return returnValidationErrors(getCreateNewEduResourceSchema, {
+          _errors: [t(`something went wrong while creating resource`)],
+        })
+      }
+      redirect(appRoutes(`/resource/${result.eduResourceDraftId}`))
+    })
 
     return createNewEduResourceDraftImageAction({ newResourceAsset })
   }
 }
 
 export async function getEduResourceMetaSchema() {
-  const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
+  const { edu } = await fetchAllPrimarySchemas({ primary: access.gate })
   return edu.eduResourceMetaSchema
 }
 
@@ -50,44 +48,36 @@ export async function getEduResourceMetaSchema() {
 export async function getEditEduResourceDraftForId({ eduResourceDraftId }: { eduResourceDraftId: eduResourceDraftId }) {
   return async function editEduResourceDraft(eduResourceMetaForm: eduResourceMetaForm) {
     'use server'
-    const editEduResourceDraftAction = defaultSafeActionClient
-      .schema(getEduResourceMetaSchema)
-      .action(async ({ parsedInput: eduResourceMetaForm }) => {
-        await access.primary.userProfile.authenticated.editEduResourceDraft({
-          eduResourceMetaForm,
-          eduResourceDraftId,
-        })
-        revalidatePath(appRoutes(`/resource/${eduResourceDraftId}`))
+    const editEduResourceDraftAction = defaultSafeActionClient.schema(getEduResourceMetaSchema).action(async ({ parsedInput: eduResourceMetaForm }) => {
+      await access.gate.userProfile.authenticated.editEduResourceDraft({
+        eduResourceMetaForm,
+        eduResourceDraftId,
       })
+      revalidatePath(appRoutes(`/resource/${eduResourceDraftId}`))
+    })
     return editEduResourceDraftAction(eduResourceMetaForm)
   }
 }
 
 export async function getApplyEduResourceDraftImageSchema() {
-  const { edu } = await fetchAllPrimarySchemas({ primary: access.primary })
+  const { edu } = await fetchAllPrimarySchemas({ primary: access.gate })
   return edu.applyImageSchema
 }
 
 // REVIEW!!!!!!!!!   bind-arguments instead of passing them as arguments to the action
 // REVIEW!!!!!!!!!   https://next-safe-action.dev/docs/define-actions/bind-arguments
 
-export async function getEduResourceDraftImageForId_AdoptAssetSafeAction({
-  eduResourceDraftId,
-}: {
-  eduResourceDraftId: eduResourceDraftId
-}): Promise<adoptAssetSafeAction> {
+export async function getEduResourceDraftImageForId_AdoptAssetSafeAction({ eduResourceDraftId }: { eduResourceDraftId: eduResourceDraftId }): Promise<adoptAssetSafeAction> {
   // console.log(`QQ `, { eduResourceDraftId })
   return async function adoptAssetSafeAction_eduResourceDraftImage(resourceImageForm) {
     'use server'
-    const applyEduResourceDraftImageAction = defaultSafeActionClient
-      .schema(getApplyEduResourceDraftImageSchema)
-      .action(async ({ parsedInput: applyImageForm }) => {
-        await access.primary.userProfile.authenticated.applyEduResourceDraftImage({
-          eduResourceDraftId,
-          applyImageForm,
-        })
-        revalidatePath(appRoutes(`/resource/${eduResourceDraftId}`))
+    const applyEduResourceDraftImageAction = defaultSafeActionClient.schema(getApplyEduResourceDraftImageSchema).action(async ({ parsedInput: applyImageForm }) => {
+      await access.gate.userProfile.authenticated.applyEduResourceDraftImage({
+        eduResourceDraftId,
+        applyImageForm,
       })
+      revalidatePath(appRoutes(`/resource/${eduResourceDraftId}`))
+    })
     return applyEduResourceDraftImageAction({ resourceImageForm })
   }
 }

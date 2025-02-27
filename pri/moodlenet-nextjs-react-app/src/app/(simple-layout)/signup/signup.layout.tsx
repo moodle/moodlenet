@@ -4,7 +4,7 @@ import { SignupCard, SignupCardProps } from './signup.client'
 import './signup.style.scss'
 
 export default async function SignupLayout(props: layoutPropsWithChildren) {
-  const { signupPageLayout } = await access.primary.moodlenetReactApp.props.signupPage()
+  const { signupPageLayout } = await access.gate.moodlenetReactApp.props.signupPage()
 
   const signupCardProps: SignupCardProps = {
     signupMethods: signupPageLayout.methods.map(({ label, panel }) => ({

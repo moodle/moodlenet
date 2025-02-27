@@ -7,7 +7,7 @@ import { access } from '../../lib/server/session-access'
 
 export async function logout() {
   const { sessionToken } = await getAuthTokenCookie()
-  sessionToken && access.primary.userAccount.authenticated.invalidateSession()
+  sessionToken && access.gate.userAccount.authenticated.invalidateSession()
   await setAuthTokenCookie(null)
   revalidatePath('/', 'layout')
   redirect('/')

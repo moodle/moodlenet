@@ -7,8 +7,7 @@ import { LandingProfileList } from './LandingProfileList/LandingProfileList'
 import { Leaderboard, leaderRowProps } from './Leaderboard/Leaderboard'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
-  const { landingPageData, landingPageLayout, authenticatedUser, moodlenetSiteInfo } =
-    await access.primary.moodlenetReactApp.props.landingLayout()
+  const { landingPageData, landingPageLayout, authenticatedUser, moodlenetSiteInfo } = await access.gate.moodlenetReactApp.props.landingLayout()
 
   const { head, content } = slotsMap(props, landingPageLayout.slots)
 

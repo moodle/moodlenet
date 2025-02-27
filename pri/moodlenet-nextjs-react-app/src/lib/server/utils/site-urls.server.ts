@@ -5,7 +5,7 @@ import { createRoutes } from '../../common/appRoutes'
 import { access } from '../session-access'
 
 export async function srvSiteRoutes() {
-  const { moodlenetWebapp } = await access.primary.env.application.deployments()
+  const { moodlenetWebapp } = await access.gate.env.application.deployments()
   assert(moodlenetWebapp, new Error('No deployment info for moodlenet !'))
   const baseUrl = getDeploymentInfoUrl(moodlenetWebapp)
 

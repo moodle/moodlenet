@@ -7,7 +7,7 @@ import { Fallback } from '../../../../ui/pages/Fallback/Fallback'
 
 export default async function UserProfilePage({ params }: pageProps<{ userAccountId: string }>) {
   const userAccountId = await paramRequired('userAccountId', params)
-  const [found, result] = await access.primary.moodlenet.admin.contributor({
+  const [found, result] = await access.gate.moodlenet.admin.contributor({
     by: 'userAccountId',
     userAccountId,
   })

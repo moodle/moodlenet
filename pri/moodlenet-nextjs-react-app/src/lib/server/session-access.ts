@@ -1,35 +1,39 @@
 import { http_bind } from '@moodle/bindings-http'
-import { MoodleDomain, moodlePrimary, primarySession } from '@moodle/domain'
-import { createMoodleDomainProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { any_, map } from '@moodle/lib-types'
-import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/user-account/lib'
+import { any_, map, url_string_schema } from '@moodle/lib-types'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
-import { redirect, RedirectType } from 'next/navigation'
-import { userAgent } from 'next/server'
+// import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/user-account/lib'
+import { clientGateReverseProxy } from '@moodle/domain/lib'
 import { hasher } from 'node-object-hash'
 import assert from 'node:assert'
-import { appRoute, appRoutes } from '../common/appRoutes'
+import { appRoute } from '../common/appRoutes'
 import { getAuthTokenCookie } from './auth'
 const MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL
 
 const reqHttpTarget = MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
+const gateDispatcher = http_bind.getHttpBinderDispatcher<moo.gate.access<any_>>({ reqHttpTarget })
 
-export const access = {
-  get primary(): moodlePrimary {
-    return _domainAccess().primary
+const session = {
+  get tools(): sessionTools {
+    return _gateDispatcher()
   },
 }
+export default session
 
-const request_session_async_storage = new AsyncLocalStorage<{ moodle_domain: MoodleDomain; cache: map<any_> }>()
-function _domainAccess(): MoodleDomain {
-  const _existing_current_moodle_domain_store = request_session_async_storage.getStore()
-  if (_existing_current_moodle_domain_store) {
-    return _existing_current_moodle_domain_store.moodle_domain
+type sessionTools = {
+  gate: moo.gate.provider<moo.Personas>
+  formDispatcher: moo.gate.client.dispatcher
+  cache: map<any_>
+}
+
+const request_session_async_storage = new AsyncLocalStorage<sessionTools>()
+function _gateDispatcher() {
+  const _existing_current_session_tools = request_session_async_storage.getStore()
+  if (_existing_current_session_tools) {
+    return _existing_current_session_tools
   }
-  const binderDispatcher = http_bind.getHttpBinderDispatcher({ reqHttpTarget })
-  const primarySessionPromise = getPrimarySession()
+  const primarySessionPromise = getClaims()
   const cache = new Map<string, any_>()
   const { hash } = hasher({
     coerce: false,
@@ -42,48 +46,44 @@ function _domainAccess(): MoodleDomain {
     // but atm we have query|write channel discrimination in secondary only
     sort: true,
   })
-  const moodle_domain = createMoodleDomainProxy({
-    async ctrl({ domainMsg }) {
-      const domainMsgHashingObject = { domainMsg /* , primarySessionId: primarySession.id */ }
-      const domainMsgHash = hash(domainMsgHashingObject)
-      // console.log(cache.has(domainMsgHash) ? `${domainMsgHash}**cache**  ` : '--fetch--  ', domainMsg.endpoint.join('.'))
-      if (!cache.has(domainMsgHash)) {
-        cache.set(
-          domainMsgHash,
-          primarySessionPromise.then(
-            primarySession =>
-              binderDispatcher({
-                domainAccess: {
-                  ...domainMsg,
-                  domain: primarySession.domain,
-                  primarySession,
-                },
-              }),
-            // .catch(error => {
-            //   if (isErrorXxx(error)) {
-            //     if (error.errorXxx.desc === 'Forbidden') {
-            //       forbidden()
-            //     }
-            //     if (error.errorXxx.desc === 'Unauthorized') {
-            //       unauthorized()
-            //     }
-            //     if (error.errorXxx.desc === 'Not Found') {
-            //       notFound()
-            //     }
-            //   }
-            //   throw error
-            // }),
-          ),
-        )
-      }
+  const formDispatcher: moo.gate.client.dispatcher = access => {
+    const gateAccessHashingObject = { access }
+    const gateAccessHash = hash(gateAccessHashingObject)
+    // console.log(cache.has(domainMsgHash) ? `${domainMsgHash}**cache**  ` : '--fetch--  ', domainMsg.endpoint.join('.'))
+    if (!cache.has(gateAccessHash)) {
+      cache.set(
+        gateAccessHash,
+        primarySessionPromise.then(claims =>
+          gateDispatcher({
+            ...access,
+            claims,
+          }),
+        ),
+        // .catch(error => {
+        //   if (isErrorXxx(error)) {
+        //     if (error.errorXxx.desc === 'Forbidden') {
+        //       forbidden()
+        //     }
+        //     if (error.errorXxx.desc === 'Unauthorized') {
+        //       unauthorized()
+        //     }
+        //     if (error.errorXxx.desc === 'Not Found') {
+        //       notFound()
+        //     }
+        //   }
+        //   throw error
+        // }),
+      )
+    }
 
-      return cache.get(domainMsgHash)
-    },
-  })
+    return cache.get(gateAccessHash)
+  }
+  const gate = clientGateReverseProxy({ formDispatcher })
 
-  request_session_async_storage.enterWith({ moodle_domain, cache })
+  const sessionTools: sessionTools = { gate, formDispatcher, cache }
+  request_session_async_storage.enterWith(sessionTools)
 
-  return moodle_domain
+  return sessionTools
   // FIXME:
   // The following block should refresh the session token before it expires
   // we need to fast-check-no-validation for expiration (jose.decodeJwt() ),
@@ -113,29 +113,30 @@ export async function getCurrentUrl() {
   const currentUrl = (await headers()).get('x-pathname') as appRoute
   return currentUrl
 }
-export async function getAuthenticatedUserSessionOrRedirectToLogin() {
-  const { userSession: maybe_authenticatedUserSession } = await access.primary.userAccount.anyUser.getUserSession()
-  if (isAuthenticatedUserSession(maybe_authenticatedUserSession)) {
-    return maybe_authenticatedUserSession
-  }
 
-  const loginUrl = appRoutes('/login', {
-    q: {
-      redirect: await getCurrentUrl(),
-    },
-  })
-  redirect(loginUrl, RedirectType.replace)
-}
+// export async function getAuthenticatedUserSessionOrRedirectToLogin() {
+//   const { userSession: maybe_authenticatedUserSession } = await access.gate.userAccount.anyUser.getUserSession()
+//   if (isAuthenticatedUserSession(maybe_authenticatedUserSession)) {
+//     return maybe_authenticatedUserSession
+//   }
 
-export async function getAdminUserSessionOrRedirect(path = '/') {
-  const authenticatedUserSession = await getAuthenticatedUserSessionOrRedirectToLogin()
-  if (!isAdminUserSession(authenticatedUserSession)) {
-    redirect(path)
-  }
-  return authenticatedUserSession
-}
+//   const loginUrl = appRoutes('/login', {
+//     q: {
+//       redirect: await getCurrentUrl(),
+//     },
+//   })
+//   redirect(loginUrl, RedirectType.replace)
+// }
 
-async function getPrimarySession() {
+// export async function getAdminUserSessionOrRedirect(path = '/') {
+//   const authenticatedUserSession = await getAuthenticatedUserSessionOrRedirectToLogin()
+//   if (!isAdminUserSession(authenticatedUserSession)) {
+//     redirect(path)
+//   }
+//   return authenticatedUserSession
+// }
+
+async function getClaims() {
   //FIXME: why is it here inside ?
   i18next.init({
     // ns: ['common', 'moduleA'],
@@ -144,48 +145,31 @@ async function getPrimarySession() {
   })
 
   const _headers = await headers()
+
   const xHost = _headers.get('x-host')
-  // const xPort = _headers.get('x-port')
-  const xProto = _headers.get('x-proto') ?? 'http'
-  const xUrl = _headers.get('x-url') ?? undefined
-  const xMode = _headers.get('x-mode') ?? undefined
-  const ua = userAgent({ headers: _headers })
   assert(xHost, 'x-host not found in headers')
-  const primarySession: primarySession = {
-    id: generateUlid({ onDate: new Date().toISOString() }),
-    token: (await getAuthTokenCookie()).sessionToken,
-    app: {
-      name: 'moodlenetWebapp',
-      version: '0.1',
-    },
-    protocol: {
-      type: 'http',
-      secure: xProto === 'https',
-      mode: xMode,
-      url: xUrl,
-      ua: {
-        name: ua.ua,
-        isBot: ua.isBot,
-      },
-    },
-    domain: xHost,
-    platforms: {
-      server: {
-        type: 'nodeJs',
-        version: process.version,
-        //env: process.env,
-      },
-      client: {
-        // this stuff goes in session token ?
-        type: 'browser',
-        version: ua.browser.version,
-        name: ua.browser.name,
-        cpu: ua.cpu,
-        device: ua.device,
-        engine: ua.engine,
-        os: ua.os,
-      },
+
+  // const xPort = _headers.get('x-port')
+  // const xProto = _headers.get('x-proto') ?? 'http'
+  // const xUrl = _headers.get('x-url') ?? undefined
+  // const xMode = _headers.get('x-mode') ?? undefined
+  const ua = _headers.get('x-user-agent')
+
+  const { data: href } = url_string_schema.safeParse(_headers.get('x-href'))
+  assert(href, 'x-href not found in headers')
+  const requestId = generateUlid({ onDate: new Date().toISOString() })
+  const authSessionToken = (await getAuthTokenCookie()).sessionToken
+  const meta = {
+    app: 'moodlenet NextJs Webapp@0.1',
+  }
+  const claims: moo.gate.access<any_>['claims'] = {
+    server: {
+      authSessionToken,
+      href,
+      requestId,
+      ua,
+      meta,
     },
   }
-  return primarySession
+  return claims
 }

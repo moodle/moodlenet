@@ -264,7 +264,10 @@ export function middlewareHeaders(request: express.Request) {
   const urlPathname = request.path
   const urlProto = (headers.get('X-Forwarded-Proto') || request.protocol).toLowerCase()
   const xUrl = request.url.toString()
+  const userAgent = headers.get('user-agent')
+const requestURL =   new URL(request.url, `${urlProto}://${urlHost}`);
 
+  request.url.
   // FIXME: find how to get 'mode' in expressjs
   const xMode = null // request.mode
 
@@ -275,12 +278,15 @@ export function middlewareHeaders(request: express.Request) {
   //! NOTE:  consider this https://www.npmjs.com/package/next-extra ! (or maybe others)
   // or simply implement some utility functins for accessing these  custom data in server-components|actions
 
-  xMode ? headers.set('x-mode', xMode) : headers.delete('x-mode')
-  headers.set('x-url', xUrl)
+  // xMode ? headers.set('x-mode', xMode) : headers.delete('x-mode')
+  // headers.set('x-url', xUrl)
   headers.set('x-host', urlHost)
-  headers.set('x-proto', urlProto)
-  headers.set('x-port', urlPort)
+  // headers.set('x-proto', urlProto)
+  // headers.set('x-port', urlPort)
   headers.set('x-pathname', urlPathname)
-  headers.set('x-search', xSearch)
+  // headers.set('x-search', xSearch)
+  headers.set('x-href', requestURL.href)
+  userAgent && headers.set('x-user-agent', userAgent)
+
   return { headers }
 }

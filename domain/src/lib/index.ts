@@ -1,6 +1,7 @@
 export * from './access-error'
 export * from './access-error-status'
 export * from './clientGateProxy'
+export * from './clientGateReverseProxy'
 export * from './constants'
 export * from './content'
 export * from './coreGateProxy'
