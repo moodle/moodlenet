@@ -22,7 +22,7 @@ export function modelConfigs({ dbStruct }: { dbStruct: dbStruct }): moo.model.im
       {
         ...unsupportedProxyHandler,
         get: <model_name extends Exclude<moo.modelName, 'configs'>>(_target: any_, modelName: model_name) => {
-          const { _: impl }: moo.model.impl<{ _: moo.model.type.staticData<moo.Models[Exclude<moo.modelName, 'configs'>][moo.configs]> }> = {
+          const { _: impl }: moo.model.impl<{ _: moo.model.type.atom<'static', moo.Models[Exclude<moo.modelName, 'configs'>][moo.configs]> }> = {
             _: {
               '* replace': async ({ newData }) => {
                 const modConfigData: modulesModelConfigData = {

@@ -4,9 +4,10 @@ import type { fileMeta } from '@moodle/lib-domain-fs'
 import type { any_, map, serializable_object } from '@moodle/lib-types'
 import type { Either } from 'fp-ts/Either'
 import type { Option } from 'fp-ts/Option'
-import type { CONDITIONS_NOT_MET, NOT_FOUND } from '../lib/constants'
+import type { NOT_FOUND } from '../lib/constants'
 
 declare const traits_sym: unique symbol
+type traitsFlags = 'static' | 'view'
 
 declare global {
   namespace moo {
@@ -15,9 +16,8 @@ declare global {
 
       namespace type {
         type traits_prop = typeof traits_sym
-
         type ops = map<opDef>
-        type traitsDef = { shape: unknown; ops: ops; data: serializable_object; derived?: boolean }
+        type traitsDef = { shape: unknown; ops: ops; data: serializable_object; flags: traitsFlags }
 
         type opType = 'sync' | 'async' | 'query'
         type opDef = [type: opType, message: any_, outcome: any_]
@@ -26,6 +26,7 @@ declare global {
           idSpaceModel<space_shape, space_ops> extends infer spaceModel
             ? type<{
                 ops: ops_ & {
+                  emptyModel: ['query', void, sSpaceData<space_shape>]
                   some: [
                     'query',
                     {
@@ -39,7 +40,9 @@ declare global {
                   bulkCreate: ['sync', { spaces: { id: string; data: sSpaceData<space_shape> }[] }, void]
                 }
                 shape: map<spaceModel>
+                // data: map<null | xSpaceData<space_shape>>
                 data: map<xSpaceData<space_shape>>
+                flags: never
               }>
             : unknown
 
@@ -47,21 +50,14 @@ declare global {
           shape: shape
           ops: ops_ & {
             getData: ['query', void, Option<xSpaceData<shape>>]
-            purge: ['async', void, Option<'done'>]
+            purge: ['sync', void, Option<'done'>]
             exists: ['query', void, { exists: boolean }]
             create: ['sync', { spaceData: sSpaceData<shape> }, void]
           }
           data: xSpaceData<shape>
+          flags: never
         }>
 
-        type derived<data extends serializable_object, ops_ extends ops = ops> = type<{
-          shape: unknown
-          ops: ops_ & {
-            get: ['query', void, Either<typeof NOT_FOUND, data>]
-          }
-          data: data
-          derived: true
-        }>
         // type staticAggregate<data extends serializable_object, ops_ extends ops = ops> = type<{
         //   shape: unknown
         //   ops: ops_ & { get: ['query', void, data] }
@@ -71,44 +67,37 @@ declare global {
         type xSpaceData<shape> = spaceData<shape, false>
         type sSpaceData<shape> = spaceData<shape, true>
         type spaceData<shape, strict extends boolean = true> = {
-          [k in keyof shape as strict extends false ? k : shape[k] extends type<infer traits> ? (traits['derived'] extends true ? never : k) : k]: shape[k] extends type<
+          [k in keyof shape as strict extends false ? k : shape[k] extends type<infer traits> ? ('view' extends traits['flags'] ? never : k) : k]: shape[k] extends type<
             infer traits
           >
             ? traits['data']
             : spaceData<shape[k], strict>
         }
 
-        type entityData<data extends serializable_object, opts extends { conditions?: map } = never, ops_ extends ops = ops> = type<{
+        type atom<flags extends traitsFlags, data extends serializable_object, ops_ extends ops = ops, opts = never> = type<{
           data: data
           ops: ops_ & {
-            get: ['query', void | undefined | { conditions?: opts['conditions'] }, Either<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET, data>]
-            replace: ['async', { newData: data; conditions?: opts['conditions'] }, Either<typeof NOT_FOUND | typeof CONDITIONS_NOT_MET, 'done'>]
-          }
+            get: ['query', void, 'static' extends flags ? data : Option<data>]
+          } & ('view' extends flags
+              ? unknown
+              : {
+                  put: ['sync', { newData: data; opts?: opts }, 'static' extends flags ? 'done' : Option<'done'>]
+                })
           shape: unknown
+          flags: flags
         }>
 
-        type staticData<data extends serializable_object, ops_ extends ops = ops> = type<{
-          data: data
-          ops: ops_ & { get: ['query', void, data]; replace: ['sync', { newData: data }, void] }
+        type asset<flags extends traitsFlags | 'optional'> = type<{
           shape: unknown
-        }>
-
-        type asset<opts extends { optional: boolean }> = type<{
-          shape: { file: fsFile<{ optional: true }> }
-          data: opts['optional'] extends true ? content.asset.maybe : content.asset
+          data: 'optional' extends flags ? content.asset.optional : content.asset
           ops: {
-            fromTempFile: ['async', { tempId: string }, Either<typeof NOT_FOUND, { fileMeta: fileMeta }>]
-            fromUrl: ['async', { externalAsset: content.asset.external }, Either<typeof NOT_FOUND, void>]
-          } & (opts['optional'] extends false ? unknown : { remove: ['async', void, void] })
+            fromTempFile: ['async', { tempId: string }, Either<typeof NOT_FOUND, 'static' extends flags ? { fileMeta: fileMeta } : Option<{ fileMeta: fileMeta }>>]
+            fromUrl: ['async', { externalAsset: content.asset.external }, 'static' extends flags ? void : Option<void>]
+          } & ('optional' extends flags ? { remove: ['async', void, 'static' extends flags ? void : Option<void>] } : unknown)
+          flags: Exclude<flags, 'optional'>
         }>
 
-        type fsFile<opts extends { optional: boolean; image?: boolean }> = type<{
-          shape: unknown
-          data: { fileMeta: fileMeta | opts['optional'] extends false ? never : null }
-          ops: opts['optional'] extends false ? never : { remove: ['async', void, void] }
-        }>
-
-        type endpoint<modelOpDef extends opDef> = type<{ ops: { call: modelOpDef }; shape: unknown; data: never }>
+        type endpoint<modelOpDef extends opDef> = type<{ ops: { call: modelOpDef }; shape: unknown; data: never; flags: never }>
       }
     }
   }

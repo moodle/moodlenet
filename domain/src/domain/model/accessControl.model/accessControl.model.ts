@@ -1,7 +1,6 @@
 import { signed_token } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { NOT_FOUND } from '../../../lib'
-import { userAccountUserSpace } from '../userAccount.model'
 import { accessControlConfigs, authSession, userRole } from './types'
 export * from './types'
 
@@ -19,9 +18,9 @@ type xTypes = moo.model.xTypes<{
   }
 }>
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-export type accessControl = moo.model<AccessControlModel, xTypes>
+export type accessControl = moo.model<accessControlModel, xTypes>
 
-export type AccessControlModel = {
+export type accessControlModel = {
   [moo.configs]: accessControlConfigs
   // storeAuthSession: moo.model.type.endpoint<['sync', { authSessionId: string; activeAuthSession: authSession }, void]>
   // getAuthSession: moo.model.type.endpoint<['query', { authSessionId: string }, Option<{ activeAuthSession: authSession }>]>
@@ -34,16 +33,9 @@ export type AccessControlModel = {
   >
 
   getMyUserSessionInfo: moo.model.type.endpoint<['query', { authSessionToken: signed_token | null | undefined }, { info: moo.session.user.info }]>
-  newUser: {
-    emptyContributorSpace: moo.model.type.endpoint<
-      ['query', { userAccountUserSpace: moo.model.type.sSpaceData<userAccountUserSpace> }, { accessControlUserSpace: moo.model.type.sSpaceData<accessControlUserSpace> }]
-    >
-  }
 }
 
 export type accessControlUserSpace = {
-  permissions: moo.model.type.entityData<{ role: userRole }>
-  activeSession: moo.model.type.idSpaceMap<{
-    authSession: moo.model.type.entityData<authSession>
-  }>
+  permissions: moo.model.type.atom<never, { role: userRole }>
+  session: moo.model.type.idSpaceMap<{ auth: moo.model.type.atom<never, authSession> }>
 }

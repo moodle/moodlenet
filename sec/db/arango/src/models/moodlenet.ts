@@ -1,28 +1,30 @@
 import { moodlenet } from '@moodle/domain/model'
-import { none, some } from 'fp-ts/Option'
-import { appDataUserCollectionData, dbStruct } from '../db-structure'
+import { fromNullable } from 'fp-ts/Option'
+import { appDataUserAccountCollectionData, dbStruct } from '../db-structure'
 
 export function moodlenetImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<moodlenet.MoodlenetModel> {
   return {
     contributor: {
       '#': _key => ({
         '* getData': async () => {
-          const doc = await dbStruct.appData.coll.user.document({ _key }, { graceful: true })
-          if (!doc) return none
-          return some(appDataUserCollectionData_2_ContributorXspace(doc))
+          const doc = await dbStruct.appData.coll.userAccount.document({ _key }, { graceful: true })
+          return fromNullable(doc && appDataUserCollectionData_2_MoodlenetUserSpace(doc))
         },
       }),
     },
   }
 }
 
-function appDataUserCollectionData_2_ContributorXspace(docData: appDataUserCollectionData): moo.model.type.xSpaceData<moodlenet.contributorSpace> {
+function appDataUserCollectionData_2_MoodlenetUserSpace(docData: appDataUserAccountCollectionData): moo.model.type.xSpaceData<moodlenet.moodlenetUserSpace> {
   return {
-    ...docData.moodlenet.contributor,
-    profile: {
-      info: docData.userAccount.user.profile.info,
-      avatar: docData.userAccount.user.profile.avatar,
-      background: docData.userAccount.user.profile.background,
+    ...docData.moodlenet,
+    contributor: {
+      ...docData.moodlenet.contributor,
+      profile: {
+        info: docData.userAccount.profile.info,
+        avatar: docData.userAccount.profile.avatar,
+        background: docData.userAccount.profile.background,
+      },
     },
   }
 }

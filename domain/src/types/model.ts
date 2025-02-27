@@ -86,7 +86,7 @@ declare global {
         type exeArgs<op extends type.opDef> = [message: op[1], handle: handle, ctx: ctx<op>]
         type typeModel<modelNode extends type<type.traitsDef>> = handlers<modelNode> &
           (modelNode extends type.idSpaceMap<infer space_shape, any_, infer space_ops>
-            ? { '#': (id: string) => typeModel<type.idSpaceModel<space_shape, space_ops>> }
+            ? { '#'?: (id: string) => typeModel<type.idSpaceModel<space_shape, space_ops>> }
             : impl<Omit<modelNode, type.traits_prop>>)
 
         type exe<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<op[2]>

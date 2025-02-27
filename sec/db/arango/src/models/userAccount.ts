@@ -1,31 +1,34 @@
 import { userAccount } from '@moodle/domain/model'
-import { none, some } from 'fp-ts/Option'
-import { appDataUserCollectionData, dbStruct } from '../db-structure'
+import { fromNullable } from 'fp-ts/Option'
+import { dbStruct } from '../db-structure'
 
 export function userAccountImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<userAccount.userAccountModel> {
   return {
     user: {
       '#': _key => ({
-        '* create': async ({ spaceData: userAccountUserSpace }, { over, model }) => {
-          const { contributorSpace } = await over(model.moodlenet.newUser.emptyContributorSpace).call.query({ userAccountUserSpace })
-          const { accessControlUserSpace } = await over(model.accessControl.newUser.emptyContributorSpace).call.query({ userAccountUserSpace })
-          await dbStruct.appData.coll.user.save({
+        '* create': async ({ spaceData: userAccount }, { over, model }) => {
+          const [moodlenet, accessControl, moderation, home] = await Promise.all([
+            over(model.moodlenet.contributor).emptyModel.query(),
+            over(model.accessControl.user).emptyModel.query(),
+            over(model.moderation.userModeration).emptyModel.query(),
+            over(model.userHome.userHome).emptyModel.query(),
+          ])
+
+          await dbStruct.appData.coll.userAccount.save({
             _key,
-            userAccount: { user: userAccountUserSpace },
-            moodlenet: { contributor: contributorSpace },
-            accessControl: { data: accessControlUserSpace },
+            userAccount,
+            moodlenet,
+            accessControl,
+            moderation,
+            home,
           })
         },
         '* getData': async () => {
-          const doc = await dbStruct.appData.coll.user.document({ _key }, { graceful: true })
-          if (!doc) return none
-          return some(appDataUserCollectionData_2_UserXspace(doc))
+          const doc = await dbStruct.appData.coll.userAccount.document({ _key }, { graceful: true })
+          return fromNullable(doc?.userAccount)
         },
       }),
     },
   }
 }
 
-function appDataUserCollectionData_2_UserXspace(docData: appDataUserCollectionData): moo.model.type.xSpaceData<userAccount.userAccountUserSpace> {
-  return docData.userAccount.user
-}

@@ -9,7 +9,7 @@ declare global {
     namespace content {
       type asset = d_u<
         {
-          stored: fileMeta
+          stored: { fileMeta: fileMeta }
           external: asset.external
         },
         'type'
@@ -17,7 +17,7 @@ declare global {
       namespace asset {
         type external = { url: url_string; credits?: moo.content.categories.credits }
 
-        type maybe = asset | none
+        type optional = asset | none
         type none = d_u<{ none: unknown }, 'type'>
 
         type adoptForm = d_u<
@@ -31,12 +31,12 @@ declare global {
           'type'
         >
 
-        type adoptResult<typ extends maybe['type'] = maybe['type']> = Either<
+        type adoptResult<typ extends optional['type'] = optional['type']> = Either<
           Error4xx,
           d_u<
             {
               assetSubmitted: unknown
-              done: { asset: d_u__d<maybe, 'type', typ> }
+              done: { asset: d_u__d<optional, 'type', typ> }
             },
             'status'
           >

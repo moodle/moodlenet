@@ -24,10 +24,10 @@ export type contentModel = {
 }
 
 export type languageSpace = {
-  data: moo.model.type.entityData<language>
-  meta: moo.model.type.entityData<{ enabled: boolean }>
+  data: moo.model.type.atom<never, language>
+  meta: moo.model.type.atom<never, { enabled: boolean }>
 }
 export type licenseSpace = {
-  data: moo.model.type.entityData<license>
-  meta: moo.model.type.entityData<{ enabled: boolean }>
+  data: moo.model.type.atom<never, license>
+  meta: moo.model.type.atom<never, { enabled: boolean }>
 }

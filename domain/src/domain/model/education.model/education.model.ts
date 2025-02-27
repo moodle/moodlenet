@@ -25,18 +25,18 @@ export type educationModel = {
 }
 
 export type iscedFieldSpace = {
-  data: moo.model.type.entityData<iscedField>
-  meta: moo.model.type.entityData<{ enabled: boolean }>
+  data: moo.model.type.atom<never, iscedField>
+  meta: moo.model.type.atom<never, { enabled: boolean }>
 }
 export type iscedLevelSpace = {
-  data: moo.model.type.entityData<iscedLevel>
-  meta: moo.model.type.entityData<{ enabled: boolean }>
+  data: moo.model.type.atom<never, iscedLevel>
+  meta: moo.model.type.atom<never, { enabled: boolean }>
 }
 export type resourceTypeSpace = {
-  data: moo.model.type.entityData<resourceType>
-  meta: moo.model.type.entityData<{ enabled: boolean }>
+  data: moo.model.type.atom<never, resourceType>
+  meta: moo.model.type.atom<never, { enabled: boolean }>
 }
 export type bloomCognitiveSpace = {
-  data: moo.model.type.entityData<bloomCognitive>
-  meta: moo.model.type.entityData<{ enabled: boolean }>
+  data: moo.model.type.atom<never, bloomCognitive>
+  meta: moo.model.type.atom<never, { enabled: boolean }>
 }

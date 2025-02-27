@@ -5,13 +5,13 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   // logs
 
   // userAccount
-  await dbStruct.appData.coll.user.create({})
-  await dbStruct.appData.coll.user.ensureIndex({
+  await dbStruct.appData.coll.userAccount.create({})
+  await dbStruct.appData.coll.userAccount.ensureIndex({
     type: 'persistent',
     name: 'moodlenet.contributor.points',
     fields: ['moodlenet.contributor.points'],
   })
-  await dbStruct.appData.coll.user.ensureIndex({
+  await dbStruct.appData.coll.userAccount.ensureIndex({
     type: 'persistent',
     name: 'userAccount.user.email.address',
     fields: ['userAccount.user.email.address'],

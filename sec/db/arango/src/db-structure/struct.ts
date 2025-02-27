@@ -10,7 +10,7 @@ import {
   appDataLanguageCollectionData,
   appDataLicenseCollectionData,
   appDataResourceTypeCollectionData,
-  appDataUserCollectionData,
+  appDataUserAccountCollectionData,
   databaseConnections,
 } from './types'
 import { modulesModelConfigData } from './types/collections'
@@ -41,7 +41,7 @@ export function getDbStruct(databaseConnections: databaseConnections) {
         eduResourceType: appData_db.collection<appDataResourceTypeCollectionData>('eduResourceType'),
         contentLanguage: appData_db.collection<appDataLanguageCollectionData>('contentLanguage'),
         contentLicense: appData_db.collection<appDataLicenseCollectionData>('contentLicense'),
-        user: appData_db.collection<appDataUserCollectionData>('user'),
+        userAccount: appData_db.collection<appDataUserAccountCollectionData>('userAccount'),
         modelConfig: appData_db.collection<modulesModelConfigData>('modelConfig'),
       },
     },

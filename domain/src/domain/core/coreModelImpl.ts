@@ -1,6 +1,7 @@
 import { generateUlid } from '@moodle/lib-id-gen'
 import { int } from '@moodle/lib-types'
 import { isLeft, left, right } from 'fp-ts/Either'
+import { isNone } from 'fp-ts/Option'
 import { isString } from 'lodash'
 import { NOT_FOUND } from '../../lib'
 import { authSession } from '../model/accessControl.model'
@@ -21,24 +22,30 @@ export const domainCoreImpl: domainCore = {
 
 export const coreModelImpl: moo.model.impl = {
   moodlenet: {
-    newUser: {
-      emptyContributorSpace: {
-        '* call': async (/* { userAccountUserSpace }, _ */) => {
-          return {
-            contributorSpace: { points: int(0) },
-          }
-        },
+    contributor: {
+      '* emptyModel': async (/* { userAccountUserSpace }, _ */) => {
+        return {
+          contributor: { points: int(0) },
+        }
+      },
+    },
+  },
+  moderation: {
+    userModeration: {
+      '* emptyModel': async () => {
+        return {
+          reports: { received: { moodlenet: {} } },
+        }
       },
     },
   },
   accessControl: {
-    newUser: {
-      emptyContributorSpace: {
-        '* call': async (/* { userAccountUserSpace }, _ */) => {
-          return {
-            accessControlUserSpace: { activeSession: {}, permissions: { role: 'viewer' } },
-          }
-        },
+    user: {
+      '* emptyModel': async (/* { userAccountUserSpace }, _ */) => {
+        return {
+          session: {},
+          permissions: { role: 'viewer' },
+        }
       },
     },
     getMyUserSessionInfo: {
@@ -51,11 +58,11 @@ export const coreModelImpl: moo.model.impl = {
           return getAnonSessionInfo(_)
         }
         const { authSessionId, userId } = e_authSessionData.right.data
-        const e_authSession = await _.over(_.model.accessControl.user[userId]?.activeSession[authSessionId]?.authSession).get.query()
-        if (isLeft(e_authSession)) {
+        const o_authSession = await _.over(_.model.accessControl.user[userId]?.session[authSessionId]?.auth).get.query()
+        if (isNone(o_authSession)) {
           return getAnonSessionInfo(_)
         }
-        const authSession = e_authSession.right
+        const authSession = o_authSession.value
         return {
           info: {
             session: authSession.session,
@@ -80,11 +87,11 @@ export const coreModelImpl: moo.model.impl = {
     //     }
     getUserSessionFor: {
       '* call': async ({ userId }, { model, over }) => {
-        const e_permissions = await over(model.accessControl.user[userId]?.permissions).get.query()
-        if (isLeft(e_permissions)) {
+        const o_permissions = await over(model.accessControl.user[userId]?.permissions).get.query()
+        if (isNone(o_permissions)) {
           return left(NOT_FOUND)
         }
-        const { role } = e_permissions.right
+        const { role } = o_permissions.value
         const { fullUserSession } = await getFullUserSession({ over, model })
         const session: moo.session.user = {
           admin: role === 'admin' ? fullUserSession.admin : undefined,
@@ -137,13 +144,12 @@ export const coreModelImpl: moo.model.impl = {
         const { token: authSessionToken } = await _.over(_.model.jwtTokens.xModel.accessControl.authSession.sign).call.query({ data: { userId, authSessionId } }) // as signed_token
 
         const authSession: authSession = {
-          userId,
           session,
           createdDate: new Date().toISOString(),
           validUntilDate: new Date().toISOString(),
         }
 
-        await _.over(_.model.accessControl.user[userId]?.activeSession[authSessionId]).create.sync({ spaceData: { authSession } })
+        await _.over(_.model.accessControl.user[userId]?.session[authSessionId]?.auth).put.sync({ newData: authSession })
 
         return right({ authSession, authSessionId, authSessionToken })
       },

@@ -50,17 +50,17 @@ export type collectionDraftSpace = unknown
 
 
 // export interface permissions {
-//   personaTypes: moo.model.type.entityData<{ types: moo.personaType[] }>
+//   personaTypes: moo.model.type.atom<never, { types: moo.personaType[] }>
 // }
 
 export type userAccountUserSpace = {
   profile: {
-    info: moo.model.type.entityData<profileInfo>
-    avatar: moo.model.type.asset<{ optional: true }>
-    background: moo.model.type.asset<{ optional: true }>
+    info: moo.model.type.atom<never, profileInfo>
+    avatar: moo.model.type.asset<'optional'>
+    background: moo.model.type.asset<'optional'>
   }
-  email: moo.model.type.entityData<{ address: email_address }>
-  password: moo.model.type.entityData<{ hash: string }>
+  email: moo.model.type.atom<never, { address: email_address }>
+  password: moo.model.type.atom<never, { hash: string }>
 }
 
 export type userAccountModel = {

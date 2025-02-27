@@ -1,17 +1,12 @@
-import { content, education, moodlenet, userAccount } from '@moodle/domain/model'
+import { accessControl, content, education, moderation, moodlenet, userAccount, userHome } from '@moodle/domain/model'
 import { d_u } from '@moodle/lib-types'
-import { accessControlUserSpace } from 'domain/src/domain/model/accessControl.model'
 
-export type appDataUserCollectionData = {
-  userAccount: {
-    user: moo.model.type.sSpaceData<userAccount.userAccountUserSpace>
-  }
-  moodlenet: {
-    contributor: moo.model.type.sSpaceData<moodlenet.contributorSpace>
-  }
-  accessControl: {
-    data: moo.model.type.sSpaceData<accessControlUserSpace>
-  }
+export type appDataUserAccountCollectionData = {
+  userAccount: moo.model.type.sSpaceData<userAccount.userAccountUserSpace>
+  moodlenet: moo.model.type.sSpaceData<moodlenet.moodlenetUserSpace>
+  accessControl: moo.model.type.sSpaceData<accessControl.accessControlUserSpace>
+  moderation: moo.model.type.sSpaceData<moderation.moderationUserSpace>
+  home: moo.model.type.sSpaceData<userHome.userHomeUserSpace>
 }
 
 export type appDataIscedFieldCollectionData = {

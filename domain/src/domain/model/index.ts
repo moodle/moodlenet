@@ -8,3 +8,6 @@ export * as mailer from './mailer.model'
 export * as moodlenet from './moodlenet.model'
 export * as org from './org.model'
 export * as userAccount from './userAccount.model'
+export * as moderation from './moderation.model'
+export * as userHome from './userHome.model'
+

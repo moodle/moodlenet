@@ -1,7 +1,7 @@
 import { languageCode, licenseCode } from '../../content.model'
 import { bloomCognitiveLevel, iscedFieldCode, iscedLevelCode, resourceTypeCode } from './edu-categories'
 
-export type eduResourceData = {
+export type eduResource = {
   title: string
   description: string
   iscedField: null | iscedFieldCode
@@ -11,11 +11,8 @@ export type eduResourceData = {
   language: null | languageCode
   license: null | licenseCode
   publicationDate: null | { month: number | null; year: number }
-}
-
-export type eduResourceAssets = {
   asset: moo.content.asset
-  image: moo.content.asset.maybe
+  image: moo.content.asset.optional
 }
 
 export type bloomLearningOutcome = {
@@ -24,11 +21,9 @@ export type bloomLearningOutcome = {
   sentence: string
 }
 
-export type eduCollectionData = {
+export type eduCollection = {
   title: string
   description: string
+  image: moo.content.asset.optional
 }
 
-export type eduCollectionAssets = {
-  image: moo.content.asset.maybe
-}

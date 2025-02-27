@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { int } from '@moodle/lib-types'
-import { profileInfo, userAccountUserSpace } from '../userAccount.model'
+import { profileInfo } from '../userAccount.model'
 import { moodlenetConfigs } from './types'
 declare global {
   namespace moo {
@@ -10,25 +10,25 @@ declare global {
   }
 }
 
-export type contributorSpace = {
-  points: int
-  profile: moo.model.type.derived<{
-    info: profileInfo
-    avatar: moo.content.asset.maybe
-    background: moo.content.asset.maybe
-  }>
+export type moodlenetUserSpace = {
+  contributor: {
+    points: int
+    profile: moo.model.type.atom<
+      'view',
+      {
+        info: profileInfo
+        avatar: moo.content.asset.optional
+        background: moo.content.asset.optional
+      }
+    >
+  }
 }
 
 export type moodlenet = moo.model<MoodlenetModel>
 
 export type MoodlenetModel = {
   [moo.configs]: moodlenetConfigs
-  contributor: moo.model.type.idSpaceMap<contributorSpace>
-  newUser: {
-    emptyContributorSpace: moo.model.type.endpoint<
-      ['query', { userAccountUserSpace: moo.model.type.sSpaceData<userAccountUserSpace> }, { contributorSpace: moo.model.type.sSpaceData<contributorSpace> }]
-    >
-  }
+  contributor: moo.model.type.idSpaceMap<moodlenetUserSpace>
 }
 
 // type _ = moo.model.type.xSpaceData<contributorSpace>
