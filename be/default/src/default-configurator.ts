@@ -21,7 +21,7 @@ import { coerce, object } from 'zod'
 import { createQueueServices } from './queue-services'
 import { configurator } from './types'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
-import { isLeft, left, right } from 'fp-ts/Either'
+import { Either, isLeft, left, right } from 'fp-ts/Either'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
 //   provideDefaultResourceIngestorSecEnv,
@@ -189,7 +189,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
               throw e
             })
 
-          async function modelAccessDispatcher(access: moo.model.access<any_>): Promise<unknown> {
+          async function modelAccessDispatcher(access: moo.model.access<any_>): Promise<Either<Error4xx, unknown>> {
             type __ = keyof moo.Models extends infer modelName
               ? modelName extends keyof moo.Models
                 ? keyof moo.Models[modelName] extends infer frstProp
@@ -221,7 +221,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
                     ),
                   ),
               )
-              return
+              return right(void 0)
             }
 
             const accessResultPromise = pushPendingPromise(
@@ -265,12 +265,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
                   return left(new Error4xx('Internal Server Error', { message: error.message, error }))
                 }),
             )
-            return accessResultPromise.then(outcome => {
-              if (isLeft(outcome)) {
-                throw outcome.left
-              }
-              return outcome.right
-            })
+            return accessResultPromise
           }
 
           resolveConfigurationPromise({

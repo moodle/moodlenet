@@ -1,5 +1,6 @@
 import { generateUlid } from '@moodle/lib-id-gen'
 import { path, unsupportedProxyHandler } from '@moodle/lib-types'
+import { isLeft } from 'fp-ts/Either'
 
 export function modelHandleProxy({
   modelAccessDispatcher,
@@ -48,7 +49,7 @@ export function modelHandleProxy({
           },
           origin,
           message,
-        })
+        }).then(outcome => (isLeft(outcome) ? Promise.reject(outcome.left) : outcome.right))
       },
     })
   }

@@ -12,7 +12,7 @@ declare global {
       type def = {
         [moo.tags.configs]: serializable_object
       }
-      type dispatcher = (access: access<type.opDef>) => Promise<unknown>
+      type dispatcher = (access: access<type.opDef>) => Promise<Either<Error4xx, unknown>>
 
       type handle = {
         model: Models

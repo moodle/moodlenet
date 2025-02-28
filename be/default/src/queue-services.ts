@@ -1,11 +1,7 @@
-import {
-  executionOutcome,
-  jobConfig,
-  provideQueueService,
-  queueService,
-  queueServiceWorkers,
-} from '@moodle/lib-job-queue-service'
+import { isError4xx } from '@moodle/domain/lib'
+import { executionOutcome, jobConfig, provideQueueService, queueService, queueServiceWorkers } from '@moodle/lib-job-queue-service'
 import { any_, map } from '@moodle/lib-types'
+import { isLeft } from 'fp-ts/Either'
 import moment from 'moment'
 import timers from 'timers/promises'
 
@@ -39,16 +35,22 @@ export function createQueueServices<jobNames extends string>({
       }) {
         return Promise.race([
           modelDispatcher(access)
-            .then<executionOutcome>(outcome => ({
-              result: 'done',
-              outcome,
-              date: new Date().toISOString(),
-            }))
+            .then<executionOutcome>(outcome => {
+              if (isLeft(outcome)) {
+                throw outcome.left
+              }
+
+              return {
+                result: 'done',
+                outcome,
+                date: new Date().toISOString(),
+              }
+            })
             .catch<executionOutcome>(error => ({
               result: 'failed',
-              reason: 'unhandledError',
+              reason: isError4xx(error) ? 'applicative' : 'unhandledError',
               date: new Date().toISOString(),
-              error,
+              error: isError4xx(error) ? error.details : error,
               followUp:
                 executionOutcomes.length >= queueConfig.maxRetries
                   ? {

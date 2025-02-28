@@ -1,3 +1,4 @@
+import { error4xxDetails } from '@moodle/domain/lib'
 import { d_u, date_time_string } from '@moodle/lib-types'
 
 export type jobConfig = {
@@ -45,7 +46,7 @@ export type executionOutcome = {
       followUp: failedExecutionFollowup
     } & d_u<
       {
-        applicative: { details: unknown }
+        applicative: { error: error4xxDetails }
         unhandledError: { error: unknown }
         timeout: { timeoutSecs: number }
       },
@@ -85,8 +86,4 @@ export type reEnqueueTimedoutInProgressJobs<jobData> = (_: {
   timeoutOutcome: executionOutcome
 }) => Promise<job<jobData>[]>
 
-export type fetchAndEngageSomeEnqueuedJobs<jobData> = (_: {
-  jobName: string
-  amount: number
-  engageDate: date_time_string
-}) => Promise<job<jobData>[]>
+export type fetchAndEngageSomeEnqueuedJobs<jobData> = (_: { jobName: string; amount: number; engageDate: date_time_string }) => Promise<job<jobData>[]>
