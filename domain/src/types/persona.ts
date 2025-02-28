@@ -7,32 +7,27 @@ declare global {
     type persona<personaDef extends persona.def> = personaDef
 
     namespace persona {
-      type def = /* Partial< */ map<context.def> & withConfigs & withContext // ,moo.contexts>>
+      type def = /* Partial< */ map<context.def> & tags<tags.configs> & withContext // ,moo.contexts>>
 
       const context: unique symbol
       type withContext = { [context]?: serializable_object }
 
       type context<contextScopesDef extends context.def> = contextScopesDef
       namespace context {
-        type def = Partial<map<scope.def, moo.scopeNames> & withConfigs & withContext>
+        type def = Partial<map<scope.def, moo.scopeNames> & tags<tags.configs> & withContext>
       }
 
       type scope<scopeDef extends scope.def> = scopeDef
       namespace scope {
-        type def = map<usecase.def> & withConfigs & withContext
+        type def = map<usecase.def> & tags<tags.configs> & withContext
       }
 
       type usecase<usecaseDef extends usecase.def> = usecaseDef
       namespace usecase {
-        type def = map<endpoint.def> & withConfigs & withContext
+        type def = map<endpoint.def> & tags<tags.configs> & withContext
       }
 
-      type endpoint<endpointDef extends endpoint.def> = [
-        epZodType<endpointDef[0]>,
-        endpointDef[1],
-        endpointDef[2],
-        endpointDef[3],
-      ]
+      type endpoint<endpointDef extends endpoint.def> = [epZodType<endpointDef[0]>, endpointDef[1], endpointDef[2], endpointDef[3]]
       namespace endpoint {
         type def = [form: zodTypeOrProvider, outcome: any_, configs?: serializable | undefined | void, context?: any_]
       }

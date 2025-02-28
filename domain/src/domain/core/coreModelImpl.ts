@@ -76,7 +76,7 @@ export const coreModelImpl: moo.model.impl = {
             if (!isString(authSessionToken)) {
               return getAnonSessionInfo(_)
             }
-            const e_authSessionData = await _.over(_.model.jwtTokens.xModel.accessControl.authSession.validate).call.query({ token: authSessionToken })
+            const e_authSessionData = await _.over(_.model.jwtTokens.token.accessControl.authSession.validate).call.query({ token: authSessionToken })
             if (isLeft(e_authSessionData)) {
               return getAnonSessionInfo(_)
             }
@@ -176,7 +176,7 @@ export const coreModelImpl: moo.model.impl = {
             const { session } = e_session_obj.right
 
             const authSessionId = generateUlid({ onDate: new Date() })
-            const { token: authSessionToken } = await _.over(_.model.jwtTokens.xModel.accessControl.authSession.sign).call.query({ data: { userId, authSessionId } }) // as signed_token
+            const { token: authSessionToken } = await _.over(_.model.jwtTokens.token.accessControl.authSession.sign).call.query({ data: { userId, authSessionId } }) // as signed_token
 
             const authSession: authSession = {
               session,

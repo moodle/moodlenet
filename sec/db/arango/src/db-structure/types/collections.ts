@@ -30,7 +30,7 @@ export type appDataLicenseCollectionData = {
 
 export type modulesModelConfigData = d_u<
   {
-    [_modelName in Exclude<moo.modelName, 'configs'>]: { configs: moo.Models[_modelName][moo.configs] }
+    [_modelName in Exclude<moo.modelName, 'configs'>]: { configs: moo.Models[_modelName][moo.tags.configs] }
   },
   'modelName'
 >

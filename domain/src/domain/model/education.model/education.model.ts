@@ -15,7 +15,7 @@ type abilityFilter = {
   ability: 'enabled' | 'disabled' | 'all'
 }
 export type educationModel = {
-  [moo.configs]: educationConfigs
+  [moo.tags.configs]: educationConfigs
   categories: {
     iscedFields: moo.model.type.idSpaceMap<iscedFieldSpace, abilityFilter>
     iscedLevels: moo.model.type.idSpaceMap<iscedLevelSpace, abilityFilter>

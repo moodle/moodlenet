@@ -8,5 +8,5 @@ export type modelUpgradeData = {
 }
 
 export type allModuleConfigs = {
-  [_modelName in Exclude<moo.modelName, 'configs'>]: moo.Models[_modelName][moo.configs]
+  [_modelName in Exclude<moo.modelName, 'configs'>]: moo.Models[_modelName][moo.tags.configs]
 }

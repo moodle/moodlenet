@@ -15,7 +15,7 @@ declare global {
 
 export interface Persona {
   // [moo.persona.meta]: { userId: string }
-  [moo.configs]: {
+  [moo.tags.configs]: {
     schemas: authenticatedPersonaValidationConfigs
   }
 }

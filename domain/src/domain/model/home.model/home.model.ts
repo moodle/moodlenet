@@ -25,6 +25,6 @@ export type homeUserSpace = {
 export type home = moo.model<homeModel>
 
 export type homeModel = {
-  [moo.configs]: never
+  [moo.tags.configs]: never
   userHome: moo.model.type.idSpaceMap<homeUserSpace>
 }

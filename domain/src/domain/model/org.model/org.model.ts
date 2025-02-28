@@ -12,5 +12,5 @@ declare global {
 export type org = moo.model<OrgModel>
 
 export type OrgModel = {
-  [moo.configs]: orgConfigs
+  [moo.tags.configs]: orgConfigs
 }

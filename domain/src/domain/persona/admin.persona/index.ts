@@ -12,7 +12,7 @@ declare global {
 }
 
 export interface Persona {
-  [moo.configs]: adminPersonaConfigs
+  [moo.tags.configs]: adminPersonaConfigs
 }
 
 export type admin = moo.persona<moo<Persona>>

@@ -16,7 +16,7 @@ type abilityFilter = {
 }
 
 export type contentModel = {
-  [moo.configs]: contentConfigs
+  [moo.tags.configs]: contentConfigs
   categories: {
     languages: moo.model.type.idSpaceMap<languageSpace, abilityFilter>
     licenses: moo.model.type.idSpaceMap<licenseSpace, abilityFilter>

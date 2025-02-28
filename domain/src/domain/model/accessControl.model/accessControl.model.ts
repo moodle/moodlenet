@@ -10,18 +10,23 @@ declare global {
     interface Models {
       accessControl: accessControl
     }
+    namespace Models {
+      namespace jwtTokens {
+        interface Payloads {
+          accessControl: {
+            authSession: { authSessionId: string; userId: string }
+          }
+        }
+      }
+    }
   }
 }
-type xTypes = moo.model.xTypes<{
-  jwtTokens: {
-    authSession: { authSessionId: string; userId: string }
-  }
-}>
+
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-export type accessControl = moo.model<accessControlModel, xTypes>
+export type accessControl = moo.model<accessControlModel>
 
 export type accessControlModel = {
-  [moo.configs]: accessControlConfigs
+  [moo.tags.configs]: accessControlConfigs
   // storeAuthSession: moo.model.type.endpoint<['sync', { authSessionId: string; activeAuthSession: authSession }, void]>
   // getAuthSession: moo.model.type.endpoint<['query', { authSessionId: string }, Option<{ activeAuthSession: authSession }>]>
   user: moo.model.type.idSpaceMap<accessControlUserSpace, { emailEquals: string }>

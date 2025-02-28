@@ -8,7 +8,7 @@ import { NONE_ASSET } from '../../../../../../lib/content/asset'
 import { SUBMITTED } from '../../../../../../lib/constants'
 
 export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (confirmEmailForm, _) => {
-  const e_validatedToken = await _.over(_.model.jwtTokens.xModel.userAccount.emailConfirmationToken.validate).call.query({
+  const e_validatedToken = await _.over(_.model.jwtTokens.token.userAccount.emailConfirmationToken.validate).call.query({
     token: confirmEmailForm.signupEmailVerificationToken,
   })
 

@@ -10,19 +10,18 @@ declare global {
     [k in keyof iface]: iface[k] //extends primitive | void | any_[] | never ? iface[k] : moo<iface[k]>
   }
   namespace moo {
-    interface Domain {
-      version: '5.0'
-      personas: Personas
-      models: Models
-    }
+    type version = '5.0'
 
     interface Personas {}
     interface Models {}
+    namespace Models {}
+    interface IdSpaces {}
 
-
-    const configs: unique symbol
-    type configs = typeof configs
-    type withConfigs = { [configs]?: serializable_object }
+    type tags<sym extends symbol, t = serializable_object> = { [k in sym]?: t }
+    export namespace tags {
+      const configs: unique symbol
+      type configs = typeof configs
+    }
 
     type contexts = {
       [personaType_ in personaType]: string & keyof Personas[personaType_]
@@ -58,7 +57,5 @@ declare global {
 
     type modelName = keyof Models // | any_other_string
     type personaType = keyof Personas // | any_other_string
-
   }
 }
-

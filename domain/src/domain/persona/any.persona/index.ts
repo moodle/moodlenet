@@ -12,7 +12,7 @@ declare global {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Persona {
-  [moo.configs]: anyPersonaConfigs
+  [moo.tags.configs]: anyPersonaConfigs
 }
 
 export type any__ = moo.persona<moo<Persona>>

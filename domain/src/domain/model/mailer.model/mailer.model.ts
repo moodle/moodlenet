@@ -1,26 +1,29 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { email_address } from '@moodle/lib-types'
+/* eslint-disable @typescript-eslint/no-empty-interface */
 import { mailerConfigs } from './types'
+import { emailBody, emailEnvelope } from './types/email'
 declare global {
   namespace moo {
     interface Models {
       mailer: mailer
     }
+    namespace Models {
+      namespace mailer {
+        interface Templates {}
+      }
+    }
   }
 }
 export type mailer = moo.model<MailerModel>
 
-type xTypes = moo.model.xTypes.blueprint<'mailer'>
-
 export type MailerModel = {
-  [moo.configs]: mailerConfigs
-  send: {
-    [xModel in keyof xTypes]: {
-      [eml in keyof xTypes[xModel]]: moo.model.type.endpoint<['async', { envelope: envelope; data: xTypes[xModel][eml] }, unknown]>
+  [moo.tags.configs]: mailerConfigs
+  template: {
+    [namespace in keyof moo.Models.mailer.Templates]: {
+      [tplParams in keyof moo.Models.mailer.Templates[namespace]]: moo.model.type.endpoint<
+        ['query', { data: moo.Models.mailer.Templates[namespace][tplParams] }, { body: emailBody }]
+      >
     }
   }
-}
-
-export type envelope = {
-  to: email_address[]
+  send: moo.model.type.endpoint<['async', { envelope: emailEnvelope }, unknown]>
 }

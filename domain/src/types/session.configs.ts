@@ -34,4 +34,4 @@ declare global {
     }
   }
 }
-type config_tag<T> = T extends moo.withConfigs ? (T[typeof moo.configs] extends never | undefined ? { _?: never } : { _: T[typeof moo.configs] }) : unknown
+type config_tag<T> = T extends moo.tags<moo.tags.configs> ? (T[typeof moo.tags.configs] extends never | undefined ? { _?: never } : { _: T[typeof moo.tags.configs] }) : unknown

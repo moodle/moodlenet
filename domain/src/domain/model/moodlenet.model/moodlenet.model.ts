@@ -20,7 +20,7 @@ export type moodlenetUserSpace = {
 export type moodlenet = moo.model<MoodlenetModel>
 
 export type MoodlenetModel = {
-  [moo.configs]: moodlenetConfigs
+  [moo.tags.configs]: moodlenetConfigs
   contributor: moo.model.type.idSpaceMap<moodlenetUserSpace>
 }
 

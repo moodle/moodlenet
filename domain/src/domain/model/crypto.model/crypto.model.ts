@@ -11,7 +11,7 @@ declare global {
 export type crypto = moo.model<CryptoModel>
 
 export type CryptoModel = {
-  [moo.configs]: cryptoConfigs
+  [moo.tags.configs]: cryptoConfigs
   hashing: {
     password: {
       hash: moo.model.type.endpoint<['query', { plainPassword: plain_password }, { hash: string }]>

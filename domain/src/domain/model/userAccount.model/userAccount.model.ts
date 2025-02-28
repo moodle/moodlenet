@@ -7,42 +7,50 @@ declare global {
     interface Models {
       userAccount: userAccount
     }
+    namespace Models {
+      namespace mailer {
+        interface Templates {
+          userAccount: {
+            userEmailConfirmation: {
+              displayName: string
+              confirmationToken: signed_token
+            }
+            resetPasswordLink: {
+              displayName: string
+              resetPasswordToken: signed_token
+            }
+            myAccountDeletionConfirmation: {
+              displayName: string
+              confirmMyAccountDeletionToken: signed_token
+            }
+            goodbye: {
+              displayName: string
+            }
+          }
+        }
+      }
+      namespace jwtTokens {
+        interface Payloads {
+          userAccount: {
+            emailConfirmationToken: {
+              passwordHash: string
+              displayName: string
+              email: email_address
+            }
+            resetPasswordToken: {
+              userId: string
+            }
+            confirmMyAccountDeletion: {
+              userId: string
+            }
+          }
+        }
+      }
+    }
   }
 }
-type xTypes = moo.model.xTypes<{
-  jwtTokens: {
-    emailConfirmationToken: {
-      passwordHash: string
-      displayName: string
-      email: email_address
-    }
-    resetPasswordToken: {
-      userId: string
-    }
-    confirmMyAccountDeletion: {
-      userId: string
-    }
-  }
-  mailer: {
-    userEmailConfirmation: {
-      displayName: string
-      confirmationToken: signed_token
-    }
-    resetPasswordLink: {
-      displayName: string
-      resetPasswordToken: signed_token
-    }
-    myAccountDeletionConfirmation: {
-      displayName: string
-      confirmMyAccountDeletionToken: signed_token
-    }
-    goodbye: {
-      displayName: string
-    }
-  }
-}>
 
-export type userAccount = moo.model<userAccountModel, xTypes>
+export type userAccount = moo.model<userAccountModel>
 
 export type resourceDraftSpace = unknown
 
@@ -63,7 +71,7 @@ export type userAccountUserSpace = {
 }
 
 export type userAccountModel = {
-  [moo.configs]: userAccountConfigs
+  [moo.tags.configs]: userAccountConfigs
   user: moo.model.type.idSpaceMap<userAccountUserSpace, { emailEquals: string }>
 }
 

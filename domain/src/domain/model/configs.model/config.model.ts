@@ -13,9 +13,9 @@ declare global {
 export type configs_ = moo.model<configsModel>
 
 export type configsModel = {
-  [moo.configs]: never
+  [moo.tags.configs]: never
   module: {
-    [model_name in Exclude<moo.modelName, 'configs'>]: moo.model.type.atom<never, moo.Models[model_name][moo.configs]>
+    [model_name in Exclude<moo.modelName, 'configs'>]: moo.model.type.atom<never, moo.Models[model_name][moo.tags.configs]>
   }
   allConfigs: moo.model.type.endpoint<['query', void, allModuleConfigs]>
   latestModuleUpgrade: {

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
+import { userAccountUserSpace } from '../userAccount.model'
 import { moodlenet } from './types'
 declare global {
   namespace moo {
@@ -21,6 +22,9 @@ export type moderation = moo.model<moderationModel>
 export type moderationModel = {
   [moo.tags.configs]: never
   userModeration: moo.model.type.idSpaceMap<moderationUserSpace>
+  newUser: {
+    setupUserSpace: moo.model.type.endpoint<['query', { userAccountUserSpace: moo.model.type.sSpaceData<userAccountUserSpace> }, moo.model.type.sSpaceData<moderationUserSpace>]>
+  }
 }
 
 // type _ = moo.model.type.xSpaceData<userModerationSpace>
