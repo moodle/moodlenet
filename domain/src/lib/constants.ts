@@ -4,6 +4,9 @@ import { any_ } from '@moodle/lib-types'
 export type NOT_FOUND = typeof NOT_FOUND
 export const NOT_FOUND = 'NOT_FOUND'
 
+export type TEMP_FILE_NOT_FOUND = typeof TEMP_FILE_NOT_FOUND
+export const TEMP_FILE_NOT_FOUND = 'TEMP_FILE_NOT_FOUND'
+
 export type CONDITIONS_NOT_MET = typeof CONDITIONS_NOT_MET
 export const CONDITIONS_NOT_MET = 'CONDITIONS_NOT_MET'
 

@@ -13,7 +13,7 @@ export function userAccountImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model
                 over(model.moodlenet.contributor).emptySpace.query(),
                 over(model.accessControl.user).emptySpace.query(),
                 over(model.moderation.userModeration).emptySpace.query(),
-                over(model.userHome.userHome).emptySpace.query(),
+                over(model.home.userHome).emptySpace.query(),
               ])
 
               await dbStruct.appData.coll.userAccount.save({

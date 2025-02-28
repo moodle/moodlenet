@@ -4,7 +4,7 @@ import type { fileMeta } from '@moodle/lib-domain-fs'
 import type { any_, map, serializable_object } from '@moodle/lib-types'
 import type { Either } from 'fp-ts/Either'
 import type { Option } from 'fp-ts/Option'
-import type { NOT_FOUND } from '../lib/constants'
+import type { TEMP_FILE_NOT_FOUND } from '../lib/constants'
 
 declare const traits_sym: unique symbol
 type traitsFlags = 'static' | 'view'
@@ -92,7 +92,7 @@ declare global {
           shape: unknown
           data: 'optional' extends flags ? content.asset.optional : content.asset
           ops: {
-            fromTempFile: ['async', { tempId: string }, Either<typeof NOT_FOUND, 'static' extends flags ? { fileMeta: fileMeta } : Option<{ fileMeta: fileMeta }>>]
+            fromTempFile: ['async', { tempId: string }, Either<TEMP_FILE_NOT_FOUND, 'static' extends flags ? { fileMeta: fileMeta } : Option<{ fileMeta: fileMeta }>>]
             fromUrl: ['async', { externalAsset: content.asset.external }, 'static' extends flags ? void : Option<void>]
           } & ('optional' extends flags ? { remove: ['async', void, 'static' extends flags ? void : Option<void>] } : unknown)
           flags: Exclude<flags, 'optional'>

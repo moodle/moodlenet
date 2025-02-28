@@ -1,4 +1,4 @@
-import { accessControl, content, education, moderation, moodlenet, userAccount, userHome } from '@moodle/domain/model'
+import { accessControl, content, education, home, moderation, moodlenet, userAccount } from '@moodle/domain/model'
 import { d_u } from '@moodle/lib-types'
 
 export type appDataUserAccountCollectionData = {
@@ -6,7 +6,7 @@ export type appDataUserAccountCollectionData = {
   moodlenet: moo.model.type.sSpaceData<moodlenet.moodlenetUserSpace>
   accessControl: moo.model.type.sSpaceData<accessControl.accessControlUserSpace>
   moderation: moo.model.type.sSpaceData<moderation.moderationUserSpace>
-  home: moo.model.type.sSpaceData<userHome.userHomeUserSpace>
+  home: moo.model.type.sSpaceData<home.homeUserSpace>
 }
 
 export type appDataIscedFieldCollectionData = {

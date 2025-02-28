@@ -21,6 +21,17 @@ export const domainCoreImpl: domainCore = {
 }
 
 export const coreModelImpl: moo.model.impl = {
+  home: {
+    userHome: {
+      $: {
+        emptySpace: {
+          exe: async () => {
+            return { myDrafts: { edu: { collection: {}, resources: {} } } }
+          },
+        },
+      },
+    },
+  },
   moodlenet: {
     contributor: {
       $: {

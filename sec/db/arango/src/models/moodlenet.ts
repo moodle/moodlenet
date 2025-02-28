@@ -25,7 +25,7 @@ function appDataUserCollectionData_2_MoodlenetUserSpace(docData: appDataUserAcco
     ...docData.moodlenet,
     contributor: {
       ...docData.moodlenet.contributor,
-      profile: {
+      userProfile: {
         info: docData.userAccount.profile.info,
         avatar: docData.userAccount.profile.avatar,
         background: docData.userAccount.profile.background,

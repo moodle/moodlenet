@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { int } from '@moodle/lib-types'
-import { profileInfo } from '../userAccount.model'
+import { userProfile } from '../userAccount.model'
 import { moodlenetConfigs } from './types'
 declare global {
   namespace moo {
@@ -13,14 +13,7 @@ declare global {
 export type moodlenetUserSpace = {
   contributor: {
     points: int
-    profile: moo.model.type.atom<
-      'view',
-      {
-        info: profileInfo
-        avatar: moo.content.asset.optional
-        background: moo.content.asset.optional
-      }
-    >
+    userProfile: moo.model.type.atom<'view', userProfile>
   }
 }
 

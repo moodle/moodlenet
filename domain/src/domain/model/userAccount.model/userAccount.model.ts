@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { email_address, signed_token } from '@moodle/lib-types'
-import { userAccountConfigs, profileInfo } from './types'
+import { userAccountConfigs, userProfileInfo } from './types'
 declare global {
   namespace moo {
     interface Models {
@@ -48,14 +48,13 @@ export type resourceDraftSpace = unknown
 
 export type collectionDraftSpace = unknown
 
-
 // export interface permissions {
 //   personaTypes: moo.model.type.atom<never, { types: moo.personaType[] }>
 // }
 
 export type userAccountUserSpace = {
   profile: {
-    info: moo.model.type.atom<never, profileInfo>
+    info: moo.model.type.atom<never, userProfileInfo>
     avatar: moo.model.type.asset<'optional'>
     background: moo.model.type.asset<'optional'>
   }
