@@ -17,16 +17,17 @@ declare global {
       namespace type {
         type traits_prop = typeof traits_sym
         type ops = map<opDef>
+        type no_ops = map<opDef, never>
         type traitsDef = { shape: unknown; ops: ops; data: serializable_object; flags: traitsFlags }
 
         type opType = 'sync' | 'async' | 'query'
         type opDef = [type: opType, message: any_, outcome: any_]
 
-        type idSpaceMap<space_shape, filters extends map = map, space_ops extends ops = ops, ops_ extends ops = ops> =
+        type idSpaceMap<space_shape, filters extends map = map, space_ops extends ops = no_ops, ops_ extends ops = no_ops> =
           idSpaceModel<space_shape, space_ops> extends infer spaceModel
             ? type<{
                 ops: ops_ & {
-                  emptyModel: ['query', void, sSpaceData<space_shape>]
+                  emptySpace: ['query', void, sSpaceData<space_shape>]
                   some: [
                     'query',
                     {
@@ -46,7 +47,7 @@ declare global {
               }>
             : unknown
 
-        type idSpaceModel<shape, ops_ extends ops = ops> = type<{
+        type idSpaceModel<shape, ops_ extends ops = no_ops> = type<{
           shape: shape
           ops: ops_ & {
             getData: ['query', void, Option<xSpaceData<shape>>]
@@ -58,7 +59,7 @@ declare global {
           flags: never
         }>
 
-        // type staticAggregate<data extends serializable_object, ops_ extends ops = ops> = type<{
+        // type staticAggregate<data extends serializable_object, ops_ extends ops = no_ops> = type<{
         //   shape: unknown
         //   ops: ops_ & { get: ['query', void, data] }
         //   data: data
@@ -74,7 +75,7 @@ declare global {
             : spaceData<shape[k], strict>
         }
 
-        type atom<flags extends traitsFlags, data extends serializable_object, ops_ extends ops = ops, opts = never> = type<{
+        type atom<flags extends traitsFlags, data extends serializable_object, ops_ extends ops = no_ops, opts = never> = type<{
           data: data
           ops: ops_ & {
             get: ['query', void, 'static' extends flags ? data : Option<data>]

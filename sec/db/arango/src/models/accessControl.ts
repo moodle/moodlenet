@@ -6,13 +6,13 @@ import { dbStruct } from '../db-structure'
 export function accessControlImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<accessControl.accessControlModel> {
   return {
     user: {
-      '#': userId => ({
+      _: userId => ({
         '* getData': async () => {
           const doc = await dbStruct.appData.coll.userAccount.document({ _key: userId }, { graceful: true })
           return fromNullable(doc?.accessControl)
         },
         'session': {
-          '#': authSessionId => ({
+          _: authSessionId => ({
             auth: {
               '* replace': async ({ newData: authSession }) => {
                 const cursor = await dbStruct.appData.db.query<true>(

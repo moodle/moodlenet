@@ -6,14 +6,18 @@ import { aql } from 'arangojs'
 export function modelConfigs({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<configs.configsModel> {
   return {
     allConfigs: {
-      '* call': async () => {
-        const allCursor = await dbStruct.appData.db.query<modulesModelConfigData>(
-          aql`FOR doc IN ${dbStruct.appData.coll.modelConfig}
+      $: {
+        call: {
+          exe: async () => {
+            const allCursor = await dbStruct.appData.db.query<modulesModelConfigData>(
+              aql`FOR doc IN ${dbStruct.appData.coll.modelConfig}
           RETURN doc`,
-        )
-        const all = await allCursor.all()
-        const allConfigs = all.reduce((acc, { configs, modelName }) => ({ ...acc, [modelName]: configs }), {} as configs.allModuleConfigs)
-        return allConfigs
+            )
+            const all = await allCursor.all()
+            const allConfigs = all.reduce((acc, { configs, modelName }) => ({ ...acc, [modelName]: configs }), {} as configs.allModuleConfigs)
+            return allConfigs
+          },
+        },
       },
     },
     //TODO: try to make a well typed util for this kind of usecase (named map od)
@@ -24,16 +28,23 @@ export function modelConfigs({ dbStruct }: { dbStruct: dbStruct }): moo.model.im
         get: <model_name extends Exclude<moo.modelName, 'configs'>>(_target: any_, modelName: model_name) => {
           const { _: impl }: moo.model.impl<{ _: moo.model.type.atom<'static', moo.Models[Exclude<moo.modelName, 'configs'>][moo.configs]> }> = {
             _: {
-              '* replace': async ({ newData }) => {
-                const modConfigData: modulesModelConfigData = {
-                  configs: newData as any_,
-                  modelName: modelName as any_,
-                }
-                await dbStruct.appData.coll.modelConfig.save({ _key: modelName, ...modConfigData })
-              },
-              '* get': async () => {
-                const doc = await dbStruct.appData.coll.modelConfig.document({ _key: modelName })
-                return doc.configs
+              $: {
+                put: {
+                  exe: async ({ newData }) => {
+                    const modConfigData: modulesModelConfigData = {
+                      configs: newData as any_,
+                      modelName: modelName as any_,
+                    }
+                    await dbStruct.appData.coll.modelConfig.save({ _key: modelName, ...modConfigData })
+                    return 'done'
+                  },
+                },
+                get: {
+                  exe: async () => {
+                    const doc = await dbStruct.appData.coll.modelConfig.document({ _key: modelName })
+                    return doc.configs
+                  },
+                },
               },
             },
           }
@@ -43,21 +54,29 @@ export function modelConfigs({ dbStruct }: { dbStruct: dbStruct }): moo.model.im
     ),
     latestModuleUpgrade: {
       get: {
-        '* call': async () => {
-          const doc = await dbStruct.services.coll.modelUpgrade.document({ _key: 'latest' }, { graceful: true })
-          if (!doc) return null
-          return doc.data
+        $: {
+          call: {
+            exe: async () => {
+              const doc = await dbStruct.services.coll.modelUpgrade.document({ _key: 'latest' }, { graceful: true })
+              if (!doc) return null
+              return doc.data
+            },
+          },
         },
       },
       save: {
-        '* call': async modelUpgradeData => {
-          await dbStruct.services.coll.modelUpgrade.saveAll(
-            [
-              { _key: `${modelUpgradeData.previous}::${modelUpgradeData.current}`, data: modelUpgradeData },
-              { _key: 'latest', data: modelUpgradeData },
-            ],
-            { overwriteMode: 'replace', silent: true },
-          )
+        $: {
+          call: {
+            exe: async modelUpgradeData => {
+              await dbStruct.services.coll.modelUpgrade.saveAll(
+                [
+                  { _key: `${modelUpgradeData.previous}::${modelUpgradeData.current}`, data: modelUpgradeData },
+                  { _key: 'latest', data: modelUpgradeData },
+                ],
+                { overwriteMode: 'replace', silent: true },
+              )
+            },
+          },
         },
       },
     },

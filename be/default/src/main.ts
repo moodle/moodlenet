@@ -37,6 +37,17 @@ http_bind
       },
     })
 
+    configurator
+      .access({
+        gateAccess: {
+          form: {},
+          path: ['a', 'a', 'a', 'a'],
+          claims: { server: { href: 'https://moodlenet.local/' as any_, authSessionToken: null, requestId: '11', ua: '313132' } },
+        },
+      })
+      .then(_ => coreGate(_))
+      .then(console.log, console.error)
+
     let exiting = false
 
     async function drainAndExit(sig: unknown) {

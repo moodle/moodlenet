@@ -23,59 +23,73 @@ export const domainCoreImpl: domainCore = {
 export const coreModelImpl: moo.model.impl = {
   moodlenet: {
     contributor: {
-      '* emptyModel': async (/* { userAccountUserSpace }, _ */) => {
-        return {
-          contributor: { points: int(0) },
-        }
+      $: {
+        emptySpace: {
+          exe: async () => {
+            return { contributor: { points: int(0) } }
+          },
+        },
       },
     },
   },
   moderation: {
     userModeration: {
-      '* emptyModel': async () => {
-        return {
-          reports: { received: { moodlenet: {} } },
-        }
+      $: {
+        emptySpace: {
+          exe: async () => {
+            return {
+              reports: { received: { moodlenet: {} } },
+            }
+          },
+        },
       },
     },
   },
   accessControl: {
     user: {
-      '* emptyModel': async (/* { userAccountUserSpace }, _ */) => {
-        return {
-          session: {},
-          permissions: { role: 'viewer' },
-        }
+      $: {
+        emptySpace: {
+          exe: async () => {
+            return {
+              session: {},
+              permissions: { role: 'viewer' },
+            }
+          },
+        },
       },
     },
     getMyUserSessionInfo: {
-      '* call': async ({ authSessionToken }, _) => {
-        if (!isString(authSessionToken)) {
-          return getAnonSessionInfo(_)
-        }
-        const e_authSessionData = await _.over(_.model.jwtTokens.xModel.accessControl.authSession.validate).call.query({ token: authSessionToken })
-        if (isLeft(e_authSessionData)) {
-          return getAnonSessionInfo(_)
-        }
-        const { authSessionId, userId } = e_authSessionData.right.data
-        const o_authSession = await _.over(_.model.accessControl.user[userId]?.session[authSessionId]?.auth).get.query()
-        if (isNone(o_authSession)) {
-          return getAnonSessionInfo(_)
-        }
-        const authSession = o_authSession.value
-        return {
-          info: {
-            session: authSession.session,
-            user: {
-              type: 'auth',
-              id: userId,
-            },
+      $: {
+        call: {
+          exe: async ({ authSessionToken }, _) => {
+            if (!isString(authSessionToken)) {
+              return getAnonSessionInfo(_)
+            }
+            const e_authSessionData = await _.over(_.model.jwtTokens.xModel.accessControl.authSession.validate).call.query({ token: authSessionToken })
+            if (isLeft(e_authSessionData)) {
+              return getAnonSessionInfo(_)
+            }
+            const { authSessionId, userId } = e_authSessionData.right.data
+            const o_authSession = await _.over(_.model.accessControl.user[userId]?.session[authSessionId]?.auth).get.query()
+            if (isNone(o_authSession)) {
+              return getAnonSessionInfo(_)
+            }
+            const authSession = o_authSession.value
+            return {
+              info: {
+                session: authSession.session,
+                user: {
+                  type: 'auth',
+                  id: userId,
+                },
+              },
+            }
           },
-        }
+        },
       },
     },
     //     user:{
-    //       '#':(userId)=>({
+    //       _:(userId)=>({
     // activeSession:{
     //   '#' : (authSessionId)=>({
     //     "* create": async ({spaceData: {authSession}},{model,over})=>{
@@ -86,72 +100,84 @@ export const coreModelImpl: moo.model.impl = {
     //       } )
     //     }
     getUserSessionFor: {
-      '* call': async ({ userId }, { model, over }) => {
-        const o_permissions = await over(model.accessControl.user[userId]?.permissions).get.query()
-        if (isNone(o_permissions)) {
-          return left(NOT_FOUND)
-        }
-        const { role } = o_permissions.value
-        const { fullUserSession } = await getFullUserSession({ over, model })
-        const session: moo.session.user = {
-          admin: role === 'admin' ? fullUserSession.admin : undefined,
-          moderator: role === 'admin' ? fullUserSession.moderator : undefined,
-          anonymous: undefined,
-          any: fullUserSession.any,
-          authenticated: {
-            ...fullUserSession.authenticated,
-            messaging: {
-              email: {
-                ...fullUserSession.authenticated.messaging.email,
-                send: role === 'contributor' ? fullUserSession.authenticated.messaging.email.send : undefined,
+      $: {
+        call: {
+          exe: async ({ userId }, { model, over }) => {
+            const o_permissions = await over(model.accessControl.user[userId]?.permissions).get.query()
+            if (isNone(o_permissions)) {
+              return left(NOT_FOUND)
+            }
+            const { role } = o_permissions.value
+            const { fullUserSession } = await getFullUserSession({ over, model })
+            const session: moo.session.user = {
+              admin: role === 'admin' ? fullUserSession.admin : undefined,
+              moderator: role === 'admin' ? fullUserSession.moderator : undefined,
+              anonymous: undefined,
+              any: fullUserSession.any,
+              authenticated: {
+                ...fullUserSession.authenticated,
+                messaging: {
+                  email: {
+                    ...fullUserSession.authenticated.messaging.email,
+                    send: role === 'contributor' ? fullUserSession.authenticated.messaging.email.send : undefined,
+                  },
+                },
+                moodlenet: {
+                  ...fullUserSession.authenticated.moodlenet,
+                  contribute: undefined,
+                },
               },
-            },
-            moodlenet: {
-              ...fullUserSession.authenticated.moodlenet,
-              contribute: undefined,
-            },
+            }
+            return right({ session })
           },
-        }
-        return right({ session })
+        },
       },
     },
     getAnonUserSession: {
-      '* call': async (_void, _) => {
-        const {
-          fullUserSession: { anonymous, any },
-        } = await getFullUserSession(_)
-        const session: moo.session.user = {
-          any,
-          anonymous,
-        }
-        return {
-          session,
-        }
+      $: {
+        call: {
+          exe: async (_void, _) => {
+            const {
+              fullUserSession: { anonymous, any },
+            } = await getFullUserSession(_)
+            const session: moo.session.user = {
+              any,
+              anonymous,
+            }
+            return {
+              session,
+            }
+          },
+        },
       },
     },
     activateAuthSessionFor: {
-      '* call': async ({ userId }, _) => {
-        const e_session_obj = await _.over(_.model.accessControl.getUserSessionFor).call.query({
-          userId,
-        })
-        if (isLeft(e_session_obj)) {
-          return e_session_obj
-        }
+      $: {
+        call: {
+          exe: async ({ userId }, _) => {
+            const e_session_obj = await _.over(_.model.accessControl.getUserSessionFor).call.query({
+              userId,
+            })
+            if (isLeft(e_session_obj)) {
+              return e_session_obj
+            }
 
-        const { session } = e_session_obj.right
+            const { session } = e_session_obj.right
 
-        const authSessionId = generateUlid({ onDate: new Date() })
-        const { token: authSessionToken } = await _.over(_.model.jwtTokens.xModel.accessControl.authSession.sign).call.query({ data: { userId, authSessionId } }) // as signed_token
+            const authSessionId = generateUlid({ onDate: new Date() })
+            const { token: authSessionToken } = await _.over(_.model.jwtTokens.xModel.accessControl.authSession.sign).call.query({ data: { userId, authSessionId } }) // as signed_token
 
-        const authSession: authSession = {
-          session,
-          createdDate: new Date().toISOString(),
-          validUntilDate: new Date().toISOString(),
-        }
+            const authSession: authSession = {
+              session,
+              createdDate: new Date().toISOString(),
+              validUntilDate: new Date().toISOString(),
+            }
 
-        await _.over(_.model.accessControl.user[userId]?.session[authSessionId]?.auth).put.sync({ newData: authSession })
+            await _.over(_.model.accessControl.user[userId]?.session[authSessionId]?.auth).put.sync({ newData: authSession })
 
-        return right({ authSession, authSessionId, authSessionToken })
+            return right({ authSession, authSessionId, authSessionToken })
+          },
+        },
       },
     },
   },

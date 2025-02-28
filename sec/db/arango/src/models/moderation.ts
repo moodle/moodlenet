@@ -5,10 +5,14 @@ import { appDataUserAccountCollectionData, dbStruct } from '../db-structure'
 export function moderationImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<moderation.moderationModel> {
   return {
     userModeration: {
-      '#': _key => ({
-        '* getData': async () => {
-          const doc = await dbStruct.appData.coll.userAccount.document({ _key }, { graceful: true })
-          return fromNullable(doc && appDataUserCollectionData_2_moderationUserSpace(doc))
+      _: userId => ({
+        $: {
+          getData: {
+            exe: async () => {
+              const doc = await dbStruct.appData.coll.userAccount.document({ _key: userId }, { graceful: true })
+              return fromNullable(doc && appDataUserCollectionData_2_moderationUserSpace(doc))
+            },
+          },
         },
       }),
     },

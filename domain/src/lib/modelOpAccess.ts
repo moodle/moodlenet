@@ -15,7 +15,7 @@ export async function preModelOps({ models, access, backModelAccessDispatcher, l
   const allOpTargets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
   const exeTargets = allOpTargets.exe
   const implementationExists = exeTargets.length > 0
-  const step = implementationExists ? 'pre' : ('noImpl' as const)
+  const step = implementationExists ? 'pre' : ('notImpl' as const)
   const myLogger = loggerProvider({ for: 'model', more: { name: `${step}:op` /*  models: Object.keys(models) */ }, access })
   await Promise.all(
     allOpTargets[step].map(({ fn, modelName }) =>
@@ -83,7 +83,7 @@ type allModelsOpExtractsDeps = {
 export function allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider }: allModelsOpExtractsDeps) {
   return Object.entries(models).reduce(
     (acc, [modelName, impl]) => {
-      const { post, exe, pre, noImpl } = modelOpExtract({
+      const { post, exe, pre, notImpl } = modelOpExtract({
         model: { name: modelName, impl },
         access,
         backModelAccessDispatcher,
@@ -92,14 +92,14 @@ export function allModelsOpExtracts({ models, access, backModelAccessDispatcher,
       post && acc.post.push({ fn: post, modelName })
       exe && acc.exe.push({ fn: exe, modelName })
       pre && acc.pre.push({ fn: pre, modelName })
-      noImpl && acc.noImpl.push({ fn: noImpl, modelName })
+      notImpl && acc.notImpl.push({ fn: notImpl, modelName })
       return acc
     },
-    { post: [], pre: [], exe: [], noImpl: [] } as {
+    { post: [], pre: [], exe: [], notImpl: [] } as {
       exe: { modelName: string; fn: Exclude<modelExtraction['exe'], undefined> }[]
       pre: { modelName: string; fn: Exclude<modelExtraction['pre'], undefined> }[]
       post: { modelName: string; fn: Exclude<modelExtraction['post'], undefined> }[]
-      noImpl: { modelName: string; fn: Exclude<modelExtraction['noImpl'], undefined> }[]
+      notImpl: { modelName: string; fn: Exclude<modelExtraction['notImpl'], undefined> }[]
     },
   )
 }
@@ -122,11 +122,14 @@ export function modelOpExtract({ model, access, backModelAccessDispatcher, logge
       useCase: access.origin.useCase,
     },
   })
-  const typeModelImpl = access.target.path.reduce((_model, prop) => _model?.[prop], model.impl)
-  const exe = typeModelImpl?.[`* ${access.target.opName}`] as undefined | moo.model.impl.exe<any_>
-  const pre = typeModelImpl?.[`^ ${access.target.opName}`] as undefined | moo.model.impl.pre<any_>
-  const post = typeModelImpl?.[`$ ${access.target.opName}`] as undefined | moo.model.impl.post<any_>
-  const noImpl = typeModelImpl?.[`! ${access.target.opName}`] as undefined | moo.model.impl.noImpl<any_>
+
+  const withOpHandlers: undefined | moo.model.impl.withOpHandlers<any_> = access.target.path.reduce((_model, prop) => _model?.[prop], model.impl)
+  const opHandlers = withOpHandlers?.$?.[access.target.opName]
+
+  const exe = opHandlers?.exe // as undefined | moo.model.impl.exe<any_>
+  const pre = opHandlers?.pre // as undefined | moo.model.impl.pre<any_>
+  const post = opHandlers?.post // as undefined | moo.model.impl.post<any_>
+  const notImpl = opHandlers?.notImpl // as undefined | moo.model.impl.notImpl<any_>
   const log = loggerProvider({ for: 'model', access })
   const now = new Date().toISOString()
   const ctx: moo.model.impl.ctx<any_> = {
@@ -138,7 +141,7 @@ export function modelOpExtract({ model, access, backModelAccessDispatcher, logge
   return {
     exe: exe && (() => exe(...exeArgs)),
     pre: pre && (() => pre(...exeArgs)),
-    noImpl: noImpl && (() => noImpl(...exeArgs)),
+    notImpl: notImpl && (() => notImpl(...exeArgs)),
     post: post && ((outcome: Either<Error4xx, unknown>) => post(outcome, ...exeArgs)),
   }
 }

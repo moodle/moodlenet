@@ -5,7 +5,7 @@ import { NO_JOB_HERE } from '../lib/constants'
 
 const _1: moo.model.impl<moo.Models['userAccount']> = {
   user: {
-    '#': _id => ({
+    '_': _id => ({
       email: NO_JOB_HERE,
       permissions: NO_JOB_HERE,
       password: NO_JOB_HERE,

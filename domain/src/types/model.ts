@@ -84,26 +84,27 @@ declare global {
           access: access<op>
         }
         type exeArgs<op extends type.opDef> = [message: op[1], handle: handle, ctx: ctx<op>]
-        type typeModel<modelNode extends type<type.traitsDef>> = handlers<modelNode> &
+        type typeModel<modelNode extends type<type.traitsDef>> = withOpHandlers<modelNode> &
           (modelNode extends type.idSpaceMap<infer space_shape, any_, infer space_ops>
-            ? { '#'?: (id: string) => typeModel<type.idSpaceModel<space_shape, space_ops>> }
+            ? { _?: (id: string) => typeModel<type.idSpaceModel<space_shape, space_ops>> }
             : impl<Omit<modelNode, type.traits_prop>>)
 
         type exe<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<op[2]>
         type pre<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
-        type noImpl<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
+        type notImpl<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
         type post<op extends model.type.opDef> = (outcome: Either<Error4xx, op[2]>, ...exeArgs: exeArgs<op>) => Promise<void>
 
-        type handlers<modelNode extends type<type.traitsDef>> = modelNode[type.traits_prop]['ops'] extends infer ops
+        type withOpHandlers<modelNode extends type<type.traitsDef>> = modelNode[type.traits_prop]['ops'] extends infer ops
           ? ops extends model.type.ops
             ? {
-                [opName in keyof ops as `* ${string & opName}`]?: exe<[type.opType, ops[opName][1], ops[opName][2]]> //exe<ops[opName]>
-              } & {
-                [opName in keyof ops as `^ ${string & opName}`]?: pre<[type.opType, ops[opName][1], ops[opName][2]]> //or<ops[opName]>
-              } & {
-                [opName in keyof ops as `! ${string & opName}`]?: noImpl<[type.opType, ops[opName][1], ops[opName][2]]> //or<ops[opName]>
-              } & {
-                [opName in keyof ops as `$ ${string & opName}`]?: post<[type.opType, ops[opName][1], ops[opName][2]]> //and<ops[opName]>
+                $?: {
+                  [opName in keyof ops /* as `_${string & opName}` */]?: {
+                    exe?: exe<[type.opType, ops[opName][1], ops[opName][2]]>
+                    pre?: pre<[type.opType, ops[opName][1], ops[opName][2]]>
+                    notImpl?: notImpl<[type.opType, ops[opName][1], ops[opName][2]]>
+                    post?: post<[type.opType, ops[opName][1], ops[opName][2]]>
+                  }
+                }
               }
             : never
           : never

@@ -5,10 +5,14 @@ import { dbStruct } from '../db-structure'
 export function userHomeImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<userHome.userHomeModel> {
   return {
     userHome: {
-      '#': _key => ({
-        '* getData': async () => {
-          const doc = await dbStruct.appData.coll.userAccount.document({ _key }, { graceful: true })
-          return fromNullable(doc?.home)
+      _: userId => ({
+        $: {
+          getData: {
+            exe: async () => {
+              const doc = await dbStruct.appData.coll.userAccount.document({ _key: userId }, { graceful: true })
+              return fromNullable(doc?.home)
+            },
+          },
         },
       }),
     },
