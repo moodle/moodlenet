@@ -21,7 +21,7 @@ import { coerce, object } from 'zod'
 import { createQueueServices } from './queue-services'
 import { configurator } from './types'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
-import { isLeft, left } from 'fp-ts/Either'
+import { isLeft, left, right } from 'fp-ts/Either'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
 //   provideDefaultResourceIngestorSecEnv,
@@ -242,16 +242,15 @@ export const defaultConfigurator: configurator = ({ master }) => {
                     models,
                   })
                   if (isLeft(outcome) && outcome.left.desc !== 'Not Implemented' && !isFromQueue && access.target.type === 'async') {
-                    myLogger.error('executeModel (async, formerly not enqueued) failed, will enqueue', { jobId, error: outcome.left, access })
+                    myLogger.info('executeModel: async call - formerly not enqueued - failed, will enqueue', { jobId, error: outcome.left, access })
                     await queues.defaultService.enqueue({
                       jobId,
                       enqueueDate: new Date().toISOString(),
                       jobData: { access },
                     })
+                    return right(void 0)
                   }
-                  return outcome
-                })
-                .then(outcome => {
+
                   postModelOps({
                     access,
                     backModelAccessDispatcher: modelAccessDispatcher,
