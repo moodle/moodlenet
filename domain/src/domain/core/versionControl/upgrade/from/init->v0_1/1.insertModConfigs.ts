@@ -9,8 +9,10 @@ export async function insertModConfigs({ handle }: { handle: moo.model.handle })
   // await handle.over(handle.model.configs.module.crypto).replace.sync({ newData: DEFAULT_CRYPTO_CONFIGS })
   // await handle.over(handle.model.configs.module.jwtTokens).replace.sync({ newData: DEFAULT_JWT_TOKENS_CONFIGS })
   // await handle.over(handle.model.configs.module.mailer).replace.sync({ newData: DEFAULT_MAILER_CONFIGS })
-  await handle.over(handle.model.configs.module.education).put.sync({ newData: DEFAULT_EDUCATION_CONFIGS })
-  await handle.over(handle.model.configs.module.moodlenet).put.sync({ newData: DEFAULT_MOODLENET_CONFIGS })
-  await handle.over(handle.model.configs.module.org).put.sync({ newData: DEFAULT_ORG_CONFIGS })
-  await handle.over(handle.model.configs.module.userAccount).put.sync({ newData: DEFAULT_USER_ACCOUNT_CONFIGS })
+  await Promise.all([
+    handle.over(handle.model.configs.module.education).put.sync({ newData: DEFAULT_EDUCATION_CONFIGS }),
+    handle.over(handle.model.configs.module.moodlenet).put.sync({ newData: DEFAULT_MOODLENET_CONFIGS }),
+    handle.over(handle.model.configs.module.org).put.sync({ newData: DEFAULT_ORG_CONFIGS }),
+    handle.over(handle.model.configs.module.userAccount).put.sync({ newData: DEFAULT_USER_ACCOUNT_CONFIGS }),
+  ])
 }

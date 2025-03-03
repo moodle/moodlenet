@@ -38,7 +38,7 @@ declare global {
                     { items: { id: string; data: xSpaceData<space_shape>; cursor: string }[] },
                   ]
                   one: ['query', { filters?: filters }, Option<{ id: string; data: xSpaceData<space_shape> }>]
-                  createMany: ['sync', { spaces: { id: string; data: sSpaceData<space_shape> }[] }, void]
+                  // createMany: ['sync', { spaces: { id: string; data: sSpaceData<space_shape> }[] }, void]
                 }
                 shape: map<spaceModel>
                 // data: map<null | xSpaceData<space_shape>>

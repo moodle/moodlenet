@@ -5,52 +5,48 @@ export function educationImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.i
   return {
     categories: {
       bloomCognitives: {
-        $: {
-          createMany: {
-            exe: async ({ spaces }) => {
-              await dbStruct.appData.coll.eduBloomCognitive.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, education: data })),
-                { silent: true, overwriteMode: 'replace' },
-              )
+        _: code => ({
+          $: {
+            create: {
+              exe: async ({ spaceData }) => {
+                await dbStruct.appData.coll.eduBloomCognitive.save({ _key: code, education: spaceData }, { silent: true, overwriteMode: 'conflict' })
+              },
             },
           },
-        },
+        }),
       },
       iscedFields: {
-        $: {
-          createMany: {
-            exe: async ({ spaces }) => {
-              await dbStruct.appData.coll.eduIscedField.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, education: data })),
-                { silent: true, overwriteMode: 'replace' },
-              )
+        _: code => ({
+          $: {
+            create: {
+              exe: async ({ spaceData }) => {
+                await dbStruct.appData.coll.eduIscedField.save({ _key: code, education: spaceData }, { silent: true, overwriteMode: 'conflict' })
+              },
             },
           },
-        },
+        }),
       },
       iscedLevels: {
-        $: {
-          createMany: {
-            exe: async ({ spaces }) => {
-              await dbStruct.appData.coll.eduIscedLevel.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, education: data })),
-                { silent: true, overwriteMode: 'replace' },
-              )
+        _: code => ({
+          $: {
+            create: {
+              exe: async ({ spaceData }) => {
+                await dbStruct.appData.coll.eduIscedLevel.save({ _key: code, education: spaceData }, { silent: true, overwriteMode: 'conflict' })
+              },
             },
           },
-        },
+        }),
       },
       resourceTypes: {
-        $: {
-          createMany: {
-            exe: async ({ spaces }) => {
-              await dbStruct.appData.coll.eduResourceType.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, education: data })),
-                { silent: true, overwriteMode: 'replace' },
-              )
+        _: code => ({
+          $: {
+            create: {
+              exe: async ({ spaceData }) => {
+                await dbStruct.appData.coll.eduResourceType.save({ _key: code, education: spaceData }, { silent: true, overwriteMode: 'conflict' })
+              },
             },
           },
-        },
+        }),
       },
     },
   }

@@ -5,28 +5,26 @@ export function contentImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.imp
   return {
     categories: {
       languages: {
-        $: {
-          createMany: {
-            exe: async ({ spaces }) => {
-              await dbStruct.appData.coll.contentLanguage.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, content: data })),
-                { silent: true, overwriteMode: 'replace' },
-              )
+        _: code => ({
+          $: {
+            create: {
+              exe: async ({ spaceData }) => {
+                await dbStruct.appData.coll.contentLanguage.save({ _key: code, content: spaceData }, { silent: true, overwriteMode: 'conflict' })
+              },
             },
           },
-        },
+        }),
       },
       licenses: {
-        $: {
-          createMany: {
-            exe: async ({ spaces }) => {
-              await dbStruct.appData.coll.contentLicense.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, content: data })),
-                { silent: true, overwriteMode: 'replace' },
-              )
+        _: code => ({
+          $: {
+            create: {
+              exe: async ({ spaceData }) => {
+                await dbStruct.appData.coll.contentLicense.save({ _key: code, content: spaceData }, { silent: true, overwriteMode: 'conflict' })
+              },
             },
-          }
-        },
+          },
+        }),
       },
     },
   }
