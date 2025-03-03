@@ -12,7 +12,7 @@ const MOODLE_HTTP_BINDER_RECEIVER_PORT = parseInt(process.env.MOODLE_HTTP_BINDER
 const MOODLE_HTTP_BINDER_RECEIVER_BASEURL = process.env.MOODLE_HTTP_BINDER_RECEIVER_BASEURL ?? '/'
 
 http_bind
-  .getHttpBinderReceiver<moo.gate.access<any_>>({
+  .getHttpBinderReceiver<moo.gate.provider.request<any_>>({
     port: MOODLE_HTTP_BINDER_RECEIVER_PORT,
     basePath: MOODLE_HTTP_BINDER_RECEIVER_BASEURL,
   })
@@ -32,14 +32,14 @@ http_bind
 
     httpGate.receiver({
       dispatcher: async gateAccess => {
-        const coreGateDeps = await configurator.access({ gateAccess })
+        const coreGateDeps = await configurator.gate({ gateRequest: gateAccess })
         return coreGate(coreGateDeps)
       },
     })
 
     configurator
-      .access({
-        gateAccess: {
+      .gate({
+        gateRequest: {
           form: {},
           path: ['a', 'a', 'a', 'a'],
           claims: { server: { href: 'https://moodlenet.local/' as any_, authSessionToken: null, requestId: '11', ua: '313132' } },

@@ -1,58 +1,73 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_, map, path, serializable, serializable_object, signed_token, url_string } from '@moodle/lib-types'
+import { any_, map, path } from '@moodle/lib-types'
 import { ZodType } from 'zod'
 import { Error4xx } from '../lib/access-error'
 
 declare global {
   namespace moo {
     namespace gate {
-      type access<endpoint_ extends persona.endpoint<any_>> = {
-        path: path
-        form: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never
-        claims: {
-          // client: clientClaims
-          server: serverClaims
-        }
-      }
       // type clientClaims = { locale?: string; locales?: string[] }
-      type serverClaims = { authSessionToken: signed_token | null; requestId: string; href: url_string; ua: string | null; meta?: serializable_object }
+
+      type gateContextChecks<useCaseEndpoint extends moo.persona.endpoint<any_>> = useCaseEndpoint[3] extends never | undefined | null | void
+        ? {
+            context?: undefined
+          }
+        : {
+            context: {
+              preflight: preflight<useCaseEndpoint>
+              check: contextCheck<useCaseEndpoint>
+            }
+          }
+
+      type endpointChecksHandle<useCaseEndpoint extends moo.persona.endpoint<any_>> = {
+        zod: endpointZod<useCaseEndpoint>
+      } & gateContextChecks<useCaseEndpoint>
+
+      type contextCheck<useCaseEndpoint extends moo.persona.endpoint<any_>> = (_: { context: useCaseEndpoint[3] }) => Error4xx | undefined
+
+      type preflight<useCaseEndpoint extends moo.persona.endpoint<any_>> = (_: {
+        context: useCaseEndpoint[3]
+        form: useCaseEndpoint[0] extends ZodType<any_, any_, infer inputType> ? inputType : never
+      }) => Error4xx | undefined
+
+      type endpointZod<useCaseEndpoint extends moo.persona.endpoint<any_>> = useCaseEndpoint[0]
 
       type client<forPersonas extends map<moo.persona<any_>>> = {
         [personaType_ in keyof forPersonas]: client.persona<forPersonas[personaType_]>
       }
       namespace client {
-        type access = { path: path; form: serializable }
-        type dispatcher = (gateAccess: access) => Promise<unknown>
+        type request<endpoint_ extends persona.endpoint<any_>> = { path: path; form: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never }
+        type dispatcher<endpoint_ extends persona.endpoint<any_>> = (gateClientRequest: request<endpoint_>) => Promise<unknown>
 
         type persona<persona_ extends moo.persona<any_>> = {
           [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_> ? context<persona_[contextName]> : unknown
-        } & withAccessError
+        } & withAccErr<'u'>
 
         type context<context extends moo.persona.context<any_>> = {
           [scopeName in string & keyof context]: context[scopeName] extends moo.persona.scope<any_> ? scope<context[scopeName]> : unknown
-        } & withAccessError
+        } & withAccErr<'u'>
 
         type scope<scope extends moo.persona.scope<any_>> = {
           [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.persona.usecase<any_> ? usecase<scope[useCaseName]> : never
-        } & withAccessError
+        } & withAccErr<'u'>
 
         type usecase<useCase extends moo.persona.usecase<any_>> = {
           [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.persona.endpoint<any_> ? endpointAccess<useCase[endpointName]> : never
-        } & withAccessError
+        } & withAccErr<'u'>
 
         type endpointAccessHandle<useCaseEndpoint extends moo.persona.endpoint<any_>> = endpointChecksHandle<useCaseEndpoint> &
-          withAccessError<'u'> & {
+          withAccErr<'u'> & {
             allowed: true
             send: endpointCall<useCaseEndpoint>
           }
 
-        type endpointAccess<useCaseEndpoint extends moo.persona.endpoint<any_>> = withAccessError &
+        type endpointAccess<useCaseEndpoint extends moo.persona.endpoint<any_>> = withAccErr &
           ((
             context: useCaseEndpoint[3] extends never | undefined | null | void ? void : useCaseEndpoint[3],
-          ) => (withAccessError<'e'> & { allowed: false; zod?: undefined; send?: undefined; context?: undefined }) | endpointAccessHandle<useCaseEndpoint>)
+          ) => (withAccErr<'e'> & { allowed: false; zod?: undefined; send?: undefined; context?: undefined }) | endpointAccessHandle<useCaseEndpoint>)
 
-        type withAccessError<t extends 'e' | 'u' = 'e' | 'u'> = {
+        type withAccErr<t extends 'e' | 'u' = 'e' | 'u'> = {
           _: t extends 'e' ? { error: Error4xx } : never | t extends 'u' ? undefined : never
         }
 

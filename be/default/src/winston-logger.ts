@@ -81,7 +81,7 @@ ${info.message}
 
 const loggerContextFormatter = {
   core(c: d_u__d<loggerContext, 'for', 'core'>) {
-    const { id, sessionInfo, now, gateAccess } = c.access
+    const { id, sessionInfo, now, gateRequest: gateAccess } = c.request
     return `Core Access:
 id: ${id}
 now: ${now}
@@ -102,7 +102,7 @@ gateAccess:
 `
   },
   model(c: d_u__d<loggerContext, 'for', 'model'>) {
-    const { callTime, id, now, message, origin, target } = c.access
+    const { callTime, id, now, message, origin, target } = c.envelope
     return `Model Access:
 id: ${id}
 callTime: ${callTime} (now: ${now})

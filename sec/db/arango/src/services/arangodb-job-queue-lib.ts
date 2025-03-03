@@ -16,12 +16,8 @@ import assert from 'assert'
 import { dbStruct } from '../db-structure'
 export type jobCollection<jobData> = DocumentCollection<Omit<job<jobData>, 'id'>>
 
-export function provideArangoQueueServiceWorkers({
-  dbStruct,
-}: {
-  dbStruct: dbStruct
-}): queueServiceWorkers<{ access: moo.model.access<any_> }> {
-  const jobCollection = dbStruct.services.coll.domainAccessJob
+export function provideArangoQueueServiceWorkers({ dbStruct }: { dbStruct: dbStruct }): queueServiceWorkers<{ envelope: moo.model.envelope<any_> }> {
+  const jobCollection = dbStruct.services.coll.modelEnvelopeQueue
   return {
     enqueueJob: arangoEnqueueJob({ jobCollection }),
     updateJob: updateJob({ jobCollection }),

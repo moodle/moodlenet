@@ -34,29 +34,23 @@ declare global {
           : never
       }
 
-      type access<endpoint_ extends persona.endpoint<any_>> = {
+      type request<endpoint_ extends persona.endpoint<any_>> = {
         id: string
         now: date_time_string
         sessionInfo: session.user.info
-        gateAccess: gate.access<endpoint_>
+        gateRequest: gate.provider.request<endpoint_>
       }
 
       type ctx<endpoint_ extends persona.endpoint<any_>> = {
         configs: endpoint_[2]
         log: logger
-        access: access<endpoint_>
+        coreRequest: request<endpoint_>
         assertContextChecks: endpoint_[3] extends never | undefined | null | void
           ? undefined
-          : (
-              context: endpoint_[3] extends never | undefined | null | void ? void : endpoint_[3],
-            ) => /* Error4xx |  */ undefined
+          : (context: endpoint_[3] extends never | undefined | null | void ? void : endpoint_[3]) => /* Error4xx |  */ undefined
         zod: gate.endpointZod<endpoint_>
       }
-      type endpointArgs<endpoint_ extends persona.endpoint<any_>> = [
-        form: gate.access<endpoint_>['form'],
-        handle: moo.model.handle,
-        ctx: ctx<endpoint_>,
-      ]
+      type endpointArgs<endpoint_ extends persona.endpoint<any_>> = [form: gate.provider.request<endpoint_>['form'], handle: moo.model.handle, ctx: ctx<endpoint_>]
 
       type endpoint<endpoint_ extends persona.endpoint<any_>> = (
         ...endpointArgs: endpointArgs<endpoint_>

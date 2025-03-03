@@ -12,22 +12,22 @@ declare global {
       type def = {
         [moo.tags.configs]: serializable_object
       }
-      type dispatcher = (access: access<type.opDef>) => Promise<Either<Error4xx, unknown>>
+      type dispatcher<opdef extends type.opDef> = (envelope: envelope<opdef>) => Promise<Either<Error4xx, opdef[2]>>
 
       type handle = {
         model: Models
         over: <typeModelRef extends model.type>(type_model_ref: typeModelRef | undefined) => typeModelRefOpMap_impl<typeModelRef>
       }
-      type access<op extends type.opDef> = {
+      type envelope<op extends type.opDef> = {
         id: string
         callTime: date_time_string
         now: date_time_string
         message: op[1]
-        origin: access.origin //<type.opDef>
-        target: access.target //<op>
+        origin: envelope.origin //<type.opDef>
+        target: envelope.target //<op>
       }
 
-      namespace access {
+      namespace envelope {
         // type target<op extends type.opDef> = {
         //   opName: string
         //   path: path
@@ -66,7 +66,7 @@ declare global {
         type ctx<op extends type.opDef> = {
           now: date_time_string
           log: logger
-          access: access<op>
+          envelope: envelope<op>
         }
         type exeArgs<op extends type.opDef> = [message: op[1], handle: handle, ctx: ctx<op>]
         type typeModel<modelNode extends type<type.traitsDef>> = withOpHandlers<modelNode> &

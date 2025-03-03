@@ -1,5 +1,5 @@
 import { resources } from './resources.usecase/resources.usecase.core'
-import type { exchangeWithLms as exchangeWithLmsType } from '.'
-export const exchangeWithLms: moo.core.scope<exchangeWithLmsType> ={
-  resources
+import type { exchangeWithLms as exchangeWithLms_def } from '.'
+export const exchangeWithLms: moo.core.scope<exchangeWithLms_def> = {
+  resources,
 }

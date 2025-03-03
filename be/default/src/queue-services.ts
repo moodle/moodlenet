@@ -5,7 +5,7 @@ import { isLeft } from 'fp-ts/Either'
 import moment from 'moment'
 import timers from 'timers/promises'
 
-type jobData = { access: moo.model.access<any_> }
+type jobData = { envelope: moo.model.envelope<any_> }
 
 type queueConfig = Omit<jobConfig, 'jobName'> & { maxRetries: number }
 export function createQueueServices<jobNames extends string>({
@@ -13,7 +13,7 @@ export function createQueueServices<jobNames extends string>({
   modelDispatcher,
   queues,
 }: {
-  modelDispatcher: moo.model.dispatcher
+  modelDispatcher: moo.model.dispatcher<any_>
   queueServiceWorkers: queueServiceWorkers<jobData>
   queues: map<queueConfig, jobNames>
 }) {
@@ -30,11 +30,11 @@ export function createQueueServices<jobNames extends string>({
       async executeJob({
         job: {
           executionOutcomes,
-          jobData: { access },
+          jobData: { envelope },
         },
       }) {
         return Promise.race([
-          modelDispatcher(access)
+          modelDispatcher(envelope)
             .then<executionOutcome>(outcome => {
               if (isLeft(outcome)) {
                 throw outcome.left

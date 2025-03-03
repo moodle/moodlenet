@@ -20,5 +20,5 @@ export type configurator = (_: { master: boolean }) => configuration
 
 export type configuration = {
   drain: () => Promise<unknown>
-  access: (_: { gateAccess: moo.gate.access<any_> }) => Promise<coreGateDeps>
+  gate: (_: { gateRequest: moo.gate.provider.request<any_> }) => Promise<coreGateDeps>
 }

@@ -1,6 +1,6 @@
-import { unsupportedProxyHandler } from '@moodle/lib-types'
+import { any_, unsupportedProxyHandler } from '@moodle/lib-types'
 
-export function clientGateReverseProxy({ formDispatcher }: { formDispatcher: moo.gate.client.dispatcher }): moo.gate.provider<moo.Personas> {
+export function clientGateReverseProxy({ formDispatcher }: { formDispatcher: moo.gate.client.dispatcher<any_> }): moo.gate.provider<moo.Personas> {
   return subClientGateReverseProxy({
     path: [],
   }) as unknown as moo.gate.provider<moo.Personas>

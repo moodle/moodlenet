@@ -9,7 +9,7 @@ export function clientGateProxy({
 }: {
   sessionInfo: moo.session.user.info
   gateProvider: moo.gate.provider<moo.Personas>
-  formDispatcher: moo.gate.client.dispatcher
+  formDispatcher: moo.gate.client.dispatcher<any_>
 }) {
   return subClientGateProxy({
     gateProvider: baseGateProvider,

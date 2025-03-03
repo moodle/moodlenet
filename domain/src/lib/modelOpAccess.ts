@@ -6,17 +6,17 @@ import { modelHandleProxy } from './modelHandleProxy'
 
 type executeModelOpsDeps = {
   models: map
-  access: moo.model.access<any_>
-  backModelAccessDispatcher: moo.model.dispatcher
+  envelope: moo.model.envelope<any_>
+  backModelEnvelopeDispatcher: moo.model.dispatcher<any_>
   loggerProvider: loggerProvider
 }
 
-export async function preModelOps({ models, access, backModelAccessDispatcher, loggerProvider }: executeModelOpsDeps) {
-  const allOpTargets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
+export async function preModelOps({ models, envelope, backModelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps) {
+  const allOpTargets = allModelsOpExtracts({ models, envelope, backModelEnvelopeDispatcher, loggerProvider })
   const exeTargets = allOpTargets.exe
   const implementationExists = exeTargets.length > 0
   const step = implementationExists ? 'pre' : ('notImpl' as const)
-  const myLogger = loggerProvider({ for: 'model', more: { name: `${step}:op` /*  models: Object.keys(models) */ }, access })
+  const myLogger = loggerProvider({ for: 'model', more: { name: `${step}:op` /*  models: Object.keys(models) */ }, envelope: envelope })
   await Promise.all(
     allOpTargets[step].map(({ fn, modelName }) =>
       fn().catch(err => {
@@ -27,13 +27,13 @@ export async function preModelOps({ models, access, backModelAccessDispatcher, l
   )
 }
 
-export async function executeModel({ models, access, backModelAccessDispatcher, loggerProvider }: executeModelOpsDeps) {
-  const myLogger = loggerProvider({ for: 'model', more: { name: `exec:op` /*  models: Object.keys(models) */ }, access })
+export async function executeModel({ models, envelope, backModelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps) {
+  const myLogger = loggerProvider({ for: 'model', more: { name: `exec:op` /*  models: Object.keys(models) */ }, envelope: envelope })
 
-  const allOpTargets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
+  const allOpTargets = allModelsOpExtracts({ models, envelope, backModelEnvelopeDispatcher, loggerProvider })
   const exe = allOpTargets.exe[0] ?? {
     fn: async (): Promise<never> => {
-      const notImplErr = new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${access.target.path.join('.')}.${access.target.opName}` })
+      const notImplErr = new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${envelope.target.path.join('.')}.${envelope.target.opName}` })
       myLogger.warn(notImplErr)
       return Promise.reject(notImplErr)
     },
@@ -41,7 +41,7 @@ export async function executeModel({ models, access, backModelAccessDispatcher, 
   }
 
   if (allOpTargets.exe.length > 1) {
-    const MULTIPLE_EXEC_MESSAGE = `Multiple implementations of model target: ${access.target.path.join('.')}.${access.target.opName} detected,
+    const MULTIPLE_EXEC_MESSAGE = `Multiple implementations of model target: ${envelope.target.path.join('.')}.${envelope.target.opName} detected,
   will call the first from "${exe.modelName}" model all others will be ignored`
     //REVIEW: should we throw an error here?
     myLogger.critical(MULTIPLE_EXEC_MESSAGE)
@@ -58,10 +58,10 @@ export async function executeModel({ models, access, backModelAccessDispatcher, 
   return isError4xx(outcome) ? left(outcome) : right(outcome)
 }
 
-export async function postModelOps({ models, access, outcome, backModelAccessDispatcher, loggerProvider }: executeModelOpsDeps & { outcome: Either<Error4xx, unknown> }) {
-  const myLogger = loggerProvider({ for: 'model', more: { name: `post:op` /*  models: Object.keys(models) */ }, access })
+export async function postModelOps({ models, envelope, outcome, backModelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps & { outcome: Either<Error4xx, unknown> }) {
+  const myLogger = loggerProvider({ for: 'model', more: { name: `post:op` /*  models: Object.keys(models) */ }, envelope: envelope })
 
-  const allOpTargets = allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider })
+  const allOpTargets = allModelsOpExtracts({ models, envelope, backModelEnvelopeDispatcher, loggerProvider })
 
   await Promise.all(
     allOpTargets.post.map(({ fn, modelName }) =>
@@ -75,18 +75,18 @@ export async function postModelOps({ models, access, outcome, backModelAccessDis
 
 type allModelsOpExtractsDeps = {
   models: map
-  access: moo.model.access<any_>
-  backModelAccessDispatcher: moo.model.dispatcher
+  envelope: moo.model.envelope<any_>
+  backModelEnvelopeDispatcher: moo.model.dispatcher<any_>
   loggerProvider: loggerProvider
 }
 
-export function allModelsOpExtracts({ models, access, backModelAccessDispatcher, loggerProvider }: allModelsOpExtractsDeps) {
+export function allModelsOpExtracts({ models, envelope: envelope, backModelEnvelopeDispatcher, loggerProvider }: allModelsOpExtractsDeps) {
   return Object.entries(models).reduce(
     (acc, [modelName, impl]) => {
       const { post, exe, pre, notImpl } = modelOpExtract({
         model: { name: modelName, impl },
-        access,
-        backModelAccessDispatcher,
+        envelope,
+        backModelEnvelopeDispatcher,
         loggerProvider,
       })
       post && acc.post.push({ fn: post, modelName })
@@ -106,38 +106,38 @@ export function allModelsOpExtracts({ models, access, backModelAccessDispatcher,
 
 type modelOpExtractDeps = {
   model: { impl: any_; name: any_ }
-  access: moo.model.access<any_>
-  backModelAccessDispatcher: moo.model.dispatcher
+  envelope: moo.model.envelope<any_>
+  backModelEnvelopeDispatcher: moo.model.dispatcher<any_>
   loggerProvider: loggerProvider
 }
 type modelExtraction = ReturnType<typeof modelOpExtract>
-export function modelOpExtract({ model, access, backModelAccessDispatcher, loggerProvider }: modelOpExtractDeps) {
+export function modelOpExtract({ model, envelope, backModelEnvelopeDispatcher, loggerProvider }: modelOpExtractDeps) {
   const handle = modelHandleProxy({
-    modelAccessDispatcher: backModelAccessDispatcher,
+    modelEnvelopeDispatcher: backModelEnvelopeDispatcher,
     origin: {
       from: {
-        id: access.id,
-        target: access.target,
+        id: envelope.id,
+        target: envelope.target,
       },
-      useCase: access.origin.useCase,
+      useCase: envelope.origin.useCase,
     },
   })
 
-  const withOpHandlers: undefined | moo.model.impl.withOpHandlers<any_> = access.target.path.reduce((_model, prop) => _model?.[prop], model.impl)
-  const opHandlers = withOpHandlers?.$?.[access.target.opName]
+  const withOpHandlers: undefined | moo.model.impl.withOpHandlers<any_> = envelope.target.path.reduce((_model, prop) => _model?.[prop], model.impl)
+  const opHandlers = withOpHandlers?.$?.[envelope.target.opName]
 
   const exe = opHandlers?.exe // as undefined | moo.model.impl.exe<any_>
   const pre = opHandlers?.pre // as undefined | moo.model.impl.pre<any_>
   const post = opHandlers?.post // as undefined | moo.model.impl.post<any_>
   const notImpl = opHandlers?.notImpl // as undefined | moo.model.impl.notImpl<any_>
-  const log = loggerProvider({ for: 'model', access })
+  const log = loggerProvider({ for: 'model', envelope: envelope })
   const now = new Date().toISOString()
   const ctx: moo.model.impl.ctx<any_> = {
-    access: { ...access, now },
+    envelope: { ...envelope, now },
     log,
     now: new Date().toISOString(),
   }
-  const exeArgs: moo.model.impl.exeArgs<any_> = [access.message, handle, ctx]
+  const exeArgs: moo.model.impl.exeArgs<any_> = [envelope.message, handle, ctx]
   return {
     exe: exe && (() => exe(...exeArgs)),
     pre: pre && (() => pre(...exeArgs)),

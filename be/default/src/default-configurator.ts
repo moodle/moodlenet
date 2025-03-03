@@ -31,7 +31,7 @@ type __ = model.jwtTokens.JwtTokensModel
 
 type configuratorResult = {
   loggerProvider: loggerProvider
-  modelAccessDispatcher: moo.model.dispatcher
+  modelEnvelopeDispatcher: moo.model.dispatcher<any_>
   stopAndDrain: () => Promise<void>
 }
 
@@ -40,7 +40,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
   return {
     drain: configuratorDrain,
-    access,
+    gate,
   }
   async function configuratorDrain() {
     console.log(`draining [#${Object.keys(cache).length}] pending configurations ...`)
@@ -48,9 +48,9 @@ export const defaultConfigurator: configurator = ({ master }) => {
     return Promise.allSettled(configResults.map(({ stopAndDrain }) => stopAndDrain()))
   }
 
-  async function access({ gateAccess }: { gateAccess: moo.gate.access<any_> }): Promise<coreGateDeps> {
+  async function gate({ gateRequest }: { gateRequest: moo.gate.provider.request<any_> }): Promise<coreGateDeps> {
     // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
-    const domainName = new URL(gateAccess.claims.server.href).hostname
+    const domainName = new URL(gateRequest.claims.server.href).hostname
     if (!cache[domainName]) {
       cache[domainName] = new Promise<configuratorResult>(resolveConfigurationPromise => {
         ;(async () => {
@@ -132,15 +132,15 @@ export const defaultConfigurator: configurator = ({ master }) => {
             tikaResourceIngestor,
           } satisfies map<moo.model.impl>
 
-          const pendingAccessResultPromises: Promise<unknown>[] = []
+          const pendingModelResultPromises: Promise<unknown>[] = []
 
           const arangoQueueServiceWorkers = provideArangoQueueServiceWorkers({ dbStruct: arangodb.dbStruct })
 
           const _from_queue_sym_ = Symbol('fromQueue')
           const queues = createQueueServices({
-            modelDispatcher: access => {
-              ;(access as any_)[_from_queue_sym_] = _from_queue_sym_
-              return modelAccessDispatcher(access)
+            modelDispatcher: envelope => {
+              ;(envelope as any_)[_from_queue_sym_] = _from_queue_sym_
+              return modelEnvelopeDispatcher(envelope)
             },
             queueServiceWorkers: arangoQueueServiceWorkers,
             queues: {},
@@ -159,7 +159,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
               .setup({
                 handle: modelHandleProxy({
                   origin: { from: false, useCase: 'domainCore.setup' },
-                  modelAccessDispatcher,
+                  modelEnvelopeDispatcher: modelEnvelopeDispatcher,
                 }),
                 log: loggerProvider({ for: 'setup', name: 'domainCore.setup', more: { domainName } }),
               })
@@ -175,7 +175,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
             .preflight({
               handle: modelHandleProxy({
                 origin: { from: false, useCase: 'domainCore.preflight' },
-                modelAccessDispatcher,
+                modelEnvelopeDispatcher: modelEnvelopeDispatcher,
               }),
               log: loggerProvider({ for: 'setup', name: 'domainCore.preflight', more: { domainName } }),
             })
@@ -189,7 +189,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
               throw e
             })
 
-          async function modelAccessDispatcher(access: moo.model.access<any_>): Promise<Either<Error4xx, unknown>> {
+          async function modelEnvelopeDispatcher(envelope: moo.model.envelope<any_>): Promise<Either<Error4xx, unknown>> {
             type __ = keyof moo.Models extends infer modelName
               ? modelName extends keyof moo.Models
                 ? keyof moo.Models[modelName] extends infer frstProp
@@ -197,10 +197,10 @@ export const defaultConfigurator: configurator = ({ master }) => {
                   : never
                 : never
               : never
-            const [model, frstProp] = access.target.path as __
-            const isFromQueue = _from_queue_sym_ in access
-            const enqueueing = !isFromQueue && access.target.type === 'async' && ((model === 'mailer' && frstProp === 'send') || (model === 'mailer' && frstProp === 'send'))
-            const jobId = `${access.id}_${generateAlphanumId({ length: 4 })}`
+            const [model, frstProp] = envelope.target.path as __
+            const isFromQueue = _from_queue_sym_ in envelope
+            const enqueueing = !isFromQueue && envelope.target.type === 'async' && ((model === 'mailer' && frstProp === 'send') || (model === 'mailer' && frstProp === 'send'))
+            const jobId = `${envelope.id}_${generateAlphanumId({ length: 4 })}`
             if (enqueueing) {
               const queueService = queues.services.default
               pushPendingPromise(
@@ -208,13 +208,13 @@ export const defaultConfigurator: configurator = ({ master }) => {
                   .enqueue({
                     jobId,
                     enqueueDate: new Date().toISOString(),
-                    jobData: { access },
+                    jobData: { envelope },
                   })
                   .then(() =>
                     pushPendingPromise(
                       preModelOps({
-                        access,
-                        backModelAccessDispatcher: modelAccessDispatcher,
+                        envelope,
+                        backModelEnvelopeDispatcher: modelEnvelopeDispatcher,
                         loggerProvider,
                         models,
                       }),
@@ -224,36 +224,36 @@ export const defaultConfigurator: configurator = ({ master }) => {
               return right(void 0)
             }
 
-            const accessResultPromise = pushPendingPromise(
+            const modelResultPromise = pushPendingPromise(
               (isFromQueue
                 ? Promise.resolve()
                 : preModelOps({
-                    access,
-                    backModelAccessDispatcher: modelAccessDispatcher,
+                    envelope,
+                    backModelEnvelopeDispatcher: modelEnvelopeDispatcher,
                     loggerProvider,
                     models,
                   })
               )
                 .then(async () => {
                   const outcome = await executeModel({
-                    access,
-                    backModelAccessDispatcher: modelAccessDispatcher,
+                    envelope,
+                    backModelEnvelopeDispatcher: modelEnvelopeDispatcher,
                     loggerProvider,
                     models,
                   })
-                  if (isLeft(outcome) && outcome.left.desc !== 'Not Implemented' && !isFromQueue && access.target.type === 'async') {
-                    myLogger.info('executeModel: async call - formerly not enqueued - failed, will enqueue', { jobId, error: outcome.left, access })
+                  if (isLeft(outcome) && outcome.left.desc !== 'Not Implemented' && !isFromQueue && envelope.target.type === 'async') {
+                    myLogger.info('executeModel: async call - formerly not enqueued - failed, will enqueue', { jobId, error: outcome.left, envelope })
                     await queues.defaultService.enqueue({
                       jobId,
                       enqueueDate: new Date().toISOString(),
-                      jobData: { access },
+                      jobData: { envelope: envelope },
                     })
                     return right(void 0)
                   }
 
                   postModelOps({
-                    access,
-                    backModelAccessDispatcher: modelAccessDispatcher,
+                    envelope,
+                    backModelEnvelopeDispatcher: modelEnvelopeDispatcher,
                     loggerProvider,
                     models,
                     outcome,
@@ -261,27 +261,27 @@ export const defaultConfigurator: configurator = ({ master }) => {
                   return outcome
                 })
                 .catch(error => {
-                  myLogger.warn('model access failed', error, 'access:', access)
+                  myLogger.warn('model access failed', error, 'envelope:', envelope)
                   return left(new Error4xx('Internal Server Error', { message: error.message, error }))
                 }),
             )
-            return accessResultPromise
+            return modelResultPromise
           }
 
           resolveConfigurationPromise({
             loggerProvider,
-            modelAccessDispatcher,
+            modelEnvelopeDispatcher: modelEnvelopeDispatcher,
             stopAndDrain,
           })
 
           async function stopAndDrain() {
-            console.log(`draining [${domainName}]'s [#${pendingAccessResultPromises.length}] pending replies ...`)
-            await Promise.allSettled([queues.stopAndDrainAll(), ...pendingAccessResultPromises])
+            console.log(`draining [${domainName}]'s [#${pendingModelResultPromises.length}] pending replies ...`)
+            await Promise.allSettled([queues.stopAndDrainAll(), ...pendingModelResultPromises])
             console.log(`drained [${domainName}]'s pending replies`)
           }
           function pushPendingPromise<t>(p: Promise<t>) {
-            pendingAccessResultPromises.push(p)
-            p.finally(() => pendingAccessResultPromises.splice(pendingAccessResultPromises.indexOf(p), 1))
+            pendingModelResultPromises.push(p)
+            p.finally(() => pendingModelResultPromises.splice(pendingModelResultPromises.indexOf(p), 1))
             return p
           }
         })()
@@ -296,24 +296,24 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
     const myModelHandle = modelHandleProxy({
       origin: { from: false, useCase: 'configurator' },
-      modelAccessDispatcher: configuration.modelAccessDispatcher,
+      modelEnvelopeDispatcher: configuration.modelEnvelopeDispatcher,
     })
 
     const coreId = generateUlid({ onDate: new Date() })
     const coreGateDeps: coreGateDeps = {
       core: domainCore.persona.core,
-      coreAccess: {
-        gateAccess,
+      coreRequest: {
+        gateRequest,
         id: coreId,
         now: new Date().toISOString(),
-        sessionInfo: (await myModelHandle.over(myModelHandle.model.accessControl.getMyUserSessionInfo).call.query({ authSessionToken: gateAccess.claims.server.authSessionToken }))
+        sessionInfo: (await myModelHandle.over(myModelHandle.model.accessControl.getMyUserSessionInfo).call.query({ authSessionToken: gateRequest.claims.server.authSessionToken }))
           .info,
       },
       gateProvider: domainGate.gateProvider,
       loggerProvider: configuration.loggerProvider,
       modelHandle: modelHandleProxy({
-        origin: { from: false, useCase: { id: coreId, path: gateAccess.path } },
-        modelAccessDispatcher: configuration.modelAccessDispatcher,
+        origin: { from: false, useCase: { id: coreId, path: gateRequest.path } },
+        modelEnvelopeDispatcher: configuration.modelEnvelopeDispatcher,
       }),
     }
     return coreGateDeps

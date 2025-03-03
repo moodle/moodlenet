@@ -50,7 +50,7 @@ export function getDbStruct(databaseConnections: databaseConnections) {
       coll: {
         dbUpgrade: services_db.collection<dbUpgradeData>('dbUpgrade'),
         modelUpgrade: services_db.collection<{ data: configs.modelUpgradeData }>('modelUpgrade'),
-        domainAccessJob: services_db.collection<job<{ access: moo.model.access<any_> }>>('domainAccessJob'),
+        modelEnvelopeQueue: services_db.collection<job<{ envelope: moo.model.envelope<any_> }>>('modelEnvelopeQueue'),
         activeAuthSession: services_db.collection<{ data: authSession }>('activeAuthSession'),
       },
     },
