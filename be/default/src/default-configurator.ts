@@ -124,7 +124,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
           const tikaResourceIngestor = get_default_resource_ingestion_secondary_factory(default_resource_ingestor_env)
 
           const models = {
-            core: domainCore.coreModelImpl,
+            ...domainCore.model.cores,
             arangodb: arangodb.modelImpl,
             crypto,
             nodemailer,
@@ -155,7 +155,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
               throw e
             })
 
-            await domainCore
+            await domainCore.versionControl
               .setup({
                 handle: modelHandleProxy({
                   origin: { from: false, useCase: 'domainCore.setup' },
@@ -171,7 +171,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
             await queues.startAll()
           }
 
-          await domainCore
+          await domainCore.versionControl
             .preflight({
               handle: modelHandleProxy({
                 origin: { from: false, useCase: 'domainCore.preflight' },
@@ -301,7 +301,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
     const coreId = generateUlid({ onDate: new Date() })
     const coreGateDeps: coreGateDeps = {
-      core: domainCore.domainCoreImpl,
+      core: domainCore.persona.core,
       coreAccess: {
         gateAccess,
         id: coreId,

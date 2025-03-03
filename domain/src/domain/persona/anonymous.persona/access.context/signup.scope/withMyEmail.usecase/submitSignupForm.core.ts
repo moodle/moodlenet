@@ -5,7 +5,7 @@ import type * as def from './submitSignupForm.endpoint'
 import { SUBMITTED } from '../../../../../../lib/constants'
 
 export const submitSignupForm: moo.core.endpoint<def.submitSignupForm> = async (form, _) => {
-  const existingUser = await _.over(_.model.userAccount.user).one.query({ filters: { emailEquals: form.email } })
+  const existingUser = await _.over(_.model.userAccount.userAccountSpace).one.query({ filters: { emailEquals: form.email } })
 
   if (!O.isNone(existingUser)) {
     return E.left(USER_WITH_THIS_EMAIL_EXISTS)

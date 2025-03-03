@@ -27,7 +27,7 @@ declare global {
           idSpaceModel<space_shape, space_ops> extends infer spaceModel
             ? type<{
                 ops: ops_ & {
-                  emptySpace: ['query', void, sSpaceData<space_shape>]
+                  // emptySpace: ['query', void, sSpaceData<space_shape>]
                   some: [
                     'query',
                     {
@@ -38,7 +38,7 @@ declare global {
                     { items: { id: string; data: xSpaceData<space_shape>; cursor: string }[] },
                   ]
                   one: ['query', { filters?: filters }, Option<{ id: string; data: xSpaceData<space_shape> }>]
-                  bulkCreate: ['sync', { spaces: { id: string; data: sSpaceData<space_shape> }[] }, void]
+                  createMany: ['sync', { spaces: { id: string; data: sSpaceData<space_shape> }[] }, void]
                 }
                 shape: map<spaceModel>
                 // data: map<null | xSpaceData<space_shape>>
@@ -82,7 +82,7 @@ declare global {
           } & ('view' extends flags
               ? unknown
               : {
-                  put: ['sync', { newData: data; opts?: opts }, 'static' extends flags ? 'done' : Option<'done'>]
+                  put: ['sync', { newData: data; opts?: opts }, 'static' extends flags ? 'done' : Option<{ was: data }>]
                 })
           shape: unknown
           flags: flags

@@ -9,7 +9,7 @@ export * as any__ from './any.persona'
 export * as authenticated from './authenticated.persona'
 export * as moderator from './moderator.persona'
 
-export type domainCore = moo.core<{
+export type personaCore = moo.core<{
   admin: admin
   authenticated: authenticated
   anonymous: anonymous

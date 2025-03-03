@@ -18,7 +18,7 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
 
   const confirmationTokenData = e_validatedToken.right.data
 
-  const o_existingUserWithThisEmail = await _.over(_.model.userAccount.user).one.query({
+  const o_existingUserWithThisEmail = await _.over(_.model.userAccount.userAccountSpace).one.query({
     filters: { emailEquals: confirmationTokenData.email },
   })
 
@@ -27,7 +27,7 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
   }
 
   const id = await generateAlphanumId_withCheck(generated_id =>
-    _.over(_.model.userAccount.user[generated_id])
+    _.over(_.model.userAccount.userAccountSpace[generated_id])
       .exists.query()
       .then(({ exists }) => exists),
   )
@@ -44,7 +44,7 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
     },
   }
 
-  await _.over(_.model.userAccount.user[id]).create.async({ spaceData: userSpace })
+  await _.over(_.model.userAccount.userAccountSpace[id]).create.async({ spaceData: userSpace })
 
   return E.right(SUBMITTED)
 }

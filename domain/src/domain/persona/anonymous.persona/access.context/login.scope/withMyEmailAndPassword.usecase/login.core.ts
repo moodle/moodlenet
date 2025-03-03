@@ -5,7 +5,7 @@ import type * as def from './login.endpoint'
 import { Error4xx } from '../../../../../../lib'
 
 export const login: moo.core.endpoint<def.login> = async (emailLoginForm, _) => {
-  const existingUser = await _.over(_.model.userAccount.user).one.query({ filters: { emailEquals: emailLoginForm.email } })
+  const existingUser = await _.over(_.model.userAccount.userAccountSpace).one.query({ filters: { emailEquals: emailLoginForm.email } })
 
   if (O.isNone(existingUser)) {
     return E.left(WRONG_CREDENTIALS)

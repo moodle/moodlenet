@@ -72,6 +72,5 @@ export type userAccountUserSpace = {
 
 export type userAccountModel = {
   [moo.tags.configs]: userAccountConfigs
-  user: moo.model.type.idSpaceMap<userAccountUserSpace, { emailEquals: string }>
+  userAccountSpace: moo.model.type.idSpaceMap<userAccountUserSpace, { emailEquals: string }>
 }
-

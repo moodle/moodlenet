@@ -1,74 +1,33 @@
 import { generateUlid } from '@moodle/lib-id-gen'
-import { int } from '@moodle/lib-types'
 import { isLeft, left, right } from 'fp-ts/Either'
 import { isNone } from 'fp-ts/Option'
 import { isString } from 'lodash'
-import { NOT_FOUND } from '../../lib'
-import { authSession } from '../model/accessControl.model'
-import { domainCore } from '../persona'
-import { admin } from '../persona/admin.persona/admin.persona.core'
-import { anonymous } from '../persona/anonymous.persona/anonymous.persona.core'
-import { any } from '../persona/any.persona/any.persona.core'
-import { authenticated } from '../persona/authenticated.persona/authenticated.persona.core'
-import { moderator } from '../persona/moderator.persona/moderator.persona.core'
+import { NOT_FOUND } from '../../../lib'
+import { authSession } from './types'
 
-export const domainCoreImpl: domainCore = {
-  admin,
-  anonymous,
-  any,
-  authenticated,
-  moderator,
-}
-
-export const coreModelImpl: moo.model.impl = {
-  home: {
-    userHome: {
-      $: {
-        emptySpace: {
-          exe: async () => {
-            return { myDrafts: { edu: { collection: {}, resources: {} } } }
+export const accessControlCore: moo.model.impl = {
+  userAccount: {
+    userAccountSpace: {
+      _: userId => ({
+        $: {
+          create: {
+            post: async (outcome, _message, { model, over }) => {
+              if (isLeft(outcome)) {
+                return
+              }
+              await over(model.accessControl.user[userId]).create.async({
+                spaceData: {
+                  session: {},
+                  permissions: { role: 'viewer' },
+                },
+              })
+            },
           },
         },
-      },
-    },
-  },
-  moodlenet: {
-    contributor: {
-      $: {
-        emptySpace: {
-          exe: async () => {
-            return { contributor: { points: int(0) } }
-          },
-        },
-      },
-    },
-  },
-  moderation: {
-    userModeration: {
-      $: {
-        emptySpace: {
-          exe: async () => {
-            return {
-              reports: { received: { moodlenet: {} } },
-            }
-          },
-        },
-      },
+      }),
     },
   },
   accessControl: {
-    user: {
-      $: {
-        emptySpace: {
-          exe: async () => {
-            return {
-              session: {},
-              permissions: { role: 'viewer' },
-            }
-          },
-        },
-      },
-    },
     getMyUserSessionInfo: {
       $: {
         call: {

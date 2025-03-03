@@ -6,10 +6,10 @@ export function educationImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.i
     categories: {
       bloomCognitives: {
         $: {
-          bulkCreate: {
+          createMany: {
             exe: async ({ spaces }) => {
               await dbStruct.appData.coll.eduBloomCognitive.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, edu: data })),
+                spaces.map(({ id, data }) => ({ _key: id, education: data })),
                 { silent: true, overwriteMode: 'replace' },
               )
             },
@@ -18,10 +18,10 @@ export function educationImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.i
       },
       iscedFields: {
         $: {
-          bulkCreate: {
+          createMany: {
             exe: async ({ spaces }) => {
               await dbStruct.appData.coll.eduIscedField.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, edu: data })),
+                spaces.map(({ id, data }) => ({ _key: id, education: data })),
                 { silent: true, overwriteMode: 'replace' },
               )
             },
@@ -30,10 +30,10 @@ export function educationImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.i
       },
       iscedLevels: {
         $: {
-          bulkCreate: {
+          createMany: {
             exe: async ({ spaces }) => {
               await dbStruct.appData.coll.eduIscedLevel.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, edu: data })),
+                spaces.map(({ id, data }) => ({ _key: id, education: data })),
                 { silent: true, overwriteMode: 'replace' },
               )
             },
@@ -42,10 +42,10 @@ export function educationImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.i
       },
       resourceTypes: {
         $: {
-          bulkCreate: {
+          createMany: {
             exe: async ({ spaces }) => {
               await dbStruct.appData.coll.eduResourceType.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, edu: data })),
+                spaces.map(({ id, data }) => ({ _key: id, education: data })),
                 { silent: true, overwriteMode: 'replace' },
               )
             },

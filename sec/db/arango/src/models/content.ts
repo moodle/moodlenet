@@ -6,10 +6,10 @@ export function contentImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.imp
     categories: {
       languages: {
         $: {
-          bulkCreate: {
+          createMany: {
             exe: async ({ spaces }) => {
               await dbStruct.appData.coll.contentLanguage.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, edu: data })),
+                spaces.map(({ id, data }) => ({ _key: id, content: data })),
                 { silent: true, overwriteMode: 'replace' },
               )
             },
@@ -18,14 +18,14 @@ export function contentImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.imp
       },
       licenses: {
         $: {
-          bulkCreate: {
+          createMany: {
             exe: async ({ spaces }) => {
               await dbStruct.appData.coll.contentLicense.saveAll(
-                spaces.map(({ id, data }) => ({ _key: id, edu: data })),
+                spaces.map(({ id, data }) => ({ _key: id, content: data })),
                 { silent: true, overwriteMode: 'replace' },
               )
             },
-          },
+          }
         },
       },
     },
