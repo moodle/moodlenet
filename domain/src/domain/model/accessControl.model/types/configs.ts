@@ -1,1 +1,3 @@
-export type accessControlConfigs = never
+export type accessControlConfigs = {
+  anonPermissions: moo.permissions.user
+}

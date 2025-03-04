@@ -11,7 +11,7 @@ export type read = moo.persona.endpoint<[typeof readSchema, void]>
 
 export const read: moo.gate.provider.endpoint<read> = flow(
   O.some,
-  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.general)),
+  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.permissions.any?._.schemas.general)),
   E.fromOption(() => new Error4xx('Unauthorized')),
   E.bind('zod', flow(E.right, E.map(readSchema))),
 )

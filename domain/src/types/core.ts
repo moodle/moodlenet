@@ -37,7 +37,7 @@ declare global {
       type request<endpoint_ extends persona.endpoint<any_>> = {
         id: string
         now: date_time_string
-        sessionInfo: session.user.info
+        sessionInfo: permissions.user.info
         gateRequest: gate.provider.request<endpoint_>
       }
 

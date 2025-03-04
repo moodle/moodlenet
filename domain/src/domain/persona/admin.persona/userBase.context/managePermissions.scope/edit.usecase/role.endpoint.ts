@@ -12,7 +12,7 @@ export type role = moo.persona.endpoint<[typeof roleSchema, void]>
 
 export const role: moo.gate.provider.endpoint<role> = flow(
   O.some,
-  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.general)),
+  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.permissions.any?._.schemas.general)),
   E.fromOption(() => new Error4xx('Unauthorized')),
   E.bind('zod', flow(E.right, E.map(roleSchema))),
 )

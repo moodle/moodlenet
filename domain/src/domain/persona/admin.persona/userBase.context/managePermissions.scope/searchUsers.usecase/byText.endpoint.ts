@@ -19,7 +19,7 @@ export type byText = moo.persona.endpoint<[typeof byTextSchema, { users: foundUs
 
 export const byText: moo.gate.provider.endpoint<byText> = flow(
   O.some,
-  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.general)),
+  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.permissions.any?._.schemas.general)),
   E.fromOption(() => new Error4xx('Unauthorized')),
   E.bind('zod', flow(E.right, E.map(byTextSchema))),
 )

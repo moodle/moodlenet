@@ -50,7 +50,7 @@ type gateStep = Either<
 export function coreGateProxy({ modelHandle, coreRequest, gateProvider, core, loggerProvider }: coreGateProxyDeps) {
   type p_endpoint = moo.persona.endpoint<moo.persona.endpoint.def>
 
-  return subCoreGateProxy(right({ gateProvider, session: coreRequest.sessionInfo.session, core, path: [] })) as coreGate
+  return subCoreGateProxy(right({ gateProvider, session: coreRequest.sessionInfo.permissions, core, path: [] })) as coreGate
 
   function subCoreGateProxy(gateStep: gateStep) {
     return new Proxy((() => null as any_) as coreGate, {
@@ -151,7 +151,7 @@ export function coreGateProxy({ modelHandle, coreRequest, gateProvider, core, lo
 
         const gate_Endpoint_Provider: moo.gate.provider.endpoint<p_endpoint> = gateStep.right.gateProvider as any_
         const core_Endpoint: moo.core.endpoint<p_endpoint> = gateStep.right.core as any_
-        const session_Endpoint: moo.session.user.endpoint<p_endpoint> = gateStep.right.session as any_
+        const session_Endpoint: moo.permissions.user.endpoint<p_endpoint> = gateStep.right.session as any_
 
         const configs = session_Endpoint._
 

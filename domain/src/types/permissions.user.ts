@@ -4,14 +4,14 @@ import '@moodle/lib-types'
 import { any_, d_u } from '@moodle/lib-types'
 declare global {
   namespace moo {
-    namespace session {
+    namespace permissions {
       type user = {
         [personaType_ in personaType]?: user.persona<Personas[personaType_]>
       }
       namespace user {
         type info = {
           user: info.user
-          session: user
+          permissions: user
         }
         namespace info {
           type user = d_u<

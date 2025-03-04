@@ -7,13 +7,13 @@ export function clientGateProxy({
   gateProvider: baseGateProvider,
   formDispatcher,
 }: {
-  sessionInfo: moo.session.user.info
+  sessionInfo: moo.permissions.user.info
   gateProvider: moo.gate.provider<moo.Personas>
   formDispatcher: moo.gate.client.dispatcher<any_>
 }) {
   return subClientGateProxy({
     gateProvider: baseGateProvider,
-    session: sessionInfo.session,
+    session: sessionInfo.permissions,
     path: [],
     accessError: undefined,
   }) as unknown as moo.gate.client<moo.Personas>
@@ -73,7 +73,7 @@ export function clientGateProxy({
         }
         type endpoint_type = moo.persona.endpoint<moo.persona.endpoint.def>
         const endpointProvider: moo.gate.provider.endpoint<endpoint_type> = _next_gateProvider
-        const session_endpoint: moo.session.config.endpoint<endpoint_type> = _next_session
+        const session_endpoint: moo.permissions.config.endpoint<endpoint_type> = _next_session
 
         const configs = (session_endpoint ?? {})._
         const endpointAccess: moo.gate.client.endpointAccess<endpoint_type> = context => {

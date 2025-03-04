@@ -12,8 +12,8 @@ import { WRONG_CREDENTIALS } from '../consts'
 export type login = moo.persona.endpoint<[typeof loginFormZodSchema, E.Either<WRONG_CREDENTIALS, { authSession: authSession; authSessionToken: signed_token }>]>
 export const login: moo.gate.provider.endpoint<login> = flow(
   O.some,
-  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.general)),
-  O.bind(`baseUserData`, ({ sessionInfo }) => O.fromNullable(sessionInfo.session.any?._.schemas.baseUserData)),
+  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.permissions.any?._.schemas.general)),
+  O.bind(`baseUserData`, ({ sessionInfo }) => O.fromNullable(sessionInfo.permissions.any?._.schemas.baseUserData)),
   E.fromOption(() => new Error4xx('Forbidden')),
   E.bind('zod', flow(E.right, E.map(loginFormZodSchema))),
 )

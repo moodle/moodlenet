@@ -4,6 +4,7 @@ import { isNone } from 'fp-ts/Option'
 import { isString } from 'lodash'
 import { NOT_FOUND } from '../../../lib'
 import { authSession } from './types'
+import { getFullUserSession } from './lib/fullUserSession'
 
 export const accessControlCore: moo.model.impl = {
   userAccount: {
@@ -17,7 +18,7 @@ export const accessControlCore: moo.model.impl = {
               }
               await over(model.accessControl.user[userId]).create.async({
                 spaceData: {
-                  session: {},
+                  authSession: {},
                   permissions: { role: 'viewer' },
                 },
               })
@@ -28,7 +29,7 @@ export const accessControlCore: moo.model.impl = {
     },
   },
   accessControl: {
-    getMyUserSessionInfo: {
+    getMyUserPermissions: {
       $: {
         call: {
           exe: async ({ authSessionToken }, _) => {
@@ -39,15 +40,16 @@ export const accessControlCore: moo.model.impl = {
             if (isLeft(e_authSessionData)) {
               return getAnonSessionInfo(_)
             }
-            const { authSessionId, userId } = e_authSessionData.right.data
-            const o_authSession = await _.over(_.model.accessControl.user[userId]?.session[authSessionId]?.auth).get.query()
+            const { id: authSessionId, userId } = e_authSessionData.right.data
+            const o_authSession = await _.over(_.model.accessControl.user[userId]?.authSession[authSessionId]?.auth).get.query()
             if (isNone(o_authSession)) {
               return getAnonSessionInfo(_)
             }
             const authSession = o_authSession.value
             return {
               info: {
-                session: authSession.session,
+                permissions: authSession.session,
+                revision: authSession.revision,
                 user: {
                   type: 'auth',
                   id: userId,
@@ -79,7 +81,7 @@ export const accessControlCore: moo.model.impl = {
             }
             const { role } = o_permissions.value
             const { fullUserSession } = await getFullUserSession({ over, model })
-            const session: moo.session.user = {
+            const session: moo.permissions.user = {
               admin: role === 'admin' ? fullUserSession.admin : undefined,
               moderator: role === 'admin' ? fullUserSession.moderator : undefined,
               anonymous: undefined,
@@ -110,7 +112,7 @@ export const accessControlCore: moo.model.impl = {
             const {
               fullUserSession: { anonymous, any },
             } = await getFullUserSession(_)
-            const session: moo.session.user = {
+            const session: moo.permissions.user = {
               any,
               anonymous,
             }
@@ -132,18 +134,14 @@ export const accessControlCore: moo.model.impl = {
               return e_session_obj
             }
 
-            const { session } = e_session_obj.right
+            const { authSession, permissions } = e_session_obj.right
 
             const authSessionId = generateUlid({ onDate: new Date() })
-            const { token: authSessionToken } = await _.over(_.model.jwtTokens.token.accessControl.authSession.sign).call.query({ data: { userId, authSessionId } }) // as signed_token
+            const { token: authSessionToken } = await _.over(_.model.jwtTokens.token.accessControl.authSession.sign).call.query({
+              data: { userId, id: authSessionId, revision: authSession.revision },
+            }) // as signed_token
 
-            const authSession: authSession = {
-              session,
-              createdDate: new Date().toISOString(),
-              validUntilDate: new Date().toISOString(),
-            }
-
-            await _.over(_.model.accessControl.user[userId]?.session[authSessionId]?.auth).put.sync({ newData: authSession })
+            await _.over(_.model.accessControl.user[userId]?.authSession[authSessionId]?.authSession).put.sync({ newData: authSession })
 
             return right({ authSession, authSessionId, authSessionToken })
           },
@@ -153,99 +151,15 @@ export const accessControlCore: moo.model.impl = {
   },
 }
 
-async function getAnonSessionInfo(_: moo.model.handle): Promise<{ info: moo.session.user.info }> {
-  const user: moo.session.user.info.user = { type: 'anon' }
+async function getAnonSessionInfo(_: moo.model.handle): Promise<{ info: moo.permissions.user.info }> {
+  const user: moo.permissions.user.info.user = { type: 'anon' }
   const { session: anonSession } = await _.over(_.model.accessControl.getAnonUserSession).call.query()
   return {
     info: {
       user,
-      session: anonSession,
+      permissions: anonSession,
     },
   }
 }
 
-async function getFullUserSession({ over, model }: moo.model.handle): Promise<{ fullUserSession: moo.session.config }> {
-  const { org, userAccount: _userAccount, moodlenet, education: _education } = await over(model.configs.allConfigs).call.query()
-  // userAccount.configs.schema.eduDraftsOverrides
-  // education.configs.schema.collection
-  const fullUserSession: moo.session.config = {
-    admin: {
-      _: { schemas: { orgInfo: org.schema.orgInfo } },
-      moodlenet: {
-        curateInfo: { general: { edit: {}, read: {} } },
-      },
-      organization: {
-        curateInfo: {
-          general: {
-            edit: {},
-            read: {},
-          },
-        },
-      },
-      userBase: {
-        managePermissions: {
-          edit: {
-            role: {},
-          },
-          searchUsers: {
-            byText: {},
-          },
-        },
-      },
-    },
-    anonymous: {
-      access: {
-        login: {
-          resetMyPassword: {
-            requestLink: {},
-            setNew: {},
-          },
-          withMyEmailAndPassword: { login: {} },
-        },
-        signup: { withMyEmail: { confirmMyEmail: {}, submitSignupForm: {} } },
-      },
-    },
-    any: {
-      _: { schemas: { baseUserData: org.schema.baseUserData, general: org.schema.general } },
-      moodlenet: {
-        viewPublicContent: {
-          entity: { collection: {}, contributor: {}, resource: {}, subject: {} },
-          followers: { collection: {}, subject: {}, contributor: {} },
-          fullTextSearch: { collections: {}, contributors: {}, resources: {}, subjects: {} },
-        },
-      },
-      system: { access: { session: { myOwn: {} } } },
-    },
-    authenticated: {
-      _: {
-        schemas: {
-          //FIXME: eduDraftsPublishOverrides should go in authenticated.moodlenet.contribute[moo.configs] scope
-          eduDraftsPublishOverrides: moodlenet.schema.publishEduOverrides,
-        },
-      },
-      edu: { curatePreferences: { categories: { edit: {}, read: {} } } },
-      messaging: { email: { preferences: { edit: {}, read: {} }, send: { user: {} } } },
-      moodlenet: {
-        contribute: { publishMyContent: { collection: {}, resource: {} } },
-        curatePreferences: { search: { edit: {}, read: {} } },
-        curateContent: {
-          bookmark: { collection: {}, resource: {} },
-          follow: { collection: {}, contributor: {}, subject: {} },
-          like: { resource: {} },
-          report: { contributor: {} },
-        },
-        exchangeWithLms: { resources: { send: {} } },
-      },
-      myAccount: { manage: { deleteIt: { confirmDelete: {}, request: {} } }, security: { authentication: { changeMyPassword: {} } } },
-      mySpace: {
-        curateMyDrafts: {
-          collection: { create: {}, read: {}, edit: {}, setBackground: {}, trash: {} },
-          resource: { create: {}, read: {}, edit: {}, setBackground: {}, trash: {} },
-        },
-        curateMyProfile: { info: { edit: {}, setBackground: {}, read: {}, setAvatar: {} } },
-      },
-    },
-    moderator: { moodlenet: { manageReports: { contributors: { ignoreReports: {}, viewList: {} } } } },
-  }
-  return { fullUserSession }
-}
+

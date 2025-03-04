@@ -91,7 +91,7 @@ sessionInfo:
       ? ''
       : `
     id: ${sessionInfo.user.id}
-  session personas: ${Object.keys(sessionInfo.session)}
+  session personas: ${Object.keys(sessionInfo.permissions)}
 gateAccess:
   path: ${gateAccess.path.join('.')}
   claims: ${inspect(gateAccess.claims, { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}

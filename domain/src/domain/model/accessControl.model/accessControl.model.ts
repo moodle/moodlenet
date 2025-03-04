@@ -1,6 +1,7 @@
-import { signed_token } from '@moodle/lib-types'
+import { email_address, signed_token } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { NOT_FOUND } from '../../../lib'
+import { userProfileInfo } from '../userAccount.model'
 import { accessControlConfigs, authSession, userRole } from './types'
 export * from './types'
 
@@ -14,7 +15,11 @@ declare global {
       namespace jwtTokens {
         interface Payloads {
           accessControl: {
-            authSession: { authSessionId: string; userId: string }
+            authSession: {
+              id: string
+              userId: string
+              permissionsRev: string
+            }
           }
         }
       }
@@ -31,16 +36,16 @@ export type accessControlModel = {
   // getAuthSession: moo.model.type.endpoint<['query', { authSessionId: string }, Option<{ activeAuthSession: authSession }>]>
   user: moo.model.type.idSpaceMap<accessControlUserSpace, { emailEquals: string }>
 
-  getAnonUserSession: moo.model.type.endpoint<['query', void, { session: moo.session.user }]>
-  getUserSessionFor: moo.model.type.endpoint<['query', { userId: string }, Either<NOT_FOUND, { session: moo.session.user }>]>
   activateAuthSessionFor: moo.model.type.endpoint<
     ['sync', { userId: string }, Either<NOT_FOUND, { authSession: authSession; authSessionId: string; authSessionToken: signed_token }>]
   >
 
-  getMyUserSessionInfo: moo.model.type.endpoint<['query', { authSessionToken: signed_token | null | undefined }, { info: moo.session.user.info }]>
+  getMyUserPermissions: moo.model.type.endpoint<['query', { authSessionToken: signed_token | null | undefined }, { info: moo.permissions.user.info }]>
 }
 
 export type accessControlUserSpace = {
-  permissions: moo.model.type.atom<never, { role: userRole }>
-  session: moo.model.type.idSpaceMap<{ auth: moo.model.type.atom<never, authSession> }>
+  role: moo.model.type.atom<never, { role: userRole }>
+  permissions: moo.model.type.atom<never, { rev: string; permissions: moo.permissions.user }>
+  authSession: moo.model.type.idSpaceMap<{ authSession: moo.model.type.atom<never, authSession> }>
+  info: moo.model.type.atom<'view', { email: email_address } & Pick<userProfileInfo, 'displayName'>>
 }

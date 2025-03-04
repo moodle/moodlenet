@@ -4,7 +4,7 @@ import '@moodle/lib-types'
 import { any_ } from '@moodle/lib-types'
 declare global {
   namespace moo {
-    namespace session {
+    namespace permissions {
       type config = {
         [personaType_ in personaType]: config.persona<Personas[personaType_]>
       }
