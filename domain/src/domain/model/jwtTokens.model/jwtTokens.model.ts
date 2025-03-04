@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 /* eslint-disable @typescript-eslint/no-namespace */
-import { signed_token } from '@moodle/lib-types'
+import { date_time_string, signed_token } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import type { jwtTokensConfigs, TYPE_INVALID_TOKEN } from './types'
 declare global {
@@ -42,6 +42,8 @@ export type JwtTokensModel = {
             'query',
             {
               data: moo.Models.jwtTokens.Payloads[namespace][tokType]
+              expires: date_time_string
+              opts?: jwtSignOpts
             },
             { token: signed_token },
           ]
@@ -50,3 +52,13 @@ export type JwtTokensModel = {
     }
   }
 }
+export type jwtSignOpts = {
+  // audience?: string | string[]
+  scope?: string | string[]
+  subject?: string
+  jti?: string
+  notBefore?: date_time_string
+  issuedAt?: date_time_string
+}
+
+//type time_or_duration = d_u<{ duration: { duration: time_duration_string }; date: { date: date_time_string } }, 'time'>

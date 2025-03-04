@@ -98,7 +98,7 @@ declare global {
           flags: Exclude<flags, 'optional'>
         }>
 
-        type endpoint<modelOpDef extends opDef> = type<{ ops: { call: modelOpDef }; shape: unknown; data: never; flags: never }>
+        type endpoint<modelOpDef extends opDef> = type<{ ops: { call: modelOpDef }; shape: unknown; data: never; flags: 'view' }>
       }
     }
   }

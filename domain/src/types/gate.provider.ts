@@ -11,13 +11,13 @@ declare global {
         [personaType_ in keyof forPersonas]: provider.persona<forPersonas[personaType_]>
       }
       namespace provider {
-        type serverClaims = { authSessionToken: signed_token | null; requestId: string; href: url_string; ua: string | null; meta?: serializable_object }
-        type request<endpoint_ extends persona.endpoint<any_>> = client.request<endpoint_> & {
+        type requestInfo = {
           claims: {
-            // client: clientClaims
-            server: serverClaims
+            server: { authSessionToken: signed_token | null; requestId: string; href: url_string; ua: string | null; meta?: serializable_object }
           }
         }
+        type request<endpoint_ extends persona.endpoint<any_>> = client.request<endpoint_> & { info: requestInfo }
+
         type persona<persona_ extends moo.persona<any_>> = {
           [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_> ? context<persona_[contextName]> : unknown
         }
@@ -36,7 +36,7 @@ declare global {
 
         type endpoint<useCaseEndpoint extends moo.persona.endpoint<any_>> = (epGateCtx: {
           configs: useCaseEndpoint[2]
-          sessionInfo: permissions.user.info
+          permissionsInfo: permissions.user.info
         }) => Either<Error4xx, endpointChecksHandle<useCaseEndpoint>>
       }
     }

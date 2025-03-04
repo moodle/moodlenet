@@ -11,7 +11,7 @@ export type user = moo.persona.endpoint<[typeof userSchema, void]>
 
 export const user: moo.gate.provider.endpoint<user> = flow(
   O.some,
-  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.permissions.any?._.schemas.general)),
+  O.bind(`general`, ({ permissionsInfo }) => O.fromNullable(permissionsInfo.tree.any?._.schemas.general)),
   E.fromOption(() => new Error4xx('Unauthorized')),
   E.bind('zod', flow(E.right, E.map(userSchema))),
 )

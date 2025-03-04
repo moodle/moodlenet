@@ -1,10 +1,9 @@
 import { generateUlid } from '@moodle/lib-id-gen'
-import { isLeft, left, right } from 'fp-ts/Either'
-import { isNone } from 'fp-ts/Option'
+import assert from 'assert'
+import { isLeft, right } from 'fp-ts/Either'
+import * as duration from 'iso8601-duration'
 import { isString } from 'lodash'
-import { NOT_FOUND } from '../../../lib'
-import { authSession } from './types'
-import { getFullUserSession } from './lib/fullUserSession'
+import { Error4xx } from '../../../lib'
 
 export const accessControlCore: moo.model.impl = {
   userAccount: {
@@ -16,10 +15,13 @@ export const accessControlCore: moo.model.impl = {
               if (isLeft(outcome)) {
                 return
               }
+              const { newUserDefaultRole } = await over(model.configs.module.accessControl).get.query()
               await over(model.accessControl.user[userId]).create.async({
                 spaceData: {
-                  authSession: {},
-                  permissions: { role: 'viewer' },
+                  activeAuthSession: {},
+                  auth: {
+                    role: newUserDefaultRole,
+                  },
                 },
               })
             },
@@ -29,27 +31,48 @@ export const accessControlCore: moo.model.impl = {
     },
   },
   accessControl: {
-    getMyUserPermissions: {
+    getMyPermissionsInfo: {
+      $: {
+        call: {
+          exe: async (_, { over, model }, ctx) => {
+            assert(ctx.envelope.origin.gate.kind === 'core', new Error4xx('Expectation Failed', `ctx.envelope.origin.gate.kind === 'core' (${ctx.envelope.origin.gate.kind})`))
+            const authSessionToken = ctx.envelope.origin.gate.gateRequest.info.claims.server.authSessionToken
+            ctx.log.debug(`gateRequest.info.claims.server authSessionToken: ${authSessionToken}`)
+            return over(model.accessControl.getTokenPermissionsInfo).call.query({ authSessionToken })
+          },
+        },
+      },
+    },
+    getTokenPermissionsInfo: {
       $: {
         call: {
           exe: async ({ authSessionToken }, _) => {
             if (!isString(authSessionToken)) {
-              return getAnonSessionInfo(_)
+              return getAnonPermissionsInfo(_)
             }
             const e_authSessionData = await _.over(_.model.jwtTokens.token.accessControl.authSession.validate).call.query({ token: authSessionToken })
             if (isLeft(e_authSessionData)) {
-              return getAnonSessionInfo(_)
+              throw new Error4xx('Unauthorized', 'invalid token')
             }
-            const { id: authSessionId, userId } = e_authSessionData.right.data
-            const o_authSession = await _.over(_.model.accessControl.user[userId]?.authSession[authSessionId]?.auth).get.query()
-            if (isNone(o_authSession)) {
-              return getAnonSessionInfo(_)
+            const { authSessionId, userId } = e_authSessionData.right.data
+            const e_userPermissionsDeps = await _.over(_.model.accessControl.user[userId]?.getUserPermissionsDepsForAuthSessionId).call.query({ authSessionId })
+            if (isLeft(e_userPermissionsDeps)) {
+              throw new Error4xx('Expectation Failed', 'unexistent user')
             }
-            const authSession = o_authSession.value
+            const { roleConfigs, userRole, authSessionIdExists } = e_userPermissionsDeps.right.deps
+
+            if (!authSessionIdExists) {
+              throw new Error4xx('Forbidden', 'invalidated session')
+            }
+
+            if (!roleConfigs) {
+              throw new Error4xx('Expectation Failed', `no role configs for role: ${userRole}`)
+            }
+
             return {
               info: {
-                permissions: authSession.session,
-                revision: authSession.revision,
+                tree: roleConfigs.permissionsTree,
+                revDate: roleConfigs.revDate,
                 user: {
                   type: 'auth',
                   id: userId,
@@ -60,106 +83,111 @@ export const accessControlCore: moo.model.impl = {
         },
       },
     },
-    //     user:{
-    //       _:(userId)=>({
-    // activeSession:{
-    //   '#' : (authSessionId)=>({
-    //     "* create": async ({spaceData: {authSession}},{model,over})=>{
-    //       await over(model.accessControl.storeAuthSession).call.sync({authSessionId,activeAuthSession})
-    //     }
-    //   })
-    // }
-    //       } )
-    //     }
-    getUserSessionFor: {
-      $: {
-        call: {
-          exe: async ({ userId }, { model, over }) => {
-            const o_permissions = await over(model.accessControl.user[userId]?.permissions).get.query()
-            if (isNone(o_permissions)) {
-              return left(NOT_FOUND)
-            }
-            const { role } = o_permissions.value
-            const { fullUserSession } = await getFullUserSession({ over, model })
-            const session: moo.permissions.user = {
-              admin: role === 'admin' ? fullUserSession.admin : undefined,
-              moderator: role === 'admin' ? fullUserSession.moderator : undefined,
-              anonymous: undefined,
-              any: fullUserSession.any,
-              authenticated: {
-                ...fullUserSession.authenticated,
-                messaging: {
-                  email: {
-                    ...fullUserSession.authenticated.messaging.email,
-                    send: role === 'contributor' ? fullUserSession.authenticated.messaging.email.send : undefined,
+    user: {
+      _: userId => ({
+        // getPermissionsInfo: {
+        //   $: {
+        //     call: {
+        //       exe: async (_, { over, model }) => {
+        //         const e_userPermissionsDeps = await over(model.accessControl.user[userId]?.getUserPermissionsDepsForAuthSessionId).call.query({ authSessionId })
+        //         if (isLeft(e_userPermissionsDeps)) {
+        //           throw new Error4xx('Expectation Failed', 'unexistent user')
+        //         }
+        //         const { roleConfigs, userRole, authSessionIdExists } = e_userPermissionsDeps.right.deps
+
+        //         if (!authSessionIdExists) {
+        //           throw new Error4xx('Forbidden', 'invalidated session')
+        //         }
+
+        //         if (!roleConfigs) {
+        //           throw new Error4xx('Expectation Failed', `no role configs for role: ${userRole}`)
+        //         }
+
+        //         return {
+        //           info: {
+        //             tree: roleConfigs.permissionsTree,
+        //             revDate: roleConfigs.revDate,
+        //             user: {
+        //               type: 'auth',
+        //               id: userId,
+        //             },
+        //           },
+        //         }
+        //       },
+        //     },
+        //   },
+        // },
+        activateNewAuthSession: {
+          $: {
+            call: {
+              exe: async (_, { model, over }, ctx) => {
+                const authSessionId = generateUlid({ onDate: new Date() })
+                const configs = await over(model.configs.module.accessControl).get.query()
+                const expires = duration.end(duration.parse(configs.sessionExpirationTime)).toISOString()
+
+                const { token: authSessionToken } = await over(model.jwtTokens.token.accessControl.authSession.sign).call.query({
+                  data: { userId, authSessionId },
+                  expires,
+                }) // as signed_token
+
+                await over(model.accessControl.user[userId]?.activeAuthSession[authSessionId]?.authSession).put.sync({
+                  newData: {
+                    expires,
+                    envelope: {
+                      id: ctx.envelope.id,
+                      callTime: ctx.envelope.callTime,
+                      origin: ctx.envelope.origin,
+                    },
                   },
-                },
-                moodlenet: {
-                  ...fullUserSession.authenticated.moodlenet,
-                  contribute: undefined,
-                },
+                })
+
+                return right({ authSessionId, authSessionToken })
               },
-            }
-            return right({ session })
+            },
           },
         },
-      },
+      }),
     },
-    getAnonUserSession: {
-      $: {
-        call: {
-          exe: async (_void, _) => {
-            const {
-              fullUserSession: { anonymous, any },
-            } = await getFullUserSession(_)
-            const session: moo.permissions.user = {
-              any,
-              anonymous,
-            }
-            return {
-              session,
-            }
-          },
-        },
-      },
-    },
-    activateAuthSessionFor: {
-      $: {
-        call: {
-          exe: async ({ userId }, _) => {
-            const e_session_obj = await _.over(_.model.accessControl.getUserSessionFor).call.query({
-              userId,
-            })
-            if (isLeft(e_session_obj)) {
-              return e_session_obj
-            }
-
-            const { authSession, permissions } = e_session_obj.right
-
-            const authSessionId = generateUlid({ onDate: new Date() })
-            const { token: authSessionToken } = await _.over(_.model.jwtTokens.token.accessControl.authSession.sign).call.query({
-              data: { userId, id: authSessionId, revision: authSession.revision },
-            }) // as signed_token
-
-            await _.over(_.model.accessControl.user[userId]?.authSession[authSessionId]?.authSession).put.sync({ newData: authSession })
-
-            return right({ authSession, authSessionId, authSessionToken })
-          },
-        },
-      },
-    },
+    // __getUserSessionFor: {
+    //   $: {
+    //     call: {
+    //       exe: async ({ userId }, _) => {
+    //         const o_permissions = await over(model.accessControl.user[userId]?.permissions).get.query()
+    //         if (isNone(o_permissions)) {
+    //           return left(NOT_FOUND)
+    //         }
+    //         const { role } = o_permissions.value
+    //         const { fullUserSession } = await getFullUserSession({ over, model })
+    //         const session: moo.permissions.user.tree = {
+    //           admin: role === 'admin' ? fullUserSession.admin : undefined,
+    //           moderator: role === 'admin' ? fullUserSession.moderator : undefined,
+    //           anonymous: undefined,
+    //           any: fullUserSession.any,
+    //           authenticated: {
+    //             ...fullUserSession.authenticated,
+    //             messaging: {
+    //               email: {
+    //                 ...fullUserSession.authenticated.messaging.email,
+    //                 send: role === 'contributor' ? fullUserSession.authenticated.messaging.email.send : undefined,
+    //               },
+    //             },
+    //             moodlenet: {
+    //               ...fullUserSession.authenticated.moodlenet,
+    //               contribute: undefined,
+    //             },
+    //           },
+    //         }
+    //         return right({ session })
+    //       },
+    //     },
+    //   },
+    // },
   },
 }
 
-async function getAnonSessionInfo(_: moo.model.handle): Promise<{ info: moo.permissions.user.info }> {
-  const user: moo.permissions.user.info.user = { type: 'anon' }
-  const { session: anonSession } = await _.over(_.model.accessControl.getAnonUserSession).call.query()
+async function getAnonPermissionsInfo(_: moo.model.handle): Promise<{ info: moo.permissions.user.info }> {
+  const configs = await _.over(_.model.configs.module.accessControl).get.query()
   return {
-    info: {
-      user,
-      permissions: anonSession,
-    },
+    info: { tree: configs.roles.anonymous.permissionsTree, revDate: configs.roles.anonymous.revDate, user: { type: 'anon' } },
   }
 }
-
-

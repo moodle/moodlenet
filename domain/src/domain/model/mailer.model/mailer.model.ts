@@ -21,7 +21,7 @@ export type MailerModel = {
   template: {
     [namespace in keyof moo.Models.mailer.Templates]: {
       [tplParams in keyof moo.Models.mailer.Templates[namespace]]: moo.model.type.endpoint<
-        ['query', { data: moo.Models.mailer.Templates[namespace][tplParams] }, { body: emailBody }]
+        ['query', { data: moo.Models.mailer.Templates[namespace][tplParams] }, { body: emailBody; subject: string }]
       >
     }
   }

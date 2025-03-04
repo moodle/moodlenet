@@ -1,9 +1,8 @@
-import { any_, date_time_string, signed_token } from '@moodle/lib-types'
+import { any_, date_time_string } from '@moodle/lib-types'
 
 export type authSession = {
-  permissionsRev: string
-  createdDate: date_time_string
-  validUntilDate: date_time_string
-  token: signed_token
-  request: moo.core.request<any_>
+  envelope: Pick<moo.model.envelope<any_>, 'id' | 'origin' | 'callTime'>
+  expires: date_time_string
+  // permissionsRevDate: date_time_string
+  // token: signed_token
 }

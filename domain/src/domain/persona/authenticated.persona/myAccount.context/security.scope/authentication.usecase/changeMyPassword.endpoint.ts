@@ -12,7 +12,7 @@ export type changeMyPassword = moo.persona.endpoint<[typeof changeMyPasswordSche
 
 export const changeMyPassword: moo.gate.provider.endpoint<changeMyPassword> = flow(
   O.some,
-  O.bind(`baseUserData`, ({ sessionInfo }) => O.fromNullable(sessionInfo.permissions.any?._.schemas.baseUserData)),
+  O.bind(`baseUserData`, ({ permissionsInfo }) => O.fromNullable(permissionsInfo.tree.any?._.schemas.baseUserData)),
   E.fromOption(() => new Error4xx('Unauthorized')),
   E.bind('zod', flow(E.right, E.map(changeMyPasswordSchema))),
 )

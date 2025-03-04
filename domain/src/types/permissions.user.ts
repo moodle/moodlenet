@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import '@moodle/lib-types'
-import { any_, d_u } from '@moodle/lib-types'
+import { any_, d_u, date_time_string } from '@moodle/lib-types'
 declare global {
   namespace moo {
     namespace permissions {
-      type user = {
-        [personaType_ in personaType]?: user.persona<Personas[personaType_]>
-      }
       namespace user {
+        type tree = {
+          [personaType_ in personaType]?: user.persona<Personas[personaType_]>
+        }
         type info = {
           user: info.user
-          permissions: user
+          tree: tree
+          revDate: date_time_string
         }
         namespace info {
           type user = d_u<

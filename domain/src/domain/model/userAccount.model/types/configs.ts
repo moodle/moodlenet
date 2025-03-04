@@ -1,3 +1,4 @@
+import { time_duration_string } from '@moodle/lib-types'
 import { eduCollectionSchemaConfigsOverrides, eduResourceSchemaConfigsOverrides } from '../../education.model'
 
 export type eduDraftsPublishSchemaOverrides = {
@@ -8,4 +9,5 @@ export type userAccountConfigs = {
   schema: {
     eduDraftsOverrides: eduDraftsPublishSchemaOverrides
   }
+  emailConfirmationTokenExpires: time_duration_string
 }

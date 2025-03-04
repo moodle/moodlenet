@@ -119,7 +119,7 @@ export function modelOpExtract({ model, envelope, backModelEnvelopeDispatcher, l
         id: envelope.id,
         target: envelope.target,
       },
-      useCase: envelope.origin.useCase,
+      gate: envelope.origin.gate,
     },
   })
 

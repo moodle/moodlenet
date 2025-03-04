@@ -21,10 +21,10 @@ export const login: moo.core.endpoint<def.login> = async (emailLoginForm, _) => 
   }
 
   const userId = existingUser.value.id
-  const e_activeAuthSessionInfoObj = await _.over(_.model.accessControl.activateAuthSessionFor).call.sync({ userId })
-  if (E.isLeft(e_activeAuthSessionInfoObj)) {
-    throw new Error4xx('Expectation Failed', `Failed to activate auth session for user[${userId}] due to ${e_activeAuthSessionInfoObj.left}`)
+  const e_activeAuthPermissionsInfoObj = await _.over(_.model.accessControl.user[userId]?.activateNewAuthSession).call.sync()
+  if (E.isLeft(e_activeAuthPermissionsInfoObj)) {
+    throw new Error4xx('Expectation Failed', `Failed to activate auth session for user[${userId}] due to ${e_activeAuthPermissionsInfoObj.left}`)
   }
-  const { authSession, authSessionToken /* , authSessionId */ } = e_activeAuthSessionInfoObj.right
-  return E.right({ authSession, authSessionToken })
+  const { authSessionToken } = e_activeAuthPermissionsInfoObj.right
+  return E.right({ authSessionToken })
 }

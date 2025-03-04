@@ -2,7 +2,7 @@ import { email_address, signed_token } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { NOT_FOUND } from '../../../lib'
 import { userProfileInfo } from '../userAccount.model'
-import { accessControlConfigs, authSession, userRole } from './types'
+import { accessControlConfigs, authSession, roleConfigs, userRole } from './types'
 export * from './types'
 
 /* eslint-disable @typescript-eslint/no-namespace */
@@ -16,9 +16,8 @@ declare global {
         interface Payloads {
           accessControl: {
             authSession: {
-              id: string
+              authSessionId: string
               userId: string
-              permissionsRev: string
             }
           }
         }
@@ -32,20 +31,24 @@ export type accessControl = moo.model<accessControlModel>
 
 export type accessControlModel = {
   [moo.tags.configs]: accessControlConfigs
-  // storeAuthSession: moo.model.type.endpoint<['sync', { authSessionId: string; activeAuthSession: authSession }, void]>
-  // getAuthSession: moo.model.type.endpoint<['query', { authSessionId: string }, Option<{ activeAuthSession: authSession }>]>
   user: moo.model.type.idSpaceMap<accessControlUserSpace, { emailEquals: string }>
+  getTokenPermissionsInfo: moo.model.type.endpoint<['query', { authSessionToken: signed_token | null }, { info: moo.permissions.user.info }]>
 
-  activateAuthSessionFor: moo.model.type.endpoint<
-    ['sync', { userId: string }, Either<NOT_FOUND, { authSession: authSession; authSessionId: string; authSessionToken: signed_token }>]
-  >
-
-  getMyUserPermissions: moo.model.type.endpoint<['query', { authSessionToken: signed_token | null | undefined }, { info: moo.permissions.user.info }]>
+  // NOTICE: remove getMyPermissionsInfo, as it only adds overhead on getTokenPermissionsInfo - initially good for testing request info propagation
+  getMyPermissionsInfo: moo.model.type.endpoint<['query', void, { info: moo.permissions.user.info }]>
 }
 
 export type accessControlUserSpace = {
-  role: moo.model.type.atom<never, { role: userRole }>
-  permissions: moo.model.type.atom<never, { rev: string; permissions: moo.permissions.user }>
-  authSession: moo.model.type.idSpaceMap<{ authSession: moo.model.type.atom<never, authSession> }>
+  getUserPermissionsDepsForAuthSessionId: moo.model.type.endpoint<['query', { authSessionId: string }, Either<NOT_FOUND, { deps: userPermissionsDeps }>]>
+  auth: moo.model.type.atom<never, { role: userRole }>
   info: moo.model.type.atom<'view', { email: email_address } & Pick<userProfileInfo, 'displayName'>>
+  activateNewAuthSession: moo.model.type.endpoint<['sync', void, Either<NOT_FOUND, { authSessionToken: signed_token }>]>
+  activeAuthSession: moo.model.type.idSpaceMap<{ authSession: moo.model.type.atom<never, authSession> }>
+  // getPermissionsInfo: moo.model.type.endpoint<['query', void, { info: moo.permissions.user.info }]>
+}
+
+export type userPermissionsDeps = {
+  roleConfigs: roleConfigs | null
+  userRole: userRole
+  authSessionIdExists: boolean
 }

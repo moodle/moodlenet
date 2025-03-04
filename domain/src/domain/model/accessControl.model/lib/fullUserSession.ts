@@ -5,10 +5,10 @@ export async function getFullUserSession({
   userAccount: _userAccount,
   moodlenet,
   education: _education,
-}: allModuleConfigs): Promise<{ fullUserSession: moo.permissions.config }> {
+}: allModuleConfigs): Promise<{ fullUserSession: moo.permissions.config.tree }> {
   // userAccount.configs.schema.eduDraftsOverrides
   // education.configs.schema.collection
-  const fullUserSession: moo.permissions.config = {
+  const fullUserSession: moo.permissions.config.tree = {
     admin: {
       _: { schemas: { orgInfo: org.schema.orgInfo } },
       moodlenet: {

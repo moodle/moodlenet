@@ -81,20 +81,20 @@ ${info.message}
 
 const loggerContextFormatter = {
   core(c: d_u__d<loggerContext, 'for', 'core'>) {
-    const { id, sessionInfo, now, gateRequest: gateAccess } = c.request
+    const { id, permissionsInfo, now, gateRequest: gateAccess } = c.request
     return `Core Access:
 id: ${id}
 now: ${now}
 sessionInfo:
-  user: ${sessionInfo.user.type}${
-    sessionInfo.user.type === 'anon'
+  user: ${permissionsInfo.user.type}${
+    permissionsInfo.user.type === 'anon'
       ? ''
       : `
-    id: ${sessionInfo.user.id}
-  session personas: ${Object.keys(sessionInfo.permissions)}
+    id: ${permissionsInfo.user.id}
+  session personas: ${Object.keys(permissionsInfo.tree)}
 gateAccess:
   path: ${gateAccess.path.join('.')}
-  claims: ${inspect(gateAccess.claims, { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
+  claims: ${inspect(gateAccess.info.claims, { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
   form: ${inspect(_redact(gateAccess.form), { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
 `
   }
@@ -111,17 +111,20 @@ target:
   opName: ${target.opName}
   type: ${target.type}
 origin:
-  useCase: ${origin.useCase}
-  from: ${
+  gate: ${inspect(origin.gate, { colors: true })}
+  from:
+    ${
+      origin.from ? inspect(origin.from, { colors: true }) : '~'
+      /*from: ${
     origin.from
       ? `
-    if: ${origin.from.id}
+    id: ${origin.from.id}
     target:
       opName: ${origin.from.target.opName}
       type: ${origin.from.target.type}
       path: ${origin.from.target.path.join('.')}`
-      : '~'
-  }
+      : '~'*/
+    }
 message: ${inspect(_redact(message), { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
 `
   },

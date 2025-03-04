@@ -5,10 +5,10 @@ import { any_ } from '@moodle/lib-types'
 declare global {
   namespace moo {
     namespace permissions {
-      type config = {
-        [personaType_ in personaType]: config.persona<Personas[personaType_]>
-      }
       namespace config {
+        type tree = {
+          [personaType_ in personaType]: config.persona<Personas[personaType_]>
+        }
         type persona<persona_ extends moo.persona<any_>> = config_tag<persona_> & {
           [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_> ? context<persona_[contextName]> : never
         }

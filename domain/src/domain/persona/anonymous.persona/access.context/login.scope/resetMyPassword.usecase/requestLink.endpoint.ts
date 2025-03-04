@@ -11,7 +11,7 @@ import { generalSchemas } from '../../../../../model/org.model/lib/schemas'
 export type requestLink = moo.persona.endpoint<[typeof requestLinkSchema, void]>
 export const requestLink: moo.gate.provider.endpoint<requestLink> = flow(
   O.some,
-  O.bind(`general`, ({ sessionInfo }) => O.fromNullable(sessionInfo.permissions.any?._.schemas.general)),
+  O.bind(`general`, ({ permissionsInfo }) => O.fromNullable(permissionsInfo.tree.any?._.schemas.general)),
   E.fromOption(() => new Error4xx('Forbidden')),
   E.bind('zod', flow(E.right, E.map(requestLinkSchema))),
 )

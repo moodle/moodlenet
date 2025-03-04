@@ -15,7 +15,7 @@ export type configs_ = moo.model<configsModel>
 export type configsModel = {
   [moo.tags.configs]: never
   module: {
-    [model_name in Exclude<moo.modelName, 'configs'>]: moo.model.type.atom<never, moo.Models[model_name][moo.tags.configs]>
+    [model_name in Exclude<moo.modelName, 'configs'>]: moo.model.type.atom<'static', moo.Models[model_name][moo.tags.configs]>
   }
   allConfigs: moo.model.type.endpoint<['query', void, allModuleConfigs]>
   latestModuleUpgrade: {

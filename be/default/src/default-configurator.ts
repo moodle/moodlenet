@@ -50,7 +50,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
   async function gate({ gateRequest }: { gateRequest: moo.gate.provider.request<any_> }): Promise<coreGateDeps> {
     // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
-    const domainName = new URL(gateRequest.claims.server.href).hostname
+    const domainName = new URL(gateRequest.info.claims.server.href).hostname
     if (!cache[domainName]) {
       cache[domainName] = new Promise<configuratorResult>(resolveConfigurationPromise => {
         ;(async () => {
@@ -158,7 +158,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
             await domainCore.versionControl
               .setup({
                 handle: modelHandleProxy({
-                  origin: { from: false, useCase: 'domainCore.setup' },
+                  origin: { from: false, gate: { kind: 'internal', name: 'domainCore.setup', more: { domainName } } },
                   modelEnvelopeDispatcher: modelEnvelopeDispatcher,
                 }),
                 log: loggerProvider({ for: 'setup', name: 'domainCore.setup', more: { domainName } }),
@@ -174,7 +174,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
           await domainCore.versionControl
             .preflight({
               handle: modelHandleProxy({
-                origin: { from: false, useCase: 'domainCore.preflight' },
+                origin: { from: false, gate: { kind: 'internal', name: 'domainCore.preflight', more: { domainName } } },
                 modelEnvelopeDispatcher: modelEnvelopeDispatcher,
               }),
               log: loggerProvider({ for: 'setup', name: 'domainCore.preflight', more: { domainName } }),
@@ -295,7 +295,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
     const configuration = await cache[domainName]
 
     const myModelHandle = modelHandleProxy({
-      origin: { from: false, useCase: 'configurator' },
+      origin: { from: false, gate: { kind: 'internal', name: 'configurator', more: { domainName } } },
       modelEnvelopeDispatcher: configuration.modelEnvelopeDispatcher,
     })
 
@@ -306,13 +306,14 @@ export const defaultConfigurator: configurator = ({ master }) => {
         gateRequest,
         id: coreId,
         now: new Date().toISOString(),
-        sessionInfo: (await myModelHandle.over(myModelHandle.model.accessControl.getMyUserSessionInfo).call.query({ authSessionToken: gateRequest.claims.server.authSessionToken }))
-          .info,
+        permissionsInfo: (
+          await myModelHandle.over(myModelHandle.model.accessControl.getTokenPermissionsInfo).call.query({ authSessionToken: gateRequest.info.claims.server.authSessionToken })
+        ).info,
       },
       gateProvider: domainGate.gateProvider,
       loggerProvider: configuration.loggerProvider,
       modelHandle: modelHandleProxy({
-        origin: { from: false, useCase: { id: coreId, path: gateRequest.path } },
+        origin: { from: false, gate: { kind: 'core', id: coreId, gateRequest: { info: gateRequest.info, path: gateRequest.path } } },
         modelEnvelopeDispatcher: configuration.modelEnvelopeDispatcher,
       }),
     }

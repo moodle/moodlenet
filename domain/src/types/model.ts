@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import type { any_, date_time_string, path, serializable_object } from '@moodle/lib-types'
+import type { any_, d_u, date_time_string, path, serializable_object } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { Error4xx } from '../lib'
 import { logger } from './log'
@@ -41,12 +41,14 @@ declare global {
 
         type origin = {
           //<op extends type.opDef> = {
-          useCase:
-            | string
-            | {
-                id: string
-                path: path
-              }
+          gate: d_u<
+            {
+              internal: { name: string; more?: serializable_object }
+              core: { id: string; gateRequest: Pick<gate.provider.request<persona.endpoint<any_>>, 'path' | 'info'> }
+            },
+            'kind'
+          >
+
           from: false | { id: string; target: target } //<op>
         }
       }

@@ -3,17 +3,17 @@ import { isLeft } from 'fp-ts/Either'
 import { Error4xx } from './access-error'
 
 export function clientGateProxy({
-  sessionInfo,
+  permissionsInfo,
   gateProvider: baseGateProvider,
   formDispatcher,
 }: {
-  sessionInfo: moo.permissions.user.info
+  permissionsInfo: moo.permissions.user.info
   gateProvider: moo.gate.provider<moo.Personas>
   formDispatcher: moo.gate.client.dispatcher<any_>
 }) {
   return subClientGateProxy({
     gateProvider: baseGateProvider,
-    session: sessionInfo.permissions,
+    session: permissionsInfo.tree,
     path: [],
     accessError: undefined,
   }) as unknown as moo.gate.client<moo.Personas>
@@ -77,7 +77,7 @@ export function clientGateProxy({
 
         const configs = (session_endpoint ?? {})._
         const endpointAccess: moo.gate.client.endpointAccess<endpoint_type> = context => {
-          const e_gate_endpoint = endpointProvider({ configs, sessionInfo })
+          const e_gate_endpoint = endpointProvider({ configs, permissionsInfo })
           if (isLeft(e_gate_endpoint)) {
             return {
               allowed: false,

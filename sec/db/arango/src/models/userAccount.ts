@@ -2,7 +2,7 @@ import { userAccount } from '@moodle/domain/model'
 import { fromNullable } from 'fp-ts/Option'
 import { dbStruct } from '../db-structure'
 
-export function userAccountImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<userAccount.userAccountModel> {
+export function userAccountImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<userAccount.userAccount> {
   return {
     userAccountSpace: {
       _: userId => ({

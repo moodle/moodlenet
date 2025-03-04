@@ -50,7 +50,10 @@ declare global {
   }
 }
 
-export type userAccount = moo.model<userAccountModel>
+export type userAccount = moo.model<{
+  [moo.tags.configs]: userAccountConfigs
+  userAccountSpace: moo.model.type.idSpaceMap<userAccountUserSpace, { emailEquals: string }>
+}>
 
 export type resourceDraftSpace = unknown
 
@@ -68,9 +71,4 @@ export type userAccountUserSpace = {
   }
   email: moo.model.type.atom<never, { address: email_address }>
   password: moo.model.type.atom<never, { hash: string }>
-}
-
-export type userAccountModel = {
-  [moo.tags.configs]: userAccountConfigs
-  userAccountSpace: moo.model.type.idSpaceMap<userAccountUserSpace, { emailEquals: string }>
 }
