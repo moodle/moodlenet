@@ -29,7 +29,6 @@ export async function preModelOps({ models, envelope, backModelEnvelopeDispatche
 
 export async function executeModel({ models, envelope, backModelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps) {
   const myLogger = loggerProvider({ for: 'model', more: { name: `exec:op` /*  models: Object.keys(models) */ }, envelope: envelope })
-
   const allOpTargets = allModelsOpExtracts({ models, envelope, backModelEnvelopeDispatcher, loggerProvider })
   const exe = allOpTargets.exe[0] ?? {
     fn: async (): Promise<never> => {
@@ -123,7 +122,10 @@ export function modelOpExtract({ model, envelope, backModelEnvelopeDispatcher, l
     },
   })
 
-  const withOpHandlers: undefined | moo.model.impl.withOpHandlers<any_> = envelope.target.path.reduce((_model, prop) => _model?.[prop], model.impl)
+  const withOpHandlers: undefined | moo.model.impl.withOpHandlers<any_> = envelope.target.path.reduce(
+    (_model, prop) => (_model && '_' in _model && 'function' === typeof _model._ ? _model._(prop) : _model?.[prop]),
+    model.impl,
+  )
   const opHandlers = withOpHandlers?.$?.[envelope.target.opName]
 
   const exe = opHandlers?.exe // as undefined | moo.model.impl.exe<any_>
