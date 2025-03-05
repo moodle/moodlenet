@@ -1,11 +1,11 @@
 import { allModuleConfigs } from '../../configs.model'
 
-export async function getFullUserSession({
+export function getFullUserSession({
   org,
-  userAccount: _userAccount,
   moodlenet,
-  education: _education,
-}: allModuleConfigs): Promise<{ fullUserSession: moo.permissions.config.tree }> {
+  // userAccount: _userAccount,
+  // education: _education,
+}: Pick<allModuleConfigs, 'org' | 'moodlenet'>): { fullUserSession: moo.permissions.config.tree } {
   // userAccount.configs.schema.eduDraftsOverrides
   // education.configs.schema.collection
   const fullUserSession: moo.permissions.config.tree = {

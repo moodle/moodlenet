@@ -159,7 +159,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
               .setup({
                 handle: modelHandleProxy({
                   origin: { from: false, gate: { kind: 'internal', name: 'domainCore.setup', more: { domainName } } },
-                  modelEnvelopeDispatcher: modelEnvelopeDispatcher,
+                  modelEnvelopeDispatcher,
                 }),
                 log: loggerProvider({ for: 'setup', name: 'domainCore.setup', more: { domainName } }),
               })
@@ -175,7 +175,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
             .preflight({
               handle: modelHandleProxy({
                 origin: { from: false, gate: { kind: 'internal', name: 'domainCore.preflight', more: { domainName } } },
-                modelEnvelopeDispatcher: modelEnvelopeDispatcher,
+                modelEnvelopeDispatcher,
               }),
               log: loggerProvider({ for: 'setup', name: 'domainCore.preflight', more: { domainName } }),
             })
@@ -270,7 +270,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
           resolveConfigurationPromise({
             loggerProvider,
-            modelEnvelopeDispatcher: modelEnvelopeDispatcher,
+            modelEnvelopeDispatcher,
             stopAndDrain,
           })
 

@@ -5,12 +5,12 @@ import { allModuleConfigs, modelUpgradeData } from './types'
 declare global {
   namespace moo {
     interface Models {
-      configs: configs_
+      configs: configs
     }
   }
 }
 
-export type configs_ = moo.model<configsModel>
+export type configs = moo.model<configsModel>
 
 export type configsModel = {
   [moo.tags.configs]: never

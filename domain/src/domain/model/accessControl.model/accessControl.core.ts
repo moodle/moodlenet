@@ -35,6 +35,8 @@ export const accessControlCore: moo.model.impl = {
       $: {
         call: {
           exe: async (_, { over, model }, ctx) => {
+            // NOTICE: remove getMyPermissionsInfo, as it only adds overhead on getTokenPermissionsInfo - initially good for testing origin request info propagation
+            // NOTICE:   ... unless there's a sensible use-case for it
             assert(ctx.envelope.origin.gate.kind === 'core', new Error4xx('Expectation Failed', `ctx.envelope.origin.gate.kind === 'core' (${ctx.envelope.origin.gate.kind})`))
             const authSessionToken = ctx.envelope.origin.gate.gateRequest.info.claims.server.authSessionToken
             ctx.log.debug(`gateRequest.info.claims.server authSessionToken: ${authSessionToken}`)
@@ -85,38 +87,6 @@ export const accessControlCore: moo.model.impl = {
     },
     user: {
       _: userId => ({
-        // getPermissionsInfo: {
-        //   $: {
-        //     call: {
-        //       exe: async (_, { over, model }) => {
-        //         const e_userPermissionsDeps = await over(model.accessControl.user[userId]?.getUserPermissionsDepsForAuthSessionId).call.query({ authSessionId })
-        //         if (isLeft(e_userPermissionsDeps)) {
-        //           throw new Error4xx('Expectation Failed', 'unexistent user')
-        //         }
-        //         const { roleConfigs, userRole, authSessionIdExists } = e_userPermissionsDeps.right.deps
-
-        //         if (!authSessionIdExists) {
-        //           throw new Error4xx('Forbidden', 'invalidated session')
-        //         }
-
-        //         if (!roleConfigs) {
-        //           throw new Error4xx('Expectation Failed', `no role configs for role: ${userRole}`)
-        //         }
-
-        //         return {
-        //           info: {
-        //             tree: roleConfigs.permissionsTree,
-        //             revDate: roleConfigs.revDate,
-        //             user: {
-        //               type: 'auth',
-        //               id: userId,
-        //             },
-        //           },
-        //         }
-        //       },
-        //     },
-        //   },
-        // },
         activateNewAuthSession: {
           $: {
             call: {
@@ -148,40 +118,6 @@ export const accessControlCore: moo.model.impl = {
         },
       }),
     },
-    // __getUserSessionFor: {
-    //   $: {
-    //     call: {
-    //       exe: async ({ userId }, _) => {
-    //         const o_permissions = await over(model.accessControl.user[userId]?.permissions).get.query()
-    //         if (isNone(o_permissions)) {
-    //           return left(NOT_FOUND)
-    //         }
-    //         const { role } = o_permissions.value
-    //         const { fullUserSession } = await getFullUserSession({ over, model })
-    //         const session: moo.permissions.user.tree = {
-    //           admin: role === 'admin' ? fullUserSession.admin : undefined,
-    //           moderator: role === 'admin' ? fullUserSession.moderator : undefined,
-    //           anonymous: undefined,
-    //           any: fullUserSession.any,
-    //           authenticated: {
-    //             ...fullUserSession.authenticated,
-    //             messaging: {
-    //               email: {
-    //                 ...fullUserSession.authenticated.messaging.email,
-    //                 send: role === 'contributor' ? fullUserSession.authenticated.messaging.email.send : undefined,
-    //               },
-    //             },
-    //             moodlenet: {
-    //               ...fullUserSession.authenticated.moodlenet,
-    //               contribute: undefined,
-    //             },
-    //           },
-    //         }
-    //         return right({ session })
-    //       },
-    //     },
-    //   },
-    // },
   },
 }
 

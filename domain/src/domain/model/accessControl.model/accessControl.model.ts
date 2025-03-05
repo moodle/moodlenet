@@ -34,7 +34,8 @@ export type accessControlModel = {
   user: moo.model.type.idSpaceMap<accessControlUserSpace, { emailEquals: string }>
   getTokenPermissionsInfo: moo.model.type.endpoint<['query', { authSessionToken: signed_token | null }, { info: moo.permissions.user.info }]>
 
-  // NOTICE: remove getMyPermissionsInfo, as it only adds overhead on getTokenPermissionsInfo - initially good for testing request info propagation
+  // NOTICE: remove getMyPermissionsInfo, as it only adds overhead on getTokenPermissionsInfo - initially good for testing origin request info propagation
+  // NOTICE:   ... unless there's a sensible use-case for it
   getMyPermissionsInfo: moo.model.type.endpoint<['query', void, { info: moo.permissions.user.info }]>
 }
 

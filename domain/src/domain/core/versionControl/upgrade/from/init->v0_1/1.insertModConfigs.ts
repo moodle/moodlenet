@@ -1,4 +1,5 @@
 import { logger } from '../../../../../../types'
+import { DEFAULT_ACCESS_CONTROL_CONFIGS } from '../../../../../model/accessControl.model/setup'
 import { DEFAULT_EDUCATION_CONFIGS } from '../../../../../model/education.model/setup/configs'
 import { DEFAULT_MOODLENET_CONFIGS } from '../../../../../model/moodlenet.model/setup'
 import { DEFAULT_ORG_CONFIGS } from '../../../../../model/org.model/setup'
@@ -16,5 +17,6 @@ export async function insertModConfigs({ handle, log }: { handle: moo.model.hand
     handle.over(handle.model.configs.module.moodlenet).put.sync({ newData: DEFAULT_MOODLENET_CONFIGS }),
     handle.over(handle.model.configs.module.org).put.sync({ newData: DEFAULT_ORG_CONFIGS }),
     handle.over(handle.model.configs.module.userAccount).put.sync({ newData: DEFAULT_USER_ACCOUNT_CONFIGS }),
+    handle.over(handle.model.configs.module.accessControl).put.sync({ newData: DEFAULT_ACCESS_CONTROL_CONFIGS }),
   ])
 }
