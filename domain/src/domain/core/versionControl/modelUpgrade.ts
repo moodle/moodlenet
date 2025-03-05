@@ -20,7 +20,7 @@ export async function upgradeModel({ log, handle }: { handle: moo.model.handle; 
     throw new Error(errorMessage)
   }
 
-  const modelUpgradeData = await upgradeMod.upgrade({ handle })
+  const modelUpgradeData = await upgradeMod.upgrade({ handle, log })
 
   await handle.over(handle.model.configs.latestModuleUpgrade.save).call.sync(modelUpgradeData)
 

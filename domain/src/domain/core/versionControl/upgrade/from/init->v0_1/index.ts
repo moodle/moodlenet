@@ -1,12 +1,13 @@
+import { logger } from '../../../../../../types'
 import { modelUpgradeData } from '../../../../../model/configs.model'
 import { insertInitialData } from './0.insertInitialData'
 import { insertModConfigs } from './1.insertModConfigs'
 // import { removePropOnInsert } from '../lib/id'
 
 export const VERSION = 'v0_1'
-export async function upgrade({ handle }: { handle: moo.model.handle }) {
-  await insertInitialData({ handle })
-  await insertModConfigs({ handle })
+export async function upgrade({ handle, log }: { handle: moo.model.handle; log: logger }) {
+  await insertInitialData({ handle, log })
+  await insertModConfigs({ handle, log })
 
   // bump_version
   const upgradeData: modelUpgradeData = {
