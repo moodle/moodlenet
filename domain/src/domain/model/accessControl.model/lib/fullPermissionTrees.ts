@@ -1,14 +1,14 @@
 import { allModuleConfigs } from '../../configs.model'
 
-export function getFullUserSession({
+export function getFullPermissionsConfigTree({
   org,
   moodlenet,
   // userAccount: _userAccount,
   // education: _education,
-}: Pick<allModuleConfigs, 'org' | 'moodlenet'>): { fullUserSession: moo.permissions.config.tree } {
+}: Pick<allModuleConfigs, 'org' | 'moodlenet'>) {
   // userAccount.configs.schema.eduDraftsOverrides
   // education.configs.schema.collection
-  const fullUserSession: moo.permissions.config.tree = {
+  const config: moo.permissions.config.tree = {
     admin: {
       _: { schemas: { orgInfo: org.schema.orgInfo } },
       moodlenet: {
@@ -87,5 +87,15 @@ export function getFullUserSession({
     },
     moderator: { moodlenet: { manageReports: { contributors: { ignoreReports: {}, viewList: {} } } } },
   }
-  return { fullUserSession }
+  return config
 }
+
+// export function deriveUnconfigured(config: moo.permissions.config.tree): moo.permissions.override.tree {
+//   return Object.entries(config).reduce((acc, [prop, val]) => {
+//     if (prop === '_') {
+//       return acc
+//     }
+//     acc[prop] = deriveUnconfigured(val as any_)
+//     return acc
+//   }, {} as any_)
+// }

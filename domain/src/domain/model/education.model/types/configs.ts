@@ -1,4 +1,4 @@
-import { deep_partial_props, int, serializable_object, valid } from '@moodle/lib-types'
+import { deep_partial_props, int, valid } from '@moodle/lib-types'
 import { bloomCognitive, bloomCognitiveLevel, iscedField, iscedLevel, resourceType } from './edu-categories'
 
 export type educationConfigs = {
@@ -13,7 +13,7 @@ export type enabledEduCategories = {
   bloomCognitives: ({ level: bloomCognitiveLevel } & bloomCognitive)[]
 }
 
-export type eduResourceSchemaConfigsOverrides = deep_partial_props<eduResourceSchemaConfigs> & serializable_object
+export type eduResourceSchemaConfigsOverrides = deep_partial_props<eduResourceSchemaConfigs>
 export type eduResourceSchemaConfigs = {
   title: valid.i_natMinMax
   description: valid.i_natMinMax
@@ -31,7 +31,7 @@ export type eduResourceSchemaConfigs = {
   }
 }
 
-export type eduCollectionSchemaConfigsOverrides = deep_partial_props<eduCollectionSchemaConfigs> & serializable_object
+export type eduCollectionSchemaConfigsOverrides = deep_partial_props<eduCollectionSchemaConfigs>
 export type eduCollectionSchemaConfigs = {
   title: valid.i_natMinMax
   description: valid.i_natMinMax

@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 /* eslint-disable @typescript-eslint/no-namespace */
 import '@moodle/lib-types'
-import { serializable_object } from '@moodle/lib-types'
 export * from './types'
 
 declare global {
@@ -17,7 +16,7 @@ declare global {
     namespace Models {}
     interface IdSpaces {}
 
-    type tags<sym extends symbol, t = serializable_object> = { [k in sym]?: t }
+    type tags<sym extends symbol, t = unknown> = { [k in sym]?: t }
     export namespace tags {
       const configs: unique symbol
       type configs = typeof configs

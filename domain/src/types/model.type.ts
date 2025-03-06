@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { fileMeta } from '@moodle/lib-domain-fs'
-import type { any_, map, serializable_object } from '@moodle/lib-types'
+import type { any_, map } from '@moodle/lib-types'
 import type { Either } from 'fp-ts/Either'
 import type { Option } from 'fp-ts/Option'
 import type { TEMP_FILE_NOT_FOUND } from '../lib/constants'
@@ -18,7 +18,7 @@ declare global {
         type traits_prop = typeof traits_sym
         type ops = map<opDef>
         type no_ops = map<opDef, never>
-        type traitsDef = { shape: unknown; ops: ops; data: serializable_object; flags: traitsFlags }
+        type traitsDef = { shape: unknown; ops: ops; data: unknown; flags: traitsFlags }
 
         type opType = 'sync' | 'async' | 'query'
         type opDef = [type: opType, message: any_, outcome: any_]
@@ -59,7 +59,7 @@ declare global {
           flags: never
         }>
 
-        // type staticAggregate<data extends serializable_object, ops_ extends ops = no_ops> = type<{
+        // type staticAggregate<data extends unknown, ops_ extends ops = no_ops> = type<{
         //   shape: unknown
         //   ops: ops_ & { get: ['query', void, data] }
         //   data: data
@@ -75,7 +75,7 @@ declare global {
             : spaceData<shape[k], strict>
         }
 
-        type atom<flags extends traitsFlags, data extends serializable_object, ops_ extends ops = no_ops, opts = never> = type<{
+        type atom<flags extends traitsFlags, data, ops_ extends ops = no_ops, opts = never> = type<{
           data: data
           ops: ops_ & {
             get: ['query', void, 'static' extends flags ? data : Option<data>]

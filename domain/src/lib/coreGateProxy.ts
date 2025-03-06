@@ -89,7 +89,7 @@ export function coreGateProxy({ modelHandle, coreRequest, gateProvider, core, lo
             ({ path }) =>
               new Error4xx(
                 'Not Found',
-                `CoreGate:
+                `CoreGateProxy:
   unexistent gate path [${path.join('.')}]`,
               ),
           ),

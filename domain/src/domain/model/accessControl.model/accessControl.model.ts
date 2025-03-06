@@ -49,7 +49,8 @@ export type accessControlUserSpace = {
 }
 
 export type userPermissionsDeps = {
-  roleConfigs: roleConfigs | null
-  userRole: userRole
+  roleConfigs: roleConfigs
+  // userRole: userRole
   authSessionIdExists: boolean
+  permissionsConfigTree: moo.permissions.config.tree
 }

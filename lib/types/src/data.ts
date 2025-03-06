@@ -46,10 +46,10 @@ export const void_ = void 0 as void
 export type primitive = primitive_value | null | undefined
 export type primitive_value = string | number | boolean | bigint
 
-export type serializable = serializable_primitive | serializable_object | serializable_array
-export type serializable_primitive = string | number | boolean | null | undefined
-export type serializable_object = { [k in string]: serializable }
-export type serializable_array = ReadonlyArray<serializable>
+// export type serializable = serializable_primitive | serializable_object | serializable_array
+// export type serializable_primitive = string | number | boolean | null | undefined
+// export type serializable_object = { [k in string]: serializable }
+// export type serializable_array = ReadonlyArray<serializable>
 
 export function unchecked_brand_<b extends branded<any_, any_>>(b: unbranded<b>): b {
   return b as b

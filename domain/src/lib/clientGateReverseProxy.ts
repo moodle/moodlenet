@@ -16,7 +16,7 @@ export function clientGateReverseProxy({ formDispatcher }: { formDispatcher: moo
 
         if (_next_path.length > 4) {
           throw new TypeError(
-            `GateProxy:
+            `ClilentGateReverseProxy:
   unexistent gate path [${_next_path.join(',')}]
             `,
           )

@@ -1,58 +1,68 @@
 import { time_duration_string_schema } from '@moodle/lib-types'
 import { DEFAULT_MOODLENET_CONFIGS } from '../../moodlenet.model/setup'
 import { DEFAULT_ORG_CONFIGS } from '../../org.model/setup'
-import { getFullUserSession } from '../lib/fullUserSession'
-import { accessControlConfigs } from '../types'
+import { getFullPermissionsConfigTree } from '../lib/fullPermissionTrees'
+import { accessControlConfigs, rolePerm } from '../types'
 
 const revDate = new Date().toISOString()
-const { fullUserSession } = getFullUserSession({
+const permissionsConfigTree = getFullPermissionsConfigTree({
   moodlenet: DEFAULT_MOODLENET_CONFIGS,
   org: DEFAULT_ORG_CONFIGS,
 })
 
-const anonymous_default_permissionsTree: moo.permissions.user.tree = {
-  anonymous: fullUserSession.anonymous,
-  any: fullUserSession.any,
+const default_anonymous_grants: rolePerm = {
+  allow: {
+    any: {},
+    anonymous: {},
+  },
 }
-const contributor_default_permissionsTree: moo.permissions.user.tree = {
-  any: fullUserSession.any,
-  authenticated: fullUserSession.authenticated,
+
+const default_contributor_grants: rolePerm = {
+  allow: {
+    any: {},
+    authenticated: {},
+  },
 }
-const admin_default_permissionsTree: moo.permissions.user.tree = {
-  ...contributor_default_permissionsTree,
-  admin: fullUserSession.admin,
-  moderator: fullUserSession.moderator,
+
+const default_admin_grants: rolePerm = {
+  allow: {
+    any: {},
+    authenticated: {},
+    admin: {},
+    moderator: {},
+  },
 }
-const viewer_default_permissionsTree: moo.permissions.user.tree = {
-  ...contributor_default_permissionsTree,
-  authenticated: {
-    ...contributor_default_permissionsTree.authenticated,
-    _: fullUserSession.authenticated._,
-    messaging: {
-      email: {
-        ...contributor_default_permissionsTree.authenticated?.messaging?.email,
-        send: undefined,
+
+const default_viewer_grants: rolePerm = {
+  allow: default_contributor_grants.allow,
+  deny: {
+    authenticated: {
+      messaging: {},
+      moodlenet: {
+        contribute: {},
       },
     },
   },
 }
+
 export const DEFAULT_ACCESS_CONTROL_CONFIGS: accessControlConfigs = {
   newUserDefaultRole: 'viewer',
+  permissionsConfigTree,
   roles: {
     anonymous: {
-      permissionsTree: anonymous_default_permissionsTree,
+      perm: default_anonymous_grants,
       revDate,
     },
     contributor: {
-      permissionsTree: contributor_default_permissionsTree,
+      perm: default_contributor_grants,
       revDate,
     },
     admin: {
-      permissionsTree: admin_default_permissionsTree,
+      perm: default_admin_grants,
       revDate,
     },
     viewer: {
-      permissionsTree: viewer_default_permissionsTree,
+      perm: default_viewer_grants,
       revDate,
     },
   },

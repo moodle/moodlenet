@@ -22,6 +22,7 @@ import { createQueueServices } from './queue-services'
 import { configurator } from './types'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
 import { Either, isLeft, left, right } from 'fp-ts/Either'
+import { inspect } from 'util'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
 //   provideDefaultResourceIngestorSecEnv,
@@ -300,15 +301,19 @@ export const defaultConfigurator: configurator = ({ master }) => {
     })
 
     const coreId = generateUlid({ onDate: new Date() })
+    console.time(`getTokenPermissionsInfo`)
+    const permissionsInfo = (
+      await myModelHandle.over(myModelHandle.model.accessControl.getTokenPermissionsInfo).call.query({ authSessionToken: gateRequest.info.claims.server.authSessionToken })
+    ).info
+    console.timeEnd(`getTokenPermissionsInfo`)
+    console.log(inspect(permissionsInfo, { depth: 100 }))
     const coreGateDeps: coreGateDeps = {
       core: domainCore.persona.core,
       coreRequest: {
         gateRequest,
         id: coreId,
         now: new Date().toISOString(),
-        permissionsInfo: (
-          await myModelHandle.over(myModelHandle.model.accessControl.getTokenPermissionsInfo).call.query({ authSessionToken: gateRequest.info.claims.server.authSessionToken })
-        ).info,
+        permissionsInfo,
       },
       gateProvider: domainGate.gateProvider,
       loggerProvider: configuration.loggerProvider,

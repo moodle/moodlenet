@@ -4,6 +4,7 @@ import { isLeft, right } from 'fp-ts/Either'
 import * as duration from 'iso8601-duration'
 import { isString } from 'lodash'
 import { Error4xx } from '../../../lib'
+import { applyRolePerms } from './lib/overrideTree'
 
 export const accessControlCore: moo.model.impl = {
   userAccount: {
@@ -61,19 +62,20 @@ export const accessControlCore: moo.model.impl = {
             if (isLeft(e_userPermissionsDeps)) {
               throw new Error4xx('Expectation Failed', 'unexistent user')
             }
-            const { roleConfigs, userRole, authSessionIdExists } = e_userPermissionsDeps.right.deps
+            const { roleConfigs, /*  userRole, */ authSessionIdExists, permissionsConfigTree } = e_userPermissionsDeps.right.deps
 
             if (!authSessionIdExists) {
               throw new Error4xx('Forbidden', 'invalidated session')
             }
 
-            if (!roleConfigs) {
-              throw new Error4xx('Expectation Failed', `no role configs for role: ${userRole}`)
-            }
+            // if (!roleConfigs) {
+            //   throw new Error4xx('Expectation Failed', `no role configs for role: ${userRole}`)
+            // }
 
+            const roleTree = applyRolePerms(permissionsConfigTree, [roleConfigs.perm])
             return {
               info: {
-                tree: roleConfigs.permissionsTree,
+                tree: roleTree,
                 revDate: roleConfigs.revDate,
                 user: {
                   type: 'auth',
@@ -123,7 +125,9 @@ export const accessControlCore: moo.model.impl = {
 
 async function getAnonPermissionsInfo(_: moo.model.handle): Promise<{ info: moo.permissions.user.info }> {
   const configs = await _.over(_.model.configs.module.accessControl).get.query()
+
+  const anonTree = applyRolePerms(configs.permissionsConfigTree, [configs.roles.anonymous.perm])
   return {
-    info: { tree: configs.roles.anonymous.permissionsTree, revDate: configs.roles.anonymous.revDate, user: { type: 'anon' } },
+    info: { tree: anonTree, revDate: configs.roles.anonymous.revDate, user: { type: 'anon' } },
   }
 }

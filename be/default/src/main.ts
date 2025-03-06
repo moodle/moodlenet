@@ -47,6 +47,17 @@ http_bind
       })
       .then(_ => coreGate(_))
       .then(console.log, console.error)
+      .then(() =>
+        configurator.gate({
+          gateRequest: {
+            form: {},
+            path: ['a', 'a', 'a', 'a'],
+            info: { claims: { server: { href: 'https://moodlenet.local/' as any_, authSessionToken: null, requestId: '11', ua: '313132' } } },
+          },
+        }),
+      )
+      .then(_ => coreGate(_))
+      .then(console.log, console.error)
 
     let exiting = false
 

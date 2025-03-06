@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 /* eslint-disable @typescript-eslint/no-namespace */
-import type { any_, map, serializable, serializable_object } from '@moodle/lib-types'
+import type { any_, map } from '@moodle/lib-types'
 import type { ZodType } from 'zod'
 declare global {
   namespace moo {
@@ -10,7 +10,7 @@ declare global {
       type def = /* Partial< */ map<context.def> & tags<tags.configs> & withContext // ,moo.contexts>>
 
       const context: unique symbol
-      type withContext = { [context]?: serializable_object }
+      type withContext = { [context]?: unknown }
 
       type context<contextScopesDef extends context.def> = contextScopesDef
       namespace context {
@@ -29,7 +29,7 @@ declare global {
 
       type endpoint<endpointDef extends endpoint.def> = [epZodType<endpointDef[0]>, endpointDef[1], endpointDef[2], endpointDef[3]]
       namespace endpoint {
-        type def = [form: zodTypeOrProvider, outcome: any_, configs?: serializable | undefined | void, context?: any_]
+        type def = [form: zodTypeOrProvider, outcome: any_, configs?: any_, context?: any_]
       }
     }
   }

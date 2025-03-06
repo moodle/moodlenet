@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import type { any_, d_u, date_time_string, path, serializable_object } from '@moodle/lib-types'
+import type { any_, d_u, date_time_string, path } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { Error4xx } from '../lib'
 import { logger } from './log'
@@ -10,7 +10,7 @@ declare global {
     type model<modelDef extends model.def> = modelDef
     namespace model {
       type def = {
-        [moo.tags.configs]: serializable_object
+        [moo.tags.configs]: unknown
       }
       type dispatcher<opdef extends type.opDef> = (envelope: envelope<opdef>) => Promise<Either<Error4xx, opdef[2]>>
 
@@ -43,7 +43,7 @@ declare global {
           //<op extends type.opDef> = {
           gate: d_u<
             {
-              internal: { name: string; more?: serializable_object }
+              internal: { name: string; more?: unknown }
               core: { id: string; gateRequest: Pick<gate.provider.request<persona.endpoint<any_>>, 'path' | 'info'> }
             },
             'kind'

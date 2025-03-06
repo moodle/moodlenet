@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_, map, serializable_object, signed_token, url_string } from '@moodle/lib-types'
+import { any_, map, signed_token, url_string } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { Error4xx } from '../lib/access-error'
 
@@ -13,7 +13,7 @@ declare global {
       namespace provider {
         type requestInfo = {
           claims: {
-            server: { authSessionToken: signed_token | null; requestId: string; href: url_string; ua: string | null; meta?: serializable_object }
+            server: { authSessionToken: signed_token | null; requestId: string; href: url_string; ua: string | null; meta?: unknown }
           }
         }
         type request<endpoint_ extends persona.endpoint<any_>> = client.request<endpoint_> & { info: requestInfo }

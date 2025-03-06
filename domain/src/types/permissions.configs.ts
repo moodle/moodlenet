@@ -7,28 +7,28 @@ declare global {
     namespace permissions {
       namespace config {
         type tree = {
-          [personaType_ in personaType]: config.persona<Personas[personaType_]>
+          [personaType_ in personaType]: persona<Personas[personaType_]>
         }
         type persona<persona_ extends moo.persona<any_>> = config_tag<persona_> & {
           [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_> ? context<persona_[contextName]> : never
         }
 
-        type context<context extends moo.persona.context<any_>> = config_tag<context> & {
-          [scopeName in string & keyof context]: context[scopeName] extends moo.persona.scope<any_> ? scope<context[scopeName]> : never
+        type context<context_ extends moo.persona.context<any_>> = config_tag<context_> & {
+          [scopeName in string & keyof context_]: context_[scopeName] extends moo.persona.scope<any_> ? scope<context_[scopeName]> : never
         }
 
-        type scope<scope extends moo.persona.scope<any_>> = config_tag<scope> & {
-          [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.persona.usecase<any_> ? usecase<scope[useCaseName]> : never
+        type scope<scope_ extends moo.persona.scope<any_>> = config_tag<scope_> & {
+          [useCaseName in string & keyof scope_]: scope_[useCaseName] extends moo.persona.usecase<any_> ? usecase<scope_[useCaseName]> : never
         }
 
-        type usecase<useCase extends moo.persona.usecase<any_>> = config_tag<useCase> & {
-          [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.persona.endpoint<any_> ? endpoint<persona.endpoint<useCase[endpointName]>> : never
+        type usecase<usecase_ extends moo.persona.usecase<any_>> = config_tag<usecase_> & {
+          [endpointName in string & keyof usecase_]: usecase_[endpointName] extends moo.persona.endpoint<any_> ? endpoint<persona.endpoint<usecase_[endpointName]>> : never
         }
 
-        type endpoint<useCaseEndpoint extends moo.persona.endpoint<any_>> = useCaseEndpoint[2] extends undefined | void | never
+        type endpoint<endpoint_ extends moo.persona.endpoint<any_>> = endpoint_[2] extends undefined | void | never
           ? Record<string, never>
           : {
-              _: useCaseEndpoint[2]
+              _: endpoint_[2]
             }
       }
     }

@@ -1,10 +1,8 @@
-import { serializable } from '@moodle/lib-types'
-
 export type modelUpgradeData = {
   previous: string
   current: string
   date: string
-  meta: serializable
+  meta: unknown
 }
 
 export type allModuleConfigs = {

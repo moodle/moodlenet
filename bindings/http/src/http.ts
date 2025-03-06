@@ -3,6 +3,7 @@ import { any_, path } from '@moodle/lib-types'
 import express from 'express'
 import { Either, isLeft } from 'fp-ts/Either'
 import { Agent, fetch } from 'undici'
+import cors from 'cors'
 
 const PROTOCOL_CONTENT_TYPE = 'text/plain; charset=utf-8'
 
@@ -85,6 +86,22 @@ export async function getHttpBinderReceiver<pl extends payload>({ port, basePath
   }
   let draining = false
   const app = express()
+
+  // NOTICE: added for DEV: check the proper way
+  app.use(
+    cors({
+      origin: (origin, callback) => {
+        // Allow requests from all localhost origins
+        if (!origin || origin.startsWith('http://localhost:')) {
+          callback(null, true)
+        } else {
+          callback(new Error('Not allowed by CORS'))
+        }
+      },
+      credentials: true,
+    }),
+  )
+
   app.use(express.text({ defaultCharset: 'utf-8' }))
   const router = express.Router().use(async (req, res) => {
     if (draining) {
