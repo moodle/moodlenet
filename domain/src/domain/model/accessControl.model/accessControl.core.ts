@@ -4,7 +4,7 @@ import { isLeft, right } from 'fp-ts/Either'
 import * as duration from 'iso8601-duration'
 import { isString } from 'lodash'
 import { Error4xx } from '../../../lib'
-import { applyRolePerms } from './lib/overrideTree'
+import { applyRolePerms } from './lib/applyRolePerms'
 
 export const accessControlCore: moo.model.impl = {
   userAccount: {
