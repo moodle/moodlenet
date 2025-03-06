@@ -2,13 +2,13 @@ import { generateAlphanumId_withCheck } from '@moodle/lib-id-gen'
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import { userAccountUserSpace } from '../../../../../model/userAccount.model/userAccount.model'
-import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 import type * as def from './confirmMyEmail.endpoint'
 import { NONE_ASSET } from '../../../../../../lib/content/asset'
 import { SUBMITTED } from '../../../../../../lib/constants'
+import { INVALID_TOKEN } from '../../../../../model/jwtTokens.model'
 
 export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (confirmEmailForm, _) => {
-  const e_validatedToken = await _.over(_.model.jwtTokens.token.userAccount.emailConfirmationToken.validate).call.query({
+  const e_validatedToken = await _.over(_.model.jwtTokens.model.userAccount.emailConfirmationToken.validate).call.query({
     token: confirmEmailForm.signupEmailVerificationToken,
   })
 
@@ -23,10 +23,11 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
   })
 
   if (O.isSome(o_existingUserWithThisEmail)) {
-    return E.left(USER_WITH_THIS_EMAIL_EXISTS)
+    return E.left(INVALID_TOKEN)
   }
 
-  const id = await generateAlphanumId_withCheck(generated_id =>
+  // TODO: mv userAccount creation as userAccount model endpoint
+  const userId = await generateAlphanumId_withCheck(generated_id =>
     _.over(_.model.userAccount.userAccountSpace[generated_id])
       .exists.query()
       .then(({ exists }) => exists),
@@ -44,7 +45,7 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
     },
   }
 
-  await _.over(_.model.userAccount.userAccountSpace[id]).create.async({ spaceData: userSpace })
+  await _.over(_.model.userAccount.userAccountSpace[userId]).create.async({ spaceData: userSpace })
 
   return E.right(SUBMITTED)
 }

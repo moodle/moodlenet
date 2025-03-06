@@ -22,7 +22,7 @@ export type JwtTokensModel = {
   [moo.tags.configs]: jwtTokensConfigs
   // validate: moo.model.type.endpoint<['query', { token: signed_token }, Either<TYPE_INVALID_TOKEN, { data: unknown }>]>
   // sign: moo.model.type.endpoint<['query', { data: unknown }, { token: signed_token }]>
-  token: {
+  model: {
     [namespace in keyof moo.Models.jwtTokens.Payloads]: {
       [tokType in keyof moo.Models.jwtTokens.Payloads[namespace]]: {
         validate: moo.model.type.endpoint<

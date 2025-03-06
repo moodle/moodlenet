@@ -38,7 +38,7 @@ export const accessControlCore: moo.model.impl = {
             if (!isString(authSessionToken)) {
               return getAnonPermissionsInfo(_)
             }
-            const e_authSessionData = await _.over(_.model.jwtTokens.token.accessControl.authSession.validate).call.query({ token: authSessionToken })
+            const e_authSessionData = await _.over(_.model.jwtTokens.model.accessControl.authSession.validate).call.query({ token: authSessionToken })
             if (isLeft(e_authSessionData)) {
               throw new Error4xx('Unauthorized', 'invalid token')
             }
@@ -82,7 +82,7 @@ export const accessControlCore: moo.model.impl = {
                 const configs = await over(model.configs.module.accessControl).get.query()
                 const expires = duration.end(duration.parse(configs.sessionExpirationTime)).toISOString()
 
-                const { token: authSessionToken } = await over(model.jwtTokens.token.accessControl.authSession.sign).call.query({
+                const { token: authSessionToken } = await over(model.jwtTokens.model.accessControl.authSession.sign).call.query({
                   data: { userId, authSessionId },
                   expires,
                 }) // as signed_token

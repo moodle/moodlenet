@@ -11,6 +11,7 @@ export const login: moo.core.endpoint<def.login> = async (emailLoginForm, _) => 
     return E.left(WRONG_CREDENTIALS)
   }
 
+  // TODO: mv userAccount check password as userAccount model endpoint
   const { valid } = await _.over(_.model.crypto.hashing.password.verify).call.query({
     plainPassword: emailLoginForm.password,
     hash: existingUser.value.data.password.hash,

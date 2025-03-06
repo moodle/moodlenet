@@ -6,10 +6,9 @@ import { object } from 'zod'
 import { Error4xx } from '../../../../../../lib/access-error'
 import { baseUserDataSchemaConfig, generalSchemaConfig } from '../../../../../model/org.model'
 import { baseUserDataSchemas, generalSchemas } from '../../../../../model/org.model/lib/schemas'
-import { USER_WITH_THIS_EMAIL_EXISTS } from '../consts'
 import { SUBMITTED } from '../../../../../../lib'
 
-export type submitSignupForm = moo.persona.endpoint<[typeof signupFormZodSchema, E.Either<typeof USER_WITH_THIS_EMAIL_EXISTS, typeof SUBMITTED>]>
+export type submitSignupForm = moo.persona.endpoint<[typeof signupFormZodSchema, E.Either<never, typeof SUBMITTED>]>
 
 export type signupForm = {
   email: email_address
