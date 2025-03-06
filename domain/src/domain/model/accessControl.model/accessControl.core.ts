@@ -1,5 +1,4 @@
 import { generateUlid } from '@moodle/lib-id-gen'
-import assert from 'assert'
 import { isLeft, right } from 'fp-ts/Either'
 import * as duration from 'iso8601-duration'
 import { isString } from 'lodash'
@@ -32,20 +31,6 @@ export const accessControlCore: moo.model.impl = {
     },
   },
   accessControl: {
-    getMyPermissionsInfo: {
-      $: {
-        call: {
-          exe: async (_, { over, model }, ctx) => {
-            // NOTICE: remove getMyPermissionsInfo, as it only adds overhead on getTokenPermissionsInfo - initially good for testing origin request info propagation
-            // NOTICE:   ... unless there's a sensible use-case for it
-            assert(ctx.envelope.origin.gate.kind === 'core', new Error4xx('Expectation Failed', `ctx.envelope.origin.gate.kind === 'core' (${ctx.envelope.origin.gate.kind})`))
-            const authSessionToken = ctx.envelope.origin.gate.gateRequest.info.claims.server.authSessionToken
-            ctx.log.debug(`gateRequest.info.claims.server authSessionToken: ${authSessionToken}`)
-            return over(model.accessControl.getTokenPermissionsInfo).call.query({ authSessionToken })
-          },
-        },
-      },
-    },
     getTokenPermissionsInfo: {
       $: {
         call: {
