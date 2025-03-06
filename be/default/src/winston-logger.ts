@@ -81,7 +81,7 @@ ${info.message}
 
 const loggerContextFormatter = {
   core(c: d_u__d<loggerContext, 'for', 'core'>) {
-    const { id, permissionsInfo, now, gateRequest: gateAccess } = c.request
+    const { id, permissionsInfo, now, gateRequest } = c.request
     return `Core Access:
 id: ${id}
 now: ${now}
@@ -90,15 +90,12 @@ sessionInfo:
     permissionsInfo.user.type === 'anon'
       ? ''
       : `
-    id: ${permissionsInfo.user.id}
-  session personas: ${Object.keys(permissionsInfo.tree)}
-gateAccess:
-  path: ${gateAccess.path.join('.')}
-  claims: ${inspect(gateAccess.info.claims, { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
-  form: ${inspect(_redact(gateAccess.form), { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
-`
+    id: ${permissionsInfo.user.id}${'' /*  session personas: ${Object.keys(permissionsInfo.tree)} */}`
   }
-
+gateRequest:
+  path: ${gateRequest.path.join('.')}
+  claims: ${inspect(gateRequest.info.claims, { breakLength: 300, maxStringLength: 600, colors: true, depth: 8 })}
+  form: ${inspect(_redact(gateRequest.form), { breakLength: 300, maxStringLength: 600, colors: true, depth: 8 })}
 `
   },
   model(c: d_u__d<loggerContext, 'for', 'model'>) {
