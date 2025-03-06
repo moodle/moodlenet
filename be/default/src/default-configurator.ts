@@ -1,7 +1,7 @@
 import { appDeployments, loggerProvider } from '@moodle/domain'
 import * as domainCore from '@moodle/domain/core'
 import * as domainGate from '@moodle/domain/gate'
-import { coreGateDeps, deploymentInfoFromUrlString, executeModel, preModelOps, modelHandleProxy, postModelOps, Error4xx } from '@moodle/domain/lib'
+import { coreGateDeps, deploymentInfoFromUrlString, Error4xx, executeModel, modelHandleProxy, postModelOps, preModelOps } from '@moodle/domain/lib'
 import type * as model from '@moodle/domain/model'
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 import { generateAlphanumId, generateUlid } from '@moodle/lib-id-gen'
@@ -15,14 +15,13 @@ import { get_default_resource_ingestion_secondary_factory, provideDefaultResourc
 import { fs_default_storage_factory, storageDefaultSecEnv } from '@moodle/sec-storage-local-fs'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
+import { Either, isLeft, left, right } from 'fp-ts/Either'
 import { readFileSync } from 'fs'
 import * as path from 'path'
 import { coerce, object } from 'zod'
 import { createQueueServices } from './queue-services'
 import { configurator } from './types'
 import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winston-logger'
-import { Either, isLeft, left, right } from 'fp-ts/Either'
-import { inspect } from 'util'
 // import {
 //   get_default_resource_ingestion_secondary_factory,
 //   provideDefaultResourceIngestorSecEnv,
@@ -301,12 +300,12 @@ export const defaultConfigurator: configurator = ({ master }) => {
     })
 
     const coreId = generateUlid({ onDate: new Date() })
-    console.time(`getTokenPermissionsInfo`)
+    // console.time(`getTokenPermissionsInfo`)
     const permissionsInfo = (
       await myModelHandle.over(myModelHandle.model.accessControl.getTokenPermissionsInfo).call.query({ authSessionToken: gateRequest.info.claims.server.authSessionToken })
     ).info
-    console.timeEnd(`getTokenPermissionsInfo`)
-    console.log(inspect(permissionsInfo, { depth: 100 }))
+    // console.timeEnd(`getTokenPermissionsInfo`)
+    // console.log(inspect(permissionsInfo, { depth: 100 }))
     const coreGateDeps: coreGateDeps = {
       core: domainCore.persona.core,
       coreRequest: {
