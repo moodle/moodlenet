@@ -26,7 +26,8 @@ function apply_perm_(currentPermUserTreeNode: any_, currentPermConfigTreeNode: a
     throw new TypeError('currentPermConfigTreeNode is required')
   }
   const perm_override_tree_entries = Object.entries(permOverrideTreeNode)
-  if (currentPermUserTreeNode === deny_sym_ || (perm_override_tree_entries.length === 0 /* that's a leaf */ && d_a === 'deny')) {
+  const isOverrideLeaf = perm_override_tree_entries.length === 0
+  if (currentPermUserTreeNode === deny_sym_ || (d_a === 'deny' && isOverrideLeaf)) {
     return deny_sym_ as unknown as moo.permissions.user.tree
   }
   const node = perm_override_tree_entries.reduce(
@@ -39,7 +40,7 @@ function apply_perm_(currentPermUserTreeNode: any_, currentPermConfigTreeNode: a
       return acc
     },
     {
-      ...(currentPermUserTreeNode /*  ?? currentPermConfigTreeNode  */ ?? null),
+      ...(currentPermUserTreeNode ?? (isOverrideLeaf && d_a === 'allow' ? currentPermConfigTreeNode : null) ?? null),
       ...(permOverrideTreeNode?._ || currentPermUserTreeNode?._ || currentPermConfigTreeNode?._
         ? { _: defaultsDeep({}, permOverrideTreeNode?._ ?? {}, currentPermUserTreeNode?._ ?? {}, currentPermConfigTreeNode?._ ?? {}) }
         : null),

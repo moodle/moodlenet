@@ -40,3 +40,6 @@ export function clientGateReverseProxy({ formDispatcher }: { formDispatcher: moo
     })
   }
 }
+
+// declare const _: moo.gate.client<moo.Personas>
+// false && _.anonymous.access.login.withMyEmailAndPassword.login().send?.({"email":"","password":{"###--redacted--###":""}})

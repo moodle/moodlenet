@@ -65,7 +65,7 @@ declare global {
         type endpointAccess<useCaseEndpoint extends moo.persona.endpoint<any_>> = withAccErr &
           ((
             context: useCaseEndpoint[3] extends never | undefined | null | void ? void : useCaseEndpoint[3],
-          ) => (withAccErr<'e'> & { allowed: false; zod?: undefined; send?: undefined; context?: undefined }) | endpointAccessHandle<useCaseEndpoint>)
+          ) => (withAccErr<'e'> & { allowed: false; zod?: undefined; send?: endpointCall<useCaseEndpoint>; context?: undefined }) | endpointAccessHandle<useCaseEndpoint>)
 
         type withAccErr<t extends 'e' | 'u' = 'e' | 'u'> = {
           _: t extends 'e' ? { error: Error4xx } : never | t extends 'u' ? undefined : never
