@@ -65,10 +65,12 @@ http_bind
       if (exiting) {
         return
       }
-      exiting = true
-      // FIXME: use a Logger
-      console.log(`received signal [${sig}] draining...`)
-      await Promise.all([configurator.drain(), httpGate.drain()])
+      if (process.env.NODE_ENV !== 'development') {
+        exiting = true
+        // FIXME: use a Logger
+        console.log(`received signal [${sig}] draining...`)
+        await Promise.all([configurator.drain(), httpGate.drain()])
+      }
       console.log(`exiting...`)
       process.exit(0)
     }

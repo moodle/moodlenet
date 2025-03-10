@@ -18,7 +18,6 @@ export const accessControlCore: moo.model.impl = {
               const { newUserDefaultRole } = await over(model.configs.module.accessControl).get.query()
               await over(model.accessControl.user[userId]).create.async({
                 spaceData: {
-                  activeAuthSession: {},
                   auth: {
                     role: newUserDefaultRole,
                   },

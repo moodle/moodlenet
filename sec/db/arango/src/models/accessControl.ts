@@ -15,11 +15,20 @@ export function accessControlImpl({ dbStruct }: { dbStruct: dbStruct }): moo.mod
           getData: {
             exe: async () => {
               const doc = await dbStruct.appData.coll.userSpace.document({ _key: userId }, { graceful: true })
-              return fromNullable(doc?.accessControl)
+
+              const _: moo.model.ops.xSpaceData<accessControl.accessControlUserSpace> | undefined = doc?.accessControl && {
+                ...doc.accessControl,
+                info: {
+                  displayName: doc.userAccount.profile.info.displayName,
+                  email: doc.userAccount.email.address,
+                },
+              }
+
+              return fromNullable(_)
             },
           },
         },
-        session: {
+        activeAuthSession: {
           _: authSessionId => ({
             $: {
               create: {
@@ -28,7 +37,7 @@ export function accessControlImpl({ dbStruct }: { dbStruct: dbStruct }): moo.mod
                     { _key: userId },
                     {
                       accessControl: {
-                        session: {
+                        activeAuthSession: {
                           [authSessionId]: spaceData,
                         },
                       },
@@ -43,7 +52,7 @@ export function accessControlImpl({ dbStruct }: { dbStruct: dbStruct }): moo.mod
                 get: {
                   exe: async () => {
                     const doc = await dbStruct.appData.coll.userSpace.document({ _key: userId }, { graceful: true })
-                    return fromNullable(doc?.accessControl?.session[authSessionId]?.auth)
+                    return fromNullable(doc?.accessControl?.activeAuthSession[authSessionId]?.authSession)
                   },
                 },
               },

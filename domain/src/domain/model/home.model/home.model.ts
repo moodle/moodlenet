@@ -16,8 +16,8 @@ export type draft<t> = {
 export type homeUserSpace = {
   myDrafts: {
     edu: {
-      resources: moo.model.type.idSpaceMap<draft<eduResource>>
-      collection: moo.model.type.idSpaceMap<draft<eduCollection>>
+      resources: moo.model.ops.collection<draft<eduResource>>
+      collection: moo.model.ops.collection<draft<eduCollection>>
     }
   }
 }
@@ -26,5 +26,5 @@ export type home = moo.model<homeModel>
 
 export type homeModel = {
   [moo.tags.configs]: never
-  userHome: moo.model.type.idSpaceMap<homeUserSpace>
+  userHome: moo.model.ops.collection<homeUserSpace>
 }

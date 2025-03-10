@@ -12,13 +12,13 @@ declare global {
       type def = {
         [moo.tags.configs]: unknown
       }
-      type dispatcher<opdef extends type.opDef> = (envelope: envelope<opdef>) => Promise<Either<Error4xx, opdef[2]>>
+      type dispatcher<opdef extends ops.opDef> = (envelope: envelope<opdef>) => Promise<Either<Error4xx, opdef[2]>>
 
       type handle = {
         model: Models
-        over: <typeModelRef extends model.type>(type_model_ref: typeModelRef | undefined) => typeModelRefOpMap_impl<typeModelRef>
+        over: <typeModelRef extends model.ops>(type_model_ref: typeModelRef | undefined) => opsImpl_ref<typeModelRef>
       }
-      type envelope<op extends type.opDef> = {
+      type envelope<op extends ops.opDef> = {
         id: string
         callTime: date_time_string
         now: date_time_string
@@ -36,7 +36,7 @@ declare global {
         type target = {
           opName: string
           path: path
-          type: type.opType
+          type: ops.opType
         }
 
         type origin = {
@@ -54,47 +54,39 @@ declare global {
       }
 
       type impl<baseModelNode = Models> = {
-        [modelNodePropName in keyof baseModelNode]?: baseModelNode[modelNodePropName] extends infer modelNode
+        [modelNodePropName in Exclude<keyof baseModelNode, model.ops_prop>]?: baseModelNode[modelNodePropName] extends infer modelNode
           ? /* ? wideProvider<
               modelNode extends type<type.traitsDef> ? impl.typeModel<modelNode> : impl<modelNode>,
               [modelNodePropName]
-            > */ modelNode extends type<type.traitsDef>
-            ? impl.typeModel<modelNode>
-            : impl<modelNode>
+            > */ (modelNode extends model.ops
+            ? impl.withOpHandlers<modelNode[model.ops_prop]>
+            :unknown) & impl<modelNode> | (<key extends keyof modelNode>(k: key) => impl<modelNode[key]>)
           : never // or maybe `unknown` instead ?
       }
 
       namespace impl {
-        type ctx<op extends type.opDef> = {
+        type ctx<op extends ops.opDef> = {
           now: date_time_string
           log: logger
           envelope: envelope<op>
         }
-        type exeArgs<op extends type.opDef> = [message: op[1], handle: handle, ctx: ctx<op>]
-        type typeModel<modelNode extends type<type.traitsDef>> = withOpHandlers<modelNode> &
-          (modelNode extends type.idSpaceMap<infer space_shape, any_, infer space_ops>
-            ? { _?: (id: string) => typeModel<type.idSpaceModel<space_shape, space_ops>> }
-            : impl<Omit<modelNode, type.traits_prop>>)
+        type exeArgs<op extends ops.opDef> = [message: op[1], handle: handle, ctx: ctx<op>]
 
-        type exe<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<op[2]>
-        type pre<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
-        type notImpl<op extends model.type.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
-        type post<op extends model.type.opDef> = (outcome: Either<Error4xx, op[2]>, ...exeArgs: exeArgs<op>) => Promise<void>
+        type exe<op extends model.ops.opDef> = (...exeArgs: exeArgs<op>) => Promise<op[2]>
+        type pre<op extends model.ops.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
+        type notImpl<op extends model.ops.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
+        type post<op extends model.ops.opDef> = (outcome: Either<Error4xx, op[2]>, ...exeArgs: exeArgs<op>) => Promise<void>
 
-        type withOpHandlers<modelNode extends type<type.traitsDef>> = modelNode[type.traits_prop]['ops'] extends infer ops
-          ? ops extends model.type.ops
-            ? {
-                $?: {
-                  [opName in keyof ops /* as `_${string & opName}` */]?: {
-                    exe?: exe<[type.opType, ops[opName][1], ops[opName][2]]>
-                    pre?: pre<[type.opType, ops[opName][1], ops[opName][2]]>
-                    notImpl?: notImpl<[type.opType, ops[opName][1], ops[opName][2]]>
-                    post?: post<[type.opType, ops[opName][1], ops[opName][2]]>
-                  }
-                }
-              }
-            : never
-          : never
+        type withOpHandlers<ops_def extends model.ops.def> = {
+          $?: {
+            [opName in keyof ops_def /* as `_${string & opName}` */]?: {
+              exe?: exe<[ops.opType, ops_def[opName][1], ops_def[opName][2]]>
+              pre?: pre<[ops.opType, ops_def[opName][1], ops_def[opName][2]]>
+              notImpl?: notImpl<[ops.opType, ops_def[opName][1], ops_def[opName][2]]>
+              post?: post<[ops.opType, ops_def[opName][1], ops_def[opName][2]]>
+            }
+          }
+        }
 
         // type op<modelOpDef extends type.opDef> = modelOpDef[0] extends 'query'
         //   ? {
@@ -112,27 +104,20 @@ declare global {
   }
 }
 
-type typeModelRefOpMap_impl<typeModelRef extends moo.model.type> =
-  typeModelRef extends moo.model.type<infer traits>
-    ? traits['ops'] extends infer opTraits
-      ? opTraits extends moo.model.type.ops
-        ? {
-            [k in keyof opTraits]: typeModelRefOp_impl<opTraits[k]>
-          }
-        : never
-      : never
-    : never
+type opsImpl_ref<opsRef extends moo.model.ops> = {
+  [k in keyof opsRef[moo.model.ops_prop]]: opImpl_ref<opsRef[moo.model.ops_prop][k]>
+}
 
-type typeModelRefOp_impl<modelOpDef extends moo.model.type.opDef> = modelOpDef[0] extends 'query'
+type opImpl_ref<op_def extends moo.model.ops.opDef> = op_def[0] extends 'query'
   ? {
-      query: (message: modelOpDef[1]) => Promise<modelOpDef[2]>
+      query: (message: op_def[1]) => Promise<op_def[2]>
     }
-  : modelOpDef[0] extends 'async' | 'sync'
+  : op_def[0] extends 'async' | 'sync'
     ? {
-        async: (message: modelOpDef[1]) => Promise<void>
-      } & (modelOpDef[0] extends 'sync'
+        async: (message: op_def[1]) => Promise<void>
+      } & (op_def[0] extends 'sync'
         ? {
-            sync: (message: modelOpDef[1]) => Promise<modelOpDef[2]>
+            sync: (message: op_def[1]) => Promise<op_def[2]>
           }
         : unknown)
     : never

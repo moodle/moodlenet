@@ -11,7 +11,7 @@ declare global {
 export type moderationUserSpace = {
   reports: {
     received: {
-      moodlenet: moo.model.type.idSpaceMap<{ asContributor: { items: moodlenet.contributorAbuseItem } }>
+      moodlenet: moo.model.ops.collection<{ asContributor: { items: moodlenet.contributorAbuseItem } }>
     }
   }
 }
@@ -20,7 +20,7 @@ export type moderation = moo.model<moderationModel>
 
 export type moderationModel = {
   [moo.tags.configs]: never
-  userModeration: moo.model.type.idSpaceMap<moderationUserSpace>
+  userModeration: moo.model.ops.collection<moderationUserSpace>
 }
 
 // type _ = moo.model.type.xSpaceData<userModerationSpace>

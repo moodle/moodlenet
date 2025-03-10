@@ -111,7 +111,7 @@ origin:
   gate: ${inspect(origin.gate, { colors: true })}
   from:
     ${
-      origin.from ? inspect(origin.from, { colors: true }) : '~'
+      origin.from ? inspect(origin.from, { breakLength: 300, maxStringLength: 600, colors: true, depth: 8 }) : '~'
       /*from: ${
     origin.from
       ? `

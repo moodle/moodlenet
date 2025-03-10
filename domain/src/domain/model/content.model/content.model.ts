@@ -18,16 +18,16 @@ type abilityFilter = {
 export type contentModel = {
   [moo.tags.configs]: contentConfigs
   categories: {
-    languages: moo.model.type.idSpaceMap<languageSpace, abilityFilter>
-    licenses: moo.model.type.idSpaceMap<licenseSpace, abilityFilter>
+    languages: moo.model.ops.collection<languageSpace, abilityFilter>
+    licenses: moo.model.ops.collection<licenseSpace, abilityFilter>
   }
 }
 
 export type languageSpace = {
-  data: moo.model.type.atom<never, language>
-  meta: moo.model.type.atom<never, { enabled: boolean }>
+  data: moo.model.ops.atom<'ephem', language>
+  meta: moo.model.ops.atom<'ephem', { enabled: boolean }>
 }
 export type licenseSpace = {
-  data: moo.model.type.atom<never, license>
-  meta: moo.model.type.atom<never, { enabled: boolean }>
+  data: moo.model.ops.atom<'ephem', license>
+  meta: moo.model.ops.atom<'ephem', { enabled: boolean }>
 }

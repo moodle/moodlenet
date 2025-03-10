@@ -19,7 +19,7 @@ export type loggerContext = { more?: any_ } & d_u<
       request: moo.core.request<moo.persona.endpoint<any_>>
     }
     model: {
-      envelope: moo.model.envelope<moo.model.type.opDef>
+      envelope: moo.model.envelope<moo.model.ops.opDef>
     }
     infra: {
       name: string

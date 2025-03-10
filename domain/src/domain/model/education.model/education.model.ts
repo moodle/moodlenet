@@ -17,26 +17,26 @@ type abilityFilter = {
 export type educationModel = {
   [moo.tags.configs]: educationConfigs
   categories: {
-    iscedFields: moo.model.type.idSpaceMap<iscedFieldSpace, abilityFilter>
-    iscedLevels: moo.model.type.idSpaceMap<iscedLevelSpace, abilityFilter>
-    resourceTypes: moo.model.type.idSpaceMap<resourceTypeSpace, abilityFilter>
-    bloomCognitives: moo.model.type.idSpaceMap<bloomCognitiveSpace, abilityFilter>
+    iscedFields: moo.model.ops.collection<iscedFieldSpace, abilityFilter>
+    iscedLevels: moo.model.ops.collection<iscedLevelSpace, abilityFilter>
+    resourceTypes: moo.model.ops.collection<resourceTypeSpace, abilityFilter>
+    bloomCognitives: moo.model.ops.collection<bloomCognitiveSpace, abilityFilter>
   }
 }
 
 export type iscedFieldSpace = {
-  data: moo.model.type.atom<never, iscedField>
-  meta: moo.model.type.atom<never, { enabled: boolean }>
+  data: moo.model.ops.atom<'ephem', iscedField>
+  meta: moo.model.ops.atom<'ephem', { enabled: boolean }>
 }
 export type iscedLevelSpace = {
-  data: moo.model.type.atom<never, iscedLevel>
-  meta: moo.model.type.atom<never, { enabled: boolean }>
+  data: moo.model.ops.atom<'ephem', iscedLevel>
+  meta: moo.model.ops.atom<'ephem', { enabled: boolean }>
 }
 export type resourceTypeSpace = {
-  data: moo.model.type.atom<never, resourceType>
-  meta: moo.model.type.atom<never, { enabled: boolean }>
+  data: moo.model.ops.atom<'ephem', resourceType>
+  meta: moo.model.ops.atom<'ephem', { enabled: boolean }>
 }
 export type bloomCognitiveSpace = {
-  data: moo.model.type.atom<never, bloomCognitive>
-  meta: moo.model.type.atom<never, { enabled: boolean }>
+  data: moo.model.ops.atom<'ephem', bloomCognitive>
+  meta: moo.model.ops.atom<'ephem', { enabled: boolean }>
 }

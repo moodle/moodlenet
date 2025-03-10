@@ -50,9 +50,13 @@ declare global {
   }
 }
 
+export type userAccountSpaceFilters = {
+  emailEquals: string
+}
+
 export type userAccount = moo.model<{
   [moo.tags.configs]: userAccountConfigs
-  userAccountSpace: moo.model.type.idSpaceMap<userAccountUserSpace, { emailEquals: string }>
+  userAccountSpace: moo.model.ops.collection<userAccountUserSpace, userAccountSpaceFilters>
 }>
 
 export type resourceDraftSpace = unknown
@@ -60,15 +64,15 @@ export type resourceDraftSpace = unknown
 export type collectionDraftSpace = unknown
 
 // export interface permissions {
-//   personaTypes: moo.model.type.atom<never, { types: moo.personaType[] }>
+//   personaTypes: moo.model.type.atom<'ephem', { types: moo.personaType[] }>
 // }
 
 export type userAccountUserSpace = {
   profile: {
-    info: moo.model.type.atom<never, userProfileInfo>
-    avatar: moo.model.type.asset<'optional'>
-    background: moo.model.type.asset<'optional'>
+    info: moo.model.ops.atom<'ephem', userProfileInfo>
+    avatar: moo.model.ops.asset<'optional'>
+    background: moo.model.ops.asset<'optional'>
   }
-  email: moo.model.type.atom<never, { address: email_address }>
-  password: moo.model.type.atom<never, { hash: string }>
+  email: moo.model.ops.atom<'ephem', { address: email_address }>
+  password: moo.model.ops.atom<'ephem', { hash: string }>
 }

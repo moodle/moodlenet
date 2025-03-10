@@ -13,7 +13,7 @@ declare global {
 export type moodlenetUserSpace = {
   contributor: {
     points: int
-    userProfile: moo.model.type.atom<'view', userProfile>
+    userProfile: moo.model.ops.atom<'view', userProfile>
   }
 }
 
@@ -21,7 +21,7 @@ export type moodlenet = moo.model<MoodlenetModel>
 
 export type MoodlenetModel = {
   [moo.tags.configs]: moodlenetConfigs
-  contributor: moo.model.type.idSpaceMap<moodlenetUserSpace>
+  contributor: moo.model.ops.collection<moodlenetUserSpace>
 }
 
 // type _ = moo.model.type.xSpaceData<contributorSpace>

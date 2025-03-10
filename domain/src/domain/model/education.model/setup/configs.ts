@@ -31,19 +31,19 @@ export const DEFAULT_EDUCATION_CONFIGS: educationConfigs = {
   },
 }
 export const EDU_CATEGORIES_DATA_SETUP = {
-  iscedFields: eduIscedFieldsSetup.map<{ id: string; data: moo.model.type.sSpaceData<iscedFieldSpace> }>(([id, data]) => ({
+  iscedFields: eduIscedFieldsSetup.map<{ id: string; data: moo.model.ops.sSpaceData<iscedFieldSpace> }>(([id, data]) => ({
     id,
     data: { data, meta: { enabled: !excludeIscedFieldCodes.includes(id) } },
   })),
 
-  iscedLevels: eduIscedLevelsSetup.map<{ id: string; data: moo.model.type.sSpaceData<iscedLevelSpace> }>(([id, data]) => ({
+  iscedLevels: eduIscedLevelsSetup.map<{ id: string; data: moo.model.ops.sSpaceData<iscedLevelSpace> }>(([id, data]) => ({
     id,
     data: { data, meta: { enabled: data.codePath.length === 1 } },
   })),
 
-  resourceTypes: eduResourceTypesSetup.map<{ id: string; data: moo.model.type.sSpaceData<resourceTypeSpace> }>(([id, data]) => ({ id, data: { data, meta: { enabled: true } } })),
+  resourceTypes: eduResourceTypesSetup.map<{ id: string; data: moo.model.ops.sSpaceData<resourceTypeSpace> }>(([id, data]) => ({ id, data: { data, meta: { enabled: true } } })),
 
-  bloomCognitives: eduBloomCognitivesSetup.map<{ id: string; data: moo.model.type.sSpaceData<bloomCognitiveSpace> }>(([id, data]) => ({
+  bloomCognitives: eduBloomCognitivesSetup.map<{ id: string; data: moo.model.ops.sSpaceData<bloomCognitiveSpace> }>(([id, data]) => ({
     id,
     data: { data, meta: { enabled: true } },
   })),

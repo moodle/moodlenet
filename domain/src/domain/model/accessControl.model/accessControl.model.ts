@@ -31,16 +31,16 @@ export type accessControl = moo.model<accessControlModel>
 
 export type accessControlModel = {
   [moo.tags.configs]: accessControlConfigs
-  user: moo.model.type.idSpaceMap<accessControlUserSpace, { emailEquals: string }>
-  getTokenPermissionsInfo: moo.model.type.endpoint<['query', { authSessionToken: signed_token | null }, { info: moo.permissions.user.info }]>
+  user: moo.model.ops.collection<accessControlUserSpace, { emailEquals: string }>
+  getTokenPermissionsInfo: moo.model.ops.endpoint<['query', { authSessionToken: signed_token | null }, { info: moo.permissions.user.info }]>
 }
 
 export type accessControlUserSpace = {
-  getUserPermissionsDepsForAuthSessionId: moo.model.type.endpoint<['query', { authSessionId: string }, Either<NOT_FOUND, { deps: userPermissionsDeps }>]>
-  auth: moo.model.type.atom<never, { role: userRole }>
-  info: moo.model.type.atom<'view', { email: email_address } & Pick<userProfileInfo, 'displayName'>>
-  activateNewAuthSession: moo.model.type.endpoint<['sync', void, Either<NOT_FOUND, { authSessionToken: signed_token }>]>
-  activeAuthSession: moo.model.type.idSpaceMap<{ authSession: moo.model.type.atom<never, authSession> }>
+  getUserPermissionsDepsForAuthSessionId: moo.model.ops.endpoint<['query', { authSessionId: string }, Either<NOT_FOUND, { deps: userPermissionsDeps }>]>
+  auth: moo.model.ops.atom<'ephem', { role: userRole }>
+  info: moo.model.ops.atom<'view', { email: email_address } & Pick<userProfileInfo, 'displayName'>>
+  activateNewAuthSession: moo.model.ops.endpoint<['sync', void, Either<NOT_FOUND, { authSessionToken: signed_token }>]>
+  activeAuthSession: moo.model.ops.collection<{ authSession: moo.model.ops.atom<'ephem', authSession> }>
   // getPermissionsInfo: moo.model.type.endpoint<['query', void, { info: moo.permissions.user.info }]>
 }
 
