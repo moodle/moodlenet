@@ -1,28 +1,29 @@
 import * as E from 'fp-ts/Either'
-import * as O from 'fp-ts/Option'
+import { Error4xx } from '../../../../../../lib'
 import { WRONG_CREDENTIALS } from '../consts'
 import type * as def from './login.endpoint'
-import { Error4xx } from '../../../../../../lib'
 
-export const login: moo.core.endpoint<def.login> = async (emailLoginForm, _) => {
-  const existingUser = await _.over(_.model.userAccount.userAccountSpace).one.query({ filters: { emailEquals: emailLoginForm.email } })
+export const login: moo.core.endpoint<def.login> = async (emailLoginForm, { model }) => {
+  const {
+    items: [existingUser],
+  } = await model.userAccount.user.find.query({ filter: { by: 'id', email: emailLoginForm.email } })
 
-  if (O.isNone(existingUser)) {
+  if (!existingUser) {
     return E.left(WRONG_CREDENTIALS)
   }
 
   // TODO: mv userAccount check password as userAccount model endpoint
-  const { valid } = await _.over(_.model.crypto.hashing.password.verify).call.query({
+  const { valid } = await model.crypto.hashing.password.verify.query({
     plainPassword: emailLoginForm.password,
-    hash: existingUser.value.data.password.hash,
+    hash: existingUser.password.hash,
   })
 
   if (!valid) {
     return E.left(WRONG_CREDENTIALS)
   }
 
-  const userId = existingUser.value.id
-  const e_activeAuthPermissionsInfoObj = await _.over(_.model.accessControl.user[userId]?.activateNewAuthSession).call.sync()
+  const userId = existingUser.userId
+  const e_activeAuthPermissionsInfoObj = await model.accessControl.activateNewAuthSession.sync({ userId })
   if (E.isLeft(e_activeAuthPermissionsInfoObj)) {
     throw new Error4xx('Expectation Failed', `Failed to activate auth session for user[${userId}] due to ${e_activeAuthPermissionsInfoObj.left}`)
   }

@@ -6,8 +6,8 @@ import { iscedField } from '../types'
 // @ts-ignore: because is raw data and it's massive, it will slowdown ts
 
 export const eduIscedFieldsSetup = _eduIscedFieldsSetup()
-  .map<[code: string, data: iscedField]>(record => [record.codePath.join(''), record])
-  .sort(([a], [b]) => a.localeCompare(b))
+  .map<iscedField>(record => ({ code: record.codePath.join(''), ...record }))
+  .sort((a, b) => a.code.localeCompare(b.code))
 
 function _eduIscedFieldsSetup(): Omit<iscedField, 'code'>[] {
   return [

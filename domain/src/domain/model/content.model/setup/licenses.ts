@@ -1,9 +1,9 @@
 import { fract } from '@moodle/lib-types'
-import { license, licenseCode } from '../types'
+import { license } from '../types'
 
 export const contentLicensesSetup = contentLicenses()
 
-function contentLicenses(): [contentLicenseCode: licenseCode, contentLicense: license][] {
+function contentLicenses(): license[] {
   return [
     { code: 'cc-0', name: 'Public domain', restrictiveness: fract(0.01) },
     { code: 'cc-by', name: 'Attribution', restrictiveness: fract(0.1) },
@@ -22,5 +22,5 @@ function contentLicenses(): [contentLicenseCode: licenseCode, contentLicense: li
     },
     // { code: 'other-open', name: 'Other open license', restrictiveness: fract(0.15)},
     // { code: 'restricted-copyright', name: 'Restricted / copyrighted', restrictiveness: fract(0.9)},
-  ].map(({ code, ...license }) => [code, license])
+  ]
 }

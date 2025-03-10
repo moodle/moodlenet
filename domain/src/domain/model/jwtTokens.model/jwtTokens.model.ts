@@ -25,7 +25,7 @@ export type JwtTokensModel = {
   model: {
     [namespace in keyof moo.Models.jwtTokens.Payloads]: {
       [tokType in keyof moo.Models.jwtTokens.Payloads[namespace]]: {
-        validate: moo.model.ops.endpoint<
+        validate: moo.model.op<
           [
             'query',
             { token: signed_token },
@@ -37,7 +37,7 @@ export type JwtTokensModel = {
             >,
           ]
         >
-        sign: moo.model.ops.endpoint<
+        sign: moo.model.op<
           [
             'query',
             {

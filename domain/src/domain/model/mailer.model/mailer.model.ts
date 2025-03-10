@@ -20,10 +20,10 @@ export type MailerModel = {
   [moo.tags.configs]: mailerConfigs
   template: {
     [namespace in keyof moo.Models.mailer.Templates]: {
-      [tplParams in keyof moo.Models.mailer.Templates[namespace]]: moo.model.ops.endpoint<
+      [tplParams in keyof moo.Models.mailer.Templates[namespace]]: moo.model.op<
         ['query', { data: moo.Models.mailer.Templates[namespace][tplParams] }, { body: emailBody; subject: string }]
       >
     }
   }
-  send: moo.model.ops.endpoint<['async', { envelope: emailEnvelope }, unknown]>
+  send: moo.model.op<['async', { envelope: emailEnvelope }, unknown]>
 }

@@ -1,7 +1,7 @@
-import { email_address, signed_token } from '@moodle/lib-types'
+import { d_u, signed_token } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { NOT_FOUND } from '../../../lib'
-import { userProfileInfo } from '../userAccount.model'
+import { userId } from '../userAccount.model'
 import { accessControlConfigs, authSession, roleConfigs, userRole } from './types'
 export * from './types'
 
@@ -31,16 +31,21 @@ export type accessControl = moo.model<accessControlModel>
 
 export type accessControlModel = {
   [moo.tags.configs]: accessControlConfigs
-  user: moo.model.ops.collection<accessControlUserSpace, { emailEquals: string }>
-  getTokenPermissionsInfo: moo.model.ops.endpoint<['query', { authSessionToken: signed_token | null }, { info: moo.permissions.user.info }]>
+  user: {
+    create: moo.model.op.set.create<userAccessControl>
+    authSession: {
+      create: moo.model.op.set.create<authSession>
+      query: moo.model.op.set.find<authSession, d_u<{ ids: { authSessionId: string; userId: userId } }, 'by'>, never>
+    }
+  }
+  getPermissionsDeps: moo.model.op<['query', { authSessionId: string; userId: userId }, Either<NOT_FOUND, { deps: userPermissionsDeps }>]>
+  activateNewAuthSession: moo.model.op<['sync', { userId: userId }, Either<NOT_FOUND, { authSessionToken: signed_token }>]>
+  getTokenPermissionsInfo: moo.model.op<['query', { authSessionToken: signed_token | null }, { info: moo.permissions.user.info }]>
 }
-
-export type accessControlUserSpace = {
-  getUserPermissionsDepsForAuthSessionId: moo.model.ops.endpoint<['query', { authSessionId: string }, Either<NOT_FOUND, { deps: userPermissionsDeps }>]>
-  auth: moo.model.ops.atom<'ephem', { role: userRole }>
-  info: moo.model.ops.atom<'view', { email: email_address } & Pick<userProfileInfo, 'displayName'>>
-  activateNewAuthSession: moo.model.ops.endpoint<['sync', void, Either<NOT_FOUND, { authSessionToken: signed_token }>]>
-  activeAuthSession: moo.model.ops.collection<{ authSession: moo.model.ops.atom<'ephem', authSession> }>
+//type userInfo = { email: email_address } & Pick<userProfileInfo, 'displayName'>
+type userAccessControl = {
+  userId: userId
+  role: userRole
   // getPermissionsInfo: moo.model.type.endpoint<['query', void, { info: moo.permissions.user.info }]>
 }
 

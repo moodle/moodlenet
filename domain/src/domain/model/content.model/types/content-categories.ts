@@ -7,7 +7,7 @@ export type credits = {
 
 export type languageCode = string
 export type language = {
-  // code: contentLanguageCode
+  code: languageCode
   part2b: string | null
   part2t: string | null
   part1: string | null
@@ -18,7 +18,7 @@ export type language = {
 
 export type licenseCode = string
 export type license = {
-  // code: contentLicenseCode
+  code: licenseCode
   name: string
   restrictiveness: fract
 }

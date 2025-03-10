@@ -5,9 +5,9 @@ import { insertModConfigs } from './1.insertModConfigs'
 // import { removePropOnInsert } from '../lib/id'
 
 export const VERSION = 'v0_1'
-export async function upgrade({ handle, log }: { handle: moo.model.handle; log: logger }) {
-  await insertInitialData({ handle, log })
-  await insertModConfigs({ handle, log })
+export async function upgrade({ model, log }: { model: moo.model.handle; log: logger }) {
+  await insertInitialData({ model, log })
+  await insertModConfigs({ model, log })
 
   // bump_version
   const upgradeData: modelUpgradeData = {

@@ -1,5 +1,5 @@
 import type { myOwn as myOwnType } from './myOwn.endpoint'
-export const myOwn: moo.core.endpoint<myOwnType> = async (_, __, ctx) => {
+export const myOwn: moo.core.endpoint<myOwnType> = async (_, ctx) => {
   return { permissions: ctx.coreRequest.permissionsInfo.tree }
 }
 // export const myOwn: moo.core.endpoint<myOwnType> = async (_, { model, over }, ctx) => {

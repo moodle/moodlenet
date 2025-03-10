@@ -18,16 +18,12 @@ type abilityFilter = {
 export type contentModel = {
   [moo.tags.configs]: contentConfigs
   categories: {
-    languages: moo.model.ops.collection<languageSpace, abilityFilter>
-    licenses: moo.model.ops.collection<licenseSpace, abilityFilter>
+    languages: Pick<moo.model.op.set<catRecord<language>, abilityFilter, never>, 'create' | 'find'>
+    licenses: Pick<moo.model.op.set<catRecord<license>, abilityFilter, never>, 'create' | 'find'>
   }
 }
 
-export type languageSpace = {
-  data: moo.model.ops.atom<'ephem', language>
-  meta: moo.model.ops.atom<'ephem', { enabled: boolean }>
-}
-export type licenseSpace = {
-  data: moo.model.ops.atom<'ephem', license>
-  meta: moo.model.ops.atom<'ephem', { enabled: boolean }>
+export type catRecord<t> = {
+  data: t
+  meta: { enabled: boolean }
 }

@@ -4,7 +4,7 @@ import { some } from 'fp-ts/Option'
 import { NO_JOB_HERE } from '../lib/constants'
 
 const _1: moo.model.impl<moo.Models['userAccount']> = {
-  userAccountSpace: {
+  user: {
     '_': _id => ({
       email: NO_JOB_HERE,
       permissions: NO_JOB_HERE,

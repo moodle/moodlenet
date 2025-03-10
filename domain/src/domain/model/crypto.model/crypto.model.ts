@@ -14,8 +14,8 @@ export type CryptoModel = {
   [moo.tags.configs]: cryptoConfigs
   hashing: {
     password: {
-      hash: moo.model.ops.endpoint<['query', { plainPassword: plain_password }, { hash: string }]>
-      verify: moo.model.ops.endpoint<['query', { plainPassword: plain_password; hash: string }, { valid: boolean }]>
+      hash: moo.model.op<['query', { plainPassword: plain_password }, { hash: string }]>
+      verify: moo.model.op<['query', { plainPassword: plain_password; hash: string }, { valid: boolean }]>
     }
   }
 }

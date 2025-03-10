@@ -157,7 +157,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
             await domainCore.versionControl
               .setup({
-                handle: modelHandleProxy({
+                model: modelHandleProxy({
                   origin: { from: false, gate: { kind: 'internal', name: 'domainCore.setup', more: { domainName } } },
                   modelEnvelopeDispatcher,
                 }),
@@ -173,7 +173,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
           await domainCore.versionControl
             .preflight({
-              handle: modelHandleProxy({
+              model: modelHandleProxy({
                 origin: { from: false, gate: { kind: 'internal', name: 'domainCore.preflight', more: { domainName } } },
                 modelEnvelopeDispatcher,
               }),
@@ -199,7 +199,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
               : never
             const [model, frstProp] = envelope.target.path as __
             const isFromQueue = _from_queue_sym_ in envelope
-            const enqueueing = !isFromQueue && envelope.target.type === 'async' && ((model === 'mailer' && frstProp === 'send') || (model === 'mailer' && frstProp === 'send'))
+            const enqueueing = !isFromQueue && envelope.target.opType === 'async' && ((model === 'mailer' && frstProp === 'send') || (model === 'mailer' && frstProp === 'send'))
             const jobId = `${envelope.id}_${generateAlphanumId({ length: 4 })}`
             if (enqueueing) {
               const queueService = queues.services.default
@@ -241,7 +241,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
                     loggerProvider,
                     models,
                   })
-                  if (isLeft(outcome) && outcome.left.desc !== 'Not Implemented' && !isFromQueue && envelope.target.type === 'async') {
+                  if (isLeft(outcome) && outcome.left.desc !== 'Not Implemented' && !isFromQueue && envelope.target.opType === 'async') {
                     myLogger.info('executeModel: async call - formerly not enqueued - failed, will enqueue', { jobId, error: outcome.left, envelope })
                     await queues.defaultService.enqueue({
                       jobId,
@@ -301,9 +301,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
     const coreId = generateUlid({ onDate: new Date() })
     // console.time(`getTokenPermissionsInfo`)
-    const permissionsInfo = (
-      await myModelHandle.over(myModelHandle.model.accessControl.getTokenPermissionsInfo).call.query({ authSessionToken: gateRequest.info.claims.server.authSessionToken })
-    ).info
+    const { info: permissionsInfo } = await myModelHandle.accessControl.getTokenPermissionsInfo.query({ authSessionToken: gateRequest.info.claims.server.authSessionToken })
     // console.timeEnd(`getTokenPermissionsInfo`)
     // console.log(inspect(permissionsInfo, { depth: 100 }))
     const coreGateDeps: coreGateDeps = {
@@ -316,7 +314,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
       },
       gateProvider: domainGate.gateProvider,
       loggerProvider: configuration.loggerProvider,
-      modelHandle: modelHandleProxy({
+      model: modelHandleProxy({
         origin: { from: false, gate: { kind: 'core', id: coreId, gateRequest: { info: gateRequest.info, path: gateRequest.path } } },
         modelEnvelopeDispatcher: configuration.modelEnvelopeDispatcher,
       }),

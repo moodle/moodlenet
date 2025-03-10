@@ -6,8 +6,8 @@ import { iscedLevel } from '../types'
 // @ts-ignore: because is raw data and it's massive, it will slowdown ts
 
 export const eduIscedLevelsSetup = _eduIscedLevelsSetup()
-  .map<[code: string, data: iscedLevel]>(record => [record.codePath.join(''), record])
-  .sort(([a], [b]) => a.localeCompare(b))
+  .map<iscedLevel>(record => ({ code: record.codePath.join(''), ...record }))
+  .sort((a, b) => a.code.localeCompare(b.code))
 
 function _eduIscedLevelsSetup(): Omit<iscedLevel, 'code'>[] {
   return [

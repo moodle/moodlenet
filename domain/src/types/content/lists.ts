@@ -1,22 +1,29 @@
 import { d_t_u } from '@moodle/lib-types'
 
-export type cursorList<itemData, cursor = string> = [items: cursorListItem<itemData, cursor>[]]
-export type cursorListItem<itemData, cursor = string> = [item: itemData, cursor: cursor]
+export type cursorList<itemData, cursor = string> = { items: itemData[]; cursors: [cursor, cursor]; hasMore: boolean }
 export type pageOpts<filter, order extends string> = {
-  order?: [order: order, dir: 'asc' | 'desc'][]
+  order?: [order: order, dir?: 'asc' | 'desc'][]
   filter?: filter
   limit?: number | 1
-  cursor?: [cursor: string, take: 'after' | 'before']
+  cursor?: [cursor: string, take?: 'after' | 'before']
 }
 
-export type filterLogic<f> = _mnot<d_t_u<f> | init<f>>
-type init<f> = d_t_u<f> extends infer dtu ? ['OR' | 'AND', _mnot<dtu | more<f>>, _mnot<dtu | more<f>>, ..._mnot<dtu | more<f>>[]] : never
-type more<f> = d_t_u<f> extends infer dtu ? [_mnot<dtu>, ..._mnot<dtu>[]] | init<f> : never
+export type filterBoolTree<f> = _filterBoolTree_not<d_t_u<f> | _filterBoolTree_block<f>>
+type _filterBoolTree_block<f> =
+  d_t_u<f> extends infer dtu
+    ? [
+        'OR' | 'AND',
+        _filterBoolTree_not<dtu | _filterBoolTree_rest<f>>,
+        _filterBoolTree_not<dtu | _filterBoolTree_rest<f>>,
+        ..._filterBoolTree_not<dtu | _filterBoolTree_rest<f>>[],
+      ]
+    : never
+type _filterBoolTree_rest<f> = d_t_u<f> extends infer dtu ? [_filterBoolTree_not<dtu>, ..._filterBoolTree_not<dtu>[]] | _filterBoolTree_block<f> : never
 
 //@ts-expect-error : cannot enforce stuff to be a tuple.. nevertheless, seems it works nicely like so ...
-type _mnot<stuff> = stuff | ['NOT', ...stuff]
+type _filterBoolTree_not<stuff> = stuff | ['NOT', ...stuff]
 
-// type y = filterLogic<{ a: 1; b: 2; c: never }>
+// type y = filterBoolTree<{ a: 1; b: 2; c: never }>
 // // prettier-ignore
 // export const x: y = [
 //   'OR',

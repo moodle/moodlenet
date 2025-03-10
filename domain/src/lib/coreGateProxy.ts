@@ -9,12 +9,12 @@ type coreGate = () => Promise<Either<Error4xx, unknown>>
 export type coreGateDeps = {
   gateProvider: moo.gate.provider<any_> //moo.Personas>
   core: moo.core<any_> //moo.Personas>
-  modelHandle: moo.model.handle
+  model: moo.model.handle
   coreRequest: moo.core.request<any_>
   loggerProvider: loggerProvider
 }
-export async function coreGate({ coreRequest, modelHandle, core, gateProvider, loggerProvider }: coreGateDeps) {
-  const gateProxy = coreGateProxy({ gateProvider, core, coreRequest, modelHandle, loggerProvider })
+export async function coreGate({ coreRequest, model, core, gateProvider, loggerProvider }: coreGateDeps) {
+  const gateProxy = coreGateProxy({ gateProvider, core, coreRequest, model, loggerProvider })
   const gatedResult = await coreRequest.gateRequest.path.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy as coreGate)()
   // if (isRight(gatedResult)) {
   //   const cleanCoreResult: Promise<Either<Error4xx, unknown>> = gatedResult.right
@@ -33,7 +33,7 @@ export async function coreGate({ coreRequest, modelHandle, core, gateProvider, l
 type coreGateProxyDeps = {
   gateProvider: moo.gate.provider<any_> //moo.Personas>
   core: moo.core<any_> //moo.Personas>
-  modelHandle: moo.model.handle
+  model: moo.model.handle
   coreRequest: moo.core.request<any_>
   loggerProvider: loggerProvider
 }
@@ -47,7 +47,7 @@ type gateStep = Either<
     path: string[]
   }
 >
-export function coreGateProxy({ modelHandle, coreRequest, gateProvider, core, loggerProvider }: coreGateProxyDeps) {
+export function coreGateProxy({ model, coreRequest, gateProvider, core, loggerProvider }: coreGateProxyDeps) {
   type p_endpoint = moo.persona.endpoint<moo.persona.endpoint.def>
 
   return subCoreGateProxy(right({ gateProvider, session: coreRequest.permissionsInfo.tree, core, path: [] })) as coreGate
@@ -176,7 +176,7 @@ export function coreGateProxy({ modelHandle, coreRequest, gateProvider, core, lo
           )
         }
 
-        const access: moo.core.request<any_> = {
+        const safeFormCoreRequest: moo.core.request<any_> = {
           ...coreRequest,
           gateRequest: {
             ...coreRequest.gateRequest,
@@ -184,9 +184,10 @@ export function coreGateProxy({ modelHandle, coreRequest, gateProvider, core, lo
           },
         }
 
-        const log = loggerProvider({ for: 'core', request: access })
+        const log = loggerProvider({ for: 'core', request: safeFormCoreRequest })
         const ctx: moo.core.ctx<any_> = {
-          coreRequest: access,
+          model,
+          coreRequest: safeFormCoreRequest,
           configs,
           log,
           zod: gateEndpointAccessHandle.zod,
@@ -203,7 +204,7 @@ export function coreGateProxy({ modelHandle, coreRequest, gateProvider, core, lo
               }
             }),
         }
-        const endpointArgs: moo.core.endpointArgs<any_> = [safe_form, modelHandle, ctx]
+        const endpointArgs: moo.core.endpointArgs<any_> = [safe_form, ctx]
 
         const cleanCoreResult: Promise<Either<Error4xx, unknown>> = core_Endpoint(...endpointArgs)
           .then(result => right(result))

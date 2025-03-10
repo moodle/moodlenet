@@ -12,17 +12,15 @@ declare global {
       type def = {
         [moo.tags.configs]: unknown
       }
-      type dispatcher<opdef extends ops.opDef> = (envelope: envelope<opdef>) => Promise<Either<Error4xx, opdef[2]>>
+      type dispatcher<opdef extends op.def> = (envelope: envelope<opdef>) => Promise<Either<Error4xx, opdef[2]>>
 
-      type handle = {
-        model: Models
-        over: <typeModelRef extends model.ops>(type_model_ref: typeModelRef | undefined) => opsImpl_ref<typeModelRef>
-      }
-      type envelope<op extends ops.opDef> = {
+      type handle = op_ref<Models>
+
+      type envelope<op_ extends op.def> = {
         id: string
         callTime: date_time_string
         now: date_time_string
-        message: op[1]
+        message: op_[1]
         origin: envelope.origin //<type.opDef>
         target: envelope.target //<op>
       }
@@ -34,9 +32,8 @@ declare global {
         //   type: op[0]
         // }
         type target = {
-          opName: string
           path: path
-          type: ops.opType
+          opType: op.type
         }
 
         type origin = {
@@ -54,38 +51,30 @@ declare global {
       }
 
       type impl<baseModelNode = Models> = {
-        [modelNodePropName in Exclude<keyof baseModelNode, model.ops_prop>]?: baseModelNode[modelNodePropName] extends infer modelNode
-          ? /* ? wideProvider<
-              modelNode extends type<type.traitsDef> ? impl.typeModel<modelNode> : impl<modelNode>,
-              [modelNodePropName]
-            > */ (modelNode extends model.ops
-            ? impl.withOpHandlers<modelNode[model.ops_prop]>
-            :unknown) & impl<modelNode> | (<key extends keyof modelNode>(k: key) => impl<modelNode[key]>)
-          : never // or maybe `unknown` instead ?
+        [modelNodePropName in keyof baseModelNode]?:
+          | (baseModelNode[modelNodePropName] extends op.def ? impl.opHandlers<baseModelNode[modelNodePropName]> : impl<baseModelNode[modelNodePropName]>)
+          | (<key extends keyof baseModelNode[modelNodePropName]>(k: key) => impl<baseModelNode[modelNodePropName][key]>)
       }
 
       namespace impl {
-        type ctx<op extends ops.opDef> = {
+        type ctx<op_ extends op.def> = {
           now: date_time_string
           log: logger
-          envelope: envelope<op>
+          envelope: envelope<op_>
+          model: handle
         }
-        type exeArgs<op extends ops.opDef> = [message: op[1], handle: handle, ctx: ctx<op>]
+        type exeArgs<op_ extends op.def> = [message: op_[1], ctx: ctx<op_>]
 
-        type exe<op extends model.ops.opDef> = (...exeArgs: exeArgs<op>) => Promise<op[2]>
-        type pre<op extends model.ops.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
-        type notImpl<op extends model.ops.opDef> = (...exeArgs: exeArgs<op>) => Promise<void>
-        type post<op extends model.ops.opDef> = (outcome: Either<Error4xx, op[2]>, ...exeArgs: exeArgs<op>) => Promise<void>
+        type exe<op_ extends op.def> = (...exeArgs: exeArgs<op_>) => Promise<op_[2]>
+        type pre<op_ extends op.def> = (...exeArgs: exeArgs<op_>) => Promise<void>
+        type notImpl<op_ extends op.def> = (...exeArgs: exeArgs<op_>) => Promise<void>
+        type post<op_ extends op.def> = (outcome: Either<Error4xx, op_[2]>, ...exeArgs: exeArgs<op_>) => Promise<void>
 
-        type withOpHandlers<ops_def extends model.ops.def> = {
-          $?: {
-            [opName in keyof ops_def /* as `_${string & opName}` */]?: {
-              exe?: exe<[ops.opType, ops_def[opName][1], ops_def[opName][2]]>
-              pre?: pre<[ops.opType, ops_def[opName][1], ops_def[opName][2]]>
-              notImpl?: notImpl<[ops.opType, ops_def[opName][1], ops_def[opName][2]]>
-              post?: post<[ops.opType, ops_def[opName][1], ops_def[opName][2]]>
-            }
-          }
+        type opHandlers<op_ extends op.def> = {
+          exe?: exe<[op.type, op_[1], op_[2]]>
+          pre?: pre<[op.type, op_[1], op_[2]]>
+          notImpl?: notImpl<[op.type, op_[1], op_[2]]>
+          post?: post<[op.type, op_[1], op_[2]]>
         }
 
         // type op<modelOpDef extends type.opDef> = modelOpDef[0] extends 'query'
@@ -104,11 +93,10 @@ declare global {
   }
 }
 
-type opsImpl_ref<opsRef extends moo.model.ops> = {
-  [k in keyof opsRef[moo.model.ops_prop]]: opImpl_ref<opsRef[moo.model.ops_prop][k]>
+type op_ref<modelNode> = {
+  [k in keyof modelNode]: modelNode[k] extends moo.model.op.def ? opImpl_ref<modelNode[k]> : op_ref<modelNode[k]>
 }
-
-type opImpl_ref<op_def extends moo.model.ops.opDef> = op_def[0] extends 'query'
+type opImpl_ref<op_def extends moo.model.op.def> = op_def[0] extends 'query'
   ? {
       query: (message: op_def[1]) => Promise<op_def[2]>
     }

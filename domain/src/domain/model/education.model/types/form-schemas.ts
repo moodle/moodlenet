@@ -1,4 +1,4 @@
-import { single_line_string_schema, zod_m_nullable } from '@moodle/lib-types'
+import { i_nat_schema, single_line_string_schema, zod_m_nullable } from '@moodle/lib-types'
 import type { z } from 'zod'
 import { array, enum as enum_z, number, object, string } from 'zod'
 import { adoptAssetFormSchema, adoptValuedAssetFormSchema } from '../../../../lib'
@@ -41,7 +41,7 @@ export function getEduFormSchemas({
   const eduCollectionMetaSchema = object(eduCollectionRawMetaSchema)
 
   const eduResourceBloomLearningOutcome = object({
-    level: string(),
+    level: i_nat_schema,
     verb: string(),
     sentence: string().trim().min(eduSchemaConfigs.resource.bloomLearningOutcomes.sentence.min).max(eduSchemaConfigs.resource.bloomLearningOutcomes.sentence.max),
   }).refine(

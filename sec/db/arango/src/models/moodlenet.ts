@@ -24,7 +24,7 @@ export function moodlenetImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.i
   }
 }
 
-function appDataUserCollectionData_2_MoodlenetUserSpace(docData: appDataUserSpaceCollectionData | null): moo.model.ops.xSpaceData<moodlenet.moodlenetUserSpace> | null {
+function appDataUserCollectionData_2_MoodlenetUserSpace(docData: appDataUserSpaceCollectionData | null): moo.model.ops.xSpaceData<moodlenet.moodlenetContributorSpace> | null {
   return !docData?.moodlenet
     ? null
     : {

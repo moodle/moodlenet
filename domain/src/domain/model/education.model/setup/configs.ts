@@ -1,10 +1,10 @@
 import { i_nat, int } from '@moodle/lib-types'
-import { educationConfigs } from '../types'
+import { catRecord } from '../education.model'
+import { bloomCognitive, educationConfigs, iscedField, iscedLevel, resourceType } from '../types'
 import { eduBloomCognitivesSetup } from './bloom-cognitives'
 import { eduResourceTypesSetup } from './setup-edu-resource-types'
 import { eduIscedFieldsSetup } from './setup-isced-fields'
 import { eduIscedLevelsSetup } from './setup-isced-levels'
-import { bloomCognitiveSpace, iscedFieldSpace, iscedLevelSpace, resourceTypeSpace } from '../education.model'
 
 const excludeIscedFieldCodes = getExcludeIscedFieldCodes()
 
@@ -31,21 +31,18 @@ export const DEFAULT_EDUCATION_CONFIGS: educationConfigs = {
   },
 }
 export const EDU_CATEGORIES_DATA_SETUP = {
-  iscedFields: eduIscedFieldsSetup.map<{ id: string; data: moo.model.ops.sSpaceData<iscedFieldSpace> }>(([id, data]) => ({
-    id,
-    data: { data, meta: { enabled: !excludeIscedFieldCodes.includes(id) } },
+  iscedFields: eduIscedFieldsSetup.map<catRecord<iscedField>>(data => ({
+    data,
+    meta: { enabled: !excludeIscedFieldCodes.includes(data.code) },
   })),
 
-  iscedLevels: eduIscedLevelsSetup.map<{ id: string; data: moo.model.ops.sSpaceData<iscedLevelSpace> }>(([id, data]) => ({
-    id,
-    data: { data, meta: { enabled: data.codePath.length === 1 } },
-  })),
+  iscedLevels: eduIscedLevelsSetup.map<catRecord<iscedLevel>>(data => ({ data, meta: { enabled: data.codePath.length === 1 } })),
 
-  resourceTypes: eduResourceTypesSetup.map<{ id: string; data: moo.model.ops.sSpaceData<resourceTypeSpace> }>(([id, data]) => ({ id, data: { data, meta: { enabled: true } } })),
+  resourceTypes: eduResourceTypesSetup.map<catRecord<resourceType>>(data => ({ data, meta: { enabled: true } })),
 
-  bloomCognitives: eduBloomCognitivesSetup.map<{ id: string; data: moo.model.ops.sSpaceData<bloomCognitiveSpace> }>(([id, data]) => ({
-    id,
-    data: { data, meta: { enabled: true } },
+  bloomCognitives: eduBloomCognitivesSetup.map<catRecord<bloomCognitive>>(data => ({
+    data,
+    meta: { enabled: true },
   })),
 }
 

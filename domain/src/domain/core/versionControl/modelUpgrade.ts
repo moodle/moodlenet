@@ -3,8 +3,8 @@ import * as modelUpgrades from './upgrade/from'
 
 export const TARGET_V = 'v0_1'
 
-export async function upgradeModel({ log, handle }: { handle: moo.model.handle; log: logger }): Promise<string> {
-  const latestModelUpgradeData = await getLatestModelUpgradeData({ handle })
+export async function upgradeModel({ log, model }: { model: moo.model.handle; log: logger }): Promise<string> {
+  const latestModelUpgradeData = await getLatestModelUpgradeData({ model })
 
   const from_v = (latestModelUpgradeData?.current ?? 'init') as keyof typeof modelUpgrades | typeof TARGET_V
 
@@ -20,15 +20,15 @@ export async function upgradeModel({ log, handle }: { handle: moo.model.handle; 
     throw new Error(errorMessage)
   }
 
-  const modelUpgradeData = await upgradeMod.upgrade({ handle, log })
+  const modelUpgradeData = await upgradeMod.upgrade({ model, log })
 
-  await handle.over(handle.model.configs.latestModuleUpgrade.save).call.sync(modelUpgradeData)
+  await model.configs.latestModelUpgrade.save.sync(modelUpgradeData)
 
   log.info(`upgraded model from [${from_v}] to [${upgradeMod.VERSION}]`)
-  return upgradeModel({ handle, log })
+  return upgradeModel({ model: model, log })
 }
 
-export async function getLatestModelUpgradeData({ handle }: { handle: moo.model.handle }) {
-  const latestModelUpgradeData = await handle.over(handle.model.configs.latestModuleUpgrade.get).call.query()
+export async function getLatestModelUpgradeData({ model }: { model: moo.model.handle }) {
+  const latestModelUpgradeData = await model.configs.latestModelUpgrade.get.query()
   return latestModelUpgradeData
 }

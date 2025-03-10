@@ -21,7 +21,7 @@ export function modelConfigs({ dbStruct }: { dbStruct: dbStruct }): moo.model.im
       },
     },
     //TODO: try to make a well typed util for this kind of usecase (named map od)
-    module: new Proxy(
+    model: new Proxy(
       {},
       {
         ...unsupportedProxyHandler,
@@ -52,7 +52,7 @@ export function modelConfigs({ dbStruct }: { dbStruct: dbStruct }): moo.model.im
         },
       },
     ),
-    latestModuleUpgrade: {
+    latestModelUpgrade: {
       get: {
         $: {
           call: {

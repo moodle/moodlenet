@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { map } from '@moodle/lib-types'
 import { orgConfigs } from './types'
 declare global {
   namespace moo {

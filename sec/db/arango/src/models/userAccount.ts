@@ -6,12 +6,12 @@ import { dbStruct } from '../db-structure'
 
 export function userAccountImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<userAccount.userAccount> {
   return {
-    userAccountSpace: {
+    user: {
       $: {
         one: {
           exe: async ({ filters } /* , _, { log } */) => {
             const userSpaceDoc = literal(`userSpaceDoc`)
-            const query = aql<{ id: string; data: moo.model.ops.sSpaceData<userAccount.userAccountUserSpace> }>`
+            const query = aql<{ id: string; data: moo.model.ops.sSpaceData<userAccount.userAccountRecord> }>`
               FOR ${userSpaceDoc} IN ${dbStruct.appData.coll.userSpace}
                 ${filters ? aql`FILTER ${getAqlUserAccountSpaceFilters({ varName: userSpaceDoc, filters })}` : ''}
                 LIMIT 1

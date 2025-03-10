@@ -42,6 +42,7 @@ declare global {
       }
 
       type ctx<endpoint_ extends persona.endpoint<any_>> = {
+        model: moo.model.handle
         configs: endpoint_[2]
         log: logger
         coreRequest: request<endpoint_>
@@ -50,7 +51,7 @@ declare global {
           : (context: endpoint_[3] extends never | undefined | null | void ? void : endpoint_[3]) => /* Error4xx |  */ undefined
         zod: gate.endpointZod<endpoint_>
       }
-      type endpointArgs<endpoint_ extends persona.endpoint<any_>> = [form: gate.provider.request<endpoint_>['form'], handle: moo.model.handle, ctx: ctx<endpoint_>]
+      type endpointArgs<endpoint_ extends persona.endpoint<any_>> = [form: gate.provider.request<endpoint_>['form'], ctx: ctx<endpoint_>]
 
       type endpoint<endpoint_ extends persona.endpoint<any_>> = (
         ...endpointArgs: endpointArgs<endpoint_>

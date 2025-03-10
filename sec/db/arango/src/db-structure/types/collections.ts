@@ -2,8 +2,8 @@ import { accessControl, content, education, home, moderation, moodlenet, userAcc
 import { d_u } from '@moodle/lib-types'
 
 export type appDataUserSpaceCollectionData = {
-  userAccount: moo.model.ops.sSpaceData<userAccount.userAccountUserSpace>
-  moodlenet?: moo.model.ops.sSpaceData<moodlenet.moodlenetUserSpace>
+  userAccount: moo.model.ops.sSpaceData<userAccount.userAccountRecord>
+  moodlenet?: moo.model.ops.sSpaceData<moodlenet.moodlenetContributorSpace>
   accessControl?: moo.model.ops.sSpaceData<accessControl.accessControlUserSpace>
   moderation?: moo.model.ops.sSpaceData<moderation.moderationUserSpace>
   home?: moo.model.ops.sSpaceData<home.homeUserSpace>

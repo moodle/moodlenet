@@ -1,14 +1,13 @@
 import { generateAlphanumId_withCheck } from '@moodle/lib-id-gen'
 import * as E from 'fp-ts/Either'
-import * as O from 'fp-ts/Option'
-import { userAccountUserSpace } from '../../../../../model/userAccount.model/userAccount.model'
-import type * as def from './confirmMyEmail.endpoint'
-import { NONE_ASSET } from '../../../../../../lib/content/asset'
 import { SUBMITTED } from '../../../../../../lib/constants'
+import { NONE_ASSET } from '../../../../../../lib/content/asset'
 import { INVALID_TOKEN } from '../../../../../model/jwtTokens.model'
+import { userAccountRecord } from '../../../../../model/userAccount.model/userAccount.model'
+import type * as def from './confirmMyEmail.endpoint'
 
-export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (confirmEmailForm, _) => {
-  const e_validatedToken = await _.over(_.model.jwtTokens.model.userAccount.emailConfirmationToken.validate).call.query({
+export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (confirmEmailForm, { model, coreRequest }) => {
+  const e_validatedToken = await model.jwtTokens.model.userAccount.emailConfirmationToken.validate.query({
     token: confirmEmailForm.signupEmailVerificationToken,
   })
 
@@ -18,22 +17,24 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
 
   const confirmationTokenData = e_validatedToken.right.data
 
-  const o_existingUserWithThisEmail = await _.over(_.model.userAccount.userAccountSpace).one.query({
-    filters: { emailEquals: confirmationTokenData.email },
+  const {
+    items: [existingUserWithThisEmail],
+  } = await model.userAccount.user.find.query({
+    filter: { by: 'id', email: confirmationTokenData.email },
   })
 
-  if (O.isSome(o_existingUserWithThisEmail)) {
+  if (!existingUserWithThisEmail) {
     return E.left(INVALID_TOKEN)
   }
 
   // TODO: mv userAccount creation as userAccount model endpoint
   const userId = await generateAlphanumId_withCheck(generated_id =>
-    _.over(_.model.userAccount.userAccountSpace[generated_id])
-      .exists.query()
-      .then(({ exists }) => exists),
+    model.userAccount.user.find.query({ filter: { by: 'id', userId: generated_id } }).then(({ items }) => items.length === 0),
   )
 
-  const userSpace: moo.model.ops.sSpaceData<userAccountUserSpace> = {
+  const userAccountRecord: userAccountRecord = {
+    userId,
+    createdDate: coreRequest.now,
     email: { address: confirmationTokenData.email },
     password: { hash: confirmationTokenData.passwordHash },
     profile: {
@@ -45,7 +46,7 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
     },
   }
 
-  await _.over(_.model.userAccount.userAccountSpace[userId]).create.async({ spaceData: userSpace })
+  await model.userAccount.user.create.async({ record: userAccountRecord })
 
   return E.right(SUBMITTED)
 }

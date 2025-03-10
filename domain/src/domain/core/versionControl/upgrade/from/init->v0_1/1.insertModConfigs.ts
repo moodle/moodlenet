@@ -5,18 +5,18 @@ import { DEFAULT_MOODLENET_CONFIGS } from '../../../../../model/moodlenet.model/
 import { DEFAULT_ORG_CONFIGS } from '../../../../../model/org.model/setup'
 import { DEFAULT_USER_ACCOUNT_CONFIGS } from '../../../../../model/userAccount.model/setup'
 
-export async function insertModConfigs({ handle, log }: { handle: moo.model.handle; log: logger }) {
-  // await handle.over(handle.model.configs.module.accessControl).replace.sync({ newData: DEFAULT_ACCESS_CONTROL_CONFIGS })
-  // await handle.over(handle.model.configs.module.content).replace.sync({ newData: DEFAULT_CONTENT_CONFIGS })
-  // await handle.over(handle.model.configs.module.crypto).replace.sync({ newData: DEFAULT_CRYPTO_CONFIGS })
-  // await handle.over(handle.model.configs.module.jwtTokens).replace.sync({ newData: DEFAULT_JWT_TOKENS_CONFIGS })
-  // await handle.over(handle.model.configs.module.mailer).replace.sync({ newData: DEFAULT_MAILER_CONFIGS })
+export async function insertModConfigs({ model, log }: { model: moo.model.handle; log: logger }) {
+  // await model.configs.module.accessControl).eplace.sync({ newData: DEFAULT_ACCESS_CONTROL_CONFIGS })
+  // await model.configs.module.content).eplace.sync({ newData: DEFAULT_CONTENT_CONFIGS })
+  // await model.configs.module.crypto).eplace.sync({ newData: DEFAULT_CRYPTO_CONFIGS })
+  // await model.configs.module.jwtTokens).eplace.sync({ newData: DEFAULT_JWT_TOKENS_CONFIGS })
+  // await model.configs.module.mailer).eplace.sync({ newData: DEFAULT_MAILER_CONFIGS })
   log.info('inserting module configs')
   await Promise.all([
-    handle.over(handle.model.configs.module.education).put.sync({ newData: DEFAULT_EDUCATION_CONFIGS }),
-    handle.over(handle.model.configs.module.moodlenet).put.sync({ newData: DEFAULT_MOODLENET_CONFIGS }),
-    handle.over(handle.model.configs.module.org).put.sync({ newData: DEFAULT_ORG_CONFIGS }),
-    handle.over(handle.model.configs.module.userAccount).put.sync({ newData: DEFAULT_USER_ACCOUNT_CONFIGS }),
-    handle.over(handle.model.configs.module.accessControl).put.sync({ newData: DEFAULT_ACCESS_CONTROL_CONFIGS }),
+    model.configs.model.education.put.sync({ newData: DEFAULT_EDUCATION_CONFIGS }),
+    model.configs.model.moodlenet.put.sync({ newData: DEFAULT_MOODLENET_CONFIGS }),
+    model.configs.model.org.put.sync({ newData: DEFAULT_ORG_CONFIGS }),
+    model.configs.model.userAccount.put.sync({ newData: DEFAULT_USER_ACCOUNT_CONFIGS }),
+    model.configs.model.accessControl.put.sync({ newData: DEFAULT_ACCESS_CONTROL_CONFIGS }),
   ])
 }

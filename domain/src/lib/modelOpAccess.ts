@@ -32,7 +32,7 @@ export async function executeModel({ models, envelope, backModelEnvelopeDispatch
   const allOpTargets = allModelsOpExtracts({ models, envelope, backModelEnvelopeDispatcher, loggerProvider })
   const exe = allOpTargets.exe[0] ?? {
     fn: async (): Promise<never> => {
-      const notImplErr = new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${envelope.target.path.join('.')}.${envelope.target.opName}` })
+      const notImplErr = new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${envelope.target.path.join('.')}` })
       myLogger.warn(notImplErr)
       return Promise.reject(notImplErr)
     },
@@ -40,7 +40,7 @@ export async function executeModel({ models, envelope, backModelEnvelopeDispatch
   }
 
   if (allOpTargets.exe.length > 1) {
-    const MULTIPLE_EXEC_MESSAGE = `Multiple implementations of model target: ${envelope.target.path.join('.')}.${envelope.target.opName} detected,
+    const MULTIPLE_EXEC_MESSAGE = `Multiple implementations of model target: ${envelope.target.path.join('.')} detected,
   will call the first from "${exe.modelName}" model all others will be ignored`
     //REVIEW: should we throw an error here?
     myLogger.critical(MULTIPLE_EXEC_MESSAGE)
@@ -83,7 +83,7 @@ export function allModelsOpExtracts({ models, envelope: envelope, backModelEnvel
   return Object.entries(models).reduce(
     (acc, [modelName, impl]) => {
       const { post, exe, pre, notImpl } = modelOpExtract({
-        model: { name: modelName, impl },
+        worker: { name: modelName, impl },
         envelope,
         backModelEnvelopeDispatcher,
         loggerProvider,
@@ -104,14 +104,14 @@ export function allModelsOpExtracts({ models, envelope: envelope, backModelEnvel
 }
 
 type modelOpExtractDeps = {
-  model: { impl: any_; name: any_ }
+  worker: { impl: any_; name: any_ }
   envelope: moo.model.envelope<any_>
   backModelEnvelopeDispatcher: moo.model.dispatcher<any_>
   loggerProvider: loggerProvider
 }
 type modelExtraction = ReturnType<typeof modelOpExtract>
-export function modelOpExtract({ model, envelope, backModelEnvelopeDispatcher, loggerProvider }: modelOpExtractDeps) {
-  const handle = modelHandleProxy({
+export function modelOpExtract({ worker, envelope, backModelEnvelopeDispatcher, loggerProvider }: modelOpExtractDeps) {
+  const model = modelHandleProxy({
     modelEnvelopeDispatcher: backModelEnvelopeDispatcher,
     origin: {
       from: {
@@ -122,11 +122,10 @@ export function modelOpExtract({ model, envelope, backModelEnvelopeDispatcher, l
     },
   })
 
-  const withOpHandlers: undefined | moo.model.impl.withOpHandlers<any_> = envelope.target.path.reduce(
+  const opHandlers: undefined | moo.model.impl.opHandlers<any_> = envelope.target.path.reduce(
     (_model, prop) => (_model && '_' in _model && 'function' === typeof _model._ ? _model._(prop) : _model?.[prop]),
-    model.impl,
+    worker.impl,
   )
-  const opHandlers = withOpHandlers?.$?.[envelope.target.opName]
 
   const exe = opHandlers?.exe // as undefined | moo.model.impl.exe<any_>
   const pre = opHandlers?.pre // as undefined | moo.model.impl.pre<any_>
@@ -134,12 +133,8 @@ export function modelOpExtract({ model, envelope, backModelEnvelopeDispatcher, l
   const notImpl = opHandlers?.notImpl // as undefined | moo.model.impl.notImpl<any_>
   const log = loggerProvider({ for: 'model', envelope: envelope })
   const now = new Date().toISOString()
-  const ctx: moo.model.impl.ctx<any_> = {
-    envelope: { ...envelope, now },
-    log,
-    now: new Date().toISOString(),
-  }
-  const exeArgs: moo.model.impl.exeArgs<any_> = [envelope.message, handle, ctx]
+  const ctx: moo.model.impl.ctx<any_> = { model, envelope: { ...envelope, now }, log, now: new Date().toISOString() }
+  const exeArgs: moo.model.impl.exeArgs<any_> = [envelope.message, ctx]
   return {
     exe: exe && (() => exe(...exeArgs)),
     pre: pre && (() => pre(...exeArgs)),

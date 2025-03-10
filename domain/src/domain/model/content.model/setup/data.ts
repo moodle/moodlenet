@@ -1,10 +1,11 @@
 import { contentLanguages_iso_639_3_Setup, contentLicensesSetup } from '.'
-import { languageSpace, licenseSpace } from '../content.model'
+import { catRecord } from '../content.model'
+import { language, license } from '../types'
 
 export const CONTENT_CATEGORIES_DATA_SETUP = {
-  languages: contentLanguages_iso_639_3_Setup.map<{ id: string; data: moo.model.ops.sSpaceData<languageSpace> }>(([id, data]) => ({
-    id,
-    data: { data, meta: { enabled: !!data.part1 } },
+  languages: contentLanguages_iso_639_3_Setup.map<catRecord<language>>(language => ({
+    data: language,
+    meta: { enabled: !!language.part1 },
   })),
-  licenses: contentLicensesSetup.map<{ id: string; data: moo.model.ops.sSpaceData<licenseSpace> }>(([id, data]) => ({ id, data: { data, meta: { enabled: true } } })),
+  licenses: contentLicensesSetup.map<catRecord<license>>(license => ({ data: license, meta: { enabled: true } })),
 }

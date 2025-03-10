@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { date_time_string } from '@moodle/lib-types'
+import { d_u, date_time_string } from '@moodle/lib-types'
 import { eduCollection, eduResource } from '../education.model'
+import { userId, userProfile } from '../userAccount.model'
 declare global {
   namespace moo {
     interface Models {
@@ -14,17 +15,31 @@ export type draft<t> = {
   draft: t
 }
 export type homeUserSpace = {
+  userId: userId
   myDrafts: {
     edu: {
-      resources: moo.model.ops.collection<draft<eduResource>>
-      collection: moo.model.ops.collection<draft<eduCollection>>
+      resources: draft<eduResource>[]
+      collection: draft<eduCollection>[]
     }
   }
+}
+export type homeUserView = homeUserSpace & {
+  profile: userProfile
 }
 
 export type home = moo.model<homeModel>
 
+export type homeUserViewFilters = d_u<
+  {
+    userId: string
+  },
+  'by'
+>
+
 export type homeModel = {
   [moo.tags.configs]: never
-  userHome: moo.model.ops.collection<homeUserSpace>
+  userHome: {
+    create: moo.model.op.set.create<homeUserSpace>
+    query: moo.model.op.set.find<homeUserView, homeUserViewFilters, never>
+  }
 }

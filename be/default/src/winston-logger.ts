@@ -105,8 +105,7 @@ id: ${id}
 callTime: ${callTime} (now: ${now})
 target:
   path: ${target.path.join('.')}
-  opName: ${target.opName}
-  type: ${target.type}
+  type: ${target.opType}
 origin:
   gate: ${inspect(origin.gate, { colors: true })}
   from:
