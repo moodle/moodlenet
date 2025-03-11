@@ -1,7 +1,7 @@
 import { appDeployments, loggerProvider } from '@moodle/domain'
 import * as domainCore from '@moodle/domain/core'
 import * as domainGate from '@moodle/domain/gate'
-import { coreGateDeps, deploymentInfoFromUrlString, Error4xx, executeModel, modelHandleProxy, postModelOps, preModelOps } from '@moodle/domain/lib'
+import { coreGateDeps, deploymentInfoFromUrlString, Error4xx, executeModel, isError4xx, modelHandleProxy, postModelOps, preModelOps } from '@moodle/domain/lib'
 import type * as model from '@moodle/domain/model'
 import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 import { generateAlphanumId, generateUlid } from '@moodle/lib-id-gen'
@@ -214,7 +214,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
                     pushPendingPromise(
                       preModelOps({
                         envelope,
-                        backModelEnvelopeDispatcher: modelEnvelopeDispatcher,
+                        modelEnvelopeDispatcher,
                         loggerProvider,
                         models,
                       }),
@@ -229,20 +229,20 @@ export const defaultConfigurator: configurator = ({ master }) => {
                 ? Promise.resolve()
                 : preModelOps({
                     envelope,
-                    backModelEnvelopeDispatcher: modelEnvelopeDispatcher,
+                    modelEnvelopeDispatcher,
                     loggerProvider,
                     models,
                   })
               )
                 .then(async () => {
-                  const outcome = await executeModel({
+                  const exeResult = await executeModel({
                     envelope,
-                    backModelEnvelopeDispatcher: modelEnvelopeDispatcher,
+                    modelEnvelopeDispatcher,
                     loggerProvider,
                     models,
                   })
-                  if (isLeft(outcome) && outcome.left.desc !== 'Not Implemented' && !isFromQueue && envelope.target.opType === 'async') {
-                    myLogger.info('executeModel: async call - formerly not enqueued - failed, will enqueue', { jobId, error: outcome.left, envelope })
+                  if (isError4xx(exeResult) && exeResult.desc !== 'Not Implemented' && !isFromQueue && envelope.target.opType === 'async') {
+                    myLogger.info('executeModel: async call - formerly not enqueued - failed, will enqueue', { jobId, error: exeResult, envelope })
                     await queues.defaultService.enqueue({
                       jobId,
                       enqueueDate: new Date().toISOString(),
@@ -250,14 +250,16 @@ export const defaultConfigurator: configurator = ({ master }) => {
                     })
                     return right(void 0)
                   }
+                  const outcome = isError4xx(exeResult) ? left(exeResult) : right(exeResult)
 
                   postModelOps({
                     envelope,
-                    backModelEnvelopeDispatcher: modelEnvelopeDispatcher,
+                    modelEnvelopeDispatcher,
                     loggerProvider,
                     models,
                     outcome,
                   })
+                  // console.log(outcome, '*******************************')
                   return outcome
                 })
                 .catch(error => {

@@ -16,19 +16,23 @@ declare global {
 
       namespace op {
         type type = 'sync' | 'async' | 'query'
-        type def = [type: type, message: any_, outcome: any_]
+        type def = [type: type, message: any_, outcome: any_] | def_fn
+        type def_fn = [type: type, fn: (msg: any_) => Promise<any_>]
         type sym = typeof op_sym
+        type fn<op extends def> = op extends def_fn ? op[1] : (msg: op[1]) => Promise<op[2]>
+        type msg<op extends def> = op extends def_fn ? Parameters<op[1]>[0] : op[1]
+        type res<op extends def> = op extends def_fn ? ReturnType<op[1]> : op[2]
 
-        type set<record, filter, order extends string> = {
-          find: set.find<record, filter, order>
-          exists: set.exists<filter>
+        type set<record, filter /* , order extends string */> = {
+          find: set.find<record, filter /* , order */>
+          count: set.count<filter>
           del: set.del<record, filter>
           create: set.create<record>
           replace: set.replace<record>
         }
         namespace set {
-          type find<record, filter, order extends string> = op<['query', pageOpts<filter, order>, cursorList<record>]>
-          type exists<filter> = op<['query', filter, { exists: boolean }]>
+          type find<record, filter /* , order extends string */> = op<['query', pageOpts<filter /* , order */>, cursorList<record>]>
+          type count<filter> = op<['query', { filter: filter; atMost?: number | 1 }, { count: number }]>
           type del<record, filter> = op<['sync', { filter: filter; limit?: number | 1 }, { deleted: record[] }]>
           type create<record> = op<['sync', { record: record }, void]>
           type replace<record> = op<['sync', { record: record }, Option<{ was: record }>]>
@@ -39,7 +43,7 @@ declare global {
         }
         namespace atom {
           type get<data> = op<['query', void, data]>
-          type put<data, opts = never> = op<['sync', { newData: data; opts?: opts }, { was: data }]>
+          type put<data, opts = never> = op<['sync', { newData: data; opts?: opts }, Option<{ was: data }>]>
         }
         type asset<flags = 'optional'> = {
           fromTempFile: asset.fromTempFile

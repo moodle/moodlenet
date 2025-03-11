@@ -1,5 +1,5 @@
 export * as accessControl from './accessControl.model'
-export * as configs from './configs.model'
+export * as statics from './statics.model'
 export * as content from './content.model'
 export * as crypto from './crypto.model'
 export * as education from './education.model'

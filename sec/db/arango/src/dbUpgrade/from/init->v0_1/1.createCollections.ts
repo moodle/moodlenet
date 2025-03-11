@@ -27,8 +27,8 @@ export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   await dbStruct.appData.coll.eduIscedField.create({ cacheEnabled: true })
   await dbStruct.appData.coll.eduIscedLevel.create({ cacheEnabled: true })
   await dbStruct.appData.coll.eduResourceType.create({ cacheEnabled: true })
-  await dbStruct.appData.coll.modelConfig.create({ cacheEnabled: true })
-  await dbStruct.appData.coll.modelConfig.ensureIndex({
+  await dbStruct.appData.coll.staticData.create({ cacheEnabled: true })
+  await dbStruct.appData.coll.staticData.ensureIndex({
     type: 'persistent',
     name: 'modelName',
     fields: ['modelName'],

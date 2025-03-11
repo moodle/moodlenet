@@ -1,11 +1,11 @@
 import { d_t_u } from '@moodle/lib-types'
 
-export type cursorList<itemData, cursor = string> = { items: itemData[]; cursors: [cursor, cursor]; hasMore: boolean }
-export type pageOpts<filter, order extends string> = {
-  order?: [order: order, dir?: 'asc' | 'desc'][]
-  filter?: filter
+export type cursorList<itemData /* , cursor = number */> = { items: itemData[] } //; cursors: [cursor, cursor] } //; hasMore: boolean }
+export type pageOpts<filter /* , order extends string, cursor = number */> = {
+  // order?: [order: order, dir?: 'asc' | 'desc'][]
+  filters?: filter[]
   limit?: number | 1
-  cursor?: [cursor: string, take?: 'after' | 'before']
+  // cursor?: [cursor: cursor, take?: 'after' | 'before']
 }
 
 export type filterBoolTree<f> = _filterBoolTree_not<d_t_u<f> | _filterBoolTree_block<f>>

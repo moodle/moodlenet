@@ -1,5 +1,5 @@
 import { any_, map } from '@moodle/lib-types'
-import { Either, left, right } from 'fp-ts/Either'
+import { Either } from 'fp-ts/Either'
 import { loggerProvider } from '../types/log'
 import { Error4xx, isError4xx } from './access-error'
 import { modelHandleProxy } from './modelHandleProxy'
@@ -7,18 +7,18 @@ import { modelHandleProxy } from './modelHandleProxy'
 type executeModelOpsDeps = {
   models: map
   envelope: moo.model.envelope<any_>
-  backModelEnvelopeDispatcher: moo.model.dispatcher<any_>
+  modelEnvelopeDispatcher: moo.model.dispatcher<any_>
   loggerProvider: loggerProvider
 }
 
-export async function preModelOps({ models, envelope, backModelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps) {
-  const allOpTargets = allModelsOpExtracts({ models, envelope, backModelEnvelopeDispatcher, loggerProvider })
+export async function preModelOps({ models, envelope, modelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps) {
+  const allOpTargets = allModelsOpExtracts({ models, envelope, modelEnvelopeDispatcher, loggerProvider })
   const exeTargets = allOpTargets.exe
   const implementationExists = exeTargets.length > 0
   const step = implementationExists ? 'pre' : ('notImpl' as const)
   const myLogger = loggerProvider({ for: 'model', more: { name: `${step}:op` /*  models: Object.keys(models) */ }, envelope: envelope })
   await Promise.all(
-    allOpTargets[step].map(({ fn, modelName }) =>
+    allOpTargets[step].map(({ fn, workerName: modelName }) =>
       fn().catch(err => {
         myLogger.error(`Error in "${step}" exec model ${modelName}`, err)
         //REVIEW: should we throw an error here? if so it would brake the flow...
@@ -27,21 +27,22 @@ export async function preModelOps({ models, envelope, backModelEnvelopeDispatche
   )
 }
 
-export async function executeModel({ models, envelope, backModelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps) {
+export async function executeModel({ models, envelope, modelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps) {
   const myLogger = loggerProvider({ for: 'model', more: { name: `exec:op` /*  models: Object.keys(models) */ }, envelope: envelope })
-  const allOpTargets = allModelsOpExtracts({ models, envelope, backModelEnvelopeDispatcher, loggerProvider })
+  const allOpTargets = allModelsOpExtracts({ models, envelope, modelEnvelopeDispatcher, loggerProvider })
   const exe = allOpTargets.exe[0] ?? {
-    fn: async (): Promise<never> => {
+    fn: async (): Promise<Either<Error4xx, never>> => {
       const notImplErr = new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${envelope.target.path.join('.')}` })
       myLogger.warn(notImplErr)
+      // return left(notImplErr)
       return Promise.reject(notImplErr)
     },
-    modelName: '~',
+    workerName: '~',
   }
 
   if (allOpTargets.exe.length > 1) {
     const MULTIPLE_EXEC_MESSAGE = `Multiple implementations of model target: ${envelope.target.path.join('.')} detected,
-  will call the first from "${exe.modelName}" model all others will be ignored`
+  will call the first from "${exe.workerName}" model all others will be ignored`
     //REVIEW: should we throw an error here?
     myLogger.critical(MULTIPLE_EXEC_MESSAGE)
   }
@@ -54,16 +55,16 @@ export async function executeModel({ models, envelope, backModelEnvelopeDispatch
     return new Error4xx('Internal Server Error', { message: e.message })
   })
 
-  return isError4xx(outcome) ? left(outcome) : right(outcome)
+  return outcome
 }
 
-export async function postModelOps({ models, envelope, outcome, backModelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps & { outcome: Either<Error4xx, unknown> }) {
+export async function postModelOps({ models, envelope, outcome, modelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps & { outcome: Either<Error4xx, unknown> }) {
   const myLogger = loggerProvider({ for: 'model', more: { name: `post:op` /*  models: Object.keys(models) */ }, envelope: envelope })
 
-  const allOpTargets = allModelsOpExtracts({ models, envelope, backModelEnvelopeDispatcher, loggerProvider })
+  const allOpTargets = allModelsOpExtracts({ models, envelope, modelEnvelopeDispatcher, loggerProvider })
 
   await Promise.all(
-    allOpTargets.post.map(({ fn, modelName }) =>
+    allOpTargets.post.map(({ fn, workerName: modelName }) =>
       fn(outcome).catch(andError => {
         myLogger.error(`And error in model ${modelName}`, andError)
         //REVIEW: should we throw an error here? if so it would brake the flow...
@@ -75,30 +76,30 @@ export async function postModelOps({ models, envelope, outcome, backModelEnvelop
 type allModelsOpExtractsDeps = {
   models: map
   envelope: moo.model.envelope<any_>
-  backModelEnvelopeDispatcher: moo.model.dispatcher<any_>
+  modelEnvelopeDispatcher: moo.model.dispatcher<any_>
   loggerProvider: loggerProvider
 }
 
-export function allModelsOpExtracts({ models, envelope: envelope, backModelEnvelopeDispatcher, loggerProvider }: allModelsOpExtractsDeps) {
+export function allModelsOpExtracts({ models, envelope, modelEnvelopeDispatcher, loggerProvider }: allModelsOpExtractsDeps) {
   return Object.entries(models).reduce(
-    (acc, [modelName, impl]) => {
-      const { post, exe, pre, notImpl } = modelOpExtract({
-        worker: { name: modelName, impl },
+    (acc, [workerName, impl]) => {
+      const { post, exe, pre, notImpl } = workerOpExtract({
+        worker: { name: workerName, impl },
         envelope,
-        backModelEnvelopeDispatcher,
+        modelEnvelopeDispatcher,
         loggerProvider,
       })
-      post && acc.post.push({ fn: post, modelName })
-      exe && acc.exe.push({ fn: exe, modelName })
-      pre && acc.pre.push({ fn: pre, modelName })
-      notImpl && acc.notImpl.push({ fn: notImpl, modelName })
+      post && acc.post.push({ fn: post, workerName })
+      exe && acc.exe.push({ fn: exe, workerName })
+      pre && acc.pre.push({ fn: pre, workerName })
+      notImpl && acc.notImpl.push({ fn: notImpl, workerName })
       return acc
     },
     { post: [], pre: [], exe: [], notImpl: [] } as {
-      exe: { modelName: string; fn: Exclude<modelExtraction['exe'], undefined> }[]
-      pre: { modelName: string; fn: Exclude<modelExtraction['pre'], undefined> }[]
-      post: { modelName: string; fn: Exclude<modelExtraction['post'], undefined> }[]
-      notImpl: { modelName: string; fn: Exclude<modelExtraction['notImpl'], undefined> }[]
+      exe: { workerName: string; fn: Exclude<workerOpExtraction['exe'], undefined> }[]
+      pre: { workerName: string; fn: Exclude<workerOpExtraction['pre'], undefined> }[]
+      post: { workerName: string; fn: Exclude<workerOpExtraction['post'], undefined> }[]
+      notImpl: { workerName: string; fn: Exclude<workerOpExtraction['notImpl'], undefined> }[]
     },
   )
 }
@@ -106,13 +107,13 @@ export function allModelsOpExtracts({ models, envelope: envelope, backModelEnvel
 type modelOpExtractDeps = {
   worker: { impl: any_; name: any_ }
   envelope: moo.model.envelope<any_>
-  backModelEnvelopeDispatcher: moo.model.dispatcher<any_>
+  modelEnvelopeDispatcher: moo.model.dispatcher<any_>
   loggerProvider: loggerProvider
 }
-type modelExtraction = ReturnType<typeof modelOpExtract>
-export function modelOpExtract({ worker, envelope, backModelEnvelopeDispatcher, loggerProvider }: modelOpExtractDeps) {
+type workerOpExtraction = ReturnType<typeof workerOpExtract>
+export function workerOpExtract({ worker, envelope, modelEnvelopeDispatcher, loggerProvider }: modelOpExtractDeps) {
   const model = modelHandleProxy({
-    modelEnvelopeDispatcher: backModelEnvelopeDispatcher,
+    modelEnvelopeDispatcher,
     origin: {
       from: {
         id: envelope.id,
@@ -122,23 +123,23 @@ export function modelOpExtract({ worker, envelope, backModelEnvelopeDispatcher, 
     },
   })
 
-  const opHandlers: undefined | moo.model.impl.opHandlers<any_> = envelope.target.path.reduce(
-    (_model, prop) => (_model && '_' in _model && 'function' === typeof _model._ ? _model._(prop) : _model?.[prop]),
+  const opHandlers: undefined | moo.model.impl.opHandlers<moo.model.op> = envelope.target.path.reduce(
+    (_model, prop) => ('function' === typeof _model ? _model(prop) : _model?.[prop]),
     worker.impl,
   )
 
-  const exe = opHandlers?.exe // as undefined | moo.model.impl.exe<any_>
-  const pre = opHandlers?.pre // as undefined | moo.model.impl.pre<any_>
-  const post = opHandlers?.post // as undefined | moo.model.impl.post<any_>
-  const notImpl = opHandlers?.notImpl // as undefined | moo.model.impl.notImpl<any_>
   const log = loggerProvider({ for: 'model', envelope: envelope })
   const now = new Date().toISOString()
   const ctx: moo.model.impl.ctx<any_> = { model, envelope: { ...envelope, now }, log, now: new Date().toISOString() }
-  const exeArgs: moo.model.impl.exeArgs<any_> = [envelope.message, ctx]
+
+  const exe = opHandlers?.exe
+  const pre = opHandlers?.pre
+  const post = opHandlers?.post
+  const notImpl = opHandlers?.notImpl
   return {
-    exe: exe && (() => exe(...exeArgs)),
-    pre: pre && (() => pre(...exeArgs)),
-    notImpl: notImpl && (() => notImpl(...exeArgs)),
-    post: post && ((outcome: Either<Error4xx, unknown>) => post(outcome, ...exeArgs)),
+    exe: exe && (() => exe(ctx)(envelope.message)),
+    pre: pre && (() => pre(ctx)(envelope.message)),
+    notImpl: notImpl && (() => notImpl(ctx)(envelope.message)),
+    post: post && ((outcome: Either<Error4xx, unknown>) => post(ctx)(outcome, envelope.message)),
   }
 }

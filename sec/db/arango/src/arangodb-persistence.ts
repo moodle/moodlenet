@@ -1,5 +1,5 @@
 import { ArangoDbSecEnv, getDbStruct } from './db-structure'
-import { content, education, modelConfigs, moodlenet, userAccount } from './models'
+import { content, education, statics, moodlenet, userAccount } from './models'
 export type { ArangoDbSecEnv } from './db-structure'
 
 export function get_arango_persistence_factory(env: ArangoDbSecEnv) {
@@ -7,7 +7,7 @@ export function get_arango_persistence_factory(env: ArangoDbSecEnv) {
   const modelImpl: moo.model.impl = {
     education: education.educationImpl({ dbStruct }),
     content: content.contentImpl({ dbStruct }),
-    configs: modelConfigs.modelConfigs({ dbStruct }),
+    statics: statics.staticsImpl({ dbStruct }),
     moodlenet: moodlenet.moodlenetImpl({ dbStruct }),
     userAccount: userAccount.userAccountImpl({ dbStruct }),
   }

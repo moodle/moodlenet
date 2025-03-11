@@ -1,1 +1,1 @@
-export type mailerConfigs = never
+export default null

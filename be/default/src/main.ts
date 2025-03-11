@@ -4,6 +4,7 @@ import { any_ } from '@moodle/lib-types'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { defaultConfigurator } from './default-configurator'
+import { configuration } from './types'
 
 dotenvExpand(dotenv.config())
 
@@ -37,27 +38,7 @@ http_bind
       },
     })
 
-    // configurator
-    //   .gate({
-    //     gateRequest: {
-    //       form: {},
-    //       path: ['a', 'a', 'a', 'a'],
-    //       info: { claims: { server: { href: 'https://moodlenet.local/' as any_, authSessionToken: null, requestId: '11', ua: '313132' } } },
-    //     },
-    //   })
-    //   .then(_ => coreGate(_))
-    //   .then(console.log, console.error)
-    //   .then(() =>
-    //     configurator.gate({
-    //       gateRequest: {
-    //         form: {},
-    //         path: ['a', 'a', 'a', 'a'],
-    //         info: { claims: { server: { href: 'https://moodlenet.local/' as any_, authSessionToken: null, requestId: '11', ua: '313132' } } },
-    //       },
-    //     }),
-    //   )
-    //   .then(_ => coreGate(_))
-    //   .then(console.log, console.error)
+    _____CALL____TEST____(configurator)
 
     let exiting = false
 
@@ -75,3 +56,29 @@ http_bind
       process.exit(0)
     }
   })
+
+
+function _____CALL____TEST____(configurator: configuration) {
+  configurator
+    .gate({
+      gateRequest: {
+        form: {},
+        path: ['a', 'a', 'a', 'a'],
+        info: { claims: { server: { href: 'https://moodlenet.local/' as any_, authSessionToken: null, requestId: '11', ua: '313132' } } },
+      },
+    })
+    .then(_ => coreGate(_))
+    .then(console.log, console.error)
+    .then(() =>
+      configurator.gate({
+        gateRequest: {
+          form: {},
+          path: ['a', 'a', 'a', 'a'],
+          info: { claims: { server: { href: 'https://moodlenet.local/' as any_, authSessionToken: null, requestId: '11', ua: '313132' } } },
+        },
+      }),
+    )
+    .then(_ => coreGate(_))
+    .then(console.log, console.error)
+}
+

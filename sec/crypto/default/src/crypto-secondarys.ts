@@ -7,10 +7,7 @@ export interface cryptoDefaultEnv {
   argonOpts: ArgonPwdHashOpts
 }
 
-export function get_default_crypto_secondarys_factory({
-  joseOpts: _joseOpts,
-  argonOpts: _argonOpts,
-}: cryptoDefaultEnv): moo.model.impl {
+export function get_default_crypto_secondarys_factory({ joseOpts: _joseOpts, argonOpts: _argonOpts }: cryptoDefaultEnv): moo.model.impl {
   const modelImpl: moo.model.impl = {
     userAccount: NO_JOB_HERE,
   }

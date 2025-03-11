@@ -22,13 +22,13 @@ export async function upgradeModel({ log, model }: { model: moo.model.handle; lo
 
   const modelUpgradeData = await upgradeMod.upgrade({ model, log })
 
-  await model.configs.latestModelUpgrade.save.sync(modelUpgradeData)
+  await model.statics.latestModelUpgrade.save.sync(modelUpgradeData)
 
   log.info(`upgraded model from [${from_v}] to [${upgradeMod.VERSION}]`)
   return upgradeModel({ model: model, log })
 }
 
 export async function getLatestModelUpgradeData({ model }: { model: moo.model.handle }) {
-  const latestModelUpgradeData = await model.configs.latestModelUpgrade.get.query()
+  const latestModelUpgradeData = await model.statics.latestModelUpgrade.get.query()
   return latestModelUpgradeData
 }

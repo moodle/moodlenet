@@ -6,26 +6,30 @@ import type * as def from './submitSignupForm.endpoint'
 export const submitSignupForm: moo.core.endpoint<def.submitSignupForm> = async (form, { model }) => {
   const {
     items: [existingUser],
-  } = await model.userAccount.user.find.query({ filter: { by: 'id', email: form.email } })
+  } = await model.userAccount.find.query({ filters: [{ by: 'id', type: 'email', email: form.email }] })
 
   if (existingUser) {
     return E.right(SUBMITTED)
     // return E.left(USER_WITH_THIS_EMAIL_EXISTS)
   }
 
-  const { emailConfirmationTokenExpires } = await model.configs.model.userAccount.get.query()
+  const { data: emailConfirmationTokenExpires } = await model.statics.data.type.get.query({ kind: 'configs', ns: 'userAccount', type: 'emailConfirmationTokenExpires' })
   const expires = duration.end(duration.parse(emailConfirmationTokenExpires)).toISOString()
 
   const { hash: passwordHash } = await model.crypto.hashing.password.hash.query({
     plainPassword: form.password,
   })
 
-  const { token: confirmationToken } = await model.jwtTokens.model.userAccount.emailConfirmationToken.sign.query({
+  const { token: confirmationToken } = await model.jwtTokens.sign.query({
+    ns: 'userAccount',
+    type: 'emailConfirmationToken',
     data: { displayName: form.displayName, email: form.email, passwordHash },
     expires,
   })
 
-  const { body, subject } = await model.mailer.template.userAccount.userEmailConfirmation.query({
+  const { body, subject } = await model.mailer.template.query({
+    ns: 'userAccount',
+    type: 'userEmailConfirmation',
     data: {
       displayName: form.displayName,
       confirmationToken,

@@ -5,18 +5,18 @@ import { appDataUserSpaceCollectionData, dbStruct } from '../db-structure'
 export function moodlenetImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<moodlenet.MoodlenetModel> {
   return {
     contributor: {
-      _: userId => ({
-        $: {
-          create: {
-            exe: async ({ spaceData: moodlenet }) => {
-              await dbStruct.appData.coll.userSpace.update({ _key: userId }, { moodlenet }, { mergeObjects: false })
-            },
+      create: {
+        exe:
+          () =>
+          async ({ record: moodlenet }) => {
+            await dbStruct.appData.coll.userSpace.update({ _key: moodlenet.userId }, { moodlenet }, { mergeObjects: false })
           },
-          getData: {
-            exe: async () => {
-              const doc = await dbStruct.appData.coll.userSpace.document({ _key: userId }, { graceful: true })
-              return fromNullable(appDataUserCollectionData_2_MoodlenetUserSpace(doc))
-            },
+      },
+      userId: userId => ({
+        getData: {
+          exe: () => async () => {
+            const doc = await dbStruct.appData.coll.userSpace.document({ _key: userId }, { graceful: true })
+            return fromNullable(appDataUserCollectionData_2_MoodlenetUserSpace(doc))
           },
         },
       }),
@@ -24,18 +24,17 @@ export function moodlenetImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.i
   }
 }
 
-function appDataUserCollectionData_2_MoodlenetUserSpace(docData: appDataUserSpaceCollectionData | null): moo.model.ops.xSpaceData<moodlenet.moodlenetContributorSpace> | null {
+function appDataUserCollectionData_2_MoodlenetUserSpace(docData: appDataUserSpaceCollectionData | null): moodlenet.moodlenetContributorView | null {
   return !docData?.moodlenet
     ? null
     : {
         ...docData.moodlenet,
-        contributor: {
-          ...docData.moodlenet.contributor,
-          userProfile: {
-            info: docData.userAccount.profile.info,
-            avatar: docData.userAccount.profile.avatar,
-            background: docData.userAccount.profile.background,
-          },
+        eduCollection: { items: [] },
+        eduResource: { items: [] },
+        userProfile: {
+          info: docData.userAccount.profile.info,
+          avatar: docData.userAccount.profile.avatar,
+          background: docData.userAccount.profile.background,
         },
       }
 }

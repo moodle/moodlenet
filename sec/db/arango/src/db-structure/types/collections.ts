@@ -1,36 +1,37 @@
 import { accessControl, content, education, home, moderation, moodlenet, userAccount } from '@moodle/domain/model'
-import { d_u } from '@moodle/lib-types'
+import { authSession } from 'domain/src/domain/model/accessControl.model'
 
 export type appDataUserSpaceCollectionData = {
-  userAccount: moo.model.ops.sSpaceData<userAccount.userAccountRecord>
-  moodlenet?: moo.model.ops.sSpaceData<moodlenet.moodlenetContributorSpace>
-  accessControl?: moo.model.ops.sSpaceData<accessControl.accessControlUserSpace>
-  moderation?: moo.model.ops.sSpaceData<moderation.moderationUserSpace>
-  home?: moo.model.ops.sSpaceData<home.homeUserSpace>
+  userAccount: userAccount.userAccountRecord
+  moodlenet?: moodlenet.moodlenetContributorRecord
+  accessControl?: accessControl.userAccessControl
+  moderation?: moderation.userModerationSpace
+  home?: home.homeUserSpace
 }
 
 export type appDataIscedFieldCollectionData = {
-  education: moo.model.ops.sSpaceData<education.iscedFieldSpace>
+  education: education.catRecord<education.iscedField>
 }
 export type appDataIscedLevelCollectionData = {
-  education: moo.model.ops.sSpaceData<education.iscedLevelSpace>
+  education: education.catRecord<education.iscedLevel>
 }
 export type appDataBloomCognitiveCollectionData = {
-  education: moo.model.ops.sSpaceData<education.bloomCognitiveSpace>
+  education: education.catRecord<education.bloomCognitive>
 }
 export type appDataResourceTypeCollectionData = {
-  education: moo.model.ops.sSpaceData<education.resourceTypeSpace>
+  education: education.catRecord<education.resourceType>
 }
 export type appDataLanguageCollectionData = {
-  content: moo.model.ops.sSpaceData<content.languageSpace>
+  content: content.catRecord<content.language>
 }
 export type appDataLicenseCollectionData = {
-  content: moo.model.ops.sSpaceData<content.licenseSpace>
+  content: content.catRecord<content.license>
 }
 
-export type modulesModelConfigData = d_u<
-  {
-    [_modelName in Exclude<moo.modelName, 'configs'>]: { configs: moo.Models[_modelName][moo.tags.configs] }
-  },
-  'modelName'
->
+export type staticData = {
+  all: moo.Models.statics.all
+}
+
+export type activeAuthSessionData = {
+  authSession: authSession
+}

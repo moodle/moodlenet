@@ -1,15 +1,26 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-namespace */
-import { orgConfigs } from './types'
+import { orgConfigs, orgSchemas } from './types'
+const MODEL_NAME = 'org'
+
 declare global {
   namespace moo {
     interface Models {
-      org: org
+      [MODEL_NAME]: org
+    }
+    namespace Models {
+      namespace statics {
+        interface Schemas {
+          [MODEL_NAME]: orgSchemas
+        }
+        interface Configs {
+          [MODEL_NAME]: orgConfigs
+        }
+      }
     }
   }
 }
 
 export type org = moo.model<OrgModel>
 
-export type OrgModel = {
-  [moo.tags.configs]: orgConfigs
-}
+export type OrgModel = {}

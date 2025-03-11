@@ -1,6 +1,6 @@
 import { i_nat, i_pos } from '@moodle/lib-types'
 import { NONE_ASSET } from '../../../../lib'
-import { moodlenetConfigs } from '../types'
+import { moodlenetConfigs, moodlenetSchemas } from '../types'
 
 export const DEFAULT_MOODLENET_CONFIGS: moodlenetConfigs = {
   info: {
@@ -8,32 +8,6 @@ export const DEFAULT_MOODLENET_CONFIGS: moodlenetConfigs = {
     subtitle: 'Find, share and curate open educational resources',
     logo: NONE_ASSET,
     smallLogo: NONE_ASSET,
-  },
-  schema: {
-    publishEduOverrides: {
-      collection: {
-        description: { min: i_nat(15) },
-        title: { min: i_nat(5) },
-      },
-      resource: {
-        description: { min: i_nat(15) },
-        title: { min: i_nat(5) },
-        iscedField: { required: true },
-        iscedLevel: { required: true },
-        type: { required: true },
-        language: { required: true },
-        license: { required: true },
-        publicationDate: { required: true },
-        bloomLearningOutcomes: {
-          amount: { min: i_nat(1) },
-          sentence: { min: i_nat(10) },
-        },
-      },
-    },
-    moodlenetInfo: {
-      subtitle: { max: i_nat(200), min: i_nat(3) },
-      title: { max: i_nat(100), min: i_nat(3) },
-    },
   },
   pointSystem: {
     welcomePoints: i_nat(5),
@@ -88,5 +62,31 @@ export const DEFAULT_MOODLENET_CONFIGS: moodlenetConfigs = {
       { lessThanPoints: i_pos(100000), title: 'Versatile canopy' },
       { title: 'Dazzling biome' },
     ],
+  },
+}
+export const DEFAULT_MOODLENET_SCHEMAS: moodlenetSchemas = {
+  publishEduOverrides: {
+    collection: {
+      description: { min: i_nat(15) },
+      title: { min: i_nat(5) },
+    },
+    resource: {
+      description: { min: i_nat(15) },
+      title: { min: i_nat(5) },
+      iscedField: { required: true },
+      iscedLevel: { required: true },
+      type: { required: true },
+      language: { required: true },
+      license: { required: true },
+      publicationDate: { required: true },
+      bloomLearningOutcomes: {
+        amount: { min: i_nat(1) },
+        sentence: { min: i_nat(10) },
+      },
+    },
+  },
+  moodlenetInfo: {
+    subtitle: { max: i_nat(200), min: i_nat(3) },
+    title: { max: i_nat(100), min: i_nat(3) },
   },
 }

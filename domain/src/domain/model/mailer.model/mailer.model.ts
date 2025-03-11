@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { mailerConfigs } from './types'
 import { emailBody, emailEnvelope } from './types/email'
+const MODEL_NAME = 'mailer'
+
+type _t = moo.Models.mailer.Templates
 declare global {
   namespace moo {
     interface Models {
-      mailer: mailer
+      [MODEL_NAME]: mailer
     }
     namespace Models {
       namespace mailer {
@@ -17,13 +19,8 @@ declare global {
 export type mailer = moo.model<MailerModel>
 
 export type MailerModel = {
-  [moo.tags.configs]: mailerConfigs
-  template: {
-    [namespace in keyof moo.Models.mailer.Templates]: {
-      [tplParams in keyof moo.Models.mailer.Templates[namespace]]: moo.model.op<
-        ['query', { data: moo.Models.mailer.Templates[namespace][tplParams] }, { body: emailBody; subject: string }]
-      >
-    }
-  }
+  template: moo.model.op<
+    ['query', <ns extends keyof _t, type extends keyof _t[ns]>(_: { ns: ns; type: type; data: _t[ns][type] }) => Promise<{ body: emailBody; subject: string }>]
+  >
   send: moo.model.op<['async', { envelope: emailEnvelope }, unknown]>
 }

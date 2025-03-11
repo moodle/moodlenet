@@ -27,7 +27,10 @@ export type jsonDiff = unknown
 export type union<types extends any_[]> = types extends [infer t, ...infer rest] ? t | intersection<rest> : unknown
 export type intersection<types extends any_[]> = types extends [infer t, ...infer rest] ? t & intersection<rest> : unknown
 
-export function unreachable_never(_: never, message?: string): never {
+export function unreachable_never(_: never, message?: string | Error): never {
+  if (message instanceof Error) {
+    throw message
+  }
   throw new TypeError(`never [${JSON.stringify(_, null, 2)}]${message ? `: ${message}` : ''}`)
 }
 // export type pretty<t> = keyof t extends infer keyof_t ? { [k in keyof_t & keyof t]: t[k] } : never // this one prettify better, but loses optionals?: props 🤔

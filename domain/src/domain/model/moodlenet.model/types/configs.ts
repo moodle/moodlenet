@@ -7,11 +7,12 @@ export type publishEduSchemaOverrides = {
   resource: eduResourceSchemaConfigsOverrides
 }
 
+export type moodlenetSchemas = {
+  publishEduOverrides: publishEduSchemaOverrides
+  moodlenetInfo: moodlenetInfoSchemaConfigs
+}
+
 export type moodlenetConfigs = {
-  schema: {
-    publishEduOverrides: publishEduSchemaOverrides
-    moodlenetInfo: moodlenetInfoSchemaConfigs
-  }
   info: moodlenetInfo
   pointSystem: pointSystem
 }

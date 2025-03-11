@@ -1,6 +1,6 @@
 import { i_nat, int } from '@moodle/lib-types'
 import { catRecord } from '../education.model'
-import { bloomCognitive, educationConfigs, iscedField, iscedLevel, resourceType } from '../types'
+import { bloomCognitive, eduSchemaConfigs, iscedField, iscedLevel, resourceType } from '../types'
 import { eduBloomCognitivesSetup } from './bloom-cognitives'
 import { eduResourceTypesSetup } from './setup-edu-resource-types'
 import { eduIscedFieldsSetup } from './setup-isced-fields'
@@ -8,25 +8,23 @@ import { eduIscedLevelsSetup } from './setup-isced-levels'
 
 const excludeIscedFieldCodes = getExcludeIscedFieldCodes()
 
-export const DEFAULT_EDUCATION_CONFIGS: educationConfigs = {
-  schema: {
-    collection: {
-      description: { min: i_nat(0), max: i_nat(5000) },
-      title: { min: i_nat(0), max: i_nat(150) },
-    },
-    resource: {
-      description: { min: i_nat(0), max: i_nat(5000) },
-      title: { min: i_nat(0), max: i_nat(150) },
-      iscedField: { required: false },
-      iscedLevel: { required: false },
-      type: { required: false },
-      language: { required: false },
-      license: { required: false },
-      publicationDate: { required: false, sinceYear: int(1900) },
-      bloomLearningOutcomes: {
-        amount: { min: i_nat(0), max: i_nat(4) },
-        sentence: { min: i_nat(0), max: i_nat(150) },
-      },
+export const DEFAULT_EDUCATION_SCHEMAS: eduSchemaConfigs = {
+  collection: {
+    description: { min: i_nat(0), max: i_nat(5000) },
+    title: { min: i_nat(0), max: i_nat(150) },
+  },
+  resource: {
+    description: { min: i_nat(0), max: i_nat(5000) },
+    title: { min: i_nat(0), max: i_nat(150) },
+    iscedField: { required: false },
+    iscedLevel: { required: false },
+    type: { required: false },
+    language: { required: false },
+    license: { required: false },
+    publicationDate: { required: false, sinceYear: int(1900) },
+    bloomLearningOutcomes: {
+      amount: { min: i_nat(0), max: i_nat(4) },
+      sentence: { min: i_nat(0), max: i_nat(150) },
     },
   },
 }

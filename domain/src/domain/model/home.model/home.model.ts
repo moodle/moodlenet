@@ -2,10 +2,13 @@
 import { d_u, date_time_string } from '@moodle/lib-types'
 import { eduCollection, eduResource } from '../education.model'
 import { userId, userProfile } from '../userAccount.model'
+import { Option } from 'fp-ts/Option'
+const MODEL_NAME = 'home'
+
 declare global {
   namespace moo {
     interface Models {
-      home: home
+      [MODEL_NAME]: home
     }
   }
 }
@@ -37,9 +40,8 @@ export type homeUserViewFilters = d_u<
 >
 
 export type homeModel = {
-  [moo.tags.configs]: never
   userHome: {
-    create: moo.model.op.set.create<homeUserSpace>
-    query: moo.model.op.set.find<homeUserView, homeUserViewFilters, never>
+    create: moo.model.op<['sync', homeUserSpace, void]>
+    get: moo.model.op<['query', { userId: userId }, Option<homeUserView>]>
   }
 }

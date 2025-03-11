@@ -106,6 +106,16 @@ export function statusByDescOrCode4xx(code_or_desc: status_desc_4xx | status_cod
 export function isCode4xx(sc: number): sc is status_code_4xx {
   return sc >= 400 && sc < 500
 }
+export function code4xx_2_http(sc: number) {
+  return sc > 451 ? 500 + (499 - sc) : sc
+}
+export function codeHttp_2_m_4xx(sc: number) {
+  const m_4xx = sc >= 501 ? 499 - (sc - 500) : sc
+  if (!isCode4xx(m_4xx)) {
+    return null
+  }
+  return m_4xx
+}
 
 // export const status_code_by_desc_2xx = Object.fromEntries(status_list_2xx) as Record<
 //   status_desc_2xx,

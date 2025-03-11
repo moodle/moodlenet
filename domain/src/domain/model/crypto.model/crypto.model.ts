@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { plain_password } from '@moodle/lib-types'
-import { cryptoConfigs } from './types'
+const MODEL_NAME = 'crypto'
+
 declare global {
   namespace moo {
     interface Models {
-      crypto: crypto
+      [MODEL_NAME]: crypto
     }
   }
 }
-export type crypto = moo.model<CryptoModel>
+export type crypto = moo.model<cryptoModel>
 
-export type CryptoModel = {
-  [moo.tags.configs]: cryptoConfigs
+export type cryptoModel = {
   hashing: {
     password: {
       hash: moo.model.op<['query', { plainPassword: plain_password }, { hash: string }]>

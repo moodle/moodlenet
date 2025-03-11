@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { d_u, email_address, signed_token } from '@moodle/lib-types'
-import { userAccountConfigs, userAccountRecord, userId, userProfileInfo } from './types'
+import { userAccountConfigs, userAccountRecord, userAccountSchemas, userId, userProfileInfo } from './types'
+const MODEL_NAME = 'userAccount'
 declare global {
   namespace moo {
     interface Models {
-      userAccount: userAccount
+      [MODEL_NAME]: userAccountModel
     }
     namespace Models {
       namespace mailer {
         interface Templates {
-          userAccount: {
+          [MODEL_NAME]: {
             userEmailConfirmation: {
               displayName: string
               confirmationToken: signed_token
@@ -29,9 +30,17 @@ declare global {
           }
         }
       }
+      namespace statics {
+        interface Schemas {
+          [MODEL_NAME]: userAccountSchemas
+        }
+        interface Configs {
+          [MODEL_NAME]: userAccountConfigs
+        }
+      }
       namespace jwtTokens {
         interface Payloads {
-          userAccount: {
+          [MODEL_NAME]: {
             emailConfirmationToken: {
               passwordHash: string
               displayName: string
@@ -52,34 +61,34 @@ declare global {
 
 export * from './types'
 
-export type userAccountSpaceFilters = d_u<
+export type userAccountSpaceFilter = d_u<
   {
-    id: {
-      email?: string
-      userId?: string
-    }
+    id: d_u<
+      {
+        email: { email: string }
+        userId: { userId: userId }
+      },
+      'type'
+    >
   },
   'by'
 >
 
-export type userAccount = moo.model<{
-  [moo.tags.configs]: userAccountConfigs
-  user: {
-    create: moo.model.op.set.create<userAccountRecord>
-    find: moo.model.op.set.find<userAccountRecord, userAccountSpaceFilters, never>
-    userId: Record<
-      userId,
-      {
-        profile: {
-          info: Pick<moo.model.op.atom<userProfileInfo>, 'put'>
-          avatar: moo.model.op.asset
-          background: moo.model.op.asset
-        }
-        email: moo.model.op.atom.get<{ address: email_address }>
-        password: moo.model.op.atom<{ hash: string }>
+export type userAccountModel = moo.model<{
+  create: moo.model.op.set.create<userAccountRecord>
+  find: moo.model.op.set.find<userAccountRecord, userAccountSpaceFilter>
+  user: Record<
+    userId,
+    {
+      profile: {
+        info: Pick<moo.model.op.atom<userProfileInfo>, 'put'>
+        avatar: moo.model.op.asset
+        background: moo.model.op.asset
       }
-    >
-  }
+      email: moo.model.op.atom.get<{ address: email_address }>
+      password: moo.model.op.atom<{ hash: string }>
+    }
+  >
 }>
 
 export type resourceDraftSpace = unknown

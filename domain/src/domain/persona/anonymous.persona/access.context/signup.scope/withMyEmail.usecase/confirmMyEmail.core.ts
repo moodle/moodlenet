@@ -7,7 +7,9 @@ import { userAccountRecord } from '../../../../../model/userAccount.model/userAc
 import type * as def from './confirmMyEmail.endpoint'
 
 export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (confirmEmailForm, { model, coreRequest }) => {
-  const e_validatedToken = await model.jwtTokens.model.userAccount.emailConfirmationToken.validate.query({
+  const e_validatedToken = await model.jwtTokens.validate.query({
+    ns: 'userAccount',
+    type: 'emailConfirmationToken',
     token: confirmEmailForm.signupEmailVerificationToken,
   })
 
@@ -19,9 +21,7 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
 
   const {
     items: [existingUserWithThisEmail],
-  } = await model.userAccount.user.find.query({
-    filter: { by: 'id', email: confirmationTokenData.email },
-  })
+  } = await model.userAccount.find.query({ filters: [{ by: 'id', type: 'email', email: confirmationTokenData.email }] })
 
   if (!existingUserWithThisEmail) {
     return E.left(INVALID_TOKEN)
@@ -29,7 +29,7 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
 
   // TODO: mv userAccount creation as userAccount model endpoint
   const userId = await generateAlphanumId_withCheck(generated_id =>
-    model.userAccount.user.find.query({ filter: { by: 'id', userId: generated_id } }).then(({ items }) => items.length === 0),
+    model.userAccount.find.query({ filters: [{ by: 'id', type: 'userId', userId: generated_id }] }).then(({ items }) => items.length === 0),
   )
 
   const userAccountRecord: userAccountRecord = {
@@ -46,7 +46,7 @@ export const confirmMyEmail: moo.core.endpoint<def.confirmMyEmail> = async (conf
     },
   }
 
-  await model.userAccount.user.create.async({ record: userAccountRecord })
+  await model.userAccount.create.async({ record: userAccountRecord })
 
   return E.right(SUBMITTED)
 }

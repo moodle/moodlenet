@@ -1,10 +1,18 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { bloomCognitive, educationConfigs, iscedField, iscedLevel, resourceType } from './types'
+import { bloomCognitive, eduSchemaConfigs, iscedField, iscedLevel, resourceType } from './types'
+const MODEL_NAME = 'education'
 declare global {
   namespace moo {
     interface Models {
-      education: education
+      [MODEL_NAME]: education
+    }
+    namespace Models {
+      namespace statics {
+        interface Schemas {
+          [MODEL_NAME]: eduSchemaConfigs
+        }
+      }
     }
   }
 }
@@ -16,12 +24,11 @@ type abilityFilter = {
   id: string
 }
 export type educationModel = {
-  [moo.tags.configs]: educationConfigs
   categories: {
-    iscedFields: Pick<moo.model.op.set<catRecord<iscedField>, abilityFilter, never>, 'create' | 'find'>
-    iscedLevels: Pick<moo.model.op.set<catRecord<iscedLevel>, abilityFilter, never>, 'create' | 'find'>
-    resourceTypes: Pick<moo.model.op.set<catRecord<resourceType>, abilityFilter, never>, 'create' | 'find'>
-    bloomCognitives: Pick<moo.model.op.set<catRecord<bloomCognitive>, abilityFilter, never>, 'create' | 'find'>
+    iscedFields: Pick<moo.model.op.set<catRecord<iscedField>, abilityFilter>, 'create' | 'find'>
+    iscedLevels: Pick<moo.model.op.set<catRecord<iscedLevel>, abilityFilter>, 'create' | 'find'>
+    resourceTypes: Pick<moo.model.op.set<catRecord<resourceType>, abilityFilter>, 'create' | 'find'>
+    bloomCognitives: Pick<moo.model.op.set<catRecord<bloomCognitive>, abilityFilter>, 'create' | 'find'>
   }
 }
 

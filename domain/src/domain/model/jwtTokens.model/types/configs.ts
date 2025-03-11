@@ -1,1 +1,1 @@
-export type jwtTokensConfigs = never
+export default null

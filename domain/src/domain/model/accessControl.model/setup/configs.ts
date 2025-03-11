@@ -1,13 +1,13 @@
 import { time_duration_string_schema } from '@moodle/lib-types'
-import { DEFAULT_MOODLENET_CONFIGS } from '../../moodlenet.model/setup'
-import { DEFAULT_ORG_CONFIGS } from '../../org.model/setup'
+import { DEFAULT_MOODLENET_SCHEMAS } from '../../moodlenet.model/setup'
+import { DEFAULT_ORG_SCHEMAS } from '../../org.model/setup'
 import { getFullPermissionsConfigTree } from '../lib/fullPermissionTrees'
 import { accessControlConfigs, rolePerm } from '../types'
 
 const revDate = new Date().toISOString()
 const permissionsConfigTree = getFullPermissionsConfigTree({
-  moodlenet: DEFAULT_MOODLENET_CONFIGS,
-  org: DEFAULT_ORG_CONFIGS,
+  moodlenet: DEFAULT_MOODLENET_SCHEMAS,
+  org: DEFAULT_ORG_SCHEMAS,
 })
 
 const default_anonymous_grants: rolePerm = {

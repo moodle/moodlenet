@@ -2,12 +2,25 @@
 import { date_time_string, int } from '@moodle/lib-types'
 import { cursorList } from '../../../types'
 import { eduCollection, eduResource } from '../education.model'
-import { userProfile } from '../userAccount.model'
-import { moodlenetConfigs } from './types'
+import { userId, userProfile } from '../userAccount.model'
+import { moodlenetConfigs, moodlenetSchemas } from './types'
+import { Option } from 'fp-ts/Option'
+const MODEL_NAME = 'moodlenet'
+
 declare global {
   namespace moo {
     interface Models {
-      moodlenet: moodlenet
+      [MODEL_NAME]: moodlenet
+    }
+    namespace Models {
+      namespace statics {
+        interface Schemas {
+          [MODEL_NAME]: moodlenetSchemas
+        }
+        interface Configs {
+          [MODEL_NAME]: moodlenetConfigs
+        }
+      }
     }
   }
 }
@@ -15,11 +28,11 @@ type published<t> = {
   publishedDate: date_time_string
   data: t
 }
-export type moodlenetContributorSpace = {
+export type moodlenetContributorRecord = {
   userId: string
   points: int
 }
-export type moodlenetContributorView = moodlenetContributorSpace & {
+export type moodlenetContributorView = moodlenetContributorRecord & {
   userProfile: userProfile
   eduResource: cursorList<published<eduResource>>
   eduCollection: cursorList<published<eduCollection>>
@@ -27,17 +40,22 @@ export type moodlenetContributorView = moodlenetContributorSpace & {
 
 export type moodlenet = moo.model<MoodlenetModel>
 
-type contentSort = 'popularity' | 'latest' | 'relevence'
+// type contentSort = 'popularity' | 'latest' | 'relevence'
 
 export type MoodlenetModel = {
-  [moo.tags.configs]: moodlenetConfigs
   contributor: {
-    create: moo.model.op.set.create<moodlenetContributorSpace>
-    query: moo.model.op.set.find<moodlenetContributorView, never, contentSort>
+    create: moo.model.op.set.create<moodlenetContributorRecord>
+    query: moo.model.op.set.find<moodlenetContributorView, never /* , contentSort */>
+    userId: Record<
+      userId,
+      {
+        getData: moo.model.op.atom.get<Option<moodlenetContributorView>>
+      }
+    >
   }
   contributions: {
-    eduResource: moo.model.op.set<published<eduResource>, resourceCategoryFilter, contentSort>
-    eduCollection: moo.model.op.set<published<eduCollection>, baseFilters, contentSort>
+    eduResource: moo.model.op.set<published<eduResource>, resourceCategoryFilter /* , contentSort */>
+    eduCollection: moo.model.op.set<published<eduCollection>, baseFilters /* , contentSort */>
   }
 }
 

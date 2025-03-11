@@ -1,65 +1,53 @@
 import { accessControl } from '@moodle/domain/model'
+import { aql } from 'arangojs'
 import { fromNullable } from 'fp-ts/Option'
-import { dbStruct } from '../db-structure'
+import { activeAuthSessionData, dbStruct } from '../db-structure'
 
 export function accessControlImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<accessControl.accessControlModel> {
   return {
     user: {
-      _: userId => ({
-        $: {
-          create: {
-            exe: async ({ spaceData: accessControl }) => {
-              await dbStruct.appData.coll.userSpace.update({ _key: userId }, { accessControl }, { mergeObjects: false })
-            },
+      create: {
+        exe:
+          () =>
+          async ({ record: accessControl }) => {
+            await dbStruct.appData.coll.userSpace.update({ _key: accessControl.userId }, { accessControl }, { mergeObjects: false })
           },
-          getData: {
-            exe: async () => {
-              const doc = await dbStruct.appData.coll.userSpace.document({ _key: userId }, { graceful: true })
+      },
+      createAuthSession: {
+        exe: () => async authSession => {
+          await dbStruct.services.coll.activeAuthSession.save({ _key: authSession.id, authSession }, { overwriteMode: 'replace' })
+        },
+      },
+      getData: {
+        exe: (/*ctx*/) =>
+          async ({ userId }) => {
+            const doc = await dbStruct.appData.coll.userSpace.document({ _key: userId }, { graceful: true })
 
-              const _: moo.model.ops.xSpaceData<accessControl.accessControlUserSpace> | undefined = doc?.accessControl && {
-                ...doc.accessControl,
-                info: {
-                  displayName: doc.userAccount.profile.info.displayName,
-                  email: doc.userAccount.email.address,
-                },
-              }
-
-              return fromNullable(_)
-            },
+            const m_userAccessControlView: accessControl.userAccessControlView | undefined = doc?.accessControl && {
+              ...doc.accessControl,
+              info: {
+                displayName: doc.userAccount.profile.info.displayName,
+                email: doc.userAccount.email.address,
+              },
+            }
+            return fromNullable(m_userAccessControlView)
           },
-        },
-        activeAuthSession: {
-          _: authSessionId => ({
-            $: {
-              create: {
-                exe: async ({ spaceData }) => {
-                  await dbStruct.appData.coll.userSpace.update(
-                    { _key: userId },
-                    {
-                      accessControl: {
-                        activeAuthSession: {
-                          [authSessionId]: spaceData,
-                        },
-                      },
-                    },
-                    { mergeObjects: false },
-                  )
-                },
-              },
+      },
+      authSession: {
+        get: {
+          exe:
+            () =>
+            async ({ userId, authSessionId }) => {
+              const cursor = await dbStruct.services.db.query<activeAuthSessionData>(aql`FOR auth IN ${dbStruct.services.coll.activeAuthSession}
+                                                                  FILTER auth.id == ${authSessionId} && auth.userId == ${userId}
+                                                                  LIMIT 1
+                                                                  RETURN auth`)
+              const [m_activeAuthSessionData] = await cursor.all()
+              //.document({ _key: userId }, { graceful: true })
+              return fromNullable(m_activeAuthSessionData?.authSession)
             },
-            auth: {
-              $: {
-                get: {
-                  exe: async () => {
-                    const doc = await dbStruct.appData.coll.userSpace.document({ _key: userId }, { graceful: true })
-                    return fromNullable(doc?.accessControl?.activeAuthSession[authSessionId]?.authSession)
-                  },
-                },
-              },
-            },
-          }),
         },
-      }),
+      },
     },
   }
 }

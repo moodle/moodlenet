@@ -7,11 +7,8 @@ import { logger } from './log'
 
 declare global {
   namespace moo {
-    type model<modelDef extends model.def> = modelDef
+    type model<modelDef> = modelDef
     namespace model {
-      type def = {
-        [moo.tags.configs]: unknown
-      }
       type dispatcher<opdef extends op.def> = (envelope: envelope<opdef>) => Promise<Either<Error4xx, opdef[2]>>
 
       type handle = op_ref<Models>
@@ -50,12 +47,13 @@ declare global {
         }
       }
 
-      type impl<baseModelNode = Models> = {
-        [modelNodePropName in keyof baseModelNode]?:
-          | (baseModelNode[modelNodePropName] extends op.def ? impl.opHandlers<baseModelNode[modelNodePropName]> : impl<baseModelNode[modelNodePropName]>)
-          | (<key extends keyof baseModelNode[modelNodePropName]>(k: key) => impl<baseModelNode[modelNodePropName][key]>)
-      }
-
+      type impl<baseModelNode = Models> = baseModelNode extends op
+        ? impl.opHandlers<baseModelNode>
+        :
+            | {
+                [modelNodePropName in keyof baseModelNode]?: impl<baseModelNode[modelNodePropName]>
+              }
+            | (<key extends keyof baseModelNode>(param: key) => impl<baseModelNode[key]>)
       namespace impl {
         type ctx<op_ extends op.def> = {
           now: date_time_string
@@ -63,18 +61,22 @@ declare global {
           envelope: envelope<op_>
           model: handle
         }
-        type exeArgs<op_ extends op.def> = [message: op_[1], ctx: ctx<op_>]
+        // type exeArgs<op_ extends op.def> = [message: op_[1], ctx: ctx<op_>]
 
-        type exe<op_ extends op.def> = (...exeArgs: exeArgs<op_>) => Promise<op_[2]>
-        type pre<op_ extends op.def> = (...exeArgs: exeArgs<op_>) => Promise<void>
-        type notImpl<op_ extends op.def> = (...exeArgs: exeArgs<op_>) => Promise<void>
-        type post<op_ extends op.def> = (outcome: Either<Error4xx, op_[2]>, ...exeArgs: exeArgs<op_>) => Promise<void>
+        type exe<op_ extends op.def> = (ctx: ctx<op_>) => op.fn<op_> // (message: op.msg<op_>) => Promise<op_[2]>)
+        type pre<op_ extends op.def> = (ctx: ctx<op_>) => (message: op.msg<op_>) => Promise<void>
+        type notImpl<op_ extends op.def> = (ctx: ctx<op_>) => (message: op.msg<op_>) => Promise<void>
+        type post<op_ extends op.def> = (ctx: ctx<op_>) => (outcome: Either<Error4xx, op.res<op_>>, message: op.msg<op_>) => Promise<void>
 
-        type opHandlers<op_ extends op.def> = {
-          exe?: exe<[op.type, op_[1], op_[2]]>
-          pre?: pre<[op.type, op_[1], op_[2]]>
-          notImpl?: notImpl<[op.type, op_[1], op_[2]]>
-          post?: post<[op.type, op_[1], op_[2]]>
+        type opHandlers<op_ extends op> = {
+          exe?: exe<op_>
+          // exe?: exe<[op.type, op_[1], op_[2]]>
+          pre?: pre<op_>
+          // pre?: pre<[op.type, op_[1], op_[2]]>
+          notImpl?: notImpl<op_>
+          // notImpl?: notImpl<[op.type, op_[1], op_[2]]>
+          post?: post<op_>
+          // post?: post<[op.type, op_[1], op_[2]]>
         }
 
         // type op<modelOpDef extends type.opDef> = modelOpDef[0] extends 'query'
@@ -98,14 +100,12 @@ type op_ref<modelNode> = {
 }
 type opImpl_ref<op_def extends moo.model.op.def> = op_def[0] extends 'query'
   ? {
-      query: (message: op_def[1]) => Promise<op_def[2]>
+      query: moo.model.op.fn<op_def>
     }
-  : op_def[0] extends 'async' | 'sync'
-    ? {
-        async: (message: op_def[1]) => Promise<void>
-      } & (op_def[0] extends 'sync'
-        ? {
-            sync: (message: op_def[1]) => Promise<op_def[2]>
-          }
-        : unknown)
-    : never
+  : {
+      async: (message: moo.model.op.msg<op_def>) => Promise<void>
+    } & (op_def[0] extends 'sync'
+      ? {
+          sync: moo.model.op.fn<op_def>
+        }
+      : unknown)

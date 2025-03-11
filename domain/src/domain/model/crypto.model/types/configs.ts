@@ -1,1 +1,1 @@
-export type cryptoConfigs = never
+export default null

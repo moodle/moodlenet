@@ -5,48 +5,36 @@ export function educationImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.i
   return {
     categories: {
       bloomCognitives: {
-        _: code => ({
-          $: {
-            create: {
-              exe: async ({ spaceData }) => {
-                await dbStruct.appData.coll.eduBloomCognitive.save({ _key: code, education: spaceData }, { silent: true, overwriteMode: 'conflict' })
-              },
+        create: {
+          exe: (/*ctx*/) =>
+            async ({ record }) => {
+              await dbStruct.appData.coll.eduBloomCognitive.save({ _key: String(record.data.level), education: record }, { silent: true, overwriteMode: 'conflict' })
             },
-          },
-        }),
+        },
       },
       iscedFields: {
-        _: code => ({
-          $: {
-            create: {
-              exe: async ({ spaceData }) => {
-                await dbStruct.appData.coll.eduIscedField.save({ _key: code, education: spaceData }, { silent: true, overwriteMode: 'conflict' })
-              },
+        create: {
+          exe: (/*ctx*/) =>
+            async ({ record }) => {
+              await dbStruct.appData.coll.eduIscedField.save({ _key: record.data.code, education: record }, { silent: true, overwriteMode: 'conflict' })
             },
-          },
-        }),
+        },
       },
       iscedLevels: {
-        _: code => ({
-          $: {
-            create: {
-              exe: async ({ spaceData }) => {
-                await dbStruct.appData.coll.eduIscedLevel.save({ _key: code, education: spaceData }, { silent: true, overwriteMode: 'conflict' })
-              },
+        create: {
+          exe: (/*ctx*/) =>
+            async ({ record }) => {
+              await dbStruct.appData.coll.eduIscedLevel.save({ _key: record.data.code, education: record }, { silent: true, overwriteMode: 'conflict' })
             },
-          },
-        }),
+        },
       },
       resourceTypes: {
-        _: code => ({
-          $: {
-            create: {
-              exe: async ({ spaceData }) => {
-                await dbStruct.appData.coll.eduResourceType.save({ _key: code, education: spaceData }, { silent: true, overwriteMode: 'conflict' })
-              },
+        create: {
+          exe: (/*ctx*/) =>
+            async ({ record }) => {
+              await dbStruct.appData.coll.eduResourceType.save({ _key: record.data.code, education: record }, { silent: true, overwriteMode: 'conflict' })
             },
-          },
-        }),
+        },
       },
     },
   }

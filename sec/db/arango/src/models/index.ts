@@ -1,5 +1,5 @@
 export * as content from './content'
 export * as education from './education'
-export * as modelConfigs from './modelConfigs'
+export * as statics from './statics'
 export * as moodlenet from './moodlenet'
 export * as userAccount from './userAccount'

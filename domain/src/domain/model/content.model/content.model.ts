@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { contentConfigs, language, license } from './types'
+import { language, license } from './types'
+const MODEL_NAME = 'content'
 declare global {
   namespace moo {
     interface Models {
-      content: content
+      [MODEL_NAME]: content
     }
   }
 }
@@ -16,10 +17,9 @@ type abilityFilter = {
 }
 
 export type contentModel = {
-  [moo.tags.configs]: contentConfigs
   categories: {
-    languages: Pick<moo.model.op.set<catRecord<language>, abilityFilter, never>, 'create' | 'find'>
-    licenses: Pick<moo.model.op.set<catRecord<license>, abilityFilter, never>, 'create' | 'find'>
+    languages: Pick<moo.model.op.set<catRecord<language>, abilityFilter>, 'create' | 'find'>
+    licenses: Pick<moo.model.op.set<catRecord<license>, abilityFilter>, 'create' | 'find'>
   }
 }
 

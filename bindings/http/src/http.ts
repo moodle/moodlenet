@@ -1,9 +1,9 @@
-import { Error4xx, error4xxDetails, isCode4xx } from '@moodle/domain/lib'
+import { code4xx_2_http, codeHttp_2_m_4xx, Error4xx, error4xxDetails, isError4xx } from '@moodle/domain/lib'
 import { any_, path } from '@moodle/lib-types'
+import cors from 'cors'
 import express from 'express'
 import { Either, isLeft } from 'fp-ts/Either'
 import { Agent, fetch } from 'undici'
-import cors from 'cors'
 
 const PROTOCOL_CONTENT_TYPE = 'text/plain; charset=utf-8'
 
@@ -54,10 +54,13 @@ export function getHttpBinderDispatcher<pl extends payload = payload>({
           const jsonBody = _parse(jsonBodyStrUtf8)
           return jsonBody
         }
-        if (isCode4xx(httpResponse.status)) {
+
+        const m_code_4xx = codeHttp_2_m_4xx(httpResponse.status)
+        if (m_code_4xx) {
           const jsonBody = _parse(jsonBodyStrUtf8)
-          throw new Error4xx(httpResponse.status, jsonBody?.details)
+          throw new Error4xx(m_code_4xx, jsonBody?.details)
         }
+
         throw new Error(`Server error: ${httpResponse.status}\n ${jsonBodyStrUtf8}`)
       })
       .catch(e => {
@@ -116,15 +119,15 @@ export async function getHttpBinderReceiver<pl extends payload>({ port, basePath
     const replyPromise = binderDispatcher(transportObject).then(
       either_result => {
         if (isLeft(either_result)) {
-          res.status(either_result.left.code)
+          res.status(code4xx_2_http(either_result.left.code))
           return { details: either_result.left.details }
         }
         return either_result.right
       },
       e => {
         console.error('HttpBinderReceiver error: ', e)
-        res.status(500)
-        const details: error4xxDetails = e instanceof Error ? { error: e.name, message: e.message, stack: e.stack } : { message: String(e) }
+        res.status(isError4xx(e) ? code4xx_2_http(e.code) : 500)
+        const details: error4xxDetails = isError4xx(e) ? e.details : e instanceof Error ? { error: e.name, message: e.message, stack: e.stack } : { message: String(e) }
         return { details }
       },
     )

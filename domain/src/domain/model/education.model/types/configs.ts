@@ -1,17 +1,5 @@
 import { deep_partial_props, int, valid } from '@moodle/lib-types'
-import { bloomCognitive, bloomCognitiveLevel, iscedField, iscedLevel, resourceType } from './edu-categories'
-
-export type educationConfigs = {
-  // NO enabledCategories: enabledEduCategories
-  schema: eduSchemaConfigs
-}
-
-export type enabledEduCategories = {
-  iscedFields: ({ code: string } & iscedField)[]
-  iscedLevels: ({ code: string } & iscedLevel)[]
-  resourceTypes: ({ code: string } & resourceType)[]
-  bloomCognitives: ({ level: bloomCognitiveLevel } & bloomCognitive)[]
-}
+import { bloomCognitive, iscedField, iscedLevel, resourceType } from './edu-categories'
 
 export type eduResourceSchemaConfigsOverrides = deep_partial_props<eduResourceSchemaConfigs>
 export type eduResourceSchemaConfigs = {
@@ -40,4 +28,11 @@ export type eduCollectionSchemaConfigs = {
 export type eduSchemaConfigs = {
   collection: eduCollectionSchemaConfigs
   resource: eduResourceSchemaConfigs
+}
+
+export type enabledEduCategories = {
+  iscedFields: iscedField[]
+  iscedLevels: iscedLevel[]
+  resourceTypes: resourceType[]
+  bloomCognitives: bloomCognitive[]
 }
