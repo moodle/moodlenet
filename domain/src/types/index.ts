@@ -1,5 +1,6 @@
 export * from './content'
 export * from './core'
+export * from './gate.proxy'
 export * from './gate.client'
 export * from './gate.provider'
 export * from './log'

@@ -1,33 +1,22 @@
 import { http_bind } from '@moodle/bindings-http'
-import { moodlePrimary, primarySession } from '@moodle/domain'
-import { createMoodleDomainProxy } from '@moodle/domain/lib'
-import {
-  createUploadedTempFile,
-  deleteTempFile,
-  domainFsDirectories,
-  fileMeta,
-  getDomainFsDirectories,
-  MOODLE_DEFAULT_HOME_DIR,
-} from '@moodle/lib-domain-fs'
+import { gateProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
 import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
-import { isMimetype, signed_token_schema } from '@moodle/lib-types'
+import { createUploadedTempFile, deleteTempFile, domainFsDirectories, fileMeta } from '@moodle/lib-temp-dir'
+import { isMimetype, signed_token_schema, url_string_schema } from '@moodle/lib-types'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import { mkdir } from 'fs/promises'
 import multer from 'multer'
 import { userAgent } from 'next/server'
-import { resolve } from 'path'
 import { Headers } from 'undici'
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
 const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
 
 const MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL = process.env.MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL
-const MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR = resolve(
-  process.cwd(),
-  process.env.MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR,
-)
+const MOODLE_TEMP_DIR = process.env.MOODLE_TEMP_DIR
+assert(MOODLE_TEMP_DIR, 'MOODLE_TEMP_DIR not found in env')
 
 const reqHttpTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
 
@@ -35,9 +24,9 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     export interface Request {
-      moodlePrimary: moodlePrimary
-      moodlePrimarySession: primarySession
-      domainFsDirectories: domainFsDirectories
+      gateProxy: moo.gate.proxy<moo.Personas>
+      requestInfo: moo.gate.provider.requestInfo
+      requestURL: URL
     }
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Multer {
@@ -52,30 +41,20 @@ declare global {
 }
 
 const app = express()
-const trnspClient = http_bind.getHttpBinderDispatcher({ reqHttpTarget })
+const gateDispatcher = http_bind.getHttpBinderDispatcher<moo.gate.provider.request>({ reqHttpTarget })
+
 console.log('moodle-fs-file-server started')
 app.use(cookieParser()).use(async (req, _res, next) => {
-  const primarySession = getPrimarySession(req)
-  const ap = createMoodleDomainProxy({
-    ctrl({ domainMsg }) {
-      return trnspClient({
-        domainAccess: {
-          ...domainMsg,
-          domain: primarySession.domain,
-          primarySession,
-        },
-      })
+  const { requestInfo, requestURL } = digestRequest(req)
+  req.gateProxy = gateProxy({
+    requestInfo,
+    formDispatcher: gateProviderRequest => {
+      return gateDispatcher([gateProviderRequest.path, gateProviderRequest])
     },
   })
 
-  req.domainFsDirectories = getDomainFsDirectories({
-    domainName: primarySession.domain,
-    homeDir: MOODLE_FS_FILE_SERVER_DOMAINS_HOME_DIR,
-  })
   // const domainInfo = await ap.primary.env.domain.info()
   // console.log({ domainInfo, dirs: req.dirs })
-  req.moodlePrimarySession = primarySession
-  req.moodlePrimary = ap.primary
   next()
 })
 
@@ -83,7 +62,7 @@ const router = express
   .Router()
   .get(/\/\.temp\/\.*/, async (req, res, next) => {
     req.url = req.url.replace(/^\/\.temp\//, '')
-    express.static(req.domainFsDirectories.temp, {})(req, res, next)
+    express.static(MOODLE_TEMP_DIR, {})(req, res, next)
   })
   .get(/\.*/, async (req, res) => {
     // const [module, ...path] = req.url.split('/')
@@ -98,28 +77,28 @@ const router = express
     // }
 
     // req.url = dirname(req.url)
-    const localFsStorageDirectory = getDefaultLocalFsStorageDirectory({ domainFsDirectories: req.domainFsDirectories })
 
-    express.static(localFsStorageDirectory, {})(req, res, () => {
+    // const localFsStorageDirectory = getDefaultLocalFsStorageDirectory({ domainFsDirectories: req.domainFsDirectories })
+    express.static('      `localFsStorageDirectory`    ', {})(req, res, () => {
       res.status(404).send('NOT FOUND')
     })
   })
   .post('/.temp/:type', async (req, res) => {
-    await mkdir(req.domainFsDirectories.temp, { recursive: true })
-
     if (req.params.type !== 'file' && req.params.type !== 'webImage') {
       res.status(404).end()
     }
-    const { userSession } = await req.moodlePrimary.userAccount.anyUser.getUserSession()
+    const { permissionsInfo } = await req.gateProxy.any.system.access.session.myOwn()
 
-    if (userSession.type !== 'authenticated') {
+    const limits = permissionsInfo.tree.authenticated?._.schemas.uploadSize
+    const fileSizeLimit = req.params.type === 'file' ? limits?.file.max : limits?.image.max
+
+    if (permissionsInfo.user.type !== 'auth' || !fileSizeLimit) {
       res.status(401).send('UNAUTHORIZED')
       return
     }
     const {
       configs: { uploadMaxSize, uploadedTempFileMaxRetentionSeconds: tempFileMaxRetentionSeconds },
-    } = await req.moodlePrimary.storage.session.moduleInfo()
-    const fileSizeLimit = req.params.type === 'file' ? uploadMaxSize.max : uploadMaxSize.webImage
+    } = await req.gateProxy.storage.session.moduleInfo()
     const multerOptions: multer.Options = {
       limits: {
         fileSize: fileSizeLimit,
@@ -146,14 +125,14 @@ const router = express
           }
           createUploadedTempFile({
             expiresSeconds: tempFileMaxRetentionSeconds,
-            domainFsDirectories: req.domainFsDirectories,
+            tempDir: req.domainFsDirectories.temp,
             readable: file.stream,
             uploadedFileMeta: {
               name: file.originalname,
               mimetype: file.mimetype,
               size: file.size,
               uploaded: {
-                primarySessionId: req.moodlePrimarySession.id,
+                requestInfo: req.requestInfo,
                 date: new Date().toISOString(),
                 original: {
                   name: file.originalname,
@@ -194,57 +173,35 @@ app.listen(PORT, () => {
 //
 //
 //
-// FIXME: all this stuff below taken and adapted from react-app server code
 // SHAREDLIB
 // need to ingest lib (cookies, access-session ... ) for all http primaries
 // check DEV-NOTES.md for more info
 const AUTH_COOKIE = 'moodle-auth'
 
-function getPrimarySession(req: express.Request) {
-  const { headers } = middlewareHeaders(req)
-  const xHost = headers.get('x-host')
+function digestRequest(req: express.Request) {
+  const { headers, requestURL } = middlewareHeaders(req)
+  // const xHost = headers.get('x-host')
+  const { success, data: xHref } = url_string_schema.safeParse(headers.get('x-href')) // ?? req.originalUrl ?? req.url)
+  assert(success, `invalid x-href in headers [${headers.get('x-href')}]`)
   // const xPort = headers.get('x-port')
-  const xProto = headers.get('x-proto') ?? 'http'
-  const xUrl = headers.get('x-url') ?? undefined
-  const xMode = headers.get('x-mode') ?? undefined
+  // const xProto = headers.get('x-proto') ?? 'http'
+  // const xUrl = headers.get('x-url') ?? undefined
+  // const xMode = headers.get('x-mode') ?? undefined
   const ua = userAgent({ headers: headers })
-  assert(xHost, 'x-host not found in headers')
-  const userSession: primarySession = {
-    id: generateUlid({ onDate: new Date().toISOString() }),
-    domain: xHost,
-    token: getAuthTokenCookie(req).sessionToken,
-    app: {
-      name: 'filestoreHttp',
-      version: '0.1',
-    },
-    protocol: {
-      type: 'http',
-      secure: xProto === 'https',
-      mode: xMode,
-      url: xUrl,
-      ua: {
-        name: ua.ua,
-        isBot: ua.isBot,
-      },
-    },
-    platforms: {
-      stored: {
-        type: 'nodeJs',
-        version: process.version,
-        //    env: process.env,
-      },
-      remote: {
-        type: 'browser',
-        version: ua.browser.version,
-        name: ua.browser.name,
-        cpu: ua.cpu,
-        device: ua.device,
-        engine: ua.engine,
-        os: ua.os,
+  // assert(xHost, 'x-host not found in headers')
+  const requestInfo: moo.gate.provider.requestInfo = {
+    claims: {
+      server: {
+        authSessionToken: getAuthTokenCookie(req).sessionToken,
+        requestId: `file-server.${generateUlid({ onDate: new Date().toISOString() })}`,
+        href: xHref,
+        ua: ua.ua,
       },
     },
   }
-  return userSession
+  req.requestInfo = requestInfo
+  req.requestURL = requestURL
+  return { requestInfo, headers, requestURL }
 }
 export function getAuthTokenCookie(req: express.Request) {
   const { success, data: token } = signed_token_schema.safeParse(req.cookies[AUTH_COOKIE])
@@ -260,20 +217,18 @@ export function middlewareHeaders(request: express.Request) {
   const headers = new Headers(filteredHeaders)
 
   const urlHost = headers.get('X-Forwarded-Host') || request.hostname
-  const urlPort = headers.get('X-Forwarded-Port') || `${PORT}`
+  // const urlPort = headers.get('X-Forwarded-Port') || `${PORT}`
   const urlPathname = request.path
   const urlProto = (headers.get('X-Forwarded-Proto') || request.protocol).toLowerCase()
-  const xUrl = request.url.toString()
+  // const xUrl = request.url.toString()
   const userAgent = headers.get('user-agent')
-const requestURL =   new URL(request.url, `${urlProto}://${urlHost}`);
+  const requestURL = new URL(request.url, `${urlProto}://${urlHost}`)
 
-  request.url.
-  // FIXME: find how to get 'mode' in expressjs
-  const xMode = null // request.mode
+  // const xMode = null // request.mode
 
-  const xSearch = Object.entries(request.query ?? {})
-    .map(([k, v]) => `${k}=${v}`)
-    .join('&')
+  // const xSearch = Object.entries(request.query ?? {})
+  //   .map(([k, v]) => `${k}=${v}`)
+  //   .join('&')
 
   //! NOTE:  consider this https://www.npmjs.com/package/next-extra ! (or maybe others)
   // or simply implement some utility functins for accessing these  custom data in server-components|actions
@@ -288,5 +243,5 @@ const requestURL =   new URL(request.url, `${urlProto}://${urlHost}`);
   headers.set('x-href', requestURL.href)
   userAgent && headers.set('x-user-agent', userAgent)
 
-  return { headers }
+  return { headers, requestURL }
 }

@@ -1,11 +1,11 @@
 /* eslint-disable */
 export default {
-  displayName: 'lib-domain-fs',
+  displayName: 'lib-temp-dir',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/lib/domain-fs',
+  coverageDirectory: '../../coverage/lib/temp-dir',
 }

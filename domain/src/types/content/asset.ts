@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { fileMeta } from '@moodle/lib-domain-fs'
+import { fileMeta } from '@moodle/lib-temp-dir'
 import { d_u, d_u__d, url_string } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { Error4xx } from '../../lib/access-error'

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import type { fileMeta } from '@moodle/lib-domain-fs'
+import type { fileMeta } from '@moodle/lib-temp-dir'
 import type { any_ } from '@moodle/lib-types'
 import type { Either } from 'fp-ts/Either'
 import type { Option } from 'fp-ts/Option'

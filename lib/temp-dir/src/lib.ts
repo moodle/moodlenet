@@ -2,14 +2,12 @@ import { decodeUlid, generateUlid } from '@moodle/lib-id-gen'
 import { isNotFalsy, ok_ko } from '@moodle/lib-types'
 import { createReadStream } from 'fs'
 import { readdir, readFile, stat, writeFile } from 'fs/promises'
-import { join, resolve } from 'path'
+import { join } from 'path'
 import { rimraf } from 'rimraf'
 import sanitize_filename from 'sanitize-filename'
 import sharp from 'sharp'
 import { finished, Readable } from 'stream'
-import { domainFsDirectories, fileMeta, tempFilePaths } from './types'
-
-export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
+import { fileMeta, tempFilePaths } from './types'
 
 // export function generateFileHashes(filePath: string): Promise<fileHashes> {
 //   return generateHashes(createReadStream(filePath))
@@ -27,20 +25,21 @@ export const MOODLE_DEFAULT_HOME_DIR = '.moodle.home'
 //   }
 // }
 
-export function getDomainFsDirectories({
-  domainName,
-  homeDir,
-}: {
-  homeDir: string
-  domainName: string
-}): domainFsDirectories {
-  const currentDomainDir = resolve(homeDir, sanitizeFilename(domainName))
-  const temp = join(currentDomainDir, '.temp')
-  return {
-    currentDomainDir,
-    temp,
-  }
-}
+// tempDir
+// export function gettempDir({
+//   domainName,
+//   homeDir,
+// }: {
+//   homeDir: string
+//   domainName: string
+// }): tempDir {
+//   const currentDomainDir = resolve(homeDir, sanitizeFilename(domainName))
+//   const temp = join(currentDomainDir, '.temp')
+//   return {
+//     currentDomainDir,
+//     temp,
+//   }
+// }
 
 export function sanitizeFilename(originalFilename: string) {
   const sanitized = sanitize_filename(originalFilename)
@@ -57,71 +56,35 @@ export function sanitizeFilename(originalFilename: string) {
   // const mDotExt = origExt ? `.${origExt}` : ''
 }
 
-export async function getTempFileReadable({
-  tempId,
-  domainFsDirectories,
-}: {
-  tempId: string
-  domainFsDirectories: domainFsDirectories
-}) {
-  const { file } = getTempFilePaths({ tempId, domainFsDirectories })
+export async function getTempFileReadable({ tempId, tempDir }: { tempId: string; tempDir: string }) {
+  const { file } = getTempFilePaths({ tempId, tempDir })
   const readable = createReadStream(file)
-  finished(readable, { error: true, readable: true }, () => deleteTempFile({ tempId, domainFsDirectories }))
+  finished(readable, { error: true, readable: true }, () => deleteTempFile({ tempId, tempDir }))
   return readable
 }
 
-export function getTempFilePaths({
-  tempId,
-  domainFsDirectories,
-}: {
-  tempId: string
-  domainFsDirectories: domainFsDirectories
-}): tempFilePaths {
-  const file = join(domainFsDirectories.temp, tempId)
+export function getTempFilePaths({ tempId, tempDir }: { tempId: string; tempDir: string }): tempFilePaths {
+  const file = join(tempDir, tempId)
   const meta = `${file}.meta.json`
   return { file, meta }
 }
 
-export async function deleteTempFile({
-  tempId,
-  domainFsDirectories,
-}: {
-  tempId: string
-  domainFsDirectories: domainFsDirectories
-}) {
-  const { file: temp_file_path } = getTempFilePaths({ tempId, domainFsDirectories })
+export async function deleteTempFile({ tempId, tempDir }: { tempId: string; tempDir: string }) {
+  const { file: temp_file_path } = getTempFilePaths({ tempId, tempDir })
   await rimraf(`${temp_file_path}*`, { maxRetries: 2 }).catch(() => null)
 }
 
-export async function createTempFileReferenceNames({
-  domainFsDirectories,
-  fileName,
-  expiresSeconds,
-}: {
-  domainFsDirectories: domainFsDirectories
-  fileName: string
-  expiresSeconds: number
-}) {
+export async function createTempFileReferenceNames({ tempDir, fileName, expiresSeconds }: { tempDir: string; fileName: string; expiresSeconds: number }) {
   const sanitizedFilename = sanitizeFilename(fileName)
   const ulid = generateUlid({ onDate: new Date().valueOf() + expiresSeconds * 1000 })
   const tempId = `${ulid}_${sanitizedFilename}`
-  const tempPaths = getTempFilePaths({ tempId, domainFsDirectories })
+  const tempPaths = getTempFilePaths({ tempId, tempDir })
   return { tempPaths, tempId, sanitizedFilename }
 }
 
-export async function createTempFile({
-  domainFsDirectories,
-  readable,
-  fileName,
-  expiresSeconds,
-}: {
-  domainFsDirectories: domainFsDirectories
-  readable: Readable
-  fileName: string
-  expiresSeconds: number
-}) {
+export async function createTempFile({ tempDir, readable, fileName, expiresSeconds }: { tempDir: string; readable: Readable; fileName: string; expiresSeconds: number }) {
   const { tempPaths, sanitizedFilename, tempId } = await createTempFileReferenceNames({
-    domainFsDirectories,
+    tempDir,
     expiresSeconds,
     fileName,
   })
@@ -130,12 +93,12 @@ export async function createTempFile({
 }
 
 export async function createUploadedTempFile({
-  domainFsDirectories,
+  tempDir,
   readable,
   uploadedFileMeta,
   expiresSeconds,
 }: {
-  domainFsDirectories: domainFsDirectories
+  tempDir: string
   readable: Readable
   uploadedFileMeta: fileMeta
   expiresSeconds: number
@@ -143,7 +106,7 @@ export async function createUploadedTempFile({
   const { tempId, tempPaths, sanitizedFilename } = await createTempFile({
     expiresSeconds,
     fileName: uploadedFileMeta.name,
-    domainFsDirectories,
+    tempDir,
     readable,
   })
   const fileMeta: fileMeta = {
@@ -156,14 +119,8 @@ export async function createUploadedTempFile({
   return { tempId, fileMeta }
 }
 
-export async function ensureTempWithMeta({
-  tempId,
-  domainFsDirectories,
-}: {
-  tempId: string
-  domainFsDirectories: domainFsDirectories
-}) {
-  const ensuredTempFile = await ensureTemp({ tempId, domainFsDirectories })
+export async function ensureTempWithMeta({ tempId, tempDir }: { tempId: string; tempDir: string }) {
+  const ensuredTempFile = await ensureTemp({ tempId, tempDir })
   if (!ensuredTempFile) {
     return false
   }
@@ -176,14 +133,8 @@ export async function ensureTempWithMeta({
   }
   return { ...ensuredTempFile, fileMeta }
 }
-export async function ensureTemp({
-  tempId,
-  domainFsDirectories,
-}: {
-  tempId: string
-  domainFsDirectories: domainFsDirectories
-}) {
-  const paths = getTempFilePaths({ tempId, domainFsDirectories })
+export async function ensureTemp({ tempId, tempDir }: { tempId: string; tempDir: string }) {
+  const paths = getTempFilePaths({ tempId, tempDir })
 
   const file = await stat(paths.file).catch(() => null)
   if (!file) {
@@ -195,19 +146,19 @@ export async function ensureTemp({
 export async function resizeTempImage({
   maxSizePixel,
   tempId,
-  domainFsDirectories,
+  tempDir,
 }: {
   tempId: string
   maxSizePixel: number
-  domainFsDirectories: domainFsDirectories
+  tempDir: string
 }): Promise<ok_ko<{ resizedTempId: string; resizedPaths: tempFilePaths }, { tempNotFound: unknown; invalidFile: unknown }>> {
-  const original_temp_file = await ensureTempWithMeta({ tempId, domainFsDirectories })
+  const original_temp_file = await ensureTempWithMeta({ tempId, tempDir })
   if (!original_temp_file) {
     return [false, { reason: 'tempNotFound' }]
   }
 
   const resizedTempId = `${tempId}_${maxSizePixel}`
-  const resizedpaths = getTempFilePaths({ tempId: resizedTempId, domainFsDirectories })
+  const resizedpaths = getTempFilePaths({ tempId: resizedTempId, tempDir })
   const resizedInfo = await sharp(original_temp_file.paths.file)
     .resize({
       width: maxSizePixel,
@@ -239,12 +190,11 @@ export async function resizeTempImage({
   return [true, { resizedTempId, resizedPaths: resizedpaths }]
 }
 
-export async function deleteStaleTemp({ domainFsDirectories }: { domainFsDirectories: domainFsDirectories }) {
-  const { temp } = domainFsDirectories
-  const temp_dir_content = await readdir(temp)
+export async function deleteStaleTemp({ tempDir }: { tempDir: string }) {
+  const temp_dir_content = await readdir(tempDir)
   const deletedFiles = await Promise.all(
     temp_dir_content.map(async temp_dir_content_name => {
-      const temp_dir_content_path = join(temp, temp_dir_content_name)
+      const temp_dir_content_path = join(tempDir, temp_dir_content_name)
       const now_millis = Date.now().valueOf()
       const m_ulid_expires_string = temp_dir_content_name.split('_')[0]
       const expires_date_millis = m_ulid_expires_string ? decodeUlid(m_ulid_expires_string) : null

@@ -7,9 +7,8 @@ import { Agent, fetch } from 'undici'
 
 const PROTOCOL_CONTENT_TYPE = 'text/plain; charset=utf-8'
 
-type transportObject<pl extends payload> = pl
-type dispatcher<pl extends payload> = (transportObject: transportObject<pl>) => Promise<Either<Error4xx, unknown>>
-export type payload = { path: path }
+type dispatcher<payload> = (msg: message<payload>) => Promise<Either<Error4xx, unknown>>
+export type message<payload> = [path: path, payload: payload]
 
 type reqHttpTarget = {
   host: string
@@ -19,14 +18,8 @@ type reqHttpTarget = {
 }
 
 // FIXME: get a Logger here
-export function getHttpBinderDispatcher<pl extends payload = payload>({
-  reqHttpTarget,
-  agentOpts,
-}: {
-  reqHttpTarget: string | reqHttpTarget
-  agentOpts?: Agent.Options
-}): dispatcher<pl> {
-  const dispatcher = new Agent({
+export function getHttpBinderDispatcher<payload>({ reqHttpTarget, agentOpts }: { reqHttpTarget: string | reqHttpTarget; agentOpts?: Agent.Options }): dispatcher<payload> {
+  const httpAgent = new Agent({
     pipelining: 2,
     keepAliveMaxTimeout: 600e3, //default
     keepAliveTimeout: 4e3, //default
@@ -34,7 +27,7 @@ export function getHttpBinderDispatcher<pl extends payload = payload>({
     ...agentOpts,
   })
 
-  return async function request({ path, ...payload }) {
+  return async function request([path, payload]) {
     const url =
       typeof reqHttpTarget === 'string'
         ? new URL([reqHttpTarget, ...path].join('/'))
@@ -44,7 +37,7 @@ export function getHttpBinderDispatcher<pl extends payload = payload>({
     const replyPromise = fetch(url, {
       method: 'POST',
       body,
-      dispatcher,
+      dispatcher: httpAgent,
       headers: { 'Content-Type': PROTOCOL_CONTENT_TYPE },
     })
       .then(async httpResponse => {
@@ -76,15 +69,15 @@ type srv_cfg = {
   port: number
   basePath: string
 }
-type httpBinderReceiverHandle<pl extends payload> = {
-  receiver: (_: { dispatcher: dispatcher<pl> }) => void
+type httpBinderReceiverHandle<payload> = {
+  receiver: (_: { dispatcher: dispatcher<payload> }) => void
   drain: () => Promise<void>
 }
 
 // FIXME: get a Logger here
-export async function getHttpBinderReceiver<pl extends payload>({ port, basePath }: srv_cfg): Promise<httpBinderReceiverHandle<pl>> {
+export async function getHttpBinderReceiver<payload>({ port, basePath }: srv_cfg): Promise<httpBinderReceiverHandle<payload>> {
   const pendingReplyPromises: Promise<unknown>[] = []
-  let binderDispatcher: dispatcher<pl> = async () => {
+  let receiverDispatcher: dispatcher<payload> = async () => {
     throw new Error4xx('Service Unavailable')
   }
   let draining = false
@@ -114,9 +107,8 @@ export async function getHttpBinderReceiver<pl extends payload>({ port, basePath
     res.setHeader('Content-Type', PROTOCOL_CONTENT_TYPE)
     const path = req.url.replace(/^\//, '').split('/')
     const payload = _parse(req.body)
-    const transportObject: transportObject<pl> = { ...payload, path }
 
-    const replyPromise = binderDispatcher(transportObject).then(
+    const replyPromise = receiverDispatcher([path, payload]).then(
       either_result => {
         if (isLeft(either_result)) {
           res.status(code4xx_2_http(either_result.left.code))
@@ -143,7 +135,7 @@ export async function getHttpBinderReceiver<pl extends payload>({ port, basePath
       console.log(`http receiver listening on port ${port}`)
       resolve()
     })
-  }).then<httpBinderReceiverHandle<pl>>(() => {
+  }).then<httpBinderReceiverHandle<payload>>(() => {
     return {
       async drain() {
         draining = true
@@ -152,7 +144,7 @@ export async function getHttpBinderReceiver<pl extends payload>({ port, basePath
         console.log('drained http receiver pending replies')
       },
       receiver(_) {
-        binderDispatcher = _.dispatcher
+        receiverDispatcher = _.dispatcher
       },
     }
   })

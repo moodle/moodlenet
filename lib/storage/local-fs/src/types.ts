@@ -1,5 +1,6 @@
-import { domainFsDirectories } from '@moodle/lib-domain-fs'
-
-export type localStorageFsDirectories = domainFsDirectories & {
+export type localStorageFsDirectories = {
+  tempDir: string
+  domainName: string
+  currentDomainDir: string
   storageDir: string
 }

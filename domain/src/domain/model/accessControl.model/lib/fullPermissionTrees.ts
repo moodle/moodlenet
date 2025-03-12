@@ -1,4 +1,4 @@
-export function getFullPermissionsConfigTree(schemas: Pick<moo.Models.statics.Schemas, 'org' | 'moodlenet'>) {
+export function getFullPermissionsConfigTree(schemas: Pick<moo.Models.statics.Schemas, 'org' | 'moodlenet' | 'userAccount'>) {
   // userAccount.schemas.configs.eduDraftsOverrides
   // education.schemas.configs.collection
   const config: moo.permissions.config.tree = {
@@ -52,8 +52,7 @@ export function getFullPermissionsConfigTree(schemas: Pick<moo.Models.statics.Sc
     authenticated: {
       _: {
         schemas: {
-          //FIXME: eduDraftsPublishOverrides should go in authenticated.moodlenet.contribute[moo.configs] scope
-          eduDraftsPublishOverrides: schemas.moodlenet.publishEduOverrides,
+          uploadSize: schemas.userAccount.uploadSize,
         },
       },
       edu: { curatePreferences: { categories: { edit: {}, read: {} } } },
@@ -72,6 +71,11 @@ export function getFullPermissionsConfigTree(schemas: Pick<moo.Models.statics.Sc
       myAccount: { manage: { deleteIt: { confirmDelete: {}, request: {} } }, security: { authentication: { changeMyPassword: {} } } },
       mySpace: {
         curateMyDrafts: {
+          _: {
+            schemas: {
+              eduDraftSchemaOverrides: schemas.moodlenet.publishEduOverrides,
+            },
+          },
           collection: { create: {}, read: {}, edit: {}, setBackground: {}, trash: {} },
           resource: { create: {}, read: {}, edit: {}, setBackground: {}, trash: {} },
         },

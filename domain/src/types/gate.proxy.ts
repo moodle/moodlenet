@@ -1,23 +1,17 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_, map, signed_token, url_string } from '@moodle/lib-types'
-import { Either } from 'fp-ts/Either'
-import { Error4xx } from '../lib/access-error'
+import { any_, map } from '@moodle/lib-types'
 
 declare global {
   namespace moo {
     namespace gate {
-      type provider<forPersonas extends map<moo.persona<any_>>> = {
-        [personaType_ in keyof forPersonas]: provider.persona<forPersonas[personaType_]>
+      // type clientClaims = { locale?: string; locales?: string[] }
+
+      type proxy<forPersonas extends map<moo.persona<any_>>> = {
+        [personaType_ in keyof forPersonas]: proxy.persona<forPersonas[personaType_]>
       }
-      namespace provider {
-        type dispatcher = (gateProviderRequest: request) => Promise<unknown>
-        type requestInfo = {
-          claims: {
-            server: { authSessionToken: signed_token | null; requestId: string; href: url_string; ua: string | null; meta?: unknown }
-          }
-        }
-        type request<endpoint_ extends persona.endpoint<any_> = persona.endpoint<any_>> = client.request<endpoint_> & { info: requestInfo }
+      namespace proxy {
+        type dispatcher = (gateProviderRequest: provider.request) => Promise<unknown>
 
         type persona<persona_ extends moo.persona<any_>> = {
           [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_> ? context<persona_[contextName]> : unknown
@@ -35,10 +29,9 @@ declare global {
           [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.persona.endpoint<any_> ? endpoint<useCase[endpointName]> : never
         }
 
-        type endpoint<useCaseEndpoint extends moo.persona.endpoint<any_> = moo.persona.endpoint<any_>> = (epGateCtx: {
-          configs: useCaseEndpoint[2]
-          permissionsInfo: permissions.user.info
-        }) => Either<Error4xx, endpointChecksHandle<useCaseEndpoint>>
+        type endpoint<useCaseEndpoint extends moo.persona.endpoint<any_> = moo.persona.endpoint<any_>> = (
+          form: persona.endpointFormType<useCaseEndpoint>,
+        ) => Promise<useCaseEndpoint[1]>
       }
     }
   }

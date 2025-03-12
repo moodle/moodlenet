@@ -1,5 +1,5 @@
 import { http_bind } from '@moodle/bindings-http'
-import { coreGate, isError4xx } from '@moodle/domain/lib'
+import { gateCore, isError4xx } from '@moodle/domain/lib'
 import { any_ } from '@moodle/lib-types'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
@@ -13,7 +13,7 @@ const MOODLE_HTTP_BINDER_RECEIVER_PORT = parseInt(process.env.MOODLE_HTTP_BINDER
 const MOODLE_HTTP_BINDER_RECEIVER_BASEURL = process.env.MOODLE_HTTP_BINDER_RECEIVER_BASEURL ?? '/'
 
 http_bind
-  .getHttpBinderReceiver<moo.gate.provider.request<any_>>({
+  .getHttpBinderReceiver<moo.gate.provider.request>({
     port: MOODLE_HTTP_BINDER_RECEIVER_PORT,
     basePath: MOODLE_HTTP_BINDER_RECEIVER_BASEURL,
   })
@@ -32,9 +32,9 @@ http_bind
     const configurator = defaultConfigurator({ master: MOODLE_MASTER_INSTANCE })
 
     httpGate.receiver({
-      dispatcher: async gateAccess => {
-        const coreGateDeps = await configurator.gate({ gateRequest: gateAccess })
-        return coreGate(coreGateDeps)
+      dispatcher: async ([, gateRequest]) => {
+        const coreGateDeps = await configurator.gate({ gateRequest })
+        return gateCore(coreGateDeps)
       },
     })
 
@@ -57,7 +57,6 @@ http_bind
     }
   })
 
-
 function _____CALL____TEST____(configurator: configuration) {
   configurator
     .gate({
@@ -67,7 +66,7 @@ function _____CALL____TEST____(configurator: configuration) {
         info: { claims: { server: { href: 'https://moodlenet.local/' as any_, authSessionToken: null, requestId: '11', ua: '313132' } } },
       },
     })
-    .then(_ => coreGate(_))
+    .then(_ => gateCore(_))
     .then(console.log, console.error)
     .then(() =>
       configurator.gate({
@@ -78,7 +77,7 @@ function _____CALL____TEST____(configurator: configuration) {
         },
       }),
     )
-    .then(_ => coreGate(_))
+    .then(_ => gateCore(_))
     .then(console.log, console.error)
 }
 

@@ -1,11 +1,11 @@
 import { appDeployments, loggerProvider } from '@moodle/domain'
 import * as domainCore from '@moodle/domain/core'
 import * as domainGate from '@moodle/domain/gate'
-import { coreGateDeps, deploymentInfoFromUrlString, Error4xx, executeModel, isError4xx, modelHandleProxy, postModelOps, preModelOps } from '@moodle/domain/lib'
+import { deploymentInfoFromUrlString, Error4xx, executeModel, gateCoreDeps, isError4xx, modelHandleProxy, postModelOps, preModelOps } from '@moodle/domain/lib'
 import type * as model from '@moodle/domain/model'
-import { getDomainFsDirectories, MOODLE_DEFAULT_HOME_DIR } from '@moodle/lib-domain-fs'
 import { generateAlphanumId, generateUlid } from '@moodle/lib-id-gen'
-import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
+import { getDefaultLocalFsStorageDirectory, localStorageFsDirectories } from '@moodle/lib-storage-local-fs'
+import { sanitizeFilename } from '@moodle/lib-temp-dir'
 import { any_, email_address_schema, map, url_string_schema } from '@moodle/lib-types'
 import { cryptoDefaultEnv, get_default_crypto_secondarys_factory, provideCryptoDefaultEnv } from '@moodle/sec-crypto-default'
 import { ArangoDbSecEnv, get_arango_persistence_factory, provideArangoDbSecEnv, provideArangoQueueServiceWorkers } from '@moodle/sec-db-arango'
@@ -13,10 +13,11 @@ import { upgradeArangoDB } from '@moodle/sec-db-arango/dbUpgrade'
 import { get_nodemailer_secondary_factory, NodemailerSecEnv, provideNodemailerSecEnv } from '@moodle/sec-email-nodemailer'
 import { get_default_resource_ingestion_secondary_factory, provideDefaultResourceIngestorSecEnv } from '@moodle/sec-resource-ingestion-default'
 import { fs_default_storage_factory, storageDefaultSecEnv } from '@moodle/sec-storage-local-fs'
+import assert from 'assert'
 import dotenv from 'dotenv'
 import { expand as dotenvExpand } from 'dotenv-expand'
 import { Either, isLeft, left, right } from 'fp-ts/Either'
-import { readFileSync } from 'fs'
+import { mkdirSync, readFileSync } from 'fs'
 import * as path from 'path'
 import { coerce, object } from 'zod'
 import { createQueueServices } from './queue-services'
@@ -31,9 +32,14 @@ type __ = model.jwtTokens.JwtTokensModel
 
 type configuratorResult = {
   loggerProvider: loggerProvider
-  modelEnvelopeDispatcher: moo.model.dispatcher<any_>
+  modelEnvelopeDispatcher: moo.model.dispatcher
   stopAndDrain: () => Promise<void>
 }
+
+assert(process.env.MOODLE_HOME_DIR, `MOODLE_HOME_DIR is not defined`)
+const MOODLE_HOME_DIR = path.resolve(process.cwd(), process.env.MOODLE_HOME_DIR)
+const MOODLE_TEMP_DIR = path.resolve(MOODLE_HOME_DIR, '.temp')
+mkdirSync(MOODLE_TEMP_DIR, { recursive: true })
 
 export const defaultConfigurator: configurator = ({ master }) => {
   const cache: map<Promise<configuratorResult>> = {}
@@ -48,22 +54,24 @@ export const defaultConfigurator: configurator = ({ master }) => {
     return Promise.allSettled(configResults.map(({ stopAndDrain }) => stopAndDrain()))
   }
 
-  async function gate({ gateRequest }: { gateRequest: moo.gate.provider.request<any_> }): Promise<coreGateDeps> {
+  async function gate({ gateRequest }: { gateRequest: moo.gate.provider.request }): Promise<gateCoreDeps> {
     // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
     const domainName = new URL(gateRequest.info.claims.server.href).hostname
     if (!cache[domainName]) {
       cache[domainName] = new Promise<configuratorResult>(resolveConfigurationPromise => {
         ;(async () => {
-          const MOODLE_HOME_DIR = path.resolve(process.cwd(), process.env.MOODLE_HOME_DIR ?? MOODLE_DEFAULT_HOME_DIR)
-          const domainFsDirectories = getDomainFsDirectories({
-            homeDir: MOODLE_HOME_DIR,
+          const currentDomainDir = path.resolve(MOODLE_HOME_DIR, sanitizeFilename(domainName))
+          const localStorageFsDirectories: localStorageFsDirectories = {
+            tempDir: MOODLE_TEMP_DIR,
+            storageDir: getDefaultLocalFsStorageDirectory({ currentDomainDir }),
+            currentDomainDir,
             domainName,
-          })
-          dotenvExpand(dotenv.config({ path: path.join(domainFsDirectories.currentDomainDir, '.env'), override: true }))
+          }
+          dotenvExpand(dotenv.config({ path: path.join(localStorageFsDirectories.currentDomainDir, '.env'), override: true }))
 
           // console.debug({ currentDomainDir: domainFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
 
-          const loggerConfigs: winstonLoggerConfigs = { consoleLevel: 'debug', file: { level: 'debug', path: path.join(domainFsDirectories.currentDomainDir, 'logs') } }
+          const loggerConfigs: winstonLoggerConfigs = { consoleLevel: 'debug', file: { level: 'debug', path: path.join(localStorageFsDirectories.currentDomainDir, 'logs') } }
           const { loggerProvider } = createWinstonDomainLoggerProvider({ loggerConfigs })
 
           const myLogger = loggerProvider({ for: 'infra', name: 'configurator', more: { domainName } })
@@ -83,8 +91,8 @@ export const defaultConfigurator: configurator = ({ master }) => {
           })
 
           console.info(`configuring domain [${domainName}] env:`, { MOODLE_HOME_DIR, ...env })
-          const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `private.key`), 'utf8')
-          const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(domainFsDirectories.currentDomainDir, `public.key`), 'utf8')
+          const MOODLE_CRYPTO_PRIVATE_KEY = readFileSync(path.join(localStorageFsDirectories.currentDomainDir, `private.key`), 'utf8')
+          const MOODLE_CRYPTO_PUBLIC_KEY = readFileSync(path.join(localStorageFsDirectories.currentDomainDir, `public.key`), 'utf8')
           const domain_process_env = process.env as any_
 
           const arango_db_env: ArangoDbSecEnv = provideArangoDbSecEnv({
@@ -103,14 +111,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
           // const sys_admin_info: sys_admin_info = {
           //   email: env.MOODLE_SYS_ADMIN_EMAIL,
           // }
-          const storageDir = getDefaultLocalFsStorageDirectory({ domainFsDirectories })
-          const file_system_storage_sec_env: storageDefaultSecEnv = {
-            localStorageFsDirectories: {
-              storageDir: storageDir,
-              currentDomainDir: domainFsDirectories.currentDomainDir,
-              temp: domainFsDirectories.temp,
-            },
-          }
+          const file_system_storage_sec_env: storageDefaultSecEnv = { localStorageFsDirectories }
 
           const _appDeployments: appDeployments = {
             moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
@@ -158,8 +159,8 @@ export const defaultConfigurator: configurator = ({ master }) => {
             await domainCore.versionControl
               .setup({
                 model: modelHandleProxy({
-                  origin: { from: false, gate: { kind: 'internal', name: 'domainCore.setup', more: { domainName } } },
-                  modelEnvelopeDispatcher,
+                  origin: { model: false, request: { kind: 'internal', name: 'domainCore.setup', more: { domainName } } },
+                  modelDispatcher: modelEnvelopeDispatcher,
                 }),
                 log: loggerProvider({ for: 'setup', name: 'domainCore.setup', more: { domainName } }),
               })
@@ -174,8 +175,8 @@ export const defaultConfigurator: configurator = ({ master }) => {
           await domainCore.versionControl
             .preflight({
               model: modelHandleProxy({
-                origin: { from: false, gate: { kind: 'internal', name: 'domainCore.preflight', more: { domainName } } },
-                modelEnvelopeDispatcher,
+                origin: { model: false, request: { kind: 'internal', name: 'domainCore.preflight', more: { domainName } } },
+                modelDispatcher: modelEnvelopeDispatcher,
               }),
               log: loggerProvider({ for: 'setup', name: 'domainCore.preflight', more: { domainName } }),
             })
@@ -297,8 +298,8 @@ export const defaultConfigurator: configurator = ({ master }) => {
     const configuration = await cache[domainName]
 
     const myModelHandle = modelHandleProxy({
-      origin: { from: false, gate: { kind: 'internal', name: 'configurator', more: { domainName } } },
-      modelEnvelopeDispatcher: configuration.modelEnvelopeDispatcher,
+      origin: { model: false, request: { kind: 'internal', name: 'configurator', more: { domainName } } },
+      modelDispatcher: configuration.modelEnvelopeDispatcher,
     })
 
     const coreId = generateUlid({ onDate: new Date() })
@@ -306,7 +307,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
     const { info: permissionsInfo } = await myModelHandle.accessControl.getTokenPermissionsInfo.query({ authSessionToken: gateRequest.info.claims.server.authSessionToken })
     // console.timeEnd(`getTokenPermissionsInfo`)
     // console.log(inspect(permissionsInfo, { depth: 100 }))
-    const coreGateDeps: coreGateDeps = {
+    const coreGateDeps: gateCoreDeps = {
       core: domainCore.persona.core,
       coreRequest: {
         gateRequest,
@@ -317,11 +318,10 @@ export const defaultConfigurator: configurator = ({ master }) => {
       gateProvider: domainGate.gateProvider,
       loggerProvider: configuration.loggerProvider,
       model: modelHandleProxy({
-        origin: { from: false, gate: { kind: 'core', id: coreId, gateRequest: { info: gateRequest.info, path: gateRequest.path } } },
-        modelEnvelopeDispatcher: configuration.modelEnvelopeDispatcher,
+        origin: { model: false, request: { kind: 'core', id: coreId, gateRequest: { info: gateRequest.info, path: gateRequest.path } } },
+        modelDispatcher: configuration.modelEnvelopeDispatcher,
       }),
     }
     return coreGateDeps
   }
 }
-

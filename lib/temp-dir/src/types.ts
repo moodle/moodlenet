@@ -2,7 +2,7 @@ import { date_time_string, mimetype, ok_ko, path } from '@moodle/lib-types'
 
 export type uploadedFileMeta = {
   date: date_time_string
-  primarySessionId: string
+  requestInfo: moo.gate.provider.requestInfo
   original?: {
     name: string
     size?: number
@@ -34,11 +34,6 @@ export type useTempFileResult = ok_ko<
     invalidFile: unknown
   }
 >
-
-export type domainFsDirectories = {
-  currentDomainDir: string
-  temp: string
-}
 
 export type tempFilePaths = {
   file: string

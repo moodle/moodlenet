@@ -28,7 +28,7 @@
       "@moodle/domain/core": ["domain/src/domain/core/index.ts"],
       "@moodle/domain/model": ["domain/src/domain/model/index.ts"],
       "@moodle/domain/core/setup": ["domain/src/domain/core/setup/index.ts"],
-      "@moodle/lib-domain-fs": ["lib/domain-fs/src/index.ts"],
+      "@moodle/lib-temp-dir": ["lib/temp-dir/src/index.ts"],
       "@moodle/lib-email-templates/org": ["lib/email-templates/src/moodle/index.ts"],
       "@moodle/lib-email-templates/user-account": ["lib/email-templates/src/moodle/user-account/index.ts"],
       "@moodle/lib-id-gen": ["lib/id-gen/src/index.ts"],

@@ -2,13 +2,7 @@ import { generateUlid } from '@moodle/lib-id-gen'
 import { any_, path, unsupportedProxyHandler } from '@moodle/lib-types'
 import { isLeft } from 'fp-ts/Either'
 
-export function modelHandleProxy({
-  modelEnvelopeDispatcher: modelAccessDispatcher,
-  origin,
-}: {
-  modelEnvelopeDispatcher: moo.model.dispatcher<any_>
-  origin: moo.model.envelope.origin
-}): moo.model.handle {
+export function modelHandleProxy({ modelDispatcher, origin }: { modelDispatcher: moo.model.dispatcher<any_>; origin: moo.model.envelope.origin }): moo.model.handle {
   const model = subCoreModelHandleProxy({
     path: [],
     apply: ({ fullPath, message }) => {
@@ -22,7 +16,7 @@ export function modelHandleProxy({
 
       const now = new Date().toISOString()
       const id = generateUlid({ onDate: now })
-      return modelAccessDispatcher({
+      return modelDispatcher({
         id,
         now: now,
         callTime: now,

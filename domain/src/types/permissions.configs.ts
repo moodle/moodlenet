@@ -25,7 +25,7 @@ declare global {
           [endpointName in string & keyof usecase_]: usecase_[endpointName] extends moo.persona.endpoint<any_> ? endpoint<persona.endpoint<usecase_[endpointName]>> : never
         }
 
-        type endpoint<endpoint_ extends moo.persona.endpoint<any_>> = endpoint_[2] extends undefined | void | never
+        type endpoint<endpoint_ extends moo.persona.endpoint<any_> = moo.persona.endpoint<any_>> = endpoint_[2] extends undefined | void | never
           ? Record<string, never>
           : {
               _: endpoint_[2]

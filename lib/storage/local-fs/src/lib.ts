@@ -1,23 +1,11 @@
-import {
-  createTempFileReferenceNames,
-  domainFsDirectories,
-  ensureTempWithMeta,
-  resizeTempImage,
-  useTempFileResult,
-} from '@moodle/lib-domain-fs'
+import { createTempFileReferenceNames, ensureTempWithMeta, resizeTempImage, useTempFileResult } from '@moodle/lib-temp-dir'
 import { ok_ko, path } from '@moodle/lib-types'
 import { mkdir, readdir, rename, stat, symlink } from 'fs/promises'
 import { join, normalize, sep as os_path_separator } from 'path'
 import { rimraf } from 'rimraf'
 import { localStorageFsDirectories } from './types'
 
-function absoluteDirPathOf({
-  path,
-  localStorageFsDirectories,
-}: {
-  path: path
-  localStorageFsDirectories: localStorageFsDirectories
-}) {
+function absoluteDirPathOf({ path, localStorageFsDirectories }: { path: path; localStorageFsDirectories: localStorageFsDirectories }) {
   const absolute_dir_path = [localStorageFsDirectories.storageDir, ...path].join(os_path_separator)
   return absolute_dir_path
 }
@@ -33,7 +21,7 @@ export async function createStoredAssetTempFileSymlink({
   localStorageFsDirectories: localStorageFsDirectories
 }): Promise<ok_ko<{ tempId: string }, { notFoundInStorage: unknown; error: { error: unknown } }>> {
   const { tempPaths, tempId } = await createTempFileReferenceNames({
-    domainFsDirectories: localStorageFsDirectories,
+    tempDir: localStorageFsDirectories.tempDir,
     expiresSeconds,
     fileName: storedAssetMeta.name,
   })
@@ -60,10 +48,11 @@ export async function createStoredAssetTempFileSymlink({
   return [true, { tempId }]
 }
 
-export function getDefaultLocalFsStorageDirectory({ domainFsDirectories }: { domainFsDirectories: domainFsDirectories }) {
-  const localFsStorageDirectory = join(domainFsDirectories.currentDomainDir, 'local-fs-storage')
+export function getDefaultLocalFsStorageDirectory({ currentDomainDir }: Pick<localStorageFsDirectories, 'currentDomainDir'>) {
+  const localFsStorageDirectory = join(currentDomainDir, 'local-fs-storage')
   return localFsStorageDirectory
 }
+
 export async function useTempFileAsWebImage({
   tempId,
   path,
@@ -78,7 +67,7 @@ export async function useTempFileAsWebImage({
   const [resizeDone, resizeResult] = await resizeTempImage({
     maxSizePixel,
     tempId,
-    domainFsDirectories: localStorageFsDirectories,
+    tempDir: localStorageFsDirectories.tempDir,
   })
   // console.log({ resizeDone, resizeResult })
   if (!resizeDone) {
@@ -115,11 +104,11 @@ export async function useTempFile({
   path: path
   localStorageFsDirectories: localStorageFsDirectories
 }): Promise<useTempFileResult> {
-  const ensuredTemp = await ensureTempWithMeta({ tempId, domainFsDirectories: localStorageFsDirectories })
+  const ensuredTemp = await ensureTempWithMeta({ tempId, tempDir: localStorageFsDirectories.tempDir })
   if (!ensuredTemp) {
     return [false, { reason: 'tempNotFound' }]
   }
-  const useInAbsoluteDirPath = absoluteDirPathOf({ path, localStorageFsDirectories: localStorageFsDirectories })
+  const useInAbsoluteDirPath = absoluteDirPathOf({ path, localStorageFsDirectories })
   await rimraf(useInAbsoluteDirPath, { maxRetries: 2 }).catch(() => null)
   await mkdir(useInAbsoluteDirPath, { recursive: true })
 
@@ -136,13 +125,7 @@ export async function useTempFile({
   return [true, { path, fileMeta }]
 }
 
-export async function deleteStorageFile({
-  path,
-  localStorageFsDirectories,
-}: {
-  path: path
-  localStorageFsDirectories: localStorageFsDirectories
-}): Promise<void> {
+export async function deleteStorageFile({ path, localStorageFsDirectories }: { path: path; localStorageFsDirectories: localStorageFsDirectories }): Promise<void> {
   const absoluteDirPath = absoluteDirPathOf({ path, localStorageFsDirectories: localStorageFsDirectories })
   //_and_clean_upper_empty_dirs
   //TODO: ensure this check is enough to avoid climbing up too much !

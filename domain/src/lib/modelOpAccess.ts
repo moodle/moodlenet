@@ -113,13 +113,13 @@ type modelOpExtractDeps = {
 type workerOpExtraction = ReturnType<typeof workerOpExtract>
 export function workerOpExtract({ worker, envelope, modelEnvelopeDispatcher, loggerProvider }: modelOpExtractDeps) {
   const model = modelHandleProxy({
-    modelEnvelopeDispatcher,
+    modelDispatcher: modelEnvelopeDispatcher,
     origin: {
-      from: {
+      model: {
         id: envelope.id,
         target: envelope.target,
       },
-      gate: envelope.origin.gate,
+      request: envelope.origin.request,
     },
   })
 

@@ -1,0 +1,9 @@
+{
+  "name": "lib-temp-dir",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/temp-dir/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project lib-temp-dir --web",
+  "targets": {}
+}

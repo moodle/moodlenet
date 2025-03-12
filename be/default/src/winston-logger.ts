@@ -107,10 +107,10 @@ target:
   path: ${target.path.join('.')}
   type: ${target.opType}
 origin:
-  gate: ${inspect(origin.gate, { colors: true })}
+  gate: ${inspect(origin.request, { colors: true })}
   from:
     ${
-      origin.from ? inspect(origin.from, { breakLength: 300, maxStringLength: 600, colors: true, depth: 8 }) : '~'
+      origin.model ? inspect(origin.model, { breakLength: 300, maxStringLength: 600, colors: true, depth: 8 }) : '~'
       /*from: ${
     origin.from
       ? `

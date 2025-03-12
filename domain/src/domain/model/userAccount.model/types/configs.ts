@@ -1,4 +1,4 @@
-import { time_duration_string } from '@moodle/lib-types'
+import { time_duration_string, valid } from '@moodle/lib-types'
 import { eduCollectionSchemaConfigsOverrides, eduResourceSchemaConfigsOverrides } from '../../education.model'
 
 export type eduDraftSchemaOverrides = {
@@ -7,6 +7,10 @@ export type eduDraftSchemaOverrides = {
 }
 export type userAccountSchemas = {
   eduDraftsOverrides: eduDraftSchemaOverrides
+  uploadSize: {
+    file: valid.i_posMax
+    image: valid.i_posMax
+  }
 }
 
 export type userAccountConfigs = {

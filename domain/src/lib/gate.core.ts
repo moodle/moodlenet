@@ -1,21 +1,21 @@
 import { any_, unsupportedProxyHandler } from '@moodle/lib-types'
 import { Either, filter, isLeft, left, map, right } from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
-import { Error4xx, isError4xx } from './access-error'
 import { loggerProvider } from '../types/log'
+import { Error4xx, isError4xx } from './access-error'
 
-type coreGate = () => Promise<Either<Error4xx, unknown>>
+type gateCore = () => Promise<Either<Error4xx, unknown>>
 
-export type coreGateDeps = {
+export type gateCoreDeps = {
   gateProvider: moo.gate.provider<any_> //moo.Personas>
   core: moo.core<any_> //moo.Personas>
   model: moo.model.handle
-  coreRequest: moo.core.request<any_>
+  coreRequest: moo.core.request
   loggerProvider: loggerProvider
 }
-export async function coreGate({ coreRequest, model, core, gateProvider, loggerProvider }: coreGateDeps) {
-  const gateProxy = coreGateProxy({ gateProvider, core, coreRequest, model, loggerProvider })
-  const gatedResult = await coreRequest.gateRequest.path.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy as coreGate)()
+export async function gateCore({ coreRequest, model, core, gateProvider, loggerProvider }: gateCoreDeps) {
+  const gateProxy = gateCoreProxy({ gateProvider, core, coreRequest, model, loggerProvider })
+  const gatedResult = await coreRequest.gateRequest.path.reduce((curr, prop) => (curr as any_)?.[prop], gateProxy as gateCore)()
   // if (isRight(gatedResult)) {
   //   const cleanCoreResult: Promise<Either<Error4xx, unknown>> = gatedResult.right
   //     .then(result => right(result))
@@ -30,11 +30,11 @@ export async function coreGate({ coreRequest, model, core, gateProvider, loggerP
   return gatedResult
 }
 
-type coreGateProxyDeps = {
+type gateCoreProxyDeps = {
   gateProvider: moo.gate.provider<any_> //moo.Personas>
   core: moo.core<any_> //moo.Personas>
   model: moo.model.handle
-  coreRequest: moo.core.request<any_>
+  coreRequest: moo.core.request
   loggerProvider: loggerProvider
 }
 
@@ -47,13 +47,13 @@ type gateStep = Either<
     path: string[]
   }
 >
-export function coreGateProxy({ model, coreRequest, gateProvider, core, loggerProvider }: coreGateProxyDeps) {
+function gateCoreProxy({ model, coreRequest, gateProvider, core, loggerProvider }: gateCoreProxyDeps) {
   type p_endpoint = moo.persona.endpoint<moo.persona.endpoint.def>
 
-  return subCoreGateProxy(right({ gateProvider, session: coreRequest.permissionsInfo.tree, core, path: [] })) as coreGate
+  return subGateCoreProxy(right({ gateProvider, session: coreRequest.permissionsInfo.tree, core, path: [] })) as gateCore
 
-  function subCoreGateProxy(gateStep: gateStep) {
-    return new Proxy((() => null as any_) as coreGate, {
+  function subGateCoreProxy(gateStep: gateStep) {
+    return new Proxy((() => null as any_) as gateCore, {
       ...unsupportedProxyHandler,
       get(_target, prop) {
         const next_gate_step = pipe(
@@ -66,14 +66,14 @@ export function coreGateProxy({ model, coreRequest, gateProvider, core, loggerPr
           })),
           filter(
             (_nextGateStep): _nextGateStep is { core: unknown; gateProvider: unknown; session: unknown; path: string[] } => typeof prop === 'string',
-            () => new Error4xx('Not Acceptable', `CoreGate: Invalid property ${String(prop)}`),
+            () => new Error4xx('Not Acceptable', `GateCore: Invalid property ${String(prop)}`),
           ),
           filter(
             nextGateStep => nextGateStep.path.length < 6,
             ({ path }) =>
               new Error4xx(
                 'Bad Request',
-                `CoreGate:
+                `GateCore:
   overflow gate path [${path.join('.')}]`,
               ),
           ),
@@ -89,7 +89,7 @@ export function coreGateProxy({ model, coreRequest, gateProvider, core, loggerPr
             ({ path }) =>
               new Error4xx(
                 'Not Found',
-                `CoreGateProxy:
+                `GateCoreProxy:
   unexistent gate path [${path.join('.')}]`,
               ),
           ),
@@ -105,7 +105,7 @@ export function coreGateProxy({ model, coreRequest, gateProvider, core, loggerPr
             ({ path }) =>
               new Error4xx(
                 'Not Implemented',
-                `CoreGate:
+                `GateCore:
   core does not implement path [${path.join('.')}]`,
               ),
           ),
@@ -121,7 +121,7 @@ export function coreGateProxy({ model, coreRequest, gateProvider, core, loggerPr
             ({ path }) => new Error4xx('Forbidden', `path [${path.join('.')}]`),
           ),
         )
-        return subCoreGateProxy(next_gate_step)
+        return subGateCoreProxy(next_gate_step)
       },
       async apply() {
         if (isLeft(gateStep)) {
@@ -132,7 +132,7 @@ export function coreGateProxy({ model, coreRequest, gateProvider, core, loggerPr
           return left(
             new Error4xx(
               'Bad Request',
-              `CoreGate Apply:
+              `GateCore Apply:
   gate path [${gateStep.right.path.join('.')}]`,
             ),
           )
@@ -142,7 +142,7 @@ export function coreGateProxy({ model, coreRequest, gateProvider, core, loggerPr
           return left(
             new Error4xx(
               'Expectation Failed',
-              `CoreGate Apply:
+              `GateCore Apply:
   gateProvider:[${gateStep.right.gateProvider}] & core:[${gateStep.right.core}] are not functions
   path [${gateStep.right.path.join('.')}]`,
             ),
@@ -176,7 +176,7 @@ export function coreGateProxy({ model, coreRequest, gateProvider, core, loggerPr
           )
         }
 
-        const safeFormCoreRequest: moo.core.request<any_> = {
+        const safeFormCoreRequest: moo.core.request = {
           ...coreRequest,
           gateRequest: {
             ...coreRequest.gateRequest,

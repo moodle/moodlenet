@@ -1,5 +1,4 @@
-import { coreGateDeps } from '@moodle/domain/lib'
-import { any_ } from '@moodle/lib-types'
+import { gateCoreDeps } from '@moodle/domain/lib'
 
 // export type modelConfiguration = {
 //   gate: Pick<coreGateDeps, 'modelHandle' | 'loggerProvider'>
@@ -20,5 +19,5 @@ export type configurator = (_: { master: boolean }) => configuration
 
 export type configuration = {
   drain: () => Promise<unknown>
-  gate: (_: { gateRequest: moo.gate.provider.request<any_> }) => Promise<coreGateDeps>
+  gate: (_: { gateRequest: moo.gate.provider.request }) => Promise<gateCoreDeps>
 }

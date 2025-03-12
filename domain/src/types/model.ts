@@ -9,7 +9,7 @@ declare global {
   namespace moo {
     type model<modelDef> = modelDef
     namespace model {
-      type dispatcher<opdef extends op.def> = (envelope: envelope<opdef>) => Promise<Either<Error4xx, opdef[2]>>
+      type dispatcher<opdef extends op.def = op.def> = (envelope: envelope<opdef>) => Promise<Either<Error4xx, opdef[2]>>
 
       type handle = op_ref<Models>
 
@@ -35,7 +35,7 @@ declare global {
 
         type origin = {
           //<op extends type.opDef> = {
-          gate: d_u<
+          request: d_u<
             {
               internal: { name: string; more?: unknown }
               core: { id: string; gateRequest: Pick<gate.provider.request<persona.endpoint<any_>>, 'path' | 'info'> }
@@ -43,7 +43,7 @@ declare global {
             'kind'
           >
 
-          from: false | { id: string; target: target } //<op>
+          model: false | { id: string; target: target } //<op>
         }
       }
 

@@ -2,33 +2,33 @@ import { any_, unsupportedProxyHandler } from '@moodle/lib-types'
 import { isLeft } from 'fp-ts/Either'
 import { Error4xx } from './access-error'
 
-export function clientGateProxy({
+export function gateClient({
   permissionsInfo,
   gateProvider: baseGateProvider,
   formDispatcher,
 }: {
   permissionsInfo: moo.permissions.user.info
   gateProvider: moo.gate.provider<moo.Personas>
-  formDispatcher: moo.gate.client.dispatcher<any_>
+  formDispatcher: moo.gate.client.dispatcher
 }) {
-  return subClientGateProxy({
+  return subGateClient({
     gateProvider: baseGateProvider,
     session: permissionsInfo.tree,
     path: [],
     accessError: undefined,
   }) as unknown as moo.gate.client<moo.Personas>
-  function subClientGateProxy({ session, path, gateProvider, accessError }: { gateProvider: any_; session: any_; path: string[]; accessError: Error4xx | undefined }) {
+  function subGateClient({ session, path, gateProvider, accessError }: { gateProvider: any_; session: any_; path: string[]; accessError: Error4xx | undefined }) {
     return new Proxy(() => null, {
       ...unsupportedProxyHandler,
       get(_target, prop) {
         if (typeof prop !== 'string') {
-          throw new TypeError(`GateProxy: Invalid property ${String(prop)}`)
+          throw new TypeError(`gate.client: Invalid property ${String(prop)}`)
         }
         if (prop === '_') {
           return accessError
         }
         if (accessError) {
-          return subClientGateProxy({ gateProvider, session, path, accessError })
+          return subGateClient({ gateProvider, session, path, accessError })
         }
         const _next_gateProvider = gateProvider[prop]
         const _next_session = session[prop]
@@ -36,7 +36,7 @@ export function clientGateProxy({
 
         if (_next_path.length > 4) {
           throw new TypeError(
-            `GateProxy:
+            `gate.client:
   unexistent gate path [${_next_path.join(',')}]
             `,
           )
@@ -44,18 +44,18 @@ export function clientGateProxy({
 
         if (_next_path.length < 4) {
           if (!_next_session) {
-            return subClientGateProxy({ gateProvider, session, path, accessError: new Error4xx('Unauthorized') })
+            return subGateClient({ gateProvider, session, path, accessError: new Error4xx('Unauthorized') })
           }
 
           if (!_next_gateProvider) {
-            throw new TypeError(`GateProxy:
+            throw new TypeError(`gate.client:
                 in path [${_next_path.join(',')}]
   _next_sub_session is defined ${_next_session}
   but _next_sub_gateProvider is not ${_next_gateProvider}
               `)
           }
 
-          return subClientGateProxy({
+          return subGateClient({
             gateProvider: _next_gateProvider,
             session: _next_session,
             path: _next_path,
@@ -66,17 +66,16 @@ export function clientGateProxy({
         // _next_path.length === 4 : endpoint|provider level
 
         if ('function' !== typeof _next_gateProvider) {
-          throw new TypeError(`GateProxy:
+          throw new TypeError(`gate.client:
   _next_path.length === 4 [${_next_path.join(',')}]
   but _next_sub_gateProvider is not a function ${_next_gateProvider}
             `)
         }
-        type endpoint_type = moo.persona.endpoint<moo.persona.endpoint.def>
-        const endpointProvider: moo.gate.provider.endpoint<endpoint_type> = _next_gateProvider
-        const session_endpoint: moo.permissions.config.endpoint<endpoint_type> = _next_session
+        const endpointProvider: moo.gate.provider.endpoint = _next_gateProvider
+        const session_endpoint: moo.permissions.config.endpoint = _next_session
 
         const configs = (session_endpoint ?? {})._
-        const endpointAccess: moo.gate.client.endpointAccess<endpoint_type> = context => {
+        const endpointAccess: moo.gate.client.endpointAccess = context => {
           const e_gate_endpoint = endpointProvider({ configs, permissionsInfo })
           if (isLeft(e_gate_endpoint)) {
             return {
@@ -84,7 +83,7 @@ export function clientGateProxy({
               _: { error: e_gate_endpoint.left },
             }
           }
-          const endpointAccessHandle: moo.gate.client.endpointAccessHandle<endpoint_type> = {
+          const endpointAccessHandle: moo.gate.client.endpointAccessHandle = {
             _: undefined,
             allowed: true,
             zod: e_gate_endpoint.right.zod,
@@ -118,7 +117,7 @@ export function clientGateProxy({
   }
 }
 
-// const p = clientGateProxy({} as any)
+// const p = gate.clientClient({} as any)
 // const _ = p.anonymous.access.login.withMyEmailAndPassword.login()
 // !_.allowed || _.send({ email: '', password:redacted( '')} })
 

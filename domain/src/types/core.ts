@@ -34,7 +34,7 @@ declare global {
           : never
       }
 
-      type request<endpoint_ extends persona.endpoint<any_>> = {
+      type request<endpoint_ extends persona.endpoint<any_> = persona.endpoint<any_>> = {
         id: string
         now: date_time_string
         permissionsInfo: permissions.user.info

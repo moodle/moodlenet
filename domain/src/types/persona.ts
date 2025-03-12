@@ -27,7 +27,8 @@ declare global {
         type def = map<endpoint.def> & tags<tags.configs> & withContext
       }
 
-      type endpoint<endpointDef extends endpoint.def> = [epZodType<endpointDef[0]>, endpointDef[1], endpointDef[2], endpointDef[3]]
+      type endpointFormType<endpoint_ extends endpoint> = endpoint_[0] extends ZodType<any_, any_, infer inputType> ? inputType : never
+      type endpoint<endpointDef extends endpoint.def = endpoint.def> = [epZodType<endpointDef[0]>, endpointDef[1], endpointDef[2], endpointDef[3]]
       namespace endpoint {
         type def = [form: zodTypeOrProvider, outcome: any_, configs?: any_, context?: any_]
       }
