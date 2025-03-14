@@ -2,9 +2,9 @@ import { unsupportedProxyHandler } from '@moodle/lib-types'
 
 export function gateProxy({
   formDispatcher,
-  requestInfo,
+  requestClaims,
 }: {
-  requestInfo: moo.gate.provider.requestInfo
+  requestClaims: moo.gate.provider.requestClaims
   formDispatcher: moo.gate.provider.dispatcher
 }): moo.gate.proxy<moo.Personas> {
   return subGateProxy({
@@ -37,7 +37,7 @@ export function gateProxy({
         // _next_path.length === 4 : endpoint|provider level
 
         const gateProxyEndpointCall: moo.gate.proxy.endpoint = form => {
-          return formDispatcher({ form, path, info: requestInfo })
+          return formDispatcher({ form, path, info: { claims: requestClaims } })
         }
 
         return gateProxyEndpointCall

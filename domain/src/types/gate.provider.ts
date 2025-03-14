@@ -12,12 +12,14 @@ declare global {
       }
       namespace provider {
         type dispatcher = (gateProviderRequest: request) => Promise<unknown>
-        type requestInfo = {
-          claims: {
-            server: { authSessionToken: signed_token | null; requestId: string; href: url_string; ua: string | null; meta?: unknown }
+        type requestClaims = {
+          server: { authSessionToken: signed_token | null; requestId: string; href: url_string; ua: string | null; meta?: unknown }
+        }
+        type request<endpoint_ extends persona.endpoint<any_> = persona.endpoint<any_>> = client.request<endpoint_> & {
+          info: {
+            claims: requestClaims
           }
         }
-        type request<endpoint_ extends persona.endpoint<any_> = persona.endpoint<any_>> = client.request<endpoint_> & { info: requestInfo }
 
         type persona<persona_ extends moo.persona<any_>> = {
           [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_> ? context<persona_[contextName]> : unknown

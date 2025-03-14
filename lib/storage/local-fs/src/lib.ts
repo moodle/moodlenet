@@ -1,5 +1,6 @@
-import { createTempFileReferenceNames, ensureTempWithMeta, resizeTempImage, useTempFileResult } from '@moodle/lib-temp-dir'
-import { ok_ko, path } from '@moodle/lib-types'
+import { createTempFileReferenceNames, ensureTempWithUploadedMeta, resizeUploadedTempImage, useTempFileResult } from '@moodle/lib-temp-dir'
+import { d_u, path } from '@moodle/lib-types'
+import { Either, isLeft, left, right } from 'fp-ts/Either'
 import { mkdir, readdir, rename, stat, symlink } from 'fs/promises'
 import { join, normalize, sep as os_path_separator } from 'path'
 import { rimraf } from 'rimraf'
@@ -19,7 +20,7 @@ export async function createStoredAssetTempFileSymlink({
   // import { storedAssetMeta } from '@moodle/domain'
   storedAssetMeta: { path: path; name: string } // Pick<storedAssetMeta, 'path' | 'name'>
   localStorageFsDirectories: localStorageFsDirectories
-}): Promise<ok_ko<{ tempId: string }, { notFoundInStorage: unknown; error: { error: unknown } }>> {
+}): Promise<Either<d_u<{ notFoundInStorage: unknown; error: { error: unknown } }, 'reason'>, { tempId: string }>> {
   const { tempPaths, tempId } = await createTempFileReferenceNames({
     tempDir: localStorageFsDirectories.tempDir,
     expiresSeconds,
@@ -37,15 +38,15 @@ export async function createStoredAssetTempFileSymlink({
   // console.log({ tempPaths, tempId, storedAssetAbsolutePath })
   const targetStats = await stat(storedAssetAbsolutePath).catch(() => null)
   if (!targetStats) {
-    return [false, { reason: 'notFoundInStorage' }]
+    return left({ reason: 'notFoundInStorage' })
   }
   try {
     await symlink(storedAssetAbsolutePath, tempPaths.file)
   } catch (error) {
-    return [false, { reason: 'error', error }]
+    return left({ reason: 'error', error })
   }
 
-  return [true, { tempId }]
+  return right({ tempId })
 }
 
 export function getDefaultLocalFsStorageDirectory({ currentDomainDir }: Pick<localStorageFsDirectories, 'currentDomainDir'>) {
@@ -53,7 +54,7 @@ export function getDefaultLocalFsStorageDirectory({ currentDomainDir }: Pick<loc
   return localFsStorageDirectory
 }
 
-export async function useTempFileAsWebImage({
+export async function useUlpoadedTempFileAsWebImage({
   tempId,
   path,
   maxSizePixel,
@@ -64,17 +65,17 @@ export async function useTempFileAsWebImage({
   maxSizePixel: number
   localStorageFsDirectories: localStorageFsDirectories
 }): Promise<useTempFileResult> {
-  const [resizeDone, resizeResult] = await resizeTempImage({
+  const resizeResult = await resizeUploadedTempImage({
     maxSizePixel,
     tempId,
     tempDir: localStorageFsDirectories.tempDir,
   })
   // console.log({ resizeDone, resizeResult })
-  if (!resizeDone) {
-    return [false, resizeResult]
+  if (isLeft(resizeResult)) {
+    return resizeResult
   }
-  const use_temp_file_result = await useTempFile({
-    tempId: resizeResult.resizedTempId,
+  const use_temp_file_result = await useUploadedTempFile({
+    tempId: resizeResult.right.resizedTempId,
     path,
     localStorageFsDirectories,
   })
@@ -95,7 +96,7 @@ export async function useTempFileAsWebImage({
 //   )
 // }
 
-export async function useTempFile({
+export async function useUploadedTempFile({
   tempId,
   path,
   localStorageFsDirectories,
@@ -104,25 +105,25 @@ export async function useTempFile({
   path: path
   localStorageFsDirectories: localStorageFsDirectories
 }): Promise<useTempFileResult> {
-  const ensuredTemp = await ensureTempWithMeta({ tempId, tempDir: localStorageFsDirectories.tempDir })
+  const ensuredTemp = await ensureTempWithUploadedMeta({ tempId, tempDir: localStorageFsDirectories.tempDir })
   if (!ensuredTemp) {
-    return [false, { reason: 'tempNotFound' }]
+    return left({ reason: 'tempNotFound' })
   }
   const useInAbsoluteDirPath = absoluteDirPathOf({ path, localStorageFsDirectories })
   await rimraf(useInAbsoluteDirPath, { maxRetries: 2 }).catch(() => null)
   await mkdir(useInAbsoluteDirPath, { recursive: true })
 
-  const mvError = await rename(ensuredTemp.paths.file, join(useInAbsoluteDirPath, ensuredTemp.fileMeta.name)).then(
+  const mvError = await rename(ensuredTemp.paths.file, join(useInAbsoluteDirPath, ensuredTemp.uploadedFileMeta.name)).then(
     () => false as const,
     e => String(e),
   )
   // console.log.use_temp_file({ mvError, tempId, absolutePath })
 
   if (mvError) {
-    return [false, { reason: 'move', error: mvError }]
+    return left({ reason: 'move', error: mvError })
   }
-  const { fileMeta } = ensuredTemp
-  return [true, { path, fileMeta }]
+  const { uploadedFileMeta: fileMeta } = ensuredTemp
+  return right({ path, fileMeta })
 }
 
 export async function deleteStorageFile({ path, localStorageFsDirectories }: { path: path; localStorageFsDirectories: localStorageFsDirectories }): Promise<void> {

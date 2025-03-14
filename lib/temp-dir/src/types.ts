@@ -1,8 +1,8 @@
-import { date_time_string, mimetype, ok_ko, path } from '@moodle/lib-types'
+import { d_u, date_time_string, mimetype, path } from '@moodle/lib-types'
+import { Either } from 'fp-ts/Either'
 
-export type uploadedFileMeta = {
-  date: date_time_string
-  requestInfo: moo.gate.provider.requestInfo
+export type uploadedFileMeta = fileMeta & {
+  requestClaims: moo.gate.provider.requestClaims
   original?: {
     name: string
     size?: number
@@ -18,24 +18,30 @@ export type fileMeta = {
   name: string
   size: number
   mimetype: mimetype
-  uploaded: null | uploadedFileMeta
+  uploaded: null | {
+    date: date_time_string
+    by: moo.permissions.user.info.user
+  }
 }
 
-export type useTempFileResult = ok_ko<
+export type useTempFileResult = Either<
+  d_u<
+    {
+      tempNotFound: unknown
+      move: {
+        error: string
+      }
+      invalidFile: unknown
+    },
+    'reason'
+  >,
   {
     fileMeta: fileMeta
     path: path
-  },
-  {
-    tempNotFound: unknown
-    move: {
-      error: string
-    }
-    invalidFile: unknown
   }
 >
 
 export type tempFilePaths = {
   file: string
-  meta: string
+  uploadedFileMeta: string
 }

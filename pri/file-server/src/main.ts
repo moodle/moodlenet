@@ -1,31 +1,35 @@
 import { http_bind } from '@moodle/bindings-http'
 import { gateProxy } from '@moodle/domain/lib'
 import { generateUlid } from '@moodle/lib-id-gen'
-import { getDefaultLocalFsStorageDirectory } from '@moodle/lib-storage-local-fs'
-import { createUploadedTempFile, deleteTempFile, domainFsDirectories, fileMeta } from '@moodle/lib-temp-dir'
+import { createUploadedTempFile, deleteTempFile, fileMeta } from '@moodle/lib-temp-dir'
 import { isMimetype, signed_token_schema, url_string_schema } from '@moodle/lib-types'
 import assert from 'assert'
 import cookieParser from 'cookie-parser'
 import express from 'express'
-import { mkdir } from 'fs/promises'
 import multer from 'multer'
 import { userAgent } from 'next/server'
 import { Headers } from 'undici'
 const PORT = parseInt(process.env.MOODLE_FS_FILE_SERVER_PORT ?? '8010')
-const BASE_HTTP_PATH = process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? '/.files'
+const BASE_HTTP_PATH = /* process.env.MOODLE_FS_FILE_SERVER_BASE_HTTP_PATH ?? */ '/.files'
 
-const MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL = process.env.MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL
+const { data: MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL } = url_string_schema.safeParse(process.env.MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL) //?? 'http://localhost:8000'
+assert(MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL, 'MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS not valid int in env')
+
 const MOODLE_TEMP_DIR = process.env.MOODLE_TEMP_DIR
 assert(MOODLE_TEMP_DIR, 'MOODLE_TEMP_DIR not found in env')
 
-const reqHttpTarget = MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
+const MOODLE_BASE_ASSET_DIR = process.env.MOODLE_BASE_ASSET_DIR
+assert(MOODLE_BASE_ASSET_DIR, 'MOODLE_BASE_ASSET_DIR not found in env')
+
+const MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS = parseInt(process.env.MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS || 'N/A')
+assert(MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS, 'MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS not valid int in env')
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     export interface Request {
       gateProxy: moo.gate.proxy<moo.Personas>
-      requestInfo: moo.gate.provider.requestInfo
+      requestClaims: moo.gate.provider.requestClaims
       requestURL: URL
     }
     // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -41,13 +45,13 @@ declare global {
 }
 
 const app = express()
-const gateDispatcher = http_bind.getHttpBinderDispatcher<moo.gate.provider.request>({ reqHttpTarget })
+const gateDispatcher = http_bind.getHttpBinderDispatcher<moo.gate.provider.request>({ reqHttpTarget: MOODLE_FS_FILE_SERVER_PRIMARY_ENDPOINT_URL })
 
 console.log('moodle-fs-file-server started')
 app.use(cookieParser()).use(async (req, _res, next) => {
-  const { requestInfo, requestURL } = digestRequest(req)
+  const { requestClaims } = digestRequest(req)
   req.gateProxy = gateProxy({
-    requestInfo,
+    requestClaims,
     formDispatcher: gateProviderRequest => {
       return gateDispatcher([gateProviderRequest.path, gateProviderRequest])
     },
@@ -96,9 +100,7 @@ const router = express
       res.status(401).send('UNAUTHORIZED')
       return
     }
-    const {
-      configs: { uploadMaxSize, uploadedTempFileMaxRetentionSeconds: tempFileMaxRetentionSeconds },
-    } = await req.gateProxy.storage.session.moduleInfo()
+
     const multerOptions: multer.Options = {
       limits: {
         fileSize: fileSizeLimit,
@@ -124,23 +126,24 @@ const router = express
             return
           }
           createUploadedTempFile({
-            expiresSeconds: tempFileMaxRetentionSeconds,
-            tempDir: req.domainFsDirectories.temp,
+            expiresSeconds: MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS,
+            tempDir: MOODLE_TEMP_DIR,
             readable: file.stream,
             uploadedFileMeta: {
               name: file.originalname,
               mimetype: file.mimetype,
               size: file.size,
+              requestClaims: req.requestClaims,
+              original: {
+                name: file.originalname,
+              },
               uploaded: {
-                requestInfo: req.requestInfo,
                 date: new Date().toISOString(),
-                original: {
-                  name: file.originalname,
-                },
+                by: permissionsInfo.user,
               },
             },
           }).then(
-            ({ fileMeta, tempId }) => {
+            ({ uploadedFileMeta: fileMeta, tempId }) => {
               cb(null, { moodleUploaded: { fileMeta, tempId } })
             },
             e => {
@@ -148,15 +151,15 @@ const router = express
             },
           )
         },
-        _removeFile(req, file, callback) {
+        _removeFile(_req, file, callback) {
           deleteTempFile({
-            domainFsDirectories: req.domainFsDirectories,
+            tempDir: MOODLE_TEMP_DIR,
             tempId: file.moodleUploaded.tempId,
           }).then(() => callback(null), callback)
         },
       }, //get from req.moodlePrimary
     }
-    multer({ dest: req.domainFsDirectories.temp, ...multerOptions }).single('file')(req, res, async () => {
+    multer({ dest: MOODLE_TEMP_DIR, ...multerOptions }).single('file')(req, res, async () => {
       if (!req.file?.moodleUploaded) {
         return res.status(500).send('upload failed')
       }
@@ -189,19 +192,17 @@ function digestRequest(req: express.Request) {
   // const xMode = headers.get('x-mode') ?? undefined
   const ua = userAgent({ headers: headers })
   // assert(xHost, 'x-host not found in headers')
-  const requestInfo: moo.gate.provider.requestInfo = {
-    claims: {
-      server: {
-        authSessionToken: getAuthTokenCookie(req).sessionToken,
-        requestId: `file-server.${generateUlid({ onDate: new Date().toISOString() })}`,
-        href: xHref,
-        ua: ua.ua,
-      },
+  const requestClaims: moo.gate.provider.requestClaims = {
+    server: {
+      authSessionToken: getAuthTokenCookie(req).sessionToken,
+      requestId: `file-server.${generateUlid({ onDate: new Date().toISOString() })}`,
+      href: xHref,
+      ua: ua.ua,
     },
   }
-  req.requestInfo = requestInfo
+  req.requestClaims = requestClaims
   req.requestURL = requestURL
-  return { requestInfo, headers, requestURL }
+  return { requestClaims, headers, requestURL }
 }
 export function getAuthTokenCookie(req: express.Request) {
   const { success, data: token } = signed_token_schema.safeParse(req.cookies[AUTH_COOKIE])

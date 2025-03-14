@@ -1,5 +1,6 @@
 import { decodeUlid, generateUlid } from '@moodle/lib-id-gen'
-import { isNotFalsy, ok_ko } from '@moodle/lib-types'
+import { d_u, isNotFalsy } from '@moodle/lib-types'
+import { Either, left, right } from 'fp-ts/Either'
 import { createReadStream } from 'fs'
 import { readdir, readFile, stat, writeFile } from 'fs/promises'
 import { join } from 'path'
@@ -7,7 +8,7 @@ import { rimraf } from 'rimraf'
 import sanitize_filename from 'sanitize-filename'
 import sharp from 'sharp'
 import { finished, Readable } from 'stream'
-import { fileMeta, tempFilePaths } from './types'
+import { tempFilePaths, uploadedFileMeta } from './types'
 
 // export function generateFileHashes(filePath: string): Promise<fileHashes> {
 //   return generateHashes(createReadStream(filePath))
@@ -65,8 +66,8 @@ export async function getTempFileReadable({ tempId, tempDir }: { tempId: string;
 
 export function getTempFilePaths({ tempId, tempDir }: { tempId: string; tempDir: string }): tempFilePaths {
   const file = join(tempDir, tempId)
-  const meta = `${file}.meta.json`
-  return { file, meta }
+  const uploadedFileMeta = `${file}.uploadedFileMeta.json`
+  return { file, uploadedFileMeta }
 }
 
 export async function deleteTempFile({ tempId, tempDir }: { tempId: string; tempDir: string }) {
@@ -95,12 +96,14 @@ export async function createTempFile({ tempDir, readable, fileName, expiresSecon
 export async function createUploadedTempFile({
   tempDir,
   readable,
-  uploadedFileMeta,
+  // fileMeta,
   expiresSeconds,
+  uploadedFileMeta,
 }: {
   tempDir: string
   readable: Readable
-  uploadedFileMeta: fileMeta
+  // fileMeta: fileMeta
+  uploadedFileMeta: uploadedFileMeta
   expiresSeconds: number
 }) {
   const { tempId, tempPaths, sanitizedFilename } = await createTempFile({
@@ -109,29 +112,27 @@ export async function createUploadedTempFile({
     tempDir,
     readable,
   })
-  const fileMeta: fileMeta = {
+  const sanitzedUploadedFileMeta: uploadedFileMeta = {
+    ...uploadedFileMeta,
     name: sanitizedFilename,
-    mimetype: uploadedFileMeta.mimetype, // get it from actual writed file ?
-    size: uploadedFileMeta.size,
-    uploaded: uploadedFileMeta.uploaded,
   }
-  await writeFile(tempPaths.meta, JSON.stringify(fileMeta), 'utf8')
-  return { tempId, fileMeta }
+  await writeFile(tempPaths.uploadedFileMeta, JSON.stringify(sanitzedUploadedFileMeta), 'utf8')
+  return { tempId, uploadedFileMeta }
 }
 
-export async function ensureTempWithMeta({ tempId, tempDir }: { tempId: string; tempDir: string }) {
+export async function ensureTempWithUploadedMeta({ tempId, tempDir }: { tempId: string; tempDir: string }) {
   const ensuredTempFile = await ensureTemp({ tempId, tempDir })
   if (!ensuredTempFile) {
     return false
   }
 
-  const fileMeta: fileMeta = await readFile(ensuredTempFile.paths.meta, 'utf8')
+  const uploadedFileMeta: uploadedFileMeta = await readFile(ensuredTempFile.paths.uploadedFileMeta, 'utf8')
     .then(JSON.parse)
     .catch(() => null)
-  if (!fileMeta) {
+  if (!uploadedFileMeta) {
     return false
   }
-  return { ...ensuredTempFile, fileMeta }
+  return { ...ensuredTempFile, uploadedFileMeta }
 }
 export async function ensureTemp({ tempId, tempDir }: { tempId: string; tempDir: string }) {
   const paths = getTempFilePaths({ tempId, tempDir })
@@ -143,7 +144,7 @@ export async function ensureTemp({ tempId, tempDir }: { tempId: string; tempDir:
   return { paths, file }
 }
 
-export async function resizeTempImage({
+export async function resizeUploadedTempImage({
   maxSizePixel,
   tempId,
   tempDir,
@@ -151,10 +152,10 @@ export async function resizeTempImage({
   tempId: string
   maxSizePixel: number
   tempDir: string
-}): Promise<ok_ko<{ resizedTempId: string; resizedPaths: tempFilePaths }, { tempNotFound: unknown; invalidFile: unknown }>> {
-  const original_temp_file = await ensureTempWithMeta({ tempId, tempDir })
+}): Promise<Either<d_u<{ tempNotFound: unknown; invalidFile: unknown }, 'reason'>, { resizedTempId: string; resizedPaths: tempFilePaths }>> {
+  const original_temp_file = await ensureTempWithUploadedMeta({ tempId, tempDir })
   if (!original_temp_file) {
-    return [false, { reason: 'tempNotFound' }]
+    return left({ reason: 'tempNotFound' })
   }
 
   const resizedTempId = `${tempId}_${maxSizePixel}`
@@ -167,15 +168,12 @@ export async function resizeTempImage({
       withoutEnlargement: true,
     })
     .toFile(resizedpaths.file)
-  const resized_temp_fileMeta: fileMeta = {
-    ...original_temp_file.fileMeta,
+  const resized_temp_fileMeta: uploadedFileMeta = {
+    ...original_temp_file.uploadedFileMeta,
     size: resizedInfo.size,
-    uploaded: original_temp_file.fileMeta.uploaded && {
-      ...original_temp_file.fileMeta.uploaded,
-      original: {
-        size: original_temp_file.fileMeta.size,
-        name: original_temp_file.fileMeta.name,
-      },
+    original: {
+      size: original_temp_file.uploadedFileMeta.size,
+      name: original_temp_file.uploadedFileMeta.name,
     },
   }
   //   ...original_temp_file.meta,
@@ -185,9 +183,9 @@ export async function resizeTempImage({
   //     size: original_temp_file.meta.size,
   //   },
   // }
-  await writeFile(resizedpaths.meta, JSON.stringify(resized_temp_fileMeta), 'utf8')
+  await writeFile(resizedpaths.uploadedFileMeta, JSON.stringify(resized_temp_fileMeta), 'utf8')
 
-  return [true, { resizedTempId, resizedPaths: resizedpaths }]
+  return right({ resizedTempId, resizedPaths: resizedpaths })
 }
 
 export async function deleteStaleTemp({ tempDir }: { tempDir: string }) {
