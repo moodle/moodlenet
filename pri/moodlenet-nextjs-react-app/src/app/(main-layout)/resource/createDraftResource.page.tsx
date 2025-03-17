@@ -1,4 +1,4 @@
-import { getAuthenticatedUserSessionOrRedirectToLogin } from '../../../lib/server/session-access'
+import { getAuthenticatedUserSessionOrRedirectToLogin } from '../../../lib/server/session-client'
 import { ResourcePage, resourcePageProps } from '../../../ui/pages/Resource/Resource'
 import { getCreateNewEduResourceDraft } from './eduResource-actions.server'
 // import ResourceClient from './resource.client'

@@ -1,32 +1,25 @@
 import { unsupportedProxyHandler } from '@moodle/lib-types'
+import assert from 'assert'
 
-export function gateProxy({
-  formDispatcher,
-  requestClaims,
-}: {
-  requestClaims: moo.gate.provider.requestClaims
-  formDispatcher: moo.gate.provider.dispatcher
-}): moo.gate.proxy<moo.Personas> {
+export function gateClientProxy({ gateClientDispatcher }: { gateClientDispatcher: moo.gate.client.dispatcher }): moo.gate.client.proxy {
   return subGateProxy({
     path: [],
-  }) as unknown as moo.gate.proxy<moo.Personas>
+  }) as unknown as moo.gate.client.proxy
   function subGateProxy({ path }: { path: string[] }) {
     return new Proxy(() => null, {
       ...unsupportedProxyHandler,
       get(_target, prop) {
-        if (typeof prop !== 'string') {
-          throw new TypeError(`gate.proxy: Invalid property ${String(prop)}`)
-        }
+        assert(typeof prop === 'string', new TypeError(`gate.client.proxy: Invalid property ${String(prop)}`))
 
         const _next_path = [...path, prop]
-
-        if (_next_path.length > 4) {
-          throw new TypeError(
-            `gate.proxy:
+        assert(
+          _next_path.length <= 4,
+          new TypeError(
+            `gate.client.proxy:
   unexistent gate path [${_next_path.join(',')}]
             `,
-          )
-        }
+          ),
+        )
 
         if (_next_path.length < 4) {
           return subGateProxy({
@@ -36,8 +29,8 @@ export function gateProxy({
 
         // _next_path.length === 4 : endpoint|provider level
 
-        const gateProxyEndpointCall: moo.gate.proxy.endpoint = form => {
-          return formDispatcher({ form, path, info: { claims: requestClaims } })
+        const gateProxyEndpointCall: moo.gate.client.proxy.endpoint = form => {
+          return gateClientDispatcher({ form, path })
         }
 
         return gateProxyEndpointCall
@@ -46,5 +39,5 @@ export function gateProxy({
   }
 }
 
-// declare const _: moo.gate.proxy<moo.Personas>
+// declare const _: moo.gate.client.proxy<moo.Personas>
 // const x = _.anonymous.access.login.withMyEmailAndPassword.login({form:{password,email},info:{claims:{server:{}}},})

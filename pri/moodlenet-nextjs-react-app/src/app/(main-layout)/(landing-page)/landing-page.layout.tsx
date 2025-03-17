@@ -1,4 +1,4 @@
-import { access } from '../../../lib/server/session-access'
+import client from '../../../lib/server/session-client'
 import { layoutPropsWithChildren, slotsMap } from '../../../lib/server/utils/slots'
 import { profileCardProps } from '../../../ui/molecules/ProfileCard/ProfileCard'
 import { LandingPageHeader, landingPageHeaderProps } from './landing-page.client'
@@ -7,7 +7,7 @@ import { LandingProfileList } from './LandingProfileList/LandingProfileList'
 import { Leaderboard, leaderRowProps } from './Leaderboard/Leaderboard'
 
 export default async function LandingPageLayout(props: layoutPropsWithChildren) {
-  const { landingPageData, landingPageLayout, authenticatedUser, moodlenetSiteInfo } = await access.gate.moodlenetReactApp.props.landingLayout()
+  const { landingPageData, landingPageLayout, authenticatedUser, moodlenetSiteInfo } = await client.proxy.moodlenetReactApp.props.landingLayout()
 
   const { head, content } = slotsMap(props, landingPageLayout.slots)
 

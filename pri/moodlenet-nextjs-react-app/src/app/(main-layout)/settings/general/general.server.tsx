@@ -4,7 +4,7 @@ import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import { access } from '../../../../lib/server/session-access'
+import client from '../../../../lib/server/session-client'
 
 async function getChangePasswordSchema() {
   const { userAccount } = await getAllPrimarySchemas()
@@ -19,16 +19,14 @@ async function getChangePasswordSchema() {
   }) */
 }
 
-export const changePasswordAction = defaultSafeActionClient
-  .schema(getChangePasswordSchema)
-  .action(async ({ parsedInput: changePasswordForm }) => {
-    const [done, result] = await access.gate.userAccount.authenticated.changePassword(changePasswordForm)
-    if (!done) {
-      returnValidationErrors(getChangePasswordSchema, {
-        _errors:
-          result.reason === 'wrongCurrentPassword'
-            ? [t('Failed to change your password, ensure you entered your current password correctly')]
-            : /* result.reason==='unknown'? */ [t('Something went wrong while changing the password')],
-      })
-    }
-  })
+export const changePasswordAction = defaultSafeActionClient.schema(getChangePasswordSchema).action(async ({ parsedInput: changePasswordForm }) => {
+  const [done, result] = await client.proxy.userAccount.authenticated.changePassword(changePasswordForm)
+  if (!done) {
+    returnValidationErrors(getChangePasswordSchema, {
+      _errors:
+        result.reason === 'wrongCurrentPassword'
+          ? [t('Failed to change your password, ensure you entered your current password correctly')]
+          : /* result.reason==='unknown'? */ [t('Something went wrong while changing the password')],
+    })
+  }
+})

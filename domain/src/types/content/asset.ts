@@ -1,12 +1,20 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { fileMeta } from '@moodle/lib-temp-dir'
-import { d_u, d_u__d, url_string } from '@moodle/lib-types'
+import { d_u, d_u__d, date_time_string, mimetype, url_string } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { Error4xx } from '../../lib/access-error'
 
 declare global {
   namespace moo {
     namespace content {
+       type fileMeta = {
+         name: string
+         size: number
+         mimetype: mimetype
+         uploaded: null | {
+           date: date_time_string
+           by: moo.permissions.user.info.user
+         }
+       }
       type asset = d_u<
         {
           stored: { fileMeta: fileMeta }

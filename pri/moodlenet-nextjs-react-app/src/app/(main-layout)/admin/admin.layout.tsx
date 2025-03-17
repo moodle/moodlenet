@@ -1,4 +1,4 @@
-import { getAdminUserSessionOrRedirect } from '../../../lib/server/session-access'
+import { getAdminUserSessionOrRedirect } from '../../../lib/server/session-client'
 import { layoutPropsWithChildren } from '../../../lib/server/utils/slots'
 import { AdminMenu } from './admin.client'
 import './admin.style.scss'

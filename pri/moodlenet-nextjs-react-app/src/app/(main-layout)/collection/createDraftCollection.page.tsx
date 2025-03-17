@@ -1,4 +1,4 @@
-import { getAuthenticatedUserSessionOrRedirectToLogin } from '../../../lib/server/session-access'
+import { getAuthenticatedUserSessionOrRedirectToLogin } from '../../../lib/server/session-client'
 import { CollectionPage, collectionPageProps } from '../../../ui/pages/Collection/Collection'
 import { getSaveNewEduCollectionDraft } from './eduCollection-actions.server'
 // import CollectionClient from './collection.client'

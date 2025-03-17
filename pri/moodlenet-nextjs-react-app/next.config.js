@@ -29,6 +29,11 @@ const xport = async (phase, context) => {
   const config = await nextConfigFn(phase, context)
 
   const webpack = config.webpack
+
+  //CHECK: lost typings from nextConfigFn() 🤔
+  /**
+ * @type {(wpConfig:any,options:any)=>any}  
+ **/
   config.webpack = (wpConfig, options) => {
 
     // https://github.com/vercel/next.js/issues/28774#issuecomment-1208649870
@@ -40,8 +45,8 @@ const xport = async (phase, context) => {
     // )
     // ------------------
 
-    // @ts-expect-error Parameter 'name' implicitly has an 'any' type.ts(7006)
-    const fileLoaderRule = wpConfig.module.rules.find(rule => rule.test?.test?.('.svg'))
+    // @ ts-expect-error Parameter 'name' implicitly has an 'any' type.ts(7006)
+    //const fileLoaderRule = wpConfig.module.rules.find(rule => rule.test?.test?.('.svg'))
     // wpConfig.module.rules.push(
     //   // Reapply the existing rule, but only for svg imports ending in ?url
     //   {
@@ -96,6 +101,7 @@ const xport = async (phase, context) => {
 
     return webpack?.(wpConfig, options)
   }
+
   config.experimental = {
     externalDir: true,
     // instrumentationHook: true,

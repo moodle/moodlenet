@@ -16,13 +16,15 @@ import {
 } from './main-layout.client'
 
 import { filterOutFalsies, webSlug } from '@moodle/lib-types'
-import { access } from '../../lib/server/session-access'
 import { logout } from '../actions/access'
 import './main-layout.style.scss'
+import client from '../../lib/server/session-client'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
-  const { mainLayout, session } = await access.gate.moodlenetReactApp.props.mainLayout()
-  const authenticated = session.type === 'authenticated'
+  const my = await client.my
+
+  const authenticated = my.permissionsInfo.user.type === 'auth'
+  const myInfo = await my.gate.authenticated.mySpace.curateMyProfile.info.read().send?.()
 
   return (
     <div className={`main-layout`}>
@@ -33,54 +35,48 @@ export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   )
 
   async function prepareHeaderSlots(): Promise<MainHeaderProps['slots']> {
-    const { center, left, right } = mainLayout.header.slots
+    // const { center, left, right } = mainLayout.header.slots
     const defaultLefts = [<LayoutHeaderLogo key="logo" />]
     const defaultCenters = [<HeaderSearchbox key="searchbox" />]
-    const defaultRights = authenticated
-      ? await(async () => {
-          const avatarAsset = session.profileInfo.avatar
-          return [
-        <AvatarMenu
-          key="avatar-menu"
-          avatar={avatarAsset}
-          menuItems={filterOutFalsies([
-            authenticated && (
-              <ProfileLink
-                key="profile"
-                avatar={avatarAsset}
-                profileRoute={`/profile/${session.contributorId}/${webSlug(session.profileInfo.displayName)}`}
-              />
-            ),
-            authenticated && <BookmarksLink key="bookmarks" bookmarksRoute={'/'} />,
-            authenticated && <FollowingLink key="following" followingRoute={'/'} />,
-            authenticated && <UserSettingsLink key="user-settings" settingsRoute={'/settings'} />,
-            authenticated && session.hasAdminSectionAccess && (
-              <AdminSettingsLink key="admin-settings" adminRoute={'/admin'} />
-            ),
-            <Logout key="logout" logout={logout} />,
-          ])}
-        />,
-      ]
-        })()
-      : [
-          <LoginHeaderButton loginRoute="/login" key="login-header-button" />,
-          <SignupHeaderButton signupRoute="/signup" key="signup-header-button" />,
+    const defaultRights = myInfo
+      ? [
+          <AvatarMenu
+            key="avatar-menu"
+            avatar={myInfo.profile.avatar}
+            menuItems={filterOutFalsies([
+              authenticated && <ProfileLink key="profile" avatar={myInfo.profile.avatar} profileRoute={`/profile/${myInfo.userId}/${webSlug(myInfo.profile.info.displayName)}`} />,
+              authenticated && <BookmarksLink key="bookmarks" bookmarksRoute={'/'} />,
+              authenticated && <FollowingLink key="following" followingRoute={'/'} />,
+              authenticated && <UserSettingsLink key="user-settings" settingsRoute={'/settings'} />,
+              authenticated && my.permissionsInfo.tree.admin && <AdminSettingsLink key="admin-settings" adminRoute={'/admin'} />,
+              <Logout key="logout" logout={logout} />,
+            ])}
+          />,
         ]
+      : [<LoginHeaderButton loginRoute="/login" key="login-header-button" />, <SignupHeaderButton signupRoute="/signup" key="signup-header-button" />]
 
     return {
-      left: [...defaultLefts, ...left],
-      center: [...defaultCenters, ...center],
-      right: [...right, ...defaultRights],
+      left: [...defaultLefts /* , ...left */],
+      center: [...defaultCenters /* , ...center */],
+      right: [/* ...right,  */ ...defaultRights],
     }
   }
 
   function prepareFooterSlots(): FooterProps['slots'] {
-    const { center, left, right, bottom } = mainLayout.footer.slots
+    // const { center, left, right, bottom } = mainLayout.footer.slots
     return {
-      left: [...left],
-      center: [...center],
-      right: [...right],
-      bottom: [...bottom],
+      left: [
+        /* ...left */
+      ],
+      center: [
+        /* ...center */
+      ],
+      right: [
+        /* ...right */
+      ],
+      bottom: [
+        /* ...bottom */
+      ],
     }
   }
 }

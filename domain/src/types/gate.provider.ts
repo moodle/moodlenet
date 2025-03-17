@@ -7,7 +7,7 @@ import { Error4xx } from '../lib/access-error'
 declare global {
   namespace moo {
     namespace gate {
-      type provider<forPersonas extends map<moo.persona<any_>>> = {
+      type provider<forPersonas extends map<moo.persona<any_>> = Personas> = {
         [personaType_ in keyof forPersonas]: provider.persona<forPersonas[personaType_]>
       }
       namespace provider {

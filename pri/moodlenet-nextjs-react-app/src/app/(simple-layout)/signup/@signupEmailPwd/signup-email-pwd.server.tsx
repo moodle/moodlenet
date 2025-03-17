@@ -5,7 +5,7 @@ import { returnValidationErrors } from 'next-safe-action'
 import { redirect } from 'next/navigation'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import { access } from '../../../../lib/server/session-access'
+import client from '../../../../lib/server/session-client'
 import { srvSiteRoutes } from '../../../../lib/server/utils/site-urls.server'
 
 export async function getSignupSchema() {
@@ -14,12 +14,11 @@ export async function getSignupSchema() {
 }
 
 export const signupAction = defaultSafeActionClient
-  .schema(async (/* prevSchema https://next-safe-action.dev/docs/define-actions/extend-previous-schemas */) =>
-    getSignupSchema(),)
+  .schema(async (/* prevSchema https://next-safe-action.dev/docs/define-actions/extend-previous-schemas */) => getSignupSchema())
   .action(async ({ parsedInput: signupForm }) => {
     const redirectUrl = (await srvSiteRoutes()).full('/-/api/userAccount/basic-auth/verify-signup-email-token')
 
-    const [done, resp] = await access.gate.userAccount.unauthenticated.signupRequest({
+    const [done, resp] = await client.proxy.userAccount.unauthenticated.signupRequest({
       signupForm,
       redirectUrl,
     })
@@ -30,11 +29,7 @@ export const signupAction = defaultSafeActionClient
 
     returnValidationErrors(getSignupSchema, {
       email: {
-        _errors: [
-          resp.reason === 'userWithSameEmailExists'
-            ? t('User with this email already exists')
-            : t('Signup failed for unknown reasons'),
-        ],
+        _errors: [resp.reason === 'userWithSameEmailExists' ? t('User with this email already exists') : t('Signup failed for unknown reasons')],
       },
     })
   })

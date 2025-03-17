@@ -1,10 +1,10 @@
-import { access } from '../../../lib/server/session-access'
+import client from '../../../lib/server/session-client'
 import { layoutPropsWithChildren, slotItem, slotsMap } from '../../../lib/server/utils/slots'
 import { SignupCard, SignupCardProps } from './signup.client'
 import './signup.style.scss'
 
 export default async function SignupLayout(props: layoutPropsWithChildren) {
-  const { signupPageLayout } = await access.gate.moodlenetReactApp.props.signupPage()
+  const { signupPageLayout } = await client.proxy.moodlenetReactApp.props.signupPage()
 
   const signupCardProps: SignupCardProps = {
     signupMethods: signupPageLayout.methods.map(({ label, panel }) => ({

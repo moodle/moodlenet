@@ -31,8 +31,8 @@ export async function gateCore({ coreRequest, model, core, gateProvider, loggerP
 }
 
 type gateCoreProxyDeps = {
-  gateProvider: moo.gate.provider<any_> //moo.Personas>
-  core: moo.core<any_> //moo.Personas>
+  gateProvider: moo.gate.provider
+  core: moo.core
   model: moo.model.handle
   coreRequest: moo.core.request
   loggerProvider: loggerProvider

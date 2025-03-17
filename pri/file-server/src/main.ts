@@ -28,7 +28,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     export interface Request {
-      gateProxy: moo.gate.proxy<moo.Personas>
+      gateProxy: moo.gate.client.proxy<moo.Personas>
       requestClaims: moo.gate.provider.requestClaims
       requestURL: URL
     }

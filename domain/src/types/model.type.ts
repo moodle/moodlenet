@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import type { fileMeta } from '@moodle/lib-temp-dir'
 import type { any_ } from '@moodle/lib-types'
 import type { Either } from 'fp-ts/Either'
 import type { Option } from 'fp-ts/Option'
@@ -53,10 +52,10 @@ declare global {
         }
         namespace asset {
           type flags = 'optional' | 'static'
-          type fromTempFile = op<['async', { tempId: string }, Either<TEMP_FILE_NOT_FOUND, { fileMeta: fileMeta }>]>
+          type fromTempFile = op<['async', { tempId: string }, Either<TEMP_FILE_NOT_FOUND, { fileMeta: content.fileMeta }>]>
           type fromUrl = op<['async', { externalAsset: content.asset.external }, void]>
           type remove<flags = never> = op<['async', void, flags extends 'optional' ? Option<void> : void]>
-          type get<flags = never> = op<['query', void, flags extends 'optional' ? Option<{ fileMeta: fileMeta }> : { fileMeta: fileMeta }]>
+          type get<flags = never> = op<['query', void, flags extends 'optional' ? Option<{ fileMeta: content.fileMeta }> : { fileMeta: content.fileMeta }]>
         }
       }
     }

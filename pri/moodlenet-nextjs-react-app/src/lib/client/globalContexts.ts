@@ -1,62 +1,51 @@
-import { makeAllPrimarySchemas } from '@moodle/domain/lib'
-import { any_, nullish, unreachable_never, url_string } from '@moodle/lib-types'
-import { webappGlobals } from '@moodle/module/moodlenet-react-app'
-import { maybeAsset } from '@moodle/module/storage'
-import { getAssetUrl } from '@moodle/module/storage/lib'
-import { createContext, useContext, useMemo } from 'react'
-import { TextOptionProps } from '../../ui/atoms/Dropdown/Dropdown'
+import { any_ } from '@moodle/lib-types'
+import { createContext, useContext } from 'react'
+export type sessionContext = {
+  permissionsInfo: moo.permissions.user.info
+}
+
 // import { getUserLevelDetails } from './user-levels/lib'
 // import { linkedContent } from '@moodle/module/moodlenet'
-
-export type globalCtx = webappGlobals & {
-  enabledCategoriesOptions: {
-    bloomCognitives: TextOptionProps[]
-    iscedFields: TextOptionProps[]
-    iscedLevels: TextOptionProps[]
-    resourceTypes: TextOptionProps[]
-    languages: TextOptionProps[]
-    licenses: TextOptionProps[] //IconTextOptionProps[]
-  }
-}
+type webappGlobals = unknown
+export type globalCtx = webappGlobals & { session: sessionContext }
 export const GlobalCtx = createContext<globalCtx>(null as any_)
 
 export function useGlobalCtx() {
   return useContext(GlobalCtx)
 }
 
-export function useAllPrimarySchemas() {
-  const allSchemaConfigs = useGlobalCtx().allSchemaConfigs
-  const primarySchemas = makeAllPrimarySchemas(allSchemaConfigs)
-  return primarySchemas
-}
+// export function useAllPrimarySchemas() {
+//   const allSchemaConfigs = useGlobalCtx().allSchemaConfigs
+//   const primarySchemas = makeAllPrimarySchemas(allSchemaConfigs)
+//   return primarySchemas
+// }
 
-export function useAssetUrl(asset: maybeAsset | nullish, defaultTo?: url_string | maybeAsset) {
-  const filestoreHttp = useGlobalCtx().filestoreHttpDeployment
-  return useMemo(() => {
-    const defaultUrl = !defaultTo
-      ? undefined
-      : typeof defaultTo === 'string'
-        ? (defaultTo as url_string)
-        : defaultTo.type === 'none'
-          ? undefined
-          : defaultTo.type === 'external'
-            ? defaultTo.url
-            : defaultTo.type === 'stored'
-              ? getAssetUrl(defaultTo, filestoreHttp.href)
-              : unreachable_never(defaultTo)
-    const [url, credits] =
-      !asset || asset.type === 'none'
-        ? ([defaultUrl, undefined] as const)
-        : asset.type === 'stored'
-          ? ([getAssetUrl(asset, filestoreHttp.href), undefined] as const)
-          : asset.type === 'external'
-            ? ([asset.url, asset.credits] as const)
-            : unreachable_never(asset)
+// export function useAssetUrl(asset: maybeAsset | nullish, defaultTo?: url_string | maybeAsset) {
+//   const filestoreHttp = useGlobalCtx().filestoreHttpDeployment
+//   return useMemo(() => {
+//     const defaultUrl = !defaultTo
+//       ? undefined
+//       : typeof defaultTo === 'string'
+//         ? (defaultTo as url_string)
+//         : defaultTo.type === 'none'
+//           ? undefined
+//           : defaultTo.type === 'external'
+//             ? defaultTo.url
+//             : defaultTo.type === 'stored'
+//               ? getAssetUrl(defaultTo, filestoreHttp.href)
+//               : unreachable_never(defaultTo)
+//     const [url, credits] =
+//       !asset || asset.type === 'none'
+//         ? ([defaultUrl, undefined] as const)
+//         : asset.type === 'stored'
+//           ? ([getAssetUrl(asset, filestoreHttp.href), undefined] as const)
+//           : asset.type === 'external'
+//             ? ([asset.url, asset.credits] as const)
+//             : unreachable_never(asset)
 
-    return [url, credits] as const
-  }, [asset, filestoreHttp.href, defaultTo])
-}
-
+//     return [url, credits] as const
+//   }, [asset, filestoreHttp.href, defaultTo])
+// }
 
 // export function useMyLinkedContent<linkType extends keyof linkedContent, contentType extends keyof linkedContent[linkType]>(
 //   linkType: linkType,

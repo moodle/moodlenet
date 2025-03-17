@@ -3,19 +3,17 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 import { setAuthTokenCookie } from '../../../../../../lib/server/auth'
-import { access } from '../../../../../../lib/server/session-access'
+import client from '../../../../../../lib/server/session-client'
 
 export async function GET(req: NextRequest) {
-  const { success, data: selfDeletionConfirmationToken } = signed_token_schema.safeParse(
-    req.nextUrl.searchParams.get('token'),
-  )
+  const { success, data: selfDeletionConfirmationToken } = signed_token_schema.safeParse(req.nextUrl.searchParams.get('token'))
   if (!success) {
     return new Response(`invalid token`, {
       status: 400,
     })
   }
 
-  const [ok, response] = await access.gate.userAccount.signedTokenAccess.confirmSelfDeletionRequest({
+  const [ok, response] = await client.proxy.userAccount.signedTokenAccess.confirmSelfDeletionRequest({
     selfDeletionConfirmationToken,
     reason: '',
   })

@@ -10,10 +10,10 @@ import { redirect } from 'next/navigation'
 import { adoptAssetSafeAction, adoptValuedAssetSafeAction } from '../../../lib/common/actions'
 import { appRoutes } from '../../../lib/common/appRoutes'
 import { defaultSafeActionClient } from '../../../lib/server/safe-action'
-import { access } from '../../../lib/server/session-access'
+import client from '../../../lib/server/session-client'
 
 export async function getCreateNewEduResourceSchema() {
-  const { edu } = await fetchAllPrimarySchemas({ primary: access.gate })
+  const { edu } = await fetchAllPrimarySchemas({ primary: client.proxy })
   return edu.createNewEduResourceDraftSchema
 }
 
@@ -24,7 +24,7 @@ export async function getCreateNewEduResourceDraft(): Promise<adoptValuedAssetSa
   return async function adoptAssetService_newEduResourceFileDraft(newResourceAsset) {
     'use server'
     const createNewEduResourceDraftImageAction = defaultSafeActionClient.schema(getCreateNewEduResourceSchema).action(async ({ parsedInput: newEduResourceForm }) => {
-      const [done, result] = await access.gate.userProfile.authenticated.createEduResourceDraft(newEduResourceForm)
+      const [done, result] = await client.proxy.userProfile.authenticated.createEduResourceDraft(newEduResourceForm)
       if (!done) {
         return returnValidationErrors(getCreateNewEduResourceSchema, {
           _errors: [t(`something went wrong while creating resource`)],
@@ -38,7 +38,7 @@ export async function getCreateNewEduResourceDraft(): Promise<adoptValuedAssetSa
 }
 
 export async function getEduResourceMetaSchema() {
-  const { edu } = await fetchAllPrimarySchemas({ primary: access.gate })
+  const { edu } = await fetchAllPrimarySchemas({ primary: client.proxy })
   return edu.eduResourceMetaSchema
 }
 
@@ -49,7 +49,7 @@ export async function getEditEduResourceDraftForId({ eduResourceDraftId }: { edu
   return async function editEduResourceDraft(eduResourceMetaForm: eduResourceMetaForm) {
     'use server'
     const editEduResourceDraftAction = defaultSafeActionClient.schema(getEduResourceMetaSchema).action(async ({ parsedInput: eduResourceMetaForm }) => {
-      await access.gate.userProfile.authenticated.editEduResourceDraft({
+      await client.proxy.userProfile.authenticated.editEduResourceDraft({
         eduResourceMetaForm,
         eduResourceDraftId,
       })
@@ -60,7 +60,7 @@ export async function getEditEduResourceDraftForId({ eduResourceDraftId }: { edu
 }
 
 export async function getApplyEduResourceDraftImageSchema() {
-  const { edu } = await fetchAllPrimarySchemas({ primary: access.gate })
+  const { edu } = await fetchAllPrimarySchemas({ primary: client.proxy })
   return edu.applyImageSchema
 }
 
@@ -72,7 +72,7 @@ export async function getEduResourceDraftImageForId_AdoptAssetSafeAction({ eduRe
   return async function adoptAssetSafeAction_eduResourceDraftImage(resourceImageForm) {
     'use server'
     const applyEduResourceDraftImageAction = defaultSafeActionClient.schema(getApplyEduResourceDraftImageSchema).action(async ({ parsedInput: applyImageForm }) => {
-      await access.gate.userProfile.authenticated.applyEduResourceDraftImage({
+      await client.proxy.userProfile.authenticated.applyEduResourceDraftImage({
         eduResourceDraftId,
         applyImageForm,
       })

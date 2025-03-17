@@ -1,6 +1,6 @@
 import { appDeployments, loggerProvider } from '@moodle/domain'
 import * as domainCore from '@moodle/domain/core'
-import * as domainGate from '@moodle/domain/gate'
+import { gateProvider } from '@moodle/domain/persona'
 import { deploymentInfoFromUrlString, Error4xx, executeModel, gateCoreDeps, isError4xx, modelHandleProxy, postModelOps, preModelOps } from '@moodle/domain/lib'
 import type * as model from '@moodle/domain/model'
 import { generateAlphanumId, generateUlid } from '@moodle/lib-id-gen'
@@ -315,7 +315,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
         now: new Date().toISOString(),
         permissionsInfo,
       },
-      gateProvider: domainGate.gateProvider,
+      gateProvider,
       loggerProvider: configuration.loggerProvider,
       model: modelHandleProxy({
         origin: { model: false, request: { kind: 'core', id: coreId, gateRequest: { info: gateRequest.info, path: gateRequest.path } } },

@@ -1,4 +1,3 @@
-import { fileMeta } from '@moodle/lib-domain-fs'
 import { d_u, d_u__d, url_string, url_string_schema } from '@moodle/lib-types'
 import { literal, object, string, union } from 'zod'
 
@@ -10,7 +9,7 @@ export type maybeAsset = asset | noAsset
 type noAsset = d_u<{ none: unknown }, 'type'>
 export type asset = d_u<
   {
-    stored: fileMeta
+    stored: moo.content.fileMeta
     external: externalAsset
   },
   'type'

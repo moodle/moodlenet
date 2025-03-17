@@ -8,6 +8,7 @@ export * as anonymous from './anonymous.persona'
 export * as any__ from './any.persona'
 export * as authenticated from './authenticated.persona'
 export * as moderator from './moderator.persona'
+export * from './gate-provider'
 
 export type personaCore = moo.core<{
   admin: admin

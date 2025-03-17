@@ -35,10 +35,6 @@ declare global {
     }
   }
 }
-type zodTypeOrProvider = ZodType | ((...a: any_[]) => ZodType)
 
-type epZodType<T extends zodTypeOrProvider> = T extends ZodType
-  ? T
-  : T extends (...a: any_[]) => ZodType
-    ? ReturnType<T>
-    : never
+type zodTypeOrProvider<z extends ZodType = ZodType> = z | ((...a: any_[]) => z)
+type epZodType<zp> = zp extends zodTypeOrProvider<infer z> ? z : never

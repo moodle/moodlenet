@@ -1,4 +1,4 @@
-import { getAuthenticatedUserSessionOrRedirectToLogin } from '../../../lib/server/session-access'
+import { getAuthenticatedUserSessionOrRedirectToLogin } from '../../../lib/server/session-client'
 import { layoutPropsWithChildren } from '../../../lib/server/utils/slots'
 import { SettingsMenu } from './settings.client'
 import './settings.style.scss'

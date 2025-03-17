@@ -10,10 +10,10 @@ import { redirect, RedirectType } from 'next/navigation'
 import { adoptAssetSafeAction } from '../../../lib/common/actions'
 import { appRoutes } from '../../../lib/common/appRoutes'
 import { defaultSafeActionClient } from '../../../lib/server/safe-action'
-import { access } from '../../../lib/server/session-access'
+import client from '../../../lib/server/session-client'
 
 export async function getEduCollectionMetaSchema() {
-  const { edu } = await fetchAllPrimarySchemas({ primary: access.gate })
+  const { edu } = await fetchAllPrimarySchemas({ primary: client.proxy })
   return edu.eduCollectionMetaSchema
 }
 
@@ -24,7 +24,7 @@ export async function getSaveNewEduCollectionDraft() {
   return async function saveNewEduCollectionDraft(eduCollectionMetaForm: eduCollectionMetaForm) {
     'use server'
     const saveNewEduCollectionDraft = defaultSafeActionClient.schema(getEduCollectionMetaSchema).action(async ({ parsedInput: eduCollectionMetaForm }) => {
-      const [done, result] = await access.gate.userProfile.authenticated.createEduCollectionDraft({
+      const [done, result] = await client.proxy.userProfile.authenticated.createEduCollectionDraft({
         eduCollectionMetaForm,
       })
       if (!done) {
@@ -47,7 +47,7 @@ export async function getEditEduCollectionDraftForId({ eduCollectionDraftId }: {
     'use server'
     const editEduCollectionDraftAction = defaultSafeActionClient.schema(getEduCollectionMetaSchema).action(async ({ parsedInput: eduCollectionMetaForm }) => {
       'use server'
-      await access.gate.userProfile.authenticated.editEduCollectionDraft({
+      await client.proxy.userProfile.authenticated.editEduCollectionDraft({
         eduCollectionMetaForm,
         eduCollectionDraftId,
       })
@@ -59,7 +59,7 @@ export async function getEditEduCollectionDraftForId({ eduCollectionDraftId }: {
 }
 
 export async function getApplyEduCollectionDraftImageSchema() {
-  const { edu } = await fetchAllPrimarySchemas({ primary: access.gate })
+  const { edu } = await fetchAllPrimarySchemas({ primary: client.proxy })
   return edu.applyImageSchema
 }
 
@@ -73,15 +73,13 @@ export async function getEduCollectionDraftImageForId_AdoptAssetSafeAction({
 }): Promise<adoptAssetSafeAction> {
   return async function adoptAssetSafeAction_eduCollectionDraftImage(adoptAssetForm) {
     'use server'
-    const applyEduCollectionDraftImageAction = defaultSafeActionClient
-      .schema(getApplyEduCollectionDraftImageSchema)
-      .action(async ({ parsedInput: applyImageForm }) => {
-        await access.gate.userProfile.authenticated.applyEduCollectionDraftImage({
-          eduCollectionDraftId,
-          applyImageForm,
-        })
-        revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
+    const applyEduCollectionDraftImageAction = defaultSafeActionClient.schema(getApplyEduCollectionDraftImageSchema).action(async ({ parsedInput: applyImageForm }) => {
+      await client.proxy.userProfile.authenticated.applyEduCollectionDraftImage({
+        eduCollectionDraftId,
+        applyImageForm,
       })
+      revalidatePath(appRoutes(`/collection/${eduCollectionDraftId}`))
+    })
     return applyEduCollectionDraftImageAction({ resourceImageForm: adoptAssetForm })
   }
 }

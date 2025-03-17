@@ -3,11 +3,11 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { getAuthTokenCookie, setAuthTokenCookie } from '../../lib/server/auth'
-import { access } from '../../lib/server/session-access'
+import client from '../../lib/server/session-client'
 
 export async function logout() {
   const { sessionToken } = await getAuthTokenCookie()
-  sessionToken && access.gate.userAccount.authenticated.invalidateSession()
+  sessionToken && client.proxy.userAccount.authenticated.invalidateSession()
   await setAuthTokenCookie(null)
   revalidatePath('/', 'layout')
   redirect('/')

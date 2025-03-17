@@ -6,7 +6,7 @@ import { logger } from './log'
 
 declare global {
   namespace moo {
-    type core<forPersonas extends map<moo.persona<any_>>> = {
+    type core<forPersonas extends map<moo.persona<any_>> = Personas> = {
       [personaType_ in keyof forPersonas]: core.persona<forPersonas[personaType_]>
     }
     namespace core {

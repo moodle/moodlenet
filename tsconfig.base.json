@@ -24,7 +24,7 @@
       "@moodle/bindings-http": ["bindings/http/src/index.ts"],
       "@moodle/domain": ["domain/src/index.ts"],
       "@moodle/domain/lib": ["domain/src/lib/index.ts"],
-      "@moodle/domain/gate": ["domain/src/domain/gate/index.ts"],
+      "@moodle/domain/persona": ["domain/src/domain/persona/index.ts"],
       "@moodle/domain/core": ["domain/src/domain/core/index.ts"],
       "@moodle/domain/model": ["domain/src/domain/model/index.ts"],
       "@moodle/domain/core/setup": ["domain/src/domain/core/setup/index.ts"],

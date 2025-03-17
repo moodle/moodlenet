@@ -3,6 +3,7 @@
 import { any_, map, path } from '@moodle/lib-types'
 import { ZodType } from 'zod'
 import { Error4xx } from '../lib/access-error'
+import { Either } from 'fp-ts/Either'
 
 declare global {
   namespace moo {
@@ -24,16 +25,16 @@ declare global {
         zod: endpointZod<useCaseEndpoint>
       } & gateContextChecks<useCaseEndpoint>
 
-      type contextCheck<useCaseEndpoint extends moo.persona.endpoint<any_>> = (_: { context: useCaseEndpoint[3] }) => Error4xx | undefined
+      type contextCheck<useCaseEndpoint extends moo.persona.endpoint<any_>> = (_: { context: useCaseEndpoint[3] }) => Either<Error4xx, unknown>
 
       type preflight<useCaseEndpoint extends moo.persona.endpoint<any_>> = (_: {
         context: useCaseEndpoint[3]
         form: persona.endpointFormType<useCaseEndpoint>
-      }) => Error4xx | undefined
+      }) => Either<Error4xx, unknown>
 
       type endpointZod<useCaseEndpoint extends moo.persona.endpoint<any_>> = useCaseEndpoint[0]
 
-      type client<forPersonas extends map<moo.persona<any_>>> = {
+      type client<forPersonas extends map<moo.persona<any_>> = Personas> = {
         [personaType_ in keyof forPersonas]: client.persona<forPersonas[personaType_]>
       }
       namespace client {

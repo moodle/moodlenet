@@ -9,7 +9,7 @@ import QueryString from 'qs'
 import { appRoutes } from '../../../../lib/common/appRoutes'
 import { setAuthTokenCookie } from '../../../../lib/server/auth'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import { access } from '../../../../lib/server/session-access'
+import client from '../../../../lib/server/session-client'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 
 export async function getLoginSchema() {
@@ -24,7 +24,7 @@ export const loginAction = defaultSafeActionClient.schema(getLoginSchema).action
 
   const redirectUrl = redirectPathAfterLogin || appRoutes('/')
 
-  const [loginSuccess, loginResponse] = await access.gate.userAccount.unauthenticated.login({
+  const [loginSuccess, loginResponse] = await client.proxy.userAccount.unauthenticated.login({
     loginForm,
   })
   if (!loginSuccess) {

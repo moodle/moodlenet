@@ -6,10 +6,10 @@ import { revalidatePath } from 'next/cache'
 import { adoptValuedAssetSafeAction } from '../../../../../lib/common/actions'
 import { appRoutes } from '../../../../../lib/common/appRoutes'
 import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
-import { access } from '../../../../../lib/server/session-access'
+import client from '../../../../../lib/server/session-client'
 import { updateMyProfileInfoSafeAction } from '../../../../../ui/pages/Profile/ProfilePage'
 export async function getUseProfileImageSchema() {
-  const schemas = await fetchAllPrimarySchemas({ primary: access.gate })
+  const schemas = await fetchAllPrimarySchemas({ primary: client.proxy })
   return schemas.userProfile.useProfileImageSchema
 }
 
@@ -19,7 +19,7 @@ export async function getApplyMyProfileImageSafeAction({ type, userProfileId }: 
   return async function adoptAssetForm_myProfileImage(adoptAssetForm) {
     'use server'
     const applyMyProfileImageAction = defaultSafeActionClient.schema(getUseProfileImageSchema).action(async ({ parsedInput: { type, adoptAssetForm } }) => {
-      await access.gate.userProfile.authenticated.useTempImageAsProfileImage({
+      await client.proxy.userProfile.authenticated.useTempImageAsProfileImage({
         useProfileImageForm: { type, adoptAssetForm },
       })
 
@@ -30,7 +30,7 @@ export async function getApplyMyProfileImageSafeAction({ type, userProfileId }: 
 }
 
 export async function getEditProfileInfoSchema() {
-  const allSchemas = await fetchAllPrimarySchemas({ primary: access.gate })
+  const allSchemas = await fetchAllPrimarySchemas({ primary: client.proxy })
   return allSchemas.userProfile.editProfileInfoMetaSchema
 }
 
@@ -41,7 +41,7 @@ export async function getUpdateMyProfileInfoMetaSafeAction({ userProfileId }: { 
   return async function updateMyProfileInfoMeta(profileInfoMeta) {
     'use server'
     const updateMyProfileInfoMetaAction = defaultSafeActionClient.schema(getEditProfileInfoSchema).action(async ({ parsedInput: profileInfoMeta }) => {
-      await access.gate.userProfile.authenticated.editProfileInfoMeta({
+      await client.proxy.userProfile.authenticated.editProfileInfoMeta({
         profileInfoMeta,
       })
       revalidatePath(appRoutes(`/profile/${userProfileId}/`))

@@ -1,6 +1,6 @@
 export * from './access-error'
 export * from './access-error-status'
-export * from './gate.proxy'
+export * from './gate.client.proxy'
 export * from './gate.client'
 export * from './constants'
 export * from './content'

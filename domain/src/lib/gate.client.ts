@@ -5,19 +5,19 @@ import { Error4xx } from './access-error'
 export function gateClient({
   permissionsInfo,
   gateProvider: baseGateProvider,
-  formDispatcher,
+  gateClientDispatcher,
 }: {
   permissionsInfo: moo.permissions.user.info
-  gateProvider: moo.gate.provider<moo.Personas>
-  formDispatcher: moo.gate.client.dispatcher
+  gateProvider: moo.gate.provider
+  gateClientDispatcher: moo.gate.client.dispatcher
 }) {
   return subGateClient({
     gateProvider: baseGateProvider,
-    session: permissionsInfo.tree,
+    permissionBranch: permissionsInfo,
     path: [],
     accessError: undefined,
-  }) as unknown as moo.gate.client<moo.Personas>
-  function subGateClient({ session, path, gateProvider, accessError }: { gateProvider: any_; session: any_; path: string[]; accessError: Error4xx | undefined }) {
+  }) as unknown as moo.gate.client
+  function subGateClient({ permissionBranch, path, gateProvider, accessError }: { gateProvider: any_; permissionBranch: any_; path: string[]; accessError: Error4xx | undefined }) {
     return new Proxy(() => null, {
       ...unsupportedProxyHandler,
       get(_target, prop) {
@@ -28,10 +28,10 @@ export function gateClient({
           return accessError
         }
         if (accessError) {
-          return subGateClient({ gateProvider, session, path, accessError })
+          return subGateClient({ gateProvider, permissionBranch, path, accessError })
         }
         const _next_gateProvider = gateProvider[prop]
-        const _next_session = session[prop]
+        const _next_permissionBranch = permissionBranch[prop]
         const _next_path = [...path, prop]
 
         if (_next_path.length > 4) {
@@ -43,21 +43,21 @@ export function gateClient({
         }
 
         if (_next_path.length < 4) {
-          if (!_next_session) {
-            return subGateClient({ gateProvider, session, path, accessError: new Error4xx('Unauthorized') })
+          if (!_next_permissionBranch) {
+            return subGateClient({ gateProvider, permissionBranch, path, accessError: new Error4xx('Unauthorized') })
           }
 
           if (!_next_gateProvider) {
             throw new TypeError(`gate.client:
                 in path [${_next_path.join(',')}]
-  _next_sub_session is defined ${_next_session}
-  but _next_sub_gateProvider is not ${_next_gateProvider}
+  _next_permissionBranch is defined ${_next_permissionBranch}
+  but _next_gateProvider is not ${_next_gateProvider}
               `)
           }
 
           return subGateClient({
             gateProvider: _next_gateProvider,
-            session: _next_session,
+            permissionBranch: _next_permissionBranch,
             path: _next_path,
             accessError,
           })
@@ -72,7 +72,7 @@ export function gateClient({
             `)
         }
         const endpointProvider: moo.gate.provider.endpoint = _next_gateProvider
-        const session_endpoint: moo.permissions.config.endpoint = _next_session
+        const session_endpoint: moo.permissions.config.endpoint = _next_permissionBranch
 
         const configs = (session_endpoint ?? {})._
         const endpointAccess: moo.gate.client.endpointAccess = context => {
@@ -95,16 +95,16 @@ export function gateClient({
                 throw new Error4xx('Bad Request', { message: error.message, zod: error.format() })
               }
               if (e_gate_endpoint.right.context) {
-                const contextCheckResult = e_gate_endpoint.right.context.check({ context })
-                if (contextCheckResult) {
-                  throw contextCheckResult
+                const e_contextCheckResult = e_gate_endpoint.right.context.check({ context })
+                if (isLeft(e_contextCheckResult)) {
+                  throw e_contextCheckResult.left
                 }
-                const preflightResult = e_gate_endpoint.right.context.preflight({ context, form })
-                if (preflightResult) {
-                  throw preflightResult
+                const e_preflightResult = e_gate_endpoint.right.context.preflight({ context, form })
+                if (isLeft(e_preflightResult)) {
+                  throw e_preflightResult.left
                 }
               }
-              return formDispatcher({ path: _next_path, form })
+              return gateClientDispatcher({ path: _next_path, form })
             },
           }
           return endpointAccessHandle
