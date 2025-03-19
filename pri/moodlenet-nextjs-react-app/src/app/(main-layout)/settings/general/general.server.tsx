@@ -4,7 +4,7 @@ import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import client from '../../../../lib/server/session-client'
+import session from '../../../../lib/server/session-client'
 
 async function getChangePasswordSchema() {
   const { userAccount } = await getAllPrimarySchemas()

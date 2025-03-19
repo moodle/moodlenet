@@ -19,5 +19,5 @@ export type configurator = (_: { master: boolean }) => configuration
 
 export type configuration = {
   drain: () => Promise<unknown>
-  gate: (_: { gateRequest: moo.gate.provider.request }) => Promise<gateCoreDeps>
+  gate: (_: { gateRequest: moo.def.gate.provider.request }) => Promise<gateCoreDeps>
 }

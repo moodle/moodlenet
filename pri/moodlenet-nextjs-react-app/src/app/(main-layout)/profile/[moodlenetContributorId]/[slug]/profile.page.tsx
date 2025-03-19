@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { appRoutes } from '../../../../../lib/common/appRoutes'
 import { pageProps, paramRequired } from '../../../../../lib/server/page-props'
-import client from '../../../../../lib/server/session-client'
+import session from '../../../../../lib/server/session-client'
 import { Fallback } from '../../../../../ui/pages/Fallback/Fallback'
 import ProfilePageClient, { profilePageProps } from '../../../../../ui/pages/Profile/ProfilePage'
 import { getApplyMyProfileImageSafeAction, getUpdateMyProfileInfoMetaSafeAction } from './profile.server'

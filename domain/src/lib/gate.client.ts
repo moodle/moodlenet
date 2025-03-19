@@ -3,21 +3,21 @@ import { isLeft } from 'fp-ts/Either'
 import { Error4xx } from './access-error'
 
 export function gateClient({
-  permissionsInfo,
+  policiesInfo,
   gateProvider: baseGateProvider,
   gateClientDispatcher,
 }: {
-  permissionsInfo: moo.permissions.user.info
-  gateProvider: moo.gate.provider
-  gateClientDispatcher: moo.gate.client.dispatcher
+  policiesInfo: moo.def.policies.user.info
+  gateProvider: moo.def.gate.provider
+  gateClientDispatcher: moo.def.gate.client.dispatcher
 }) {
   return subGateClient({
     gateProvider: baseGateProvider,
-    permissionBranch: permissionsInfo,
+    policyBranch: policiesInfo,
     path: [],
     accessError: undefined,
-  }) as unknown as moo.gate.client
-  function subGateClient({ permissionBranch, path, gateProvider, accessError }: { gateProvider: any_; permissionBranch: any_; path: string[]; accessError: Error4xx | undefined }) {
+  }) as unknown as moo.def.gate.client
+  function subGateClient({ policyBranch, path, gateProvider, accessError }: { gateProvider: any_; policyBranch: any_; path: string[]; accessError: Error4xx | undefined }) {
     return new Proxy(() => null, {
       ...unsupportedProxyHandler,
       get(_target, prop) {
@@ -28,10 +28,10 @@ export function gateClient({
           return accessError
         }
         if (accessError) {
-          return subGateClient({ gateProvider, permissionBranch, path, accessError })
+          return subGateClient({ gateProvider, policyBranch, path, accessError })
         }
         const _next_gateProvider = gateProvider[prop]
-        const _next_permissionBranch = permissionBranch[prop]
+        const _next_policyBranch = policyBranch[prop]
         const _next_path = [...path, prop]
 
         if (_next_path.length > 4) {
@@ -43,21 +43,21 @@ export function gateClient({
         }
 
         if (_next_path.length < 4) {
-          if (!_next_permissionBranch) {
-            return subGateClient({ gateProvider, permissionBranch, path, accessError: new Error4xx('Unauthorized') })
+          if (!_next_policyBranch) {
+            return subGateClient({ gateProvider, policyBranch, path, accessError: new Error4xx('Unauthorized') })
           }
 
           if (!_next_gateProvider) {
             throw new TypeError(`gate.client:
                 in path [${_next_path.join(',')}]
-  _next_permissionBranch is defined ${_next_permissionBranch}
+  _next_policyBranch is defined ${_next_policyBranch}
   but _next_gateProvider is not ${_next_gateProvider}
               `)
           }
 
           return subGateClient({
             gateProvider: _next_gateProvider,
-            permissionBranch: _next_permissionBranch,
+            policyBranch: _next_policyBranch,
             path: _next_path,
             accessError,
           })
@@ -71,19 +71,19 @@ export function gateClient({
   but _next_sub_gateProvider is not a function ${_next_gateProvider}
             `)
         }
-        const endpointProvider: moo.gate.provider.endpoint = _next_gateProvider
-        const session_endpoint: moo.permissions.config.endpoint = _next_permissionBranch
+        const endpointProvider: moo.def.gate.provider.endpoint = _next_gateProvider
+        const session_endpoint: moo.def.policies.config.endpoint = _next_policyBranch
 
         const configs = (session_endpoint ?? {})._
-        const endpointAccess: moo.gate.client.endpointAccess = context => {
-          const e_gate_endpoint = endpointProvider({ configs, permissionsInfo })
+        const endpointAccess: moo.def.gate.client.endpointAccess = context => {
+          const e_gate_endpoint = endpointProvider({ configs, policiesInfo })
           if (isLeft(e_gate_endpoint)) {
             return {
               allowed: false,
               _: { error: e_gate_endpoint.left },
             }
           }
-          const endpointAccessHandle: moo.gate.client.endpointAccessHandle = {
+          const endpointAccessHandle: moo.def.gate.client.endpointAccessHandle = {
             _: undefined,
             allowed: true,
             zod: e_gate_endpoint.right.zod,

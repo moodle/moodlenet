@@ -16,7 +16,7 @@ declare global {
     }
   }
 }
-export type education = moo.model<educationModel>
+export type education = moo.def.model<educationModel>
 
 type abilityFilter = {
   // defaults 'enabled'
@@ -25,10 +25,10 @@ type abilityFilter = {
 }
 export type educationModel = {
   categories: {
-    iscedFields: Pick<moo.model.op.set<catRecord<iscedField>, abilityFilter>, 'create' | 'find'>
-    iscedLevels: Pick<moo.model.op.set<catRecord<iscedLevel>, abilityFilter>, 'create' | 'find'>
-    resourceTypes: Pick<moo.model.op.set<catRecord<resourceType>, abilityFilter>, 'create' | 'find'>
-    bloomCognitives: Pick<moo.model.op.set<catRecord<bloomCognitive>, abilityFilter>, 'create' | 'find'>
+    iscedFields: Pick<moo.def.model.op.set<catRecord<iscedField>, abilityFilter>, 'create' | 'find'>
+    iscedLevels: Pick<moo.def.model.op.set<catRecord<iscedLevel>, abilityFilter>, 'create' | 'find'>
+    resourceTypes: Pick<moo.def.model.op.set<catRecord<resourceType>, abilityFilter>, 'create' | 'find'>
+    bloomCognitives: Pick<moo.def.model.op.set<catRecord<bloomCognitive>, abilityFilter>, 'create' | 'find'>
   }
 }
 

@@ -5,7 +5,7 @@ import { returnValidationErrors } from 'next-safe-action'
 import { redirect } from 'next/navigation'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import client from '../../../../lib/server/session-client'
+import session from '../../../../lib/server/session-client'
 import { srvSiteRoutes } from '../../../../lib/server/utils/site-urls.server'
 
 export async function getSignupSchema() {

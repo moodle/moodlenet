@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { adoptValuedAssetSafeAction } from '../../../../../lib/common/actions'
 import { appRoutes } from '../../../../../lib/common/appRoutes'
 import { defaultSafeActionClient } from '../../../../../lib/server/safe-action'
-import client from '../../../../../lib/server/session-client'
+import session from '../../../../../lib/server/session-client'
 import { updateMyProfileInfoSafeAction } from '../../../../../ui/pages/Profile/ProfilePage'
 export async function getUseProfileImageSchema() {
   const schemas = await fetchAllPrimarySchemas({ primary: client.proxy })

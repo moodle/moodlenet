@@ -5,7 +5,7 @@ import { isLeft } from 'fp-ts/Either'
 import moment from 'moment'
 import timers from 'timers/promises'
 
-type jobData = { envelope: moo.model.envelope<any_> }
+type jobData = { envelope: moo.def.model.envelope<any_> }
 
 type queueConfig = Omit<jobConfig, 'jobName'> & { maxRetries: number }
 export function createQueueServices<jobNames extends string>({
@@ -13,7 +13,7 @@ export function createQueueServices<jobNames extends string>({
   modelDispatcher,
   queues,
 }: {
-  modelDispatcher: moo.model.dispatcher<any_>
+  modelDispatcher: moo.def.model.dispatcher<any_>
   queueServiceWorkers: queueServiceWorkers<jobData>
   queues: map<queueConfig, jobNames>
 }) {

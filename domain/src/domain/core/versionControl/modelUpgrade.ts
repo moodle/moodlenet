@@ -3,7 +3,7 @@ import * as modelUpgrades from './upgrade/from'
 
 export const TARGET_V = 'v0_1'
 
-export async function upgradeModel({ log, model }: { model: moo.model.handle; log: logger }): Promise<string> {
+export async function upgradeModel({ log, model }: { model: moo.def.model.handle; log: logger }): Promise<string> {
   const latestModelUpgradeData = await getLatestModelUpgradeData({ model })
 
   const from_v = (latestModelUpgradeData?.current ?? 'init') as keyof typeof modelUpgrades | typeof TARGET_V
@@ -28,7 +28,7 @@ export async function upgradeModel({ log, model }: { model: moo.model.handle; lo
   return upgradeModel({ model: model, log })
 }
 
-export async function getLatestModelUpgradeData({ model }: { model: moo.model.handle }) {
+export async function getLatestModelUpgradeData({ model }: { model: moo.def.model.handle }) {
   const latestModelUpgradeData = await model.statics.latestModelUpgrade.get.query()
   return latestModelUpgradeData
 }

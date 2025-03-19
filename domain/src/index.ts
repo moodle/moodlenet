@@ -11,50 +11,53 @@ declare global {
   namespace moo {
     type version = '5.0'
 
-    interface Personas {}
+    interface UserTypes {}
     interface Models {}
     namespace Models {}
-    interface IdSpaces {}
 
-    type tags<sym extends symbol, t = unknown> = { [k in sym]?: t }
-    export namespace tags {
-      const configs: unique symbol
-      type configs = typeof configs
+    namespace def {
+      type tags<sym extends symbol, t = unknown> = { [k in sym]?: t }
+      export namespace tags {
+        const configs: unique symbol
+        type configs = typeof configs
+      }
     }
 
-    type contexts = {
-      [personaType_ in personaType]: string & keyof Personas[personaType_]
-    } extends infer _
-      ? string & _[keyof _] //| any_other_string
-      : never
+    namespace names {
+      type model = keyof Models // | any_other_string
+      type userType = keyof UserTypes // | any_other_string
 
-    type scopeNames = {
-      [personaType_ in personaType]: {
-        [ctx in string & keyof Personas[personaType_]]: string & keyof Personas[personaType_][ctx]
+      type context = {
+        [userType_ in names.userType]: string & keyof UserTypes[userType_]
       } extends infer _
-        ? string & _[keyof _]
+        ? string & _[keyof _] //| any_other_string
         : never
-    } extends infer _
-      ? _[keyof _] //| any_other_string
-      : never
 
-    type fullScopes = {
-      [personaType_ in personaType]: {
-        [ctx in string & keyof Personas[personaType_]]: Personas[personaType_][ctx]
+      type scope = {
+        [userType_ in names.userType]: {
+          [ctx in string & keyof UserTypes[userType_]]: string & keyof UserTypes[userType_][ctx]
+        } extends infer _
+          ? string & _[keyof _]
+          : never
       } extends infer _
-        ? keyof _ extends infer ctxName
-          ? ctxName extends string
-            ? ctxName extends keyof _
-              ? `${ctxName}.${string & keyof _[ctxName]}`
+        ? _[keyof _] //| any_other_string
+        : never
+
+      type fullScope = {
+        [userType_ in names.userType]: {
+          [ctx in string & keyof UserTypes[userType_]]: UserTypes[userType_][ctx]
+        } extends infer _
+          ? keyof _ extends infer ctxName
+            ? ctxName extends string
+              ? ctxName extends keyof _
+                ? `${ctxName}.${string & keyof _[ctxName]}`
+                : never
               : never
             : never
           : never
+      } extends infer _
+        ? _[keyof _] //| any_other_string
         : never
-    } extends infer _
-      ? _[keyof _] //| any_other_string
-      : never
-
-    type modelName = keyof Models // | any_other_string
-    type personaType = keyof Personas // | any_other_string
+    }
   }
 }

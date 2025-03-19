@@ -2,7 +2,7 @@ import { webSlug } from '@moodle/lib-types'
 import { redirect } from 'next/navigation'
 import { appRoutes } from '../../../../lib/common/appRoutes'
 import { pageProps, paramRequired } from '../../../../lib/server/page-props'
-import client from '../../../../lib/server/session-client'
+import session from '../../../../lib/server/session-client'
 import { Fallback } from '../../../../ui/pages/Fallback/Fallback'
 
 export default async function UserProfilePage({ params }: pageProps<{ userAccountId: string }>) {

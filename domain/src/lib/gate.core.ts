@@ -7,10 +7,10 @@ import { Error4xx, isError4xx } from './access-error'
 type gateCore = () => Promise<Either<Error4xx, unknown>>
 
 export type gateCoreDeps = {
-  gateProvider: moo.gate.provider<any_> //moo.Personas>
-  core: moo.core<any_> //moo.Personas>
-  model: moo.model.handle
-  coreRequest: moo.core.request
+  gateProvider: moo.def.gate.provider
+  core: moo.def.core
+  model: moo.def.model.handle
+  coreRequest: moo.def.core.request
   loggerProvider: loggerProvider
 }
 export async function gateCore({ coreRequest, model, core, gateProvider, loggerProvider }: gateCoreDeps) {
@@ -31,10 +31,10 @@ export async function gateCore({ coreRequest, model, core, gateProvider, loggerP
 }
 
 type gateCoreProxyDeps = {
-  gateProvider: moo.gate.provider
-  core: moo.core
-  model: moo.model.handle
-  coreRequest: moo.core.request
+  gateProvider: moo.def.gate.provider
+  core: moo.def.core.def
+  model: moo.def.model.handle
+  coreRequest: moo.def.core.request
   loggerProvider: loggerProvider
 }
 
@@ -48,9 +48,9 @@ type gateStep = Either<
   }
 >
 function gateCoreProxy({ model, coreRequest, gateProvider, core, loggerProvider }: gateCoreProxyDeps) {
-  type p_endpoint = moo.persona.endpoint<moo.persona.endpoint.def>
+  type p_endpoint = moo.def.userType.endpoint<moo.def.userType.endpoint.def>
 
-  return subGateCoreProxy(right({ gateProvider, session: coreRequest.permissionsInfo.tree, core, path: [] })) as gateCore
+  return subGateCoreProxy(right({ gateProvider, session: coreRequest.policiesInfo.tree, core, path: [] })) as gateCore
 
   function subGateCoreProxy(gateStep: gateStep) {
     return new Proxy((() => null as any_) as gateCore, {
@@ -149,15 +149,15 @@ function gateCoreProxy({ model, coreRequest, gateProvider, core, loggerProvider 
           )
         }
 
-        const gate_Endpoint_Provider: moo.gate.provider.endpoint<p_endpoint> = gateStep.right.gateProvider as any_
-        const core_Endpoint: moo.core.endpoint<p_endpoint> = gateStep.right.core as any_
-        const session_Endpoint: moo.permissions.user.endpoint<p_endpoint> = gateStep.right.session as any_
+        const gate_Endpoint_Provider: moo.def.gate.provider.endpoint<p_endpoint> = gateStep.right.gateProvider as any_
+        const core_Endpoint: moo.def.core.endpoint<p_endpoint> = gateStep.right.core as any_
+        const session_Endpoint: moo.def.policies.user.endpoint<p_endpoint> = gateStep.right.session as any_
 
         const configs = session_Endpoint._
 
         const e_gate_enpoint = gate_Endpoint_Provider({
           configs,
-          permissionsInfo: coreRequest.permissionsInfo,
+          policiesInfo: coreRequest.policiesInfo,
         })
 
         if (isLeft(e_gate_enpoint)) {
@@ -176,7 +176,7 @@ function gateCoreProxy({ model, coreRequest, gateProvider, core, loggerProvider 
           )
         }
 
-        const safeFormCoreRequest: moo.core.request = {
+        const safeFormCoreRequest: moo.def.core.request = {
           ...coreRequest,
           gateRequest: {
             ...coreRequest.gateRequest,
@@ -185,7 +185,7 @@ function gateCoreProxy({ model, coreRequest, gateProvider, core, loggerProvider 
         }
 
         const log = loggerProvider({ for: 'core', request: safeFormCoreRequest })
-        const ctx: moo.core.ctx<any_> = {
+        const ctx: moo.def.core.ctx<any_> = {
           model,
           coreRequest: safeFormCoreRequest,
           configs,
@@ -204,7 +204,7 @@ function gateCoreProxy({ model, coreRequest, gateProvider, core, loggerProvider 
               }
             }),
         }
-        const endpointArgs: moo.core.endpointArgs<any_> = [safe_form, ctx]
+        const endpointArgs: moo.def.core.endpointArgs<any_> = [safe_form, ctx]
 
         const cleanCoreResult: Promise<Either<Error4xx, unknown>> = core_Endpoint(...endpointArgs)
           .then(result => right(result))

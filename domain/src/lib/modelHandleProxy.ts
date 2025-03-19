@@ -2,7 +2,7 @@ import { generateUlid } from '@moodle/lib-id-gen'
 import { any_, path, unsupportedProxyHandler } from '@moodle/lib-types'
 import { isLeft } from 'fp-ts/Either'
 
-export function modelHandleProxy({ modelDispatcher, origin }: { modelDispatcher: moo.model.dispatcher<any_>; origin: moo.model.envelope.origin }): moo.model.handle {
+export function modelHandleProxy({ modelDispatcher, origin }: { modelDispatcher: moo.def.model.dispatcher<any_>; origin: moo.def.model.envelope.origin }): moo.def.model.handle {
   const model = subCoreModelHandleProxy({
     path: [],
     apply: ({ fullPath, message }) => {
@@ -28,7 +28,7 @@ export function modelHandleProxy({ modelDispatcher, origin }: { modelDispatcher:
         message,
       }).then(outcome => (isLeft(outcome) ? Promise.reject(outcome.left) : outcome.right))
     },
-  }) as unknown as moo.model.handle
+  }) as unknown as moo.def.model.handle
 
   return model
 }

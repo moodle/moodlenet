@@ -10,7 +10,7 @@ import {
   appDataLanguageCollectionData,
   appDataLicenseCollectionData,
   appDataResourceTypeCollectionData,
-  appDataUserSpaceCollectionData,
+  appDataUserHomeCollectionData,
   databaseConnections,
 } from './types'
 import { activeAuthSessionData, staticData } from './types/collections'
@@ -40,7 +40,7 @@ export function getDbStruct(databaseConnections: databaseConnections) {
         eduResourceType: appData_db.collection<appDataResourceTypeCollectionData>('eduResourceType'),
         contentLanguage: appData_db.collection<appDataLanguageCollectionData>('contentLanguage'),
         contentLicense: appData_db.collection<appDataLicenseCollectionData>('contentLicense'),
-        userSpace: appData_db.collection<appDataUserSpaceCollectionData>('userSpace'),
+        userHome: appData_db.collection<appDataUserHomeCollectionData>('userHome'),
         staticData: appData_db.collection<staticData>('staticData'),
       },
     },
@@ -49,7 +49,7 @@ export function getDbStruct(databaseConnections: databaseConnections) {
       coll: {
         dbUpgrade: services_db.collection<dbUpgradeData>('dbUpgrade'),
         modelUpgrade: services_db.collection<{ data: statics.modelUpgradeData }>('modelUpgrade'),
-        modelEnvelopeQueue: services_db.collection<job<{ envelope: moo.model.envelope<any_> }>>('modelEnvelopeQueue'),
+        modelEnvelopeQueue: services_db.collection<job<{ envelope: moo.def.model.envelope<any_> }>>('modelEnvelopeQueue'),
         activeAuthSession: services_db.collection<activeAuthSessionData>('activeAuthSession'),
       },
     },

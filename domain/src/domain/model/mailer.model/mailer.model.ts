@@ -16,11 +16,11 @@ declare global {
     }
   }
 }
-export type mailer = moo.model<MailerModel>
+export type mailer = moo.def.model<MailerModel>
 
 export type MailerModel = {
-  template: moo.model.op<
+  template: moo.def.model.op<
     ['query', <ns extends keyof _t, type extends keyof _t[ns]>(_: { ns: ns; type: type; data: _t[ns][type] }) => Promise<{ body: emailBody; subject: string }>]
   >
-  send: moo.model.op<['async', { envelope: emailEnvelope }, unknown]>
+  send: moo.def.model.op<['async', { envelope: emailEnvelope }, unknown]>
 }

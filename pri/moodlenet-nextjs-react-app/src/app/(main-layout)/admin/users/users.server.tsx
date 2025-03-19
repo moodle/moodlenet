@@ -1,7 +1,7 @@
 'use server'
 
 import { userAccountId, userRole } from '@moodle/module/user-account'
-import client from '../../../../lib/server/session-client'
+import session from '../../../../lib/server/session-client'
 import { UserRow } from './users.client'
 
 export async function searchUsers({ textSearch }: { textSearch: string }) {

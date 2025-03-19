@@ -2,7 +2,7 @@
 import { url_string_schema } from '@moodle/lib-types'
 import { literal, object, string, union } from 'zod'
 
-export const NONE_ASSET: moo.content.asset.none = { type: 'none' }
+export const NONE_ASSET: moo.def.content.asset.none = { type: 'none' }
 export const adoptTempFileFormSchema = object({
   type: literal('tempFile'),
   tempId: string(),

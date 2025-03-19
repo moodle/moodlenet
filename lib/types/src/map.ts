@@ -39,8 +39,8 @@ export type discriminated_tuple_map<nmap extends m_map> = {
 }
 
 export type discriminated_tuple_union<nmap extends m_map, keys extends keyof nmap = keyof nmap> = d_t_m<nmap>[keys]
+export type u_entry<nmap extends m_map, keys extends keyof nmap = keyof nmap> = discriminated_tuple_union<nmap, keys>
 export type d_t_u<nmap extends m_map, keys extends keyof nmap = keyof nmap> = discriminated_tuple_union<nmap, keys>
-
 // discr_map<nmap, p> extends infer m ? m[keyof m] : never
 
 export type deep_partial<t> = {

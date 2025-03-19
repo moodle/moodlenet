@@ -3,7 +3,7 @@
 import { t } from 'i18next'
 import { returnValidationErrors } from 'next-safe-action'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import client from '../../../../lib/server/session-client'
+import session from '../../../../lib/server/session-client'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 
 export async function getResetMyPasswordSchema() {

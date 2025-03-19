@@ -81,16 +81,16 @@ ${info.message}
 
 const loggerContextFormatter = {
   core(c: d_u__d<loggerContext, 'for', 'core'>) {
-    const { id, permissionsInfo, now, gateRequest } = c.request
+    const { id, policiesInfo, now, gateRequest } = c.request
     return `Core Access:
 id: ${id}
 now: ${now}
 sessionInfo:
-  user: ${permissionsInfo.user.type}${
-    permissionsInfo.user.type === 'anon'
+  user: ${policiesInfo.user.type}${
+    policiesInfo.user.type === 'anon'
       ? ''
       : `
-    id: ${permissionsInfo.user.id}${'' /*  session personas: ${Object.keys(permissionsInfo.tree)} */}`
+    id: ${policiesInfo.user.id}${'' /*  session personas: ${Object.keys(policiesInfo.tree)} */}`
   }
 gateRequest:
   path: ${gateRequest.path.join('.')}

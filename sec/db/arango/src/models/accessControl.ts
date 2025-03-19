@@ -3,14 +3,14 @@ import { aql } from 'arangojs'
 import { fromNullable } from 'fp-ts/Option'
 import { activeAuthSessionData, dbStruct } from '../db-structure'
 
-export function accessControlImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<accessControl.accessControlModel> {
+export function accessControlImpl({ dbStruct }: { dbStruct: dbStruct }): moo.def.model.impl<accessControl.accessControlModel> {
   return {
     user: {
       create: {
         exe:
           () =>
           async ({ record: accessControl }) => {
-            await dbStruct.appData.coll.userSpace.update({ _key: accessControl.userId }, { accessControl }, { mergeObjects: false })
+            await dbStruct.appData.coll.userHome.update({ _key: accessControl.userId }, { accessControl }, { mergeObjects: false })
           },
       },
       createAuthSession: {
@@ -21,13 +21,13 @@ export function accessControlImpl({ dbStruct }: { dbStruct: dbStruct }): moo.mod
       getData: {
         exe: (/*ctx*/) =>
           async ({ userId }) => {
-            const doc = await dbStruct.appData.coll.userSpace.document({ _key: userId }, { graceful: true })
+            const doc = await dbStruct.appData.coll.userHome.document({ _key: userId }, { graceful: true })
 
             const m_userAccessControlView: accessControl.userAccessControlView | undefined = doc?.accessControl && {
               ...doc.accessControl,
               info: {
-                displayName: doc.userAccount.profile.info.displayName,
-                email: doc.userAccount.email.address,
+                displayName: doc.userHome.profile.info.displayName,
+                email: doc.userHome.email.address,
               },
             }
             return fromNullable(m_userAccessControlView)

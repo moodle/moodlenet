@@ -1,4 +1,4 @@
-import { d_t_u } from '@moodle/lib-types'
+import { u_entry } from '@moodle/lib-types'
 
 export type cursorList<itemData /* , cursor = number */> = { items: itemData[] } //; cursors: [cursor, cursor] } //; hasMore: boolean }
 export type pageOpts<filter /* , order extends string, cursor = number */> = {
@@ -8,9 +8,9 @@ export type pageOpts<filter /* , order extends string, cursor = number */> = {
   // cursor?: [cursor: cursor, take?: 'after' | 'before']
 }
 
-export type filterBoolTree<f> = _filterBoolTree_not<d_t_u<f> | _filterBoolTree_block<f>>
+export type filterBoolTree<f> = _filterBoolTree_not<u_entry<f> | _filterBoolTree_block<f>>
 type _filterBoolTree_block<f> =
-  d_t_u<f> extends infer dtu
+  u_entry<f> extends infer dtu
     ? [
         'OR' | 'AND',
         _filterBoolTree_not<dtu | _filterBoolTree_rest<f>>,
@@ -18,7 +18,7 @@ type _filterBoolTree_block<f> =
         ..._filterBoolTree_not<dtu | _filterBoolTree_rest<f>>[],
       ]
     : never
-type _filterBoolTree_rest<f> = d_t_u<f> extends infer dtu ? [_filterBoolTree_not<dtu>, ..._filterBoolTree_not<dtu>[]] | _filterBoolTree_block<f> : never
+type _filterBoolTree_rest<f> = u_entry<f> extends infer dtu ? [_filterBoolTree_not<dtu>, ..._filterBoolTree_not<dtu>[]] | _filterBoolTree_block<f> : never
 
 //@ts-expect-error : cannot enforce stuff to be a tuple.. nevertheless, seems it works nicely like so ...
 type _filterBoolTree_not<stuff> = stuff | ['NOT', ...stuff]

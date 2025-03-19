@@ -4,7 +4,7 @@ import { isLeft } from 'fp-ts/Either'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 import { appRoutes } from '../../../../../../lib/common/appRoutes'
-import client from '../../../../../../lib/server/session-client'
+import session from '../../../../../../lib/server/session-client'
 
 export async function GET(req: NextRequest) {
   const { data: signupEmailVerificationToken } = signed_token_schema.safeParse(await req.nextUrl.searchParams.get('token'))

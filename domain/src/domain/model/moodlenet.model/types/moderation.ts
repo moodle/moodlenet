@@ -1,5 +1,5 @@
 import { date_time_string, i_nat } from '@moodle/lib-types'
-import { userId } from '../../userAccount.model'
+import { userId } from '../../userHome.model'
 
 type reportType = string //TODO: type:desc map in moodlenet Configs?
 type reportAbuseForm = {

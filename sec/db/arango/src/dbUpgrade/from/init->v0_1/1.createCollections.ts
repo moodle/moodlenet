@@ -4,17 +4,17 @@ import { dbStruct } from '../../../db-structure'
 export async function createCollections({ dbStruct }: { dbStruct: dbStruct }) {
   // logs
 
-  // userAccount
-  await dbStruct.appData.coll.userSpace.create({})
-  await dbStruct.appData.coll.userSpace.ensureIndex({
+  // userHome
+  await dbStruct.appData.coll.userHome.create({})
+  await dbStruct.appData.coll.userHome.ensureIndex({
     type: 'persistent',
     name: 'moodlenet.contributor.points',
     fields: ['moodlenet.contributor.points'],
   })
-  await dbStruct.appData.coll.userSpace.ensureIndex({
+  await dbStruct.appData.coll.userHome.ensureIndex({
     type: 'persistent',
-    name: 'userAccount.user.email.address',
-    fields: ['userAccount.user.email.address'],
+    name: 'userHome.user.email.address',
+    fields: ['userHome.user.email.address'],
     unique: true,
   })
 

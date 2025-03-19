@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 import { setAuthTokenCookie } from '../../../../../../lib/server/auth'
-import client from '../../../../../../lib/server/session-client'
+import session from '../../../../../../lib/server/session-client'
 
 export async function GET(req: NextRequest) {
   const { success, data: selfDeletionConfirmationToken } = signed_token_schema.safeParse(req.nextUrl.searchParams.get('token'))

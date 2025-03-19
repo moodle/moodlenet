@@ -1,55 +1,55 @@
 import { time_duration_string_schema } from '@moodle/lib-types'
 import { DEFAULT_MOODLENET_SCHEMAS } from '../../moodlenet.model/setup'
 import { DEFAULT_ORG_SCHEMAS } from '../../org.model/setup'
-import { getFullPermissionsConfigTree } from '../lib/fullPermissionTrees'
-import { accessControlConfigs, rolePerm } from '../types'
-import { DEFAULT_USER_ACCOUNT_SCHEMAS } from '../../userAccount.model/setup'
+import { getFullPoliciesConfigTree } from '../lib/fullPoliciesTrees'
+import { accessControlConfigs, rolePolicies } from '../types'
+import { DEFAULT_USER_ACCOUNT_SCHEMAS } from '../../userHome.model/setup'
 
 const revDate = new Date().toISOString()
-const permissionsConfigTree = getFullPermissionsConfigTree({
+const policiesConfigTree = getFullPoliciesConfigTree({
   moodlenet: DEFAULT_MOODLENET_SCHEMAS,
   org: DEFAULT_ORG_SCHEMAS,
-  userAccount: DEFAULT_USER_ACCOUNT_SCHEMAS,
+  userHome: DEFAULT_USER_ACCOUNT_SCHEMAS,
 })
 
-const default_anonymous_grants: rolePerm = {
+const default_anonymous_grants: rolePolicies = {
   allow: {
     any: {},
     anonymous: {},
   },
 }
 
-const default_contributor_grants: rolePerm = {
+const default_contributor_grants: rolePolicies = {
   allow: {
     any: {},
-    authenticated: {},
+    // authenticated: {},
   },
 }
 
-const default_admin_grants: rolePerm = {
+const default_admin_grants: rolePolicies = {
   allow: {
     any: {},
-    authenticated: {},
-    admin: {},
-    moderator: {},
+    // authenticated: {},
+    // admin: {},
+    // moderator: {},
   },
 }
 
-const default_viewer_grants: rolePerm = {
+const default_viewer_grants: rolePolicies = {
   allow: default_contributor_grants.allow,
   deny: {
-    authenticated: {
-      messaging: {},
-      moodlenet: {
-        contribute: {},
-      },
-    },
+    // authenticated: {
+    //   messaging: {},
+    //   moodlenet: {
+    //     contribute: {},
+    //   },
+    // },
   },
 }
 
 export const DEFAULT_ACCESS_CONTROL_CONFIGS: accessControlConfigs = {
   newUserDefaultRole: 'viewer',
-  permissionsConfigTree,
+  policiesConfigTree,
   roles: {
     anonymous: {
       perm: default_anonymous_grants,

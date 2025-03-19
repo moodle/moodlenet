@@ -1,10 +1,10 @@
 import { unsupportedProxyHandler } from '@moodle/lib-types'
 import assert from 'assert'
 
-export function gateClientProxy({ gateClientDispatcher }: { gateClientDispatcher: moo.gate.client.dispatcher }): moo.gate.client.proxy {
+export function gateClientProxy({ gateClientDispatcher }: { gateClientDispatcher: moo.def.gate.client.dispatcher }): moo.def.gate.client.proxy {
   return subGateProxy({
     path: [],
-  }) as unknown as moo.gate.client.proxy
+  }) as unknown as moo.def.gate.client.proxy
   function subGateProxy({ path }: { path: string[] }) {
     return new Proxy(() => null, {
       ...unsupportedProxyHandler,
@@ -29,7 +29,7 @@ export function gateClientProxy({ gateClientDispatcher }: { gateClientDispatcher
 
         // _next_path.length === 4 : endpoint|provider level
 
-        const gateProxyEndpointCall: moo.gate.client.proxy.endpoint = form => {
+        const gateProxyEndpointCall: moo.def.gate.client.proxy.endpoint = form => {
           return gateClientDispatcher({ form, path })
         }
 
@@ -39,5 +39,5 @@ export function gateClientProxy({ gateClientDispatcher }: { gateClientDispatcher
   }
 }
 
-// declare const _: moo.gate.client.proxy<moo.Personas>
+// declare const _: moo.gate.client.proxy<moo.UserTypes>
 // const x = _.anonymous.access.login.withMyEmailAndPassword.login({form:{password,email},info:{claims:{server:{}}},})

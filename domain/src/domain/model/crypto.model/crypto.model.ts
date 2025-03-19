@@ -9,13 +9,13 @@ declare global {
     }
   }
 }
-export type crypto = moo.model<cryptoModel>
+export type crypto = moo.def.model<cryptoModel>
 
 export type cryptoModel = {
   hashing: {
     password: {
-      hash: moo.model.op<['query', { plainPassword: plain_password }, { hash: string }]>
-      verify: moo.model.op<['query', { plainPassword: plain_password; hash: string }, { valid: boolean }]>
+      hash: moo.def.model.op<['query', { plainPassword: plain_password }, { hash: string }]>
+      verify: moo.def.model.op<['query', { plainPassword: plain_password; hash: string }, { valid: boolean }]>
     }
   }
 }

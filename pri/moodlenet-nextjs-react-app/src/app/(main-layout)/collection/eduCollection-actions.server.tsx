@@ -10,7 +10,7 @@ import { redirect, RedirectType } from 'next/navigation'
 import { adoptAssetSafeAction } from '../../../lib/common/actions'
 import { appRoutes } from '../../../lib/common/appRoutes'
 import { defaultSafeActionClient } from '../../../lib/server/safe-action'
-import client from '../../../lib/server/session-client'
+import session from '../../../lib/server/session-client'
 
 export async function getEduCollectionMetaSchema() {
   const { edu } = await fetchAllPrimarySchemas({ primary: client.proxy })

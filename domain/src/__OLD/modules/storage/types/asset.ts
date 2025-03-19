@@ -9,7 +9,7 @@ export type maybeAsset = asset | noAsset
 type noAsset = d_u<{ none: unknown }, 'type'>
 export type asset = d_u<
   {
-    stored: moo.content.fileMeta
+    stored: moo.def.content.fileMeta
     external: externalAsset
   },
   'type'

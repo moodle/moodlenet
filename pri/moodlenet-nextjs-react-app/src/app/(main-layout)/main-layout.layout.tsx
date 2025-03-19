@@ -18,7 +18,7 @@ import {
 import { filterOutFalsies, webSlug } from '@moodle/lib-types'
 import { logout } from '../actions/access'
 import './main-layout.style.scss'
-import client from '../../lib/server/session-client'
+import session from '../../lib/server/session-client'
 
 export default async function MainLayoutLayout(props: layoutPropsWithChildren) {
   const my = await client.my

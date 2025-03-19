@@ -20,8 +20,8 @@ export type moodlenetConfigs = {
 export type moodlenetInfo = {
   title: string
   subtitle: string
-  logo: moo.content.asset.optional
-  smallLogo: moo.content.asset.optional
+  logo: moo.def.content.asset.optional
+  smallLogo: moo.def.content.asset.optional
 }
 
 export type moodlenetInfoSchemaConfigs = {

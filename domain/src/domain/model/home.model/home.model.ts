@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { d_u, date_time_string } from '@moodle/lib-types'
 import { eduCollection, eduResource } from '../education.model'
-import { userId, userProfile } from '../userAccount.model'
+import { userId, userProfile } from '../userHome.model'
 import { Option } from 'fp-ts/Option'
 const MODEL_NAME = 'home'
 
@@ -17,7 +17,7 @@ export type draft<t> = {
   lastUpdatedDate: date_time_string
   draft: t
 }
-export type homeUserSpace = {
+export type homeUserHome = {
   userId: userId
   myDrafts: {
     edu: {
@@ -26,11 +26,11 @@ export type homeUserSpace = {
     }
   }
 }
-export type homeUserView = homeUserSpace & {
+export type homeUserView = homeUserHome & {
   profile: userProfile
 }
 
-export type home = moo.model<homeModel>
+export type home = moo.def.model<homeModel>
 
 export type homeUserViewFilters = d_u<
   {
@@ -41,7 +41,7 @@ export type homeUserViewFilters = d_u<
 
 export type homeModel = {
   userHome: {
-    create: moo.model.op<['sync', homeUserSpace, void]>
-    get: moo.model.op<['query', { userId: userId }, Option<homeUserView>]>
+    create: moo.def.model.op<['sync', homeUserHome, void]>
+    get: moo.def.model.op<['query', { userId: userId }, Option<homeUserView>]>
   }
 }

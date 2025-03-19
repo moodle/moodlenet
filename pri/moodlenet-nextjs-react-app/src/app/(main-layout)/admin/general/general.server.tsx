@@ -5,7 +5,7 @@ import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import client from '../../../../lib/server/session-client'
+import session from '../../../../lib/server/session-client'
 import { provideAdminGeneralSchemas } from './general.common'
 
 export async function getAdminGeneralSchemas() {

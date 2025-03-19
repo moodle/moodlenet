@@ -1,22 +1,22 @@
 import { moodlenet } from '@moodle/domain/model'
 import { fromNullable } from 'fp-ts/Option'
-import { appDataUserSpaceCollectionData, dbStruct } from '../db-structure'
+import { appDataUserHomeCollectionData, dbStruct } from '../db-structure'
 
-export function moodlenetImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<moodlenet.MoodlenetModel> {
+export function moodlenetImpl({ dbStruct }: { dbStruct: dbStruct }): moo.def.model.impl<moodlenet.MoodlenetModel> {
   return {
     contributor: {
       create: {
         exe:
           () =>
           async ({ record: moodlenet }) => {
-            await dbStruct.appData.coll.userSpace.update({ _key: moodlenet.userId }, { moodlenet }, { mergeObjects: false })
+            await dbStruct.appData.coll.userHome.update({ _key: moodlenet.userId }, { moodlenet }, { mergeObjects: false })
           },
       },
       userId: userId => ({
         getData: {
           exe: () => async () => {
-            const doc = await dbStruct.appData.coll.userSpace.document({ _key: userId }, { graceful: true })
-            return fromNullable(appDataUserCollectionData_2_MoodlenetUserSpace(doc))
+            const doc = await dbStruct.appData.coll.userHome.document({ _key: userId }, { graceful: true })
+            return fromNullable(appDataUserCollectionData_2_MoodlenetUserHome(doc))
           },
         },
       }),
@@ -24,7 +24,7 @@ export function moodlenetImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.i
   }
 }
 
-function appDataUserCollectionData_2_MoodlenetUserSpace(docData: appDataUserSpaceCollectionData | null): moodlenet.moodlenetContributorView | null {
+function appDataUserCollectionData_2_MoodlenetUserHome(docData: appDataUserHomeCollectionData | null): moodlenet.moodlenetContributorView | null {
   return !docData?.moodlenet
     ? null
     : {
@@ -32,9 +32,9 @@ function appDataUserCollectionData_2_MoodlenetUserSpace(docData: appDataUserSpac
         eduCollection: { items: [] },
         eduResource: { items: [] },
         userProfile: {
-          info: docData.userAccount.profile.info,
-          avatar: docData.userAccount.profile.avatar,
-          background: docData.userAccount.profile.background,
+          info: docData.userHome.profile.info,
+          avatar: docData.userHome.profile.avatar,
+          background: docData.userHome.profile.background,
         },
       }
 }

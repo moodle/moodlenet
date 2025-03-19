@@ -6,8 +6,8 @@ import { modelHandleProxy } from './modelHandleProxy'
 
 type executeModelOpsDeps = {
   models: map
-  envelope: moo.model.envelope<any_>
-  modelEnvelopeDispatcher: moo.model.dispatcher<any_>
+  envelope: moo.def.model.envelope<any_>
+  modelEnvelopeDispatcher: moo.def.model.dispatcher<any_>
   loggerProvider: loggerProvider
 }
 
@@ -75,8 +75,8 @@ export async function postModelOps({ models, envelope, outcome, modelEnvelopeDis
 
 type allModelsOpExtractsDeps = {
   models: map
-  envelope: moo.model.envelope<any_>
-  modelEnvelopeDispatcher: moo.model.dispatcher<any_>
+  envelope: moo.def.model.envelope<any_>
+  modelEnvelopeDispatcher: moo.def.model.dispatcher<any_>
   loggerProvider: loggerProvider
 }
 
@@ -106,8 +106,8 @@ export function allModelsOpExtracts({ models, envelope, modelEnvelopeDispatcher,
 
 type modelOpExtractDeps = {
   worker: { impl: any_; name: any_ }
-  envelope: moo.model.envelope<any_>
-  modelEnvelopeDispatcher: moo.model.dispatcher<any_>
+  envelope: moo.def.model.envelope<any_>
+  modelEnvelopeDispatcher: moo.def.model.dispatcher<any_>
   loggerProvider: loggerProvider
 }
 type workerOpExtraction = ReturnType<typeof workerOpExtract>
@@ -123,14 +123,14 @@ export function workerOpExtract({ worker, envelope, modelEnvelopeDispatcher, log
     },
   })
 
-  const opHandlers: undefined | moo.model.impl.opHandlers<moo.model.op> = envelope.target.path.reduce(
+  const opHandlers: undefined | moo.def.model.impl.opHandlers<moo.def.model.op> = envelope.target.path.reduce(
     (_model, prop) => ('function' === typeof _model ? _model(prop) : _model?.[prop]),
     worker.impl,
   )
 
   const log = loggerProvider({ for: 'model', envelope: envelope })
   const now = new Date().toISOString()
-  const ctx: moo.model.impl.ctx<any_> = { model, envelope: { ...envelope, now }, log, now: new Date().toISOString() }
+  const ctx: moo.def.model.impl.ctx<any_> = { model, envelope: { ...envelope, now }, log, now: new Date().toISOString() }
 
   const exe = opHandlers?.exe
   const pre = opHandlers?.pre

@@ -1,12 +1,12 @@
 import { i_nat } from '@moodle/lib-types'
 import { isLeft } from 'fp-ts/Either'
 
-export const moderationCore: moo.model.impl = {
-  userAccount: {
+export const moderationCore: moo.def.model.impl = {
+  userHome: {
     create: {
       post:
         ({ model }) =>
-        async (outcome, { record: { userId } }) => {
+        async (outcome, { userHomeRecord: { userId } }) => {
           if (isLeft(outcome)) {
             return
           }

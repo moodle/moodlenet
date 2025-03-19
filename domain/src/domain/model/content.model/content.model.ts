@@ -9,7 +9,7 @@ declare global {
     }
   }
 }
-export type content = moo.model<contentModel>
+export type content = moo.def.model<contentModel>
 
 type abilityFilter = {
   // defaults 'enabled'
@@ -18,8 +18,8 @@ type abilityFilter = {
 
 export type contentModel = {
   categories: {
-    languages: Pick<moo.model.op.set<catRecord<language>, abilityFilter>, 'create' | 'find'>
-    licenses: Pick<moo.model.op.set<catRecord<license>, abilityFilter>, 'create' | 'find'>
+    languages: Pick<moo.def.model.op.set<catRecord<language>, abilityFilter>, 'create' | 'find'>
+    licenses: Pick<moo.def.model.op.set<catRecord<license>, abilityFilter>, 'create' | 'find'>
   }
 }
 

@@ -2,7 +2,7 @@ import { logger } from '../../../../../../types'
 import { CONTENT_CATEGORIES_DATA_SETUP } from '../../../../../model/content.model/setup/data'
 import { EDU_CATEGORIES_DATA_SETUP } from '../../../../../model/education.model/setup/configs'
 
-export async function insertInitialData({ model, log }: { model: moo.model.handle; log: logger }) {
+export async function insertInitialData({ model, log }: { model: moo.def.model.handle; log: logger }) {
   log.info('inserting initial data')
   await Promise.all([
     Promise.all(CONTENT_CATEGORIES_DATA_SETUP.languages.map(language => model.content.categories.languages.create.sync({ record: language }))),

@@ -4,7 +4,7 @@ import { getLatestModelUpgradeData, upgradeModel } from './modelUpgrade'
 
 const TARGET_V = 'v0_1'
 
-export async function setup({ model, log }: { model: moo.model.handle; log: logger }) {
+export async function setup({ model, log }: { model: moo.def.model.handle; log: logger }) {
   const preflightResult = await preflight({ model, log })
   if (isRight(preflightResult)) {
     log.info(`current model version: [${TARGET_V}]`)
@@ -14,7 +14,7 @@ export async function setup({ model, log }: { model: moo.model.handle; log: logg
   return upgrade({ model, log })
 }
 
-export async function preflight({ model }: { model: moo.model.handle; log: logger }) {
+export async function preflight({ model }: { model: moo.def.model.handle; log: logger }) {
   const latestModelUpgradeData = await getLatestModelUpgradeData({ model })
   if (latestModelUpgradeData?.current !== TARGET_V) {
     return left(`current model version: [${latestModelUpgradeData?.current ?? 'null'}]`)
@@ -22,6 +22,6 @@ export async function preflight({ model }: { model: moo.model.handle; log: logge
   return right(`current model version: [${TARGET_V}]`)
 }
 
-export async function upgrade({ model, log }: { model: moo.model.handle; log: logger }) {
+export async function upgrade({ model, log }: { model: moo.def.model.handle; log: logger }) {
   return upgradeModel({ model, log })
 }

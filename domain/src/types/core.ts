@@ -5,57 +5,48 @@ import { any_, date_time_string, map } from '@moodle/lib-types'
 import { logger } from './log'
 
 declare global {
-  namespace moo {
-    type core<forPersonas extends map<moo.persona<any_>> = Personas> = {
-      [personaType_ in keyof forPersonas]: core.persona<forPersonas[personaType_]>
-    }
+  namespace moo.def {
+    type core = core.def<UserTypes>
     namespace core {
-      type persona<persona_ extends moo.persona<any_>> = {
-        [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_>
-          ? context<persona_[contextName]>
-          : unknown
+      type def<forUserTypes extends map<moo.def.userType<any_>> = UserTypes> = {
+        [userType_ in keyof forUserTypes]: userType<forUserTypes[userType_]>
+      }
+      type userType<userType_ extends moo.def.userType<any_>> = {
+        [contextName in string & keyof userType_]: userType_[contextName] extends moo.def.userType.context<any_> ? context<userType_[contextName]> : unknown
       }
 
-      type context<context extends moo.persona.context<any_>> = {
-        [scopeName in string & keyof context]: context[scopeName] extends moo.persona.scope<any_>
-          ? scope<context[scopeName]>
-          : unknown
+      type context<context extends moo.def.userType.context<any_>> = {
+        [scopeName in string & keyof context]: context[scopeName] extends moo.def.userType.scope<any_> ? scope<context[scopeName]> : unknown
       }
 
-      type scope<scope extends moo.persona.scope<any_>> = {
-        [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.persona.usecase<any_>
-          ? usecase<scope[useCaseName]>
-          : never
+      type scope<scope extends moo.def.userType.scope<any_>> = {
+        [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.def.userType.usecase<any_> ? usecase<scope[useCaseName]> : never
       }
 
-      type usecase<useCase extends moo.persona.usecase<any_>> = {
-        [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.persona.endpoint<any_>
-          ? endpoint<useCase[endpointName]>
-          : never
+      type usecase<useCase extends moo.def.userType.usecase<any_>> = {
+        [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.def.userType.endpoint<any_> ? endpoint<useCase[endpointName]> : never
       }
 
-      type request<endpoint_ extends persona.endpoint<any_> = persona.endpoint<any_>> = {
+      type request<endpoint_ extends def.userType.endpoint<any_> = def.userType.endpoint<any_>> = {
         id: string
         now: date_time_string
-        permissionsInfo: permissions.user.info
-        gateRequest: gate.provider.request<endpoint_>
+        policiesInfo: def.policies.user.info
+        gateRequest: def.gate.provider.request<endpoint_>
       }
 
-      type ctx<endpoint_ extends persona.endpoint<any_>> = {
-        model: moo.model.handle
+      type ctx<endpoint_ extends def.userType.endpoint<any_>> = {
+        model: moo.def.model.handle
         configs: endpoint_[2]
         log: logger
         coreRequest: request<endpoint_>
         assertContextChecks: endpoint_[3] extends never | undefined | null | void
           ? undefined
           : (context: endpoint_[3] extends never | undefined | null | void ? void : endpoint_[3]) => /* Error4xx |  */ undefined
-        zod: gate.endpointZod<endpoint_>
+        zod: def.gate.endpointZod<endpoint_>
       }
-      type endpointArgs<endpoint_ extends persona.endpoint<any_>> = [form: gate.provider.request<endpoint_>['form'], ctx: ctx<endpoint_>]
+      type endpointArgs<endpoint_ extends def.userType.endpoint<any_>> = [form: def.gate.provider.request<endpoint_>['form'], ctx: ctx<endpoint_>]
 
-      type endpoint<endpoint_ extends persona.endpoint<any_>> = (
-        ...endpointArgs: endpointArgs<endpoint_>
-      ) => Promise<endpoint_[1]>
+      type endpoint<endpoint_ extends def.userType.endpoint<any_>> = (...endpointArgs: endpointArgs<endpoint_>) => Promise<endpoint_[1]>
     }
   }
 }

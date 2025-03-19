@@ -1,12 +1,12 @@
-import { accessControl, content, education, home, moderation, moodlenet, userAccount } from '@moodle/domain/model'
+import { accessControl, content, education, home, moderation, moodlenet, userHome } from '@moodle/domain/model'
 import { authSession } from 'domain/src/domain/model/accessControl.model'
 
-export type appDataUserSpaceCollectionData = {
-  userAccount: userAccount.userAccountRecord
+export type appDataUserHomeCollectionData = {
+  userHome: userHome.userHomeRecord
   moodlenet?: moodlenet.moodlenetContributorRecord
   accessControl?: accessControl.userAccessControl
   moderation?: moderation.userModerationSpace
-  home?: home.homeUserSpace
+  home?: home.homeUserHome
 }
 
 export type appDataIscedFieldCollectionData = {

@@ -25,21 +25,21 @@ declare global {
   }
 }
 
-export type statics = moo.model<staticsModel>
+export type statics = moo.def.model<staticsModel>
 
 type _all = moo.Models.statics.all
 export type staticsModel = {
   data: {
     kind: {
-      put: moo.model.op<['sync', <kind extends keyof _all>(_: { kind: kind; data: _all[kind] }) => Promise<void>]>
-      get: moo.model.op<['query', <kind extends keyof _all>(_: { kind: kind }) => Promise<{ data: _all[kind] }>]>
+      put: moo.def.model.op<['sync', <kind extends keyof _all>(_: { kind: kind; data: _all[kind] }) => Promise<void>]>
+      get: moo.def.model.op<['query', <kind extends keyof _all>(_: { kind: kind }) => Promise<{ data: _all[kind] }>]>
     }
     ns: {
-      put: moo.model.op<['sync', <kind extends keyof _all, ns extends keyof _all[kind]>(_: { kind: kind; ns: ns; data: _all[kind][ns] }) => Promise<void>]>
-      get: moo.model.op<['query', <kind extends keyof _all, ns extends keyof _all[kind]>(_: { kind: kind; ns: ns }) => Promise<{ data: _all[kind][ns] }>]>
+      put: moo.def.model.op<['sync', <kind extends keyof _all, ns extends keyof _all[kind]>(_: { kind: kind; ns: ns; data: _all[kind][ns] }) => Promise<void>]>
+      get: moo.def.model.op<['query', <kind extends keyof _all, ns extends keyof _all[kind]>(_: { kind: kind; ns: ns }) => Promise<{ data: _all[kind][ns] }>]>
     }
     type: {
-      put: moo.model.op<
+      put: moo.def.model.op<
         [
           'sync',
           <kind extends keyof _all, ns extends keyof _all[kind], type extends keyof _all[kind][ns]>(_: {
@@ -50,7 +50,7 @@ export type staticsModel = {
           }) => Promise<void>,
         ]
       >
-      get: moo.model.op<
+      get: moo.def.model.op<
         [
           'query',
           <kind extends keyof _all, ns extends keyof _all[kind], type extends keyof _all[kind][ns]>(_: {
@@ -63,7 +63,7 @@ export type staticsModel = {
     }
   }
   latestModelUpgrade: {
-    get: moo.model.op<['query', void, null | modelUpgradeData]>
-    save: moo.model.op<['sync', modelUpgradeData, void]>
+    get: moo.def.model.op<['query', void, null | modelUpgradeData]>
+    save: moo.def.model.op<['sync', modelUpgradeData, void]>
   }
 }

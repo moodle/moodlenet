@@ -1,11 +1,11 @@
 import { isLeft } from 'fp-ts/Either'
 
-export const homeCore: moo.model.impl = {
-  userAccount: {
+export const homeCore: moo.def.model.impl = {
+  userHome: {
     create: {
       post:
         ({ model }) =>
-        async (outcome, { record: { userId } }) => {
+        async (outcome, { userHomeRecord: { userId } }) => {
           if (isLeft(outcome)) {
             return
           }

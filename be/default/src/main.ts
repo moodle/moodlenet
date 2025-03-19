@@ -13,7 +13,7 @@ const MOODLE_HTTP_BINDER_RECEIVER_PORT = parseInt(process.env.MOODLE_HTTP_BINDER
 const MOODLE_HTTP_BINDER_RECEIVER_BASEURL = process.env.MOODLE_HTTP_BINDER_RECEIVER_BASEURL ?? '/'
 
 http_bind
-  .getHttpBinderReceiver<moo.gate.provider.request>({
+  .getHttpBinderReceiver<moo.def.gate.provider.request>({
     port: MOODLE_HTTP_BINDER_RECEIVER_PORT,
     basePath: MOODLE_HTTP_BINDER_RECEIVER_BASEURL,
   })

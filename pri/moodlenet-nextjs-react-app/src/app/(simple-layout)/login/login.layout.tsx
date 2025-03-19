@@ -1,4 +1,3 @@
-import client from '../../../lib/server/session-client'
 import { layoutPropsWithChildren, slotItem } from '../../../lib/server/utils/slots'
 import { LoginCard, LoginCardProps } from './login.client'
 import './login.style.scss'

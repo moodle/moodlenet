@@ -1,12 +1,12 @@
 import { int } from '@moodle/lib-types'
 import { isLeft } from 'fp-ts/Either'
 
-export const moodlenetCore: moo.model.impl = {
-  userAccount: {
+export const moodlenetCore: moo.def.model.impl = {
+  userHome: {
     create: {
       post:
         ({ model }) =>
-        async (outcome, { record: { userId } }) => {
+        async (outcome, { userHomeRecord: { userId } }) => {
           if (isLeft(outcome)) {
             return
           }

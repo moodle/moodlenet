@@ -11,8 +11,8 @@ export type eduResource = {
   language: null | languageCode
   license: null | licenseCode
   publicationDate: null | { month: number | null; year: number }
-  asset: moo.content.asset
-  image: moo.content.asset.optional
+  asset: moo.def.content.asset
+  image: moo.def.content.asset.optional
 }
 
 export type bloomLearningOutcome = {
@@ -24,6 +24,6 @@ export type bloomLearningOutcome = {
 export type eduCollection = {
   title: string
   description: string
-  image: moo.content.asset.optional
+  image: moo.def.content.asset.optional
 }
 

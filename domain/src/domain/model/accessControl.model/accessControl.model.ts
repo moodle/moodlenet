@@ -3,7 +3,7 @@ import { email_address, signed_token } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 import { Option } from 'fp-ts/Option'
 import { NOT_FOUND } from '../../../lib'
-import { userId } from '../userAccount.model'
+import { userId } from '../userHome.model'
 import { accessControlConfigs, authSession, roleConfigs, userRole } from './types'
 export * from './types'
 
@@ -20,7 +20,7 @@ declare global {
           [MODEL_NAME]: accessControlConfigs
         }
       }
-      namespace jwtTokens {
+      namespace signedTokens {
         interface Payloads {
           [MODEL_NAME]: {
             authSession: {
@@ -35,27 +35,27 @@ declare global {
 }
 
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-export type accessControl = moo.model<accessControlModel>
+export type accessControl = moo.def.model<accessControlModel>
 
 export type accessControlModel = {
-  getTokenPermissionsInfo: moo.model.op<['query', { authSessionToken: signed_token | null }, { info: moo.permissions.user.info }]>
+  getTokenPoliciesInfo: moo.def.model.op<['query', { authSessionToken: signed_token | null }, { info: moo.def.policies.user.info }]>
   user: {
-    create: moo.model.op.set.create<userAccessControl>
-    createAuthSession: moo.model.op<['sync', authSession, void]>
-    activateNewAuthSession: moo.model.op<['sync', { userId: userId }, Either<NOT_FOUND, { authSessionToken: signed_token }>]>
-    getData: moo.model.op<['query', { userId: userId }, Option<userAccessControlView>]>
+    create: moo.def.model.op.set.create<userAccessControl>
+    createAuthSession: moo.def.model.op<['sync', authSession, void]>
+    activateNewAuthSession: moo.def.model.op<['sync', { userId: userId }, Either<NOT_FOUND, { authSessionToken: signed_token }>]>
+    getData: moo.def.model.op<['query', { userId: userId }, Option<userAccessControlView>]>
     authSession: {
-      get: moo.model.op<['query', { userId: userId; authSessionId: string }, Option<authSession>]>
-      put: moo.model.op<['sync', { authSession: authSession }, void]>
+      get: moo.def.model.op<['query', { userId: userId; authSessionId: string }, Option<authSession>]>
+      put: moo.def.model.op<['sync', { authSession: authSession }, void]>
     }
-    getPermissionsDeps: moo.model.op<['query', { userId: userId; authSessionId: string }, Option<{ deps: userPermissionsDeps }>]>
+    getPoliciesDeps: moo.def.model.op<['query', { userId: userId; authSessionId: string }, Option<{ deps: userPoliciesDeps }>]>
   }
 }
 //type userInfo = { email: email_address } & Pick<userProfileInfo, 'displayName'>
 export type userAccessControl = {
   userId: userId
   role: userRole
-  // getPermissionsInfo: moo.model.type.endpoint<['query', void, { info: moo.permissions.user.info }]>
+  // getPoliciesInfo: moo.model.type.endpoint<['query', void, { info: moo.policies.user.info }]>
 }
 export type userAccessControlView = userAccessControl & {
   info: {
@@ -63,9 +63,9 @@ export type userAccessControlView = userAccessControl & {
     email: email_address
   }
 }
-export type userPermissionsDeps = {
+export type userPoliciesDeps = {
   roleConfigs: roleConfigs
   // userRole: userRole
   authSessionIdExists: boolean
-  permissionsConfigTree: moo.permissions.config.tree
+  policiesConfigTree: moo.def.policies.config.tree
 }

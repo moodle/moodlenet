@@ -14,20 +14,25 @@ import { getAuthTokenCookie } from './auth'
 const MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL = process.env.MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL
 
 const reqHttpTarget = MOODLE_NET_REACT_APP_PRIMARY_ENDPOINT_URL ?? 'http://localhost:8000'
-const httpGateDispatcher = http_bind.getHttpBinderDispatcher<moo.gate.provider.request>({ reqHttpTarget })
+const httpGateDispatcher = http_bind.getHttpBinderDispatcher<moo.def.gate.provider.request>({ reqHttpTarget })
 
-const client = _sessionTools()
+const session = {
+  get client() {
+    return _sessionClient()
+  },
+}
 
-export default client
+export default session
 
 export type sessionClient = {
-  dispatcher: moo.gate.client.dispatcher
-  proxy: moo.gate.client.proxy
-  my: Promise<{ gate: moo.gate.client; permissionsInfo: moo.permissions.user.info }>
+  dispatcher: moo.def.gate.client.dispatcher
+  proxy: moo.def.gate.client.proxy
+  permissionsInfo: Promise<moo.def.policies.user.info>
+  gate: Promise<moo.def.gate.client>
 }
 
 const request_session_async_storage = new AsyncLocalStorage<sessionClient>()
-function _sessionTools() {
+function _sessionClient() {
   const _existing_current_session_client = request_session_async_storage.getStore()
   if (_existing_current_session_client) {
     return _existing_current_session_client
@@ -46,7 +51,7 @@ function _sessionTools() {
     // but atm we have query|write channel discrimination in secondary only
     sort: true,
   })
-  const gateClientDispatcher: moo.gate.client.dispatcher = gateClientRequest => {
+  const gateClientDispatcher: moo.def.gate.client.dispatcher = gateClientRequest => {
     const gateClientRequestHashingObject = { gateClientRequest }
     const gateClientRequestHash = hash(gateClientRequestHashingObject)
     // console.log(cache.has(domainMsgHash) ? `${domainMsgHash}**cache**  ` : '--fetch--  ', domainMsg.endpoint.join('.'))
@@ -54,7 +59,7 @@ function _sessionTools() {
       cache.set(
         gateClientRequestHash,
         requestClaimsPromise.then(requestClaims => {
-          const gateProviderRequest: moo.gate.provider.request = { ...gateClientRequest, info: { claims: requestClaims } }
+          const gateProviderRequest: moo.def.gate.provider.request = { ...gateClientRequest, info: { claims: requestClaims } }
           return httpGateDispatcher([gateClientRequest.path, gateProviderRequest])
         }),
         // .catch(error => {???
@@ -80,26 +85,23 @@ function _sessionTools() {
   const proxy = gateClientProxy({ gateClientDispatcher })
 
   const permissionsInfoPromise = proxy.any.system.access.session.myOwn().then(({ permissionsInfo }) => permissionsInfo)
-  let myPromise: sessionClient['my']
+  let gatePromise: sessionClient['gate']
+
   const _ = Promise.withResolvers()
   const sessionClient: sessionClient = {
     dispatcher: gateClientDispatcher,
     proxy,
-    get my() {
-      if (!myPromise) {
-        myPromise = (async () => {
-          const permissionsInfo = await permissionsInfoPromise
-          return {
+    permissionsInfo: permissionsInfoPromise,
+    get gate() {
+      return (gatePromise =
+        gatePromise ??
+        permissionsInfoPromise.then(permissionsInfo =>
+          gateClient({
             permissionsInfo,
-            gate: gateClient({
-              permissionsInfo,
-              gateProvider,
-              gateClientDispatcher,
-            }),
-          }
-        })()
-      }
-      return myPromise
+            gateProvider,
+            gateClientDispatcher,
+          }),
+        ))
     },
   }
   request_session_async_storage.enterWith(sessionClient)
@@ -137,9 +139,9 @@ export async function getCurrentUrl() {
 }
 
 export async function getAuthenticatedUserSessionOrRedirectToLogin() {
-  const my = await client.my
-  if (my.permissionsInfo.user.type === 'auth') {
-    return my.permissionsInfo
+  const permissionsInfo = await session.client.permissionsInfo
+  if (permissionsInfo.user.type === 'auth') {
+    return permissionsInfo
   }
 
   const loginUrl = appRoutes('/login', {
@@ -152,8 +154,8 @@ export async function getAuthenticatedUserSessionOrRedirectToLogin() {
 
 export async function getAdminUserSessionOrRedirect(path = '/') {
   const authenticatedUserSession = await getAuthenticatedUserSessionOrRedirectToLogin()
-  const my = await client.my
-  if (!my.permissionsInfo.tree.admin) {
+  const permissionsInfo = await session.client.permissionsInfo
+  if (!permissionsInfo.tree.admin) {
     redirect(path)
   }
   return authenticatedUserSession
@@ -185,7 +187,7 @@ async function getClaims() {
   const meta = {
     app: 'moodlenet NextJs Webapp@0.1',
   }
-  const claims: moo.gate.provider.requestClaims = {
+  const claims: moo.def.gate.provider.requestClaims = {
     server: {
       authSessionToken,
       href,

@@ -1,6 +1,6 @@
 'use server'
 
-import client from '../../../../lib/server/session-client'
+import session from '../../../../lib/server/session-client'
 import { srvSiteRoutes } from '../../../../lib/server/utils/site-urls.server'
 
 export async function requestAccountSelfDeletion() {

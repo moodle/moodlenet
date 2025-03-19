@@ -1,7 +1,7 @@
 import { content } from '@moodle/domain/model'
 import { dbStruct } from '../db-structure'
 
-export function contentImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<content.contentModel> {
+export function contentImpl({ dbStruct }: { dbStruct: dbStruct }): moo.def.model.impl<content.contentModel> {
   return {
     categories: {
       languages: {

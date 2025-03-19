@@ -28,7 +28,7 @@ type receivedAmounts = {
   }
 }
 
-export type moderation = moo.model<moderationModel>
+export type moderation = moo.def.model<moderationModel>
 type deltaAmounts = {
   [context in keyof Reports]: {
     [type in keyof Reports[context]]: int
@@ -36,13 +36,13 @@ type deltaAmounts = {
 }
 export type moderationModel = {
   user: {
-    create: moo.model.op<['sync', userModerationSpace, void]>
-    get: moo.model.op<['query', { userId: string }, Option<userModerationSpace>]>
+    create: moo.def.model.op<['sync', userModerationSpace, void]>
+    get: moo.def.model.op<['query', { userId: string }, Option<userModerationSpace>]>
   }
   reports: {
     received: {
-      delta: moo.model.op<['sync', { on: deep_partial<deltaAmounts> }, { deltaAmounts: deltaAmounts }]>
-      get: moo.model.op<['query', void, { receivedAmounts: receivedAmounts }]>
+      delta: moo.def.model.op<['sync', { on: deep_partial<deltaAmounts> }, { deltaAmounts: deltaAmounts }]>
+      get: moo.def.model.op<['query', void, { receivedAmounts: receivedAmounts }]>
     }
   }
 }

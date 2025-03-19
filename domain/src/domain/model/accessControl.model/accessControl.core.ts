@@ -6,12 +6,12 @@ import { Error4xx } from '../../../lib'
 import { applyRolePerms } from './lib/applyRolePerms'
 import { isNone } from 'fp-ts/Option'
 
-export const accessControlCore: moo.model.impl = {
-  userAccount: {
+export const accessControlCore: moo.def.model.impl = {
+  userHome: {
     create: {
       post:
         ({ model }) =>
-        async (outcome, { record: { userId } }) => {
+        async (outcome, { userHomeRecord: { userId } }) => {
           if (isLeft(outcome)) {
             return
           }
@@ -26,23 +26,23 @@ export const accessControlCore: moo.model.impl = {
     },
   },
   accessControl: {
-    getTokenPermissionsInfo: {
+    getTokenPoliciesInfo: {
       exe:
         ({ model }) =>
         async ({ authSessionToken }) => {
           if (!isString(authSessionToken)) {
-            return getAnonPermissionsInfo(model)
+            return getAnonPoliciesInfo(model)
           }
-          const e_authSessionData = await model.jwtTokens.validate.query({ ns: 'accessControl', type: 'authSession', token: authSessionToken })
+          const e_authSessionData = await model.signedTokens.validate.query({ ns: 'accessControl', type: 'authSession', token: authSessionToken })
           if (isLeft(e_authSessionData)) {
             throw new Error4xx('Unauthorized', 'invalid token')
           }
           const { authSessionId, userId } = e_authSessionData.right.data
-          const o_userPermissionsDeps = await model.accessControl.user.getPermissionsDeps.query({ authSessionId, userId })
-          if (isNone(o_userPermissionsDeps)) {
+          const o_userPoliciesDeps = await model.accessControl.user.getPoliciesDeps.query({ authSessionId, userId })
+          if (isNone(o_userPoliciesDeps)) {
             throw new Error4xx('Expectation Failed', 'unexistent user')
           }
-          const { roleConfigs, /*  userRole, */ authSessionIdExists, permissionsConfigTree } = o_userPermissionsDeps.value.deps
+          const { roleConfigs, /*  userRole, */ authSessionIdExists, policiesConfigTree } = o_userPoliciesDeps.value.deps
 
           if (!authSessionIdExists) {
             throw new Error4xx('Forbidden', 'invalidated session')
@@ -52,7 +52,7 @@ export const accessControlCore: moo.model.impl = {
           //   throw new Error4xx('Expectation Failed', `no role configs for role: ${userRole}`)
           // }
 
-          const roleTree = applyRolePerms(permissionsConfigTree, [roleConfigs.perm])
+          const roleTree = applyRolePerms(policiesConfigTree, [roleConfigs.perm])
           return {
             info: {
               tree: roleTree,
@@ -74,7 +74,7 @@ export const accessControlCore: moo.model.impl = {
             const { data: sessionExpirationTime } = await model.statics.data.type.get.query({ kind: 'configs', ns: 'accessControl', type: 'sessionExpirationTime' })
             const expires = duration.end(duration.parse(sessionExpirationTime)).toISOString()
 
-            const { token: authSessionToken } = await model.jwtTokens.sign.query({
+            const { token: authSessionToken } = await model.signedTokens.sign.query({
               ns: 'accessControl',
               type: 'authSession',
               data: { userId, authSessionId },
@@ -101,10 +101,10 @@ export const accessControlCore: moo.model.impl = {
   },
 }
 
-async function getAnonPermissionsInfo(model: moo.model.handle): Promise<{ info: moo.permissions.user.info }> {
+async function getAnonPoliciesInfo(model: moo.def.model.handle): Promise<{ info: moo.def.policies.user.info }> {
   const { data: configs } = await model.statics.data.ns.get.query({ kind: 'configs', ns: 'accessControl' })
 
-  const anonTree = applyRolePerms(configs.permissionsConfigTree, [configs.roles.anonymous.perm])
+  const anonTree = applyRolePerms(configs.policiesConfigTree, [configs.roles.anonymous.perm])
   return {
     info: { tree: anonTree, revDate: configs.roles.anonymous.revDate, user: { type: 'anon' } },
   }

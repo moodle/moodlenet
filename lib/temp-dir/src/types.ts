@@ -1,8 +1,8 @@
 import { d_u, path } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 
-export type uploadedFileMeta = moo.content.fileMeta & {
-  requestClaims: moo.gate.provider.requestClaims
+export type uploadedFileMeta = moo.def.content.fileMeta & {
+  requestClaims: moo.def.gate.provider.requestClaims
   original?: {
     name: string
     size?: number
@@ -26,7 +26,7 @@ export type useTempFileResult = Either<
     'reason'
   >,
   {
-    fileMeta: moo.content.fileMeta
+    fileMeta: moo.def.content.fileMeta
     path: path
   }
 >

@@ -71,7 +71,7 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
       >
     > {
       const { name: siteName } = orgInfo
-      if (data.module === 'userAccount') {
+      if (data.module === 'userHome') {
         if (data.type === 'signupWithEmailConfirmation') {
           return [
             true,
@@ -85,21 +85,18 @@ export function user_notification_service_factory(env: NodemailerSecEnv): second
             },
           ]
         }
-        const [found, user] = await ctx.mod.secondary.userAccount.query.findUser({
+        const [found, user] = await ctx.mod.secondary.userHome.query.findUser({
           by: 'id',
-          userAccountId: data.toUserAccountId,
+          userHomeId: data.toUserHomeId,
         })
         if (!found) {
-          ctx.log.warn(`User not found for id ${data.toUserAccountId}`)
+          ctx.log.warn(`User not found for id ${data.toUserHomeId}`)
           return [false, { reason: 'userNotFound' }]
         }
         const receiverEmail = user.contacts.email
         // inactivityBeforeDeletion
         if (data.type === 'deleteAccountRequest') {
-          return [
-            true,
-            { receiverEmail, props: selfDeletionConfirmEmail({ deleteAccountUrl: data.deleteAccountUrl, siteName }) },
-          ]
+          return [true, { receiverEmail, props: selfDeletionConfirmEmail({ deleteAccountUrl: data.deleteAccountUrl, siteName }) }]
         }
         if (data.type === 'passwordChanged') {
           return [true, { receiverEmail, props: passwordChangedEmail({ siteName }) }]

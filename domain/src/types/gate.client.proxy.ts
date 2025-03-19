@@ -3,37 +3,32 @@
 import { any_, map } from '@moodle/lib-types'
 
 declare global {
-  namespace moo {
-    namespace gate {
-      // type clientClaims = { locale?: string; locales?: string[] }
-      namespace client {
-        type proxy<forPersonas extends map<moo.persona<any_>> = Personas> = {
-          [personaType_ in keyof forPersonas]: proxy.persona<forPersonas[personaType_]>
-        }
-        namespace proxy {
-          type dispatcher = (gateProviderRequest: provider.request) => Promise<unknown>
+  namespace moo.def.gate.client {
+    type proxy<forUserTypes extends map<moo.def.userType<any_>> = UserTypes> = {
+      [userType_ in keyof forUserTypes]: proxy.userType<forUserTypes[userType_]>
+    }
+    namespace proxy {
+      type dispatcher = (gateProviderRequest: provider.request) => Promise<unknown>
 
-          type persona<persona_ extends moo.persona<any_>> = {
-            [contextName in string & keyof persona_]: persona_[contextName] extends moo.persona.context<any_> ? context<persona_[contextName]> : unknown
-          }
-
-          type context<context extends moo.persona.context<any_>> = {
-            [scopeName in string & keyof context]: context[scopeName] extends moo.persona.scope<any_> ? scope<context[scopeName]> : unknown
-          }
-
-          type scope<scope extends moo.persona.scope<any_>> = {
-            [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.persona.usecase<any_> ? usecase<scope[useCaseName]> : never
-          }
-
-          type usecase<useCase extends moo.persona.usecase<any_>> = {
-            [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.persona.endpoint<any_> ? endpoint<useCase[endpointName]> : never
-          }
-
-          type endpoint<useCaseEndpoint extends moo.persona.endpoint<any_> = moo.persona.endpoint<any_>> = (
-            form: persona.endpointFormType<useCaseEndpoint>,
-          ) => Promise<useCaseEndpoint[1]>
-        }
+      type userType<userType_ extends moo.def.userType<any_>> = {
+        [contextName in string & keyof userType_]: userType_[contextName] extends moo.def.userType.context<any_> ? context<userType_[contextName]> : unknown
       }
+
+      type context<context extends moo.def.userType.context<any_>> = {
+        [scopeName in string & keyof context]: context[scopeName] extends moo.def.userType.scope<any_> ? scope<context[scopeName]> : unknown
+      }
+
+      type scope<scope extends moo.def.userType.scope<any_>> = {
+        [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.def.userType.usecase<any_> ? usecase<scope[useCaseName]> : never
+      }
+
+      type usecase<useCase extends moo.def.userType.usecase<any_>> = {
+        [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.def.userType.endpoint<any_> ? endpoint<useCase[endpointName]> : never
+      }
+
+      type endpoint<useCaseEndpoint extends moo.def.userType.endpoint<any_> = moo.def.userType.endpoint<any_>> = (
+        form: def.userType.endpointFormType<useCaseEndpoint>,
+      ) => Promise<useCaseEndpoint[1]>
     }
   }
 }

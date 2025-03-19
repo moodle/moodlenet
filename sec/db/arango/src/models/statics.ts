@@ -2,7 +2,7 @@ import { statics } from '@moodle/domain/model'
 import { deep_partial_props } from '@moodle/lib-types'
 import { dbStruct, staticData } from '../db-structure'
 const LATEST_KEY = 'latest'
-export function staticsImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<statics.staticsModel> {
+export function staticsImpl({ dbStruct }: { dbStruct: dbStruct }): moo.def.model.impl<statics.staticsModel> {
   return {
     data: {
       type: {

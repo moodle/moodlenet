@@ -21,6 +21,6 @@ declare global {
   }
 }
 
-export type org = moo.model<OrgModel>
+export type org = moo.def.model<OrgModel>
 
 export type OrgModel = {}

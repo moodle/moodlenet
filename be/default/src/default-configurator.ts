@@ -1,6 +1,6 @@
 import { appDeployments, loggerProvider } from '@moodle/domain'
 import * as domainCore from '@moodle/domain/core'
-import { gateProvider } from '@moodle/domain/persona'
+import { gateProvider } from '@moodle/domain/userType'
 import { deploymentInfoFromUrlString, Error4xx, executeModel, gateCoreDeps, isError4xx, modelHandleProxy, postModelOps, preModelOps } from '@moodle/domain/lib'
 import type * as model from '@moodle/domain/model'
 import { generateAlphanumId, generateUlid } from '@moodle/lib-id-gen'
@@ -28,11 +28,11 @@ import { createWinstonDomainLoggerProvider, winstonLoggerConfigs } from './winst
 //   provideDefaultResourceIngestorSecEnv,
 // } from '@moodle/sec-resource-ingestion-default'
 
-type __ = model.jwtTokens.JwtTokensModel
+type __ = model.signedTokens.signedTokensModel
 
 type configuratorResult = {
   loggerProvider: loggerProvider
-  modelEnvelopeDispatcher: moo.model.dispatcher
+  modelEnvelopeDispatcher: moo.def.model.dispatcher
   stopAndDrain: () => Promise<void>
 }
 
@@ -54,7 +54,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
     return Promise.allSettled(configResults.map(({ stopAndDrain }) => stopAndDrain()))
   }
 
-  async function gate({ gateRequest }: { gateRequest: moo.gate.provider.request }): Promise<gateCoreDeps> {
+  async function gate({ gateRequest }: { gateRequest: moo.def.gate.provider.request }): Promise<gateCoreDeps> {
     // const normalized_domain = domainName.split(':')[0]!.replace(/:/g, '_')
     const domainName = new URL(gateRequest.info.claims.server.href).hostname
     if (!cache[domainName]) {
@@ -131,7 +131,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
             nodemailer,
             localFsStorage,
             tikaResourceIngestor,
-          } satisfies map<moo.model.impl>
+          } satisfies map<moo.def.model.impl>
 
           const pendingModelResultPromises: Promise<unknown>[] = []
 
@@ -190,7 +190,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
               throw e
             })
 
-          async function modelEnvelopeDispatcher(envelope: moo.model.envelope<any_>): Promise<Either<Error4xx, unknown>> {
+          async function modelEnvelopeDispatcher(envelope: moo.def.model.envelope<any_>): Promise<Either<Error4xx, unknown>> {
             type __ = keyof moo.Models extends infer modelName
               ? modelName extends keyof moo.Models
                 ? keyof moo.Models[modelName] extends infer frstProp
@@ -304,16 +304,16 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
     const coreId = generateUlid({ onDate: new Date() })
     // console.time(`getTokenPermissionsInfo`)
-    const { info: permissionsInfo } = await myModelHandle.accessControl.getTokenPermissionsInfo.query({ authSessionToken: gateRequest.info.claims.server.authSessionToken })
+    const { info: policiesInfo } = await myModelHandle.accessControl.getTokenPoliciesInfo.query({ authSessionToken: gateRequest.info.claims.server.authSessionToken })
     // console.timeEnd(`getTokenPermissionsInfo`)
     // console.log(inspect(permissionsInfo, { depth: 100 }))
     const coreGateDeps: gateCoreDeps = {
-      core: domainCore.persona.core,
+      core: domainCore.userType.core,
       coreRequest: {
         gateRequest,
         id: coreId,
         now: new Date().toISOString(),
-        permissionsInfo,
+        policiesInfo,
       },
       gateProvider,
       loggerProvider: configuration.loggerProvider,

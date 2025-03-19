@@ -2,7 +2,7 @@
 import { fract, url_string } from '@moodle/lib-types'
 declare global {
   namespace moo {
-    namespace content {
+    namespace def.content {
       namespace categories {
         type credits = {
           owner: { name: string; url: url_string }

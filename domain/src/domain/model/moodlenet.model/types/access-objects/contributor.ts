@@ -64,10 +64,10 @@ type featuredContentRef<refData = unknown> = refData & {
   removingDate: null | date_time_string
 }
 
-export type permissionsOnMoodlenetContributor = flags<'follow' | 'sendMessage' | 'report' | 'editProfileInfo'>
+export type policiesOnMoodlenetContributor = flags<'follow' | 'sendMessage' | 'report' | 'editProfileInfo'>
 export type moodlenetContributorAccessObject = {
   myLinks: flags<'followed'>
-  permissions: permissionsOnMoodlenetContributor
+  policies: policiesOnMoodlenetContributor
 
   profileInfo: profileInfo
 

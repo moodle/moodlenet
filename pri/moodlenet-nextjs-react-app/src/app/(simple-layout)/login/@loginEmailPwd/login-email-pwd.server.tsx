@@ -9,7 +9,7 @@ import QueryString from 'qs'
 import { appRoutes } from '../../../../lib/common/appRoutes'
 import { setAuthTokenCookie } from '../../../../lib/server/auth'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import client from '../../../../lib/server/session-client'
+import session from '../../../../lib/server/session-client'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 
 export async function getLoginSchema() {

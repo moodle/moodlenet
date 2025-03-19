@@ -1,7 +1,7 @@
 import { education } from '@moodle/domain/model'
 import { dbStruct } from '../db-structure'
 
-export function educationImpl({ dbStruct }: { dbStruct: dbStruct }): moo.model.impl<education.educationModel> {
+export function educationImpl({ dbStruct }: { dbStruct: dbStruct }): moo.def.model.impl<education.educationModel> {
   return {
     categories: {
       bloomCognitives: {
