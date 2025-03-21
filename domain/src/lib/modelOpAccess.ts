@@ -15,12 +15,12 @@ export async function preModelOps({ models, envelope, modelEnvelopeDispatcher, l
   const allOpTargets = allModelsOpExtracts({ models, envelope, modelEnvelopeDispatcher, loggerProvider })
   const exeTargets = allOpTargets.exe
   const implementationExists = exeTargets.length > 0
-  const step = implementationExists ? 'pre' : ('notImpl' as const)
-  const myLogger = loggerProvider({ for: 'model', more: { name: `${step}:op` /*  models: Object.keys(models) */ }, envelope: envelope })
+  const layer: keyof moo.def.model.impl.opHandlers = implementationExists ? 'pre' : 'notImpl'
+  const myLogger = loggerProvider({ for: 'model', layer, name: 'modelOpAccess:preModelOps', envelope })
   await Promise.all(
-    allOpTargets[step].map(({ fn, workerName: modelName }) =>
+    allOpTargets[layer].map(({ fn, workerName: modelName }) =>
       fn().catch(err => {
-        myLogger.error(`Error in "${step}" exec model ${modelName}`, err)
+        myLogger.error(`Error in "${layer}" exec model ${modelName}`, err)
         //REVIEW: should we throw an error here? if so it would brake the flow...
       }),
     ),
@@ -28,11 +28,11 @@ export async function preModelOps({ models, envelope, modelEnvelopeDispatcher, l
 }
 
 export async function executeModel({ models, envelope, modelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps) {
-  const myLogger = loggerProvider({ for: 'model', more: { name: `exec:op` /*  models: Object.keys(models) */ }, envelope: envelope })
+  const myLogger = loggerProvider({ for: 'model', layer: 'exe', name: 'modelOpAccess:executeModel', envelope })
   const allOpTargets = allModelsOpExtracts({ models, envelope, modelEnvelopeDispatcher, loggerProvider })
   const exe = allOpTargets.exe[0] ?? {
     fn: async (): Promise<Either<Error4xx, never>> => {
-      const notImplErr = new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${envelope.target.path.join('.')}` })
+      const notImplErr = new Error4xx('Not Implemented', { message: `No exec implementations of model target: ${envelope.path.join('.')}` })
       myLogger.warn(notImplErr)
       // return left(notImplErr)
       return Promise.reject(notImplErr)
@@ -41,7 +41,7 @@ export async function executeModel({ models, envelope, modelEnvelopeDispatcher, 
   }
 
   if (allOpTargets.exe.length > 1) {
-    const MULTIPLE_EXEC_MESSAGE = `Multiple implementations of model target: ${envelope.target.path.join('.')} detected,
+    const MULTIPLE_EXEC_MESSAGE = `Multiple implementations of model target: ${envelope.path.join('.')} detected,
   will call the first from "${exe.workerName}" model all others will be ignored`
     //REVIEW: should we throw an error here?
     myLogger.critical(MULTIPLE_EXEC_MESSAGE)
@@ -59,7 +59,7 @@ export async function executeModel({ models, envelope, modelEnvelopeDispatcher, 
 }
 
 export async function postModelOps({ models, envelope, outcome, modelEnvelopeDispatcher, loggerProvider }: executeModelOpsDeps & { outcome: Either<Error4xx, unknown> }) {
-  const myLogger = loggerProvider({ for: 'model', more: { name: `post:op` /*  models: Object.keys(models) */ }, envelope: envelope })
+  const myLogger = loggerProvider({ for: 'model', layer: 'post', name: 'modelOpAccess:postModelOps', envelope })
 
   const allOpTargets = allModelsOpExtracts({ models, envelope, modelEnvelopeDispatcher, loggerProvider })
 
@@ -117,29 +117,31 @@ export function workerOpExtract({ worker, envelope, modelEnvelopeDispatcher, log
     origin: {
       model: {
         id: envelope.id,
-        target: envelope.target,
+        target: {
+          opType: envelope.opType,
+          path: envelope.path,
+        },
       },
       request: envelope.origin.request,
     },
   })
 
-  const opHandlers: undefined | moo.def.model.impl.opHandlers<moo.def.model.op> = envelope.target.path.reduce(
-    (_model, prop) => ('function' === typeof _model ? _model(prop) : _model?.[prop]),
-    worker.impl,
-  )
-
-  const log = loggerProvider({ for: 'model', envelope: envelope })
-  const now = new Date().toISOString()
-  const ctx: moo.def.model.impl.ctx<any_> = { model, envelope: { ...envelope, now }, log, now: new Date().toISOString() }
+  const opHandlers: undefined | moo.def.model.impl.opHandlers = envelope.path.reduce((_model, prop) => ('function' === typeof _model ? _model(prop) : _model?.[prop]), worker.impl)
 
   const exe = opHandlers?.exe
   const pre = opHandlers?.pre
   const post = opHandlers?.post
   const notImpl = opHandlers?.notImpl
   return {
-    exe: exe && (() => exe(ctx)(envelope.message)),
-    pre: pre && (() => pre(ctx)(envelope.message)),
-    notImpl: notImpl && (() => notImpl(ctx)(envelope.message)),
-    post: post && ((outcome: Either<Error4xx, unknown>) => post(ctx)(outcome, envelope.message)),
+    exe: exe && (() => exe(ctx('exe'))(envelope.message)),
+    pre: pre && (() => pre(ctx('pre'))(envelope.message)),
+    notImpl: notImpl && (() => notImpl(ctx('notImpl'))(envelope.message)),
+    post: post && ((outcome: Either<Error4xx, unknown>) => post(ctx('post'))(outcome, envelope.message)),
+  }
+  function ctx(layer: keyof moo.def.model.impl.opHandlers) {
+    const log = loggerProvider({ for: 'model', envelope, layer, name: worker.name })
+    const now = new Date().toISOString()
+    const ctx: moo.def.model.impl.ctx<any_> = { model, envelope: { ...envelope, now }, log, now: new Date().toISOString() }
+    return ctx
   }
 }

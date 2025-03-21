@@ -20,10 +20,8 @@ export function modelHandleProxy({ modelDispatcher, origin }: { modelDispatcher:
         id,
         now: now,
         callTime: now,
-        target: {
-          path,
-          opType,
-        },
+        path,
+        opType,
         origin,
         message,
       }).then(outcome => (isLeft(outcome) ? Promise.reject(outcome.left) : outcome.right))

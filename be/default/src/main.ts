@@ -32,13 +32,13 @@ http_bind
     const configurator = defaultConfigurator({ master: MOODLE_MASTER_INSTANCE })
 
     httpGate.receiver({
-      dispatcher: async ([, gateRequest]) => {
+      dispatcher: async gateRequest => {
         const coreGateDeps = await configurator.gate({ gateRequest })
         return gateCore(coreGateDeps)
       },
     })
 
-    _____CALL____TEST____(configurator)
+    // _____CALL____TEST____(configurator)
 
     let exiting = false
 

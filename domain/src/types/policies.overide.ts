@@ -33,7 +33,7 @@ declare global {
 
     type endpoint<endpoint_ extends moo.def.userType.endpoint> =
       // | nodeDir
-      config_tag<{ [moo.def.tags.configs]: endpoint_[2] }>
+      config_tag<endpoint_>
   }
 }
 

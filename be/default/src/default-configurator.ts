@@ -68,8 +68,9 @@ export const defaultConfigurator: configurator = ({ master }) => {
             domainName,
           }
           dotenvExpand(dotenv.config({ path: path.join(localStorageFsDirectories.currentDomainDir, '.env'), override: true }))
+      console.debug(`confiuguring domainName ${domainName}`)
 
-          // console.debug({ currentDomainDir: domainFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
+      console.debug({ currentDomainDir: localStorageFsDirectories.currentDomainDir, MOODLE_HOME_DIR })
 
           const loggerConfigs: winstonLoggerConfigs = { consoleLevel: 'debug', file: { level: 'debug', path: path.join(localStorageFsDirectories.currentDomainDir, 'logs') } }
           const { loggerProvider } = createWinstonDomainLoggerProvider({ loggerConfigs })
@@ -82,12 +83,12 @@ export const defaultConfigurator: configurator = ({ master }) => {
             MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS: coerce.number().default(60),
             MOODLE_SYS_ADMIN_EMAIL: email_address_schema(),
             MOODLE_NET_WEBAPP_DEPLOYMENT_URL: url_string_schema,
-            MOODLE_FILE_SERVER_DEPLOYMENT_URL: url_string_schema,
+            // MOODLE_FILE_SERVER_DEPLOYMENT_URL: url_string_schema,
           }).parse({
             MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS: process.env.MOODLE_TEMP_FILE_MAX_RETENTION_SECONDS,
             MOODLE_SYS_ADMIN_EMAIL: process.env.MOODLE_SYS_ADMIN_EMAIL,
             MOODLE_NET_WEBAPP_DEPLOYMENT_URL: process.env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL,
-            MOODLE_FILE_SERVER_DEPLOYMENT_URL: process.env.MOODLE_FILE_SERVER_DEPLOYMENT_URL,
+            // MOODLE_FILE_SERVER_DEPLOYMENT_URL: process.env.MOODLE_FILE_SERVER_DEPLOYMENT_URL,
           })
 
           console.info(`configuring domain [${domainName}] env:`, { MOODLE_HOME_DIR, ...env })
@@ -115,7 +116,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
           const _appDeployments: appDeployments = {
             moodlenetWebapp: deploymentInfoFromUrlString(env.MOODLE_NET_WEBAPP_DEPLOYMENT_URL),
-            filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
+            // filestoreHttp: deploymentInfoFromUrlString(env.MOODLE_FILE_SERVER_DEPLOYMENT_URL),
           }
           const default_resource_ingestor_env = provideDefaultResourceIngestorSecEnv({ env: domain_process_env })
           const arangodb = get_arango_persistence_factory(arango_db_env)
@@ -198,9 +199,9 @@ export const defaultConfigurator: configurator = ({ master }) => {
                   : never
                 : never
               : never
-            const [model, frstProp] = envelope.target.path as __
+            const [model, frstProp] = envelope.path as __
             const isFromQueue = _from_queue_sym_ in envelope
-            const enqueueing = !isFromQueue && envelope.target.opType === 'async' && ((model === 'mailer' && frstProp === 'send') || (model === 'mailer' && frstProp === 'send'))
+            const enqueueing = !isFromQueue && envelope.opType === 'async' && ((model === 'mailer' && frstProp === 'send') || (model === 'mailer' && frstProp === 'send'))
             const jobId = `${envelope.id}_${generateAlphanumId({ length: 4 })}`
             if (enqueueing) {
               const queueService = queues.services.default
@@ -242,7 +243,7 @@ export const defaultConfigurator: configurator = ({ master }) => {
                     loggerProvider,
                     models,
                   })
-                  if (isError4xx(exeResult) && exeResult.desc !== 'Not Implemented' && !isFromQueue && envelope.target.opType === 'async') {
+                  if (isError4xx(exeResult) && exeResult.desc !== 'Not Implemented' && !isFromQueue && envelope.opType === 'async') {
                     myLogger.info('executeModel: async call - formerly not enqueued - failed, will enqueue', { jobId, error: exeResult, envelope })
                     await queues.defaultService.enqueue({
                       jobId,

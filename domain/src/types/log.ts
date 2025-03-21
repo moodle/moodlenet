@@ -20,6 +20,8 @@ export type loggerContext = { more?: any_ } & d_u<
       branchPath: string[]
     }
     model: {
+      name: string
+      layer: keyof moo.def.model.impl.opHandlers
       envelope: moo.def.model.envelope<moo.def.model.op.def>
     }
     infra: {

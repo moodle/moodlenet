@@ -14,13 +14,12 @@ declare global {
 
         type handle = op_ref<Models>
 
-        type envelope<op_ extends op.def> = {
+        type envelope<op_ extends op.def> = envelope.target & {
           id: string
           callTime: date_time_string
           now: date_time_string
           message: op_[1]
           origin: envelope.origin //<type.opDef>
-          target: envelope.target //<op>
         }
 
         namespace envelope {
@@ -69,7 +68,7 @@ declare global {
           type notImpl<op_ extends op.def> = (ctx: ctx<op_>) => (message: op.msg<op_>) => Promise<void>
           type post<op_ extends op.def> = (ctx: ctx<op_>) => (outcome: Either<Error4xx, op.res<op_>>, message: op.msg<op_>) => Promise<void>
 
-          type opHandlers<op_ extends op> = {
+          type opHandlers<op_ extends op = op> = {
             exe?: exe<op_>
             // exe?: exe<[op.type, op_[1], op_[2]]>
             pre?: pre<op_>

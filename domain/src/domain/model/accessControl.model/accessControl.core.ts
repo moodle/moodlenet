@@ -3,7 +3,7 @@ import { isLeft, right } from 'fp-ts/Either'
 import * as duration from 'iso8601-duration'
 import { isString } from 'lodash'
 import { Error4xx } from '../../../lib'
-import { applyRolePerms } from './lib/applyRolePerms'
+import { applyRolePolicies } from './lib/applyRolePolicies'
 import { isNone } from 'fp-ts/Option'
 
 export const accessControlCore: moo.def.model.impl = {
@@ -52,7 +52,7 @@ export const accessControlCore: moo.def.model.impl = {
           //   throw new Error4xx('Expectation Failed', `no role configs for role: ${userRole}`)
           // }
 
-          const roleTree = applyRolePerms(policiesConfigTree, [roleConfigs.perm])
+          const roleTree = applyRolePolicies(policiesConfigTree, [roleConfigs.perm])
           return {
             info: {
               tree: roleTree,
@@ -104,7 +104,7 @@ export const accessControlCore: moo.def.model.impl = {
 async function getAnonPoliciesInfo(model: moo.def.model.handle): Promise<{ info: moo.def.policies.user.info }> {
   const { data: configs } = await model.statics.data.ns.get.query({ kind: 'configs', ns: 'accessControl' })
 
-  const anonTree = applyRolePerms(configs.policiesConfigTree, [configs.roles.anonymous.perm])
+  const anonTree = applyRolePolicies(configs.policiesConfigTree, [configs.roles.anonymous.perm])
   return {
     info: { tree: anonTree, revDate: configs.roles.anonymous.revDate, user: { type: 'anon' } },
   }

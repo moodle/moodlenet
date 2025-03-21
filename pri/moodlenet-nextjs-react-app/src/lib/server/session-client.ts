@@ -5,7 +5,7 @@ import i18next from 'i18next'
 import { headers } from 'next/headers'
 // import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/user-account/lib'
 import { gateClient, gateClientProxy } from '@moodle/domain/lib'
-import { gateProvider } from '@moodle/domain/persona'
+import { gateProvider } from '@moodle/domain/gate'
 import { redirect, RedirectType } from 'next/navigation'
 import { hasher } from 'node-object-hash'
 import assert from 'node:assert'
@@ -27,7 +27,7 @@ export default session
 export type sessionClient = {
   dispatcher: moo.def.gate.client.dispatcher
   proxy: moo.def.gate.client.proxy
-  permissionsInfo: Promise<moo.def.policies.user.info>
+  policiesInfoPromise: Promise<moo.def.policies.user.info>
   gate: Promise<moo.def.gate.client>
 }
 
@@ -60,7 +60,7 @@ function _sessionClient() {
         gateClientRequestHash,
         requestClaimsPromise.then(requestClaims => {
           const gateProviderRequest: moo.def.gate.provider.request = { ...gateClientRequest, info: { claims: requestClaims } }
-          return httpGateDispatcher([gateClientRequest.path, gateProviderRequest])
+          return httpGateDispatcher(gateProviderRequest)
         }),
         // .catch(error => {???
         //   if (isErrorXxx(error)) {
@@ -84,20 +84,20 @@ function _sessionClient() {
 
   const proxy = gateClientProxy({ gateClientDispatcher })
 
-  const permissionsInfoPromise = proxy.any.system.access.session.myOwn().then(({ permissionsInfo }) => permissionsInfo)
+  const policiesInfoPromise = proxy.any.accessControl.policies.readMyOwn.policiesInfo().then(({ policiesInfo }) => policiesInfo)
   let gatePromise: sessionClient['gate']
 
   const _ = Promise.withResolvers()
   const sessionClient: sessionClient = {
     dispatcher: gateClientDispatcher,
     proxy,
-    permissionsInfo: permissionsInfoPromise,
+    policiesInfoPromise,
     get gate() {
       return (gatePromise =
         gatePromise ??
-        permissionsInfoPromise.then(permissionsInfo =>
+        policiesInfoPromise.then(policiesInfo =>
           gateClient({
-            permissionsInfo,
+            policiesInfo,
             gateProvider,
             gateClientDispatcher,
           }),
@@ -139,7 +139,7 @@ export async function getCurrentUrl() {
 }
 
 export async function getAuthenticatedUserSessionOrRedirectToLogin() {
-  const permissionsInfo = await session.client.permissionsInfo
+  const permissionsInfo = await session.client.policiesInfoPromise
   if (permissionsInfo.user.type === 'auth') {
     return permissionsInfo
   }
@@ -154,7 +154,7 @@ export async function getAuthenticatedUserSessionOrRedirectToLogin() {
 
 export async function getAdminUserSessionOrRedirect(path = '/') {
   const authenticatedUserSession = await getAuthenticatedUserSessionOrRedirectToLogin()
-  const permissionsInfo = await session.client.permissionsInfo
+  const permissionsInfo = await session.client.policiesInfoPromise
   if (!permissionsInfo.tree.admin) {
     redirect(path)
   }
@@ -187,7 +187,7 @@ async function getClaims() {
   const meta = {
     app: 'moodlenet NextJs Webapp@0.1',
   }
-  const claims: moo.def.gate.provider.requestClaims = {
+  const claims: moo.def.gate.provider.request.claims = {
     server: {
       authSessionToken,
       href,

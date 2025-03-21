@@ -99,13 +99,12 @@ gateRequest:
 `
   },
   model(c: d_u__d<loggerContext, 'for', 'model'>) {
-    const { callTime, id, now, message, origin, target } = c.envelope
+    const { callTime, id, now, message, origin, path, opType } = c.envelope
     return `Model Access:
 id: ${id}
+path: ${path.join('.')}
+type: ${opType}
 callTime: ${callTime} (now: ${now})
-target:
-  path: ${target.path.join('.')}
-  type: ${target.opType}
 origin:
   gate: ${inspect(origin.request, { colors: true })}
   from:
