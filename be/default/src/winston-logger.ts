@@ -1,5 +1,5 @@
 import { logLevelColors, logLevelMap, logSeverity, logger, loggerContext, loggerProvider } from '@moodle/domain'
-import { any_, d_u__d, redacted_json_replacer, unsupportedProxyHandler } from '@moodle/lib-types'
+import { any_, d_u__d, redact_stringify, unsupportedProxyHandler } from '@moodle/lib-types'
 import assert from 'assert'
 import { inspect } from 'util'
 import winston, { Logform } from 'winston'
@@ -67,13 +67,14 @@ export function createWinstonDomainLoggerProvider({ loggerConfigs }: { loggerCon
 
   return { loggerProvider }
 }
-
+const default_inspect_opts = { breakLength: 300, maxStringLength: 600, colors: true, depth: 8 }
 function format(info: loggerContext & Logform.TransformableInfo) {
   return `
 - - - - - - - - - -
 ${info.timestamp}
 ${info.level} [${info.for}]
 ${loggerContextFormatter[info.for](info as any_)}
+${info.more ? `more: ${inspect(info.more, default_inspect_opts)}\n` : ''}
 ${info.message}
 - - - - - - - - - -
 `
@@ -81,9 +82,11 @@ ${info.message}
 
 const loggerContextFormatter = {
   core(c: d_u__d<loggerContext, 'for', 'core'>) {
+    const { branchPath } = c
     const { id, userPoliciesInfo, now, gateRequest } = c.request
     return `Core Access:
 id: ${id}
+branchPath: ${branchPath.join('.')}
 now: ${now}
 sessionInfo:
   user: ${userPoliciesInfo.user.type}${
@@ -94,9 +97,8 @@ sessionInfo:
   }
 gateRequest:
   path: ${gateRequest.path.join('.')}
-  claims: ${inspect(gateRequest.info.claims, { breakLength: 300, maxStringLength: 600, colors: true, depth: 8 })}
-  form: ${inspect(_redact(gateRequest.form), { breakLength: 300, maxStringLength: 600, colors: true, depth: 8 })}
-`
+  claims: ${inspect(gateRequest.info.claims, default_inspect_opts)}
+  form: ${inspect(_redact(gateRequest.form), default_inspect_opts)}`
   },
   model(c: d_u__d<loggerContext, 'for', 'model'>) {
     const { callTime, id, now, message, origin, path, opType } = c.envelope
@@ -109,7 +111,7 @@ origin:
   gate: ${inspect(origin.request, { colors: true })}
   from:
     ${
-      origin.model ? inspect(origin.model, { breakLength: 300, maxStringLength: 600, colors: true, depth: 8 }) : '~'
+      origin.model ? inspect(origin.model, default_inspect_opts) : '~'
       /*from: ${
     origin.from
       ? `
@@ -120,8 +122,7 @@ origin:
       path: ${origin.from.target.path.join('.')}`
       : '~'*/
     }
-message: ${inspect(_redact(message), { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}
-`
+message: ${inspect(_redact(message), { breakLength: 120, maxStringLength: 3000, colors: true, depth: 8 })}`
   },
   infra(c: d_u__d<loggerContext, 'for', 'infra'>) {
     return `[${c.name}]`
@@ -132,5 +133,5 @@ message: ${inspect(_redact(message), { breakLength: 120, maxStringLength: 3000, 
 }
 
 function _redact(o: any_) {
-  return o && JSON.parse(JSON.stringify(o, redacted_json_replacer))
+  return o && JSON.parse(redact_stringify(o))
 }

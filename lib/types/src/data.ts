@@ -73,7 +73,7 @@ export type unbranded<b> = b extends map
 // redacted logging
 export const REDACTED_KEY = '###--redacted--###'
 export function redact_stringify(obj: any_) {
-  return JSON.stringify(obj, redacted_json_replacer, 2)
+  return JSON.stringify(obj, redacted_json_replacer)
 }
 
 export function redacted_json_replacer(key: string, value: any_): any_ {

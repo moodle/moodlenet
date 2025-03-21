@@ -1,6 +1,7 @@
 import { any_ } from '@moodle/lib-types'
 import assert from 'assert'
 import { Either, left, right } from 'fp-ts/Either'
+import { ZodType } from 'zod'
 import { loggerProvider } from '../types/log'
 import { Error4xx } from './access-error'
 
@@ -64,6 +65,7 @@ export async function gateCore(deps: gateCoreDeps) {
         const currCore = error_or_currCore
 
         const context = currCore._
+        // log.debug({ configs, context })
         const error_or_currGate = gateBranch(configs, context)
 
         if (error_or_currGate instanceof Error4xx) {
@@ -95,9 +97,24 @@ export async function gateCore(deps: gateCoreDeps) {
   if (error4xx_or_reduced_branch instanceof Error4xx) {
     return left(error4xx_or_reduced_branch)
   }
+  const reduced_branch = error4xx_or_reduced_branch
 
-  const coreFn = error4xx_or_reduced_branch.core.$ as moo.def.userType.endpointFunction<any_>
-  const e_result = await coreFn(deps.request.gateRequest.form)
+  const zod = reduced_branch.gate.zod as ZodType
+
+  assert(typeof zod.safeParse === 'function', `GateCore: no zod found in gate.endpoint path [${reduced_branch.path.join('.')}]K[${Object.keys(reduced_branch.gate).join('.')}]`)
+
+  const { data: form, error, success } = zod.safeParse(deps.request.gateRequest.form)
+  if (!success) {
+    return left(
+      new Error4xx('Bad Request', {
+        message: error.message,
+        zod: error.format(),
+      }),
+    )
+  }
+
+  const coreFn = reduced_branch.core.$ as moo.def.userType.endpointFunction<any_>
+  const e_result = await coreFn(form)
     .then(result => right(result))
     .catch(error => left(error))
 

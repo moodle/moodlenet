@@ -11,13 +11,13 @@ import { any_def } from '../../gate'
 // })
 
 export const any_core: moo.def.core.node<any_def> = async M => ({
-  _: { m1: M.configs.m },
+  _: { m1: M.configs.m + '*' },
   policies: async S => ({
-    _: { s1: S.configs.s },
+    _: { s1: S.configs.s + '*' },
     readMyOwn: async U => ({
-      _: { u1: U.configs.u },
+      _: { u1: U.configs.u + '*' },
       policiesInfo: async E => ({
-        //  _: ({ e1: E.configs.e }),
+        _: { e1: E.configs.e + '*' },
         //  _: ({ ae1: E.configs.e }),
         $: async _ => ({ policiesInfo: E.request.userPoliciesInfo }),
       }),
