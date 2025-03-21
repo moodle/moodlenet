@@ -1,6 +1,6 @@
 import { appDeployments, loggerProvider } from '@moodle/domain'
 import * as domainCore from '@moodle/domain/core'
-import { gateProvider } from '@moodle/domain/userType'
+import { gateProvider } from '@moodle/domain/gate'
 import { deploymentInfoFromUrlString, Error4xx, executeModel, gateCoreDeps, isError4xx, modelHandleProxy, postModelOps, preModelOps } from '@moodle/domain/lib'
 import type * as model from '@moodle/domain/model'
 import { generateAlphanumId, generateUlid } from '@moodle/lib-id-gen'
@@ -304,16 +304,16 @@ export const defaultConfigurator: configurator = ({ master }) => {
 
     const coreId = generateUlid({ onDate: new Date() })
     // console.time(`getTokenPermissionsInfo`)
-    const { info: policiesInfo } = await myModelHandle.accessControl.getTokenPoliciesInfo.query({ authSessionToken: gateRequest.info.claims.server.authSessionToken })
+    const { info: userPoliciesInfo } = await myModelHandle.accessControl.getTokenPoliciesInfo.query({ authSessionToken: gateRequest.info.claims.server.authSessionToken })
     // console.timeEnd(`getTokenPermissionsInfo`)
     // console.log(inspect(permissionsInfo, { depth: 100 }))
     const coreGateDeps: gateCoreDeps = {
-      core: domainCore.userType.core,
-      coreRequest: {
+      core: domainCore.branch,
+      request: {
         gateRequest,
         id: coreId,
         now: new Date().toISOString(),
-        policiesInfo,
+        userPoliciesInfo,
       },
       gateProvider,
       loggerProvider: configuration.loggerProvider,

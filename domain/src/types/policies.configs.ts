@@ -1,33 +1,28 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import '@moodle/lib-types'
-import { any_ } from '@moodle/lib-types'
 declare global {
   namespace moo.def.policies.config {
     type tree = {
-      [userType_ in names.userType]: userType<UserTypes[userType_]>
+      [userType_ in names.userType]: userType<UserType[userType_]>
     }
-    type userType<userType_ extends moo.def.userType<any_>> = config_tag<userType_> & {
-      [contextName in string & keyof userType_]: userType_[contextName] extends moo.def.userType.context<any_> ? context<userType_[contextName]> : never
-    }
-
-    type context<context_ extends moo.def.userType.context<any_>> = config_tag<context_> & {
-      [scopeName in string & keyof context_]: context_[scopeName] extends moo.def.userType.scope<any_> ? scope<context_[scopeName]> : never
+    type userType<userType_ extends moo.def.userType> = config_tag<userType_> & {
+      [contextName in string & keyof userType_]: userType_[contextName] extends moo.def.userType.model ? model<userType_[contextName]> : never
     }
 
-    type scope<scope_ extends moo.def.userType.scope<any_>> = config_tag<scope_> & {
-      [useCaseName in string & keyof scope_]: scope_[useCaseName] extends moo.def.userType.usecase<any_> ? usecase<scope_[useCaseName]> : never
+    type model<model_ extends moo.def.userType.model> = config_tag<model_> & {
+      [scopeName in string & keyof model_]: model_[scopeName] extends moo.def.userType.scope ? scope<model_[scopeName]> : never
     }
 
-    type usecase<usecase_ extends moo.def.userType.usecase<any_>> = config_tag<usecase_> & {
-      [endpointName in string & keyof usecase_]: usecase_[endpointName] extends moo.def.userType.endpoint<any_> ? endpoint<def.userType.endpoint<usecase_[endpointName]>> : never
+    type scope<scope_ extends moo.def.userType.scope> = config_tag<scope_> & {
+      [useCaseName in string & keyof scope_]: scope_[useCaseName] extends moo.def.userType.usecase ? usecase<scope_[useCaseName]> : never
     }
 
-    type endpoint<endpoint_ extends moo.def.userType.endpoint<any_> = moo.def.userType.endpoint<any_>> = endpoint_[2] extends undefined | void | never
-      ? Record<string, never>
-      : {
-          _: endpoint_[2]
-        }
+    type usecase<usecase_ extends moo.def.userType.usecase = moo.def.userType.usecase> = config_tag<usecase_> & {
+      [endpointName in string & keyof usecase_]: usecase_[endpointName] extends moo.def.userType.endpoint ? endpoint<def.userType.endpoint<usecase_[endpointName]>> : never
+    }
+
+    type endpoint<endpoint_ extends moo.def.userType.endpoint = moo.def.userType.endpoint> = config_tag<endpoint_>
   }
 }
 type config_tag<T> =

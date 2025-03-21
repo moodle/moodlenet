@@ -1,45 +1,53 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_, map, signed_token, url_string } from '@moodle/lib-types'
-import { Either } from 'fp-ts/Either'
-import { Error4xx } from '../lib/access-error'
+import { map, signed_token, url_string } from '@moodle/lib-types'
+import { Error4xx } from '../lib'
 
+type voidable<t> = t extends never | undefined | void ? void : t
 declare global {
   namespace moo.def.gate {
-    type provider<forUserTypes extends map<moo.def.userType<any_>> = UserTypes> = {
-      [userType_ in keyof forUserTypes]: provider.userType<forUserTypes[userType_]>
-    }
+    type endpointChecksHandle<useCaseEndpoint extends moo.def.userType.endpoint = moo.def.userType.endpoint> = {
+      zod: userType.enpointZodType<useCaseEndpoint>
+    } //& gateContextChecks<useCaseEndpoint>
+
+    // type gateContextChecks<useCaseEndpoint extends moo.def.userType.endpoint> =
+    //   tagType<useCaseEndpoint, tags.context> extends never | undefined | void
+    //     ? {
+    //         context?: undefined
+    //       }
+    //     : {
+    //         context: {
+    //           preflight: preflight<useCaseEndpoint>
+    //           check: contextCheck
+    //         }
+    //       }
+
+    // type contextCheck = () => Either<Error4xx, unknown>
+    // type preflight<useCaseEndpoint extends moo.def.userType.endpoint> = (form: def.userType.endpointFormType<useCaseEndpoint>) => Either<Error4xx, unknown>
+
+    type provider<forUserTypes extends map<moo.def.userType> = moo<UserType>> = provider.branch<forUserTypes>
     namespace provider {
       type dispatcher = (gateProviderRequest: request) => Promise<unknown>
-      type requestClaims = {
-        server: { authSessionToken: signed_token | null; requestId: string; href: url_string; ua: string | null; meta?: unknown }
-      }
-      type request<endpoint_ extends def.userType.endpoint<any_> = def.userType.endpoint<any_>> = client.request<endpoint_> & {
-        info: {
-          claims: requestClaims
+
+      type request<endpoint_ extends def.userType.endpoint = def.userType.endpoint> = client.request<endpoint_> & { info: request.info }
+      namespace request {
+        type claims = {
+          server: { authSessionToken: signed_token | null; requestId: string; href: url_string; ua: string | null; meta?: unknown }
+          // client: { locale?: string; locales?: string[] }
+        }
+        type info = {
+          claims: claims
         }
       }
 
-      type userType<userType_ extends moo.def.userType<any_>> = {
-        [contextName in string & keyof userType_]: userType_[contextName] extends moo.def.userType.context<any_> ? context<userType_[contextName]> : unknown
-      }
+      type branch<node_> = node_ extends moo.def.userType.endpoint
+        ? endpointChecksHandle<node_>
+        : {
+            [key in string & keyof node_]: node<node_[key]>
+          }
 
-      type context<context extends moo.def.userType.context<any_>> = {
-        [scopeName in string & keyof context]: context[scopeName] extends moo.def.userType.scope<any_> ? scope<context[scopeName]> : unknown
-      }
-
-      type scope<scope extends moo.def.userType.scope<any_>> = {
-        [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.def.userType.usecase<any_> ? usecase<scope[useCaseName]> : never
-      }
-
-      type usecase<useCase extends moo.def.userType.usecase<any_>> = {
-        [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.def.userType.endpoint<any_> ? endpoint<useCase[endpointName]> : never
-      }
-
-      type endpoint<useCaseEndpoint extends moo.def.userType.endpoint<any_> = moo.def.userType.endpoint<any_>> = (epGateCtx: {
-        configs: useCaseEndpoint[2]
-        policiesInfo: def.policies.user.info
-      }) => Either<Error4xx, endpointChecksHandle<useCaseEndpoint>>
+      type node<node_> = (configs: moo.def.tagType<node_, moo.def.tags.configs>, context?: voidable<tagType<node_, moo.def.tags.context>>) => Error4xx | branch<node_>
     }
   }
 }
+

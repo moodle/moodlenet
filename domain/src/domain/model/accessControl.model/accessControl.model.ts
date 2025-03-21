@@ -5,6 +5,7 @@ import { Option } from 'fp-ts/Option'
 import { NOT_FOUND } from '../../../lib'
 import { userId } from '../userHome.model'
 import { accessControlConfigs, authSession, roleConfigs, userRole } from './types'
+import { any_def } from './gate/'
 export * from './types'
 
 const MODEL_NAME = 'accessControl'
@@ -13,6 +14,11 @@ declare global {
   namespace moo {
     interface Models {
       [MODEL_NAME]: accessControl
+    }
+    namespace UserType {
+      interface Any {
+        [MODEL_NAME]: any_def
+      }
     }
     namespace Models {
       namespace statics {

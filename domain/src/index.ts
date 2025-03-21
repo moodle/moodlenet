@@ -11,31 +11,42 @@ declare global {
   namespace moo {
     type version = '5.0'
 
-    interface UserTypes {}
+    interface UserType {
+      any: moo.def.userType<moo<UserType.Any>>
+      anonymous: moo.def.userType<moo<UserType.Anonymous>>
+    }
+    namespace UserType {
+      interface Any {}
+      interface Anonymous {}
+    }
     interface Models {}
     namespace Models {}
 
     namespace def {
-      type tags<sym extends symbol, t = unknown> = { [k in sym]?: t }
-      export namespace tags {
+      type tags<sym extends symbol, t = unknown> = { [k in sym]: t }
+      type tagType<of, sym extends symbol> = of extends { [k in sym]: infer typ } ? (typ extends undefined | never ? void : typ) : void
+      namespace tags {
         const configs: unique symbol
         type configs = typeof configs
+
+        const context: unique symbol
+        type context = typeof context
       }
     }
 
     namespace names {
       type model = keyof Models // | any_other_string
-      type userType = keyof UserTypes // | any_other_string
+      type userType = keyof UserType // | any_other_string
 
       type context = {
-        [userType_ in names.userType]: string & keyof UserTypes[userType_]
+        [userType_ in names.userType]: string & keyof UserType[userType_]
       } extends infer _
         ? string & _[keyof _] //| any_other_string
         : never
 
       type scope = {
         [userType_ in names.userType]: {
-          [ctx in string & keyof UserTypes[userType_]]: string & keyof UserTypes[userType_][ctx]
+          [ctx in string & keyof UserType[userType_]]: string & keyof UserType[userType_][ctx]
         } extends infer _
           ? string & _[keyof _]
           : never
@@ -45,7 +56,7 @@ declare global {
 
       type fullScope = {
         [userType_ in names.userType]: {
-          [ctx in string & keyof UserTypes[userType_]]: UserTypes[userType_][ctx]
+          [ctx in string & keyof UserType[userType_]]: UserType[userType_][ctx]
         } extends infer _
           ? keyof _ extends infer ctxName
             ? ctxName extends string

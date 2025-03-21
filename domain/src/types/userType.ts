@@ -4,36 +4,23 @@ import type { any_, map } from '@moodle/lib-types'
 import type { ZodType } from 'zod'
 declare global {
   namespace moo.def {
-    type userType<userType_ extends userType.def> = userType_
+    type userType<userTypeDef extends userType_def = userType_def> = userTypeDef
     namespace userType {
-      type def = /* Partial< */ map<context.def> & def.tags<def.tags.configs> & withContext // ,moo.contexts>>
-
-      const context: unique symbol
-      type withContext = { [context]?: unknown }
-
-      type context<contextScopesDef extends context.def> = contextScopesDef
-      namespace context {
-        type def = Partial<map<scope.def> & def.tags<def.tags.configs> & withContext>
-      }
-
-      type scope<scopeDef extends scope.def> = scopeDef
-      namespace scope {
-        type def = map<usecase.def> & def.tags<def.tags.configs> & withContext
-      }
-
-      type usecase<usecaseDef extends usecase.def> = usecaseDef
-      namespace usecase {
-        type def = map<endpoint.def> & def.tags<def.tags.configs> & withContext
-      }
-
-      type endpointFormType<endpoint_ extends endpoint> = endpoint_[0] extends ZodType<any_, any_, infer inputType> ? inputType : never
-      type endpoint<endpointDef extends endpoint.def = endpoint.def> = [epZodType<endpointDef[0]>, endpointDef[1], endpointDef[2], endpointDef[3]]
-      namespace endpoint {
-        type def = [form: zodTypeOrProvider, outcome: any_, configs?: any_, context?: any_]
-      }
+      type model<modelScopesDef extends map<scope> = map<scope>> = modelScopesDef
+      type scope<scopeDef extends map<usecase> = map<usecase>> = scopeDef
+      type usecase<usecaseDef extends map<endpoint> = map<endpoint>> = usecaseDef
+      type enpointZodType<endpoint_ extends endpoint> = epZodType<endpoint_[0]>
+      type endpointReturn<endpoint_ extends endpoint> = endpoint_[1]
+      type endpointFunction<endpoint_ extends endpoint> = (form: endpointFormType<endpoint_>) => Promise<endpointReturn<endpoint_>>
+      // (by inputType)type endpointFormType<endpoint_ extends endpoint> = enpointZodType<endpoint_> extends ZodType<any_, any_  , infer inputType > ? inputType : never
+      type endpointFormType<endpoint_ extends endpoint> = enpointZodType<endpoint_> extends ZodType<infer outputType, any_, any_> ? outputType : never
+      type endpoint<endpointDef_ extends endpointDef = endpointDef> = endpointDef_
     }
   }
 }
 
-type zodTypeOrProvider<z extends ZodType = ZodType> = z | ((...a: any_[]) => z)
-type epZodType<zp> = zp extends zodTypeOrProvider<infer z> ? z : never
+type zodTypeOrProvider<zt extends ZodType = ZodType> = zt | ((...a: any_[]) => zt)
+type epZodType<zp> = zp extends zodTypeOrProvider<infer zt> ? zt : never
+
+type endpointDef = [form: zodTypeOrProvider, outcome: any_]
+type userType_def = Partial<map<moo.def.userType.model, moo.names.model>>

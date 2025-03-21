@@ -1,82 +1,74 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { any_, map, path } from '@moodle/lib-types'
-import { ZodType } from 'zod'
-import { Error4xx } from '../lib/access-error'
-import { Either } from 'fp-ts/Either'
+import { path } from '@moodle/lib-types'
+// import { identity, pipe } from 'fp-ts/function'
+import { Error4xx } from '../lib'
+
+type voidable<t> = t extends never | undefined | void ? void : t
 
 declare global {
   namespace moo.def.gate {
-    // type clientClaims = { locale?: string; locales?: string[] }
+    // type client = {
+    //   [userTypeName in keyof UserType]: client.branch<UserType[userTypeName]>
+    // }
+    type client = client.branch<UserType>
 
-    type gateContextChecks<useCaseEndpoint extends moo.def.userType.endpoint<any_>> = useCaseEndpoint[3] extends never | undefined | null | void
-      ? {
-          context?: undefined
-        }
-      : {
-          context: {
-            preflight: preflight<useCaseEndpoint>
-            check: contextCheck<useCaseEndpoint>
-          }
-        }
-
-    type endpointChecksHandle<useCaseEndpoint extends moo.def.userType.endpoint<any_>> = {
-      zod: endpointZod<useCaseEndpoint>
-    } & gateContextChecks<useCaseEndpoint>
-
-    type contextCheck<useCaseEndpoint extends moo.def.userType.endpoint<any_>> = (_: { context: useCaseEndpoint[3] }) => Either<Error4xx, unknown>
-
-    type preflight<useCaseEndpoint extends moo.def.userType.endpoint<any_>> = (_: {
-      context: useCaseEndpoint[3]
-      form: def.userType.endpointFormType<useCaseEndpoint>
-    }) => Either<Error4xx, unknown>
-
-    type endpointZod<useCaseEndpoint extends moo.def.userType.endpoint<any_>> = useCaseEndpoint[0]
-
-    type client<forUserTypes extends map<moo.def.userType<any_>> = UserTypes> = {
-      [userType_ in keyof forUserTypes]: client.userType<forUserTypes[userType_]>
-    }
     namespace client {
-      type request<endpoint_ extends def.userType.endpoint<any_> = def.userType.endpoint<any_>> = {
+      // type branch<branch_> = (context: voidable<tagType<branch_, tags.context>>) => E.Either<
+      // type withMaybeError4xx<branch_> = ({ $error: Error4xx } & Partial<branch_>) | ({ $error?: never } & branch_)
+      // type withMaybeError4xx<branch_> = ({ $error?: Error4xx } & Partial<branch_>)
+
+      type node<node_> = (
+        context?: voidable<tagType<node_, tags.context>>,
+      ) => branchWithMaybeErrror<node_ extends moo.def.userType.endpoint ? endpointAccessHandle<node_> : branch<node_>>
+
+      type branch<branch_> = {
+        [key in keyof branch_]: node<branch_[key]>
+      }
+
+      type branchWithMaybeErrror<branch_> = branch_ extends endpointAccessHandle
+        ? ({ $error?: undefined } & branch_) | ({ $error: Error4xx } & { [k in keyof branch_]: undefined }) // Partial<branch_> //
+        : { $error?: Error4xx } & branch_
+
+      type request<endpoint_ extends def.userType.endpoint = def.userType.endpoint> = {
         path: path
-        form: endpoint_[0] extends ZodType<infer ouputType, any_, any_> ? ouputType : never
-      }
-      type dispatcher = (gateClientRequest: request) => Promise<unknown>
-
-      type userType<userType_ extends moo.def.userType<any_>> = {
-        [contextName in string & keyof userType_]: userType_[contextName] extends moo.def.userType.context<any_> ? context<userType_[contextName]> : unknown
-      } & withAccErr<'u'>
-
-      type context<context extends moo.def.userType.context<any_>> = {
-        [scopeName in string & keyof context]: context[scopeName] extends moo.def.userType.scope<any_> ? scope<context[scopeName]> : unknown
-      } & withAccErr<'u'>
-
-      type scope<scope extends moo.def.userType.scope<any_>> = {
-        [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.def.userType.usecase<any_> ? usecase<scope[useCaseName]> : never
-      } & withAccErr<'u'>
-
-      type usecase<useCase extends moo.def.userType.usecase<any_>> = {
-        [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.def.userType.endpoint<any_> ? endpointAccess<useCase[endpointName]> : never
-      } & withAccErr<'u'>
-
-      type endpointAccessHandle<useCaseEndpoint extends moo.def.userType.endpoint<any_> = moo.def.userType.endpoint<any_>> = endpointChecksHandle<useCaseEndpoint> &
-        withAccErr<'u'> & {
-          allowed: true
-          send: endpointCall<useCaseEndpoint>
-        }
-
-      type endpointAccess<useCaseEndpoint extends moo.def.userType.endpoint<any_> = moo.def.userType.endpoint<any_>> = withAccErr &
-        ((
-          context: useCaseEndpoint[3] extends never | undefined | null | void ? void : useCaseEndpoint[3],
-        ) => (withAccErr<'e'> & { allowed: false; zod?: undefined; send?: endpointCall<useCaseEndpoint>; context?: undefined }) | endpointAccessHandle<useCaseEndpoint>)
-
-      type withAccErr<t extends 'e' | 'u' = 'e' | 'u'> = {
-        _: t extends 'e' ? { error: Error4xx } : never | t extends 'u' ? undefined : never
+        form: userType.endpointFormType<endpoint_>
       }
 
-      type endpointCall<useCaseEndpoint extends moo.def.userType.endpoint<any_> = moo.def.userType.endpoint<any_>> = (
-        form: useCaseEndpoint[0] extends ZodType<any_, any_, infer inputType> ? inputType : never,
-      ) => Promise<useCaseEndpoint[1]>
+      type dispatcher<endpoint_ extends def.userType.endpoint = def.userType.endpoint> = (gateClientRequest: request<endpoint_>) => Promise<userType.endpointReturn<endpoint_>>
+
+      type endpointAccessHandle<endpoint_ extends moo.def.userType.endpoint = moo.def.userType.endpoint> = {
+        // preflight: gate.preflight<endpoint_>
+        send: userType.endpointFunction<endpoint_>
+        zod: userType.enpointZodType<endpoint_>
+      }
     }
   }
 }
+
+// declare const cli: moo.def.gate.client
+// declare const _i: moo.def.policies.user.info
+// const accessControl = pipe(
+//   cli.any(),
+//   E.flatMap(({ accessControl }) => accessControl({ m1: '' })),
+// )
+// const q = E.ap(accessControl)
+
+// const _1 = q(E.right(ac => ac.policies({ s1: '' })))
+// const _2 = q(E.left('ccc'))
+
+// const policiesInfo = pipe(
+//   accessControl,
+//   E.flatMap(({ policies }) => policies({ s1: '' })),
+//   E.flatMap(({ readMyOwn }) => readMyOwn({ u1: '' })),
+//   E.map(({ policiesInfo }) => ({
+//     policiesInfo: E.getOrElse(() => null)(policiesInfo({ e1: '' })),
+//   })),
+//   //E.map(({})=>policiesInfo({configs:{e:''},context:{e1:''}})),
+// )
+// pipe(
+//   policiesInfo,
+//   E.map(({ policiesInfo }) => policiesInfo),
+//   E.flatMapNullableK(() => new Error4xx('Unauthorized', ''))(identity),
+//   E.map(policiesInfo => policiesInfo.send()),
+// )

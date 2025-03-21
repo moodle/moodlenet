@@ -10,10 +10,10 @@ export function userHomeImpl({ dbStruct }: { dbStruct: dbStruct }): moo.def.mode
   return {
     create: {
       exe: (/*ctx*/) =>
-        async ({ record: userHome }) => {
+        async ({ userHomeRecord /* , id  */ }) => {
           await dbStruct.appData.coll.userHome.save({
-            _key: userHome.userId,
-            userHome,
+            _key: userHomeRecord.userId,
+            userHome: userHomeRecord,
           })
         },
     },

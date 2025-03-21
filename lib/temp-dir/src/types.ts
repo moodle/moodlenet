@@ -2,7 +2,7 @@ import { d_u, path } from '@moodle/lib-types'
 import { Either } from 'fp-ts/Either'
 
 export type uploadedFileMeta = moo.def.content.fileMeta & {
-  requestClaims: moo.def.gate.provider.requestClaims
+  requestClaims: moo.def.gate.provider.request.claims
   original?: {
     name: string
     size?: number

@@ -1,37 +1,37 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import '@moodle/lib-types'
-import { any_, deep_partial_props } from '@moodle/lib-types'
+import { deep_partial_props } from '@moodle/lib-types'
 declare global {
   namespace moo.def.policies.override {
     type tree = {
-      [userType_ in names.userType]?: userType<UserTypes[userType_]>
+      [userType_ in names.userType]?: userType<UserType[userType_]>
     }
-    type userType<userType_ extends moo.def.userType<any_>> =
+    type userType<userType_ extends moo.def.userType> =
       // | nodeDir
       config_tag<userType_> & {
-        [contextName in string & keyof userType_]?: userType_[contextName] extends moo.def.userType.context<any_> ? context<userType_[contextName]> : never
+        [contextName in string & keyof userType_]?: userType_[contextName] extends moo.def.userType.model ? context<userType_[contextName]> : never
       }
 
-    type context<context_ extends moo.def.userType.context<any_>> =
+    type context<context_ extends moo.def.userType.model> =
       // | nodeDir
       config_tag<context_> & {
-        [scopeName in string & keyof context_]?: context_[scopeName] extends moo.def.userType.scope<any_> ? scope<context_[scopeName]> : never
+        [scopeName in string & keyof context_]?: context_[scopeName] extends moo.def.userType.scope ? scope<context_[scopeName]> : never
       }
 
-    type scope<scope_ extends moo.def.userType.scope<any_>> =
+    type scope<scope_ extends moo.def.userType.scope> =
       // | nodeDir
       config_tag<scope_> & {
-        [useCaseName in string & keyof scope_]?: scope_[useCaseName] extends moo.def.userType.usecase<any_> ? usecase<scope_[useCaseName]> : never
+        [useCaseName in string & keyof scope_]?: scope_[useCaseName] extends moo.def.userType.usecase ? usecase<scope_[useCaseName]> : never
       }
 
-    type usecase<usecase_ extends moo.def.userType.usecase<any_>> =
+    type usecase<usecase_ extends moo.def.userType.usecase> =
       // | nodeDir
       config_tag<usecase_> & {
-        [endpointName in string & keyof usecase_]?: usecase_[endpointName] extends moo.def.userType.endpoint<any_> ? endpoint<def.userType.endpoint<usecase_[endpointName]>> : never
+        [endpointName in string & keyof usecase_]?: usecase_[endpointName] extends moo.def.userType.endpoint ? endpoint<def.userType.endpoint<usecase_[endpointName]>> : never
       }
 
-    type endpoint<endpoint_ extends moo.def.userType.endpoint<any_>> =
+    type endpoint<endpoint_ extends moo.def.userType.endpoint> =
       // | nodeDir
       config_tag<{ [moo.def.tags.configs]: endpoint_[2] }>
   }

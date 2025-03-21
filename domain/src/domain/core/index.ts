@@ -1,3 +1,3 @@
 export * as model from './model'
-export * as userType from './userType'
+export * from './core'
 export * as versionControl from './versionControl'

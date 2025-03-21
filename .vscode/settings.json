@@ -7,11 +7,7 @@
     // "https://json-schema.org/draft/2020-12/schema": "asyncapi/**/*.sch.yml"
   },
   "javascript.updateImportsOnFileMove.enabled": "prompt",
-  "todo-tree.filtering.excludeGlobs": [
-    "**/pri/moodlenet-nextjs-react-app/zz__legacy/*/**",
-    "**/pri/moodlenet-nextjs-react-app/ui-cmps/*/**",
-    "**/node_modules/*/**"
-  ],
+  "todo-tree.filtering.excludeGlobs": ["**/pri/moodlenet-nextjs-react-app/zz__legacy/*/**", "**/pri/moodlenet-nextjs-react-app/ui-cmps/*/**", "**/node_modules/*/**"],
   // -TODO-TREE
   // "todo-tree.tree.filterCaseSensitive": false,
   "todo-tree.highlights.useColourScheme": true,

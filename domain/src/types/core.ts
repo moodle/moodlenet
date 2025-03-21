@@ -1,52 +1,43 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 
-import { any_, date_time_string, map } from '@moodle/lib-types'
+import { date_time_string, map } from '@moodle/lib-types'
 import { logger } from './log'
 
+type voidable<t> = t extends never | undefined | void ? void : t
 declare global {
   namespace moo.def {
-    type core = core.def<UserTypes>
+    type core<forUserTypes extends map<moo.def.userType> = moo<UserType>> = core.branch<forUserTypes>
+
     namespace core {
-      type def<forUserTypes extends map<moo.def.userType<any_>> = UserTypes> = {
-        [userType_ in keyof forUserTypes]: userType<forUserTypes[userType_]>
-      }
-      type userType<userType_ extends moo.def.userType<any_>> = {
-        [contextName in string & keyof userType_]: userType_[contextName] extends moo.def.userType.context<any_> ? context<userType_[contextName]> : unknown
+      type branch<node_> = {
+        _?: voidable<moo.def.tagType<node_, moo.def.tags.context>>
+      } & (node_ extends moo.def.userType.endpoint
+        ? {
+            $: userType.endpointFunction<node_>
+          }
+        : {
+            [key in string & keyof node_]: node<node_[key]>
+          })
+
+      type node<node_> = (env: env<node_>) => Promise<branch<node_>>
+
+      type env<branch_> = {
+        model: moo.def.model.handle
+        log: logger
+        configs: moo.def.tagType<branch_, moo.def.tags.configs>
+        request: request
       }
 
-      type context<context extends moo.def.userType.context<any_>> = {
-        [scopeName in string & keyof context]: context[scopeName] extends moo.def.userType.scope<any_> ? scope<context[scopeName]> : unknown
-      }
-
-      type scope<scope extends moo.def.userType.scope<any_>> = {
-        [useCaseName in string & keyof scope]: scope[useCaseName] extends moo.def.userType.usecase<any_> ? usecase<scope[useCaseName]> : never
-      }
-
-      type usecase<useCase extends moo.def.userType.usecase<any_>> = {
-        [endpointName in string & keyof useCase]: useCase[endpointName] extends moo.def.userType.endpoint<any_> ? endpoint<useCase[endpointName]> : never
-      }
-
-      type request<endpoint_ extends def.userType.endpoint<any_> = def.userType.endpoint<any_>> = {
+      type request = {
         id: string
         now: date_time_string
-        policiesInfo: def.policies.user.info
-        gateRequest: def.gate.provider.request<endpoint_>
+        userPoliciesInfo: def.policies.user.info
+        gateRequest: {
+          [k in keyof def.gate.provider.request]: k extends 'form' ? unknown : def.gate.provider.request[k]
+        }
       }
-
-      type ctx<endpoint_ extends def.userType.endpoint<any_>> = {
-        model: moo.def.model.handle
-        configs: endpoint_[2]
-        log: logger
-        coreRequest: request<endpoint_>
-        assertContextChecks: endpoint_[3] extends never | undefined | null | void
-          ? undefined
-          : (context: endpoint_[3] extends never | undefined | null | void ? void : endpoint_[3]) => /* Error4xx |  */ undefined
-        zod: def.gate.endpointZod<endpoint_>
-      }
-      type endpointArgs<endpoint_ extends def.userType.endpoint<any_>> = [form: def.gate.provider.request<endpoint_>['form'], ctx: ctx<endpoint_>]
-
-      type endpoint<endpoint_ extends def.userType.endpoint<any_>> = (...endpointArgs: endpointArgs<endpoint_>) => Promise<endpoint_[1]>
     }
   }
 }
+

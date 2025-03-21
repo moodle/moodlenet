@@ -1,132 +1,113 @@
-import { any_, unsupportedProxyHandler } from '@moodle/lib-types'
-import { isLeft } from 'fp-ts/Either'
+import { any_, map, unsupportedProxyHandler } from '@moodle/lib-types'
 import { Error4xx } from './access-error'
 
 export function gateClient({
   policiesInfo,
-  gateProvider: baseGateProvider,
+  gateProvider,
   gateClientDispatcher,
 }: {
   policiesInfo: moo.def.policies.user.info
   gateProvider: moo.def.gate.provider
   gateClientDispatcher: moo.def.gate.client.dispatcher
-}) {
-  return subGateClient({
-    gateProvider: baseGateProvider,
-    policyBranch: policiesInfo,
-    path: [],
-    accessError: undefined,
-  }) as unknown as moo.def.gate.client
-  function subGateClient({ policyBranch, path, gateProvider, accessError }: { gateProvider: any_; policyBranch: any_; path: string[]; accessError: Error4xx | undefined }) {
-    return new Proxy(() => null, {
-      ...unsupportedProxyHandler,
-      get(_target, prop) {
-        if (typeof prop !== 'string') {
-          throw new TypeError(`gate.client: Invalid property ${String(prop)}`)
-        }
-        if (prop === '_') {
-          return accessError
-        }
-        if (accessError) {
-          return subGateClient({ gateProvider, policyBranch, path, accessError })
-        }
-        const _next_gateProvider = gateProvider[prop]
-        const _next_policyBranch = policyBranch[prop]
-        const _next_path = [...path, prop]
-
-        if (_next_path.length > 4) {
-          throw new TypeError(
-            `gate.client:
-  unexistent gate path [${_next_path.join(',')}]
-            `,
-          )
-        }
-
-        if (_next_path.length < 4) {
-          if (!_next_policyBranch) {
-            return subGateClient({ gateProvider, policyBranch, path, accessError: new Error4xx('Unauthorized') })
-          }
-
-          if (!_next_gateProvider) {
-            throw new TypeError(`gate.client:
-                in path [${_next_path.join(',')}]
-  _next_policyBranch is defined ${_next_policyBranch}
-  but _next_gateProvider is not ${_next_gateProvider}
-              `)
-          }
-
-          return subGateClient({
-            gateProvider: _next_gateProvider,
-            policyBranch: _next_policyBranch,
-            path: _next_path,
-            accessError,
-          })
-        }
-
-        // _next_path.length === 4 : endpoint|provider level
-
-        if ('function' !== typeof _next_gateProvider) {
-          throw new TypeError(`gate.client:
-  _next_path.length === 4 [${_next_path.join(',')}]
-  but _next_sub_gateProvider is not a function ${_next_gateProvider}
-            `)
-        }
-        const endpointProvider: moo.def.gate.provider.endpoint = _next_gateProvider
-        const session_endpoint: moo.def.policies.config.endpoint = _next_policyBranch
-
-        const configs = (session_endpoint ?? {})._
-        const endpointAccess: moo.def.gate.client.endpointAccess = context => {
-          const e_gate_endpoint = endpointProvider({ configs, policiesInfo })
-          if (isLeft(e_gate_endpoint)) {
-            return {
-              allowed: false,
-              _: { error: e_gate_endpoint.left },
-            }
-          }
-          const endpointAccessHandle: moo.def.gate.client.endpointAccessHandle = {
-            _: undefined,
-            allowed: true,
-            zod: e_gate_endpoint.right.zod,
-            context: e_gate_endpoint.right.context,
-            send: unsafe_form => {
-              // const form = e_gate_endpoint.right.zod.parse(unsafe_form)
-              const { success, data: form, error } = e_gate_endpoint.right.zod.safeParse(unsafe_form)
-              if (!success) {
-                throw new Error4xx('Bad Request', { message: error.message, zod: error.format() })
-              }
-              if (e_gate_endpoint.right.context) {
-                const e_contextCheckResult = e_gate_endpoint.right.context.check({ context })
-                if (isLeft(e_contextCheckResult)) {
-                  throw e_contextCheckResult.left
-                }
-                const e_preflightResult = e_gate_endpoint.right.context.preflight({ context, form })
-                if (isLeft(e_preflightResult)) {
-                  throw e_preflightResult.left
-                }
-              }
-              return gateClientDispatcher({ path: _next_path, form })
-            },
-          }
-          return endpointAccessHandle
-        }
-        endpointAccess._ = accessError
-
-        return endpointAccess
-      },
-    })
-  }
+}): moo.def.gate.client {
+  return branch({ branchGate: gateProvider as any_, branchPolicies: policiesInfo.tree, gateClientDispatcher }) as unknown as moo.def.gate.client
 }
 
-// const p = gate.clientClient({} as any)
-// const _ = p.anonymous.access.login.withMyEmailAndPassword.login()
-// !_.allowed || _.send({ email: '', password:redacted( '')} })
+function branch({
+  branchGate,
+  branchPolicies,
+  gateClientDispatcher,
+  path = [],
+}: {
+  branchGate: map<moo.def.gate.provider.node<any_>>
+  branchPolicies: any_
+  gateClientDispatcher: moo.def.gate.client.dispatcher
+  path?: string[]
+}): moo.def.gate.client.branch<any_> | moo.def.gate.client.endpointAccessHandle {
+  return isEndpointChecksHandle(branchGate)
+    ? ({
+        // preflight: branchGate.preflight,
+        zod: branchGate.zod,
+        send: async _form => {
+          const { success, data: form, error } = branchGate.zod.safeParse(_form)
+          if (!success) {
+            throw new Error4xx('Bad Request', { zod: error.format(), message: error.message })
+          }
+          return gateClientDispatcher({ form, path })
+        },
+      } satisfies moo.def.gate.client.endpointAccessHandle)
+    : Object.entries(branchGate).reduce((client, [branchName, subBranchProvider]) => {
+        const subBranchPolicies = branchPolicies[branchName]
+        const subBranchConfigs = subBranchPolicies._
 
-// const c = p.anonymous.access.signup.withMyEmail.confirmMyEmail({ ctxA: '32' })
+        if (!subBranchConfigs) {
+          return errorProxy(new Error4xx('Unauthorized', { message: `path [${path.join('.')}]` }))
+        }
 
-// const q = c.zod ? c.send({ signupEmailVerificationToken: '' }) : c()
-// const e = p.anonymous.access.signup.withMyEmail.confirmMyEmail()
-// e.allowed && e.context.preflight({context:{ctxA:'32'},form:{signupEmailVerificationToken:''}})
-// if (e) {
-//   const { displayName, email, password } = e.zod.parse({})
-//   const x = e.call({ password, email, displayName })
-// }
+        const subBranch: moo.def.gate.client.node<any_> = (subBranchContext: unknown) => {
+          const error4xx_or_subBranchGate = subBranchProvider(subBranchConfigs, subBranchContext)
+          if (error4xx_or_subBranchGate instanceof Error4xx) {
+            return errorProxy(error4xx_or_subBranchGate)
+          }
+
+          const subBranchGate = error4xx_or_subBranchGate
+          return branch({ branchPolicies: subBranchPolicies, branchGate: subBranchGate, gateClientDispatcher, path: [...path, branchName] })
+        }
+
+        client[branchName] = subBranch
+        return client
+      }, {} as moo.def.gate.client.branch<any_>)
+}
+function errorProxy(error4xx: Error4xx) {
+  const p = new Proxy(
+    {},
+    {
+      ...unsupportedProxyHandler(),
+      apply() {
+        return errorProxy(error4xx)
+      },
+      get(_target, prop) {
+        if (prop === '$error') return error4xx
+        return errorProxy(error4xx)
+      },
+    },
+  ) as any_
+  return p
+}
+function isEndpointChecksHandle(endpointAccessHandle: any_): endpointAccessHandle is moo.def.gate.endpointChecksHandle {
+  return !!endpointAccessHandle && 'zod' in endpointAccessHandle
+}
+
+// declare const _: moo.def.gate.client
+// // ;async () => {
+// //   const x = await pipe(
+// //     _.any(),
+// //     bind('cfgUany', ({ _ }) => right(_)),
+// //     bind('ac', ({ accessControl }) => accessControl(some({ m1: '' }))),
+// //     bind('cfgMac', ({ ac: { _ } }) => right(_)),
+// //     bind('pol', ({ ac }) => ac.policies()),
+// //     bind('re', ({ pol }) => pol.readMyOwn()),
+// //     bind('pi', ({ re }) => re.policiesInfo()),
+// //     bind('aa', ({ pi }) => right(pi.send().then(_ => _.policiesInfo))),
+// //     E.getOrElse(() => null),
+// //   )
+// // }
+
+// const __ = _.any()?.accessControl()?.policies()?.readMyOwn()?.policiesInfo()
+// __?.send().then(_ => _.policiesInfo)
+
+// const _X_ = _.any?.().accessControl?.().policies?.().readMyOwn?.().policiesInfo?.()
+// const _Y_ = _X_?.send?.().then(_ => _.policiesInfo)
+// const _Z_ = _.any
+// !_Z_ && _Z_.$error
+
+// const _Q_ = _.any().accessControl().policies().readMyOwn()
+// const _W_ = _Q_.policiesInfo()
+// _W_.$error && _W_.send().then(_ => _.policiesInfo)
+// !_W_.$error && _W_.send().then(_ => _.policiesInfo)
+// !_W_.$error && _W_.send
+// _W_.$error && _W_.send
+// !_W_.send && _W_.$error
+// _W_.send && _W_.$error
+// _W_.$error
+// _Q_.$error

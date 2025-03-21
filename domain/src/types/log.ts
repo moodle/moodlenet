@@ -16,7 +16,8 @@ export const logLevelMap: Record<logSeverity, number> = {
 export type loggerContext = { more?: any_ } & d_u<
   {
     core: {
-      request: moo.def.core.request<moo.def.userType.endpoint<any_>>
+      request: moo.def.core.request
+      branchPath: string[]
     }
     model: {
       envelope: moo.def.model.envelope<moo.def.model.op.def>
