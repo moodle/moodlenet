@@ -18,9 +18,9 @@
         "tsConfig": "be/default/tsconfig.app.json",
         "assets": [
           {
-            "input": "core/*/initial-fs",
+            "input": "initial-assets/",
             "glob": "**/*",
-            "output": "initial-fs/"
+            "output": "initial-assets/"
           }
         ],
         "generatePackageJson": true,

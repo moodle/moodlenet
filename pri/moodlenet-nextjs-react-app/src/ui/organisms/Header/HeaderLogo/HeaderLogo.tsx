@@ -1,16 +1,17 @@
 'use client'
-import { nullish } from '@moodle/lib-types'
 import Link from 'next/link'
 import { appRoute } from '../../../../lib/common/appRoutes'
+import defaultLogoSmall from '../../../../ui/lib/assets/logos/moodlenet-logo-small.svg'
+import defaultLogo from '../../../../ui/lib/assets/logos/moodlenet-logo.svg'
 import './HeaderLogo.scss'
 
 export interface HeaderLogoProps {
-  logo: string | nullish
-  smallLogo: string | nullish
+  logo?: string | undefined
+  smallLogo?: string | undefined
   landingPath: appRoute
 }
 
-export default function HeaderLogo({ logo, smallLogo, landingPath }: HeaderLogoProps) {
+export default function HeaderLogo({ smallLogo = defaultLogoSmall, logo = defaultLogo, landingPath }: HeaderLogoProps) {
   return (
     <Link href={landingPath} style={{ textDecoration: 'none' }}>
       <div className="header-title">
