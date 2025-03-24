@@ -13,7 +13,7 @@ export function gateClientProxy({ gateClientDispatcher }: { gateClientDispatcher
 
         const _next_path = [...path, prop]
         assert(
-          _next_path.length <= 4,
+          _next_path.length <= 5,
           new TypeError(
             `gate.client.proxy:
   unexistent gate path [${_next_path.join(',')}]
@@ -21,16 +21,15 @@ export function gateClientProxy({ gateClientDispatcher }: { gateClientDispatcher
           ),
         )
 
-        if (_next_path.length < 4) {
+        if (_next_path.length < 5) {
           return subGateProxy({
             path: _next_path,
           })
         }
 
-        // _next_path.length === 4 : endpoint|provider level
-
+        // _next_path.length === 5 : endpoint|provider level
         const gateProxyEndpointCall: moo.def.gate.client.proxy.endpoint = form => {
-          return gateClientDispatcher({ form, path })
+          return gateClientDispatcher({ form, path: _next_path })
         }
 
         return gateProxyEndpointCall

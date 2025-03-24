@@ -27,7 +27,7 @@ export default session
 export type sessionClient = {
   dispatcher: moo.def.gate.client.dispatcher
   proxy: moo.def.gate.client.proxy
-  policiesInfoPromise: Promise<moo.def.policies.user.info>
+  policiesInfo: Promise<moo.def.policies.user.info>
   gate: Promise<moo.def.gate.client>
 }
 
@@ -91,7 +91,7 @@ function _sessionClient() {
   const sessionClient: sessionClient = {
     dispatcher: gateClientDispatcher,
     proxy,
-    policiesInfoPromise,
+    policiesInfo: policiesInfoPromise,
     get gate() {
       return (gatePromise =
         gatePromise ??
@@ -139,7 +139,7 @@ export async function getCurrentUrl() {
 }
 
 export async function getAuthenticatedUserSessionOrRedirectToLogin() {
-  const permissionsInfo = await session.client.policiesInfoPromise
+  const permissionsInfo = await session.client.policiesInfo
   if (permissionsInfo.user.type === 'auth') {
     return permissionsInfo
   }
@@ -154,7 +154,7 @@ export async function getAuthenticatedUserSessionOrRedirectToLogin() {
 
 export async function getAdminUserSessionOrRedirect(path = '/') {
   const authenticatedUserSession = await getAuthenticatedUserSessionOrRedirectToLogin()
-  const permissionsInfo = await session.client.policiesInfoPromise
+  const permissionsInfo = await session.client.policiesInfo
   if (!permissionsInfo.tree.admin) {
     redirect(path)
   }
@@ -171,7 +171,11 @@ async function getClaims() {
 
   const _headers = await headers()
 
+  const xProto = _headers.get('x-proto')
   const xHost = _headers.get('x-host')
+  const xPathname = _headers.get('x-pathname')
+  const xPort = _headers.get('x-port')
+  const _href = `${xProto}://${xHost}:${xPort}${xPathname}`
   assert(xHost, 'x-host not found in headers')
 
   // const xPort = _headers.get('x-port')
@@ -180,7 +184,7 @@ async function getClaims() {
   // const xMode = _headers.get('x-mode') ?? undefined
   const ua = _headers.get('x-user-agent')
 
-  const { data: href } = url_string_schema.safeParse(_headers.get('x-href'))
+  const { data: href } = url_string_schema.safeParse(_href)
   assert(href, 'x-href not found in headers')
   const requestId = generateUlid({ onDate: new Date().toISOString() })
   const authSessionToken = (await getAuthTokenCookie()).sessionToken

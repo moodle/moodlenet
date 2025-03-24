@@ -14,10 +14,16 @@ declare global {
     interface UserType {
       any: moo.def.userType<moo<UserType.Any>>
       anonymous: moo.def.userType<moo<UserType.Anonymous>>
+      admin: moo.def.userType<moo<UserType.Admin>>
+      authenticated: moo.def.userType<moo<UserType.Authenticated>>
+      moderator: moo.def.userType<moo<UserType.Moderator>>
     }
     namespace UserType {
       interface Any {}
       interface Anonymous {}
+      interface Admin {}
+      interface Authenticated {}
+      interface Moderator {}
     }
     interface Models {}
     namespace Models {}

@@ -5,7 +5,7 @@ import { createContext, PropsWithChildren, useContext } from 'react'
 // import { getUserLevelDetails } from './user-levels/lib'
 // import { linkedContent } from '@moodle/module/moodlenet'
 type webappGlobals = unknown
-export type serverGlobals = { permissionsInfo: moo.def.policies.user.info }
+export type serverGlobals = { policiesInfo: moo.def.policies.user.info }
 export type globalCtx = webappGlobals & serverGlobals
 export const GlobalCtx = createContext<globalCtx>(null as any_)
 

@@ -10,5 +10,5 @@ export * as org from './org.model'
 export * as userHome from './userHome.model'
 export * as moderation from './moderation.model'
 export * as home from './home.model'
-export * as idConfirmedEmail from './idConfirmedEmail.model'
+export * as idMyOwnEmailPwd from './idMyOwnEmailPwd.model'
 

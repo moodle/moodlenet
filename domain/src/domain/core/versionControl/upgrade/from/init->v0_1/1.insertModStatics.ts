@@ -3,7 +3,7 @@ import { DEFAULT_ACCESS_CONTROL_CONFIGS } from '../../../../../model/accessContr
 import { DEFAULT_EDUCATION_SCHEMAS } from '../../../../../model/education.model/setup/configs'
 import { DEFAULT_MOODLENET_CONFIGS, DEFAULT_MOODLENET_SCHEMAS } from '../../../../../model/moodlenet.model/setup'
 import { DEFAULT_ORG_CONFIGS, DEFAULT_ORG_SCHEMAS } from '../../../../../model/org.model/setup'
-import { DEFAULT_ID_CONFIRMED_EMAIL_CONFIGS } from '../../../../../model/idConfirmedEmail.model/setup'
+import { DEFAULT_ID_CONFIRMED_EMAIL_CONFIGS } from '../../../../../model/idMyOwnEmailPwd.model/setup'
 import { DEFAULT_USER_ACCOUNT_SCHEMAS } from '../../../../../model/userHome.model/setup'
 
 export async function insertModStatics({ model, log }: { model: moo.def.model.handle; log: logger }) {
@@ -19,7 +19,7 @@ export async function insertModStatics({ model, log }: { model: moo.def.model.ha
     model.statics.data.ns.put.sync({ kind: 'configs', ns: 'moodlenet', data: DEFAULT_MOODLENET_CONFIGS }),
     model.statics.data.ns.put.sync({ kind: 'schemas', ns: 'org', data: DEFAULT_ORG_SCHEMAS }),
     model.statics.data.ns.put.sync({ kind: 'configs', ns: 'org', data: DEFAULT_ORG_CONFIGS }),
-    model.statics.data.ns.put.sync({ kind: 'configs', ns: 'idConfirmedEmail', data: DEFAULT_ID_CONFIRMED_EMAIL_CONFIGS }),
+    model.statics.data.ns.put.sync({ kind: 'configs', ns: 'idMyOwnEmailPwd', data: DEFAULT_ID_CONFIRMED_EMAIL_CONFIGS }),
     model.statics.data.ns.put.sync({ kind: 'schemas', ns: 'userHome', data: DEFAULT_USER_ACCOUNT_SCHEMAS }),
     model.statics.data.ns.put.sync({ kind: 'configs', ns: 'accessControl', data: DEFAULT_ACCESS_CONTROL_CONFIGS }),
   ])

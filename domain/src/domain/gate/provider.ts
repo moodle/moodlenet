@@ -5,4 +5,7 @@ export const gateProvider: moo.def.gate.provider = {
     accessControl: accessControl.any_gate,
   }),
   anonymous: () => ({}),
+  admin: () => ({}),
+  authenticated: () => ({}),
+  moderator: () => ({}),
 }

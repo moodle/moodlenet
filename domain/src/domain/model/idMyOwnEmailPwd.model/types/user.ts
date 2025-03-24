@@ -1,9 +1,9 @@
 import { email_address } from '@moodle/lib-types'
 import { userHomeRecord } from '../../userHome.model'
 
-export type idConfirmedEmailRecord = Pick<userHomeRecord, 'userId'> & idConfirmedEmailEntry
+export type idMyOwnEmailPwdRecord = Pick<userHomeRecord, 'userId'> & idMyOwnEmailPwdEntry
 
-export type idConfirmedEmailEntry = {
+export type idMyOwnEmailPwdEntry = {
   email: { address: email_address }
   password: { hash: string }
 }

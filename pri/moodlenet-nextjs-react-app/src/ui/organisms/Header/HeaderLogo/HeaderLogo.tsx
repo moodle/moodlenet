@@ -1,25 +1,21 @@
 'use client'
-import Link from 'next/link'
-import './HeaderLogo.scss'
-import { maybeAsset } from '@moodle/module/storage'
-import { useAssetUrl } from '../../../../lib/client/globalContexts'
-import { appRoute } from '../../../../lib/common/appRoutes'
 import { nullish } from '@moodle/lib-types'
+import Link from 'next/link'
+import { appRoute } from '../../../../lib/common/appRoutes'
+import './HeaderLogo.scss'
 
 export interface HeaderLogoProps {
-  logo: maybeAsset | nullish
-  smallLogo: maybeAsset | nullish
+  logo: string | nullish
+  smallLogo: string | nullish
   landingPath: appRoute
 }
 
 export default function HeaderLogo({ logo, smallLogo, landingPath }: HeaderLogoProps) {
-  const [logoUrl] = useAssetUrl(logo)
-  const [smallLogoUrl] = useAssetUrl(smallLogo)
   return (
     <Link href={landingPath} style={{ textDecoration: 'none' }}>
       <div className="header-title">
-        <img className="logo big" src={logoUrl} alt="Logo" />
-        <img className="logo small" src={smallLogoUrl} alt="small Logo" />
+        <img className="logo big" src={logo} alt="Logo" />
+        <img className="logo small" src={smallLogo} alt="small Logo" />
       </div>
     </Link>
   )

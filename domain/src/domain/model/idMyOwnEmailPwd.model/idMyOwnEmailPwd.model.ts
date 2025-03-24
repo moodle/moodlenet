@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { d_u, email_address, signed_token } from '@moodle/lib-types'
-import { idConfirmedEmailConfigs, idConfirmedEmailEntry, idConfirmedEmailRecord } from './types'
+import { idMyOwnEmailPwdConfigs, idMyOwnEmailPwdEntry, idMyOwnEmailPwdRecord } from './types'
 import { Option } from 'fp-ts/Option'
 export * from './types'
 
-const MODEL_NAME = 'idConfirmedEmail'
+const MODEL_NAME = 'idMyOwnEmailPwd'
 declare global {
   namespace moo {
     interface Models {
-      [MODEL_NAME]: idConfirmedEmail
+      [MODEL_NAME]: idMyOwnEmailPwd
     }
     namespace Models {
       namespace userHome {
         interface IdentityProviders {
-          [MODEL_NAME]: idConfirmedEmailEntry
+          [MODEL_NAME]: idMyOwnEmailPwdEntry
         }
       }
       namespace mailer {
@@ -33,7 +33,7 @@ declare global {
       }
       namespace statics {
         interface Configs {
-          [MODEL_NAME]: idConfirmedEmailConfigs
+          [MODEL_NAME]: idMyOwnEmailPwdConfigs
         }
       }
       namespace signedTokens {
@@ -54,7 +54,7 @@ declare global {
   }
 }
 
-export type idConfirmedEmailFilter = d_u<
+export type idMyOwnEmailPwdFilter = d_u<
   {
     id: d_u<
       {
@@ -65,7 +65,7 @@ export type idConfirmedEmailFilter = d_u<
   },
   'by'
 >
-export type idConfirmedEmail = moo.def.model<{
-  create: moo.def.model.op.set.create<idConfirmedEmailRecord>
-  findByEmail: moo.def.model.op<['query', { email: email_address }, Option<idConfirmedEmailRecord>]>
+export type idMyOwnEmailPwd = moo.def.model<{
+  create: moo.def.model.op.set.create<idMyOwnEmailPwdRecord>
+  findByEmail: moo.def.model.op<['query', { email: email_address }, Option<idMyOwnEmailPwdRecord>]>
 }>

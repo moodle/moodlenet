@@ -2,6 +2,9 @@ export function getFullPoliciesConfigTree(_schemas: Pick<moo.Models.statics.Sche
   // userHome.schemas.configs.eduDraftsOverrides
   // education.schemas.configs.collection
   const config: moo.def.policies.config.tree = {
+    moderator: {},
+    authenticated: {},
+    admin: {},
     anonymous: {},
     any: {
       accessControl: {
