@@ -10,7 +10,9 @@ export function gateClient({
   gateProvider: moo.def.gate.provider
   gateClientDispatcher: moo.def.gate.client.dispatcher
 }): moo.def.gate.client {
-  return branch({ branchGate: gateProvider as any_, branchPolicies: policiesInfo.tree, gateClientDispatcher }) as unknown as moo.def.gate.client
+  const gateClient = branch({ branchGate: gateProvider as any_, branchPolicies: policiesInfo.tree, gateClientDispatcher }) as unknown as moo.def.gate.client
+  // console.log('gate - Client', { gateClient /* , __: Object.entries(gateClient)  */ })
+  return gateClient
 }
 
 function branch({
@@ -38,19 +40,23 @@ function branch({
       } satisfies moo.def.gate.client.endpointAccessHandle)
     : Object.entries(branchGate).reduce((client, [branchName, subBranchProvider]) => {
         const subBranchPolicies = branchPolicies[branchName]
-        const subBranchConfigs = subBranchPolicies._
+        // console.log({ subBranchPolicies, branchName, branchPolicies, branchGate })
 
-        if (!subBranchConfigs) {
-          return errorProxy(new Error4xx('Unauthorized', { message: `path [${path.join('.')}]` }))
+        if (!subBranchPolicies) {
+          client[branchName] = errorProxy(new Error4xx('Unauthorized', { message: `path [${path.join('.')}]` }))
+          return client
         }
 
         const subBranch: moo.def.gate.client.node<any_> = (subBranchContext: unknown) => {
+          // console.log('subBranch', { subBranchContext })
+          const subBranchConfigs = subBranchPolicies._
           const error4xx_or_subBranchGate = subBranchProvider(subBranchConfigs, subBranchContext)
+
           if (error4xx_or_subBranchGate instanceof Error4xx) {
             return errorProxy(error4xx_or_subBranchGate)
           }
-
           const subBranchGate = error4xx_or_subBranchGate
+
           return branch({ branchPolicies: subBranchPolicies, branchGate: subBranchGate, gateClientDispatcher, path: [...path, branchName] })
         }
 
@@ -60,7 +66,9 @@ function branch({
 }
 function errorProxy(error4xx: Error4xx) {
   const p = new Proxy(
-    {},
+    function errorProxy() {
+      /* */
+    },
     {
       ...unsupportedProxyHandler(),
       apply() {

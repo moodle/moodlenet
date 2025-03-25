@@ -4,8 +4,8 @@ import { any_, url_string_schema } from '@moodle/lib-types'
 import i18next from 'i18next'
 import { headers } from 'next/headers'
 // import { isAdminUserSession, isAuthenticatedUserSession } from '@moodle/module/user-account/lib'
-import { gateClient, gateClientProxy } from '@moodle/domain/lib'
 import { gateProvider } from '@moodle/domain/gate'
+import { gateClient, gateClientProxy } from '@moodle/domain/lib'
 import { redirect, RedirectType } from 'next/navigation'
 import { hasher } from 'node-object-hash'
 import assert from 'node:assert'
@@ -51,7 +51,33 @@ function _sessionClient() {
     // but atm we have query|write channel discrimination in secondary only
     sort: true,
   })
-  const gateClientDispatcher: moo.def.gate.client.dispatcher = gateClientRequest => {
+
+  const proxy = gateClientProxy({ gateClientDispatcher })
+
+  const policiesInfoPromise = proxy.any.accessControl.policies.readMyOwn.policiesInfo().then(({ policiesInfo }) => policiesInfo)
+  let gatePromise: sessionClient['gate']
+
+  const sessionClient: sessionClient = {
+    dispatcher: gateClientDispatcher,
+    proxy,
+    policiesInfo: policiesInfoPromise,
+    get gate() {
+      if (!gatePromise) {
+        gatePromise = policiesInfoPromise.then(policiesInfo =>
+          gateClient({
+            policiesInfo,
+            gateProvider,
+            gateClientDispatcher,
+          }),
+        )
+      }
+      return gatePromise
+    },
+  }
+  request_session_async_storage.enterWith(sessionClient)
+
+  return sessionClient
+  function gateClientDispatcher(gateClientRequest: moo.def.gate.client.request) {
     const gateClientRequestHashingObject = { gateClientRequest }
     const gateClientRequestHash = hash(gateClientRequestHashingObject)
     // console.log(cache.has(domainMsgHash) ? `${domainMsgHash}**cache**  ` : '--fetch--  ', domainMsg.endpoint.join('.'))
@@ -81,32 +107,6 @@ function _sessionClient() {
 
     return cache.get(gateClientRequestHash)
   }
-
-  const proxy = gateClientProxy({ gateClientDispatcher })
-
-  const policiesInfoPromise = proxy.any.accessControl.policies.readMyOwn.policiesInfo().then(({ policiesInfo }) => policiesInfo)
-  let gatePromise: sessionClient['gate']
-
-  const _ = Promise.withResolvers()
-  const sessionClient: sessionClient = {
-    dispatcher: gateClientDispatcher,
-    proxy,
-    policiesInfo: policiesInfoPromise,
-    get gate() {
-      return (gatePromise =
-        gatePromise ??
-        policiesInfoPromise.then(policiesInfo =>
-          gateClient({
-            policiesInfo,
-            gateProvider,
-            gateClientDispatcher,
-          }),
-        ))
-    },
-  }
-  request_session_async_storage.enterWith(sessionClient)
-
-  return sessionClient
 
   // FIXME:
   // The following block should refresh the session token before it expires

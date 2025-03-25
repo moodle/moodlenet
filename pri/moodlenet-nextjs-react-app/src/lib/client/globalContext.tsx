@@ -1,19 +1,41 @@
 'use client'
+import { gateProvider } from '@moodle/domain/gate'
+import { gateClient } from '@moodle/domain/lib'
 import { any_ } from '@moodle/lib-types'
-import { createContext, PropsWithChildren, useContext } from 'react'
+import { createContext, PropsWithChildren, use, useContext, useState } from 'react'
 
 // import { getUserLevelDetails } from './user-levels/lib'
 // import { linkedContent } from '@moodle/module/moodlenet'
 type webappGlobals = unknown
-export type serverGlobals = { policiesInfo: moo.def.policies.user.info }
+export type serverGlobals = {
+  policiesInfo: moo.def.policies.user.info
+  gateClientDispatcher: moo.def.gate.client.dispatcher
+  get?: () => Promise<moo.def.policies.user.info | null>
+}
 export type globalCtx = webappGlobals & serverGlobals
 export const GlobalCtx = createContext<globalCtx>(null as any_)
 
-export function GlobalContextProvider({ children, serverGlobals }: PropsWithChildren<{ serverGlobals: serverGlobals }>) {
+export function GlobalContextProvider({ children, serverGlobals: { gateClientDispatcher, get, policiesInfo } }: PropsWithChildren<{ serverGlobals: serverGlobals }>) {
   const globalCtx: globalCtx = {
-    ...serverGlobals,
+    policiesInfo,
+    get,
+    gateClientDispatcher: gateClientDispatcher,
   }
-  return <GlobalCtx.Provider value={globalCtx}>{children}</GlobalCtx.Provider>
+  const gate = gateClient({
+    policiesInfo,
+    gateProvider,
+    gateClientDispatcher,
+  })
+  const [_, __] = useState<Promise<unknown>>(Promise.resolve(null))
+  const ___ = use(_)
+  return (
+    <>
+      <button onClick={() => __(Promise.resolve(get?.()))}>get</button>
+      <button onClick={() => __(Promise.resolve(gate.any().accessControl().policies().readMyOwn().policiesInfo().send?.()))}>__get</button>
+      <pre>{JSON.stringify({ ___ }, null, 2)}</pre>
+      <GlobalCtx.Provider value={globalCtx}>{children}</GlobalCtx.Provider>
+    </>
+  )
 }
 
 export function useGlobalCtx() {
