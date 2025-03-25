@@ -25,7 +25,7 @@ export const LikeButton: FC<LikeButtonProps> = ({
   isCreator,
   isAuthenticated,
   toggleLike,
-  color,
+  color = 'grey',
 }) => {
   return (
     <TertiaryButton
@@ -49,6 +49,3 @@ export const LikeButton: FC<LikeButtonProps> = ({
   )
 }
 
-LikeButton.defaultProps = {
-  color: 'grey',
-}

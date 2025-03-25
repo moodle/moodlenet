@@ -14,7 +14,7 @@ export function provideNodemailerSecEnv({
   const env_config = object({
     MOODLE_SMTP_URL: url_string_schema,
     MOODLE_SMTP_SENDER_NAME: string().optional(),
-    MOODLE_SMTP_SENDER_ADDRESS: email_address_schema,
+    MOODLE_SMTP_SENDER_ADDRESS: email_address_schema(),
   }).parse({
     MOODLE_SMTP_URL: env.MOODLE_SMTP_URL,
     MOODLE_SMTP_SENDER_NAME: env.MOODLE_SMTP_SENDER_NAME,

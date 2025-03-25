@@ -1,12 +1,9 @@
-import {
-  _any,
-  date_time_string,
-  signed_token_schema,
-  time_duration_string,
-} from '@moodle/lib-types'
+import { any_, date_time_string, signed_token_schema, time_duration_string } from '@moodle/lib-types'
 import * as iso8601duration from 'iso8601-duration'
 import * as jose from 'jose'
 import { joseOpts } from './types'
+import assert from 'assert'
+import moment from 'moment'
 
 export async function getJoseKeys(opts: joseOpts) {
   if (opts.type !== 'PKCS8') {
@@ -17,7 +14,7 @@ export async function getJoseKeys(opts: joseOpts) {
   }
 
   const [privateKeyLike, publicKeyLike] = await Promise.all([
-    jose.importPKCS8(opts.privateKeyStr, opts.alg),
+    opts.privateKeyStr ? jose.importPKCS8(opts.privateKeyStr, opts.alg) : null,
     jose.importSPKI(opts.publicKeyStr, opts.alg),
   ])
 
@@ -25,7 +22,7 @@ export async function getJoseKeys(opts: joseOpts) {
     private: privateKeyLike,
     public: publicKeyLike,
   }
-  const jwk = await jose.exportJWK(privateKeyLike)
+  const jwk = privateKeyLike && (await jose.exportJWK(privateKeyLike))
   return { jwk, keyLikes }
 }
 
@@ -54,7 +51,7 @@ export async function joseVerify<payload>(joseEnv: joseOpts, token: string) {
 //       if (claimSet.includes(key)) {
 //         acc.claims[key] = value
 //       } else {
-//         ;(acc.payload as _any)[key] = value
+//         ;(acc.payload as any_)[key] = value
 //       }
 //       return acc
 //     },
@@ -86,19 +83,16 @@ export async function sign<payload>({
   opts?: jose.SignOptions
 }) {
   const { /* jwk, */ keyLikes } = await getJoseKeys(joseOpts)
-  const _payload: JwtStdClaims & payload = { ...(payload as _any) }
+  assert(keyLikes.private, 'cannot sign without access to privateKey')
+  const _payload: JwtStdClaims & payload = { ...(payload as any_) }
   if (stdClaims.scope !== undefined) {
     _payload.scope = [stdClaims.scope].flat().join(' ')
   }
 
   const [expireTimeSecs, expireDateStr] = expirations(expiresIn)
 
-  const [notBeforeTimeSecs, notBeforeDateStr] = notBefore
-    ? expirations(notBefore)
-    : ([null, null, null] as const)
-  const signingJwt = new jose.SignJWT(_payload)
-    .setProtectedHeader({ alg: joseOpts.alg })
-    .setExpirationTime(expireTimeSecs)
+  const [notBeforeTimeSecs, notBeforeDateStr] = notBefore ? expirations(notBefore) : ([null, null, null] as const)
+  const signingJwt = new jose.SignJWT(_payload).setProtectedHeader({ alg: joseOpts.alg }).setExpirationTime(expireTimeSecs)
 
   if (stdClaims.issuer !== undefined) {
     signingJwt.setIssuer(stdClaims.issuer)
@@ -129,10 +123,8 @@ function expirations(
       ? duration
       : iso8601duration.toSeconds(iso8601duration.parse(duration))
 
-  const toDate = new Date(new Date().getTime() + durationInSecs * 1000)
-  const toDateStr = date_time_string(toDate)
-
-  return [toDate.getTime() / 1000, toDateStr, toDate]
+ const toDate = moment().add(durationInSecs, 'seconds').toDate()
+ return [toDate.getTime() / 1000, toDate.toISOString(), toDate]
 }
 type JwtStdClaims = {
   audience?: string | string[]

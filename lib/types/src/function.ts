@@ -1,3 +1,3 @@
-import { _any } from './map'
+import { any_ } from './data'
 
-export type any_function = (...args: _any[]) => _any
+export type any_function = (...args: any_[]) => any_

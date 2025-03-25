@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'jose-jwt',
+  displayName: 'lib-jwt-jose',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

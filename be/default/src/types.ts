@@ -1,22 +1,23 @@
-import { domainAccess, LogSeverity, messageDispatcher } from '@moodle/domain'
-import { configuration } from '@moodle/domain/lib'
+import { gateCoreDeps } from '@moodle/domain/lib'
 
-export type configurator_deps = { domainAccess: domainAccess; loggerConfigs: loggerConfigs }
-export type configurator = (_: configurator_deps) => Promise<configuration>
+// export type modelConfiguration = {
+//   gate: Pick<coreGateDeps, 'modelHandle' | 'loggerProvider'>
+//   access: Pick<moo.core.access<any_>, 'sessionInfo'>
+// }
 
-export type mainMessageDispatcherDeps = {
-  domainAccess: domainAccess
-  configuration: configuration
-}
-export type mainMessageDispatcher = (_: mainMessageDispatcherDeps) => Promise<unknown>
+// export type coreConfiguration = {
+//   gate: Pick<coreGateDeps, 'core' | 'gateProvider' | 'coreAccess'>
+//   access: Pick<moo.core.access<any_>, 'id' | 'now'>
+// }
 
-export type binder_deps = { messageDispatcher: messageDispatcher }
+// export type accessConfiguration = {
+//   model: modelConfiguration
+//   core: coreConfiguration
+// }
 
-export type binder = (_: binder_deps) => void
-export type loggerConfigs = {
-  consoleLevel?: LogSeverity
-  file?: {
-    path: string
-    level: string
-  }
+export type configurator = (_: { master: boolean }) => configuration
+
+export type configuration = {
+  drain: () => Promise<unknown>
+  gate: (_: { gateRequest: moo.def.gate.provider.request }) => Promise<gateCoreDeps>
 }

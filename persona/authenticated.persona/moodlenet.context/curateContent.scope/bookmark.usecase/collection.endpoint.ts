@@ -1,0 +1,7 @@
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
+import * as E from 'fp-ts/Either'
+import { void as voidz, ZodVoid } from 'zod'
+
+export type collection = moo.persona.endpoint<[ZodVoid, void]>
+
+export const collection: moo.gate.provider.endpoint<collection> = () => E.right({ zod: voidz() })

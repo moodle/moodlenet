@@ -16,13 +16,12 @@ import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import { PrimaryButton } from '../../../atoms/PrimaryButton/PrimaryButton'
 import { RoundButton } from '../../../atoms/RoundButton/RoundButton'
 import { SecondaryButton } from '../../../atoms/SecondaryButton/SecondaryButton'
-import { Snackbar } from '../../../atoms/Snackbar/Snackbar'
 import './MainProfileCard.scss'
 // import { defaultProfileAvatarAsset, defaultProfileBackgroundAsset } from './defaultImagesAsset'
+import { default_noop_action } from '../../../../lib/common/actions'
 import defaultAvatar from '../../../lib/assets/img/default-avatar.svg'
 import defaultBackground from '../../../lib/assets/img/default-background.svg'
 import { profilePageProps } from '../ProfilePage'
-import { default_noop_action } from '../../../../lib/common/actions'
 
 export function MainProfileCard({ profileInfo, actions, myLinks }: profilePageProps) {
   const schemas = useAllPrimarySchemas()
@@ -32,7 +31,7 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
     handleSubmitWithAction: submitForm,
   } = useHookFormAction(
     default_noop_action(actions.edit?.updateMyProfileInfo),
-    zodResolver(schemas.userProfile.updateProfileInfoMetaSchema),
+    zodResolver(schemas.userProfile.editProfileInfoMetaSchema),
     {
       formProps: { defaultValues: { ...profileInfo } },
       actionProps: {
@@ -49,7 +48,7 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
     current: { url: displayAvatarSrc },
     openFileDialog: chooseImageAvatar,
     submit: submitAvatar,
-    state: avatarUploaderState,
+    // state: avatarUploaderState,
     dropHandlers: dropAvatarAttr,
   } = useAssetUploader('webImage', profileInfo.avatar, actions.edit?.useAsMyProfileAvatar)
 
@@ -57,7 +56,7 @@ export function MainProfileCard({ profileInfo, actions, myLinks }: profilePagePr
     current: { url: displayBackgroundSrc },
     openFileDialog: chooseImageBackground,
     submit: submitBackground,
-    state: backgroundUploaderState,
+    // state: backgroundUploaderState,
     dropHandlers: dropBackgroundAttrs,
   } = useAssetUploader('webImage', profileInfo.background, actions.edit?.useAsMyProfileBackground)
 

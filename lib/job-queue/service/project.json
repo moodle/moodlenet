@@ -1,0 +1,9 @@
+{
+  "name": "lib-job-queues-service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/job-queue/service/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project lib-job-queues-service --web",
+  "targets": {}
+}

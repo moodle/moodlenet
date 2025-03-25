@@ -1,5 +1,5 @@
 'use client'
-import { _nullish } from '@moodle/lib-types'
+import { nullish } from '@moodle/lib-types'
 import { Bookmarks, DisplaySettings, ExitToApp, Settings } from '@mui/icons-material'
 import Person from '@mui/icons-material/Person'
 import { t } from 'i18next'
@@ -12,7 +12,7 @@ import Searchbox from '../../ui/atoms/Searchbox/Searchbox'
 import { TertiaryButton } from '../../ui/atoms/TertiaryButton/TertiaryButton'
 import { ReactComponent as ArrowsIcon } from '../../ui/lib/assets/icons/arrows.svg'
 // import ArrowsIcon from '../../ui/lib/assets/icons/arrows.svg'
-import { asset } from '@moodle/module/storage'
+import { maybeAsset } from '@moodle/module/storage'
 import { useAssetUrl } from '../../lib/client/globalContexts'
 import { clientSlotItem } from '../../lib/common/types'
 import defaultAvatar from '../../ui/lib/assets/img/default-avatar.svg'
@@ -60,7 +60,7 @@ export function HeaderSearchbox() {
 }
 
 export type ProfileLinkProps = {
-  avatar: asset | _nullish
+  avatar: maybeAsset | nullish
   profileRoute: appRoute
 }
 export function ProfileLink({ profileRoute, avatar }: ProfileLinkProps) {
@@ -132,7 +132,7 @@ export function FollowingLink({ followingRoute }: FollowingLinkProps) {
 }
 
 export type AvatarMenuProps = {
-  avatar: asset | _nullish
+  avatar: maybeAsset | nullish
   menuItems: clientSlotItem[]
 }
 

@@ -1,8 +1,8 @@
 import { secondaryAdapter, secondaryProvider } from '@moodle/domain'
 import { joseOpts, joseVerify, sign } from '@moodle/lib-jwt-jose'
-import { _void, signed_token_payload_data, SIGNED_TOKEN_PAYLOAD_PROP } from '@moodle/lib-types'
-import * as argon2 from 'argon2'
+import { void_, signed_token_payload_data, SIGNED_TOKEN_PAYLOAD_PROP } from '@moodle/lib-types'
 import { signedToken } from '@moodle/module/crypto'
+import * as argon2 from 'argon2'
 import { ArgonPwdHashOpts } from '../types'
 
 export function crypto_secondary_services_factory({
@@ -12,17 +12,17 @@ export function crypto_secondary_services_factory({
   joseOpts: joseOpts
   argonOpts: ArgonPwdHashOpts
 }): secondaryProvider {
-  return secondaryCtx => {
-    const userAccount_secondary_adapter: secondaryAdapter = {
+  return (/* secondaryCtx */) => {
+    const userHome_secondary_adapter: secondaryAdapter = {
       crypto: {
         service: {
-          async hashPassword({ plainPassword: { __redacted__: plainPassword } }) {
+          async hashPassword({ plainPassword: { redacted: plainPassword } }) {
             const passwordHash = await argon2.hash(plainPassword, argonOpts)
             return { passwordHash }
           },
-          async verifyPasswordHash({ passwordHash, plainPassword: { __redacted__: plainPassword } }) {
+          async verifyPasswordHash({ passwordHash, plainPassword: { redacted: plainPassword } }) {
             const verified = await argon2.verify(passwordHash, plainPassword, argonOpts)
-            return [verified, _void]
+            return [verified, void_]
           },
 
           async validateSignedToken({ token, type, module }) {
@@ -39,6 +39,9 @@ export function crypto_secondary_services_factory({
             return [true, { validatedSignedTokenData: signedTokenData }]
           },
           async signDataToken({ data, expiresIn }) {
+            // NOTE: this throws if joseOpts.privateKeyStr is not set (see sign() function impl)
+            // NOTE: routing to correctly configured worker instance must be ensured at configuration (main) level
+            // NOTE: privateKey is nullable, for security reasons: only choosen instances should be able to access privateKey
             const { expireDate, token /* , notBeforeDate */ } = await sign<signed_token_payload_data<signedToken>>({
               joseOpts,
               payload: { [SIGNED_TOKEN_PAYLOAD_PROP]: data },
@@ -49,6 +52,6 @@ export function crypto_secondary_services_factory({
         },
       },
     }
-    return userAccount_secondary_adapter
+    return userHome_secondary_adapter
   }
 }

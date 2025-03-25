@@ -1,0 +1,6 @@
+export * as admin from './admin.persona'
+export * as anonymous from './anonymous.persona'
+export * as any__ from './any.persona'
+export * as authenticated from './authenticated.persona'
+export * from './gate-provider'
+export * as moderator from './moderator.persona'

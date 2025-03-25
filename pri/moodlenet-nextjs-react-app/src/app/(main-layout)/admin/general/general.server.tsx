@@ -5,7 +5,7 @@ import { returnValidationErrors } from 'next-safe-action'
 import { revalidatePath } from 'next/cache'
 import { getAllPrimarySchemas } from '../../../../lib/server/primarySchemas'
 import { defaultSafeActionClient } from '../../../../lib/server/safe-action'
-import { access } from '../../../../lib/server/session-access'
+import session from '../../../../lib/server/session-client'
 import { provideAdminGeneralSchemas } from './general.common'
 
 export async function getAdminGeneralSchemas() {
@@ -15,24 +15,21 @@ async function getGeneralSchema() {
   const { generalSchema: general } = await getAdminGeneralSchemas()
   return general
 }
-export const saveGeneralInfoAction = defaultSafeActionClient
-  .schema(getGeneralSchema)
-  .action(async ({ parsedInput: adminGeneralForm }) => {
-    const { moodlenetInfoSchema, orgInfoSchema } = await getAdminGeneralSchemas()
+export const saveGeneralInfoAction = defaultSafeActionClient.schema(getGeneralSchema).action(async ({ parsedInput: adminGeneralForm }) => {
+  const { moodlenetInfoSchema, orgInfoSchema } = await getAdminGeneralSchemas()
 
-    const [[mmoodlenetDone], [orgDone]] = await Promise.all([
-      access.primary.moodlenet.admin.updatePartialMoodlenetInfo({
-        partialInfo: moodlenetInfoSchema.parse(adminGeneralForm),
-      }),
-      access.primary.org.admin.updatePartialOrgInfo({
-        partialInfo: orgInfoSchema.parse(adminGeneralForm),
-      }),
-    ])
-    revalidatePath('/')
-    if (mmoodlenetDone && orgDone) {
-      return
-    }
-    returnValidationErrors(getGeneralSchema, {
+  const [[moodlenetDone], [orgDone]] = await Promise.all([
+    client.proxy.moodlenet.admin.updatePartialMoodlenetInfo({
+      partialInfo: moodlenetInfoSchema.parse(adminGeneralForm),
+    }),
+    client.proxy.org.admin.updatePartialOrgInfo({
+      partialInfo: orgInfoSchema.parse(adminGeneralForm),
+    }),
+  ])
+  if (!(moodlenetDone && orgDone)) {
+    return returnValidationErrors(getGeneralSchema, {
       _errors: [t(`something went wrong while saving the general info`)],
     })
-  })
+  }
+  revalidatePath('/', 'layout')
+})

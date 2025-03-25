@@ -23,17 +23,16 @@ export const MultipeSelectDropdown: FC<MultipeSelectDropdownProps> = props => {
   const updatedElements = {
     opts: options.filter(
       o =>
-        o.label.toUpperCase().includes(searchText.toUpperCase()) ||
-        o.value.toUpperCase().includes(searchText.toUpperCase()),
+        o.label.toUpperCase().includes(searchText.toUpperCase()) || o.value.toUpperCase().includes(searchText.toUpperCase()),
     ),
     selected: options.filter(
-      ({ value }) =>
-        props.value.includes(value) && value.toUpperCase().includes(searchText.toUpperCase()),
+      ({ value }) => props.value.includes(value) && value.toUpperCase().includes(searchText.toUpperCase()),
     ),
   }
   return canEdit ? (
     <Dropdown
       {...dropdownProps}
+      // edit={dropdownProps.edit ?? true} <- defaultProps.edit was set true then
       highlight={shouldShowErrors && !!errors}
       value={props.value}
       error={shouldShowErrors && errors}
@@ -62,10 +61,6 @@ export const MultipeSelectDropdown: FC<MultipeSelectDropdownProps> = props => {
       </abbr>
     </div>
   ) : null
-}
-
-MultipeSelectDropdown.defaultProps = {
-  edit: true,
 }
 
 export default MultipeSelectDropdown

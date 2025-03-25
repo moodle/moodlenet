@@ -1,23 +1,25 @@
+import { status4xx } from '@moodle/domain/lib'
 import { signed_token_schema } from '@moodle/lib-types'
+import { isLeft } from 'fp-ts/Either'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 import { appRoutes } from '../../../../../../lib/common/appRoutes'
-import { access } from '../../../../../../lib/server/session-access'
+import session from '../../../../../../lib/server/session-client'
 
 export async function GET(req: NextRequest) {
-  const signupEmailVerificationToken = signed_token_schema.parse(await req.nextUrl.searchParams.get('token'))
+  const { data: signupEmailVerificationToken } = signed_token_schema.safeParse(await req.nextUrl.searchParams.get('token'))
   if (!signupEmailVerificationToken) {
-    return new Response(`missing required token`, {
-      status: 400,
+    return new Response(`bad token`, {
+      status: status4xx('Bad Request'),
     })
   }
 
-  const [ok, response] = await access.primary.userAccount.signedTokenAccess.createNewUserByEmailVerificationToken({
+  const e_confirmMyEmailResponse = await client.proxy.anonymous.access.signup.withMyEmail.confirmMyEmail({
     signupEmailVerificationToken,
   })
-  if (!ok) {
-    return new Response(`error verifying email. reason: ${response.reason}`, {
-      status: 400,
+  if (isLeft(e_confirmMyEmailResponse)) {
+    return new Response(`invalid Token`, {
+      status: status4xx('Not Acceptable'),
     })
   }
 

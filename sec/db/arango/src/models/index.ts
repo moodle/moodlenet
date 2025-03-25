@@ -1,0 +1,5 @@
+export * as content from './content'
+export * as education from './education'
+export * as statics from './statics'
+export * as moodlenet from './moodlenet'
+export * as userHome from './userHome'

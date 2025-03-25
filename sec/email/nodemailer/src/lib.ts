@@ -28,7 +28,7 @@ interface SentMessageInfo {
   accepted: named_or_email_address[]
   rejected: named_or_email_address[]
   pending: named_or_email_address[]
-  response: string
+  result: string
 }
 export async function send({
   env,

@@ -1,15 +1,18 @@
+'use client'
 import type { PropsWithChildren } from 'react'
+import { GlobalContextProvider, serverGlobals } from '../lib/client/globalContext'
 import { defaultStyle } from '../ui/lib/color-style'
-import { GlobalContextProvider } from './root-layout.client'
 import './root-layout.scss'
-import { access } from '../lib/server/session-access'
 
-export default async function RootLayout({ children }: PropsWithChildren) {
-  const { webappGlobalCtx } = await access.primary.moodlenetReactApp.props.rootLayout()
+export type rootLayoutProps = PropsWithChildren<{
+  serverGlobals: serverGlobals
+}>
+
+export default function RootLayout({ children, serverGlobals }: rootLayoutProps) {
   return (
     <html lang="en">
       <body>
-        <GlobalContextProvider webappGlobalCtx={webappGlobalCtx}>
+        <GlobalContextProvider serverGlobals={serverGlobals}>
           <section id="root">
             <div className={`layout-container`} id={`layout-container`} style={{ ...defaultStyle }}>
               {children}

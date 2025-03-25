@@ -1,5 +1,5 @@
 # Dev notes
-
+https://stoplight.io/open-source/spectral
 https://immerjs.github.io/immer/
 
 ## TODO
@@ -9,8 +9,13 @@ remove all ok_ko<void> ==> ok_ko
 FIXME: pri/moodlenet-nextjs-react-app/src/ui/lib/ContentBackupImages/index.tsx has moodle.net referral url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral' this cannot apply for any other deployment !! 
 CHECK: tree-shaking for '@mui/icons-material' imports  https://mui.com/material-ui/guides/minimizing-bundle-size/#option-two-use-a-babel-plugin
 
+[ ] avoid service calls to get the current user, set `userSession` - or its promise - in or along with `primaryContext`
+    extracting `userSession` from token must be a cheap operation (public key signature check)
+    may need to parametrize crypto apis to sign tokens with different algorithms for each use case https://stackoverflow.com/questions/32601917/how-much-expensive-is-jwt-decrypt
+
 ### Next
 
+[ ] httponly header for cookies security https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#updating_cookie_values
 FIXME !!! [ ] react-app app api routes under module namespace
 [x] logger with current context ids
 [ ] admin user roles interface
@@ -19,7 +24,7 @@ CHECK:[ ] define types as z.infer when zod schema defined (e.g. all def in types
 [x] a "system" userSession for init/migration ? (e.g. create the first admin user)
 [x] add all "config changed" events
 FIXME:[ ]  http primaries: 
-  [ ] extract lib (cookies, access-session ... ) for all http primaries 
+  [ ] extract lib (cookies, access-session ... ) for all http primaries (done ? )
   [ ] use cookies "secret" 
 ### Done
 

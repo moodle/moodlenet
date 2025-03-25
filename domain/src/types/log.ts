@@ -1,11 +1,9 @@
-import { _any } from '@moodle/lib-types'
-import { baseContext, domainLayer } from './concrete'
-import { domainEndpoint, domainAccess } from './msg'
+import { any_, d_u } from '@moodle/lib-types'
 
 //https://datatracker.ietf.org/doc/html/rfc5424
-export type LogSeverity = 'emergency' | 'alert' | 'critical' | 'error' | 'warn' | 'notice' | 'info' | 'debug'
+export type logSeverity = 'emergency' | 'alert' | 'critical' | 'error' | 'warn' | 'notice' | 'info' | 'debug'
 
-export const logLevelMap: Record<LogSeverity, number> = {
+export const logLevelMap: Record<logSeverity, number> = {
   emergency: 0,
   alert: 1,
   critical: 2,
@@ -15,17 +13,33 @@ export const logLevelMap: Record<LogSeverity, number> = {
   info: 6,
   debug: 7,
 }
-export type loggerContext = {
-  primarySessionId?: string
-  contextLayer: domainLayer
-  endpoint?: domainEndpoint
-} & Pick<baseContext, 'domain' | 'id'> &
-  Pick<domainAccess, 'callerContext' | 'originEndpoint'>
+export type loggerContext = { more?: any_ } & d_u<
+  {
+    core: {
+      request: moo.def.core.request
+      branchPath: string[]
+    }
+    model: {
+      name: string
+      layer: keyof moo.def.model.impl.opHandlers
+      envelope: moo.def.model.envelope<moo.def.model.op.def>
+    }
+    infra: {
+      name: string
+    }
+    setup: {
+      name: string
+    }
+  },
+  'for'
+>
 
-export type loggerProvider = (_: loggerContext) => Logger
-export type Logger = (level: LogSeverity, ..._: _any[]) => void
+export type loggerProvider = (_: loggerContext) => logger
+export type logger = {
+  [level in logSeverity]: (..._: any_[]) => void
+}
 
-export const logLevelColors: Record<LogSeverity, string> = {
+export const logLevelColors: Record<logSeverity, string> = {
   emergency: 'magenta',
   alert: 'magenta',
   critical: 'red',

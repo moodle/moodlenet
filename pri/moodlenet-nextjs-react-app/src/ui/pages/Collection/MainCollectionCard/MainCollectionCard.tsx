@@ -29,7 +29,7 @@ import { useCallback, useMemo, useState } from 'react'
 //   CollectionDataProps,
 //   CollectionFormProps,
 //   CollectionStateProps,
-// } from '../../../../common/types.mjs'
+// } from '../../../../common/types'
 // import { UploadImage } from '../UploadImage/UploadImage'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { isNotFalsy } from '@moodle/lib-types'
